@@ -1,5 +1,5 @@
 import pokebase as pb
-
+import config as config
 def getPokemonLevelMoves(id_or_name):
     """ returns a dictionary of {move: level} for a pokemons base move set"""
     moveDict = {}
@@ -46,6 +46,5 @@ def getPokemonBaseStats(id_or_name):
             statVal = stat.base_stat
             baseStatDict[statName] = statVal
     return baseStatDict
-
 
 
