@@ -19,6 +19,17 @@ def getPokemonLevelMoves(id_or_name):
                         moveDict[moveName] = moveLevel
     return moveDict
 
+def getNewMoves(id_or_name, level):
+    """ returns a pokemons moves at a specific level """
+    newMoves = {}
+    if id_or_name is not None:
+        moveDict = getPokemonLevelMoves(id_or_name)
+        for key, value in moveDict.items():
+            if value == level:
+                newMoves[key] = value
+    return newMoves
+
+
 def getPokemonSpriteUrl(id_or_name, sprite_type='pokemon'):
     """ returns a pokemons base sprite url.png """
     if id_or_name is not None:
