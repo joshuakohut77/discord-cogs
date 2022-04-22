@@ -1,0 +1,10 @@
+{
+    "author" : ["BiCuriousGeorge#8804", "fr33zingdog#4845"],
+    "install_msg" : "",
+    "name" : "pokemon",
+    "short" : "Interactive Pokemon Game",
+    "description" : "This game collects pokemon and has many interactive features",
+    "tags" : ["fun"],
+    "requirements" : [],
+    "hidden" : false
+}
