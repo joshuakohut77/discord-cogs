@@ -1,5 +1,7 @@
 import pokebase as pb
 import config as config
+import random
+
 def getPokemonLevelMoves(id_or_name):
     """ returns a dictionary of {move: level} for a pokemons base move set"""
     moveDict = {}
@@ -46,5 +48,16 @@ def getPokemonBaseStats(id_or_name):
             statVal = stat.base_stat
             baseStatDict[statName] = statVal
     return baseStatDict
+
+def getStarterPokemon(username):
+    """ returns a random starter pokemon dictionary {pokemon: id} """
+    if username is not None:
+        if 'cactitwig' in username.lower():
+            return {'rattata': 19}
+        else:
+            sequence=[{'bulbasaur': 1}, {'charmander': 4}, {'squirtle': 7}]
+            print(random.choice(sequence))
+
+
 
 
