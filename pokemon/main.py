@@ -44,15 +44,15 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         return commands.check(pred)
 
 
-    @guild_only_check()
     @commands.group(name="trainer")
-    async def _trainer(self, ctx: commands.Context):
+    @commands.guild_only()
+    async def _trainer(self, ctx: commands.Context) -> None:
         """Base command to manage the trainer (user).
         """
         pass
 
     @_trainer.command()
-    async def starter(self, ctx: commands.Context, user: discord.Member = None):
+    async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
         """Show the starter pokemon for the trainer.
         """
         if user is None:
