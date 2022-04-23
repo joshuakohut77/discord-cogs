@@ -4,21 +4,6 @@ import random
 import math
 
 
-
-
-
-
-def getPokemonType(id_or_name):
-    """ returns string of pokemons base type """
-    typeList = []
-    pokemon = pb.pokemon(id_or_name)
-    for type in pokemon.types:
-        typeList.append(type.type.name)
-    
-    return typeList
-
-
-
 def getStarterPokemon(username):
     """ returns a random starter pokemon dictionary {pokemon: id} """
     if username is not None:
@@ -68,5 +53,4 @@ def getEffortValue(id_or_name):
 
 
 
-print(getPokemonType('pidgey'))
 
