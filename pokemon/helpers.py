@@ -50,16 +50,7 @@ def getPokemonType(id_or_name):
         pokemon = pb.pokemon(id_or_name)
         return pokemon.types[0].type.name
 
-def getPokemonBaseStats(id_or_name):
-    """ returns dictionary of {stat: value} for a pokemons base stats """
-    baseStatDict = {}
-    if id_or_name is not None:
-        pokemon = pb.pokemon(id_or_name)
-        for stat in pokemon.stats:
-            statName = stat.stat.name
-            statVal = stat.base_stat
-            baseStatDict[statName] = statVal
-    return baseStatDict
+
 
 def getStarterPokemon(username):
     """ returns a random starter pokemon dictionary {pokemon: id} """
@@ -73,36 +64,12 @@ def getStarterPokemon(username):
             return starter
 
 
-# def caughtNewPokemon(id_or_name, level):
-#     """ returns a new pokemons stats modified by level and randMult """
-
-#     return
-
-# def randMultiplier(value):
-#     """ retuans a random modified value within the percentMultiplier range """
-#     percentValue = value * config.baseStatRandMult
-#     return round(random.uniform(value-percentValue, value+percentValue))
-
 """
 #
 # Below are functions for calculating experience for each level at different exp rates
 #
 """
-def baseExpFast(level):
-    """ returns minimum total experience at a given level """
-    return round(0.8 * (level ** 3))
 
-def baseExpMedFast(level):
-    """ returns minimum total experience at a given level """
-    return round(level ** 3)
-
-def baseExpMedSlow(level):
-    """ returns minimum total experience at a given level """
-    return round(1.2*(level ** 3)-(15*(level ** 2)) + 100*level - 140)
-
-def baseExpSlow(level):
-    """ returns minimum total experience at a given level """
-    return round(1.25 * (level ** 3))
 
 def expGain(baseExp, level):
     a = 1 # 1 if wild, 1.5 if owned by trainer
@@ -112,7 +79,6 @@ def expGain(baseExp, level):
     t = 1 # 1 if pokemon is current owner, 1.5 if pokemon was gained in a trade
     exp = (a*t*b*L) / (7 * s)
     return exp
-
 
 def getEffortValue(id_or_name):
     """ returns dictionary of effort values gained upon defeat """
@@ -126,28 +92,6 @@ def getEffortValue(id_or_name):
     
     return effortValueDict
 
-
-def generatePokemonIV():
-    """ returns dictionary of random generated individual values """
-    # a pokemon has 6 IVs for each base stat
-    # attack, defense, speed, special_attack, and special_defense are random 0-15
-    # hp is calculated from the other IV using a binary string conversion formula
-    ivDict = {}
-    attack = random.randrange(0,16)
-    defense = random.randrange(0,16)
-    speed = random.randrange(0,16)
-    special_attack = random.randrange(0,16)
-    special_defense = special_attack
-
-    hp = int(format(attack, 'b').zfill(4)[3] + format(defense, 'b').zfill(4)[3] + format(speed, 'b').zfill(4)[3] + format(special_attack, 'b').zfill(4)[3], 2)
-
-    ivDict['hp'] = hp
-    ivDict['attack'] = attack
-    ivDict['defense'] = defense
-    ivDict['speed'] = speed
-    ivDict['special-attack'] = special_attack
-    ivDict['special-defense'] = special_defense
-    return ivDict
 
 def getPokemonStats(pokemonObj):
     """ returns a dictionary of a pokemon's unique stats based off level, EV, and IV """
@@ -198,3 +142,10 @@ def calculateUniqueStat(level, base, EV, IV):
     baseCalc = math.floor(numerator/100)
     return baseCalc
 
+
+pikachu = pb.pokemon(25)
+
+print(pb.pokemon_species(25).growth_rate.name)
+
+
+print(pb.growth_rate(2))
