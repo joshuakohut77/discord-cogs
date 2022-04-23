@@ -5,7 +5,7 @@ from abc import ABCMeta
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
-import emojis
+# import emojis
 import discord
 from redbot.core import Config, commands
 
