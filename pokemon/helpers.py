@@ -59,7 +59,9 @@ def getStarterPokemon(username):
             return {'rattata': 19}
         else:
             sequence=[{'bulbasaur': 1}, {'charmander': 4}, {'squirtle': 7}]
-            print(random.choice(sequence))
+            starter = random.choice(sequence)
+            print(starter)
+            return starter
 
 
 """
