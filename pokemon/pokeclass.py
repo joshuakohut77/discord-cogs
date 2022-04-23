@@ -1,9 +1,9 @@
 # pokemon user class
-import statclass 
+
 import pokebase as pb
 import random
 import math
-
+from statclass import PokeStats
 
 class Pokemon:
     def __init__(self, id_or_name):
@@ -16,12 +16,12 @@ class Pokemon:
         self.currentExp = None
         self.traded = None
         self.base_exp = None
-        self.hp = statclass.PokeStats('hp')
-        self.attack = statclass.PokeStats('attack')
-        self.defense = statclass.PokeStats('defense')
-        self.speed = statclass.PokeStats('speed')
-        self.special_attack = statclass.PokeStats('special-attack')
-        self.special_defense = statclass.PokeStats('special-defense')
+        self.hp = PokeStats('hp')
+        self.attack = PokeStats('attack')
+        self.defense = PokeStats('defense')
+        self.speed = PokeStats('speed')
+        self.special_attack = PokeStats('special-attack')
+        self.special_defense = PokeStats('special-defense')
 
     def load(self):
         """ populates the object with stats from pokeapi """
@@ -44,9 +44,6 @@ class Pokemon:
 
         self.setPokeStats(baseDict, ivDict, evDict)
 
-
-
-    
     def setPokeStats(self, baseDict, ivDict, evDict):
         """ populates PokeStats class value with given stats """
         self.hp.base = baseDict['hp']
@@ -72,10 +69,68 @@ class Pokemon:
         self.special_defense.base = baseDict['special-defense']
         self.special_defense.IV = ivDict['special-defense']
         self.special_defense.EV = evDict['special-defense']
+    
+    def getPokeStats(self):
+        """ returns a dictionary of a pokemon's unique stats based off level, EV, and IV """
+        statsDict = {}
+        level = self.currentLevel
+
+        statsDict['hp'] = self.__calculateUniqueStat(self.hp) + level + 10
+        statsDict['attack'] = self.__calculateUniqueStat(self.attack) + 5
+        statsDict['defense'] = self.__calculateUniqueStat(self.defense) + 5
+        statsDict['speed'] = self.__calculateUniqueStat(self.speed) + 5
+        statsDict['special-attack'] = self.__calculateUniqueStat(self.special_attack) + 5
+        statsDict['special-defense'] = self.__calculateUniqueStat(self.special_defense) + 5
+
+        return statsDict
+
+    def getPokemonLevelMoves(self):
+        """ returns a dictionary of {move: level} for a pokemons base move set"""
+        moveDict = {}
+        pokemon = pb.pokemon(self.id)
+        for move in pokemon.moves:
+            for version in move.version_group_details:
+                    if version.version_group.name != 'red-blue':
+                        continue
+                    elif version.move_learn_method.name != 'level-up':
+                        continue
+                    else:
+                        moveName = move.move.name
+                        moveLevel = version.level_learned_at
+                        moveDict[moveName] = moveLevel
+        return moveDict
+
+    def evolve(self):
+        """ takes a current pokemon and returns an evolved version """
+        # todo check if pokemon has evolution, verify level is right
+        # retain EV stats through creation. 
+
+        return
 
     ####
     ###   Private Class Methods
     ####
+
+    def __getNewMoves(self):
+        """ returns a pokemons moves at a specific level """
+        newMoves = {}
+        moveDict = self.getPokemonLevelMoves()
+        for key, value in moveDict.items():
+            if value == self.currentLevel:
+                newMoves[key] = value
+        return newMoves
+
+    def __calculateUniqueStat(self, statObj):
+        """ returns integer of a stat calculated from various parameters """
+        level = self.currentLevel
+        EV = statObj.EV
+        IV = statObj.IV
+        base = statObj.base
+        evCalc = math.floor(math.ceil(math.sqrt(EV))/4)
+        baseIVCalc = (base + IV) * 2
+        numerator = (baseIVCalc + evCalc) * level
+        baseCalc = math.floor(numerator/100)
+        return baseCalc
 
     def __generatePokemonIV(self):
         """ returns dictionary of random generated individual values """
@@ -107,13 +162,12 @@ class Pokemon:
     def __getPokemonBaseStats(self):
         """ returns dictionary of {stat: value} for a pokemons base stats """
         baseDict = {}
-        pokemon = pb.pokemon(self.id_or_name)
+        pokemon = pb.pokemon(self.id)
         for stat in pokemon.stats:
             statName = stat.stat.name
             statVal = stat.base_stat
             baseDict[statName] = statVal
         return baseDict
-
 
     def __getBaseLevelExperience(self):
         """ returns minimum total experience at a given level """
@@ -134,9 +188,10 @@ class Pokemon:
 
 
 pokemon = Pokemon('charizard')
-pokemon.create(7)
+pokemon.create(8)
 
 
-print(pokemon.currentExp)
+print(pokemon.getPokeStats())
+
 
 
