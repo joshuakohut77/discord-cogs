@@ -15,7 +15,9 @@ class Pokemon:
         self.currentLevel = None
         self.currentExp = None
         self.traded = None
+        self.wildPokemon = True
         self.base_exp = None
+        self.types = None
         self.hp = PokeStats('hp')
         self.attack = PokeStats('attack')
         self.defense = PokeStats('defense')
@@ -23,7 +25,7 @@ class Pokemon:
         self.special_attack = PokeStats('special-attack')
         self.special_defense = PokeStats('special-defense')
 
-    def load(self):
+    def load(self, pokeDict=None):
         """ populates the object with stats from pokeapi """
         pokemon = pb.pokemon(self.id_or_name)
         self.name = pokemon.species.name
@@ -31,6 +33,7 @@ class Pokemon:
         self.spriteURL = pb.SpriteResource('pokemon', pokemon.id).url
         self.growthRate = pb.pokemon_species(pokemon.id).growth_rate.name
         self.base_exp = pokemon.base_experience
+        self.types = self.__getPokemonType()
 
     def create(self, level):
         """ creates a new pokemon with generated stats at a given level """
@@ -110,6 +113,15 @@ class Pokemon:
     ####
     ###   Private Class Methods
     ####
+
+    def __getPokemonType(self):
+        """ returns string of pokemons base type """
+        typeList = []
+        pokemon = pb.pokemon(self.id)
+        for type in pokemon.types:
+            typeList.append(type.type.name)
+        
+        return typeList
 
     def __getNewMoves(self):
         """ returns a pokemons moves at a specific level """

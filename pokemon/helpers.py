@@ -10,9 +10,12 @@ import math
 
 def getPokemonType(id_or_name):
     """ returns string of pokemons base type """
-    if id_or_name is not None:
-        pokemon = pb.pokemon(id_or_name)
-        return pokemon.types[0].type.name
+    typeList = []
+    pokemon = pb.pokemon(id_or_name)
+    for type in pokemon.types:
+        typeList.append(type.type.name)
+    
+    return typeList
 
 
 
@@ -44,15 +47,15 @@ def expGain(baseExp, level):
     exp = (a*t*b*L) / (7 * s)
     return exp
 
+
 def getEffortValue(id_or_name):
     """ returns dictionary of effort values gained upon defeat """
     effortValueDict = {}
-    if id_or_name is not None:
-        pokemon = pb.pokemon(id_or_name)
-        for stat in pokemon.stats:
-            statName = stat.stat.name
-            effortValue = stat.effort * config.overallExperienceModifier
-            effortValueDict[statName] = effortValue
+    pokemon = pb.pokemon(id_or_name)
+    for stat in pokemon.stats:
+        statName = stat.stat.name
+        effortValue = stat.effort * config.overallExperienceModifier
+        effortValueDict[statName] = effortValue
     
     return effortValueDict
 
@@ -63,9 +66,7 @@ def getEffortValue(id_or_name):
 
 
 
-pikachu = pb.pokemon(25)
-
-print(pb.pokemon_species(25).growth_rate.name)
 
 
-print(pb.growth_rate(2))
+print(getPokemonType('pidgey'))
+
