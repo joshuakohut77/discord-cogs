@@ -12,7 +12,7 @@ from redbot.core import Config, commands
 from .event import EventMixin
 
 import pokebase as pb
-from helpers import *
+# from helpers import *
 
 
 class CompositeClass(commands.CogMeta, ABCMeta):
@@ -61,10 +61,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         if user is None:
             user = ctx.author
 
-        starter = getStarterPokemon(user.display_name)
-        name = starter.keys()[0]
+        # starter = getStarterPokemon(user.display_name)
+        # name = starter.keys()[0]
 
-        pokemon = pb.pokemon(name)
+        pokemon = pb.pokemon("bulbasaur")
         sprite = pb.SpriteResource('pokemon', pokemon.id)
 
         # Create the embed object
