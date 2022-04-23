@@ -47,6 +47,16 @@ class Pokemon:
 
         self.setPokeStats(baseDict, ivDict, evDict)
 
+    def print(self):
+        """ prints out all pokemon information for viewing"""
+        print('Id:', self.id)
+        print('Name:', self.name)
+        print('Level:', self.currentLevel)
+        print('Exp:', self.currentExp)
+        print('Traded:', self.traded)
+        print('Types:', self.types)
+        print('Stats:', self.getPokeStats())
+
     def setPokeStats(self, baseDict, ivDict, evDict):
         """ populates PokeStats class value with given stats """
         self.hp.base = baseDict['hp']
@@ -202,8 +212,8 @@ class Pokemon:
 pokemon = Pokemon('charizard')
 pokemon.create(8)
 
-
-print(pokemon.getPokeStats())
+pokemon.print()
+# print(pokemon.getPokeStats())
 
 
 
