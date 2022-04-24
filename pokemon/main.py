@@ -13,7 +13,7 @@ from .event import EventMixin
 
 import pokebase as pb
 import psycopg as pg
-from helpers import *
+from .helpers import *
 
 
 class CompositeClass(commands.CogMeta, ABCMeta):
