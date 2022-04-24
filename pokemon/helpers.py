@@ -1,5 +1,5 @@
 import pokebase as pb
-from config import *
+from .config import *
 import random
 import math
 
