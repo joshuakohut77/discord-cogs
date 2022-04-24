@@ -94,7 +94,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             gen1Starter = getStarterPokemon(user.display_name)
             name = list(gen1Starter.keys())[0]
             cur.execute('insert into "trainer_pokemon" values (%(trainer)s, %(name)s)', {
-                        'trainer': trainer[0], 'pokemon': name})
+                        'trainer': trainer[0], 'name': name})
             conn.commit()
             cur.execute(
                 'select * from trainer_pokemon where trainer_id = %(trainer)s', {'trainer': trainer[0]})
