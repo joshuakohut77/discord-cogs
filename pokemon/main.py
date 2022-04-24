@@ -73,20 +73,20 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         # TODO: there is a much better way to do this, still playing
         cur = conn.cursor()
         cur.execute(
-            'select * from trainer where discord_id = 509767223938777108')
+            'select * from trainer where discord_id = %(discord)s', {'discord': user.id})
 
         trainer = cur.fetchone()
 
         if trainer is None:
             cur.execute(
-                'insert into trainer (id, discord_id) values (default, %(discord)s)', {'discord': 900000000000000000})
+                'insert into trainer (id, discord_id) values (default, %(discord)s)', {'discord': user.id})
             conn.commit()
             cur.execute(
-                'select * from trainer where discord_id = 900000000000000000')
+                'select * from trainer where discord_id = %(discord)s', {'discord': user.id})
             trainer = cur.fetchone()
 
         cur.execute(
-            'select * from trainer_pokemon where trainer_id = %(trainer)s', {'trainer': 1})
+            'select * from trainer_pokemon where trainer_id = %(trainer)s', {'trainer': trainer[0]})
 
         starter = cur.fetchone()
 
@@ -94,13 +94,14 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             gen1Starter = getStarterPokemon(user.display_name)
             name = gen1Starter.keys()[0]
             cur.execute('insert into "trainer_pokemon" values (%(trainer)s, %(name)s)', {
-                        'trainer': 1, 'pokemon': name})
+                        'trainer': trainer[0], 'pokemon': name})
             conn.commit()
             cur.execute(
-                'select * from trainer_pokemon where trainer_id = %(trainer)s', {'trainer': 1})
-            pokemon = cur.fetchone()
+                'select * from trainer_pokemon where trainer_id = %(trainer)s', {'trainer': trainer[0]})
+            starter = cur.fetchone()
 
         # TODO: replace with pokeclass to calculate unique stats per pokemon
+        name = starter[1]
         pokemon = pb.pokemon(name)
         sprite = pb.SpriteResource('pokemon', pokemon.id)
 
