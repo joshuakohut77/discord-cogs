@@ -92,7 +92,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         if starter is None:
             gen1Starter = getStarterPokemon(user.display_name)
-            name = gen1Starter.keys()[0]
+            name = list(gen1Starter.keys())[0]
             cur.execute('insert into "trainer_pokemon" values (%(trainer)s, %(name)s)', {
                         'trainer': trainer[0], 'pokemon': name})
             conn.commit()
