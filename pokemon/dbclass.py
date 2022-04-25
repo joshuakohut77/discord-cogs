@@ -2,8 +2,6 @@
 
 import psycopg2 as pg
 
-
-
 class db:
     def __init__(self):
         self.conn = pg.connect(
