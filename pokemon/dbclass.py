@@ -20,7 +20,7 @@ class db:
         """ takes a select query and runs it returning all rows. params is a sequence of values to pass into the queryString"""
         cur = self.conn.cursor()
         if params:
-            cur.execute(queryString, params)
+            cur.execute(queryString, (params))
         else:
             cur.execute(queryString)
         results = cur.fetchall()
@@ -31,7 +31,7 @@ class db:
         """ takes a update/insert query and runs it committing if no errors. params is a sequence of values to pass into the queryString"""
         cur = self.conn.cursor()
         if params:
-            cur.execute(queryString, params)
+            cur.execute(queryString, (params))
         else:
             cur.execute(queryString)
         self.conn.commit()
