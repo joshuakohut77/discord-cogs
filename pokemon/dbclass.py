@@ -19,7 +19,7 @@ class db:
     def runQuery(self, queryString, params=None):
         """ takes a select query and runs it returning all rows. params is a sequence of values to pass into the queryString"""
         cur = self.conn.cursor()
-        if not params:
+        if params:
             cur.execute(queryString, params)
         else:
             cur.execute(queryString)
@@ -30,11 +30,11 @@ class db:
     def runUpdateQuery(self, queryString, params=None):
         """ takes a update/insert query and runs it committing if no errors. params is a sequence of values to pass into the queryString"""
         cur = self.conn.cursor()
-        if not params:
+        if params:
             cur.execute(queryString, params)
         else:
             cur.execute(queryString)
-        cur.commit()
+        self.conn.commit()
         cur.close()
         
     
