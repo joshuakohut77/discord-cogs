@@ -38,6 +38,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         self.config.register_channel(**default_channel)
         self.config.register_guild(**default_guild)
 
+        self.pokelist = {}
+
     async def guild_only_check():
         async def pred(self, ctx: commands.Context):
             if ctx.guild is not None and await self.config.guild(ctx.guild).enabled():
@@ -114,3 +116,60 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         embed.set_thumbnail(url=f"{sprite.url}")
 
         await ctx.send(embed=embed)
+
+    @_trainer.command()
+    async def pokemon(self, ctx: commands.Context, user: discord.Member = None) -> None:
+        """Show the starter pokemon for the trainer.
+        """
+        if user is None:
+            user = ctx.author
+
+        # TODO: don't store these credentials in source control,
+        #       eventually just pass them in as part of the cog config
+        conn = pg.connect(
+            host="REDACTED_HOST",
+            dbname="pokemon_db",
+            user="redbot",
+            password="REDACTED_PASSWORD",
+            port=REDACTED_PORT)
+
+        # TODO: there is a much better way to do this, still playing
+        cur = conn.cursor()
+        cur.execute(
+            'select * from trainer where discord_id = %(discord)s', {'discord': user.id})
+
+        trainer = cur.fetchone()
+
+        if trainer is None:
+            await ctx.send('You haven\'t received your started yet!')
+
+        cur.execute(
+            'select * from trainer_pokemon where trainer_id = %(trainer)s', {'trainer': trainer[0]})
+
+        pokemon = cur.fetchall()
+
+        if len(pokemon) == 0:
+            await ctx.send('You haven\'t received your started yet!')
+
+        firstPokemon = pokemon[0]
+        # TODO: replace with pokeclass to calculate unique stats per pokemon
+        name = firstPokemon[1]
+        pokemon = pb.pokemon(name)
+        sprite = pb.SpriteResource('pokemon', pokemon.id)
+
+        # Create the embed object
+        embed = discord.Embed(title=f"#{pokemon.id} {pokemon.name}")
+        embed.set_author(name=f"{user.display_name}",
+                         icon_url=str(user.avatar_url))
+        embed.add_field(name="Weight", value=f"{pokemon.weight}", inline=True)
+        embed.add_field(name="Height", value=f"{pokemon.height}", inline=True)
+        embed.set_thumbnail(url=f"{sprite.url}")
+
+        msg: discord.Message = await ctx.send(embed=embed)
+
+        self.pokelist[user.id] = {'message_id': msg.id,
+                                  'trainer_id': trainer[0], 'index': 0}
+
+        # emoji: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=str(emoji))
+        msg.add_reaction(':arrow_backward:')
+        msg.add_reaction(':arrow_forward:')
