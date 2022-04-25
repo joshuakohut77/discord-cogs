@@ -8,8 +8,6 @@ list of cities and locations: https://pokeapi.co/api/v2/region/1/
 """
 
 class location:
-    def __init__(self):
-        self.placeholder = None
     
     def getAreaEncounterDetails(self, areaId):
         """ returns a list of encounter details in json format """
@@ -60,8 +58,6 @@ class location:
         if split[-1] == '':
             split.pop()
         return split[-1]
-
-
 
 
 
