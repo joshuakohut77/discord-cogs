@@ -2,9 +2,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from .abc import MixinMeta
 
-if TYPE_CHECKING:
-    import discord
+# if TYPE_CHECKING:
+#     import discord
 
+import discord
 from redbot.core import commands
 
 import pokebase as pb
@@ -20,9 +21,9 @@ class EventMixin(MixinMeta):
             reaction.message.reply('not found')
             return
 
-        name = list(self.pokelist.keys())[0]
-        await reaction.message.reply(name)
-        await reaction.message.reply(user.id)
+        # name = list(self.pokelist.keys())[0]
+        # await reaction.message.reply(name)
+        # await reaction.message.reply(user.id)
 
         # pass
         trainerPokemon = self.pokelist[f'{user.id}']
