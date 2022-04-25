@@ -3,6 +3,7 @@
 import pokebase as pb
 import random
 import math
+import config
 from statclass import PokeStats
 from dbclass import db as dbconn
 
@@ -66,8 +67,12 @@ class Pokemon:
         ivDict = self.__generatePokemonIV()
         evDict = self.__generatePokemonEV()
         baseDict = self.__getPokemonBaseStats()
-
         self.__setPokeStats(baseDict, ivDict, evDict)
+        moveList = self.getMoves()
+        self.move_1 = moveList[0]
+        self.move_2 = moveList[1]
+        self.move_3 = moveList[2]
+        self.move_4 = moveList[3]
     
     def save(self, discordId):
         """ saves a pokemon to the database """
@@ -105,6 +110,9 @@ class Pokemon:
         if self.wildPokemon:
             moveDict = self.getPokemonLevelMoves()
             level = self.currentLevel
+            # user starter level for pokemon without a level
+            if level is None:
+                level = config.starterLevel
             # itterate throught he dictionary selecting the top 4 highest moves at the current level
             defaultList = sorted(moveDict.items(), key=lambda x:x[1], reverse=True)
             for move in defaultList:
@@ -335,16 +343,16 @@ class Pokemon:
 
 
 
-pokemon = Pokemon()
+# pokemon = Pokemon()
 
-pokemon.load(trainerId=2)
+# pokemon.load(trainerId=2)
 
 # pokemon.create(8)
 # pokemon.save('123')
 
 
 
-pokemon.print()
+# pokemon.print()
 # print(pokemon.getPokeStats())
 
 
