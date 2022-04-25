@@ -16,7 +16,7 @@ class EventMixin(MixinMeta):
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: discord.Reaction, user) -> None:
-        pass
+        # pass
         # trainerPokemon = self.pokelist[f'{user.id}']
 
         # if trainerPokemon is None:
@@ -25,9 +25,11 @@ class EventMixin(MixinMeta):
         # if trainerPokemon['message_id'] != reaction.message.id:
         #     return
 
-        # reactionId = reaction.emoji
-        # if not isinstance(reactionId, str):
-        #     reactionId = reaction.emoji.id
+        reactionId = reaction.emoji
+        if not isinstance(reactionId, str):
+            reactionId = reaction.emoji.id
+
+        print(reactionId)
 
         # arrow_forwards = 967957005652357150
         # arrow_backwards = 967957440400359494
