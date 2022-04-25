@@ -122,3 +122,7 @@ class EventMixin(MixinMeta):
                 trainerPokemon['index'] = nextIdx
 
                 await reaction.message.edit(embed=embed)
+
+            await reaction.message.clear_reactions()
+            await reaction.message.add_reaction('◀️')
+            await reaction.message.add_reaction('▶️')
