@@ -184,4 +184,4 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         await msg.add_reaction('▶️')
 
         # await msg.reply('done')
-        ctx.tick()
+        await ctx.tick()

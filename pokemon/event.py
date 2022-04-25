@@ -21,7 +21,7 @@ class EventMixin(MixinMeta):
             return
 
         name = list(self.pokelist.keys())[0]
-        reaction.message.reply(name)
+        await reaction.message.reply(name)
 
         # pass
         trainerPokemon = self.pokelist[f'{user.id}']
