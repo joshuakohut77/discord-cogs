@@ -143,7 +143,7 @@ class Pokemon:
         pokemon = pb.pokemon(self.id)
         for move in pokemon.moves:
             for version in move.version_group_details:
-                    if version.version_group.name != 'red-blue':
+                    if version.version_group.name != config.version_group_name:
                         continue
                     elif version.move_learn_method.name != 'level-up':
                         continue
@@ -339,21 +339,6 @@ class Pokemon:
         self.special_defense.base = baseDict['special-defense']
         self.special_defense.IV = ivDict['special-defense']
         self.special_defense.EV = evDict['special-defense']
-
-
-
-
-# pokemon = Pokemon()
-
-# pokemon.load(trainerId=2)
-
-# pokemon.create(8)
-# pokemon.save('123')
-
-
-
-# pokemon.print()
-# print(pokemon.getPokeStats())
 
 
 
