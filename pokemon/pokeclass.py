@@ -86,6 +86,10 @@ class Pokemon:
         # todo 
         return
 
+    def healAll(self):
+        # todo 
+        return
+
     def print(self):
         """ prints out all pokemon information for viewing"""
         print('Id:', self.id)
@@ -240,6 +244,7 @@ class Pokemon:
         # delete and close connectino
         del db
         return 
+
     def __getPokemonType(self):
         """ returns string of pokemons base type """
         typeList = []
@@ -346,38 +351,24 @@ class Pokemon:
         self.special_defense.IV = ivDict['special-defense']
         self.special_defense.EV = evDict['special-defense']
 
-
-
-
-# pokemon = Pokemon()
-
-# pokemon.load(trainerId=2)
-
-# pokemon.create(8)
-# pokemon.save('123')
-
-
-
-# pokemon.print()
-# print(pokemon.getPokeStats())
-
-
-# pokemon = pb.pokemon(150)
-# location = pokemon.location_area_encounters
-# for loc in location:
-#     print(loc.location_area.url)
-
-
-
-# print(pokemonEncounterList)
-
-
-    # print(encounter.pokemon.name)
-# print(locObj.pokemon_encounters)
-# print(location[0].location_area)
-# print(dir(location[0].version_details))
-
-# print(area)
-
-
-
+    def __updateExpGained(self, expGained):
+        """ updates the pokemons exp gained """
+        db = dbconn()
+        queryString = 'UPDATE pokemon SET "currentExp" = "currentExp" + %s WHERE "id"=%s'
+        db.runUpdateQuery(queryString, (expGained, self.trainerId))
+        
+        # delete and close connection
+        del db
+        return 
+    
+    def __updateEvGained(self, evGained):
+        """ updates the pokemons ev gained """
+        db = dbconn()
+        # Example 
+        # {'hp': 0, 'attack': 0, 'defense': 0, 'special-attack': 0, 'special-defense': 0, 'speed': 6}
+        queryString = 'UPDATE pokemon SET "EV_hp"="EV_hp"+%s, "EV_attack"="EV_attack"+%s, "EV_defense"="EV_defense"+%s, "EV_speed"="EV_speed"+%s, "EV_special_attack"="EV_special_attack"+%s, "EV_special_defense"="EV_special_defense"+%s WHERE "id"=%s'
+        db.runUpdateQuery(queryString, (evGained['hp'],evGained['attack'],evGained['defense'],evGained['speed'],evGained['special-attack'],evGained['special-defense'], self.trainerId))
+        
+        # delete and close connection
+        del db
+        return
