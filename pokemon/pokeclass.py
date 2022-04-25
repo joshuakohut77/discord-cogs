@@ -10,6 +10,7 @@ from dbclass import db as dbconn
 class Pokemon:
     def __init__(self, id_or_name):
         self.trainerId = None
+        self.discordId = None
         self.id_or_name = id_or_name
         self.name = None
         self.id = None
@@ -43,6 +44,11 @@ class Pokemon:
             self.growthRate = pb.pokemon_species(pokemon.id).growth_rate.name
             self.base_exp = pokemon.base_experience
             self.types = self.__getPokemonType()
+            moves = self.getMoves()
+            self.move_1 = moves[0]
+            self.move_2 = moves[1]
+            self.move_3 = moves[2]
+            self.move_4 = moves[3]
         else:
             # load pokemon from db using trainerId as unique primary key from Pokemon table 
             self.wildPokemon = False
@@ -52,8 +58,8 @@ class Pokemon:
     def create(self, level):
         """ creates a new pokemon with generated stats at a given level """
         # this function is used to create new pokemon and will auto generate their level 1 moves
-        self.load()
         self.currentLevel = level
+        self.load()
         self.traded = False
         self.currentExp = self.__getBaseLevelExperience()
         self.wildPokemon = True
@@ -62,6 +68,12 @@ class Pokemon:
         baseDict = self.__getPokemonBaseStats()
 
         self.__setPokeStats(baseDict, ivDict, evDict)
+    
+    def save(self, discordId):
+        """ saves a pokemon to the database """
+        self.discordId = discordId
+        self.__savePokemonToDB()
+
 
     def print(self):
         """ prints out all pokemon information for viewing"""
@@ -148,6 +160,8 @@ class Pokemon:
         db = dbconn()
         queryString = 'SELECT id, discord_id, "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", traded, base_hp, base_attack, base_defense, base_speed, base_special_attack, base_special_defense, "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense" FROM pokemon WHERE id = %s'
         result = db.runQuery(queryString, (trainerId))
+        #todo make sure to set
+        self.discordId = ''
 
 
         # delete and close connectino
@@ -156,8 +170,29 @@ class Pokemon:
 
     def __savePokemonToDB(self):
         """ saves pokemon using trainerId to database """
-        #todo
+        # this function assumes the pokemon class object is already populated
+        db = dbconn()
+        
+        if self.trainerId is None:
+            print('Inserting New Pokemon')
+            queryString = 'INSERT INTO pokemon(discord_id, "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", traded, base_hp, base_attack, base_defense, base_speed, base_special_attack, base_special_defense, "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", move_1, move_2, move_3, move_4) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+        else:
+            queryString = """
+                UPDATE pokemon
+                    SET discord_id=%s, "pokemonId"=%s, "pokemonName"=%s, "spriteURL"=%s, "growthRate"=%s, "currentLevel"=%s, "currentExp"=%s, traded=%s, base_hp=%s, base_attack=%s, base_defense=%s, base_speed=%s, base_special_attack=%s, base_special_defense=%s, "IV_hp"=%s, "IV_attack"=%s, "IV_defense"=%s, "IV_speed"=%s, "IV_special_attack"=%s, "IV_special_defense"=%s, "EV_hp"=%s, "EV_attack"=%s, "EV_defense"=%s, "EV_speed"=%s, "EV_special_attack"=%s, "EV_special_defense"=%s, move_1=%s, move_2=%s, move_3=%s, move_4=%s
+                    WHERE id = %s;
+            """
+        
+        values = (self.discordId, self.id, self.name, self.spriteURL, self.growthRate, self.currentLevel, self.currentExp, self.traded, self.hp.base, self.attack.base, self.defense.base, self.speed.base, self.special_attack.base, self.special_defense.base, self.hp.IV, self.attack.IV, self.defense.IV, self.speed.IV, self.special_attack.IV, self.special_defense.IV, self.hp.EV, self.attack.EV, self.defense.EV, self.speed.EV, self.special_attack.EV, self.special_defense.EV, self.move_1, self.move_2, self.move_3, self.move_4)
+        
+        if self.trainerId is not None:
+            values = values + (self.trainerId,)
+        
+        db.runUpdateQuery(queryString, values)
 
+
+        # delete and close connectino
+        del db
         return
 
     def __getPokemonType(self):
@@ -271,9 +306,10 @@ class Pokemon:
 
 pokemon = Pokemon('charizard')
 pokemon.create(8)
-print(pokemon.getMoves())
 
-pokemon.print()
+pokemon.save('123')
+
+# pokemon.print()
 # print(pokemon.getPokeStats())
 
 
