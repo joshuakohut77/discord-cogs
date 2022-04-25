@@ -170,6 +170,6 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         self.pokelist[user.id] = {'message_id': msg.id,
                                   'trainer_id': trainer[0], 'index': 0}
 
-        # emoji: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=str(emoji))
-        await msg.add_reaction('U+27A1')
-        await msg.add_reaction('U+2B05')
+        emoji: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument='U+27A1')
+        await msg.add_reaction(emoji)
+        # await msg.add_reaction('U+2B05')
