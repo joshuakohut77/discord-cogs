@@ -29,7 +29,21 @@ class trainer:
         # delete and close connection
         del db 
 
-
+    def getPokeon(self):
+        """ returns a list of pokemon objects for every pokemon in the database belonging to the trainer """
+        db = dbconn()
+        pokemonList = []
+        queryString = 'SELECT id FROM pokemon WHERE discord_id = %s'
+        results = db.runQuery(queryString, (self.discordId,))
+        for row in results:
+            trainerId = row[0]
+            pokemon = pokeClass()
+            pokemon.load(trainerId=trainerId)
+            pokemonList.append(pokemon)
+        
+        # delete and close connection
+        del db 
+        return pokemonList
 
     def getStarterPokemon(self):
         """ returns a random starter pokemon dictionary {pokemon: id} """
@@ -96,11 +110,4 @@ class trainer:
         del db
 
 
-newTrainer = trainer(discordId='789')
-
-pokemon = newTrainer.getStarterPokemon()
-
-print(pokemon.name)
-
-newTrainer.deleteTrainer()
 
