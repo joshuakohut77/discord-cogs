@@ -117,6 +117,9 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         await ctx.send(embed=embed)
 
+        cur.close()
+        conn.close()
+
     @_trainer.command()
     async def pokemon(self, ctx: commands.Context, user: discord.Member = None) -> None:
         """Show the starter pokemon for the trainer.
@@ -173,3 +176,6 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         emoji: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument='U+27A1')
         await msg.add_reaction(emoji)
         # await msg.add_reaction('U+2B05')
+
+        cur.close()
+        conn.close()
