@@ -180,4 +180,4 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         cur.close()
         conn.close()
 
-        await ctx.send('done')
+        await msg.reply('done')
