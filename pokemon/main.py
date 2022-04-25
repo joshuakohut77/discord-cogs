@@ -167,8 +167,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         msg: discord.Message = await ctx.send(embed=embed)
 
-        self.pokelist[user.id] = {'message_id': msg.id,
-                                  'trainer_id': trainer[0], 'index': 0}
+        self.pokelist[f'{user.id}'] = {'message_id': msg.id,
+                                       'trainer_id': trainer[0], 'index': 0}
 
         emoji: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument='U+27A1')
         await msg.add_reaction(emoji)

@@ -16,7 +16,7 @@ class EventMixin(MixinMeta):
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: discord.Reaction, user) -> None:
-        trainerPokemon = self.pokelist[user.id]
+        trainerPokemon = self.pokelist[f'{user.id}']
 
         if trainerPokemon is None:
             return
