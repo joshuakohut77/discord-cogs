@@ -29,8 +29,8 @@ class EventMixin(MixinMeta):
         if not isinstance(reactionId, str):
             reactionId = reaction.emoji.id
 
-        # print(reactionId)
-        reaction.message.reply(reactionId)
+        print(reactionId)
+        await reaction.message.reply(reactionId)
 
         # arrow_forwards = 967957005652357150
         # arrow_backwards = 967957440400359494
