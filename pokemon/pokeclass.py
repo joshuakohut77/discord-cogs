@@ -33,6 +33,7 @@ class Pokemon:
         self.move_2 = None
         self.move_3 = None
         self.move_4 = None
+        self.currentHP = None
     
 
     def load(self, trainerId=None):
@@ -73,12 +74,13 @@ class Pokemon:
         self.move_2 = moveList[1]
         self.move_3 = moveList[2]
         self.move_4 = moveList[3]
+        statsDict = self.getPokeStats()
+        self.currentHP = statsDict['hp']
     
     def save(self, discordId):
         """ saves a pokemon to the database """
         self.discordId = discordId
         self.__savePokemonToDB()
-
 
     def print(self):
         """ prints out all pokemon information for viewing"""
@@ -167,7 +169,7 @@ class Pokemon:
     def __loadPokemonFromDB(self, trainerId):
         """ loads and creates a pokemon object from the database """
         db = dbconn()
-        queryString = 'SELECT id, discord_id, "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", traded, base_hp, base_attack, base_defense, base_speed, base_special_attack, base_special_defense, "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", "move_4", "types" FROM pokemon WHERE id = %s'
+        queryString = 'SELECT id, discord_id, "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", traded, base_hp, base_attack, base_defense, base_speed, base_special_attack, base_special_defense, "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", "move_4", "types", "currentHP" FROM pokemon WHERE id = %s'
         results = db.runQuery(queryString, (str(trainerId)))
 
         for result in results:
@@ -205,6 +207,7 @@ class Pokemon:
             self.move_3 = result[29]
             self.move_4 = result[30]
             self.types = result[31]
+            self.currentHP = result[32]
 
         # delete and close connectino
         del db
@@ -232,8 +235,7 @@ class Pokemon:
 
         # delete and close connectino
         del db
-        return
-
+        return 
     def __getPokemonType(self):
         """ returns string of pokemons base type """
         typeList = []
@@ -339,6 +341,39 @@ class Pokemon:
         self.special_defense.base = baseDict['special-defense']
         self.special_defense.IV = ivDict['special-defense']
         self.special_defense.EV = evDict['special-defense']
+
+
+
+
+# pokemon = Pokemon()
+
+# pokemon.load(trainerId=2)
+
+# pokemon.create(8)
+# pokemon.save('123')
+
+
+
+# pokemon.print()
+# print(pokemon.getPokeStats())
+
+
+# pokemon = pb.pokemon(150)
+# location = pokemon.location_area_encounters
+# for loc in location:
+#     print(loc.location_area.url)
+
+
+
+# print(pokemonEncounterList)
+
+
+    # print(encounter.pokemon.name)
+# print(locObj.pokemon_encounters)
+# print(location[0].location_area)
+# print(dir(location[0].version_details))
+
+# print(area)
 
 
 
