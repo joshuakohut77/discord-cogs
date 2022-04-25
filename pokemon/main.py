@@ -171,5 +171,5 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                                   'trainer_id': trainer[0], 'index': 0}
 
         # emoji: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=str(emoji))
-        await msg.add_reaction(':arrow_backward:')
-        await msg.add_reaction(':arrow_forward:')
+        await msg.add_reaction('U+27A1')
+        await msg.add_reaction('U+2B05')
