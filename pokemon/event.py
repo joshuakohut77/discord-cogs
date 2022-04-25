@@ -25,7 +25,7 @@ class EventMixin(MixinMeta):
         # await reaction.message.reply(name)
         # await reaction.message.reply(user.id)
 
-        # pass
+        # TODO: this throws an error if the key is not found
         trainerPokemon = self.pokelist[f'{user.id}']
 
         if trainerPokemon is None:
@@ -82,6 +82,9 @@ class EventMixin(MixinMeta):
                 trainerPokemon['index'] = nextIdx
 
                 await reaction.message.edit(embed=embed)
+                await reaction.message.clear_reactions()
+                await reaction.message.add_reaction('◀️')
+                await reaction.message.add_reaction('▶️')
 
         # TODO: copypasta
         if reactionId == arrow_backwards:
@@ -122,7 +125,6 @@ class EventMixin(MixinMeta):
                 trainerPokemon['index'] = nextIdx
 
                 await reaction.message.edit(embed=embed)
-
-            await reaction.message.clear_reactions()
-            await reaction.message.add_reaction('◀️')
-            await reaction.message.add_reaction('▶️')
+                await reaction.message.clear_reactions()
+                await reaction.message.add_reaction('◀️')
+                await reaction.message.add_reaction('▶️')
