@@ -91,7 +91,7 @@ class EventMixin(MixinMeta):
             # TODO: don't store these credentials in source control,
             #       eventually just pass them in as part of the cog config
             conn = pg.connect(
-                host="db-redbot-nyc3-42069-do-user-1692759-0.b.db.ondigitalocean.com",
+                host="private-db-redbot-nyc3-42069-do-user-1692759-0.b.db.ondigitalocean.com",
                 dbname="pokemon_db",
                 user="redbot",
                 password="AVNS_nUSNiHJE3MlXGmj",
