@@ -4,6 +4,8 @@ from dbclass import db as dbconn
 from pokeclass import Pokemon as pokeClass
 import config
 import random
+from time import time
+
 
 class trainer:
     def __init__(self, discordId):
@@ -13,6 +15,21 @@ class trainer:
         self.__checkCreateTrainer()
 
     
+    def deleteTrainer(self):
+        """soft deletes a trainer and all of their pokemon """
+        db = dbconn()
+        # use milliseconds as a way to get a unique number. used to soft delete a value and still retain original discordId
+        milliString = str(int(time() * 1000))
+        newDiscordId = self.discordId + '_' + milliString
+        pokemonUpdateQuery = 'UPDATE pokemon SET discord_id = %s WHERE discord_id = %s'
+        db.runUpdateQuery(pokemonUpdateQuery, (newDiscordId, self.discordId))
+        trainerUpdateQuery = 'UPDATE trainer SET discord_id = %s WHERE discord_id = %s'
+        db.runUpdateQuery(trainerUpdateQuery, (newDiscordId, self.discordId))
+
+        # delete and close connection
+        del db 
+
+
 
     def getStarterPokemon(self):
         """ returns a random starter pokemon dictionary {pokemon: id} """
@@ -72,7 +89,7 @@ class trainer:
             # insert new row into trainer table 
             updateQuery = 'INSERT INTO trainer (discord_id) VALUES(%s)'
             db.runUpdateQuery(updateQuery, (self.discordId,))
-        
+
         self.trainerExists = True
 
         # delete and close connection        
@@ -85,5 +102,5 @@ pokemon = newTrainer.getStarterPokemon()
 
 print(pokemon.name)
 
-
+newTrainer.deleteTrainer()
 
