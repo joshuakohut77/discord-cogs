@@ -45,6 +45,30 @@ class trainer:
         del db 
         return pokemonList
 
+    def getActivePokemon(self):
+        """ returns pokemon object of active pokemon for the trainer """
+        db = dbconn() 
+        
+        queryString = 'SELECT "activePokemon" FROM trainer WHERE discord_id = %s'
+        results = db.runQuery(queryString, (self.discordId,))
+        
+        trainerId = results[0][0]
+        pokemon = pokeClass()
+        pokemon.load(trainerId=trainerId)
+        
+        # delete and close connection
+        del db 
+        return pokemon
+
+    def setActivePokemon(self, trainerId):
+        """ sets an active pokemon unique Id in the trainer db """
+        db = dbconn()
+        queryString = 'UPDATE trainer SET "activePokemon"=%s WHERE "discord_id"=%s'
+        db.runUpdateQuery(queryString, (trainerId, self.discordId))
+
+        # delete and close connection
+        del db
+
     def getStarterPokemon(self):
         """ returns a random starter pokemon dictionary {pokemon: id} """
         if not self.trainerExists:
@@ -105,6 +129,4 @@ class trainer:
 
         # delete and close connection        
         del db
-
-
 
