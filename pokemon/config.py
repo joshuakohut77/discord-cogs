@@ -21,4 +21,4 @@ dailyCurrencyLevelModifier = 0.25
 
 overallExperienceModifier = 3 # will scale all experience gained in level exp and effort values for base stats
 
-
+starterLevel = 6 # level of starter pokemon
