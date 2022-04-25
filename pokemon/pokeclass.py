@@ -4,9 +4,12 @@ import pokebase as pb
 import random
 import math
 from statclass import PokeStats
+from dbclass import db as dbconn
+
 
 class Pokemon:
     def __init__(self, id_or_name):
+        self.trainerId = None
         self.id_or_name = id_or_name
         self.name = None
         self.id = None
@@ -24,28 +27,41 @@ class Pokemon:
         self.speed = PokeStats('speed')
         self.special_attack = PokeStats('special-attack')
         self.special_defense = PokeStats('special-defense')
+        self.move_1 = None
+        self.move_2 = None
+        self.move_3 = None
+        self.move_4 = None
+    
 
-    def load(self, pokeDict=None):
+    def load(self, trainerId=None):
         """ populates the object with stats from pokeapi """
-        pokemon = pb.pokemon(self.id_or_name)
-        self.name = pokemon.species.name
-        self.id = pokemon.id
-        self.spriteURL = pb.SpriteResource('pokemon', pokemon.id).url
-        self.growthRate = pb.pokemon_species(pokemon.id).growth_rate.name
-        self.base_exp = pokemon.base_experience
-        self.types = self.__getPokemonType()
+        if trainerId is None:
+            pokemon = pb.pokemon(self.id_or_name)
+            self.name = pokemon.species.name
+            self.id = pokemon.id
+            self.spriteURL = pb.SpriteResource('pokemon', pokemon.id).url
+            self.growthRate = pb.pokemon_species(pokemon.id).growth_rate.name
+            self.base_exp = pokemon.base_experience
+            self.types = self.__getPokemonType()
+        else:
+            # load pokemon from db using trainerId as unique primary key from Pokemon table 
+            self.wildPokemon = False
+            self.__loadPokemonFromDB(trainerId)
+            return
 
     def create(self, level):
         """ creates a new pokemon with generated stats at a given level """
+        # this function is used to create new pokemon and will auto generate their level 1 moves
         self.load()
         self.currentLevel = level
         self.traded = False
         self.currentExp = self.__getBaseLevelExperience()
+        self.wildPokemon = True
         ivDict = self.__generatePokemonIV()
         evDict = self.__generatePokemonEV()
         baseDict = self.__getPokemonBaseStats()
 
-        self.setPokeStats(baseDict, ivDict, evDict)
+        self.__setPokeStats(baseDict, ivDict, evDict)
 
     def print(self):
         """ prints out all pokemon information for viewing"""
@@ -56,32 +72,7 @@ class Pokemon:
         print('Traded:', self.traded)
         print('Types:', self.types)
         print('Stats:', self.getPokeStats())
-
-    def setPokeStats(self, baseDict, ivDict, evDict):
-        """ populates PokeStats class value with given stats """
-        self.hp.base = baseDict['hp']
-        self.hp.IV = ivDict['hp']
-        self.hp.EV = evDict['hp']
-
-        self.attack.base = baseDict['attack']
-        self.attack.IV = ivDict['attack']
-        self.attack.EV = evDict['attack']
-
-        self.defense.base = baseDict['defense']
-        self.defense.IV = ivDict['defense']
-        self.defense.EV = evDict['defense']
-
-        self.speed.base = baseDict['speed']
-        self.speed.IV = ivDict['speed']
-        self.speed.EV = evDict['speed']
-
-        self.special_attack.base = baseDict['special-attack']
-        self.special_attack.IV = ivDict['special-attack']
-        self.special_attack.EV = evDict['special-attack']
-
-        self.special_defense.base = baseDict['special-defense']
-        self.special_defense.IV = ivDict['special-defense']
-        self.special_defense.EV = evDict['special-defense']
+        print('Moves:', self.getMoves())
     
     def getPokeStats(self):
         """ returns a dictionary of a pokemon's unique stats based off level, EV, and IV """
@@ -94,9 +85,37 @@ class Pokemon:
         statsDict['speed'] = self.__calculateUniqueStat(self.speed) + 5
         statsDict['special-attack'] = self.__calculateUniqueStat(self.special_attack) + 5
         statsDict['special-defense'] = self.__calculateUniqueStat(self.special_defense) + 5
-
         return statsDict
 
+    def getMoves(self):
+        """ returns a list of the pokemon's current moves """
+        moveList = []
+        if self.wildPokemon:
+            moveDict = self.getPokemonLevelMoves()
+            level = self.currentLevel
+            # itterate throught he dictionary selecting the top 4 highest moves at the current level
+            defaultList = sorted(moveDict.items(), key=lambda x:x[1], reverse=True)
+            for move in defaultList:
+                moveLevel = move[1]
+                moveName = move[0]
+                if int(moveLevel) <= level:
+                    moveList.append(moveName)
+            # check if list is padded to move and if not, append blank moves
+            if len(moveList) < 4:
+                diff = 4-len(moveList)
+                for x in range(diff):
+                    x=None
+                    moveList.append(x)
+        else:
+            db = dbconn()
+            queryString = "SELECT move_1, move_2, move_3, move_4 FROM pokemon WHERE id = %s"
+            result = db.runQuery(queryString, (self.trainerId))
+            moveList = [result[0], result[1], result[2], result[3]]
+            # delete object and close connection
+            del db
+        # return only 4 moves
+        return moveList[0: 4]
+    
     def getPokemonLevelMoves(self):
         """ returns a dictionary of {move: level} for a pokemons base move set"""
         moveDict = {}
@@ -123,6 +142,23 @@ class Pokemon:
     ####
     ###   Private Class Methods
     ####
+
+    def __loadPokemonFromDB(self, trainerId):
+        """ loads and creates a pokemon object from the database """
+        db = dbconn()
+        queryString = 'SELECT id, discord_id, "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", traded, base_hp, base_attack, base_defense, base_speed, base_special_attack, base_special_defense, "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense" FROM pokemon WHERE id = %s'
+        result = db.runQuery(queryString, (trainerId))
+
+
+        # delete and close connectino
+        del db
+        return 
+
+    def __savePokemonToDB(self):
+        """ saves pokemon using trainerId to database """
+        #todo
+
+        return
 
     def __getPokemonType(self):
         """ returns string of pokemons base type """
@@ -204,13 +240,38 @@ class Pokemon:
         else:
             return None
 
+    def __setPokeStats(self, baseDict, ivDict, evDict):
+        """ populates PokeStats class value with given stats """
+        self.hp.base = baseDict['hp']
+        self.hp.IV = ivDict['hp']
+        self.hp.EV = evDict['hp']
 
+        self.attack.base = baseDict['attack']
+        self.attack.IV = ivDict['attack']
+        self.attack.EV = evDict['attack']
+
+        self.defense.base = baseDict['defense']
+        self.defense.IV = ivDict['defense']
+        self.defense.EV = evDict['defense']
+
+        self.speed.base = baseDict['speed']
+        self.speed.IV = ivDict['speed']
+        self.speed.EV = evDict['speed']
+
+        self.special_attack.base = baseDict['special-attack']
+        self.special_attack.IV = ivDict['special-attack']
+        self.special_attack.EV = evDict['special-attack']
+
+        self.special_defense.base = baseDict['special-defense']
+        self.special_defense.IV = ivDict['special-defense']
+        self.special_defense.EV = evDict['special-defense']
 
 
 
 
 pokemon = Pokemon('charizard')
 pokemon.create(8)
+print(pokemon.getMoves())
 
 pokemon.print()
 # print(pokemon.getPokeStats())
