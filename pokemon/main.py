@@ -154,6 +154,9 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         if len(pokemon) == 0:
             await ctx.send('You haven\'t received your started yet!')
 
+        cur.close()
+        conn.close()
+
         firstPokemon = pokemon[0]
         # TODO: replace with pokeclass to calculate unique stats per pokemon
         name = firstPokemon[1]
@@ -178,8 +181,5 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             await msg.reply('emoji null')
         # await msg.add_reaction(emoji)
         # await msg.add_reaction('U+2B05')
-
-        cur.close()
-        conn.close()
 
         await msg.reply('done')
