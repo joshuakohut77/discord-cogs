@@ -86,9 +86,6 @@ class trainer:
 
         return pokemon
 
-
-
-
     ####
     ###   Private Class Methods
     ####
