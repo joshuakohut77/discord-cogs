@@ -124,7 +124,13 @@ class trainer:
             # insert new row into trainer table 
             updateQuery = 'INSERT INTO trainer (discord_id) VALUES(%s)'
             db.runUpdateQuery(updateQuery, (self.discordId,))
-
+        # if trainers' inventory does not exist
+        queryString = 'SELECT 1 FROM inventory WHERE discord_id=%s'
+        results = db.runQuery(queryString, (self.discordId,))
+        if len(results) == 0:
+            updateQuery = 'INSERT INTO inventory (discord_id) VALUES(%s)'
+            db.runUpdateQuery(updateQuery, (self.discordId,))
+        
         self.trainerExists = True
 
         # delete and close connection        
