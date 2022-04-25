@@ -10,7 +10,7 @@ class db:
             host="192.168.5.10",
             dbname="pokemon_db",
             user="redbot",
-            password="bfFLG9tUYPpW7272vzhX52",
+            password="bfFLG9tUYPpW7272vzhX52", #todo remove password from source control 
             port=5432)
     
     def __del__(self):
