@@ -16,6 +16,13 @@ class EventMixin(MixinMeta):
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: discord.Reaction, user) -> None:
+        if self.pokelist is None:
+            reaction.message.reply('not found')
+            return
+
+        name = list(self.pokelist.keys())[0]
+        reaction.message.reply(name)
+
         # pass
         trainerPokemon = self.pokelist[f'{user.id}']
 
