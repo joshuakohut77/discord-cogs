@@ -82,14 +82,6 @@ class Pokemon:
         self.discordId = discordId
         self.__savePokemonToDB()
 
-    def heal(self, item_potion):
-        # todo 
-        return
-
-    def healAll(self):
-        # todo 
-        return
-
     def print(self):
         """ prints out all pokemon information for viewing"""
         print('Id:', self.id)

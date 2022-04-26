@@ -124,6 +124,15 @@ class trainer:
 
         return pokemon
 
+
+    def heal(self, item_potion):
+        # todo 
+        return
+
+    def healAll(self):
+        # todo 
+        return
+
     ####
     ###   Private Class Methods
     ####
