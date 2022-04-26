@@ -13,7 +13,7 @@ import discord.ext.commands
 
 
 def setup(bot: Red):
-    if not isinstance(discord.ext.commands.Bot, bot):
+    if not isinstance(bot, discord.ext.commands.Bot):
         raise 'incorrect bot type'
 
     DiscordComponents(bot)
