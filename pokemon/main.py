@@ -23,9 +23,6 @@ import pokebase as pb
 import psycopg as pg
 from .helpers import *
 
-client = commands.Bot('*')
-DiscordComponents(client)
-
 
 class CompositeClass(commands.CogMeta, ABCMeta):
     __slots__: tuple = ()
