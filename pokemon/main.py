@@ -7,8 +7,7 @@ if TYPE_CHECKING:
 
 # import emojis
 import discord
-
-from discord_components import DiscordComponents, ComponentsBot, Button
+from discord_components import DiscordComponents, ButtonStyle, ComponentsBot, Button
 # from discord_components import (
 #     Button,
 #     ButtonStyle,

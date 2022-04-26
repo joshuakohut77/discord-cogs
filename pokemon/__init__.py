@@ -6,5 +6,9 @@ if TYPE_CHECKING:
 
 from .main import Pokemon
 
+from discord_components import DiscordComponents
+
+
 def setup(bot: Red):
+    DiscordComponents(bot, change_discord_methods=True)
     bot.add_cog(Pokemon(bot))
