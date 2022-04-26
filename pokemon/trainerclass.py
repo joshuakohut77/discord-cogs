@@ -134,8 +134,6 @@ class trainer:
             inventory.save()
         
         self.__healPokemon(trainerId, item)
-
-        
         return
 
     def healAll(self):
