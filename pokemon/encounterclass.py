@@ -20,6 +20,8 @@ class encounter:
         """ two pokemon fight and a outcome is decided """
         # two pokemon fight with an outcome calling victory or defeat
         # todo update with better fight outcome algorithm
+        if self.pokemon1.currentHP == 0:
+            return "Your active Pokemon has no HP left!"
         if random.randrange(1, 100) <= config.pokemon_win_rate:
             retMsg = self.__victory()
         else:
@@ -31,7 +33,7 @@ class encounter:
         # todo add a very small chance to not run away and result in defeat using random
         return "You successfully got away"
     
-    def catch(self, item):
+    def catch(self, item=None):
         # roll chance to catch pokemon and it either runs away or
         if not self.pokemon2.wildPokemon:
             return False, "You can only catch Wild Pokemon!"
