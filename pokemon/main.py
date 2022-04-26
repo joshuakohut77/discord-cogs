@@ -7,8 +7,8 @@ if TYPE_CHECKING:
 
 # import emojis
 import discord
-import discord.ui
-# from discord_components import DiscordComponents, ButtonStyle, ComponentsBot, Button
+# import discord.ui
+from discord_components import DiscordComponents, ButtonStyle, ComponentsBot, Button
 # from discord_components import (
 #     Button,
 #     ButtonStyle,
@@ -22,28 +22,6 @@ from .event import EventMixin
 import pokebase as pb
 import psycopg as pg
 from .helpers import *
-
-
-class Confirm(discord.ui.View):
-    def __init__(self):
-        super().__init__()
-        self.value = None
-
-    # When the confirm button is pressed, set the inner value to `True` and
-    # stop the View from listening to more input.
-    # We also send the user an ephemeral message that we're confirming their choice.
-    @discord.ui.button(label='Confirm', style=discord.ButtonStyle.green)
-    async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.response.send_message('Confirming', ephemeral=True)
-        self.value = True
-        self.stop()
-
-    # This one is similar to the confirmation button except sets the inner value to `False`
-    @discord.ui.button(label='Cancel', style=discord.ButtonStyle.grey)
-    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.response.send_message('Cancelling', ephemeral=True)
-        self.value = False
-        self.stop()
 
 
 class CompositeClass(commands.CogMeta, ABCMeta):
@@ -88,28 +66,17 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
     @_trainer.command()
     async def button(self, ctx: commands.Context, user: discord.Member) -> None:
-        view = Confirm()
-        await ctx.send('Do you want to continue?', view=view)
-        # Wait for the View to stop listening for input...
-        await view.wait()
-        if view.value is None:
-            print('Timed out...')
-        elif view.value:
-            print('Confirmed...')
-        else:
-            print('Cancelled...')
-        # async def callback(interaction):
-        #     await interaction.send(content="Yay")
+        async def callback(interaction):
+            await interaction.send(content="Yay")
 
-        # b = discord.ui.Button(
-        #     style=discord.ui.ButtonStyle.blue, label="Click this")
-        # await ctx.send('btn')
-        # await ctx.send(
-        #     "Button callbacks!",
-        #     components=[
-        #         self.bot.components_manager.add_callback(b, callback)
-        #     ]
-        # )
+        b = Button(style=ButtonStyle.blue, label="Click this")
+        await ctx.send('btn')
+        await ctx.send(
+            "Button callbacks!",
+            components=[
+                self.bot.components_manager.add_callback(b, callback)
+            ]
+        )
 
     @_trainer.command()
     async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
