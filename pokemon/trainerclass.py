@@ -151,6 +151,19 @@ class trainer:
                 pokemon.save(self.discordId)
         return
 
+    def pokedex(self):
+        """ returns a list pokemon dictionaries from the trainers pokedex """
+        pokedexList = []
+        db = dbconn()
+        queryString = 'SELECT "pokemonId", "pokemonName", "mostRecent" FROM pokedex WHERE "discord_id"=%s'
+        results = db.runQuery(queryString, (self.discordId,))
+        for row in results:
+            pokedexList.append({'pokemonId': row[0], 'pokemonName': row[1], 'mostRecent': row[2]})
+
+        # delete and close connection
+        del db
+        return pokedexList
+
     ####
     ###   Private Class Methods
     ####
