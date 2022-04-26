@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Any, Dict, List, TYPE_CHECKING
 from abc import ABCMeta
 
+
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
@@ -24,6 +25,10 @@ import psycopg as pg
 from .helpers import *
 
 
+from discord_ui.client import UI
+from discord_ui import Components, Button, SelectMenu, SelectOption
+
+
 class CompositeClass(commands.CogMeta, ABCMeta):
     __slots__: tuple = ()
     pass
@@ -33,6 +38,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):
+        self.ui = UI(bot)
         self.bot: Red = bot
         self.config: Config = Config.get_conf(
             self, identifier=4206980085, force_registration=True)
@@ -66,16 +72,20 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
     @_trainer.command()
     async def button(self, ctx: commands.Context, user: discord.Member) -> None:
-        async def callback(interaction):
-            await interaction.send(content="Yay")
+        await self.ui.components.send(ctx.channel, "Hello World", components=[
+            Button("press me", "my_custom_id", "green"),
+        ])
 
-        await ctx.send(
-            "Button callbacks!",
-            components=[
-                Button(style=ButtonStyle.blue, label="Click this")
-                # self.bot.components_manager.add_callback(b, callback)
-            ]
-        )
+        # async def callback(interaction):
+        #     await interaction.send(content="Yay")
+
+        # await ctx.send(
+        #     "Button callbacks!",
+        #     components=[
+        #         Button(style=ButtonStyle.blue, label="Click this")
+        #         # self.bot.components_manager.add_callback(b, callback)
+        #     ]
+        # )
 
     @_trainer.command()
     async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
