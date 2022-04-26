@@ -26,7 +26,11 @@ class EventMixin(MixinMeta):
         # await reaction.message.reply(user.id)
 
         # TODO: this throws an error if the key is not found
-        trainerPokemon = self.pokelist[f'{user.id}']
+        trainerPokemon = {}
+        try:
+            trainerPokemon = self.pokelist[f'{user.id}']
+        except:
+            return
 
         if trainerPokemon is None:
             return
