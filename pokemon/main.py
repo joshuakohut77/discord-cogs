@@ -95,7 +95,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         )
 
         interaction = await self.bot.wait_for("button_click", check=lambda i: i.custom_id == "button1")
-        interaction.message.edit('Buttons')
+        await interaction.message.edit('Buttons')
         await interaction.send('Button 1 clicked')
         # await interaction.send('Done')
         # await interaction.send(f'{msg.id}')
