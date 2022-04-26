@@ -134,12 +134,19 @@ class trainer:
             inventory.save()
         
         self.__healPokemon(trainerId, item)
-
-        
         return
 
     def healAll(self):
-        # todo 
+        """ heals all pokemon to max HP """
+        pokeList = self.getPokeon()
+        for pokemon in pokeList:
+            trainerId = pokemon.trainerId
+            pokemon.load(trainerId)
+            statsDict = pokemon.getPokeStats()
+            maxHP = statsDict['hp']
+            if maxHP != pokemon.currentHP:
+                pokemon.currentHP = maxHP
+                pokemon.save(self.discordId)
         return
 
     ####
