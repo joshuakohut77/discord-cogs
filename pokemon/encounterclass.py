@@ -19,12 +19,12 @@ class encounter:
     def fight(self):
         # two pokemon fight with an outcome calling victory or defeat
         if random.randrange(1, 100) <= config.pokemon_win_rate:
-            retMsg = self.victory()
+            retMsg = self.__victory()
         else:
-            retMsg = self.defeat()
+            retMsg = self.__defeat()
         return retMsg
 
-    def victory(self):
+    def __victory(self):
         # pokemon1 had victory, calculate gained exp and update current exp
         # calculate money earned, reduced HP points
         expObj = exp(self.pokemon2)
@@ -41,7 +41,7 @@ class encounter:
 
         return resultString
     
-    def defeat(self):
+    def __defeat(self):
         # pokemon1 lost, update currentHP to 0
         expGained = 0
         evGained = None
