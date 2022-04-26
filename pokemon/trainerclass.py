@@ -2,6 +2,7 @@
 
 from dbclass import db as dbconn
 from pokeclass import Pokemon as pokeClass
+from inventoryclass import inventory as inv
 import config
 import random
 from time import time
@@ -125,8 +126,16 @@ class trainer:
         return pokemon
 
 
-    def heal(self, item_potion):
-        # todo 
+    def heal(self, trainerId, item):
+        """ uses a potion to heal a pokemon """
+        inventory = inv(self.discordId)
+        if inventory.potion > 0:
+            inventory.potion = inventory.potion - 1
+            inventory.save()
+        
+        self.__healPokemon(trainerId, item)
+
+        
         return
 
     def healAll(self):
@@ -158,3 +167,21 @@ class trainer:
 
         # delete and close connection        
         del db
+
+    def __healPokemon(self, trainerId, item):
+        """ heals a pokemons currentHP """
+        pokemon = pokeClass()
+        pokemon.load(trainerId)
+        statsDict = pokemon.getPokeStats()
+        maxHP = statsDict['hp']
+        currentHP = pokemon.currentHP
+        # todo update to not hard coded value
+        newHP = currentHP + 20
+        if newHP > maxHP:
+            newHP = maxHP
+        
+        pokemon.currentHP = newHP
+        pokemon.save(self.discordId)
+
+
+
