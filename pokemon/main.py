@@ -7,6 +7,12 @@ if TYPE_CHECKING:
 
 # import emojis
 import discord
+from discord_components import (
+    Button,
+    ButtonStyle,
+    Select,
+    SelectOption,
+)
 from redbot.core import Config, commands
 
 from .event import EventMixin
@@ -55,6 +61,21 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         """Base command to manage the trainer (user).
         """
         pass
+
+    @_trainer.command()
+    async def button(self, ctx: commands.Context, user: discord.Member) -> None:
+        async def callback(interaction):
+            await interaction.send(content="Yay")
+
+        await ctx.send(
+            "Button callbacks!",
+            components=[
+                self.bot.components_manager.add_callback(
+                    Button(style=ButtonStyle.blue,
+                           label="Click this"), callback
+                ),
+            ],
+        )
 
     @_trainer.command()
     async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
