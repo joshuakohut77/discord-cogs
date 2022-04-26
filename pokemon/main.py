@@ -80,7 +80,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         # async def callback(interaction):
         #     await interaction.send(content="Yay")
-        btn = Button(style=ButtonStyle.gray, label="Button 1")
+        btn = Button(style=ButtonStyle.gray,
+                     label="Button 1", custom_id='button1')
 
         await ctx.send(
             "Buttons",
@@ -89,6 +90,9 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 # self.bot.components_manager.add_callback(b, callback)
             ]
         )
+
+        interaction = await self.bot.wait_for("button_click", check=lambda i: i.custom_id == "button1")
+        await interaction.send('Button 1 clicked')
 
     @_trainer.command()
     async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
