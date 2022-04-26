@@ -82,14 +82,6 @@ class Pokemon:
         self.discordId = discordId
         self.__savePokemonToDB()
 
-    def heal(self, item_potion):
-        # todo 
-        return
-
-    def healAll(self):
-        # todo 
-        return
-
     def print(self):
         """ prints out all pokemon information for viewing"""
         print('Id:', self.id)
@@ -163,36 +155,33 @@ class Pokemon:
                         moveDict[moveName] = moveLevel
         return moveDict
 
-    def processVictory(self, expGained, evGained, newCurrentHP):
+    def processBattleOutcome(self, expGained, evGained, newCurrentHP):
         """ process victory updates and calculations """
         self.currentExp = self.currentExp + expGained
         
         # {'hp': 0, 'attack': 0, 'defense': 0, 'special-attack': 0, 'special-defense': 0, 'speed': 6}
-        self.hp.EV = self.hp.EV + evGained['hp']
-        self.attack.EV = self.attack.EV + evGained['attack']
-        self.defense.EV = self.defense.EV + evGained['defense']
-        self.speed.EV = self.speed.EV + evGained['speed']
-        self.special_attack.EV = self.special_attack.EV + evGained['special-attack']
-        self.special_defense.EV = self.special_defense.EV + evGained['special-defense']
+        if evGained is not None:
+            self.hp.EV = self.hp.EV + evGained['hp']
+            self.attack.EV = self.attack.EV + evGained['attack']
+            self.defense.EV = self.defense.EV + evGained['defense']
+            self.speed.EV = self.speed.EV + evGained['speed']
+            self.special_attack.EV = self.special_attack.EV + evGained['special-attack']
+            self.special_defense.EV = self.special_defense.EV + evGained['special-defense']
 
         self.currentHP = newCurrentHP
 
-
-        # self.__updateExpGained(expGained)
-        # self.__updateEvGained(evGained)
-        # self.__updateCurrentHP(newCurrentHP)
-        
         levelUp = False
-        # get the base exp of the next level
-        nextLevelBaseExp = self.__getBaseLevelExperience(level=self.currentLevel+1)
-        if self.currentExp >= nextLevelBaseExp:
-            # pokemon leveled up. recurrsively check exp thresholds to determine the new level
-            for x in range(99):
-                tempLevelBaseExp = self.__getBaseLevelExperience(level=self.currentLevel+x)
-                if tempLevelBaseExp > self.currentExp:
-                    self.currentLevel = self.currentLevel + x-1
-                    levelUp = True
-                    break
+        if newCurrentHP > 0:
+            # get the base exp of the next level
+            nextLevelBaseExp = self.__getBaseLevelExperience(level=self.currentLevel+1)
+            if self.currentExp >= nextLevelBaseExp:
+                # pokemon leveled up. recurrsively check exp thresholds to determine the new level
+                for x in range(99):
+                    tempLevelBaseExp = self.__getBaseLevelExperience(level=self.currentLevel+x)
+                    if tempLevelBaseExp > self.currentExp:
+                        self.currentLevel = self.currentLevel + x-1
+                        levelUp = True
+                        break
         
         return levelUp
 
@@ -385,46 +374,4 @@ class Pokemon:
         self.special_defense.base = baseDict['special-defense']
         self.special_defense.IV = ivDict['special-defense']
         self.special_defense.EV = evDict['special-defense']
-
-    # def __updateExpGained(self, expGained):
-    #     """ updates the pokemons exp gained """
-    #     db = dbconn()
-    #     queryString = 'UPDATE pokemon SET "currentExp" = "currentExp" + %s WHERE "id"=%s'
-    #     db.runUpdateQuery(queryString, (expGained, self.trainerId))
-        
-    #     # delete and close connection
-    #     del db
-    #     return 
-    
-    # def __updateEvGained(self, evGained):
-    #     """ updates the pokemons ev gained """
-    #     db = dbconn()
-    #     # Example 
-    #     # {'hp': 0, 'attack': 0, 'defense': 0, 'special-attack': 0, 'special-defense': 0, 'speed': 6}
-    #     queryString = 'UPDATE pokemon SET "EV_hp"="EV_hp"+%s, "EV_attack"="EV_attack"+%s, "EV_defense"="EV_defense"+%s, "EV_speed"="EV_speed"+%s, "EV_special_attack"="EV_special_attack"+%s, "EV_special_defense"="EV_special_defense"+%s WHERE "id"=%s'
-    #     db.runUpdateQuery(queryString, (evGained['hp'],evGained['attack'],evGained['defense'],evGained['speed'],evGained['special-attack'],evGained['special-defense'], self.trainerId))
-
-    #     # delete and close connection
-    #     del db
-    #     return
-
-    # def __updateCurrentHP(self, newCurrentHP):
-    #     """ update pokemons new current HP """
-    #     db = dbconn()
-    #     queryString = 'UPDATE pokemon SET "currentHP" = %s WHERE "id"=%s'
-    #     db.runUpdateQuery(queryString, (newCurrentHP, self.trainerId))
-        
-    #     # delete and close connection
-    #     del db
-    #     return 
-    
-    # def __updateCurrentLevel(self, level):
-    #     """ updates pokemons current level """
-    #     db = dbconn()
-    #     queryString = 'UPDATE pokemon SET "currentLevel" = %s WHERE "id"=%s'
-    #     db.runUpdateQuery(queryString, (level, self.trainerId))
-        
-    #     # delete and close connection
-    #     del db
-    #     return 
 

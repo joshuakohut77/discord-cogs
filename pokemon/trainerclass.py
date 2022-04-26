@@ -28,6 +28,7 @@ class trainer:
 
         # delete and close connection
         del db 
+        return "Trainer deleted successfully!"
 
     def getPokeon(self):
         """ returns a list of pokemon objects for every pokemon in the database belonging to the trainer """
@@ -62,12 +63,25 @@ class trainer:
 
     def setActivePokemon(self, trainerId):
         """ sets an active pokemon unique Id in the trainer db """
+        updateSuccess = False
         db = dbconn()
-        queryString = 'UPDATE trainer SET "activePokemon"=%s WHERE "discord_id"=%s'
-        db.runUpdateQuery(queryString, (trainerId, self.discordId))
-
+        queryString = 'SELECT "currentHP" FROM pokemon WHERE id=%s'
+        results = db.runQuery(queryString, (trainerId,))
+        if len(results) > 0:
+            currentHP = results[0][0]
+            if currentHP > 0:
+                updateString = 'UPDATE trainer SET "activePokemon"=%s WHERE "discord_id"=%s'
+                db.runUpdateQuery(updateString, (trainerId, self.discordId))
+                updateSuccess = True
+        
+        if updateSuccess:
+            retMsg = 'New Active Pokemon Set!'
+        else:
+            retMsg = 'Cannot set fainted Pokemon as active.'
+        
         # delete and close connection
         del db
+        return retMsg
 
     def getStarterPokemon(self):
         """ returns a random starter pokemon dictionary {pokemon: id} """
@@ -110,6 +124,15 @@ class trainer:
 
         return pokemon
 
+
+    def heal(self, item_potion):
+        # todo 
+        return
+
+    def healAll(self):
+        # todo 
+        return
+
     ####
     ###   Private Class Methods
     ####
@@ -135,4 +158,3 @@ class trainer:
 
         # delete and close connection        
         del db
-

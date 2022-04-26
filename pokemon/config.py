@@ -26,4 +26,7 @@ starterLevel = 6 # level of starter pokemon
 version_group_name = 'red-blue'
 version_details_list = ['red', 'blue']
 
+pokemon_catch_rate = 75
+pokemon_win_rate = 85
+
 
