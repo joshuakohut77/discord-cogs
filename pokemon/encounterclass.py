@@ -2,29 +2,61 @@
 
 from dbclass import db as dbconn
 from pokeclass import Pokemon as pokeClass
+from expclass import experiance as exp
 import config
+import random
 
 # this class is to handle encounters with pokemon.
 
 class encounter:
     def __init__(self, pokemon1, pokemon2):
+        # pokemon1 for PvE will always be the discord trainers pokemon
         self.pokemon1 = pokemon1
         self.pokemon2 = pokemon2
 
 
     def fight(self):
+        # two pokemon fight with an outcome calling victory or defeat
         return
 
     def victory(self):
-        return
+        # pokemon1 had victory, calculate gained exp and update current exp
+        # calculate money earned, reduced HP points
+        expObj = exp(self.pokemon2)
+        expGained = expObj.getExpGained()
+        evGained = expObj.getEffortValue()
+        newCurrentHP = self.__calculateDamageTaken()
+
+        levelUp = self.pokemon1.processVictory(expGained, evGained, newCurrentHP)
+
+        resultString = "Your Pokemon gained %s exp."
+        # if pokemon leved up
+        if levelUp:
+            resultString = resultString + ' Your Pokemon leveled up!'
+
+        return resultString
     
     def defeat(self):
+        # pokemon1 lost, update currentHP to 0
         return
 
     def runAway(self):
-        return
+        """ run away message """
+        # todo add a very small chance to not run away and result in defeat using random
+        return "You successfully got away"
     
     def catch(self, item):
+        # roll chance to catch pokemon and it either runs away or
+        if not self.pokemon2.wildPokemon:
+            return False, "You can only catch Wild Pokemon!"
+        
         return
 
-
+    def __calculateDamageTaken(self):
+        """ calculates the damage taken during a fight """
+        newCurrentHP = self.pokemon1.currentHP - 3
+        
+        
+        if newCurrentHP < 0:
+            newCurrentHP = 0
+        return newCurrentHP
