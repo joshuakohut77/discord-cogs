@@ -26,6 +26,8 @@ class trainer:
         db.runUpdateQuery(pokemonUpdateQuery, (newDiscordId, self.discordId))
         trainerUpdateQuery = 'UPDATE trainer SET discord_id = %s WHERE discord_id = %s'
         db.runUpdateQuery(trainerUpdateQuery, (newDiscordId, self.discordId))
+        inventoryUpdateQuery = 'UPDATE inventory SET discord_id = %s WHERE discord_id = %s'
+        db.runUpdateQuery(inventoryUpdateQuery, (newDiscordId, self.discordId))
 
         # delete and close connection
         del db 
