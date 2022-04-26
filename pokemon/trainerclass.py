@@ -146,7 +146,7 @@ class trainer:
             maxHP = statsDict['hp']
             if maxHP != pokemon.currentHP:
                 pokemon.currentHP = maxHP
-                pokemon.save()
+                pokemon.save(self.discordId)
         return
 
     ####
