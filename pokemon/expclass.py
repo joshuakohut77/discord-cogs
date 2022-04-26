@@ -32,11 +32,3 @@ class experiance:
 
         return effortValueDict
 
-
-effortValueDict = {}
-pokemon = pb.pokemon(25)
-for stat in pokemon.stats:
-    statName = stat.stat.name
-    effortValue = stat.effort * config.overallExperienceModifier
-    effortValueDict[statName] = effortValue
-print(effortValueDict)
