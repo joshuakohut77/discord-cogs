@@ -10,5 +10,5 @@ from discord_components import DiscordComponents
 
 
 def setup(bot: Red):
-    DiscordComponents(bot, change_discord_methods=True)
+    DiscordComponents(bot)
     bot.add_cog(Pokemon(bot))
