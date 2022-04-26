@@ -85,7 +85,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         btn2 = Button(style=ButtonStyle.gray,
                       label="Button 2", custom_id='button2')
 
-        await ctx.send(
+        msg: discord.Message = await ctx.send(
             "Buttons",
             components=[[
                 btn, btn2
@@ -95,6 +95,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         interaction = await self.bot.wait_for("button_click", check=lambda i: i.custom_id == "button1")
         await interaction.send('Button 1 clicked')
+
+        msg.edit('Buttons')
 
     @_trainer.command()
     async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
