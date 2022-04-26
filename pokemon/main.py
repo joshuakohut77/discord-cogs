@@ -86,7 +86,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         btn2 = Button(style=ButtonStyle.gray,
                       label="Button 2", custom_id='button2')
 
-        msg: discord.Message = await ctx.send(
+        await ctx.send(
             "Buttons",
             components=[[
                 btn, btn2
@@ -95,9 +95,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         )
 
         interaction = await self.bot.wait_for("button_click", check=lambda i: i.custom_id == "button1")
+        interaction.message.edit('Buttons')
         await interaction.send('Button 1 clicked')
-        await interaction.send('Done')
-        await interaction.send(f'{msg.id}')
+        # await interaction.send('Done')
+        # await interaction.send(f'{msg.id}')
 
         # msg.edit('Buttons')
 
