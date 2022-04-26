@@ -7,12 +7,14 @@ if TYPE_CHECKING:
 
 # import emojis
 import discord
-from discord_components import (
-    Button,
-    ButtonStyle,
-    Select,
-    SelectOption,
-)
+
+from discord_components import DiscordComponents, ComponentsBot, Button
+# from discord_components import (
+#     Button,
+#     ButtonStyle,
+#     Select,
+#     SelectOption,
+# )
 from redbot.core import Config, commands
 
 from .event import EventMixin
@@ -31,7 +33,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):
-        self.bot: Red = bot
+        self.bot: Red = DiscordComponents(bot)
         self.config: Config = Config.get_conf(
             self, identifier=4206980085, force_registration=True)
 
@@ -73,7 +75,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             "Button callbacks!",
             components=[
                 self.bot.components_manager.add_callback(b, callback)
-            ],
+            ]
         )
 
     @_trainer.command()
