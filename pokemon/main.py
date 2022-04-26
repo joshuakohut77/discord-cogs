@@ -87,10 +87,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         await ctx.send(
             "Buttons",
-            components=[
+            components=[[
                 btn, btn2
                 # self.bot.components_manager.add_callback(b, callback)
-            ]
+            ]]
         )
 
         interaction = await self.bot.wait_for("button_click", check=lambda i: i.custom_id == "button1")
