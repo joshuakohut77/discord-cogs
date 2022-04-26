@@ -18,7 +18,11 @@ class encounter:
 
     def fight(self):
         # two pokemon fight with an outcome calling victory or defeat
-        return
+        if random.randrange(1, 100) <= config.pokemon_win_rate:
+            retMsg = self.victory()
+        else:
+            retMsg = self.defeat()
+        return retMsg
 
     def victory(self):
         # pokemon1 had victory, calculate gained exp and update current exp
@@ -56,12 +60,25 @@ class encounter:
             return False, "You can only catch Wild Pokemon!"
         
         inventory = inv(self.pokemon1.discordId)
-        return
+        if inventory.pokeball > 0:
+            inventory.pokeball = inventory.pokeball - 1
+            inventory.save()
+        
+        pokemonCaught = False
+        if random.randrange(1, 100) <= config.pokemon_catch_rate:
+           pokemonCaught = True 
+
+        if pokemonCaught:
+            # pokemon caught successfully. Save it to the trainers inventory
+            self.pokemon2.save(self.pokemon1.discordId)
+            retMsg = "You successfully caught the pokemon"
+        else:
+            retMsg = "You failed to catch the pokemon. The pokemon ran away!"
+        return retMsg
 
     def __calculateDamageTaken(self):
         """ calculates the damage taken during a fight """
         newCurrentHP = self.pokemon1.currentHP - 3
-        
         
         if newCurrentHP < 0:
             newCurrentHP = 0
