@@ -82,11 +82,13 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         #     await interaction.send(content="Yay")
         btn = Button(style=ButtonStyle.gray,
                      label="Button 1", custom_id='button1')
+        btn2 = Button(style=ButtonStyle.gray,
+                      label="Button 2", custom_id='button2')
 
         await ctx.send(
             "Buttons",
             components=[
-                btn
+                btn, btn2
                 # self.bot.components_manager.add_callback(b, callback)
             ]
         )
