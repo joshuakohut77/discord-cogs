@@ -2,6 +2,8 @@ from __future__ import annotations
 from typing import Any, Dict, List, TYPE_CHECKING
 from abc import ABCMeta
 
+from discord import components
+
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -95,7 +97,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         )
 
         interaction = await self.bot.wait_for("button_click", check=lambda i: i.custom_id == "button1")
-        await interaction.message.edit('Buttons')
+        await interaction.message.edit('Buttons', components=[])
         await interaction.send('Button 1 clicked')
         # await interaction.send('Done')
         # await interaction.send(f'{msg.id}')
