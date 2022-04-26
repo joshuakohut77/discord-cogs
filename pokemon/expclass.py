@@ -19,7 +19,7 @@ class experiance:
         s = 1  # number of participating pokemon
         t = 1  # 1 if pokemon is current owner, 1.5 if pokemon was gained in a trade
         exp = (a*t*b*L) / (7 * s)
-        return exp
+        return round(exp)
 
     def getEffortValue(self):
         """ returns dictionary of effort values gained upon defeat """
