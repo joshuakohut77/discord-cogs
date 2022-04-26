@@ -25,8 +25,8 @@ import psycopg as pg
 from .helpers import *
 
 
-from discord_ui.client import UI
-from discord_ui import Components, Button, SelectMenu, SelectOption
+# from discord_ui.client import UI
+# from discord_ui import Components, Button, SelectMenu, SelectOption
 
 
 class CompositeClass(commands.CogMeta, ABCMeta):
@@ -38,7 +38,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):
-        self.ui = UI(bot)
+        DiscordComponents(bot)
         self.bot: Red = bot
         self.config: Config = Config.get_conf(
             self, identifier=4206980085, force_registration=True)
@@ -71,21 +71,23 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         pass
 
     @_trainer.command()
-    async def button(self, ctx: commands.Context, user: discord.Member) -> None:
-        await self.ui.components.send(ctx.channel, "Hello World", components=[
-            Button("press me", "my_custom_id", "green"),
-        ])
+    async def button(self, ctx: commands.Context, user: discord.Member = None) -> None:
+        """Test button
+        """
+        # await self.ui.components.send(ctx.channel, "Hello World", components=[
+        #     Button("press me", "my_custom_id", "green"),
+        # ])
 
         # async def callback(interaction):
         #     await interaction.send(content="Yay")
 
-        # await ctx.send(
-        #     "Button callbacks!",
-        #     components=[
-        #         Button(style=ButtonStyle.blue, label="Click this")
-        #         # self.bot.components_manager.add_callback(b, callback)
-        #     ]
-        # )
+        await ctx.send(
+            "Button callbacks!",
+            components=[
+                Button(style=ButtonStyle.blue, label="Click this")
+                # self.bot.components_manager.add_callback(b, callback)
+            ]
+        )
 
     @_trainer.command()
     async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
