@@ -1,7 +1,6 @@
 # pokedex class
 
 from dbclass import db as dbconn
-from pokeclass import Pokemon as pokeClass
 from datetime import datetime
 
 
