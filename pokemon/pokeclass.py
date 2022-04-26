@@ -157,21 +157,21 @@ class Pokemon:
 
     def processBattleOutcome(self, expGained, evGained, newCurrentHP):
         """ process victory updates and calculations """
-        self.currentExp = self.currentExp + expGained
-        
-        # {'hp': 0, 'attack': 0, 'defense': 0, 'special-attack': 0, 'special-defense': 0, 'speed': 6}
-        if evGained is not None:
-            self.hp.EV = self.hp.EV + evGained['hp']
-            self.attack.EV = self.attack.EV + evGained['attack']
-            self.defense.EV = self.defense.EV + evGained['defense']
-            self.speed.EV = self.speed.EV + evGained['speed']
-            self.special_attack.EV = self.special_attack.EV + evGained['special-attack']
-            self.special_defense.EV = self.special_defense.EV + evGained['special-defense']
 
         self.currentHP = newCurrentHP
-
         levelUp = False
         if newCurrentHP > 0:
+            self.currentExp = self.currentExp + expGained
+            
+            # {'hp': 0, 'attack': 0, 'defense': 0, 'special-attack': 0, 'special-defense': 0, 'speed': 6}
+            if evGained is not None:
+                self.hp.EV = self.hp.EV + evGained['hp']
+                self.attack.EV = self.attack.EV + evGained['attack']
+                self.defense.EV = self.defense.EV + evGained['defense']
+                self.speed.EV = self.speed.EV + evGained['speed']
+                self.special_attack.EV = self.special_attack.EV + evGained['special-attack']
+                self.special_defense.EV = self.special_defense.EV + evGained['special-defense']
+
             # get the base exp of the next level
             nextLevelBaseExp = self.__getBaseLevelExperience(level=self.currentLevel+1)
             if self.currentExp >= nextLevelBaseExp:
@@ -183,6 +183,7 @@ class Pokemon:
                         levelUp = True
                         break
         
+        self.save(self.discordId)
         return levelUp
 
     def evolve(self):
@@ -249,14 +250,14 @@ class Pokemon:
         db = dbconn()
         
         if self.trainerId is None:
-            queryString = 'INSERT INTO pokemon(discord_id, "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", traded, base_hp, base_attack, base_defense, base_speed, base_special_attack, base_special_defense, "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", move_1, move_2, move_3, move_4, types) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+            queryString = 'INSERT INTO pokemon("discord_id", "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", "traded", "base_hp", "base_attack", "base_defense", "base_speed", "base_special_attack", "base_special_defense", "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", "move_4", "types", "currentHP") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
         else:
             queryString = """
                 UPDATE pokemon
-                    SET discord_id=%s, "pokemonId"=%s, "pokemonName"=%s, "spriteURL"=%s, "growthRate"=%s, "currentLevel"=%s, "currentExp"=%s, traded=%s, base_hp=%s, base_attack=%s, base_defense=%s, base_speed=%s, base_special_attack=%s, base_special_defense=%s, "IV_hp"=%s, "IV_attack"=%s, "IV_defense"=%s, "IV_speed"=%s, "IV_special_attack"=%s, "IV_special_defense"=%s, "EV_hp"=%s, "EV_attack"=%s, "EV_defense"=%s, "EV_speed"=%s, "EV_special_attack"=%s, "EV_special_defense"=%s, move_1=%s, move_2=%s, move_3=%s, move_4=%s, types=%s
+                    SET "discord_id"=%s, "pokemonId"=%s, "pokemonName"=%s, "spriteURL"=%s, "growthRate"=%s, "currentLevel"=%s, "currentExp"=%s, "traded"=%s, "base_hp"=%s, "base_attack"=%s, "base_defense"=%s, "base_speed"=%s, "base_special_attack"=%s, "base_special_defense"=%s, "IV_hp"=%s, "IV_attack"=%s, "IV_defense"=%s, "IV_speed"=%s, "IV_special_attack"=%s, "IV_special_defense"=%s, "EV_hp"=%s, "EV_attack"=%s, "EV_defense"=%s, "EV_speed"=%s, "EV_special_attack"=%s, "EV_special_defense"=%s, "move_1"=%s, "move_2"=%s, "move_3"=%s, "move_4"=%s, "types"=%s, "currentHP"=%s
                     WHERE id = %s;
             """
-        values = (self.discordId, self.id, self.name, self.spriteURL, self.growthRate, self.currentLevel, self.currentExp, self.traded, self.hp.base, self.attack.base, self.defense.base, self.speed.base, self.special_attack.base, self.special_defense.base, self.hp.IV, self.attack.IV, self.defense.IV, self.speed.IV, self.special_attack.IV, self.special_defense.IV, self.hp.EV, self.attack.EV, self.defense.EV, self.speed.EV, self.special_attack.EV, self.special_defense.EV, self.move_1, self.move_2, self.move_3, self.move_4, self.types)
+        values = (self.discordId, self.id, self.name, self.spriteURL, self.growthRate, self.currentLevel, self.currentExp, self.traded, self.hp.base, self.attack.base, self.defense.base, self.speed.base, self.special_attack.base, self.special_defense.base, self.hp.IV, self.attack.IV, self.defense.IV, self.speed.IV, self.special_attack.IV, self.special_defense.IV, self.hp.EV, self.attack.EV, self.defense.EV, self.speed.EV, self.special_attack.EV, self.special_defense.EV, self.move_1, self.move_2, self.move_3, self.move_4, self.types, self.currentHP)
         
         if self.trainerId is not None:
             values = values + (self.trainerId,)
