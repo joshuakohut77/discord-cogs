@@ -3,6 +3,7 @@
 from dbclass import db as dbconn
 from pokeclass import Pokemon as pokeClass
 from expclass import experiance as exp
+from inventoryclass import inventory as inv
 import config
 import random
 
@@ -27,9 +28,9 @@ class encounter:
         evGained = expObj.getEffortValue()
         newCurrentHP = self.__calculateDamageTaken()
 
-        levelUp = self.pokemon1.processVictory(expGained, evGained, newCurrentHP)
+        levelUp = self.pokemon1.processBattleOutcome(expGained, evGained, newCurrentHP)
 
-        resultString = "Your Pokemon gained %s exp."
+        resultString = "Your Pokemon gained %s exp." %(expGained)
         # if pokemon leved up
         if levelUp:
             resultString = resultString + ' Your Pokemon leveled up!'
@@ -38,7 +39,11 @@ class encounter:
     
     def defeat(self):
         # pokemon1 lost, update currentHP to 0
-        return
+        expGained = 0
+        evGained = None
+        newCurrentHP = 0
+        self.pokemon1.processBattleOutcome(expGained, evGained, newCurrentHP)
+        return "Your Pokemon Fainted."
 
     def runAway(self):
         """ run away message """
@@ -50,6 +55,7 @@ class encounter:
         if not self.pokemon2.wildPokemon:
             return False, "You can only catch Wild Pokemon!"
         
+        inventory = inv(self.pokemon1.discordId)
         return
 
     def __calculateDamageTaken(self):
