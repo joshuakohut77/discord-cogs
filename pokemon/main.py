@@ -86,7 +86,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             components=[
                 [
                     Button(style=ButtonStyle.blue, label="Button 1"),
-                    Button(style=ButtonStyle.gray, label="Button 2")
+                    Button(style=ButtonStyle.blue, label="Button 2")
                 ]
                 # self.bot.components_manager.add_callback(b, callback)
             ]
