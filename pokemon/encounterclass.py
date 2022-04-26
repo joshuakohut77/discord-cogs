@@ -33,7 +33,7 @@ class encounter:
         # todo add a very small chance to not run away and result in defeat using random
         return "You successfully got away"
     
-    def catch(self, item):
+    def catch(self, item=None):
         # roll chance to catch pokemon and it either runs away or
         if not self.pokemon2.wildPokemon:
             return False, "You can only catch Wild Pokemon!"
