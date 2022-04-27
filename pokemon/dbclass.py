@@ -1,6 +1,6 @@
 # database class
 
-import psycopg2 as pg
+import psycopg as pg
 
 
 class db:
