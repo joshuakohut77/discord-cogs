@@ -1,8 +1,8 @@
 # encounter class
 
-from .expclass import experiance as exp
-from .inventoryclass import inventory as inv
-from .pokedexclass import pokedex
+from expclass import experiance as exp
+from inventoryclass import inventory as inv
+from pokedexclass import pokedex
 import config
 import random
 

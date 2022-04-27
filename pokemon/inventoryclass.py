@@ -1,6 +1,6 @@
 # inventory class
 
-from .dbclass import db as dbconn
+from dbclass import db as dbconn
 
 class inventory:
     def __init__(self, discordId):
