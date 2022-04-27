@@ -111,7 +111,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         embed.add_field(
             name="Level", value=f"{pokemon.currentLevel}", inline=True)
         embed.add_field(
-            name="Attack", value=f"{pokemon.attack.bases}", inline=True)
+            name="Attack", value=f"{pokemon.attack.base}", inline=True)
         embed.add_field(
             name="Defense", value=f"{pokemon.defense.base}", inline=True)
         embed.set_thumbnail(url=f"{pokemon.spriteURL}")
