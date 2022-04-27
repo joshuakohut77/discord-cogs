@@ -178,6 +178,9 @@ class trainer:
         queryString = 'SELECT "areaId" FROM trainer WHERE discord_id=%s'
         result = db.querySingle(queryString, (self.discordId,))
         areaId = result[0]
+        
+        # delete and close connection
+        del db
         return areaId
 
     ####
