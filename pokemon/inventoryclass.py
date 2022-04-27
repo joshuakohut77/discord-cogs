@@ -18,8 +18,6 @@ class inventory:
         db = dbconn()
         updateString = 'UPDATE inventory set "money"=%s, "pokeball"=%s, "potion"=%s WHERE "discord_id"=%s'
         db.runUpdateQuery(updateString, (self.money, self.pokeball, self.potion, self.discordId))
-        
-
 
         # delete and close connection
         del db
