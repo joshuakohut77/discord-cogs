@@ -22,7 +22,7 @@ class encounter:
         # todo update with better fight outcome algorithm
         if self.pokemon1.currentHP == 0:
             return "Your active Pokemon has no HP left!"
-        if random.randrange(1, 100) <= config.pokemon_win_rate:
+        if random.randrange(1, 100) <= pokemon_win_rate:
             retMsg = self.__victory()
         else:
             retMsg = self.__defeat()
@@ -45,7 +45,7 @@ class encounter:
 
         pokemonCaught = False
         # todo update with better catch algorithm
-        if random.randrange(1, 100) <= config.pokemon_catch_rate:
+        if random.randrange(1, 100) <= pokemon_catch_rate:
             pokemonCaught = True
 
         if pokemonCaught:
