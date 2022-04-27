@@ -3,8 +3,8 @@
 from dbclass import db as dbconn
 from pokeclass import Pokemon as pokeClass
 from inventoryclass import inventory as inv
-# from config import *
-import config
+from config import *
+# import config
 import random
 from time import time
 
