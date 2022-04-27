@@ -5,14 +5,24 @@ import psycopg2 as pg
 
 class db:
     def __init__(self, params=None):
+        # TODO: need a better way to pass in db configs through all the objects.
         self.conn = pg.connect(
             host=(
-                params and params.host) or "192.168.5.10",
+                params and params.host) or "private-REDACTED_HOST",
             dbname=(params and params.dbname) or "pokemon_db",
             user=(params and params.user) or "redbot",
             # todo remove password from source control
-            password=(params and params.password) or "REDACTED",
-            port=(params and params.port) or 5432)
+            password=(params and params.password) or "REDACTED_PASSWORD",
+            port=(params and params.port) or REDACTED_PORT)
+
+        # self.conn = pg.connect(
+        #     host=(
+        #         params and params.host) or "192.168.5.10",
+        #     dbname=(params and params.dbname) or "pokemon_db",
+        #     user=(params and params.user) or "redbot",
+        #     # todo remove password from source control
+        #     password=(params and params.password) or "REDACTED",
+        #     port=(params and params.port) or 5432)
 
     def __del__(self):
         self.conn.close()

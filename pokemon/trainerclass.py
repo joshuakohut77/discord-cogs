@@ -120,7 +120,7 @@ class trainer:
             pokemon.load()
         if not hasStarter:
             pokemon.create(config.starterLevel)
-            updateString = 'UPDATE trainer SET "has_starter"=True, "starterId"=%s WHERE "discord_id"=%s'
+            updateString = 'UPDATE trainer SET "starterId"=%s WHERE "discord_id"=%s'
             db.execute(updateString, (starterId, self.discordId))
             # save starter into
             pokemon.save(self.discordId)

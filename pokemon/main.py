@@ -100,65 +100,78 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         if user is None:
             user = ctx.author
 
+        # This will create the trainer if it doesn't exist
         trainer = TrainerClass(user.id)
-        starter = trainer.getStarterPokemon()
-
-        # TODO: don't store these credentials in source control,
-        #       eventually just pass them in as part of the cog config
-        conn = pg.connect(
-            host="private-REDACTED_HOST",
-            dbname="pokemon_db",
-            user="redbot",
-            password="REDACTED_PASSWORD",
-            port=REDACTED_PORT)
-
-        # TODO: there is a much better way to do this, still playing
-        cur = conn.cursor()
-        cur.execute(
-            'select * from trainer where discord_id = %(discord)s', {'discord': user.id})
-
-        trainer = cur.fetchone()
-
-        if trainer is None:
-            cur.execute(
-                'insert into trainer (id, discord_id) values (default, %(discord)s)', {'discord': user.id})
-            conn.commit()
-            cur.execute(
-                'select * from trainer where discord_id = %(discord)s', {'discord': user.id})
-            trainer = cur.fetchone()
-
-        cur.execute(
-            'select * from trainer_pokemon where trainer_id = %(trainer)s', {'trainer': trainer[0]})
-
-        starter = cur.fetchone()
-
-        if starter is None:
-            gen1Starter = getStarterPokemon(user.display_name)
-            name = list(gen1Starter.keys())[0]
-            cur.execute('insert into "trainer_pokemon" values (%(trainer)s, %(name)s)', {
-                        'trainer': trainer[0], 'name': name})
-            conn.commit()
-            cur.execute(
-                'select * from trainer_pokemon where trainer_id = %(trainer)s', {'trainer': trainer[0]})
-            starter = cur.fetchone()
-
-        # TODO: replace with pokeclass to calculate unique stats per pokemon
-        name = starter[1]
-        pokemon = pb.pokemon(name)
-        sprite = pb.SpriteResource('pokemon', pokemon.id)
+        pokemon = trainer.getStarterPokemon()
 
         # Create the embed object
         embed = discord.Embed(title=f"Your starter is {pokemon.name}")
         embed.set_author(name=f"{user.display_name}",
                          icon_url=str(user.avatar_url))
+        embed.add_field(
+            name="Level", value=f"{pokemon.currentLevel}", inline=True)
         embed.add_field(name="Weight", value=f"{pokemon.weight}", inline=True)
         embed.add_field(name="Height", value=f"{pokemon.height}", inline=True)
-        embed.set_thumbnail(url=f"{sprite.url}")
+        embed.set_thumbnail(url=f"{pokemon.spriteURL}")
 
         await ctx.send(embed=embed)
 
-        cur.close()
-        conn.close()
+        # # TODO: don't store these credentials in source control,
+        # #       eventually just pass them in as part of the cog config
+        # conn = pg.connect(
+        #     host="private-REDACTED_HOST",
+        #     dbname="pokemon_db",
+        #     user="redbot",
+        #     password="REDACTED_PASSWORD",
+        #     port=REDACTED_PORT)
+
+        # # TODO: there is a much better way to do this, still playing
+        # cur = conn.cursor()
+        # cur.execute(
+        #     'select * from trainer where discord_id = %(discord)s', {'discord': user.id})
+
+        # trainer = cur.fetchone()
+
+        # if trainer is None:
+        #     cur.execute(
+        #         'insert into trainer (id, discord_id) values (default, %(discord)s)', {'discord': user.id})
+        #     conn.commit()
+        #     cur.execute(
+        #         'select * from trainer where discord_id = %(discord)s', {'discord': user.id})
+        #     trainer = cur.fetchone()
+
+        # cur.execute(
+        #     'select * from trainer_pokemon where trainer_id = %(trainer)s', {'trainer': trainer[0]})
+
+        # starter = cur.fetchone()
+
+        # if starter is None:
+        #     gen1Starter = getStarterPokemon(user.display_name)
+        #     name = list(gen1Starter.keys())[0]
+        #     cur.execute('insert into "trainer_pokemon" values (%(trainer)s, %(name)s)', {
+        #                 'trainer': trainer[0], 'name': name})
+        #     conn.commit()
+        #     cur.execute(
+        #         'select * from trainer_pokemon where trainer_id = %(trainer)s', {'trainer': trainer[0]})
+        #     starter = cur.fetchone()
+
+        # # TODO: replace with pokeclass to calculate unique stats per pokemon
+        # name = starter[1]
+        # pokemon = pb.pokemon(name)
+        # sprite = pb.SpriteResource('pokemon', pokemon.id)
+
+        # # Create the embed object
+        # embed = discord.Embed(title=f"Your starter is {pokemon.name}")
+        # embed.set_author(name=f"{user.display_name}",
+        #                  icon_url=str(user.avatar_url))
+        # embed.add_field(name="Weight", value=f"{pokemon.weight}", inline=True)
+        # embed.add_field(name="Height", value=f"{pokemon.height}", inline=True)
+        # embed.set_thumbnail(url=f"{sprite.url}")
+
+        # await ctx.send(embed=embed)
+
+        # cur.close()
+        # conn.close()
 
     @_trainer.command()
     async def pokemon(self, ctx: commands.Context, user: discord.Member = None) -> None:
