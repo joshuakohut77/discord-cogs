@@ -92,7 +92,7 @@ class trainer:
         db = dbconn()
         queryString = 'SELECT "starterId" FROM trainer WHERE discord_id = %s'
 
-        result = db.queryAll(queryString, (self.discordId,))
+        result = db.querySingle(queryString, (self.discordId,))
 
         hasStarter = False
         starterId = -1

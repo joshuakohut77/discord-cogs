@@ -46,10 +46,10 @@ class db:
         else:
             cur.execute(queryString)
 
-        # If you ask for something that should be a single row,
-        # anything more than a single row is an error.
-        if cur.rowcount > 1:
-            raise AssertionError('Expected 1, returned more than 1')
+        # # If you ask for something that should be a single row,
+        # # anything more than a single row is an error.
+        # if cur.rowcount > 1:
+        #     raise AssertionError('Expected 1, returned more than 1')
 
         result = cur.fetchone()
         cur.close()
