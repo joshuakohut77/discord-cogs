@@ -17,7 +17,7 @@ class location:
             encounterDetails = {}
             for version in encounter.version_details:
                 versionName = version.version.name
-                if versionName in config.version_details_list:
+                if versionName in version_details_list:
                     for details in version.encounter_details:
                         encounterDetails['name'] = encounter.pokemon.name
                         encounterDetails['chance'] = details.chance

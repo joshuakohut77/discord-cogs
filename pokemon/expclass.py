@@ -27,7 +27,7 @@ class experiance:
         pokemon = pb.pokemon(self.pokemon.id)
         for stat in pokemon.stats:
             statName = stat.stat.name
-            effortValue = stat.effort * config.overallExperienceModifier
+            effortValue = stat.effort * overallExperienceModifier
             effortValueDict[statName] = effortValue
 
         return effortValueDict
