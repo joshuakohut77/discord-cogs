@@ -16,14 +16,13 @@ class store:
         db = dbconn()
         trainerObj = trainer(self.discordId)
         areaId = trainerObj.getAreaId()
-        queryString = 'SELECT "id", "item", "price", "spriteUrl" FROM store WHERE areaId=%s ORDER BY "id"'
+        queryString = 'SELECT "id", "item", "price" FROM store WHERE areaId=%s ORDER BY "id"'
         results = db.queryAll(queryString, (areaId,))
         for row in results:
             id = row[0]
             item = row[1]
             price = row[2]
-            spriteUrl = row[3]
-            storeOption = {'id': id, 'item': item, 'price': price, 'spriteUrl': spriteUrl}
+            storeOption = {'id': id, 'item': item, 'price': price, 'spriteUrl': self.__getSpriteUrl(item)}
             storeList.append(storeOption)
 
         # delete and close connection
@@ -49,6 +48,11 @@ class store:
 
         return "Invalid itemId %s. Please report this error." %(itemId)
     
+    def __getSpriteUrl(self, itemName):
+        """ returns a constructed spriteUrl """
+        baseUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/"
+        spriteUrl = baseUrl + itemName + ".png"
+        return spriteUrl
 
 
         
