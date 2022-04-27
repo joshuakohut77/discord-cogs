@@ -1,9 +1,9 @@
 # encounter class
 
-from expclass import experiance as exp
-from inventoryclass import inventory as inv
-from pokedexclass import pokedex
-import config
+from .expclass import experiance as exp
+from .inventoryclass import inventory as inv
+from .pokedexclass import pokedex
+from .config import *
 import random
 
 # this class is to handle encounters with pokemon.

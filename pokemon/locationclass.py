@@ -1,7 +1,7 @@
 # location class
 
 import pokebase as pb
-import config
+from .config import *
 
 """
 list of cities and locations: https://pokeapi.co/api/v2/region/1/
