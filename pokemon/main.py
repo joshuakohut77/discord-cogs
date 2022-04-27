@@ -110,8 +110,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                          icon_url=str(user.avatar_url))
         embed.add_field(
             name="Level", value=f"{pokemon.currentLevel}", inline=True)
-        embed.add_field(name="Weight", value=f"{pokemon.weight}", inline=True)
-        embed.add_field(name="Height", value=f"{pokemon.height}", inline=True)
+        embed.add_field(
+            name="Attack", value=f"{pokemon.attack.bases}", inline=True)
+        embed.add_field(
+            name="Defense", value=f"{pokemon.defense.base}", inline=True)
         embed.set_thumbnail(url=f"{pokemon.spriteURL}")
 
         await ctx.send(embed=embed)
