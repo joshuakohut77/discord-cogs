@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Any, Dict, List, TYPE_CHECKING
 from abc import ABCMeta
-from .dbclass import db as dbconn
 
 
 if TYPE_CHECKING:
