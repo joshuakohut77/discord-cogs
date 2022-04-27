@@ -34,7 +34,6 @@ class Pokemon:
         self.move_3 = None
         self.move_4 = None
         self.currentHP = None
-    
 
     def load(self, trainerId=None):
         """ populates the object with stats from pokeapi """
@@ -52,7 +51,7 @@ class Pokemon:
             self.move_3 = moves[2]
             self.move_4 = moves[3]
         else:
-            # load pokemon from db using trainerId as unique primary key from Pokemon table 
+            # load pokemon from db using trainerId as unique primary key from Pokemon table
             self.wildPokemon = False
             self.__loadPokemonFromDB(trainerId)
             return
@@ -76,7 +75,7 @@ class Pokemon:
         self.move_4 = moveList[3]
         statsDict = self.getPokeStats()
         self.currentHP = statsDict['hp']
-    
+
     def save(self, discordId):
         """ saves a pokemon to the database """
         self.discordId = discordId
@@ -92,7 +91,7 @@ class Pokemon:
         print('Types:', self.types)
         print('Stats:', self.getPokeStats())
         print('Moves:', self.getMoves())
-    
+
     def getPokeStats(self):
         """ returns a dictionary of a pokemon's unique stats based off level, EV, and IV """
         statsDict = {}
@@ -102,8 +101,10 @@ class Pokemon:
         statsDict['attack'] = self.__calculateUniqueStat(self.attack) + 5
         statsDict['defense'] = self.__calculateUniqueStat(self.defense) + 5
         statsDict['speed'] = self.__calculateUniqueStat(self.speed) + 5
-        statsDict['special-attack'] = self.__calculateUniqueStat(self.special_attack) + 5
-        statsDict['special-defense'] = self.__calculateUniqueStat(self.special_defense) + 5
+        statsDict['special-attack'] = self.__calculateUniqueStat(
+            self.special_attack) + 5
+        statsDict['special-defense'] = self.__calculateUniqueStat(
+            self.special_defense) + 5
         return statsDict
 
     def getMoves(self):
@@ -116,7 +117,8 @@ class Pokemon:
             if level is None:
                 level = config.starterLevel
             # itterate throught he dictionary selecting the top 4 highest moves at the current level
-            defaultList = sorted(moveDict.items(), key=lambda x:x[1], reverse=True)
+            defaultList = sorted(
+                moveDict.items(), key=lambda x: x[1], reverse=True)
             for move in defaultList:
                 moveLevel = move[1]
                 moveName = move[0]
@@ -126,33 +128,33 @@ class Pokemon:
             if len(moveList) < 4:
                 diff = 4-len(moveList)
                 for x in range(diff):
-                    x=None
+                    x = None
                     moveList.append(x)
         else:
             db = dbconn()
             queryString = "SELECT move_1, move_2, move_3, move_4 FROM pokemon WHERE id = %s"
-            results = db.runQuery(queryString, (str(self.trainerId)))
+            results = db.queryAll(queryString, (str(self.trainerId)))
             for result in results:
                 moveList = [result[0], result[1], result[2], result[3]]
             # delete object and close connection
             del db
         # return only 4 moves
         return moveList[0: 4]
-    
+
     def getPokemonLevelMoves(self):
         """ returns a dictionary of {move: level} for a pokemons base move set"""
         moveDict = {}
         pokemon = pb.pokemon(self.id)
         for move in pokemon.moves:
             for version in move.version_group_details:
-                    if version.version_group.name != config.version_group_name:
-                        continue
-                    elif version.move_learn_method.name != 'level-up':
-                        continue
-                    else:
-                        moveName = move.move.name
-                        moveLevel = version.level_learned_at
-                        moveDict[moveName] = moveLevel
+                if version.version_group.name != config.version_group_name:
+                    continue
+                elif version.move_learn_method.name != 'level-up':
+                    continue
+                else:
+                    moveName = move.move.name
+                    moveLevel = version.level_learned_at
+                    moveDict[moveName] = moveLevel
         return moveDict
 
     def processBattleOutcome(self, expGained, evGained, newCurrentHP):
@@ -162,46 +164,50 @@ class Pokemon:
         levelUp = False
         if newCurrentHP > 0:
             self.currentExp = self.currentExp + expGained
-            
+
             # {'hp': 0, 'attack': 0, 'defense': 0, 'special-attack': 0, 'special-defense': 0, 'speed': 6}
             if evGained is not None:
                 self.hp.EV = self.hp.EV + evGained['hp']
                 self.attack.EV = self.attack.EV + evGained['attack']
                 self.defense.EV = self.defense.EV + evGained['defense']
                 self.speed.EV = self.speed.EV + evGained['speed']
-                self.special_attack.EV = self.special_attack.EV + evGained['special-attack']
-                self.special_defense.EV = self.special_defense.EV + evGained['special-defense']
+                self.special_attack.EV = self.special_attack.EV + \
+                    evGained['special-attack']
+                self.special_defense.EV = self.special_defense.EV + \
+                    evGained['special-defense']
 
             # get the base exp of the next level
-            nextLevelBaseExp = self.__getBaseLevelExperience(level=self.currentLevel+1)
+            nextLevelBaseExp = self.__getBaseLevelExperience(
+                level=self.currentLevel+1)
             if self.currentExp >= nextLevelBaseExp:
                 # pokemon leveled up. recurrsively check exp thresholds to determine the new level
                 for x in range(99):
-                    tempLevelBaseExp = self.__getBaseLevelExperience(level=self.currentLevel+x)
+                    tempLevelBaseExp = self.__getBaseLevelExperience(
+                        level=self.currentLevel+x)
                     if tempLevelBaseExp > self.currentExp:
                         self.currentLevel = self.currentLevel + x-1
                         levelUp = True
                         break
-        
+
         self.save(self.discordId)
         return levelUp
 
     def evolve(self):
         """ takes a current pokemon and returns an evolved version """
         # todo check if pokemon has evolution, verify level is right
-        # retain EV stats through creation. 
+        # retain EV stats through creation.
 
         return
 
     ####
-    ###   Private Class Methods
+    # Private Class Methods
     ####
 
     def __loadPokemonFromDB(self, trainerId):
         """ loads and creates a pokemon object from the database """
         db = dbconn()
         queryString = 'SELECT id, discord_id, "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", traded, base_hp, base_attack, base_defense, base_speed, base_special_attack, base_special_defense, "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", "move_4", "types", "currentHP" FROM pokemon WHERE id = %s'
-        results = db.runQuery(queryString, (str(trainerId)))
+        results = db.queryAll(queryString, (str(trainerId)))
 
         for result in results:
             self.trainerId = result[0]
@@ -242,13 +248,13 @@ class Pokemon:
 
         # delete and close connectino
         del db
-        return 
+        return
 
     def __savePokemonToDB(self):
         """ saves pokemon using trainerId to database """
         # this function assumes the pokemon class object is already populated
         db = dbconn()
-        
+
         if self.trainerId is None:
             queryString = 'INSERT INTO pokemon("discord_id", "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", "traded", "base_hp", "base_attack", "base_defense", "base_speed", "base_special_attack", "base_special_defense", "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", "move_4", "types", "currentHP") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
         else:
@@ -257,16 +263,17 @@ class Pokemon:
                     SET "discord_id"=%s, "pokemonId"=%s, "pokemonName"=%s, "spriteURL"=%s, "growthRate"=%s, "currentLevel"=%s, "currentExp"=%s, "traded"=%s, "base_hp"=%s, "base_attack"=%s, "base_defense"=%s, "base_speed"=%s, "base_special_attack"=%s, "base_special_defense"=%s, "IV_hp"=%s, "IV_attack"=%s, "IV_defense"=%s, "IV_speed"=%s, "IV_special_attack"=%s, "IV_special_defense"=%s, "EV_hp"=%s, "EV_attack"=%s, "EV_defense"=%s, "EV_speed"=%s, "EV_special_attack"=%s, "EV_special_defense"=%s, "move_1"=%s, "move_2"=%s, "move_3"=%s, "move_4"=%s, "types"=%s, "currentHP"=%s
                     WHERE id = %s;
             """
-        values = (self.discordId, self.id, self.name, self.spriteURL, self.growthRate, self.currentLevel, self.currentExp, self.traded, self.hp.base, self.attack.base, self.defense.base, self.speed.base, self.special_attack.base, self.special_defense.base, self.hp.IV, self.attack.IV, self.defense.IV, self.speed.IV, self.special_attack.IV, self.special_defense.IV, self.hp.EV, self.attack.EV, self.defense.EV, self.speed.EV, self.special_attack.EV, self.special_defense.EV, self.move_1, self.move_2, self.move_3, self.move_4, self.types, self.currentHP)
-        
+        values = (self.discordId, self.id, self.name, self.spriteURL, self.growthRate, self.currentLevel, self.currentExp, self.traded, self.hp.base, self.attack.base, self.defense.base, self.speed.base, self.special_attack.base, self.special_defense.base, self.hp.IV, self.attack.IV,
+                  self.defense.IV, self.speed.IV, self.special_attack.IV, self.special_defense.IV, self.hp.EV, self.attack.EV, self.defense.EV, self.speed.EV, self.special_attack.EV, self.special_defense.EV, self.move_1, self.move_2, self.move_3, self.move_4, self.types, self.currentHP)
+
         if self.trainerId is not None:
             values = values + (self.trainerId,)
-        
-        db.runUpdateQuery(queryString, values)
+
+        db.execute(queryString, values)
 
         # delete and close connectino
         del db
-        return 
+        return
 
     def __getPokemonType(self):
         """ returns string of pokemons base type """
@@ -274,7 +281,7 @@ class Pokemon:
         pokemon = pb.pokemon(self.id)
         for type in pokemon.types:
             typeList.append(type.type.name)
-        
+
         return typeList
 
     def __getNewMoves(self):
@@ -304,13 +311,14 @@ class Pokemon:
         # attack, defense, speed, special_attack, and special_defense are random 0-15
         # hp is calculated from the other IV using a binary string conversion formula
         ivDict = {}
-        attack = random.randrange(0,16)
-        defense = random.randrange(0,16)
-        speed = random.randrange(0,16)
-        special_attack = random.randrange(0,16)
+        attack = random.randrange(0, 16)
+        defense = random.randrange(0, 16)
+        speed = random.randrange(0, 16)
+        special_attack = random.randrange(0, 16)
         special_defense = special_attack
 
-        hp = int(format(attack, 'b').zfill(4)[3] + format(defense, 'b').zfill(4)[3] + format(speed, 'b').zfill(4)[3] + format(special_attack, 'b').zfill(4)[3], 2)
+        hp = int(format(attack, 'b').zfill(4)[3] + format(defense, 'b').zfill(4)[
+                 3] + format(speed, 'b').zfill(4)[3] + format(special_attack, 'b').zfill(4)[3], 2)
 
         ivDict['hp'] = hp
         ivDict['attack'] = attack
@@ -322,7 +330,8 @@ class Pokemon:
 
     def __generatePokemonEV(self):
         """ returns dictionary of base generated effort values """
-        evDict = {'hp': 1, 'attack': 1, 'defense': 1, 'speed': 1, 'special-attack': 1, 'special-defense': 1}
+        evDict = {'hp': 1, 'attack': 1, 'defense': 1, 'speed': 1,
+                  'special-attack': 1, 'special-defense': 1}
         return evDict
 
     def __getPokemonBaseStats(self):
@@ -375,4 +384,3 @@ class Pokemon:
         self.special_defense.base = baseDict['special-defense']
         self.special_defense.IV = ivDict['special-defense']
         self.special_defense.EV = evDict['special-defense']
-

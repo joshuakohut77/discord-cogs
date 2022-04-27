@@ -12,24 +12,22 @@ class inventory:
         self.potion = None
         self.__loadInventory()
 
-
     def save(self):
         """ updates a trainers inventory """
         db = dbconn()
         updateString = 'UPDATE inventory set "money"=%s, "pokeball"=%s, "potion"=%s WHERE "discord_id"=%s'
-        db.runUpdateQuery(updateString, (self.money, self.pokeball, self.potion, self.discordId))
-        
-
+        db.execute(updateString, (self.money, self.pokeball,
+                   self.potion, self.discordId))
 
         # delete and close connection
         del db
-        return 
-    
+        return
+
     def __loadInventory(self):
         """ loads a trainers inventory into the class object """
         db = dbconn()
         queryString = 'SELECT "money", "pokeball", "potion" FROM inventory WHERE "discord_id"=%s'
-        results = db.runQuery(queryString, (self.discordId,))
+        results = db.queryAll(queryString, (self.discordId,))
         if len(results) > 0:
             self.money = results[0][0]
             self.pokeball = results[0][1]
@@ -38,5 +36,3 @@ class inventory:
         # delete and close connection
         del db
         return
-    
-    
