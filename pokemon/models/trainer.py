@@ -1,5 +1,4 @@
 
-
 class Trainer:
     def __init__(self, row) -> None:
         self.id = row[0]
