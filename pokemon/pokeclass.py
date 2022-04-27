@@ -3,7 +3,7 @@
 import pokebase as pb
 import random
 import math
-import config
+from .config import *
 from .statclass import PokeStats
 from .dbclass import db as dbconn
 
@@ -115,7 +115,7 @@ class Pokemon:
             level = self.currentLevel
             # user starter level for pokemon without a level
             if level is None:
-                level = config.starterLevel
+                level = starterLevel
             # itterate throught he dictionary selecting the top 4 highest moves at the current level
             defaultList = sorted(
                 moveDict.items(), key=lambda x: x[1], reverse=True)
@@ -274,7 +274,7 @@ class Pokemon:
         pokemon = pb.pokemon(self.id)
         for move in pokemon.moves:
             for version in move.version_group_details:
-                if version.version_group.name != config.version_group_name:
+                if version.version_group.name != version_group_name:
                     continue
                 elif version.move_learn_method.name != 'level-up':
                     continue
