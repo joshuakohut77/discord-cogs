@@ -16,13 +16,12 @@ class store:
         db = dbconn()
         trainerObj = trainer(self.discordId)
         areaId = trainerObj.getAreaId()
-        queryString = 'SELECT "id", "item", "price" FROM store WHERE areaId=%s ORDER BY "id"'
+        queryString = 'SELECT "item", "price" FROM store WHERE areaId=%s ORDER BY "id"'
         results = db.queryAll(queryString, (areaId,))
         for row in results:
-            id = row[0]
-            item = row[1]
-            price = row[2]
-            storeOption = {'id': id, 'item': item, 'price': price, 'spriteUrl': self.__getSpriteUrl(item)}
+            item = row[0]
+            price = row[1]
+            storeOption = {'item': item, 'price': price, 'spriteUrl': self.__getSpriteUrl(item)}
             storeList.append(storeOption)
 
         # delete and close connection
