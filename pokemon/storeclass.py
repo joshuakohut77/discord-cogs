@@ -45,6 +45,7 @@ class store:
                         inventory.potion = inventory.potion + quantity
                     inventory.save()
                     return "You successfully bought that item!"
+                    
         return "Invalid itemId %s. Please report this error." %(itemId)
     
 
