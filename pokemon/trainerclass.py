@@ -3,6 +3,7 @@
 from dbclass import db as dbconn
 from pokeclass import Pokemon as pokeClass
 from inventoryclass import inventory as inv
+from pokedexclass import pokedex
 import config
 import random
 from time import time
@@ -127,6 +128,27 @@ class trainer:
 
         return pokemon
 
+    def getPokedex(self):
+        """ returns a list of dictionary from the trainers pokedex """
+        pokedex = []
+        db = dbconn()
+        queryString = 'SELECT "pokemonId", "pokemonName", "mostRecent" FROM pokedex WHERE "discord_id"=%s ORDER BY "pokemonId"'
+        results = db.queryAll(queryString, (self.discordId,))
+
+        for row in results:
+            pokemonId = row[0]
+            pokemonName = row[1]
+            mostRecent = row[2]
+            pokeDict = {'id': pokemonId,
+                        'name': pokemonName, 'lastSeen': mostRecent}
+            pokedex.append(pokeDict)
+
+        totalCaught = str(len(results)) + '/' + str(config.total_pokemon)
+
+        # delete and close connection
+        del db
+        return totalCaught, pokedex
+
     def heal(self, trainerId, item):
         """ uses a potion to heal a pokemon """
         inventory = inv(self.discordId)
@@ -149,6 +171,20 @@ class trainer:
                 pokemon.currentHP = maxHP
                 pokemon.save(self.discordId)
         return
+
+    def pokedex(self):
+        """ returns a list pokemon dictionaries from the trainers pokedex """
+        pokedexList = []
+        db = dbconn()
+        queryString = 'SELECT "pokemonId", "pokemonName", "mostRecent" FROM pokedex WHERE "discord_id"=%s'
+        results = db.queryAll(queryString, (self.discordId,))
+        for row in results:
+            pokedexList.append(
+                {'pokemonId': row[0], 'pokemonName': row[1], 'mostRecent': row[2]})
+
+        # delete and close connection
+        del db
+        return pokedexList
 
     ####
     # Private Class Methods
