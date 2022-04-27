@@ -117,7 +117,7 @@ class trainer:
         # create pokemon with unique stats using the pokemon class
         pokemon = pokeClass(starterId)
         if hasStarter:
-            pokemon.load()
+            pokemon.load(self.discordId)
         if not hasStarter:
             pokemon.create(starterLevel)
             updateString = 'UPDATE trainer SET "starterId"=%s WHERE "discord_id"=%s'
