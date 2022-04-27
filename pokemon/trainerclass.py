@@ -172,19 +172,13 @@ class trainer:
                 pokemon.save(self.discordId)
         return
 
-    def pokedex(self):
-        """ returns a list pokemon dictionaries from the trainers pokedex """
-        pokedexList = []
+    def getAreaId(self):
+        """ returns the current area Id of the trainer """
         db = dbconn()
-        queryString = 'SELECT "pokemonId", "pokemonName", "mostRecent" FROM pokedex WHERE "discord_id"=%s'
-        results = db.queryAll(queryString, (self.discordId,))
-        for row in results:
-            pokedexList.append(
-                {'pokemonId': row[0], 'pokemonName': row[1], 'mostRecent': row[2]})
-
-        # delete and close connection
-        del db
-        return pokedexList
+        queryString = 'SELECT "areaId" FROM trainer WHERE discord_id=%s'
+        result = db.querySingle(queryString, (self.discordId,))
+        areaId = result[0]
+        return areaId
 
     ####
     # Private Class Methods
@@ -194,7 +188,7 @@ class trainer:
         """ this will check if a trainerId exists and if not, insert them into the database """
         db = dbconn()
         queryString = 'SELECT 1 FROM trainer WHERE discord_id=%s'
-        results = db.queryAll(queryString, (self.discordId,))
+        results = db.querySingle(queryString, (self.discordId,))
         # if trainer does not exist
         if len(results) == 0:
             # insert new row into trainer table
