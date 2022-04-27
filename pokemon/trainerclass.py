@@ -1,9 +1,8 @@
 # trainer class
 
-from dbclass import db as dbconn
-from pokeclass import Pokemon as pokeClass
-from inventoryclass import inventory as inv
-from pokedexclass import pokedex
+from .dbclass import db as dbconn
+from .pokeclass import Pokemon as pokeClass
+from .inventoryclass import inventory as inv
 import config
 import random
 from time import time

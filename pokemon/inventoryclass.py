@@ -1,7 +1,6 @@
 # inventory class
 
-from dbclass import db as dbconn
-from pokeclass import Pokemon as pokeClass
+from .dbclass import db as dbconn
 
 
 class inventory:
