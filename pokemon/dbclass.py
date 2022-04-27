@@ -4,13 +4,15 @@ import psycopg2 as pg
 
 
 class db:
-    def __init__(self):
+    def __init__(self, params=None):
         self.conn = pg.connect(
-            host="192.168.5.10",
-            dbname="pokemon_db",
-            user="redbot",
-            password="bfFLG9tUYPpW7272vzhX52",  # todo remove password from source control
-            port=5432)
+            host=(
+                params and params.host) or "192.168.5.10",
+            dbname=(params and params.dbname) or "pokemon_db",
+            user=(params and params.user) or "redbot",
+            # todo remove password from source control
+            password=(params and params.password) or "bfFLG9tUYPpW7272vzhX52",
+            port=(params and params.port) or 5432)
 
     def __del__(self):
         self.conn.close()

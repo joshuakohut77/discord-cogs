@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Any, Dict, List, TYPE_CHECKING
 from abc import ABCMeta
+from dbclass import db as dbconn
 
 
 if TYPE_CHECKING:
@@ -8,14 +9,7 @@ if TYPE_CHECKING:
 
 # import emojis
 import discord
-# import discord.ui
 from discord_components import DiscordComponents, ButtonStyle, ComponentsBot, Button
-# from discord_components import (
-#     Button,
-#     ButtonStyle,
-#     Select,
-#     SelectOption,
-# )
 from redbot.core import Config, commands
 
 from .event import EventMixin
@@ -23,10 +17,6 @@ from .event import EventMixin
 import pokebase as pb
 import psycopg as pg
 from .helpers import *
-
-
-# from discord_ui.client import UI
-# from discord_ui import Components, Button, SelectMenu, SelectOption
 
 
 class CompositeClass(commands.CogMeta, ABCMeta):
