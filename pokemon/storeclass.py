@@ -1,8 +1,8 @@
 # store class
 
-from dbclass import db as dbconn
-from inventoryclass import inventory as inv
-from trainerclass import trainer
+from .dbclass import db as dbconn
+from .inventoryclass import inventory as inv
+from .trainerclass import trainer
 
 class store:
     def __init__(self, discordId):
@@ -45,7 +45,7 @@ class store:
                         inventory.potion = inventory.potion + quantity
                     inventory.save()
                     return "You successfully bought that item!"
-                    
+
         return "Invalid itemId %s. Please report this error." %(itemId)
     
 
