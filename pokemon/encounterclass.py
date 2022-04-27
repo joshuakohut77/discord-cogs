@@ -1,8 +1,8 @@
 # encounter class
 
-from pokeclass import Pokemon as pokeClass
 from expclass import experiance as exp
 from inventoryclass import inventory as inv
+from pokedexclass import pokedex
 import config
 import random
 
@@ -14,6 +14,7 @@ class encounter:
         # pokemon1 for PvE will always be the discord trainers pokemon
         self.pokemon1 = pokemon1
         self.pokemon2 = pokemon2
+        pokedex(self.pokemon1.discordId, pokemon2)
 
     def fight(self):
         """ two pokemon fight and a outcome is decided """
