@@ -4,8 +4,8 @@ import pokebase as pb
 import random
 import math
 import config
-from statclass import PokeStats
-from dbclass import db as dbconn
+from .statclass import PokeStats
+from .dbclass import db as dbconn
 
 
 class Pokemon:
@@ -174,7 +174,7 @@ class Pokemon:
                         levelUp = True
                         newMove = self.__getNewMoves()
                         if newMove != '':
-                            retMsg = 'Your pokemon learned %s' %(newMove)
+                            retMsg = 'Your pokemon learned %s' % (newMove)
                             moveList = self.getMoves()
                             self.move_1 = moveList[3]
                             self.move_2 = moveList[2]
