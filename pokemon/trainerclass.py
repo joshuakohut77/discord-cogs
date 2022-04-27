@@ -143,7 +143,7 @@ class trainer:
                         'name': pokemonName, 'lastSeen': mostRecent}
             pokedex.append(pokeDict)
 
-        totalCaught = str(len(results)) + '/' + str(total_pokemon)
+        totalCaught = str(len(results)) + '/' + str(config.total_pokemon)
 
         # delete and close connection
         del db
