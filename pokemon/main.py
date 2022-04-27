@@ -17,6 +17,7 @@ from .event import EventMixin
 import pokebase as pb
 import psycopg as pg
 from .helpers import *
+from .trainerclass import trainer as TrainerClass
 
 
 class CompositeClass(commands.CogMeta, ABCMeta):
@@ -98,6 +99,9 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         """
         if user is None:
             user = ctx.author
+
+        trainer = TrainerClass(user.id)
+        starter = trainer.getStarterPokemon()
 
         # TODO: don't store these credentials in source control,
         #       eventually just pass them in as part of the cog config

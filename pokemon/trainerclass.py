@@ -178,7 +178,7 @@ class trainer:
         queryString = 'SELECT "areaId" FROM trainer WHERE discord_id=%s'
         result = db.querySingle(queryString, (self.discordId,))
         areaId = result[0]
-        
+
         # delete and close connection
         del db
         return areaId
@@ -189,9 +189,13 @@ class trainer:
 
     def __checkCreateTrainer(self):
         """ this will check if a trainerId exists and if not, insert them into the database """
+        # Only do this check once
+        if self.trainerExists:
+            return
+
         db = dbconn()
         queryString = 'SELECT 1 FROM trainer WHERE discord_id=%s'
-        results = db.querySingle(queryString, (self.discordId,))
+        results = db.queryAll(queryString, (self.discordId,))
         # if trainer does not exist
         if len(results) == 0:
             # insert new row into trainer table
