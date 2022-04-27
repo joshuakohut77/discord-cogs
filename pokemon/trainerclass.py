@@ -1,9 +1,10 @@
 # trainer class
 
-from .dbclass import db as dbconn
-from .pokeclass import Pokemon as pokeClass
-from .inventoryclass import inventory as inv
-from .config import *
+from dbclass import db as dbconn
+from pokeclass import Pokemon as pokeClass
+from inventoryclass import inventory as inv
+# from config import *
+import config
 import random
 from time import time
 
@@ -118,7 +119,7 @@ class trainer:
         if hasStarter:
             pokemon.load()
         if not hasStarter:
-            pokemon.create(starterLevel)
+            pokemon.create(config.starterLevel)
             updateString = 'UPDATE trainer SET "starterId"=%s WHERE "discord_id"=%s'
             db.execute(updateString, (starterId, self.discordId))
             # save starter into
