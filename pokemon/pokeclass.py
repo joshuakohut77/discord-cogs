@@ -111,7 +111,7 @@ class Pokemon:
         """ returns a list of the pokemon's current moves """
         moveList = []
         if self.wildPokemon:
-            moveDict = self.getPokemonLevelMoves()
+            moveDict = self.__getPokemonLevelMoves()
             level = self.currentLevel
             # user starter level for pokemon without a level
             if level is None:
@@ -141,27 +141,12 @@ class Pokemon:
         # return only 4 moves
         return moveList[0: 4]
 
-    def getPokemonLevelMoves(self):
-        """ returns a dictionary of {move: level} for a pokemons base move set"""
-        moveDict = {}
-        pokemon = pb.pokemon(self.id)
-        for move in pokemon.moves:
-            for version in move.version_group_details:
-                if version.version_group.name != config.version_group_name:
-                    continue
-                elif version.move_learn_method.name != 'level-up':
-                    continue
-                else:
-                    moveName = move.move.name
-                    moveLevel = version.level_learned_at
-                    moveDict[moveName] = moveLevel
-        return moveDict
-
     def processBattleOutcome(self, expGained, evGained, newCurrentHP):
         """ process victory updates and calculations """
 
         self.currentHP = newCurrentHP
         levelUp = False
+        retMsg = ''
         if newCurrentHP > 0:
             self.currentExp = self.currentExp + expGained
 
@@ -187,10 +172,18 @@ class Pokemon:
                     if tempLevelBaseExp > self.currentExp:
                         self.currentLevel = self.currentLevel + x-1
                         levelUp = True
+                        newMove = self.__getNewMoves()
+                        if newMove != '':
+                            retMsg = 'Your pokemon learned %s' %(newMove)
+                            moveList = self.getMoves()
+                            self.move_1 = moveList[3]
+                            self.move_2 = moveList[2]
+                            self.move_3 = moveList[1]
+                            self.move_4 = moveList[0]
                         break
 
         self.save(self.discordId)
-        return levelUp
+        return levelUp, retMsg
 
     def evolve(self):
         """ takes a current pokemon and returns an evolved version """
@@ -275,6 +268,22 @@ class Pokemon:
         del db
         return
 
+    def __getPokemonLevelMoves(self):
+        """ returns a dictionary of {move: level} for a pokemons base move set"""
+        moveDict = {}
+        pokemon = pb.pokemon(self.id)
+        for move in pokemon.moves:
+            for version in move.version_group_details:
+                if version.version_group.name != config.version_group_name:
+                    continue
+                elif version.move_learn_method.name != 'level-up':
+                    continue
+                else:
+                    moveName = move.move.name
+                    moveLevel = version.level_learned_at
+                    moveDict[moveName] = moveLevel
+        return moveDict
+
     def __getPokemonType(self):
         """ returns string of pokemons base type """
         typeList = []
@@ -286,12 +295,12 @@ class Pokemon:
 
     def __getNewMoves(self):
         """ returns a pokemons moves at a specific level """
-        newMoves = {}
-        moveDict = self.getPokemonLevelMoves()
+        newMove = ''
+        moveDict = self.__getPokemonLevelMoves()
         for key, value in moveDict.items():
             if value == self.currentLevel:
-                newMoves[key] = value
-        return newMoves
+                newMove = value
+        return newMove
 
     def __calculateUniqueStat(self, statObj):
         """ returns integer of a stat calculated from various parameters """
