@@ -1,7 +1,7 @@
 # pokemon experiance class
 # this is designed to calculate the experience of the defeated pokemon
 import pokebase as pb
-import config
+from .config import *
 
 class experiance:
     def __init__(self, pokemon):
