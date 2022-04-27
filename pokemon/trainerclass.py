@@ -91,16 +91,17 @@ class trainer:
         if not self.trainerExists:
             return None
         db = dbconn()
-        queryString = 'SELECT "has_starter", "starterId" FROM trainer WHERE discord_id = %s'
+        queryString = 'SELECT "starterId" FROM trainer WHERE discord_id = %s'
 
-        results = db.queryAll(queryString, (self.discordId,))
+        result = db.queryAll(queryString, (self.discordId,))
 
         hasStarter = False
         starterId = -1
-        for result in results:
+        if len(result) > 0:
             # if at least one row returned then the trainer exists otherwise they do not
-            hasStarter = result[0]
-            starterId = result[1]
+            starterId = result[0]
+            if starterId is not None:
+                hasStarter = True
 
         if not hasStarter:
             # trainer does not yet have a starter, create one

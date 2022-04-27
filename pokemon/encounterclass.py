@@ -64,13 +64,15 @@ class encounter:
         evGained = expObj.getEffortValue()
         newCurrentHP = self.__calculateDamageTaken()
 
-        levelUp = self.pokemon1.processBattleOutcome(
+        levelUp, retMsg = self.pokemon1.processBattleOutcome(
             expGained, evGained, newCurrentHP)
 
         resultString = "Your Pokemon gained %s exp." % (expGained)
         # if pokemon leved up
         if levelUp:
             resultString = resultString + ' Your Pokemon leveled up!'
+        if retMsg != '':
+            resultString = resultString + ' ' + retMsg
 
         return resultString
 
