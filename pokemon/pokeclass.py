@@ -3,7 +3,7 @@
 import pokebase as pb
 import random
 import math
-import config 
+from .config import *
 from statclass import PokeStats
 from dbclass import db as dbconn
 
