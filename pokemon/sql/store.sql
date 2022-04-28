@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS public.store
 (
     item character varying COLLATE pg_catalog."default",
     price integer,
-    "areaId" integer
+    "locationId" integer
 )
 
 TABLESPACE pg_default;
