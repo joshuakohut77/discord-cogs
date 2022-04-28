@@ -11,11 +11,10 @@ import discord
 from discord_components import DiscordComponents, ButtonStyle, ComponentsBot, Button
 from redbot.core import Config, commands
 
-from .event import EventMixin
+from event import EventMixin
 
 import pokebase as pb
 import psycopg as pg
-# from .models.helpers import *
 from models.trainerclass import trainer as TrainerClass
 
 
