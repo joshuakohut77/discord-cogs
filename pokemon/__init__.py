@@ -13,6 +13,9 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(os.path.join(os.path.dirname(
     os.path.realpath(__file__)), 'models'))
 
+for p in sys.path:
+    print(p)
+
 
 def setup(bot: Red):
     bot.add_cog(Pokemon(bot))
