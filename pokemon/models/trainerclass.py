@@ -186,6 +186,17 @@ class trainer:
         del db
         return areaId
 
+    def getLocationId(self):
+        """ returns the current location Id of the trainer """
+        db = dbconn()
+        queryString = 'SELECT "locationId" FROM trainer WHERE discord_id=%s'
+        result = db.querySingle(queryString, (self.discordId,))
+        locationId = result[0]
+
+        # delete and close connection
+        del db
+        return locationId
+
     ####
     # Private Class Methods
     ####
@@ -195,7 +206,7 @@ class trainer:
         # Only do this check once
         if self.trainerExists:
             return
-            
+
         db = dbconn()
         queryString = 'SELECT 1 FROM trainer WHERE discord_id=%s'
         results = db.queryAll(queryString, (self.discordId,))
