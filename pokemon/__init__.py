@@ -21,7 +21,7 @@ for p in sys.path:
     print(p)
 
 
-from .main import Pokemon
+from main import Pokemon
 
 def setup(bot: Red):
     bot.add_cog(Pokemon(bot))
