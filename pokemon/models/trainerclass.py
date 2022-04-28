@@ -195,9 +195,8 @@ class trainer:
         # Only do this check once
         if self.trainerExists:
             return
-        print('start')
+            
         db = dbconn()
-        print('db open')
         queryString = 'SELECT 1 FROM trainer WHERE discord_id=%s'
         results = db.queryAll(queryString, (self.discordId,))
         # if trainer does not exist
@@ -232,5 +231,3 @@ class trainer:
         pokemon.currentHP = newHP
         pokemon.save(self.discordId)
 
-
-trainer = trainer('456')
