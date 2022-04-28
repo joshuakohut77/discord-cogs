@@ -8,7 +8,7 @@ class db:
         # TODO: need a better way to pass in db configs through all the objects.
         self.conn = pg.connect(
             host=(
-                params and params.host) or "private-REDACTED_HOST",
+                params and params.host) or "REDACTED_HOST",
             dbname=(params and params.dbname) or "pokemon_db",
             user=(params and params.user) or "redbot",
             # todo remove password from source control
