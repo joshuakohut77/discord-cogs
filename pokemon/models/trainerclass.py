@@ -4,12 +4,12 @@ from dbclass import db as dbconn
 from pokeclass import Pokemon as pokeClass
 from inventoryclass import inventory as inv
 # from .config import *
-# import config
+import config
 import random
 from time import time
 
-STARTER_LEVEL = 6
-TOTAL_POKEMON = 150
+STARTER_LEVEL = config.starterLevel
+TOTAL_POKEMON = config.total_pokemon
 
 class trainer:
     def __init__(self, discordId):
