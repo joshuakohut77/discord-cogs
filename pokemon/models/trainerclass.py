@@ -186,6 +186,17 @@ class trainer:
         del db
         return areaId
 
+    def getLocationId(self):
+        """ returns the current location Id of the trainer """
+        db = dbconn()
+        queryString = 'SELECT "locationId" FROM trainer WHERE discord_id=%s'
+        result = db.querySingle(queryString, (self.discordId,))
+        locationId = result[0]
+
+        # delete and close connection
+        del db
+        return locationId
+
     ####
     # Private Class Methods
     ####
@@ -195,9 +206,8 @@ class trainer:
         # Only do this check once
         if self.trainerExists:
             return
-        print('start')
+
         db = dbconn()
-        print('db open')
         queryString = 'SELECT 1 FROM trainer WHERE discord_id=%s'
         results = db.queryAll(queryString, (self.discordId,))
         # if trainer does not exist
@@ -232,5 +242,3 @@ class trainer:
         pokemon.currentHP = newHP
         pokemon.save(self.discordId)
 
-
-trainer = trainer('456')
