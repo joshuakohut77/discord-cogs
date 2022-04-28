@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
-from .main import Pokemon
+# from .main import Pokemon
 
 import sys
 import os
@@ -17,5 +17,5 @@ for p in sys.path:
     print(p)
 
 
-def setup(bot: Red):
-    bot.add_cog(Pokemon(bot))
+# def setup(bot: Red):
+#     bot.add_cog(Pokemon(bot))
