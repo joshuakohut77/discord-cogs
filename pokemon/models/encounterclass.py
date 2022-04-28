@@ -32,9 +32,13 @@ class encounter:
         return retMsg
 
     def runAway(self):
-        """ run away message """
+        """ run away from battle """
         # todo add a very small chance to not run away and result in defeat using random
-        return "You successfully got away"
+        if random.randrange(1,100) <= 8:
+            retMsg = 'You failed to run away! '
+            retMsg = retMsg + self.__defeat()
+        else:
+            return "You successfully got away"
 
     def catch(self, item=None):
         # roll chance to catch pokemon and it either runs away or
