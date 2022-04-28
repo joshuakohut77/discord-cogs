@@ -394,3 +394,10 @@ class Pokemon:
         self.special_defense.base = baseDict['special-defense']
         self.special_defense.IV = ivDict['special-defense']
         self.special_defense.EV = evDict['special-defense']
+    
+    def __getUrlNumber(self, url):
+        """ takes a url string and parses the unique key value from the end of the url """
+        split = url.split('/')
+        if split[-1] == '':
+            split.pop()
+        return split[-1]
