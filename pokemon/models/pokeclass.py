@@ -3,6 +3,7 @@
 import pokebase as pb
 import random
 import math
+from time import time
 from statclass import PokeStats
 from dbclass import db as dbconn
 
@@ -81,6 +82,20 @@ class Pokemon:
         """ saves a pokemon to the database """
         self.discordId = discordId
         self.__savePokemonToDB()
+
+    def delete(self):
+        """ soft deletes pokemon from database """
+        db = dbconn()
+        # use milliseconds as a way to get a unique number. used to soft delete a value and still retain original discordId
+        milliString = str(int(time() * 1000))
+        newDiscordId = self.discordId + '_' + milliString
+        pokemonUpdateQuery = 'UPDATE pokemon SET discord_id = %s WHERE id = %s'
+        db.execute(pokemonUpdateQuery, (newDiscordId, self.trainerId))
+
+        # delete and close connection
+        del db
+        
+
 
     def print(self):
         """ prints out all pokemon information for viewing"""
@@ -175,12 +190,19 @@ class Pokemon:
                         levelUp = True
                         newMove = self.__getNewMoves()
                         if newMove != '':
-                            retMsg = 'Your pokemon learned %s' % (newMove)
+                            retMsg += 'Your pokemon learned %s' % (newMove)
                             moveList = self.getMoves()
                             self.move_1 = moveList[3]
                             self.move_2 = moveList[2]
                             self.move_3 = moveList[1]
                             self.move_4 = moveList[0]
+                        evolvedForm = self.__checkForEvolution()
+                        if evolvedForm is not None:
+                            retMsg += 'Your pokemon is evolving......... Your pokemon evolved into %s' %(evolvedForm)
+                            evolvedPokemon = Pokemon(evolvedForm)
+                            evolvedPokemon.create(self.currentLevel)
+                            evolvedPokemon.save(self.discordId)
+                            self.delete()
                         break
 
         self.save(self.discordId)
@@ -436,6 +458,22 @@ class Pokemon:
         self.special_defense.IV = ivDict['special-defense']
         self.special_defense.EV = evDict['special-defense']
     
+    def __checkForEvolution(self):
+        """ returns boolean if a current pokemon is eligible for evolution """
+        evoList = self.getEvolutions()
+        evolvedForm = None
+        for item in evoList:
+            name = item['name']
+            min_level = item['min_level']
+            if min_level is not None and name != self.name:
+                # possible evolution
+                if self.currentLevel >= min_level:
+                    # eligibal evolution, continue checking for more
+                    evolvedForm = name
+        return evolvedForm
+
+
+
     def __getUrlNumber(self, url):
         """ takes a url string and parses the unique key value from the end of the url """
         split = url.split('/')
