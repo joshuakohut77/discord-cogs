@@ -89,7 +89,7 @@ class Pokemon:
         # use milliseconds as a way to get a unique number. used to soft delete a value and still retain original discordId
         milliString = str(int(time() * 1000))
         newDiscordId = self.discordId + '_' + milliString
-        pokemonUpdateQuery = 'UPDATE pokemon SET discord_id = %s WHERE id = %s'
+        pokemonUpdateQuery = 'UPDATE pokemon SET "discord_id" = %s WHERE "id" = %s'
         db.execute(pokemonUpdateQuery, (newDiscordId, self.trainerId))
 
         # delete and close connection
@@ -123,10 +123,10 @@ class Pokemon:
             self.special_defense) + 5
         return statsDict
 
-    def getMoves(self):
+    def getMoves(self, reload=False):
         """ returns a list of the pokemon's current moves """
         moveList = []
-        if self.wildPokemon:
+        if self.wildPokemon or reload == True:
             moveDict = self.__getPokemonLevelMoves()
             level = self.currentLevel
             # user starter level for pokemon without a level
@@ -148,9 +148,9 @@ class Pokemon:
                     moveList.append(x)
         else:
             db = dbconn()
-            queryString = "SELECT move_1, move_2, move_3, move_4 FROM pokemon WHERE id = %s"
-            results = db.queryAll(queryString, (str(self.trainerId)))
-            for result in results:
+            queryString = 'SELECT "move_1", "move_2", "move_3", "move_4" FROM pokemon WHERE id = %s'
+            result = db.querySingle(queryString, (self.trainerId,))
+            if len(result) > 0:
                 moveList = [result[0], result[1], result[2], result[3]]
             # delete object and close connection
             del db
@@ -187,18 +187,24 @@ class Pokemon:
                         level=self.currentLevel+x)
                     if tempLevelBaseExp > self.currentExp:
                         self.currentLevel = self.currentLevel + x-1
+                        # if a pokemon gains multiple levels, notifications of moves learned will be skipped. 
+                        # this next section is to handle that unique case
+                        if (x-1) > 1:
+                            moveList = self.getMoves(reload=True)
+                        else:
+                            moveList = self.getMoves()
                         levelUp = True
                         newMove = self.__getNewMoves()
                         if newMove != '':
-                            retMsg += 'Your pokemon learned %s' % (newMove)
-                            moveList = self.getMoves()
-                            self.move_1 = moveList[3]
-                            self.move_2 = moveList[2]
-                            self.move_3 = moveList[1]
-                            self.move_4 = moveList[0]
+                            retMsg += 'Your pokemon learned %s. ' % (newMove)
+                        
+                        self.move_1 = moveList[3]
+                        self.move_2 = moveList[2]
+                        self.move_3 = moveList[1]
+                        self.move_4 = moveList[0]
                         evolvedForm = self.__checkForEvolution()
                         if evolvedForm is not None:
-                            retMsg += 'Your pokemon is evolving......... Your pokemon evolved into %s' %(evolvedForm)
+                            retMsg += 'Your pokemon is evolving......... Your pokemon evolved into %s!' %(evolvedForm)
                             evolvedPokemon = Pokemon(evolvedForm)
                             evolvedPokemon.create(self.currentLevel)
                             evolvedPokemon.save(self.discordId)
@@ -263,8 +269,8 @@ class Pokemon:
     def __loadPokemonFromDB(self, trainerId):
         """ loads and creates a pokemon object from the database """
         db = dbconn()
-        queryString = 'SELECT id, discord_id, "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", traded, base_hp, base_attack, base_defense, base_speed, base_special_attack, base_special_defense, "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", "move_4", "types", "currentHP" FROM pokemon WHERE discord_id = %s'
-        result = db.querySingle(queryString, (trainerId,))
+        queryString = 'SELECT "id", "discord_id", "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", traded, base_hp, base_attack, base_defense, base_speed, base_special_attack, base_special_defense, "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", "move_4", "types", "currentHP" FROM pokemon WHERE "id" = %s'
+        result = db.querySingle(queryString, (int(trainerId),))
 
         # for result in results:
         self.trainerId = result[0]
