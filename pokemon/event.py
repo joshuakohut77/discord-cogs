@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from .abc import MixinMeta
+from abc import MixinMeta
+# import abc
 
 # if TYPE_CHECKING:
 #     import discord
