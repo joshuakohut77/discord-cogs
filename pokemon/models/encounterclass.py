@@ -3,11 +3,11 @@
 from expclass import experiance as exp
 from inventoryclass import inventory as inv
 from pokedexclass import pokedex
-#from config import *
+import config
 import random
 
-POKEMON_WIN_RATE = 85
-POKEMON_CATCH_RATE = 75
+POKEMON_WIN_RATE =  config.pokemon_win_rate
+POKEMON_CATCH_RATE = config.pokemon_catch_rate
 
 # this class is to handle encounters with pokemon.
 
