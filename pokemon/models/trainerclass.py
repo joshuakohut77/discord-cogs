@@ -3,12 +3,14 @@
 from dbclass import db as dbconn
 from pokeclass import Pokemon as pokeClass
 from inventoryclass import inventory as inv
-import config
+# import config
 import random
 from time import time
 
-STARTER_LEVEL = config.starterLevel
-TOTAL_POKEMON = config.total_pokemon
+# STARTER_LEVEL = config.starterLevel
+# TOTAL_POKEMON = config.total_pokemon
+STARTER_LEVEL = 6
+TOTAL_POKEMON = 150
 
 class trainer:
     def __init__(self, discordId):
@@ -38,14 +40,14 @@ class trainer:
         """ returns a list of pokemon objects for every pokemon in the database belonging to the trainer """
         db = dbconn()
         pokemonList = []
-        queryString = 'SELECT id FROM pokemon WHERE discord_id = %s'
+        queryString = 'SELECT id FROM pokemon WHERE "discord_id" = %s'
         results = db.queryAll(queryString, (self.discordId,))
+
         for row in results:
             trainerId = row[0]
             pokemon = pokeClass()
             pokemon.load(trainerId=trainerId)
             pokemonList.append(pokemon)
-
         # delete and close connection
         del db
         return pokemonList
@@ -118,7 +120,7 @@ class trainer:
         # create pokemon with unique stats using the pokemon class
         pokemon = pokeClass(starterId)
         if hasStarter:
-            pokemon.load(self.discordId)
+            pokemon.load(pokemon.id)
         if not hasStarter:
             pokemon.create(STARTER_LEVEL)
             updateString = 'UPDATE trainer SET "starterId"=%s WHERE "discord_id"=%s'
