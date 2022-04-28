@@ -1,10 +1,13 @@
 # encounter class
 
-from .expclass import experiance as exp
-from .inventoryclass import inventory as inv
-from .pokedexclass import pokedex
-from .config import *
+from expclass import experiance as exp
+from inventoryclass import inventory as inv
+from pokedexclass import pokedex
+#from config import *
 import random
+
+POKEMON_WIN_RATE = 85
+POKEMON_CATCH_RATE = 75
 
 # this class is to handle encounters with pokemon.
 
@@ -22,7 +25,7 @@ class encounter:
         # todo update with better fight outcome algorithm
         if self.pokemon1.currentHP == 0:
             return "Your active Pokemon has no HP left!"
-        if random.randrange(1, 100) <= pokemon_win_rate:
+        if random.randrange(1, 100) <= POKEMON_WIN_RATE:
             retMsg = self.__victory()
         else:
             retMsg = self.__defeat()
@@ -45,7 +48,7 @@ class encounter:
 
         pokemonCaught = False
         # todo update with better catch algorithm
-        if random.randrange(1, 100) <= pokemon_catch_rate:
+        if random.randrange(1, 100) <= POKEMON_CATCH_RATE:
             pokemonCaught = True
 
         if pokemonCaught:

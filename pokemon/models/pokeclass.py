@@ -3,10 +3,12 @@
 import pokebase as pb
 import random
 import math
-from .config import *
-from .statclass import PokeStats
-from .dbclass import db as dbconn
+# from .config import *
+from statclass import PokeStats
+from dbclass import db as dbconn
 
+STARTER_LEVEL = 6
+VERSION_GROUP_NAME = 'red-blue'
 
 class Pokemon:
     def __init__(self, id_or_name=None):
@@ -115,7 +117,7 @@ class Pokemon:
             level = self.currentLevel
             # user starter level for pokemon without a level
             if level is None:
-                level = starterLevel
+                level = STARTER_LEVEL
             # itterate throught he dictionary selecting the top 4 highest moves at the current level
             defaultList = sorted(
                 moveDict.items(), key=lambda x: x[1], reverse=True)
@@ -274,7 +276,7 @@ class Pokemon:
         pokemon = pb.pokemon(self.id)
         for move in pokemon.moves:
             for version in move.version_group_details:
-                if version.version_group.name != version_group_name:
+                if version.version_group.name != VERSION_GROUP_NAME:
                     continue
                 elif version.move_learn_method.name != 'level-up':
                     continue
@@ -292,14 +294,14 @@ class Pokemon:
             typeList.append(type.type.name)
 
         return typeList
-
+    
     def __getNewMoves(self):
         """ returns a pokemons moves at a specific level """
         newMove = ''
         moveDict = self.__getPokemonLevelMoves()
         for key, value in moveDict.items():
             if value == self.currentLevel:
-                newMove = value
+                newMove = key
         return newMove
 
     def __calculateUniqueStat(self, statObj):

@@ -1,7 +1,8 @@
 # pokemon experiance class
 # this is designed to calculate the experience of the defeated pokemon
 import pokebase as pb
-from .config import *
+# from .config import *
+OVERALL_EXPERIENCE_MODIFIER = 3
 
 class experiance:
     def __init__(self, pokemon):
@@ -27,7 +28,7 @@ class experiance:
         pokemon = pb.pokemon(self.pokemon.id)
         for stat in pokemon.stats:
             statName = stat.stat.name
-            effortValue = stat.effort * overallExperienceModifier
+            effortValue = stat.effort * OVERALL_EXPERIENCE_MODIFIER
             effortValueDict[statName] = effortValue
 
         return effortValueDict

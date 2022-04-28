@@ -1,8 +1,8 @@
 # store class
 
-from .dbclass import db as dbconn
-from .inventoryclass import inventory as inv
-from .trainerclass import trainer
+from dbclass import db as dbconn
+from inventoryclass import inventory as inv
+from trainerclass import trainer
 
 class store:
     def __init__(self, discordId):
