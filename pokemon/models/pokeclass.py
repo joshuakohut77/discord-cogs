@@ -186,12 +186,51 @@ class Pokemon:
         self.save(self.discordId)
         return levelUp, retMsg
 
-    def evolve(self):
-        """ takes a current pokemon and returns an evolved version """
-        # todo check if pokemon has evolution, verify level is right
-        # retain EV stats through creation.
+    def getEvolutions(self):
+        """ returns a dictionary of the pokemons evolution chain """
 
-        return
+        pokemon = pb.pokemon_species(self.id)
+
+        evoChainId = self.__getUrlNumber(pokemon.evolution_chain.url)
+        
+        evolutionList = []
+        evo = pb.evolution_chain(int(evoChainId))
+        name = evo.chain.species.name
+        min_level = None
+
+        evo_details = evo.chain.evolution_details
+        evolves_to = None
+        if evo_details != []:
+            trigger = evo_details.triger.name
+            if trigger == 'level-up':
+                min_level = evo_details.min_level
+
+        evolves_to = evo.chain.evolves_to
+        evolutionList.append({'name': name, 'min_level': min_level})
+
+        if evolves_to is not None and evolves_to != []:
+            name = evolves_to[0].species.name
+            evo_details = evolves_to[0].evolution_details
+            min_level = None
+            if evo_details != []:
+                trigger = evo_details[0].trigger.name
+                if trigger == 'level-up':
+                    min_level = evo_details[0].min_level
+            evolves_to = evolves_to[0].evolves_to
+            evolutionList.append({'name': name, 'min_level': min_level})
+
+        if evolves_to is not None and evolves_to != []:
+            name = evolves_to[0].species.name
+            evo_details = evolves_to[0].evolution_details
+            min_level = None
+            if evo_details != []:
+                trigger = evo_details[0].trigger.name
+                if trigger == 'level-up':
+                    min_level = evo_details[0].min_level
+            evolves_to = evolves_to[0].evolves_to
+            evolutionList.append({'name': name, 'min_level': min_level})
+
+        return evolutionList
 
     ####
     # Private Class Methods
