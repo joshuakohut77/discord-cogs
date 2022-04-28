@@ -188,6 +188,8 @@ class Pokemon:
 
     def getEvolutions(self):
         """ returns a dictionary of the pokemons evolution chain """
+        # todo consider how to loop this. It's hard coded for a maximum of 2 evolutions or 3 pokemon 
+        # the API format makes it difficult to loop for this information. 
 
         pokemon = pb.pokemon_species(self.id)
 
