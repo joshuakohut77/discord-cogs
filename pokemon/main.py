@@ -15,8 +15,8 @@ from .event import EventMixin
 
 import pokebase as pb
 import psycopg as pg
-from .helpers import *
-from .trainerclass import trainer as TrainerClass
+from .models.helpers import *
+from .models.trainerclass import trainer as TrainerClass
 
 
 class CompositeClass(commands.CogMeta, ABCMeta):

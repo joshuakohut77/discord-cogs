@@ -1,13 +1,15 @@
 # trainer class
 
-from .dbclass import db as dbconn
-from .pokeclass import Pokemon as pokeClass
-from .inventoryclass import inventory as inv
-from .config import *
+from dbclass import db as dbconn
+from pokeclass import Pokemon as pokeClass
+from inventoryclass import inventory as inv
+# from .config import *
 # import config
 import random
 from time import time
 
+STARTER_LEVEL = 6
+TOTAL_POKEMON = 150
 
 class trainer:
     def __init__(self, discordId):
@@ -119,7 +121,7 @@ class trainer:
         if hasStarter:
             pokemon.load(self.discordId)
         if not hasStarter:
-            pokemon.create(starterLevel)
+            pokemon.create(STARTER_LEVEL)
             updateString = 'UPDATE trainer SET "starterId"=%s WHERE "discord_id"=%s'
             db.execute(updateString, (starterId, self.discordId))
             # save starter into
@@ -144,7 +146,7 @@ class trainer:
                         'name': pokemonName, 'lastSeen': mostRecent}
             pokedex.append(pokeDict)
 
-        totalCaught = str(len(results)) + '/' + str(total_pokemon)
+        totalCaught = str(len(results)) + '/' + str(TOTAL_POKEMON)
 
         # delete and close connection
         del db
@@ -193,8 +195,9 @@ class trainer:
         # Only do this check once
         if self.trainerExists:
             return
-
+        print('start')
         db = dbconn()
+        print('db open')
         queryString = 'SELECT 1 FROM trainer WHERE discord_id=%s'
         results = db.queryAll(queryString, (self.discordId,))
         # if trainer does not exist
@@ -228,3 +231,6 @@ class trainer:
 
         pokemon.currentHP = newHP
         pokemon.save(self.discordId)
+
+
+trainer = trainer('456')

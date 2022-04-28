@@ -1,7 +1,9 @@
 # location class
 
 import pokebase as pb
-from .config import *
+# from .config import *
+
+VERSION_DETAILS_LIST = ['red', 'blue']
 
 """
 list of cities and locations: https://pokeapi.co/api/v2/region/1/
@@ -17,7 +19,7 @@ class location:
             encounterDetails = {}
             for version in encounter.version_details:
                 versionName = version.version.name
-                if versionName in version_details_list:
+                if versionName in VERSION_DETAILS_LIST:
                     for details in version.encounter_details:
                         encounterDetails['name'] = encounter.pokemon.name
                         encounterDetails['chance'] = details.chance
