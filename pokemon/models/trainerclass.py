@@ -3,6 +3,8 @@
 from dbclass import db as dbconn
 from pokeclass import Pokemon as pokeClass
 from inventoryclass import inventory as inv
+from locationclass import location
+from encounterclass import encounter
 # import config
 import random
 from time import time
@@ -60,8 +62,11 @@ class trainer:
         results = db.queryAll(queryString, (self.discordId,))
 
         trainerId = results[0][0]
-        pokemon = pokeClass()
-        pokemon.load(trainerId=trainerId)
+        if trainerId is None:
+            pokemon = "You do not have an active Pokemon!"
+        else:
+            pokemon = pokeClass()
+            pokemon.load(trainerId=trainerId)
 
         # delete and close connection
         del db
@@ -88,6 +93,59 @@ class trainer:
         # delete and close connection
         del db
         return retMsg
+    
+    def fight(self, pokemon2):
+        """ creates a fight encounter """
+        pokemon1 = self.getActivePokemon()
+        if pokemon1 is None:
+            return 'You do not have an active Pokemon'        
+        enc = encounter(pokemon1, pokemon2)
+        return enc.fight()
+
+    def catch(self, pokemon2, item):
+        """ creates a catch encounter """
+        pokemon1 = self.getActivePokemon()
+        if pokemon1 is None:
+            return 'You do not have an active Pokemon'        
+        enc = encounter(pokemon1, pokemon2)
+        return enc.catch(item)
+
+    def runAway(self, pokemon2):
+        """ creates a run away encounter """
+        pokemon1 = self.getActivePokemon()
+        if pokemon1 is None:
+            return 'You do not have an active Pokemon'        
+        enc = encounter(pokemon1, pokemon2)
+        return enc.runAway()
+
+    def getAreaMethods(self):
+        """ returns the encounter methods in the trainers area """
+        # before starting any area business, verify an active pokemon is set
+        pokemon1 = self.getActivePokemon()
+        if pokemon1 is None:
+            return 'You do not have an active Pokemon'
+        areaId = self.getAreaId()
+        loc = location()
+        areaEncounters = loc.getAreaEncounterDetails(areaId)
+        return loc.getMethods(areaEncounters)
+
+    def getRandomEncounter(self, method):
+        """ gets a random encounter in the current area using the selected method """
+        pokemon = None
+        areaId = self.getAreaId()
+        loc = location()
+        areaEncounters = loc.getAreaEncounterDetails(areaId)
+        randomEncounter = loc.generateEncounter(areaEncounters, method)
+        if randomEncounter is not None:
+            # this means a pokemon was found with the method
+            name = randomEncounter['name']
+            min_level = randomEncounter['min_level']
+            max_level = randomEncounter['max_level']
+            level = random.randrange(int(min_level), int(max_level)+1)
+            pokemon = pokeClass(name)
+            pokemon.create(level)
+        
+        return pokemon
 
     def getStarterPokemon(self):
         """ returns a random starter pokemon dictionary {pokemon: id} """
