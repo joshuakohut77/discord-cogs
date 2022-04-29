@@ -1,9 +1,10 @@
 # location class
 
 import pokebase as pb
-import config
+# import config
 
-VERSION_DETAILS_LIST = config.version_details_list
+# VERSION_DETAILS_LIST = config.version_details_list
+VERSION_DETAILS_LIST = ['red', 'blue']
 
 """
 list of cities and locations: https://pokeapi.co/api/v2/region/1/
