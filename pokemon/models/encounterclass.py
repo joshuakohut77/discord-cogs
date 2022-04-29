@@ -1,7 +1,8 @@
 # encounter class
-
+from dbclass import db as dbconn
 from expclass import experiance as exp
 from inventoryclass import inventory as inv
+import pokebase as pb
 from pokedexclass import pokedex
 # import config
 import random
@@ -102,3 +103,51 @@ class encounter:
         if newCurrentHP < 0:
             newCurrentHP = 0
         return newCurrentHP
+
+    def __calculateDamageOfMove(self, move):
+        """ calcualtes the damage of the move against opponent """
+        calculatedDamage = 0
+        pbMove = pb.move(move)
+        power = pbMove.power
+        moveType = pbMove.type.name
+        damage_class = pbMove.damage_class.name # physical or special
+        pokemon1Stats = self.pokemon1.getPokeStats()
+        pokemon2Stats = self.pokemon2.getPokeStats()
+        attack = 0
+        defense = 0
+        if damage_class == 'physical':
+            attack = pokemon1Stats['attack']
+            defense = pokemon2Stats['defense']
+        else:
+            attack = pokemon1Stats['special-attack']
+            defense = pokemon2Stats['special-defense']
+        randmonMult = random.randrange(217, 256) / 255
+        defendingType = self.pokemon2.types
+        if moveType in defendingType:
+            stab = 1.5
+        else:
+            stab = 1
+        level = self.pokemon1.currentLevel
+        type_effectiveness = self.__getDamageTypeMultiplier(moveType, defendingType)
+
+        # ((((2xlevel/5)* power * A/D) / 50 ) + 2) * random * STAB if same (1.5 or 1) * type
+
+        return calculatedDamage
+
+    def __getDamageTypeMultiplier(self, moveType, defendingTypeStr):
+        """ returns a multiplier for the type-effectiveness """
+        # pokemon can have multipl types so query both and return the smaller modifier of the two
+        defendingTypeStr = defendingTypeStr.replace('{', '')
+        defendingTypeStr = defendingTypeStr.replace('}', '')
+        typeList = defendingTypeStr.split(',')
+        moveType = 'normal'
+        dmgMultList = []
+        db = dbconn()
+        for defType in typeList:
+            queryString = """SELECT %s FROM "type-effectiveness" WHERE source = '%s'""" %(defType, moveType)
+            result = db.querySingle(queryString)
+            dmgMultList.append(result[0])
+        # delete and close connection
+        del db
+        return dmgMultList.sort()[0]
+
