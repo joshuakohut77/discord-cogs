@@ -144,6 +144,7 @@ class encounter:
         dmgMultList = []
         db = dbconn()
         for defType in typeList:
+            # TODO update this query string to not use string replacement like this. Psycog has a method but more complex 
             queryString = """SELECT %s FROM "type-effectiveness" WHERE source = '%s'""" %(defType, moveType)
             result = db.querySingle(queryString)
             dmgMultList.append(result[0])
