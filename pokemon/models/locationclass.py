@@ -1,6 +1,7 @@
 # location class
 
 import pokebase as pb
+import random
 # import config
 
 # VERSION_DETAILS_LIST = config.version_details_list
@@ -54,6 +55,30 @@ class location:
             areaNumber = self.__getUrlNumber(area.url)
             areaList.append({name: areaNumber})
         return areaList
+
+    def getMethods(self, areaEncounters):
+        """ returns a list of methods available in that area """
+        methodList = []
+        
+        for x in areaEncounters:
+            method = x['method']
+            if method not in methodList:
+                methodList.append(method)
+        
+        return methodList
+
+    def generateEncounter(self, areaEncounters, selectedMethod):
+        """ returns a list of chance items for the given method in that area """
+        encounter = None
+        for x in areaEncounters:
+            method = x['method']
+            if method == selectedMethod:
+                randNum = random.randrange(1, 101)
+                chance = x['chance']
+                if randNum <= chance:
+                    encounter = x
+            
+        return encounter
 
     def __getUrlNumber(self, url):
         """ takes a url string and parses the unique key value from the end of the url """
