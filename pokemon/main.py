@@ -80,10 +80,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
     @commands.group(name="pokemart")
     @commands.guild_only()
-    async def _pokemart(self, ctx: commands.Context, user: discord.Member) -> None:
+    async def _pokemart(self, ctx: commands.Context, user: discord.Member = None) -> None:
         """Base command to manage the pokemart (store)
         """
-
+        
         if user is None:
             user = ctx.author
         
@@ -93,7 +93,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         embed = discord.Embed(title=f"Pokemart - TODO: Area Name")
         # embed.set_author(name=f"{user.display_name}",
         #                  icon_url=str(user.avatar_url))
-        
+
         for item in store.storeList:
             embed.add_field(name=item['item'], value=item['price'], inline=True)
 
