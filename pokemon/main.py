@@ -80,6 +80,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
     @commands.group(name="pokemart")
     @commands.guild_only()
+    @commands.command(name='pokemart')
     async def _pokemart(self, ctx: commands.Context, user: discord.Member = None) -> None:
         """Base command to manage the pokemart (store)
         """
