@@ -17,6 +17,7 @@ import pokebase as pb
 import psycopg as pg
 # from .models.helpers import *
 from models.trainerclass import trainer as TrainerClass
+from models.storeclass import store as StoreClass
 
 
 class CompositeClass(commands.CogMeta, ABCMeta):
@@ -53,10 +54,54 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         return commands.check(pred)
 
+    #
+    # Commands:
+    #
+    # [p]trainer starter
+    # [p]trainer pokedex <user> - user is optional
+    # [p]trainer pokemon <user> - owned pokemon user optional
+    # [p]trainer setactive <id> - unique id of pokemon in db (validate it's their id)
+    # [p]trainer action - UI provides buttons to interact
+    # [p]trainer inventory <user> - user optional
+    #
+    # [p]pokemart - UI provides buttons to interact
+    # [p]pokemark buy <item> <count> - purchase poke mart item(s)
+    #
+    # [p]pokemon stats <id> - unique id of pokemon in db (stats + moves)
+    # [p]pokemon wiki <id> - any pokemon general wiki
+    #
+
     @commands.group(name="trainer")
     @commands.guild_only()
     async def _trainer(self, ctx: commands.Context) -> None:
         """Base command to manage the trainer (user).
+        """
+        pass
+
+    @commands.group(name="pokemart")
+    @commands.guild_only()
+    async def _pokemart(self, ctx: commands.Context, user: discord.Member) -> None:
+        """Base command to manage the pokemart (store)
+        """
+
+        if user is None:
+            user = ctx.author
+        
+        store = StoreClass(user.id)
+
+        # Create the embed object
+        embed = discord.Embed(title=f"Pokemart - TODO: Area Name")
+        # embed.set_author(name=f"{user.display_name}",
+        #                  icon_url=str(user.avatar_url))
+        
+        for item in store.storeList:
+            embed.add_field(name=item['item'], value=item['price'], inline=True)
+
+        await ctx.send(embed=embed)
+
+    @_pokemart.command()
+    async def buy(self, ctx: commands.Context, user: discord.Member = None) -> None:
+        """List the pokemart items available to you
         """
         pass
 
