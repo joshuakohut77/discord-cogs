@@ -96,7 +96,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         #                  icon_url=str(user.avatar_url))
 
         for item in store.storeList:
-            embed.add_field(name=f"▶️ {item['item']} -- {item['price']}", value='description of item', inline=False)
+            embed.add_field(name=f"▶️  {item['item']} — {item['price']}", value='description of item', inline=False)
 
         await ctx.send(embed=embed)
         await ctx.tick()
