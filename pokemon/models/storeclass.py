@@ -36,6 +36,7 @@ class store:
         self.storeList = storeList
 
     def buyItemEx(self, name, quantity):
+        """ buy and item and update trainers inventory Ex"""
         if name not in self.storeMap.keys():
             return "Item not available"
         
