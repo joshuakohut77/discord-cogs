@@ -12,6 +12,7 @@ import random
 
 POKEMON_WIN_RATE = 95
 POKEMON_CATCH_RATE = 85
+MAX_BATTLE_TURNS = 50
 
 # this class is to handle encounters with pokemon.
 
@@ -29,11 +30,53 @@ class encounter:
         # todo update with better fight outcome algorithm
         if self.pokemon1.currentHP == 0:
             return "Your active Pokemon has no HP left!"
-        if random.randrange(1, 100) <= POKEMON_WIN_RATE:
-            retMsg = self.__victory()
-        else:
-            retMsg = self.__defeat()
+        # if random.randrange(1, 100) <= POKEMON_WIN_RATE:
+        #     retMsg = self.__victory()
+        # else:
+        #     retMsg = self.__defeat()
+        retMsg = self.battle()
         return retMsg
+
+    def battle(self):
+        """ this function simulates a live battle between two pokemon """
+        # get pokemons current fighting HP
+        battleHP1 = self.pokemon1.currentHP
+        if battleHP1 <= 0:
+            return "Your active Pokemon has no HP left!"
+        battleHP2 = self.pokemon2.currentHP
+        # get pokemons list of moves
+        battleMoves1 = self.__removeNullMoves(self.pokemon1.getMoves())
+        battleMoves2 = self.__removeNullMoves(self.pokemon2.getMoves())
+
+        # pokemon goes first
+        for x in range(MAX_BATTLE_TURNS):
+            randMoveSelector = random.randrange(1, len(battleMoves1)+1)
+            damage = self.__calculateDamageOfMove(battleMoves1[randMoveSelector-1])
+            battleHP2 -= damage
+            print('%s used %s' %(self.pokemon1.name, battleMoves1[randMoveSelector-1]))
+            print('%s did %s damage' %(self.pokemon1.name, str(damage)))
+            if battleHP2 <=0:
+                self.pokemon1.currentHP = battleHP1
+                retMsg = self.__victory()
+                break
+            randMoveSelector = random.randrange(1, len(battleMoves2)+1)
+            damage = self.__calculateDamageOfMove(battleMoves2[randMoveSelector-1])
+            battleHP1 -= damage
+            print('%s used %s' %(self.pokemon2.name, battleMoves2[randMoveSelector-1]))
+            print('%s did %s damage' %(self.pokemon2.name, str(damage)))
+            if battleHP1 <=0:
+                self.pokemon1.currentHP = battleHP1
+                retMsg = self.__defeat()
+                break
+            
+            # max number of turns has occured. Break out of potential infinite loop
+            if x == MAX_BATTLE_TURNS - 1:
+                retMsg = 'Failed to defeat enemy pokemon. The Pokemon ran away'
+                break
+        
+        return retMsg
+
+
 
     def runAway(self):
         """ run away from battle """
@@ -73,7 +116,7 @@ class encounter:
         expObj = exp(self.pokemon2)
         expGained = expObj.getExpGained()
         evGained = expObj.getEffortValue()
-        newCurrentHP = self.__calculateDamageTaken()
+        newCurrentHP = self.pokemon1.currentHP
 
         levelUp, retMsg = self.pokemon1.processBattleOutcome(
             expGained, evGained, newCurrentHP)
@@ -144,17 +187,19 @@ class encounter:
             # formula found here: https://bulbapedia.bulbagarden.net/wiki/Damage#Example
             calc_level = ((2*level)/5)+2
             calc_numerator = ((calc_level * power * (attack/defense))/50) + 2
-            calculatedDamage = calc_numerator * randmonMult * stab * type_effectiveness
+            calculatedDamage = round(calc_numerator * randmonMult * stab * type_effectiveness)
 
         return calculatedDamage
 
     def __getDamageTypeMultiplier(self, moveType, defendingTypeStr):
         """ returns a multiplier for the type-effectiveness """
         # pokemon can have multipl types so query both and return the smaller modifier of the two
-        defendingTypeStr = defendingTypeStr.replace('{', '')
-        defendingTypeStr = defendingTypeStr.replace('}', '')
-        typeList = defendingTypeStr.split(',')
-        moveType = 'normal'
+        if type(defendingTypeStr) == str:
+            defendingTypeStr = defendingTypeStr.replace('{', '')
+            defendingTypeStr = defendingTypeStr.replace('}', '')
+
+            typeList = defendingTypeStr.split(',')
+        typeList = defendingTypeStr
         dmgMultList = []
         db = dbconn()
         for defType in typeList:
@@ -164,6 +209,17 @@ class encounter:
             dmgMultList.append(result[0])
         # delete and close connection
         del db
-        return dmgMultList.sort()[0]
+        dmgMultList.sort()
+        return dmgMultList[0]
 
-
+    def __removeNullMoves(self, moveList):
+        """ returns a list of moves without any nulls """
+        if moveList[3] is None:
+            moveList.pop(3)
+        if moveList[2] is None:
+            moveList.pop(2)
+        if moveList[1] is None:
+            moveList.pop(1)
+        if moveList[0] is None:
+            moveList.pop(0)
+        return moveList
