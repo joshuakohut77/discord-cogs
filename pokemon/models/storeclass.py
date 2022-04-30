@@ -4,6 +4,7 @@ from dbclass import db as dbconn
 from inventoryclass import inventory as inv
 from trainerclass import trainer
 
+
 class store:
     def __init__(self, discordId):
         self.discordId = discordId
@@ -22,14 +23,14 @@ class store:
         for row in results:
             item = row[0]
             price = row[1]
-            storeOption = {'item': item, 'price': price, 'spriteUrl': self.__getSpriteUrl(item)}
+            storeOption = {'item': item, 'price': price,
+                           'spriteUrl': self.__getSpriteUrl(item)}
             storeList.append(storeOption)
 
         self.storeMap = {}
         for item in storeList:
             if item['item'] in self.storeMap.keys():
                 self.storeMap[item['item']]['details'] = {price: item['price']}
-                
 
         # delete and close connection
         del db
@@ -39,7 +40,7 @@ class store:
         """ buy and item and update trainers inventory Ex"""
         if name not in self.storeMap.keys():
             return "Item not available"
-        
+
         price = self.storeMap[name]['price']
         totalPrice = price * quantity
 
@@ -56,7 +57,7 @@ class store:
                 inventory.potion = inventory.potion + quantity
             inventory.save()
             return "You successfully bought that item!"
-    
+
     def buyItem(self, itemId, quantity):
         """ buy and item and update trainers inventory """
         inventory = inv(self.discordId)
@@ -66,7 +67,8 @@ class store:
                 if inventory.money < (item['price'] * quantity):
                     return 'You do not have enough money to buy that.'
                 else:
-                    inventory.money = inventory.money - (item['price'] * quantity)
+                    inventory.money = inventory.money - \
+                        (item['price'] * quantity)
                     # todo update this so it's not hard coded
                     if itemId == 4:
                         inventory.pokeball = inventory.pokeball + quantity
@@ -75,13 +77,10 @@ class store:
                     inventory.save()
                     return "You successfully bought that item!"
 
-        return "Invalid itemId %s. Please report this error." %(itemId)
-    
+        return "Invalid itemId %s. Please report this error." % (itemId)
+
     def __getSpriteUrl(self, itemName):
         """ returns a constructed spriteUrl """
         baseUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/"
         spriteUrl = baseUrl + itemName + ".png"
         return spriteUrl
-
-
-        
