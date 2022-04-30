@@ -32,7 +32,7 @@ class store:
         """ buy and item and update trainers inventory """
         inventory = inv(self.discordId)
         for item in self.storeList:
-            if item['id'] == itemId:
+            if item['item'] == itemId:
                 if inventory.money < (item['price'] * quantity):
                     return 'You do not have enough money to buy that.'
                 else:
