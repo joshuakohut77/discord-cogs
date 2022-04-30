@@ -35,7 +35,7 @@ class store:
         del db
         self.storeList = storeList
 
-    def buyItem2(self, name, quantity):
+    def buyItemEx(self, name, quantity):
         if name not in self.storeMap.keys():
             return "Item not available"
         
