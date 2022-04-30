@@ -119,7 +119,7 @@ class encounter:
         if moveHit:
             power = pbMove.power
             if power is None:
-                power = 40
+                return 0
             moveType = pbMove.type.name
             damage_class = pbMove.damage_class.name # physical or special
             pokemon1Stats = self.pokemon1.getPokeStats()
