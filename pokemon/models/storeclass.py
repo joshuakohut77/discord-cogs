@@ -15,8 +15,8 @@ class store:
         storeList = []
         db = dbconn()
         trainerObj = trainer(self.discordId)
-        areaId = trainerObj.getAreaId()
-        queryString = 'SELECT "item", "price" FROM store WHERE areaId=%s ORDER BY "id"'
+        areaId = trainerObj.getLocationId()
+        queryString = 'SELECT "item", "price" FROM store WHERE locationId=%s ORDER BY "id"'
         results = db.queryAll(queryString, (areaId,))
         for row in results:
             item = row[0]
