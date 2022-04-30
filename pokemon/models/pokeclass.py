@@ -95,8 +95,6 @@ class Pokemon:
         # delete and close connection
         del db
         
-
-
     def print(self):
         """ prints out all pokemon information for viewing"""
         print('Id:', self.id)
