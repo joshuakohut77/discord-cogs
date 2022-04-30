@@ -80,10 +80,13 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
     @commands.group(name="pokemart")
     @commands.guild_only()
-    @commands.command(name='pokemart')
-    async def _pokemart(self, ctx: commands.Context, user: discord.Member = None) -> None:
+    async def _pokemart(self, ctx: commands.Context) -> None:
         """Base command to manage the pokemart (store)
         """
+        pass
+
+    @_pokemart.command()
+    async def list(self, ctx: commands.Context, user: discord.Member = None) -> None:
         
         if user is None:
             user = ctx.author
@@ -103,10 +106,17 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         await ctx.tick()
 
     @_pokemart.command()
-    async def buy(self, ctx: commands.Context, user: discord.Member = None) -> None:
+    async def buy(self, ctx: commands.Context, item: str, count: int = 1) -> None:
         """List the pokemart items available to you
         """
-        pass
+
+        user = ctx.author
+
+        store = StoreClass(user.id)
+        store.buyItem(item, count)
+
+        await ctx.send(f'${user.display_name} bought {count} {item}')
+        
 
     @_trainer.command()
     async def button(self, ctx: commands.Context, user: discord.Member = None) -> None:
