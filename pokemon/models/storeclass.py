@@ -33,34 +33,13 @@ class store:
                 self.storeMap[item['item']] = {}
 
             if item['item'] in self.storeMap.keys():
-                self.storeMap[item['item']]['details'] = {price: item['price']}
+                self.storeMap[item['item']]['price'] = item['price']
 
         # delete and close connection
         del db
         self.storeList = storeList
 
-    # def buyItem(self, itemId, quantity):
-    #     """ buy and item and update trainers inventory """
-    #     inventory = inv(self.discordId)
-
-    #     for item in self.storeList:
-    #         if item['item'] == itemId:
-    #             if inventory.money < (item['price'] * quantity):
-    #                 return 'You do not have enough money to buy that.'
-    #             else:
-    #                 inventory.money = inventory.money - \
-    #                     (item['price'] * quantity)
-    #                 # todo update this so it's not hard coded
-    #                 if itemId == 4:
-    #                     inventory.pokeball = inventory.pokeball + quantity
-    #                 elif itemId == 17:
-    #                     inventory.potion = inventory.potion + quantity
-    #                 inventory.save()
-    #                 return "You successfully bought that item!"
-
-    #     return "Invalid itemId %s. Please report this error." % (itemId)
-
-    def buyItem(self, name, quantity):
+    def buyItemEx(self, name, quantity):
         """ buy and item and update trainers inventory Ex"""
         if name not in self.storeMap.keys():
             return "Item not available"
@@ -81,6 +60,27 @@ class store:
                 inventory.potion = inventory.potion + quantity
             inventory.save()
             return "You successfully bought that item!"
+
+    def buyItem(self, itemId, quantity):
+        """ buy and item and update trainers inventory """
+        inventory = inv(self.discordId)
+
+        for item in self.storeList:
+            if item['item'] == itemId:
+                if inventory.money < (item['price'] * quantity):
+                    return 'You do not have enough money to buy that.'
+                else:
+                    inventory.money = inventory.money - \
+                        (item['price'] * quantity)
+                    # todo update this so it's not hard coded
+                    if itemId == 4:
+                        inventory.pokeball = inventory.pokeball + quantity
+                    elif itemId == 17:
+                        inventory.potion = inventory.potion + quantity
+                    inventory.save()
+                    return "You successfully bought that item!"
+
+        return "Invalid itemId %s. Please report this error." % (itemId)
 
     def __getSpriteUrl(self, itemName):
         """ returns a constructed spriteUrl """
