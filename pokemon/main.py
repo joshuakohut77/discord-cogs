@@ -96,7 +96,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         for item in store.storeList:
             # embed.add_image(url='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png')
-            embed.add_field(name=f"▶️ {item['item']} -- {item['price']}", value='description of item')
+            embed.add_field(name=f"▶️ {item['item']} -- {item['price']}", value='description of item', inline=False)
 
         await ctx.send(embed=embed)
 
