@@ -115,8 +115,9 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         user = ctx.author
 
         store = StoreClass(str(user.id))
-        store.buyItemEx(item, count)
+        res = store.buyItemEx(item, count)
 
+        await ctx.send(res)
         await ctx.send(f'{user.display_name} bought {count} {item}')
         
 
