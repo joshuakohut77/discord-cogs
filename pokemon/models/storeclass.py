@@ -39,28 +39,28 @@ class store:
         del db
         self.storeList = storeList
 
-    def buyItem(self, itemId, quantity):
-        """ buy and item and update trainers inventory """
-        inventory = inv(self.discordId)
+    # def buyItem(self, itemId, quantity):
+    #     """ buy and item and update trainers inventory """
+    #     inventory = inv(self.discordId)
 
-        for item in self.storeList:
-            if item['item'] == itemId:
-                if inventory.money < (item['price'] * quantity):
-                    return 'You do not have enough money to buy that.'
-                else:
-                    inventory.money = inventory.money - \
-                        (item['price'] * quantity)
-                    # todo update this so it's not hard coded
-                    if itemId == 4:
-                        inventory.pokeball = inventory.pokeball + quantity
-                    elif itemId == 17:
-                        inventory.potion = inventory.potion + quantity
-                    inventory.save()
-                    return "You successfully bought that item!"
+    #     for item in self.storeList:
+    #         if item['item'] == itemId:
+    #             if inventory.money < (item['price'] * quantity):
+    #                 return 'You do not have enough money to buy that.'
+    #             else:
+    #                 inventory.money = inventory.money - \
+    #                     (item['price'] * quantity)
+    #                 # todo update this so it's not hard coded
+    #                 if itemId == 4:
+    #                     inventory.pokeball = inventory.pokeball + quantity
+    #                 elif itemId == 17:
+    #                     inventory.potion = inventory.potion + quantity
+    #                 inventory.save()
+    #                 return "You successfully bought that item!"
 
-        return "Invalid itemId %s. Please report this error." % (itemId)
+    #     return "Invalid itemId %s. Please report this error." % (itemId)
 
-    def buyItemEx(self, name, quantity):
+    def buyItem(self, name, quantity):
         """ buy and item and update trainers inventory Ex"""
         if name not in self.storeMap.keys():
             return "Item not available"
