@@ -29,6 +29,9 @@ class store:
 
         self.storeMap = {}
         for item in storeList:
+            if item['item'] not in self.storeMap.keys():
+                self.storeMap[item['item']] = {}
+
             if item['item'] in self.storeMap.keys():
                 self.storeMap[item['item']]['details'] = {price: item['price']}
 
