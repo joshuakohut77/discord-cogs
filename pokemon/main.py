@@ -110,12 +110,14 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         """List the pokemart items available to you
         """
 
-        user = ctx.author
+        await ctx.send(f'{item}')
 
-        store = StoreClass(str(user.id))
-        store.buyItem(item, count)
+        # user = ctx.author
 
-        await ctx.send(f'${user.display_name} bought {count} {item}')
+        # store = StoreClass(str(user.id))
+        # store.buyItem(item, count)
+
+        # await ctx.send(f'{user.display_name} bought {count} {item}')
         
 
     @_trainer.command()
