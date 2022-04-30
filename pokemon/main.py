@@ -91,14 +91,15 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         # Create the embed object
         embed = discord.Embed(title=f"Pokemart - TODO: Area Name")
+        embed.set_thumbnail(url=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png")
         # embed.set_author(name=f"{user.display_name}",
         #                  icon_url=str(user.avatar_url))
 
         for item in store.storeList:
-            # embed.add_image(url='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png')
             embed.add_field(name=f"▶️ {item['item']} -- {item['price']}", value='description of item', inline=False)
 
         await ctx.send(embed=embed)
+        await ctx.tick()
 
     @_pokemart.command()
     async def buy(self, ctx: commands.Context, user: discord.Member = None) -> None:
