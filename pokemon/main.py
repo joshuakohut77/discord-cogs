@@ -176,14 +176,14 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                     interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
                     # message = interaction.message
                 
-                embed = discord.Embed(title=f"Loading...")
-                btns = []
-                if i > 0:
-                    btns.append(Button(style=ButtonStyle.gray, label='Previous', disabled=True))
-                if i < len(pokedex) - 1:
-                    btns.append(Button(style=ButtonStyle.gray, label="Next", disabled=True))
+                # embed = discord.Embed(title=f"Loading...")
+                # btns = []
+                # if i > 0:
+                #     btns.append(Button(style=ButtonStyle.gray, label='Previous', disabled=True))
+                # if i < len(pokedex) - 1:
+                #     btns.append(Button(style=ButtonStyle.gray, label="Next", disabled=True))
                 
-                await interaction.edit_origin(embed=embed, components=[btns])
+                # await interaction.edit_origin(embed=embed, components=[btns])
                 i = i + 1
             except asyncio.TimeoutError:
                 break
