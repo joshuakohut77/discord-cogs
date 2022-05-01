@@ -159,7 +159,24 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         embed.add_field(name=f"Last seen", value=f"{first['lastSeen']}", inline=False)
         embed.set_thumbnail(url=f"{pokemon.spriteURL}")
 
-        await ctx.send(embed=embed)
+
+        btn = Button(style=ButtonStyle.gray,
+                     label="Next", custom_id='next')
+
+        def nextBtnClick(ev):
+            print(ev)
+            return ev.custom_id == 'next'
+
+        await ctx.send(
+            embed=embed,
+            components=[[
+                btn
+                # self.bot.components_manager.add_callback(b, callback)
+            ]]
+        )
+        
+        interaction = await self.bot.wait_for("button_click", check=nextBtnClick)
+        # await ctx.send(embed=embed)
 
     @_trainer.command()
     async def button(self, ctx: commands.Context, user: discord.Member = None) -> None:
