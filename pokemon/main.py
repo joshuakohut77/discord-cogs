@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 import discord
 from discord_components import DiscordComponents, ButtonStyle, ComponentsBot, Button
 from redbot.core import Config, commands
+import asyncio
 
 from .event import EventMixin
 
@@ -142,40 +143,39 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             user = ctx.author
 
         def nextBtnClick():
-            return lambda i: i.custom_id == "next" or i.custom_id == 'previous'
+            return lambda x: x.custom_id == "next" or x.custom_id == 'previous'
 
         trainer = TrainerClass('456')
 
         pokedex = trainer.getPokedex()
 
         message: discord.Message = None
-        r = range(5)
-        for i in r:
-            embed = discord.Embed(title=f"Pokedex")
-            btns = []
-            if i > 0:
-                btns.append(Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'))
-            if i < r.stop - 1:
-                btns.append(Button(style=ButtonStyle.gray, label="Next", custom_id='next'))
+        i = 0
+        while True:
+            try:
+                embed = discord.Embed(title=f"Index {i}")
+                btns = []
+                if i > 0:
+                    btns.append(Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'))
+                if i < len(pokedex) - 1:
+                    btns.append(Button(style=ButtonStyle.gray, label="Next", custom_id='next'))
 
-            if message is None:
-                await ctx.send(
-                    embed=embed,
-                    components=[btns]
-                )
-                interaction = await self.bot.wait_for("button_click", check=nextBtnClick())
-                message = interaction.message
-                # await interaction.message.edit(', components=[])
-                # await interaction.send('Next button clicked')
-            else:
-                await message.edit(
-                    embed=embed,
-                    components=[btns]
-                )
-                interaction = await self.bot.wait_for("button_click", check=nextBtnClick())
-                message = interaction.message
-                # await interaction.message.edit(', components=[])
-                # await interaction.send('Next button clicked')          
+                if message is None:
+                    await ctx.send(
+                        embed=embed,
+                        components=[btns]
+                    )
+                    interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
+                    message = interaction.message
+                else:
+                    await message.edit(
+                        embed=embed,
+                        components=[btns]
+                    )
+                    interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
+                    message = interaction.message
+            except asyncio.TimeoutError:
+                break
 
         # first = pokedex[0]
         # pokemon = trainer.getPokemon(first['id'])
