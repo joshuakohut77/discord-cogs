@@ -120,7 +120,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
     
 
     @_trainer.command()
-    async def inventory(self, ctx: commands.Context, user: discord.Member):
+    async def inventory(self, ctx: commands.Context, user: discord.Member = None):
         """Show trainer inventory"""
         if user is None:
             user = ctx.author
