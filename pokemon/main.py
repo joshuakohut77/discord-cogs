@@ -321,7 +321,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             user = ctx.author
 
         # This will create the trainer if it doesn't exist
-        trainer = TrainerClass(user.id)
+        trainer = TrainerClass(str(user.id))
         pokemon = trainer.getStarterPokemon()
         stats = pokemon.getPokeStats()
 
