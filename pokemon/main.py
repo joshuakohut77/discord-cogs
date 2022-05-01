@@ -2,6 +2,8 @@ from __future__ import annotations
 from typing import Any, Dict, List, TYPE_CHECKING
 from abc import ABCMeta
 
+from pokebase.loaders import pokedex
+
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -58,15 +60,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
     #
     # Commands:
     #
-    # [p]trainer starter
     # [p]trainer pokedex <user> - user is optional
     # [p]trainer pokemon <user> - owned pokemon user optional
     # [p]trainer setactive <id> - unique id of pokemon in db (validate it's their id)
     # [p]trainer action - UI provides buttons to interact
-    # [p]trainer inventory <user> - user optional
-    #
-    # [p]pokemart - UI provides buttons to interact
-    # [p]pokemark buy <item> <count> - purchase poke mart item(s)
     #
     # [p]pokemon stats <id> - unique id of pokemon in db (stats + moves)
     # [p]pokemon wiki <id> - any pokemon general wiki
@@ -128,7 +125,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         inv = InventoryClass(str(user.id))
 
         # Create the embed object
-        embed = discord.Embed(title=f"Pokemart - TODO: Area Name")
+        embed = discord.Embed(title=f"Inventory")
         embed.set_thumbnail(url=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png")
         embed.set_author(name=f"{user.display_name}",
                          icon_url=str(user.avatar_url))
@@ -136,6 +133,30 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         embed.add_field(name=f"▶️  Pokeballs", value=f'{inv.pokeball}', inline=True)
         embed.add_field(name=f"▶️  Potion", value=f'{inv.potion}', inline=True)
         embed.add_field(name=f"▶️  Money", value=f'{inv.money}', inline=True)
+
+        await ctx.send(embed=embed)
+
+    @_trainer.command()
+    async def pokedex(self, ctx: commands.Context, user: discord.Member = None):
+        if user is None:
+            user = ctx.author
+
+        trainer = TrainerClass('456')
+        
+        # Create the embed object
+        embed = discord.Embed(title=f"Pokedex")
+        embed.set_thumbnail(url=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png")
+        embed.set_author(name=f"{user.display_name}",
+                         icon_url=str(user.avatar_url))
+
+        pokedex = trainer.getPokedex()
+
+        first = pokedex[0]
+        pokemon = trainer.getPokemon(first['id'])
+
+        embed.add_field(name=f"Pokemon", value=f"{pokemon['name']}", inline=False)
+        embed.add_field(name=f"Last seen", value=f"{pokemon['lastseen']}", inline=False)
+        embed.set_thumbnail(url=f"{pokemon.spriteURL}")
 
         await ctx.send(embed=embed)
 

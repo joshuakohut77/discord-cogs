@@ -147,6 +147,7 @@ class trainer:
         
         return pokemon
 
+    # TODO: This needs to update the trainers pokedex
     def getStarterPokemon(self):
         """ returns a random starter pokemon dictionary {pokemon: id} """
         if not self.trainerExists:
@@ -190,6 +191,11 @@ class trainer:
 
         return pokemon
 
+    def getPokemon(self, pokemonId):
+        pokemon = pokeClass(pokemonId)
+        pokemon.load()
+        return pokemon
+
     def getPokedex(self):
         """ returns a list of dictionary from the trainers pokedex """
         pokedex = []
@@ -209,7 +215,8 @@ class trainer:
 
         # delete and close connection
         del db
-        return totalCaught, pokedex
+        # return totalCaught, pokedex
+        return pokedex
 
     def heal(self, trainerId, item):
         """ uses a potion to heal a pokemon """
