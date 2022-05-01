@@ -158,7 +158,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 btns = []
                 if i > 0:
                     btns.append(Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'))
-                if i < 10 - 1:
+                if i < 5 - 1:
                     btns.append(Button(style=ButtonStyle.gray, label="Next", custom_id='next'))
 
                 if interaction is None:
