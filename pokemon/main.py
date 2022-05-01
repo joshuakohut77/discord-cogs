@@ -143,9 +143,68 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         if user is None:
             user = ctx.author
 
-        trainer = TrainerClass(str(user.id))
+        def nextBtnClick():
+            return lambda x: x.custom_id == "next" or x.custom_id == 'previous' or x.custom_id == 'stats' or x.custom_id == 'wiki'
 
-        pass
+        trainer = TrainerClass(str(user.id))
+        pokeList = trainer.getPokemon()
+
+        interaction: discord_components.Interaction = None
+        pokeLength = len(pokeList)
+        i = 0
+        while True:
+            try:
+                pokemon = pokeList[i]
+                stats = pokemon.getPokeStats()
+
+                # Create the embed object
+                embed = discord.Embed(title=f"{pokemon.name}")
+                embed.set_author(name=f"{user.display_name}",
+                                icon_url=str(user.avatar_url))
+                embed.add_field(
+                    name="Level", value=f"{pokemon.currentLevel}", inline=True)
+                embed.add_field(
+                    name="Attack", value=f"{stats['attack']}", inline=True)
+                embed.add_field(
+                    name="Defense", value=f"{stats['defense']}", inline=True)
+                embed.set_thumbnail(url=f"{pokemon.spriteURL}")
+
+                btns = []
+                if i > 0:
+                    btns.append(Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'))
+                if i < pokeLength - 1:
+                    btns.append(Button(style=ButtonStyle.gray, label="Next", custom_id='next'))
+
+                btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
+                btns.append(Button(style=ButtonStyle.green, label="Wiki", custom_id='wiki'))
+
+                if interaction is None:
+                    await ctx.send(
+                        embed=embed,
+                        components=[btns]
+                    )
+                    interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
+                    # message = interaction.message
+                else:
+                    await interaction.edit_origin(
+                        embed=embed,
+                        components=[btns]
+                    )
+                    interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
+                    # message = interaction.message
+                
+                if interaction.custom_id == 'next':
+                    i = i + 1
+                if (interaction.custom_id == 'previous'):
+                    i = i - 1
+                if interaction.custom_id == 'stats':
+                    interaction.send('Not implemented')
+                    break
+                if interaction.custom_id == 'wiki':
+                    interaction.send('Not implemented')
+                    break
+            except asyncio.TimeoutError:
+                break
 
     @_trainer.command()
     async def pokedex(self, ctx: commands.Context, user: discord.Member = None):
