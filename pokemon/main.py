@@ -18,6 +18,7 @@ import psycopg as pg
 # from .models.helpers import *
 from models.trainerclass import trainer as TrainerClass
 from models.storeclass import store as StoreClass
+from models.inventoryclass import inventory as InventoryClass
 
 
 class CompositeClass(commands.CogMeta, ABCMeta):
@@ -109,9 +110,6 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
     async def buy(self, ctx: commands.Context, item: str, count: int = 1) -> None:
         """List the pokemart items available to you
         """
-
-        # await ctx.send(f'{item}')
-
         user = ctx.author
 
         store = StoreClass(str(user.id))
@@ -119,7 +117,27 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         await ctx.send(res)
         await ctx.send(f'{user.display_name} bought {count} {item}')
-        
+    
+
+    @_trainer.command()
+    async def inventory(self, ctx: commands.Context, user: discord.Member):
+        """Show trainer inventory"""
+        if user is None:
+            user = ctx.author
+
+        inv = InventoryClass(user.id)
+
+        # Create the embed object
+        embed = discord.Embed(title=f"Pokemart - TODO: Area Name")
+        embed.set_thumbnail(url=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png")
+        embed.set_author(name=f"{user.display_name}",
+                         icon_url=str(user.avatar_url))
+
+        embed.add_field(name=f"▶️  Pokeballs", value=f'{inv.pokeball}', inline=True)
+        embed.add_field(name=f"▶️  Potion", value=f'{inv.potion}', inline=True)
+        embed.add_field(name=f"▶️  Money", value=f'{inv.money}', inline=True)
+
+        await ctx.send(embed=embed)
 
     @_trainer.command()
     async def button(self, ctx: commands.Context, user: discord.Member = None) -> None:
