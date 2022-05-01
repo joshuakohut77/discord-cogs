@@ -58,7 +58,7 @@ class trainer:
         # create pokemon with unique stats using the pokemon class
         if starterId is not None:
             pokemon = pokeClass(starterId)
-            pokemon.load(self.discordId)
+            pokemon.load(trainerId=self.discordId)
         if not starterId:
             # trainer does not yet have a starter, create one
             if 'cactitwig' in self.discordId.lower():
