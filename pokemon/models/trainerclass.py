@@ -59,21 +59,22 @@ class trainer:
         # create pokemon with unique stats using the pokemon class
         if starterId is not None:
             pokemon = pokeClass(starterId)
-            pokemon.load(trainerId=self.trainerId)
+            pokemon.load(pokemonId=starterId)
         else:
+            pokeId: int = None
             # trainer does not yet have a starter, create one
             if 'cactitwig' in self.discordId.lower():
                 starter = {'rattata': 19}
-                starterId = starter['rattata']
+                pokeId = starter['rattata']
             else:
                 sequence = [
                     {'bulbasaur': 1},
                     {'charmander': 4},
                     {'squirtle': 7}]
                 starter = random.choice(sequence)
-                starterId = list(starter.values())[0]
+                pokeId = list(starter.values())[0]
 
-            pokemon = pokeClass(starterId)
+            pokemon = pokeClass(pokeId)
             pokemon.create(STARTER_LEVEL)
             updateString = 'UPDATE trainer SET "starterId"=%s WHERE "discord_id"=%s'
             db.execute(updateString, (starterId, self.discordId))
@@ -92,9 +93,9 @@ class trainer:
         results = db.queryAll(queryString, (self.discordId,))
 
         for row in results:
-            trainerId = row[0]
+            pokemonId = row[0]
             pokemon = pokeClass()
-            pokemon.load(trainerId=trainerId)
+            pokemon.load(pokemonId=pokemonId)
             pokemonList.append(pokemon)
         # delete and close connection
         del db
@@ -107,12 +108,12 @@ class trainer:
         queryString = 'SELECT "activePokemon" FROM trainer WHERE discord_id = %s'
         results = db.queryAll(queryString, (self.discordId,))
 
-        trainerId = results[0][0]
-        if trainerId is None:
+        pokemonId = results[0][0]
+        if pokemonId is None:
             pokemon = "You do not have an active Pokemon!"
         else:
             pokemon = pokeClass()
-            pokemon.load(trainerId=trainerId)
+            pokemon.load(pokemonId=pokemonId)
 
         # delete and close connection
         del db
@@ -297,10 +298,10 @@ class trainer:
         # delete and close connection
         del db
 
-    def __healPokemon(self, trainerId, item):
+    def __healPokemon(self, pokemonId, item):
         """ heals a pokemons currentHP """
         pokemon = pokeClass()
-        pokemon.load(trainerId)
+        pokemon.load(pokemonId)
         statsDict = pokemon.getPokeStats()
         maxHP = statsDict['hp']
         currentHP = pokemon.currentHP
