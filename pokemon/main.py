@@ -174,6 +174,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                     )
                     interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
                     message = interaction.message
+                    interaction
+                i = i + 1
             except asyncio.TimeoutError:
                 break
 
@@ -231,8 +233,9 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         )
 
         interaction = await self.bot.wait_for("button_click", check=lambda i: i.custom_id == "button1")
-        await interaction.message.edit('Buttons', components=[])
-        await interaction.send('Button 1 clicked')
+        # await interaction.message.edit('Buttons', components=[])
+        await interaction.edit_origin('Buttons', components=[])
+        # await interaction.send('Button 1 clicked')
         # await interaction.send('Done')
         # await interaction.send(f'{msg.id}')
 
