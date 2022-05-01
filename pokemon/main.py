@@ -141,7 +141,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         if user is None:
             user = ctx.author
 
-        def nextBtnClick(ctx):
+        def nextBtnClick():
             return lambda i: i.custom_id == "next"
 
         trainer = TrainerClass('456')
