@@ -184,7 +184,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 #     btns.append(Button(style=ButtonStyle.gray, label="Next", disabled=True))
                 
                 # await interaction.edit_origin(embed=embed, components=[btns])
-                i = i + 1
+                if interaction.custom_id == 'next':
+                    i = i + 1
+                if (interaction.custom_id == 'previous'):
+                    i = i - 1
             except asyncio.TimeoutError:
                 break
 
