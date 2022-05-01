@@ -59,7 +59,7 @@ class trainer:
         if starterId is not None:
             pokemon = pokeClass(starterId)
             pokemon.load(trainerId=self.discordId)
-        if not starterId:
+        else:
             # trainer does not yet have a starter, create one
             if 'cactitwig' in self.discordId.lower():
                 starter = {'rattata': 19}
