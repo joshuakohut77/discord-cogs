@@ -42,7 +42,7 @@ class trainer:
         """ returns a list of pokemon objects for every pokemon in the database belonging to the trainer """
         db = dbconn()
         pokemonList = []
-        queryString = 'SELECT id FROM pokemon WHERE "discord_id" = %s'
+        queryString = 'SELECT id FROM pokemon WHERE discord_id = %s'
         results = db.queryAll(queryString, (self.discordId,))
 
         for row in results:
