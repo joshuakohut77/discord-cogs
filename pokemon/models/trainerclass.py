@@ -75,8 +75,8 @@ class trainer:
 
             pokemon = pokeClass(pokeId)
             pokemon.create(STARTER_LEVEL)
-            updateString = 'UPDATE trainer SET "starterId"=%s WHERE "discord_id"=%s'
-            db.execute(updateString, (starterId, self.discordId))
+            updateString = 'UPDATE trainer SET "starterId"=%s, "activePokemon"=%s, WHERE "discord_id"=%s'
+            db.execute(updateString, (starterId, starterId, self.discordId))
             # save starter into
             pokemon.save(self.discordId)
         # delete and close connection

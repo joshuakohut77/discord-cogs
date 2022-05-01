@@ -335,7 +335,7 @@ class Pokemon:
         db.execute(queryString, values)
 
         results = db.querySingle('SELECT id FROM pokemon WHERE discord_id=%s', (self.discordId,))
-        self.trainerId = results[0][0]
+        self.trainerId = results[0]
 
         # delete and close connectino
         del db
