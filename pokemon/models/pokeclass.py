@@ -327,7 +327,8 @@ class Pokemon:
             """
             values = (self.discordId, self.id, self.name, self.spriteURL, self.growthRate, self.currentLevel, self.currentExp, self.traded, self.hp.base, self.attack.base, self.defense.base, self.speed.base, self.special_attack.base, self.special_defense.base, self.hp.IV, self.attack.IV,
                     self.defense.IV, self.speed.IV, self.special_attack.IV, self.special_defense.IV, self.hp.EV, self.attack.EV, self.defense.EV, self.speed.EV, self.special_attack.EV, self.special_defense.EV, self.move_1, self.move_2, self.move_3, self.move_4, self.types, self.currentHP)
-            self.trainerId = db.executeAndReturn(queryString, values)
+            trainerIds = db.executeAndReturn(queryString, values)
+            self.trainerId = trainerIds[0]
         else:
             queryString = """
                 UPDATE pokemon
