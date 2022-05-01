@@ -154,8 +154,9 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         first = pokedex[0]
         pokemon = trainer.getPokemon(first['id'])
 
-        embed.add_field(name=f"Pokemon", value=f"{pokemon['name']}", inline=False)
-        embed.add_field(name=f"Last seen", value=f"{pokemon['lastseen']}", inline=False)
+        embed.add_field(name=f"No.", value=f"{pokemon.id}", inline=False)
+        embed.add_field(name=f"Pokemon", value=f"{pokemon.name}", inline=False)
+        embed.add_field(name=f"Last seen", value=f"{first['lastseen']}", inline=False)
         embed.set_thumbnail(url=f"{pokemon.spriteURL}")
 
         await ctx.send(embed=embed)
