@@ -141,19 +141,35 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         if user is None:
             user = ctx.author
 
+        def nextBtnClick(ctx):
+            return lambda i: i.custom_id == "next"
+
         trainer = TrainerClass('456')
-        
+
+        pokedex = trainer.getPokedex()
+
+        for i in range(3):
+            embed = discord.Embed(title=f"Pokedex")
+            btn = Button(style=ButtonStyle.gray,
+                        label="Next", custom_id='next')
+            await ctx.send(
+                embed=embed,
+                components=[[
+                    btn
+                    # self.bot.components_manager.add_callback(b, callback)
+                ]]
+            )  
+            interaction = await self.bot.wait_for("button_click", check=nextBtnClick())
+            await interaction.send('Next button clicked')
+
+        first = pokedex[0]
+        pokemon = trainer.getPokemon(first['id'])
+
         # Create the embed object
         embed = discord.Embed(title=f"Pokedex")
         embed.set_thumbnail(url=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png")
         embed.set_author(name=f"{user.display_name}",
                          icon_url=str(user.avatar_url))
-
-        pokedex = trainer.getPokedex()
-
-        first = pokedex[0]
-        pokemon = trainer.getPokemon(first['id'])
-
         embed.add_field(name=f"No.", value=f"{pokemon.id}", inline=False)
         embed.add_field(name=f"Pokemon", value=f"{pokemon.name}", inline=False)
         embed.add_field(name=f"Last seen", value=f"{first['lastSeen']}", inline=False)
@@ -163,9 +179,6 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         btn = Button(style=ButtonStyle.gray,
                      label="Next", custom_id='next')
 
-        def nextBtnClick(ev):
-            print(ev)
-            return ev.custom_id == 'next'
 
         await ctx.send(
             embed=embed,
@@ -175,7 +188,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             ]]
         )
         
-        interaction = await self.bot.wait_for("button_click", check=nextBtnClick)
+        interaction = await self.bot.wait_for("button_click", check=nextBtnClick())
         # await ctx.send(embed=embed)
 
     @_trainer.command()
