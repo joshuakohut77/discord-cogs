@@ -18,7 +18,6 @@ class trainer:
     def __init__(self, discordId):
         self.discordId = str(discordId)
         self.trainerExists = False
-        self.trainerId = None
         # check create trainer if exists or not
         self.__checkCreateTrainer()
 
@@ -291,8 +290,6 @@ class trainer:
             updateQuery = 'INSERT INTO inventory (discord_id) VALUES(%s)'
             db.execute(updateQuery, (self.discordId,))
 
-        results = db.querySingle('SELECT id FROM trainer WHERE discord_id=%s', (self.discordId,))
-        self.trainerId = results[0]['id']
         self.trainerExists = True
 
         # delete and close connection
