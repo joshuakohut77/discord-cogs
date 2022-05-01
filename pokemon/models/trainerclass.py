@@ -38,7 +38,7 @@ class trainer:
         del db
         return "Trainer deleted successfully!"
 
-    def getPokeon(self):
+    def getPokemon(self):
         """ returns a list of pokemon objects for every pokemon in the database belonging to the trainer """
         db = dbconn()
         pokemonList = []
@@ -191,10 +191,10 @@ class trainer:
 
         return pokemon
 
-    def getPokemon(self, pokemonId):
-        pokemon = pokeClass(pokemonId)
-        pokemon.load()
-        return pokemon
+    # def getPokemon(self, pokemonId):
+    #     pokemon = pokeClass(pokemonId)
+    #     pokemon.load()
+    #     return pokemon
 
     def getPokedex(self):
         """ returns a list of dictionary from the trainers pokedex """
@@ -230,7 +230,7 @@ class trainer:
 
     def healAll(self):
         """ heals all pokemon to max HP """
-        pokeList = self.getPokeon()
+        pokeList = self.getPokemon()
         for pokemon in pokeList:
             trainerId = pokemon.trainerId
             pokemon.load(trainerId)
