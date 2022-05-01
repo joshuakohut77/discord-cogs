@@ -155,7 +155,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             btns = []
             if i > 0:
                 btns.append(Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'))
-            if i < r.count() - 1:
+            if i < r.stop - 1:
                 btns.append(Button(style=ButtonStyle.gray, label="Next", custom_id='next'))
 
             if message is None:
