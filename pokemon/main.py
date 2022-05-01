@@ -125,7 +125,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         if user is None:
             user = ctx.author
 
-        inv = InventoryClass(user.id)
+        inv = InventoryClass(str(user.id))
 
         # Create the embed object
         embed = discord.Embed(title=f"Pokemart - TODO: Area Name")
