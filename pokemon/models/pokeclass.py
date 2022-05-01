@@ -37,9 +37,9 @@ class Pokemon:
         self.move_4 = None
         self.currentHP = None
 
-    def load(self, trainerId=None):
+    def load(self, pokemonId=None):
         """ populates the object with stats from pokeapi """
-        if trainerId is None:
+        if pokemonId is None:
             pokemon = pb.pokemon(self.id_or_name)
             self.name = pokemon.species.name
             self.id = pokemon.id
@@ -55,7 +55,7 @@ class Pokemon:
         else:
             # load pokemon from db using trainerId as unique primary key from Pokemon table
             self.wildPokemon = False
-            self.__loadPokemonFromDB(trainerId)
+            self.__loadPokemonFromDB(pokemonId)
             return
 
     def create(self, level):
@@ -266,11 +266,11 @@ class Pokemon:
     # Private Class Methods
     ####
 
-    def __loadPokemonFromDB(self, trainerId):
+    def __loadPokemonFromDB(self, pokemonId):
         """ loads and creates a pokemon object from the database """
         db = dbconn()
         queryString = 'SELECT "id", "discord_id", "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", traded, base_hp, base_attack, base_defense, base_speed, base_special_attack, base_special_defense, "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", "move_4", "types", "currentHP" FROM pokemon WHERE "id" = %s'
-        result = db.querySingle(queryString, (int(trainerId),))
+        result = db.querySingle(queryString, (int(pokemonId),))
 
         # for result in results:
         self.trainerId = result[0]
@@ -333,6 +333,9 @@ class Pokemon:
             values = values + (self.trainerId,)
 
         db.execute(queryString, values)
+
+        results = db.querySingle('SELECT id FROM pokemon WHERE discord_id=%s', (self.discordId,))
+        self.trainerId = results[0][0]
 
         # delete and close connectino
         del db
