@@ -142,25 +142,39 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             user = ctx.author
 
         def nextBtnClick():
-            return lambda i: i.custom_id == "next"
+            return lambda i: i.custom_id == "next" or i.custom_id == 'previous'
 
         trainer = TrainerClass('456')
 
         pokedex = trainer.getPokedex()
 
+        message: discord.Message = None
         for i in range(3):
             embed = discord.Embed(title=f"Pokedex")
-            btn = Button(style=ButtonStyle.gray,
-                        label="Next", custom_id='next')
-            await ctx.send(
-                embed=embed,
-                components=[[
-                    btn
-                    # self.bot.components_manager.add_callback(b, callback)
-                ]]
-            )  
-            interaction = await self.bot.wait_for("button_click", check=nextBtnClick())
-            await interaction.send('Next button clicked')
+            btns = []
+            if i > 0:
+                btns.append(Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'))
+            if i < 3 - 1:
+                btns.append(Button(style=ButtonStyle.gray, label="Next", custom_id='next'))
+
+            if message is None:
+                await ctx.send(
+                    embed=embed,
+                    components=[btns]
+                )
+                interaction = await self.bot.wait_for("button_click", check=nextBtnClick())
+                message = interaction.message
+                # await interaction.message.edit(', components=[])
+                # await interaction.send('Next button clicked')
+            else:
+                await message.edit(
+                    embed=embed,
+                    components=[btns]
+                )
+                interaction = await self.bot.wait_for("button_click", check=nextBtnClick())
+                message = interaction.message
+                # await interaction.message.edit(', components=[])
+                # await interaction.send('Next button clicked')          
 
         first = pokedex[0]
         pokemon = trainer.getPokemon(first['id'])
