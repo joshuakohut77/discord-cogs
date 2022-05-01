@@ -64,3 +64,15 @@ class db:
             cur.execute(queryString)
         self.conn.commit()
         cur.close()
+
+    def executeAndReturn(self, queryString, params=None):
+        """ takes a update/insert statement, runs it, and committing if no errors. params is a sequence of values to pass into the queryString"""
+        cur = self.conn.cursor()
+        if params:
+            cur.execute(queryString, (params))
+        else:
+            cur.execute(queryString)
+        self.conn.commit()
+        result = cur.fetchone()
+        cur.close()
+        return result
