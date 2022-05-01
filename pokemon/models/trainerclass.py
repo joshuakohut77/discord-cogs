@@ -38,6 +38,51 @@ class trainer:
         del db
         return "Trainer deleted successfully!"
 
+    # TODO: This needs to update the trainers pokedex
+    # TODO: This needs to update the trainers active pokemon if this is their first pokemon
+    def getStarterPokemon(self):
+        """Returns a random starter pokemon dictionary {pokemon: id} """
+        if not self.trainerExists:
+            return None
+        db = dbconn()
+        queryString = 'SELECT "starterId" FROM trainer WHERE discord_id = %s'
+
+        result = db.querySingle(queryString, (self.discordId,))
+
+        starterId: int = None
+
+        # if at least one row returned then the trainer exists otherwise they do not
+        if len(result) > 0:
+            starterId = result[0]
+
+        # create pokemon with unique stats using the pokemon class
+        if starterId is not None:
+            pokemon = pokeClass(starterId)
+            pokemon.load(self.discordId)
+        if not starterId:
+            # trainer does not yet have a starter, create one
+            if 'cactitwig' in self.discordId.lower():
+                starter = {'rattata': 19}
+                starterId = starter['rattata']
+            else:
+                sequence = [
+                    {'bulbasaur': 1},
+                    {'charmander': 4},
+                    {'squirtle': 7}]
+                starter = random.choice(sequence)
+                starterId = list(starter.values())[0]
+
+            pokemon = pokeClass(starterId)
+            pokemon.create(STARTER_LEVEL)
+            updateString = 'UPDATE trainer SET "starterId"=%s WHERE "discord_id"=%s'
+            db.execute(updateString, (starterId, self.discordId))
+            # save starter into
+            pokemon.save(self.discordId)
+        # delete and close connection
+        del db
+
+        return pokemon
+
     def getPokemon(self):
         """ returns a list of pokemon objects for every pokemon in the database belonging to the trainer """
         db = dbconn()
@@ -145,51 +190,6 @@ class trainer:
             pokemon = pokeClass(name)
             pokemon.create(level)
         
-        return pokemon
-
-    # TODO: This needs to update the trainers pokedex
-    # TODO: This needs to update the trainers active pokemon if this is their first pokemon
-    def getStarterPokemon(self):
-        """Returns a random starter pokemon dictionary {pokemon: id} """
-        if not self.trainerExists:
-            return None
-        db = dbconn()
-        queryString = 'SELECT "starterId" FROM trainer WHERE discord_id = %s'
-
-        result = db.querySingle(queryString, (self.discordId,))
-
-        starterId: int = None
-
-        # if at least one row returned then the trainer exists otherwise they do not
-        if len(result) > 0:
-            starterId = result[0]
-
-        # create pokemon with unique stats using the pokemon class
-        if starterId is not None:
-            pokemon = pokeClass(starterId)
-            pokemon.load(pokemon.id)
-        if not starterId:
-            # trainer does not yet have a starter, create one
-            if 'cactitwig' in self.discordId.lower():
-                starter = {'rattata': 19}
-                starterId = starter['rattata']
-            else:
-                sequence = [
-                    {'bulbasaur': 1},
-                    {'charmander': 4},
-                    {'squirtle': 7}]
-                starter = random.choice(sequence)
-                starterId = list(starter.values())[0]
-
-            pokemon = pokeClass(starterId)
-            pokemon.create(STARTER_LEVEL)
-            updateString = 'UPDATE trainer SET "starterId"=%s WHERE "discord_id"=%s'
-            db.execute(updateString, (starterId, self.discordId))
-            # save starter into
-            pokemon.save(self.discordId)
-        # delete and close connection
-        del db
-
         return pokemon
 
     # def getPokemon(self, pokemonId):
