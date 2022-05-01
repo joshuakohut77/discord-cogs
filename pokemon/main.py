@@ -149,12 +149,13 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         pokedex = trainer.getPokedex()
 
         message: discord.Message = None
-        for i in range(3):
+        r = range(5)
+        for i in r:
             embed = discord.Embed(title=f"Pokedex")
             btns = []
             if i > 0:
                 btns.append(Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'))
-            if i < 3 - 1:
+            if i < r.count() - 1:
                 btns.append(Button(style=ButtonStyle.gray, label="Next", custom_id='next'))
 
             if message is None:
@@ -176,33 +177,33 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 # await interaction.message.edit(', components=[])
                 # await interaction.send('Next button clicked')          
 
-        first = pokedex[0]
-        pokemon = trainer.getPokemon(first['id'])
+        # first = pokedex[0]
+        # pokemon = trainer.getPokemon(first['id'])
 
-        # Create the embed object
-        embed = discord.Embed(title=f"Pokedex")
-        embed.set_thumbnail(url=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png")
-        embed.set_author(name=f"{user.display_name}",
-                         icon_url=str(user.avatar_url))
-        embed.add_field(name=f"No.", value=f"{pokemon.id}", inline=False)
-        embed.add_field(name=f"Pokemon", value=f"{pokemon.name}", inline=False)
-        embed.add_field(name=f"Last seen", value=f"{first['lastSeen']}", inline=False)
-        embed.set_thumbnail(url=f"{pokemon.spriteURL}")
-
-
-        btn = Button(style=ButtonStyle.gray,
-                     label="Next", custom_id='next')
+        # # Create the embed object
+        # embed = discord.Embed(title=f"Pokedex")
+        # embed.set_thumbnail(url=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png")
+        # embed.set_author(name=f"{user.display_name}",
+        #                  icon_url=str(user.avatar_url))
+        # embed.add_field(name=f"No.", value=f"{pokemon.id}", inline=False)
+        # embed.add_field(name=f"Pokemon", value=f"{pokemon.name}", inline=False)
+        # embed.add_field(name=f"Last seen", value=f"{first['lastSeen']}", inline=False)
+        # embed.set_thumbnail(url=f"{pokemon.spriteURL}")
 
 
-        await ctx.send(
-            embed=embed,
-            components=[[
-                btn
-                # self.bot.components_manager.add_callback(b, callback)
-            ]]
-        )
+        # btn = Button(style=ButtonStyle.gray,
+        #              label="Next", custom_id='next')
+
+
+        # await ctx.send(
+        #     embed=embed,
+        #     components=[[
+        #         btn
+        #         # self.bot.components_manager.add_callback(b, callback)
+        #     ]]
+        # )
         
-        interaction = await self.bot.wait_for("button_click", check=nextBtnClick())
+        # interaction = await self.bot.wait_for("button_click", check=nextBtnClick())
         # await ctx.send(embed=embed)
 
     @_trainer.command()
