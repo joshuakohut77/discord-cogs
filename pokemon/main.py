@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Any, Dict, List, TYPE_CHECKING
 from abc import ABCMeta
+import discord_components
 
 from pokebase.loaders import pokedex
 
@@ -149,7 +150,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         pokedex = trainer.getPokedex()
 
-        message: discord.Message = None
+        interaction: discord_components.Interaction = None
         i = 0
         while True:
             try:
@@ -160,21 +161,29 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 if i < len(pokedex) - 1:
                     btns.append(Button(style=ButtonStyle.gray, label="Next", custom_id='next'))
 
-                if message is None:
+                if interaction is None:
                     await ctx.send(
                         embed=embed,
                         components=[btns]
                     )
                     interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
-                    message = interaction.message
+                    # message = interaction.message
                 else:
-                    await message.edit(
+                    await interaction.edit_origin(
                         embed=embed,
                         components=[btns]
                     )
                     interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
-                    message = interaction.message
-                    interaction
+                    # message = interaction.message
+                
+                embed = discord.Embed(title=f"Loading...")
+                btns = []
+                if i > 0:
+                    btns.append(Button(style=ButtonStyle.gray, label='Previous', disabled=True))
+                if i < len(pokedex) - 1:
+                    btns.append(Button(style=ButtonStyle.gray, label="Next", disabled=True))
+                
+                await interaction.edit_origin(embed=embed, components=[btns])
                 i = i + 1
             except asyncio.TimeoutError:
                 break
