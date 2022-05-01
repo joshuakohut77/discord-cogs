@@ -39,7 +39,6 @@ class trainer:
         return "Trainer deleted successfully!"
 
     # TODO: This needs to update the trainers pokedex
-    # TODO: This needs to update the trainers active pokemon if this is their first pokemon
     def getStarterPokemon(self):
         """Returns a random starter pokemon dictionary {pokemon: id} """
         if not self.trainerExists:
@@ -74,7 +73,13 @@ class trainer:
                 pokeId = list(starter.values())[0]
 
             pokemon = pokeClass(pokeId)
-            pokemon.create(STARTER_LEVEL)            
+            pokemon.create(STARTER_LEVEL)
+
+            # BUG:  It is possible for the pokemon to save to the db as one of the
+            #       trainers pokemon, but fail to update the trainer with the starter.
+            # TODO: Make the all the queries part of one transaction that will rollback
+            #       if it fails.
+            
             # save starter into
             pokemon.save(self.discordId)
 
