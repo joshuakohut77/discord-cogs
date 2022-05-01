@@ -148,8 +148,9 @@ class trainer:
         return pokemon
 
     # TODO: This needs to update the trainers pokedex
+    # TODO: This needs to update the trainers active pokemon if this is their first pokemon
     def getStarterPokemon(self):
-        """ returns a random starter pokemon dictionary {pokemon: id} """
+        """Returns a random starter pokemon dictionary {pokemon: id} """
         if not self.trainerExists:
             return None
         db = dbconn()
@@ -157,30 +158,30 @@ class trainer:
 
         result = db.querySingle(queryString, (self.discordId,))
 
-        hasStarter = False
-        starterId = -1
-        if len(result) > 0:
-            # if at least one row returned then the trainer exists otherwise they do not
-            starterId = result[0]
-            if starterId is not None:
-                hasStarter = True
+        starterId: int = None
 
-        if not hasStarter:
+        # if at least one row returned then the trainer exists otherwise they do not
+        if len(result) > 0:
+            starterId = result[0]
+
+        # create pokemon with unique stats using the pokemon class
+        if starterId is not None:
+            pokemon = pokeClass(starterId)
+            pokemon.load(pokemon.id)
+        if not starterId:
             # trainer does not yet have a starter, create one
             if 'cactitwig' in self.discordId.lower():
                 starter = {'rattata': 19}
-                starterId = list(starter.values())[0]
+                starterId = starter['rattata']
             else:
-                sequence = [{'bulbasaur': 1}, {
-                    'charmander': 4}, {'squirtle': 7}]
+                sequence = [
+                    {'bulbasaur': 1},
+                    {'charmander': 4},
+                    {'squirtle': 7}]
                 starter = random.choice(sequence)
                 starterId = list(starter.values())[0]
 
-        # create pokemon with unique stats using the pokemon class
-        pokemon = pokeClass(starterId)
-        if hasStarter:
-            pokemon.load(pokemon.id)
-        if not hasStarter:
+            pokemon = pokeClass(starterId)
             pokemon.create(STARTER_LEVEL)
             updateString = 'UPDATE trainer SET "starterId"=%s WHERE "discord_id"=%s'
             db.execute(updateString, (starterId, self.discordId))
