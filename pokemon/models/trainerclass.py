@@ -18,6 +18,7 @@ class trainer:
     def __init__(self, discordId):
         self.discordId = str(discordId)
         self.trainerExists = False
+        self.trainerId = None
         # check create trainer if exists or not
         self.__checkCreateTrainer()
 
@@ -58,7 +59,7 @@ class trainer:
         # create pokemon with unique stats using the pokemon class
         if starterId is not None:
             pokemon = pokeClass(starterId)
-            pokemon.load(trainerId=self.discordId)
+            pokemon.load(trainerId=self.trainerId)
         else:
             # trainer does not yet have a starter, create one
             if 'cactitwig' in self.discordId.lower():
@@ -289,6 +290,8 @@ class trainer:
             updateQuery = 'INSERT INTO inventory (discord_id) VALUES(%s)'
             db.execute(updateQuery, (self.discordId,))
 
+        resulsts = db.querySingle('SELECT id FROM trainer WHERE discord_id=%s', (self.discordId,))
+        self.trainerId = results[0]['id']
         self.trainerExists = True
 
         # delete and close connection
