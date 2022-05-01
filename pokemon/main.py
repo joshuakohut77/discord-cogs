@@ -323,7 +323,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         # This will create the trainer if it doesn't exist
         trainer = TrainerClass(str(user.id))
         pokemon = trainer.getStarterPokemon()
-        stats = pokemon.getPokeStats()
+        # stats = pokemon.getPokeStats()
 
         # Create the embed object
         embed = discord.Embed(title=f"Your starter is {pokemon.name}")
@@ -331,10 +331,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                          icon_url=str(user.avatar_url))
         embed.add_field(
             name="Level", value=f"{pokemon.currentLevel}", inline=True)
-        embed.add_field(
-            name="Attack", value=f"{stats['attack']}", inline=True)
-        embed.add_field(
-            name="Defense", value=f"{stats['defense']}", inline=True)
+        # embed.add_field(
+        #     name="Attack", value=f"{stats['attack']}", inline=True)
+        # embed.add_field(
+        #     name="Defense", value=f"{stats['defense']}", inline=True)
         embed.set_thumbnail(url=f"{pokemon.spriteURL}")
 
         await ctx.send(embed=embed)
