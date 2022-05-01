@@ -8,7 +8,24 @@ class inventory:
         self.discordId = discordId
         self.money = None
         self.pokeball = None
+        self.greatball = None
+        self.ultraball = None
+        self.masterball = None
         self.potion = None
+        self.superpotion = None
+        self.hyperpotion = None
+        self.revive = None
+        self.fullrestoer = None
+        self.repel = None
+        self.awakening = None
+        self.escaperope = None
+        self.fullheal = None
+        self.iceheal = None
+        self.maxrepel = None
+        self.burnheal = None
+        self.paralyzeheal = None
+        self.maxpotion = None
+        self.antidote = None
         self.__loadInventory()
 
     def save(self):
