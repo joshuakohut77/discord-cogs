@@ -139,7 +139,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         await ctx.send(embed=embed)
 
     @_trainer.command()
-    async def pokemon(self, ctx: commands.Context, user: discord.Member = None):
+    async def pc(self, ctx: commands.Context, user: discord.Member = None):
         if user is None:
             user = ctx.author
 
