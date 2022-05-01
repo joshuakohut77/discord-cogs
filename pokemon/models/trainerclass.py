@@ -290,7 +290,7 @@ class trainer:
             updateQuery = 'INSERT INTO inventory (discord_id) VALUES(%s)'
             db.execute(updateQuery, (self.discordId,))
 
-        resulsts = db.querySingle('SELECT id FROM trainer WHERE discord_id=%s', (self.discordId,))
+        results = db.querySingle('SELECT id FROM trainer WHERE discord_id=%s', (self.discordId,))
         self.trainerId = results[0]['id']
         self.trainerExists = True
 
