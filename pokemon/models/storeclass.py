@@ -61,26 +61,60 @@ class store:
             inventory.save()
             return "You successfully bought that item!"
 
-    def buyItem(self, itemId, quantity):
+    def buyItem(self, name, quantity):
         """ buy and item and update trainers inventory """
+        if name not in self.storeMap.keys():
+            return "Item not available"
+        
         inventory = inv(self.discordId)
+        price = self.storeMap[name]['price']
+        totalPrice = price * quantity
+        
+        if inventory.money < totalPrice:
+            return 'You do not have enough money to buy that.'
+        else:
+            if name == 'poke-ball':
+                inventory.pokeball += quantity
+            elif name == 'great-ball':
+                inventory.greatball += quantity
+            elif name == 'ultra-ball':
+                inventory.ultraball += quantity            
+            elif name == 'master-ball':
+                inventory.masterball += quantity
+            elif name == 'potion':
+                inventory.potion += quantity
+            elif name == 'super-potion':
+                inventory.superpotion += quantity
+            elif name == 'hyper-potion':
+                inventory.hyperpotion += quantity
+            elif name == 'revive':
+                inventory.revive += quantity
+            elif name == 'full-restore':
+                inventory.fullrestore += quantity
+            elif name == 'repel':
+                inventory.repel += quantity
+            elif name == 'awakening':
+                inventory.awakening += quantity
+            elif name == 'escape-rope':
+                inventory.escaperope += quantity
+            elif name == 'full-heal':
+                inventory.greatball += quantity
+            elif name == 'ice-heal':
+                inventory.iceheal += quantity
+            elif name == 'max-repel':
+                inventory.maxrepel += quantity
+            elif name == 'burn-heal':
+                inventory.burnheal += quantity
+            elif name == 'paralyze-heal':
+                inventory.paralyzeheal += quantity
+            elif name == 'antidote':
+                inventory.antidote += quantity
+            elif name == 'max-potion':
+                inventory.maxpotion += quantity                                                                                                                                                                                                                
+            inventory.save()
+            return "You successfully bought that item!"
 
-        for item in self.storeList:
-            if item['item'] == itemId:
-                if inventory.money < (item['price'] * quantity):
-                    return 'You do not have enough money to buy that.'
-                else:
-                    inventory.money = inventory.money - \
-                        (item['price'] * quantity)
-                    # todo update this so it's not hard coded
-                    if itemId == 4:
-                        inventory.pokeball = inventory.pokeball + quantity
-                    elif itemId == 17:
-                        inventory.potion = inventory.potion + quantity
-                    inventory.save()
-                    return "You successfully bought that item!"
-
-        return "Invalid itemId %s. Please report this error." % (itemId)
+        
 
     def __getSpriteUrl(self, itemName):
         """ returns a constructed spriteUrl """
