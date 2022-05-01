@@ -81,7 +81,7 @@ class trainer:
             starterId = pokemon.trainerId
             
             # set as starter
-            updateString = 'UPDATE trainer SET "starterId"=%s, "activePokemon"=%s, WHERE "discord_id"=%s'
+            updateString = 'UPDATE trainer SET "starterId"=%s, "activePokemon"=%s WHERE "discord_id"=%s'
             db.execute(updateString, (starterId, starterId, self.discordId))
         # delete and close connection
         del db
