@@ -339,6 +339,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         await ctx.send(embed=embed)
 
+    @_trainer.command()
     async def active(self, ctx: commands.Context, user: discord.Member = None) -> None:
         """Show the currect active pokemon for the trainer."""
         if user is None:
