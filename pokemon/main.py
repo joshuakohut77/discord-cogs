@@ -139,6 +139,15 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         await ctx.send(embed=embed)
 
     @_trainer.command()
+    async def pokemon(self, ctx: commands.Context, user: discord.Member = None):
+        if user is None:
+            user = ctx.author
+
+        trainer = TrainerClass(str(user.id))
+
+        pass
+
+    @_trainer.command()
     async def pokedex(self, ctx: commands.Context, user: discord.Member = None):
         if user is None:
             user = ctx.author
@@ -176,14 +185,6 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                     interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
                     # message = interaction.message
                 
-                # embed = discord.Embed(title=f"Loading...")
-                # btns = []
-                # if i > 0:
-                #     btns.append(Button(style=ButtonStyle.gray, label='Previous', disabled=True))
-                # if i < len(pokedex) - 1:
-                #     btns.append(Button(style=ButtonStyle.gray, label="Next", disabled=True))
-                
-                # await interaction.edit_origin(embed=embed, components=[btns])
                 if interaction.custom_id == 'next':
                     i = i + 1
                 if (interaction.custom_id == 'previous'):
