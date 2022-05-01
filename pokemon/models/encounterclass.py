@@ -89,18 +89,39 @@ class encounter:
 
     def catch(self, item=None):
         # roll chance to catch pokemon and it either runs away or
+        #poke-ball, great-ball, ultra-ball, master-ball
         if not self.pokemon2.wildPokemon:
             return False, "You can only catch Wild Pokemon!"
-
-        inventory = inv(self.pokemon1.discordId)
-        if inventory.pokeball > 0:
-            inventory.pokeball = inventory.pokeball - 1
-            inventory.save()
-
         pokemonCaught = False
-        # todo update with better catch algorithm
-        if random.randrange(1, 100) <= POKEMON_CATCH_RATE:
+        inventory = inv(self.pokemon1.discordId)
+        if item == 'poke-ball':
+            ballValue = 12
+            if inventory.pokeball > 0:
+                inventory.pokeball -= 1
+        elif item == 'great-ball':
+            ballValue = 8
+            if inventory.greatball > 0:
+                inventory.greatball -= 1
+        elif item == 'ultra-ball':
+            ballValue = 6
+            if inventory.ultraball > 0:
+                inventory.ultraball -= 1
+        if item == 'master-ball':
+            if inventory.masterball > 0:
+                inventory.masterball -= 1
             pokemonCaught = True
+        else:
+            breakFree = random.randrange(1, 255+1)
+            # todo add some modifier to the HP here to change up the catch statistics
+            randHPModifier = (random.randrange(45, 100) / 100)
+            currentHP = self.pokemon2.currentHP
+            hpMax = self.pokemon2.currentHP
+            catchRate = (hpMax * 255 * 4) / (currentHP * randHPModifier * ballValue)
+            
+            if catchRate >= breakFree:
+                pokemonCaught = True
+
+        inventory.save()
 
         if pokemonCaught:
             # pokemon caught successfully. Save it to the trainers inventory
