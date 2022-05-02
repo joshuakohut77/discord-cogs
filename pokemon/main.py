@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Any, Dict, List, TYPE_CHECKING
 from abc import ABCMeta
+from discord.member import Member
 import discord_components
 import random
 
@@ -45,6 +46,78 @@ ICE_BLUE = 0xa5d6d7
 DRAGON_PURPLE = 0x6745ef
 DARK_BROWN = 0x6c594a
 FAIRY_PINK = 0xe29dac
+
+def getTypeColor(type: str) -> discord.Colours:
+    color = discord.colour.Color.dark_gray()
+
+    if 'normal' in type:
+        color = discord.Colour(NORMAL_GREY)
+    elif 'grass' in type:
+        color = discord.Colour(GRASS_GREEN)
+        pass
+    elif 'bug' in type:
+        color = discord.Colour(BUG_GREEN)
+    elif 'water' in type:
+        color = discord.Colour(WATER_BLUE)
+    elif 'fire' in type:
+        color = discord.Colour(FIRE_RED)
+    elif 'electric' in type:
+        color = discord.Colour(ELECTRIC_YELLOW)
+    elif 'rock' in type:
+        color = discord.Colour(ROCK_BROWN)
+    elif 'ground' in type:
+        color = discord.Colour(GROUND_BROWN)
+    elif 'psychic' in type:
+        color = discord.Colour(PSYCHIC_PINK)
+    elif 'ghost' in type:
+        color = discord.Colour(GHOST_PURPLE)
+    elif 'fighting' in type:
+        color = discord.Colour(FIGHTING_RED)
+    elif 'poison' in type:
+        color = discord.Colour(POISON_PURPLE)
+    elif 'flying' in type:
+        color = discord.Colour(FLYING_PURPLE)
+    elif 'steel' in type:
+        color = discord.Colour(STEEL_GREY)
+    elif 'ice' in type:
+        color = discord.Colour(ICE_BLUE)
+    elif 'dragon' in type:
+        color = discord.Colour(DRAGON_PURPLE)
+    elif 'dark' in type:
+        color = discord.Colour(DARK_BROWN)
+    elif 'fairy' in type:
+        color = discord.Colour(FAIRY_PINK)
+    return color
+
+def createPokemonEmbed(user: Member, pokemon: PokemonClass):
+    stats = pokemon.getPokeStats()
+    color = getTypeColor(pokemon.type1)
+
+    # Create the embed object
+    embed = discord.Embed(title=f"#{pokemon.id}  {pokemon.name.capitalize()}", color=color)
+    embed.set_author(name=f"{user.display_name}",
+                    icon_url=str(user.avatar_url))
+    
+    types = pokemon.type1
+    if pokemon.type2 is not None:
+        types += ', ' + pokemon.type2
+        
+    embed.add_field(
+        name="Type", value=f"{types}", inline=True)
+    
+    if pokemon.nickName is not None:
+        embed.add_field(
+            name="Nickname", value=f"{pokemon.nickName}", inline=False)
+    
+    embed.add_field(
+        name="Level", value=f"{pokemon.currentLevel}", inline=False)
+    embed.add_field(
+        name="HP", value=f"{pokemon.currentHP} / {stats['hp']}", inline=False)
+    embed.add_field(
+        name="Attack", value=f"{stats['attack']}", inline=True)
+    embed.add_field(
+        name="Defense", value=f"{stats['defense']}", inline=True)
+    embed.set_thumbnail(url=f"{pokemon.spriteURL}")
 
 class CompositeClass(commands.CogMeta, ABCMeta):
     __slots__: tuple = ()
@@ -200,53 +273,14 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             try:
                 pokemon: PokemonClass = pokeList[i]
                 stats = pokemon.getPokeStats()
-                type1: str = pokemon.type1
-                color = discord.colour.Color.dark_gray()
-
-                if 'normal' in type1:
-                    color = discord.Colour(NORMAL_GREY)
-                elif 'grass' in type1:
-                    color = discord.Colour(GRASS_GREEN)
-                    pass
-                elif 'bug' in type1:
-                    color = discord.Colour(BUG_GREEN)
-                elif 'water' in type1:
-                    color = discord.Colour(WATER_BLUE)
-                elif 'fire' in type1:
-                    color = discord.Colour(FIRE_RED)
-                elif 'electric' in type1:
-                    color = discord.Colour(ELECTRIC_YELLOW)
-                elif 'rock' in type1:
-                    color = discord.Colour(ROCK_BROWN)
-                elif 'ground' in type1:
-                    color = discord.Colour(GROUND_BROWN)
-                elif 'psychic' in type1:
-                    color = discord.Colour(PSYCHIC_PINK)
-                elif 'ghost' in type1:
-                    color = discord.Colour(GHOST_PURPLE)
-                elif 'fighting' in type1:
-                    color = discord.Colour(FIGHTING_RED)
-                elif 'poison' in type1:
-                    color = discord.Colour(POISON_PURPLE)
-                elif 'flying' in type1:
-                    color = discord.Colour(FLYING_PURPLE)
-                elif 'steel' in type1:
-                    color = discord.Colour(STEEL_GREY)
-                elif 'ice' in type1:
-                    color = discord.Colour(ICE_BLUE)
-                elif 'dragon' in type1:
-                    color = discord.Colour(DRAGON_PURPLE)
-                elif 'dark' in type1:
-                    color = discord.Colour(DARK_BROWN)
-                elif 'fairy' in type1:
-                    color = discord.Colour(FAIRY_PINK)
-                
+                color = getTypeColor(pokemon.type1)
 
                 # Create the embed object
                 embed = discord.Embed(title=f"#{pokemon.id}  {pokemon.name.capitalize()}", color=color)
                 embed.set_author(name=f"{user.display_name}",
                                 icon_url=str(user.avatar_url))
-                types = type1
+                
+                types = pokemon.type1
                 if pokemon.type2 is not None:
                     types += ', ' + pokemon.type2
                  
@@ -269,9 +303,9 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
                 btns = []
                 if i > 0:
-                    btns.append(Button(style=ButtonStyle.gray, label='Previous', emoji='◀️', custom_id='previous'))
+                    btns.append(Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'))
                 if i < pokeLength - 1:
-                    btns.append(Button(style=ButtonStyle.gray, label="Next", emoji='▶️', custom_id='next'))
+                    btns.append(Button(style=ButtonStyle.gray, label="Next", custom_id='next'))
 
                 btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
                 btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
