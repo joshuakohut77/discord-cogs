@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Any, Dict, List, TYPE_CHECKING
 from abc import ABCMeta
+from discord.embeds import Embed
 from discord.member import Member
 import discord_components
 import random
@@ -89,7 +90,7 @@ def getTypeColor(type: str) -> discord.Colours:
         color = discord.Colour(FAIRY_PINK)
     return color
 
-def createPokemonEmbed(user: Member, pokemon: PokemonClass):
+def createPokemonEmbed(user: Member, pokemon: PokemonClass) -> Embed:
     stats = pokemon.getPokeStats()
     color = getTypeColor(pokemon.type1)
 
@@ -118,6 +119,8 @@ def createPokemonEmbed(user: Member, pokemon: PokemonClass):
     embed.add_field(
         name="Defense", value=f"{stats['defense']}", inline=True)
     embed.set_thumbnail(url=f"{pokemon.spriteURL}")
+    return embed
+
 
 class CompositeClass(commands.CogMeta, ABCMeta):
     __slots__: tuple = ()
@@ -272,35 +275,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         while True:
             try:
                 pokemon: PokemonClass = pokeList[i]
-                stats = pokemon.getPokeStats()
-                color = getTypeColor(pokemon.type1)
-
-                # Create the embed object
-                embed = discord.Embed(title=f"#{pokemon.id}  {pokemon.name.capitalize()}", color=color)
-                embed.set_author(name=f"{user.display_name}",
-                                icon_url=str(user.avatar_url))
+                embed = createPokemonEmbed(user, pokemon)
                 
-                types = pokemon.type1
-                if pokemon.type2 is not None:
-                    types += ', ' + pokemon.type2
-                 
-                embed.add_field(
-                    name="Type", value=f"{types}", inline=True)
-                
-                if pokemon.nickName is not None:
-                    embed.add_field(
-                        name="Nickname", value=f"{pokemon.nickName}", inline=False)
-                
-                embed.add_field(
-                    name="Level", value=f"{pokemon.currentLevel}", inline=False)
-                embed.add_field(
-                    name="HP", value=f"{pokemon.currentHP} / {stats['hp']}", inline=False)
-                embed.add_field(
-                    name="Attack", value=f"{stats['attack']}", inline=True)
-                embed.add_field(
-                    name="Defense", value=f"{stats['defense']}", inline=True)
-                embed.set_thumbnail(url=f"{pokemon.spriteURL}")
-
                 btns = []
                 if i > 0:
                     btns.append(Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'))
@@ -427,20 +403,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         # This will create the trainer if it doesn't exist
         trainer = TrainerClass(str(user.id))
         pokemon = trainer.getStarterPokemon()
-        stats = pokemon.getPokeStats()
 
-        # Create the embed object
-        embed = discord.Embed(title=f"Your starter is {pokemon.name}")
-        embed.set_author(name=f"{user.display_name}",
-                         icon_url=str(user.avatar_url))
-        embed.add_field(
-            name="Level", value=f"{pokemon.currentLevel}", inline=True)
-        embed.add_field(
-            name="Attack", value=f"{stats['attack']}", inline=True)
-        embed.add_field(
-            name="Defense", value=f"{stats['defense']}", inline=True)
-        embed.set_thumbnail(url=f"{pokemon.spriteURL}")
-
+        embed = createPokemonEmbed(user, pokemon)
         await ctx.send(embed=embed)
 
     @_trainer.command()
@@ -452,20 +416,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
          # This will create the trainer if it doesn't exist
         trainer = TrainerClass(str(user.id))
         pokemon = trainer.getActivePokemon()
-        stats = pokemon.getPokeStats()
 
-        # Create the embed object
-        embed = discord.Embed(title=f"Your active pokemon is {pokemon.name}")
-        embed.set_author(name=f"{user.display_name}",
-                         icon_url=str(user.avatar_url))
-        embed.add_field(
-            name="Level", value=f"{pokemon.currentLevel}", inline=True)
-        embed.add_field(
-            name="Attack", value=f"{stats['attack']}", inline=True)
-        embed.add_field(
-            name="Defense", value=f"{stats['defense']}", inline=True)
-        embed.set_thumbnail(url=f"{pokemon.spriteURL}")
-
+        embed = createPokemonEmbed(user, pokemon)
         await ctx.send(embed=embed)       
 
 
