@@ -26,6 +26,8 @@ from models.storeclass import store as StoreClass
 from models.inventoryclass import inventory as InventoryClass
 
 
+GRASS_GREEN = 0x77bb41
+
 class CompositeClass(commands.CogMeta, ABCMeta):
     __slots__: tuple = ()
     pass
@@ -163,13 +165,19 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             try:
                 pokemon: PokemonClass = pokeList[i]
                 stats = pokemon.getPokeStats()
+                types: str = pokemon.types
+                color = None
+
+                if isinstance(types, str) and 'grass' in types:
+                    color = GRASS_GREEN
+                    pass
 
                 # Create the embed object
-                embed = discord.Embed(title=f"#{pokemon.id}  {pokemon.name.capitalize()}")
+                embed = discord.Embed(title=f"#{pokemon.id}  {pokemon.name.capitalize()}", color=color)
                 embed.set_author(name=f"{user.display_name}",
                                 icon_url=str(user.avatar_url))
                 embed.add_field(
-                    name="Type", value=f"{pokemon.types}", inline=True)
+                    name="Type", value=f"{types}", inline=True)
                 embed.add_field(
                     name="Nickname", value=f"todo", inline=False)
                 embed.add_field(
