@@ -90,7 +90,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         id = random.choice(ids)
         pokemon = trainer.addPokemon(id)
 
-        ctx.send(f'{pokemon.name} added.')
+        await ctx.send(f'{pokemon.name} added.')
         pass
 
     @commands.group(name="trainer")
