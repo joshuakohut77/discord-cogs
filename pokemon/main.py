@@ -81,7 +81,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         pass
 
     @_debug.command()
-    async def add(self, ctx: commands.Context, user: discord.Member) -> None:
+    async def add(self, ctx: commands.Context, user: discord.Member = None) -> None:
         if user is None:
             user = ctx.author
 
