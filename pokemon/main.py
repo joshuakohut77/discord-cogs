@@ -183,16 +183,16 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             try:
                 pokemon: PokemonClass = pokeList[i]
                 stats = pokemon.getPokeStats()
-                types: str = pokemon.types
+                type1: str = pokemon.type1
                 color = discord.colour.Color.dark_gray()
 
-                if isinstance(types, str) and 'grass' in types:
+                if isinstance(type1, str) and 'grass' in type1:
                     color = discord.colour.Color.green()
                     pass
-                elif isinstance(types, str) and 'fire' in types:
+                elif isinstance(type1, str) and 'fire' in type1:
                     color = discord.colour.Color.red()
                     pass
-                elif isinstance(types, str) and 'water' in types:
+                elif isinstance(type1, str) and 'water' in type1:
                     color = discord.colour.Color.blue()
                     pass
 
@@ -201,7 +201,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 embed.set_author(name=f"{user.display_name}",
                                 icon_url=str(user.avatar_url))
                 embed.add_field(
-                    name="Type", value=f"{types}", inline=True)
+                    name="Type", value=f"{type1}", inline=True)
                 embed.add_field(
                     name="Nickname", value=f"todo", inline=False)
                 embed.add_field(
