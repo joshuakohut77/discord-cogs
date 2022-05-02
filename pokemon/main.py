@@ -146,7 +146,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             user = ctx.author
 
         def nextBtnClick():
-            return lambda x: x.custom_id == "next" or x.custom_id == 'previous' or x.custom_id == 'stats' or x.custom_id == 'wiki' or x.custom_id == 'active'
+            return lambda x: x.custom_id == "next" or x.custom_id == 'previous' or x.custom_id == 'stats' or x.custom_id == 'pokedex' or x.custom_id == 'active'
 
         trainer = TrainerClass(str(user.id))
         pokeList = trainer.getPokemon()
@@ -169,6 +169,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 embed.set_author(name=f"{user.display_name}",
                                 icon_url=str(user.avatar_url))
                 embed.add_field(
+                    name="Type", value=f"{pokemon.types}", inline=True)
+                embed.add_field(
                     name="Nickname", value=f"todo", inline=False)
                 embed.add_field(
                     name="Level", value=f"{pokemon.currentLevel}", inline=False)
@@ -187,7 +189,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                     btns.append(Button(style=ButtonStyle.gray, label="Next", custom_id='next'))
 
                 btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
-                btns.append(Button(style=ButtonStyle.green, label="Wiki", custom_id='wiki'))
+                btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
                 btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active'))
 
                 if interaction is None:
@@ -216,7 +218,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 if interaction.custom_id == 'stats':
                     await interaction.send('Not implemented')
                     break
-                if interaction.custom_id == 'wiki':
+                if interaction.custom_id == 'pokedex':
                     await interaction.send('Not implemented')
                     break
             except asyncio.TimeoutError:

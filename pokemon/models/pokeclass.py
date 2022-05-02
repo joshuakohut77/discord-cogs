@@ -4,6 +4,8 @@ import pokebase as pb
 import random
 import math
 from time import time
+
+from pokebase.interface import APIResource
 from statclass import PokeStats
 from dbclass import db as dbconn
 
@@ -46,7 +48,7 @@ class Pokemon:
             self.spriteURL = pb.SpriteResource('pokemon', pokemon.id).url
             self.growthRate = pb.pokemon_species(pokemon.id).growth_rate.name
             self.base_exp = pokemon.base_experience
-            self.types = self.__getPokemonType()
+            self.types = self.__getPokemonType(pokemon)
             moves = self.getMoves()
             self.move_1 = moves[0]
             self.move_2 = moves[1]
@@ -362,10 +364,12 @@ class Pokemon:
                     moveDict[moveName] = moveLevel
         return moveDict
 
-    def __getPokemonType(self):
+    def __getPokemonType(self, pokemon: APIResource = None):
         """ returns string of pokemons base type """
+        if pokemon is None:
+            pokemon = pb.pokemon(self.id)
+
         typeList = []
-        pokemon = pb.pokemon(self.id)
         for type in pokemon.types:
             typeList.append(type.type.name)
 
