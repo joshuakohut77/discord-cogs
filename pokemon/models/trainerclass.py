@@ -11,7 +11,7 @@ from time import time
 
 # STARTER_LEVEL = config.starterLevel
 # TOTAL_POKEMON = config.total_pokemon
-STARTER_LEVEL = 6
+STARTER_LEVEL = 5
 TOTAL_POKEMON = 150
 
 class trainer:
