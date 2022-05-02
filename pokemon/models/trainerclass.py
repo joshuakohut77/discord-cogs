@@ -61,7 +61,7 @@ class trainer:
         else:
             pokeId: int = None
             # trainer does not yet have a starter, create one
-            if 'cactitwig' in self.discordId.lower():
+            if '500047678378344449' in self.discordId.lower() or self.discordId == '500047678378344449':
                 starter = {'rattata': 19}
                 pokeId = starter['rattata']
             else:
