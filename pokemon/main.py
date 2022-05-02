@@ -165,11 +165,15 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 stats = pokemon.getPokeStats()
 
                 # Create the embed object
-                embed = discord.Embed(title=f"{pokemon.name}")
+                embed = discord.Embed(title=f"#{pokemon.id}  {pokemon.name.capitalize()}")
                 embed.set_author(name=f"{user.display_name}",
                                 icon_url=str(user.avatar_url))
                 embed.add_field(
-                    name="Level", value=f"{pokemon.currentLevel}", inline=True)
+                    name="Nickname", value=f"todo", inline=False)
+                embed.add_field(
+                    name="Level", value=f"{pokemon.currentLevel}", inline=False)
+                embed.add_field(
+                    name="HP", value=f"{pokemon.currentHP} / {stats['hp']}", inline=False)
                 embed.add_field(
                     name="Attack", value=f"{stats['attack']}", inline=True)
                 embed.add_field(
