@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Any, Dict, List, TYPE_CHECKING
 from abc import ABCMeta
 import discord_components
+import random
 
 from pokebase.loaders import pokedex
 
@@ -71,9 +72,26 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
     #
     # [p]pokemon stats <id> - unique id of pokemon in db (stats + moves)
     # [p]pokemon wiki <id> - any pokemon general wiki
-    #
-    # TODO: set active can be a button not a command
-    # TODO: 
+
+    @commands.group(name="debug")
+    @commands.guild_only()
+    async def _debug(self, ctx: commands.Context) -> None:
+        """Base command to manage the trainer (user).
+        """
+        pass
+
+    @_debug.command()
+    async def add(self, ctx: commands.Context, user: discord.Member) -> None:
+        if user is None:
+            user = ctx.author
+
+        trainer = TrainerClass(str(user.id))
+        ids = range(1, 152)
+        id = random.choice(ids)
+        pokemon = trainer.addPokemon(id)
+
+        ctx.send(f'{pokemon.name} added.')
+        pass
 
     @commands.group(name="trainer")
     @commands.guild_only()
@@ -171,10 +189,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 if isinstance(types, str) and 'grass' in types:
                     color = discord.colour.Color.green()
                     pass
-                if isinstance(types, str) and 'fire' in types:
+                elif isinstance(types, str) and 'fire' in types:
                     color = discord.colour.Color.red()
                     pass
-                if isinstance(types, str) and 'water' in types:
+                elif isinstance(types, str) and 'water' in types:
                     color = discord.colour.Color.blue()
                     pass
 
