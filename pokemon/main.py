@@ -166,10 +166,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 pokemon: PokemonClass = pokeList[i]
                 stats = pokemon.getPokeStats()
                 types: str = pokemon.types
-                color = discord.colour.Color.dark_gray
+                color = discord.colour.Color.dark_gray()
 
                 if isinstance(types, str) and 'grass' in types:
-                    color = discord.colour.Color.green
+                    color = discord.colour.Color.green()
                     pass
 
                 # Create the embed object
