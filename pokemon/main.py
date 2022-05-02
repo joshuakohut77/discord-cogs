@@ -156,7 +156,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         i = 0
 
         if pokeLength == 0:
-            ctx.reply(content=f'{user.display_name} does not have any Pokemon.')
+            await ctx.reply(content=f'{user.display_name} does not have any Pokemon.')
             return
 
         while True:
