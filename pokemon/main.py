@@ -27,10 +27,24 @@ from models.storeclass import store as StoreClass
 from models.inventoryclass import inventory as InventoryClass
 
 
+NORMAL_GREY = 0xa8a77d
 GRASS_GREEN = 0x77bb41
 BUG_GREEN = 0xabb642
 WATER_BLUE = 0x6f91e9
 FIRE_RED = 0xe28544
+ELECTRIC_YELLOW = 0xf2ca54
+ROCK_BROWN = 0xb5a04b
+GROUND_BROWN = 0xdbc075
+PSYCHIC_PINK = 0xe66488
+GHOST_PURPLE = 0x6c5a94
+FIGHTING_RED = 0xb13c31
+POISON_PURPLE = 0x94499b
+FLYING_PURPLE = 0xa393ea
+STEEL_GREY = 0xb8b8ce
+ICE_BLUE = 0xa5d6d7
+DRAGON_PURPLE = 0x6745ef
+DARK_BROWN = 0x6c594a
+FAIRY_PINK = 0xe29dac
 
 class CompositeClass(commands.CogMeta, ABCMeta):
     __slots__: tuple = ()
@@ -189,22 +203,44 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 type1: str = pokemon.type1
                 color = discord.colour.Color.dark_gray()
 
-                if 'grass' in type1:
-                    color = discord.colour.Color.green()
+                if 'normal' in type1:
+                    color = discord.Colour(NORMAL_GREY)
+                elif 'grass' in type1:
+                    color = discord.Colour(GRASS_GREEN)
                     pass
-                elif 'fire' in type1:
-                    color = discord.colour.Color.red()
-                    pass
-                elif 'water' in type1:
-                    color = discord.Colour(WATER_BLUE)
-                    pass
-                elif 'electric' in type1:
-                    color = discord.colour.Color.gold()
                 elif 'bug' in type1:
                     color = discord.Colour(BUG_GREEN)
+                elif 'water' in type1:
+                    color = discord.Colour(WATER_BLUE)
+                elif 'fire' in type1:
+                    color = discord.Colour(FIRE_RED)
+                elif 'electric' in type1:
+                    color = discord.Colour(ELECTRIC_YELLOW)
+                elif 'rock' in type1:
+                    color = discord.Colour(ROCK_BROWN)
+                elif 'ground' in type1:
+                    color = discord.Colour(GROUND_BROWN)
                 elif 'psychic' in type1:
-                    color = discord.colour.Color.purple()
-                # elif 'psychic' in 
+                    color = discord.Colour(PSYCHIC_PINK)
+                elif 'ghost' in type1:
+                    color = discord.Colour(GHOST_PURPLE)
+                elif 'fighting' in type1:
+                    color = discord.Colour(FIGHTING_RED)
+                elif 'poison' in type1:
+                    color = discord.Colour(POISON_PURPLE)
+                elif 'flying' in type1:
+                    color = discord.Colour(FLYING_PURPLE)
+                elif 'steel' in type1:
+                    color = discord.Colour(STEEL_GREY)
+                elif 'ice' in type1:
+                    color = discord.Colour(ICE_BLUE)
+                elif 'dragon' in type1:
+                    color = discord.Colour(DRAGON_PURPLE)
+                elif 'dark' in type1:
+                    color = discord.Colour(DARK_BROWN)
+                elif 'fairy' in type1:
+                    color = discord.Colour(FAIRY_PINK)
+                
 
                 # Create the embed object
                 embed = discord.Embed(title=f"#{pokemon.id}  {pokemon.name.capitalize()}", color=color)
