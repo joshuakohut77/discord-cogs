@@ -252,8 +252,11 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                  
                 embed.add_field(
                     name="Type", value=f"{types}", inline=True)
-                embed.add_field(
-                    name="Nickname", value=f"todo", inline=False)
+                
+                if pokemon.nickName is not None:
+                    embed.add_field(
+                        name="Nickname", value=f"{pokemon.nickName}", inline=False)
+                
                 embed.add_field(
                     name="Level", value=f"{pokemon.currentLevel}", inline=False)
                 embed.add_field(
@@ -266,9 +269,9 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
                 btns = []
                 if i > 0:
-                    btns.append(Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'))
+                    btns.append(Button(style=ButtonStyle.gray, label='Previous', emoji='◀️', custom_id='previous'))
                 if i < pokeLength - 1:
-                    btns.append(Button(style=ButtonStyle.gray, label="Next", custom_id='next'))
+                    btns.append(Button(style=ButtonStyle.gray, label="Next", emoji='▶️', custom_id='next'))
 
                 btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
                 btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
