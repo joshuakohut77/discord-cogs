@@ -19,6 +19,7 @@ class Pokemon:
         self.id_or_name = id_or_name
         self.name = None
         self.id = None
+        self.nickName = None
         self.spriteURL = None
         self.growthRate = None
         self.currentLevel = None
@@ -26,7 +27,9 @@ class Pokemon:
         self.traded = None
         self.wildPokemon = True
         self.base_exp = None
-        self.types = None
+        # self.types = None
+        self.type1 = None
+        self.type2 = None
         self.hp = PokeStats('hp')
         self.attack = PokeStats('attack')
         self.defense = PokeStats('defense')
@@ -48,12 +51,17 @@ class Pokemon:
             self.spriteURL = pb.SpriteResource('pokemon', pokemon.id).url
             self.growthRate = pb.pokemon_species(pokemon.id).growth_rate.name
             self.base_exp = pokemon.base_experience
-            self.types = self.__getPokemonType(pokemon)
             moves = self.getMoves()
             self.move_1 = moves[0]
             self.move_2 = moves[1]
             self.move_3 = moves[2]
             self.move_4 = moves[3]
+
+            types = self.__getPokemonType(pokemon)
+            if len(types) > 0:
+                self.type1 = types[0]
+                if len(types) > 1:
+                    self.type2 = types[1]
         else:
             # load pokemon from db using trainerId as unique primary key from Pokemon table
             self.wildPokemon = False
@@ -106,7 +114,8 @@ class Pokemon:
         print('Level:', self.currentLevel)
         print('Exp:', self.currentExp)
         print('Traded:', self.traded)
-        print('Types:', self.types)
+        print('Type 1:', self.type1)
+        print('Type 2:', self.type2)
         print('Stats:', self.getPokeStats())
         print('Moves:', self.getMoves())
 
@@ -271,7 +280,7 @@ class Pokemon:
     def __loadPokemonFromDB(self, pokemonId):
         """ loads and creates a pokemon object from the database """
         db = dbconn()
-        queryString = 'SELECT "id", "discord_id", "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", traded, base_hp, base_attack, base_defense, base_speed, base_special_attack, base_special_defense, "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", "move_4", "types", "currentHP" FROM pokemon WHERE "id" = %s'
+        queryString = 'SELECT "id", "discord_id", "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", traded, base_hp, base_attack, base_defense, base_speed, base_special_attack, base_special_defense, "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", "move_4", "type_1", "type_2", "nickName", "currentHP" FROM pokemon WHERE "id" = %s'
         result = db.querySingle(queryString, (int(pokemonId),))
 
         # for result in results:
@@ -308,8 +317,10 @@ class Pokemon:
         self.move_2 = result[28]
         self.move_3 = result[29]
         self.move_4 = result[30]
-        self.types = result[31]
-        self.currentHP = result[32]
+        self.type1 = result[31]
+        self.type2 = result[32]
+        self.nickName = result[33]
+        self.currentHP = result[34]
 
         # delete and close connectino
         del db
@@ -323,26 +334,23 @@ class Pokemon:
         if self.trainerId is None:
             queryString = """
                 INSERT INTO
-                    pokemon("discord_id", "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", "traded", "base_hp", "base_attack", "base_defense", "base_speed", "base_special_attack", "base_special_defense", "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", "move_4", "types", "currentHP")
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    pokemon("discord_id", "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", "traded", "base_hp", "base_attack", "base_defense", "base_speed", "base_special_attack", "base_special_defense", "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", "move_4", "type_1", "type_2", "nickName", "currentHP")
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     RETURNING id
             """
             values = (self.discordId, self.id, self.name, self.spriteURL, self.growthRate, self.currentLevel, self.currentExp, self.traded, self.hp.base, self.attack.base, self.defense.base, self.speed.base, self.special_attack.base, self.special_defense.base, self.hp.IV, self.attack.IV,
-                    self.defense.IV, self.speed.IV, self.special_attack.IV, self.special_defense.IV, self.hp.EV, self.attack.EV, self.defense.EV, self.speed.EV, self.special_attack.EV, self.special_defense.EV, self.move_1, self.move_2, self.move_3, self.move_4, self.types, self.currentHP)
+                    self.defense.IV, self.speed.IV, self.special_attack.IV, self.special_defense.IV, self.hp.EV, self.attack.EV, self.defense.EV, self.speed.EV, self.special_attack.EV, self.special_defense.EV, self.move_1, self.move_2, self.move_3, self.move_4, self.type1, self.type2, self.nickName, self.currentHP)
             trainerIds = db.executeAndReturn(queryString, values)
             self.trainerId = trainerIds[0]
         else:
             queryString = """
                 UPDATE pokemon
-                    SET "discord_id"=%s, "pokemonId"=%s, "pokemonName"=%s, "spriteURL"=%s, "growthRate"=%s, "currentLevel"=%s, "currentExp"=%s, "traded"=%s, "base_hp"=%s, "base_attack"=%s, "base_defense"=%s, "base_speed"=%s, "base_special_attack"=%s, "base_special_defense"=%s, "IV_hp"=%s, "IV_attack"=%s, "IV_defense"=%s, "IV_speed"=%s, "IV_special_attack"=%s, "IV_special_defense"=%s, "EV_hp"=%s, "EV_attack"=%s, "EV_defense"=%s, "EV_speed"=%s, "EV_special_attack"=%s, "EV_special_defense"=%s, "move_1"=%s, "move_2"=%s, "move_3"=%s, "move_4"=%s, "types"=%s, "currentHP"=%s
+                    SET "discord_id"=%s, "pokemonId"=%s, "pokemonName"=%s, "spriteURL"=%s, "growthRate"=%s, "currentLevel"=%s, "currentExp"=%s, "traded"=%s, "base_hp"=%s, "base_attack"=%s, "base_defense"=%s, "base_speed"=%s, "base_special_attack"=%s, "base_special_defense"=%s, "IV_hp"=%s, "IV_attack"=%s, "IV_defense"=%s, "IV_speed"=%s, "IV_special_attack"=%s, "IV_special_defense"=%s, "EV_hp"=%s, "EV_attack"=%s, "EV_defense"=%s, "EV_speed"=%s, "EV_special_attack"=%s, "EV_special_defense"=%s, "move_1"=%s, "move_2"=%s, "move_3"=%s, "move_4"=%s, "currentHP"=%s
                     WHERE id = %s;
             """
             values = (self.discordId, self.id, self.name, self.spriteURL, self.growthRate, self.currentLevel, self.currentExp, self.traded, self.hp.base, self.attack.base, self.defense.base, self.speed.base, self.special_attack.base, self.special_defense.base, self.hp.IV, self.attack.IV,
-                    self.defense.IV, self.speed.IV, self.special_attack.IV, self.special_defense.IV, self.hp.EV, self.attack.EV, self.defense.EV, self.speed.EV, self.special_attack.EV, self.special_defense.EV, self.move_1, self.move_2, self.move_3, self.move_4, self.types, self.currentHP, self.trainerId)
+                    self.defense.IV, self.speed.IV, self.special_attack.IV, self.special_defense.IV, self.hp.EV, self.attack.EV, self.defense.EV, self.speed.EV, self.special_attack.EV, self.special_defense.EV, self.move_1, self.move_2, self.move_3, self.move_4, self.currentHP, self.trainerId)
             db.execute(queryString, values)
-
-        # results = db.querySingle('SELECT id FROM pokemon WHERE discord_id=%s', (self.discordId,))
-        # self.trainerId = results[0]
 
         # delete and close connectino
         del db
