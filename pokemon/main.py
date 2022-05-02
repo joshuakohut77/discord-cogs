@@ -203,7 +203,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                     i = i - 1
                 if interaction.custom_id == 'active':
                     res = trainer.setActivePokemon(pokemon.trainerId)
-                    interaction.respond(f'{res}')
+                    interaction.send(content=f'{res}')
                     break
                 if interaction.custom_id == 'stats':
                     interaction.send('Not implemented')
