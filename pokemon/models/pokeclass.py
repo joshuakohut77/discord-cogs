@@ -348,10 +348,12 @@ class Pokemon:
         del db
         return
 
-    def __getPokemonLevelMoves(self):
+    def __getPokemonLevelMoves(self, pokemon: APIResource = None):
         """ returns a dictionary of {move: level} for a pokemons base move set"""
+        if pokemon is None:
+            pokemon = pb.pokemon(self.id)
+        
         moveDict = {}
-        pokemon = pb.pokemon(self.id)
         for move in pokemon.moves:
             for version in move.version_group_details:
                 if version.version_group.name != VERSION_GROUP_NAME:

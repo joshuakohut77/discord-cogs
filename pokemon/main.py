@@ -171,6 +171,12 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 if isinstance(types, str) and 'grass' in types:
                     color = discord.colour.Color.green()
                     pass
+                if isinstance(types, str) and 'fire' in types:
+                    color = discord.colour.Color.red()
+                    pass
+                if isinstance(types, str) and 'water' in types:
+                    color = discord.colour.Color.blue()
+                    pass
 
                 # Create the embed object
                 embed = discord.Embed(title=f"#{pokemon.id}  {pokemon.name.capitalize()}", color=color)
