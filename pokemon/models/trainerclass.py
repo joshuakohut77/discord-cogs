@@ -93,6 +93,12 @@ class trainer:
 
         return pokemon
 
+    def addPokemon(self, pokeId: int):
+        pokemon = pokeClass(pokeId)
+        pokemon.create(STARTER_LEVEL)
+        pokemon.save(self.discordId)
+        return pokemon
+
     def getPokemon(self):
         """ returns a list of pokemon objects for every pokemon in the database belonging to the trainer """
         db = dbconn()
