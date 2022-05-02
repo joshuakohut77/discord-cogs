@@ -28,6 +28,9 @@ from models.inventoryclass import inventory as InventoryClass
 
 
 GRASS_GREEN = 0x77bb41
+BUG_GREEN = 0xabb642
+WATER_BLUE = 0x6f91e9
+FIRE_RED = 0xe28544
 
 class CompositeClass(commands.CogMeta, ABCMeta):
     __slots__: tuple = ()
@@ -186,22 +189,33 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 type1: str = pokemon.type1
                 color = discord.colour.Color.dark_gray()
 
-                if isinstance(type1, str) and 'grass' in type1:
+                if 'grass' in type1:
                     color = discord.colour.Color.green()
                     pass
-                elif isinstance(type1, str) and 'fire' in type1:
+                elif 'fire' in type1:
                     color = discord.colour.Color.red()
                     pass
-                elif isinstance(type1, str) and 'water' in type1:
-                    color = discord.colour.Color.blue()
+                elif 'water' in type1:
+                    color = discord.Colour(WATER_BLUE)
                     pass
+                elif 'electric' in type1:
+                    color = discord.colour.Color.gold()
+                elif 'bug' in type1:
+                    color = discord.Colour(BUG_GREEN)
+                elif 'psychic' in type1:
+                    color = discord.colour.Color.purple()
+                # elif 'psychic' in 
 
                 # Create the embed object
                 embed = discord.Embed(title=f"#{pokemon.id}  {pokemon.name.capitalize()}", color=color)
                 embed.set_author(name=f"{user.display_name}",
                                 icon_url=str(user.avatar_url))
+                types = type1
+                if pokemon.type2 is not None:
+                    types += ', ' + pokemon.type2
+                 
                 embed.add_field(
-                    name="Type", value=f"{type1}", inline=True)
+                    name="Type", value=f"{types}", inline=True)
                 embed.add_field(
                     name="Nickname", value=f"todo", inline=False)
                 embed.add_field(
