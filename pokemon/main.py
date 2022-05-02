@@ -203,13 +203,13 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                     i = i - 1
                 if interaction.custom_id == 'active':
                     res = trainer.setActivePokemon(pokemon.trainerId)
-                    interaction.send(content=f'{res}')
+                    await interaction.send(content=f'{res}')
                     break
                 if interaction.custom_id == 'stats':
-                    interaction.send('Not implemented')
+                    await interaction.send('Not implemented')
                     break
                 if interaction.custom_id == 'wiki':
-                    interaction.send('Not implemented')
+                    await interaction.send('Not implemented')
                     break
             except asyncio.TimeoutError:
                 break
