@@ -65,7 +65,6 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
     #
     # [p]trainer pokedex <user> - user is optional
     # [p]trainer pokemon <user> - owned pokemon user optional
-    # [p]trainer setactive <id> - unique id of pokemon in db (validate it's their id)
     # [p]trainer action - UI provides buttons to interact
     #
     # [p]pokemon stats <id> - unique id of pokemon in db (stats + moves)
@@ -155,6 +154,11 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         interaction: discord_components.Interaction = None
         pokeLength = len(pokeList)
         i = 0
+
+        if pokeLength == 0:
+            ctx.reply(content=f'{user.display_name} does not have any Pokemon.')
+            return
+
         while True:
             try:
                 pokemon: PokemonClass = pokeList[i]
