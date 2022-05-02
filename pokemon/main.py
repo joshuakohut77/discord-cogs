@@ -21,6 +21,7 @@ import pokebase as pb
 import psycopg as pg
 # from .models.helpers import *
 from models.trainerclass import trainer as TrainerClass
+from models.pokeclass import Pokemon as PokemonClass
 from models.storeclass import store as StoreClass
 from models.inventoryclass import inventory as InventoryClass
 
@@ -70,6 +71,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
     # [p]pokemon stats <id> - unique id of pokemon in db (stats + moves)
     # [p]pokemon wiki <id> - any pokemon general wiki
     #
+    # TODO: set active can be a button not a command
+    # TODO: 
 
     @commands.group(name="trainer")
     @commands.guild_only()
@@ -144,7 +147,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             user = ctx.author
 
         def nextBtnClick():
-            return lambda x: x.custom_id == "next" or x.custom_id == 'previous' or x.custom_id == 'stats' or x.custom_id == 'wiki'
+            return lambda x: x.custom_id == "next" or x.custom_id == 'previous' or x.custom_id == 'stats' or x.custom_id == 'wiki' or x.custom_id == 'active'
 
         trainer = TrainerClass(str(user.id))
         pokeList = trainer.getPokemon()
@@ -154,7 +157,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         i = 0
         while True:
             try:
-                pokemon = pokeList[i]
+                pokemon: PokemonClass = pokeList[i]
                 stats = pokemon.getPokeStats()
 
                 # Create the embed object
@@ -177,6 +180,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
                 btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
                 btns.append(Button(style=ButtonStyle.green, label="Wiki", custom_id='wiki'))
+                btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active'))
 
                 if interaction is None:
                     await ctx.send(
@@ -197,6 +201,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                     i = i + 1
                 if (interaction.custom_id == 'previous'):
                     i = i - 1
+                if interaction.custom_id == 'active':
+                    res = trainer.setActivePokemon(pokemon.trainerId)
+                    interaction.respond(f'{res}')
+                    break
                 if interaction.custom_id == 'stats':
                     interaction.send('Not implemented')
                     break
@@ -281,39 +289,6 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         # await ctx.send(embed=embed)
 
     @_trainer.command()
-    async def button(self, ctx: commands.Context, user: discord.Member = None) -> None:
-        """Test button
-        """
-        # await self.ui.components.send(ctx.channel, "Hello World", components=[
-        #     Button("press me", "my_custom_id", "green"),
-        # ])
-
-        # async def callback(interaction):
-        #     await interaction.send(content="Yay")
-
-        btn = Button(style=ButtonStyle.gray,
-                     label="Button 1", custom_id='button1')
-        btn2 = Button(style=ButtonStyle.gray,
-                      label="Button 2", custom_id='button2')
-
-        await ctx.send(
-            "Buttons",
-            components=[[
-                btn, btn2
-                # self.bot.components_manager.add_callback(b, callback)
-            ]]
-        )
-
-        interaction = await self.bot.wait_for("button_click", check=lambda i: i.custom_id == "button1")
-        # await interaction.message.edit('Buttons', components=[])
-        await interaction.edit_origin('Buttons', components=[])
-        # await interaction.send('Button 1 clicked')
-        # await interaction.send('Done')
-        # await interaction.send(f'{msg.id}')
-
-        # msg.edit('Buttons')
-
-    @_trainer.command()
     async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
         """Show the starter pokemon for the trainer.
         """
@@ -365,68 +340,101 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         await ctx.send(embed=embed)       
 
 
-    @_trainer.command()
-    async def pokemon(self, ctx: commands.Context, user: discord.Member = None) -> None:
-        """Show the starter pokemon for the trainer.
-        """
-        if user is None:
-            user = ctx.author
+    # @_trainer.command()
+    # async def pokemon(self, ctx: commands.Context, user: discord.Member = None) -> None:
+    #     """Show the starter pokemon for the trainer.
+    #     """
+    #     if user is None:
+    #         user = ctx.author
 
-        # TODO: don't store these credentials in source control,
-        #       eventually just pass them in as part of the cog config
-        conn = pg.connect(
-            host="private-REDACTED_HOST",
-            dbname="pokemon_db",
-            user="redbot",
-            password="REDACTED_PASSWORD",
-            port=REDACTED_PORT)
+    #     # TODO: don't store these credentials in source control,
+    #     #       eventually just pass them in as part of the cog config
+    #     conn = pg.connect(
+    #         host="private-REDACTED_HOST",
+    #         dbname="pokemon_db",
+    #         user="redbot",
+    #         password="REDACTED_PASSWORD",
+    #         port=REDACTED_PORT)
 
-        # TODO: there is a much better way to do this, still playing
-        cur = conn.cursor()
-        cur.execute(
-            'select * from trainer where discord_id = %(discord)s', {'discord': user.id})
+    #     # TODO: there is a much better way to do this, still playing
+    #     cur = conn.cursor()
+    #     cur.execute(
+    #         'select * from trainer where discord_id = %(discord)s', {'discord': user.id})
 
-        trainer = cur.fetchone()
+    #     trainer = cur.fetchone()
 
-        if trainer is None:
-            await ctx.send('You haven\'t received your started yet!')
+    #     if trainer is None:
+    #         await ctx.send('You haven\'t received your started yet!')
 
-        cur.execute(
-            'select * from trainer_pokemon where trainer_id = %(trainer)s', {'trainer': trainer[0]})
+    #     cur.execute(
+    #         'select * from trainer_pokemon where trainer_id = %(trainer)s', {'trainer': trainer[0]})
 
-        pokemon = cur.fetchall()
+    #     pokemon = cur.fetchall()
 
-        if len(pokemon) == 0:
-            await ctx.send('You haven\'t received your started yet!')
+    #     if len(pokemon) == 0:
+    #         await ctx.send('You haven\'t received your started yet!')
 
-        cur.close()
-        conn.close()
+    #     cur.close()
+    #     conn.close()
 
-        firstPokemon = pokemon[0]
-        # TODO: replace with pokeclass to calculate unique stats per pokemon
-        name = firstPokemon[1]
-        pokemon = pb.pokemon(name)
-        sprite = pb.SpriteResource('pokemon', pokemon.id)
+    #     firstPokemon = pokemon[0]
+    #     # TODO: replace with pokeclass to calculate unique stats per pokemon
+    #     name = firstPokemon[1]
+    #     pokemon = pb.pokemon(name)
+    #     sprite = pb.SpriteResource('pokemon', pokemon.id)
 
-        # Create the embed object
-        embed = discord.Embed(title=f"#{pokemon.id} {pokemon.name}")
-        embed.set_author(name=f"{user.display_name}",
-                         icon_url=str(user.avatar_url))
-        embed.add_field(name="Weight", value=f"{pokemon.weight}", inline=True)
-        embed.add_field(name="Height", value=f"{pokemon.height}", inline=True)
-        embed.set_thumbnail(url=f"{sprite.url}")
+    #     # Create the embed object
+    #     embed = discord.Embed(title=f"#{pokemon.id} {pokemon.name}")
+    #     embed.set_author(name=f"{user.display_name}",
+    #                      icon_url=str(user.avatar_url))
+    #     embed.add_field(name="Weight", value=f"{pokemon.weight}", inline=True)
+    #     embed.add_field(name="Height", value=f"{pokemon.height}", inline=True)
+    #     embed.set_thumbnail(url=f"{sprite.url}")
 
-        msg: discord.Message = await ctx.send(embed=embed)
+    #     msg: discord.Message = await ctx.send(embed=embed)
 
-        self.pokelist[f'{user.id}'] = {'message_id': msg.id,
-                                       'trainer_id': trainer[0], 'index': 0}
+    #     self.pokelist[f'{user.id}'] = {'message_id': msg.id,
+    #                                    'trainer_id': trainer[0], 'index': 0}
 
-        # emoji: discord.Emoji = await commands.EmojiConverter().convert(ctx=await self.bot.get_context(msg), argument=':arrow_backward:')
-        # if emoji is None:
-        #     await msg.reply('emoji null')
-        # emoji = self.bot.get_emoji()
-        await msg.add_reaction('◀️')
-        await msg.add_reaction('▶️')
+    #     # emoji: discord.Emoji = await commands.EmojiConverter().convert(ctx=await self.bot.get_context(msg), argument=':arrow_backward:')
+    #     # if emoji is None:
+    #     #     await msg.reply('emoji null')
+    #     # emoji = self.bot.get_emoji()
+    #     await msg.add_reaction('◀️')
+    #     await msg.add_reaction('▶️')
 
-        # await msg.reply('done')
-        await ctx.tick()
+    #     # await msg.reply('done')
+    #     await ctx.tick()
+
+    # @_trainer.command()
+    # async def button(self, ctx: commands.Context, user: discord.Member = None) -> None:
+    #     """Test button
+    #     """
+    #     # await self.ui.components.send(ctx.channel, "Hello World", components=[
+    #     #     Button("press me", "my_custom_id", "green"),
+    #     # ])
+
+    #     # async def callback(interaction):
+    #     #     await interaction.send(content="Yay")
+
+    #     btn = Button(style=ButtonStyle.gray,
+    #                  label="Button 1", custom_id='button1')
+    #     btn2 = Button(style=ButtonStyle.gray,
+    #                   label="Button 2", custom_id='button2')
+
+    #     await ctx.send(
+    #         "Buttons",
+    #         components=[[
+    #             btn, btn2
+    #             # self.bot.components_manager.add_callback(b, callback)
+    #         ]]
+    #     )
+
+    #     interaction = await self.bot.wait_for("button_click", check=lambda i: i.custom_id == "button1")
+    #     # await interaction.message.edit('Buttons', components=[])
+    #     await interaction.edit_origin('Buttons', components=[])
+    #     # await interaction.send('Button 1 clicked')
+    #     # await interaction.send('Done')
+    #     # await interaction.send(f'{msg.id}')
+
+    #     # msg.edit('Buttons')
