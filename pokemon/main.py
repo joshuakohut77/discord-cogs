@@ -5,6 +5,7 @@ from discord.embeds import Embed
 from discord.member import Member
 import discord_components
 import random
+from discord_components import component
 
 from pokebase.loaders import pokedex
 
@@ -267,7 +268,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             btns.append(Button(style=ButtonStyle.gray, label=f"{method}", custom_id=f'{method}'))
 
         await ctx.send(
-            content="What do you want to do?",
+            "What do you want to do?",
             components=[btns]
         )
 
@@ -301,9 +302,12 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 if i < pokeLength - 1:
                     btns.append(Button(style=ButtonStyle.gray, label="Next", custom_id='next'))
 
+                # TODO: starter should not be releasable
+                # TODO: active should not be releasable
                 btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
                 btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
                 btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active'))
+                btns.append(Button(style=ButtonStyle.red, label="Release", custom_id='release'))
 
                 if interaction is None:
                     await ctx.send(
@@ -423,7 +427,14 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         pokemon = trainer.getStarterPokemon()
 
         embed = createPokemonEmbed(user, pokemon)
-        await ctx.send(embed=embed)
+
+        btns = []
+        btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
+        btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
+        # TODO: don't show this if starter is active pokemon
+        btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active'))
+
+        await ctx.send(embed=embed, components=[btns])
 
     @_trainer.command()
     async def active(self, ctx: commands.Context, user: discord.Member = None) -> None:
@@ -434,6 +445,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
          # This will create the trainer if it doesn't exist
         trainer = TrainerClass(str(user.id))
         pokemon = trainer.getActivePokemon()
+
+        btns = []
+        btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
+        btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
 
         embed = createPokemonEmbed(user, pokemon)
         await ctx.send(embed=embed)       
