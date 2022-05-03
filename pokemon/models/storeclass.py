@@ -117,7 +117,6 @@ class store:
         
 
     def __getSpriteUrl(self, itemName):
-        """ returns a constructed spriteUrl """
-        baseUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/"
-        spriteUrl = baseUrl + itemName + ".png"
-        return spriteUrl
+        """ returns a path to item sprite on disk """
+        return "/data/cogs/CogManager/cogs/pokemon/sprites/items/%s.png" %itemName
+
