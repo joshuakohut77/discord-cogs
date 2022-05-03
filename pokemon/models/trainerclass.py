@@ -13,7 +13,7 @@ from time import time
 # TOTAL_POKEMON = config.total_pokemon
 STARTER_LEVEL = 5
 TOTAL_POKEMON = 150
-RELEASE_MONEY_MODIFIER = 20 # when you release a pokemon, you will get 15*level of released pokemon
+RELEASE_MONEY_MODIFIER = 15 # when you release a pokemon, you will get 15*level of released pokemon
 
 class trainer:
     def __init__(self, discordId):
@@ -248,15 +248,22 @@ class trainer:
         # return totalCaught, pokedex
         return pokedex
 
-    def heal(self, trainerId, item):
+    def heal(self, pokeTrainerId, item):
         """ uses a potion to heal a pokemon """
-        # TODO update for all healing items
+        # this function is only designed to work with potion, super-potion, hyper-potion, max-potion
+        if 'potion' not in item:
+            return 'You cannot use that item like that'
         inventory = inv(self.discordId)
-        if inventory.potion > 0:
-            inventory.potion = inventory.potion - 1
-            inventory.save()
-
-        self.__healPokemon(trainerId, item)
+        if item == 'potion':
+            inventory.potion -= 1
+        elif item == 'super-potion':
+            inventory.superpotion -= 1
+        elif item == 'hyper-potion':
+            inventory.hyperpotion -= 1
+        elif item == 'max-potion':
+            inventory.maxpotion -= 1
+        inventory.save()
+        self.__healPokemon(pokeTrainerId, item)
         return
 
     def healAll(self):
@@ -326,13 +333,21 @@ class trainer:
 
     def __healPokemon(self, pokemonId, item):
         """ heals a pokemons currentHP """
+        # this function is only designed to work with potion, super-potion, hyper-potion, max-potion
         pokemon = pokeClass()
         pokemon.load(pokemonId)
         statsDict = pokemon.getPokeStats()
         maxHP = statsDict['hp']
         currentHP = pokemon.currentHP
-        # todo update to not hard coded value
-        newHP = currentHP + 20
+        if item == 'potion':
+            newHP = currentHP + 20
+        elif item == 'super-potion':
+            newHP = currentHP + 50
+        elif item == 'hyper-potion':
+            newHP = currentHP + 200
+        elif item == 'max-potion':
+            newHP = maxHP
+
         if newHP > maxHP:
             newHP = maxHP
 
