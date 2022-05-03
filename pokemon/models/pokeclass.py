@@ -48,7 +48,7 @@ class Pokemon:
             pokemon = pb.pokemon(self.id_or_name)
             self.name = pokemon.species.name
             self.id = pokemon.id
-            self.spriteURL = pb.SpriteResource('pokemon', pokemon.id).url
+            self.spriteURL = self.__getSpritePath()
             self.growthRate = pb.pokemon_species(pokemon.id).growth_rate.name
             self.base_exp = pokemon.base_experience
             moves = self.getMoves()
@@ -373,6 +373,11 @@ class Pokemon:
                     moveLevel = version.level_learned_at
                     moveDict[moveName] = moveLevel
         return moveDict
+
+    def __getSpritePath(self):
+        """ returns a path to pokemon sprite on disk """
+        return "/data/cogs/CogManager/cogs/pokemon/sprites/pokemon/%s.png" %self.name
+
 
     def __getPokemonType(self, pokemon: APIResource = None):
         """ returns string of pokemons base type """
