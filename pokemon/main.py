@@ -273,7 +273,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 components=[btns]
             )
         else:
-            await ctx.send('No actions available')
+            await ctx.send(f'areaId: {trainer.getAreaId()} - No actions available')
 
     @_trainer.command()
     async def pc(self, ctx: commands.Context, user: discord.Member = None):
