@@ -437,10 +437,9 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
         btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
         
-        # # Only add the "Set Active" button if the starter is not currently the active pokemon
-        # if active is not None:
-        #     if pokemon.id != active.id:
-        btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=True))
+        # Disable the "Set Active" button if the starter is currently the active pokemon
+        disabled = (active is not None) and (pokemon.id == active.id)
+        btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=disabled))
 
         await ctx.send(embed=embed, components=[btns])
 

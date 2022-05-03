@@ -31,7 +31,7 @@ class db:
         """ takes a select query and runs it returning all rows. params is a sequence of values to pass into the queryString"""
         cur = self.conn.cursor()
         if params:
-            cur.execute(queryString, (params))
+            cur.execute(queryString, (params) if type(params) is list else params)
         else:
             cur.execute(queryString)
         results = cur.fetchall()
@@ -42,7 +42,7 @@ class db:
         """ takes a select query and runs it returning the first row. params is a sequence of values to pass into the queryString"""
         cur = self.conn.cursor()
         if params:
-            cur.execute(queryString, (params))
+            cur.execute(queryString, (params) if type(params) is list else params)
         else:
             cur.execute(queryString)
 
@@ -59,7 +59,7 @@ class db:
         """ takes a update/insert statement, runs it, and committing if no errors. params is a sequence of values to pass into the queryString"""
         cur = self.conn.cursor()
         if params:
-            cur.execute(queryString, (params))
+            cur.execute(queryString, (params) if type(params) is list else params)
         else:
             cur.execute(queryString)
         self.conn.commit()
@@ -69,7 +69,7 @@ class db:
         """ takes a update/insert statement, runs it, and committing if no errors. params is a sequence of values to pass into the queryString"""
         cur = self.conn.cursor()
         if params:
-            cur.execute(queryString, (params))
+            cur.execute(queryString, (params) if type(params) is list else params)
         else:
             cur.execute(queryString)
         self.conn.commit()
