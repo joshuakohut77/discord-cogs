@@ -88,6 +88,7 @@ class Pokemon:
         statsDict = self.getPokeStats()
         self.currentHP = statsDict['hp']
 
+    # TODO: this doesn't need the discord id
     def save(self, discordId):
         """ saves a pokemon to the database """
         self.discordId = discordId
