@@ -429,14 +429,18 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         # This will create the trainer if it doesn't exist
         trainer = TrainerClass(str(user.id))
         pokemon = trainer.getStarterPokemon()
+        active = trainer.getActivePokemon()
 
         embed = createPokemonEmbed(user, pokemon)
 
         btns = []
         btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
         btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
-        # TODO: don't show this if starter is active pokemon
-        btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active'))
+        
+        # # Only add the "Set Active" button if the starter is not currently the active pokemon
+        # if active is not None:
+        #     if pokemon.id != active.id:
+        btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=True))
 
         await ctx.send(embed=embed, components=[btns])
 
