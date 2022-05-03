@@ -267,10 +267,13 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         for method in areaMethods:
             btns.append(Button(style=ButtonStyle.gray, label=f"{method}", custom_id=f'{method}'))
 
-        await ctx.send(
-            "What do you want to do?",
-            components=[btns]
-        )
+        if len(btns) > 0:
+            await ctx.send(
+                "What do you want to do?",
+                components=[btns]
+            )
+        else:
+            await ctx.send('No actions available')
 
     @_trainer.command()
     async def pc(self, ctx: commands.Context, user: discord.Member = None):
