@@ -211,7 +211,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         # Create the embed object
         embed = discord.Embed(title=f"Pokemart - TODO: Area Name")
-        embed.set_thumbnail(url=f"/data/cogs/CogManager/cogs/pokemon/sprites/items/poke-ball.png")
+        embed.set_thumbnail(url=f"attachment://data/cogs/CogManager/cogs/pokemon/sprites/items/poke-ball.png")
         # embed.set_author(name=f"{user.display_name}",
         #                  icon_url=str(user.avatar_url))
 
