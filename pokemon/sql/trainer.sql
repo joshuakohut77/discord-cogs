@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS public.trainer
     discord_id character varying COLLATE pg_catalog."default" NOT NULL,
     "starterId" integer,
     "activePokemon" integer,
-    "areaId" integer DEFAULT 1,
-    "locationId" integer DEFAULT 154,
+    "areaId" integer DEFAULT 285,
+    "locationId" integer DEFAULT 86,
     CONSTRAINT trainer_pkey PRIMARY KEY (discord_id)
 )
 
