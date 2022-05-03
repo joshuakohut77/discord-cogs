@@ -254,6 +254,23 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         await ctx.send(embed=embed)
 
     @_trainer.command()
+    async def action(self, ctx: commands.Context, user: discord.Member = None):
+        if user is None:
+            user = ctx.author
+
+        
+        trainer = TrainerClass(str(user.id))
+        areaMethods = trainer.getAreaMethods()
+
+        btns = []
+        for method in areaMethods:
+            btns.append(Button(style=ButtonStyle.gray, label=f"{method}", custom_id=f'{method}'))
+
+        await ctx.send(
+            components=[btns]
+        )
+
+    @_trainer.command()
     async def pc(self, ctx: commands.Context, user: discord.Member = None):
         if user is None:
             user = ctx.author
