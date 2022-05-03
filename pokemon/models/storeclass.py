@@ -15,9 +15,9 @@ class store:
     def __loadStore(self):
         """ loads a trainers store into the class object """
         storeList = []
-        db = dbconn()
         trainerObj = trainer(self.discordId)
         locationId = trainerObj.getLocationId()
+        db = dbconn()
         queryString = 'SELECT "item", "price" FROM store WHERE "locationId"=%s'
         results = db.queryAll(queryString, (locationId,))
         for row in results:
