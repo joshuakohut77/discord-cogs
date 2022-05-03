@@ -93,19 +93,9 @@ class Pokemon:
         self.discordId = discordId
         self.__savePokemonToDB()
 
-    def delete(self):
-        """ soft deletes pokemon from database """
-        db = dbconn()
-        # use milliseconds as a way to get a unique number. used to soft delete a value and still retain original discordId
-        milliString = str(int(time() * 1000))
-        newDiscordId = self.discordId + '_' + milliString
-        pokemonUpdateQuery = 'UPDATE pokemon SET "discord_id" = %s WHERE "id" = %s'
-        db.execute(pokemonUpdateQuery, (newDiscordId, self.trainerId))
-
-        # delete and close connection
-        del db
-        
-
+    def release(self):
+        """ release a pokemon """
+        return self.__delete()
 
     def print(self):
         """ prints out all pokemon information for viewing"""
@@ -219,7 +209,7 @@ class Pokemon:
                             evolvedPokemon = Pokemon(evolvedForm)
                             evolvedPokemon.create(self.currentLevel)
                             evolvedPokemon.save(self.discordId)
-                            self.delete()
+                            self.__delete()
                         break
 
         self.save(self.discordId)
@@ -355,6 +345,18 @@ class Pokemon:
         # delete and close connectino
         del db
         return
+
+    def __delete(self):
+        """ soft deletes pokemon from database """
+        db = dbconn()
+        # use milliseconds as a way to get a unique number. used to soft delete a value and still retain original discordId
+        milliString = str(int(time() * 1000))
+        newDiscordId = self.discordId + '_' + milliString
+        pokemonUpdateQuery = 'UPDATE pokemon SET "discord_id" = %s WHERE "id" = %s'
+        db.execute(pokemonUpdateQuery, (newDiscordId, self.trainerId))
+
+        # delete and close connection
+        del db
 
     def __getPokemonLevelMoves(self, pokemon: APIResource = None):
         """ returns a dictionary of {move: level} for a pokemons base move set"""
