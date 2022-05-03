@@ -13,26 +13,28 @@ list of cities and locations: https://pokeapi.co/api/v2/region/1/
 
 class location:
     
-    def getAreaEncounterDetails(self, areaId):
+    def getAreaEncounterDetails(self, areaIdList):
         """ returns a list of encounter details in json format """
         pokemonEncounterList = []
-        locObj = pb.location_area(areaId)
-        for encounter in locObj.pokemon_encounters:
-            encounterDetails = {}
-            for version in encounter.version_details:
-                versionName = version.version.name
-                if versionName in VERSION_DETAILS_LIST:
-                    for details in version.encounter_details:
-                        encounterDetails['name'] = encounter.pokemon.name
-                        encounterDetails['chance'] = details.chance
-                        encounterDetails['max_level'] = details.max_level
-                        encounterDetails['min_level'] = details.min_level
-                        encounterDetails['method'] = details.method.name
-                        # this if section is to check for the previous value and not append to list if duplicate
-                        if len(pokemonEncounterList) > 0:
-                            if encounterDetails == pokemonEncounterList[-1]:
-                                continue
-                        pokemonEncounterList.append(encounterDetails)
+        for areaIdDict in areaIdList:
+            for areaId in areaIdDict:
+                locObj = pb.location_area(areaId)
+                for encounter in locObj.pokemon_encounters:
+                    encounterDetails = {}
+                    for version in encounter.version_details:
+                        versionName = version.version.name
+                        if versionName in VERSION_DETAILS_LIST:
+                            for details in version.encounter_details:
+                                encounterDetails['name'] = encounter.pokemon.name
+                                encounterDetails['chance'] = details.chance
+                                encounterDetails['max_level'] = details.max_level
+                                encounterDetails['min_level'] = details.min_level
+                                encounterDetails['method'] = details.method.name
+                                # this if section is to check for the previous value and not append to list if duplicate
+                                if len(pokemonEncounterList) > 0:
+                                    if encounterDetails == pokemonEncounterList[-1]:
+                                        continue
+                                pokemonEncounterList.append(encounterDetails)
         return pokemonEncounterList
 
     def getLocationList(self, region=1):
@@ -59,7 +61,7 @@ class location:
     def getMethods(self, areaEncounters):
         """ returns a list of methods available in that area """
         methodList = []
-        
+
         for x in areaEncounters:
             method = x['method']
             if method not in methodList:
@@ -70,10 +72,18 @@ class location:
     def generateEncounter(self, areaEncounters, selectedMethod):
         """ returns a list of chance items for the given method in that area """
         encounter = None
+        totalChance = 0
+        selectedMethod = 'walk'
         for x in areaEncounters:
             method = x['method']
             if method == selectedMethod:
-                randNum = random.randrange(1, 101)
+                chance = x['chance']
+                totalChance += chance
+        for x in areaEncounters:
+            method = x['method']
+            if method == selectedMethod:
+                chance = x['chance']
+                randNum = random.randrange(1, totalChance+1)
                 chance = x['chance']
                 if randNum <= chance:
                     encounter = x
