@@ -91,7 +91,7 @@ def getTypeColor(type: str) -> discord.Colours:
         color = discord.Colour(FAIRY_PINK)
     return color
 
-def createPokemonEmbed(user: Member, pokemon: PokemonClass) -> Embed:
+def createPokemonEmbed(user: Member, pokemon: PokemonClass) -> tuple[Embed, discord.File]:
     stats = pokemon.getPokeStats()
     color = getTypeColor(pokemon.type1)
 
@@ -122,7 +122,7 @@ def createPokemonEmbed(user: Member, pokemon: PokemonClass) -> Embed:
 
     file = discord.File(f"{pokemon.spriteURL}", filename="pokemon.png")
     embed.set_thumbnail(url=f"attachment://pokemon.png")
-    return embed
+    return embed, file
 
 
 class CompositeClass(commands.CogMeta, ABCMeta):
@@ -300,7 +300,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         while True:
             try:
                 pokemon: PokemonClass = pokeList[i]
-                embed = createPokemonEmbed(user, pokemon)
+                embed, file = createPokemonEmbed(user, pokemon)
                 
                 btns = []
                 if i > 0:
@@ -318,6 +318,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 if interaction is None:
                     await ctx.send(
                         embed=embed,
+                        file=file,
                         components=[btns]
                     )
                     interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
@@ -325,6 +326,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 else:
                     await interaction.edit_origin(
                         embed=embed,
+                        file=file,
                         components=[btns]
                     )
                     interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
@@ -433,7 +435,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         pokemon = trainer.getStarterPokemon()
         active = trainer.getActivePokemon()
 
-        embed = createPokemonEmbed(user, pokemon)
+        embed, file = createPokemonEmbed(user, pokemon)
 
         btns = []
         btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
@@ -443,7 +445,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         disabled = (active is not None) and (pokemon.id == active.id)
         btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=disabled))
 
-        await ctx.send(embed=embed, components=[btns])
+        await ctx.send(embed=embed, file=file, components=[btns])
 
     @_trainer.command()
     async def active(self, ctx: commands.Context, user: discord.Member = None) -> None:
@@ -459,8 +461,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
         btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
 
-        embed = createPokemonEmbed(user, pokemon)
-        await ctx.send(embed=embed)       
+        embed, file = createPokemonEmbed(user, pokemon)
+        await ctx.send(embed=embed, file=file)       
 
 
     # @_trainer.command()
