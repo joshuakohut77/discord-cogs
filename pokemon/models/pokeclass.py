@@ -273,7 +273,10 @@ class Pokemon:
         db = dbconn()
         queryString = 'SELECT "id", "discord_id", "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", traded, base_hp, base_attack, base_defense, base_speed, base_special_attack, base_special_defense, "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", "move_4", "type_1", "type_2", "nickName", "currentHP" FROM pokemon WHERE "id" = %s'
         result = db.querySingle(queryString, (int(pokemonId),))
-
+        
+        # delete and close connection
+        del db
+        
         # for result in results:
         self.trainerId = result[0]
         self.discordId = result[1]
@@ -313,8 +316,6 @@ class Pokemon:
         self.nickName = result[33]
         self.currentHP = result[34]
 
-        # delete and close connectino
-        del db
         return
 
     def __savePokemonToDB(self):
