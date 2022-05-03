@@ -267,6 +267,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             btns.append(Button(style=ButtonStyle.gray, label=f"{method}", custom_id=f'{method}'))
 
         await ctx.send(
+            content="What do you want to do?",
             components=[btns]
         )
 
