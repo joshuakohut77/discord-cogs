@@ -13,6 +13,7 @@ from time import time
 # TOTAL_POKEMON = config.total_pokemon
 STARTER_LEVEL = 5
 TOTAL_POKEMON = 150
+RELEASE_MONEY_MODIFIER = 20 # when you release a pokemon, you will get 15*level of released pokemon
 
 class trainer:
     def __init__(self, discordId):
@@ -98,6 +99,18 @@ class trainer:
         pokemon.create(STARTER_LEVEL)
         pokemon.save(self.discordId)
         return pokemon
+
+    def releasePokemon(self, pokemonId):
+        """ release a pokemon and get any rewards from it """
+        pokemon = pokeClass()
+        pokemon.load(pokemonId)
+        level = pokemon.currentLevel
+        pokemon.release()
+        inventory = inv(self.discordId)
+        releaseMoney = level * RELEASE_MONEY_MODIFIER
+        inventory.money += releaseMoney
+        inventory.save()
+        return 
 
     def getPokemon(self):
         """ returns a list of pokemon objects for every pokemon in the database belonging to the trainer """
@@ -237,6 +250,7 @@ class trainer:
 
     def heal(self, trainerId, item):
         """ uses a potion to heal a pokemon """
+        # TODO update for all healing items
         inventory = inv(self.discordId)
         if inventory.potion > 0:
             inventory.potion = inventory.potion - 1
