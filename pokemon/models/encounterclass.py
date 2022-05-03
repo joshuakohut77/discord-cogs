@@ -197,7 +197,7 @@ class encounter:
                 attack = pokemon1Stats['special-attack']
                 defense = pokemon2Stats['special-defense']
             randmonMult = random.randrange(217, 256) / 255
-            defendingType = self.pokemon2.types
+            defendingType = self.pokemon2.type1 # type 1 is the primary type 
             if moveType in defendingType:
                 stab = 1.5
             else:
@@ -212,26 +212,16 @@ class encounter:
 
         return calculatedDamage
 
-    def __getDamageTypeMultiplier(self, moveType, defendingTypeStr):
+    def __getDamageTypeMultiplier(self, moveType, defendingType):
         """ returns a multiplier for the type-effectiveness """
-        # pokemon can have multipl types so query both and return the smaller modifier of the two
-        if type(defendingTypeStr) == str:
-            defendingTypeStr = defendingTypeStr.replace('{', '')
-            defendingTypeStr = defendingTypeStr.replace('}', '')
-
-            typeList = defendingTypeStr.split(',')
-        typeList = defendingTypeStr
-        dmgMultList = []
         db = dbconn()
-        for defType in typeList:
-            # TODO update this query string to not use string replacement like this. Psycog has a method but more complex 
-            queryString = """SELECT %s FROM "type-effectiveness" WHERE source = '%s'""" %(defType, moveType)
-            result = db.querySingle(queryString)
-            dmgMultList.append(result[0])
+        # TODO update this query string to not use string replacement like this. Psycog has a method 
+        queryString = """SELECT %s FROM "type-effectiveness" WHERE source = '%s'""" %(defendingType, moveType)
+        result = db.querySingle(queryString)
+        dmgMult = result[0]
         # delete and close connection
         del db
-        dmgMultList.sort()
-        return dmgMultList[0]
+        return dmgMult
 
     def __removeNullMoves(self, moveList):
         """ returns a list of moves without any nulls """
