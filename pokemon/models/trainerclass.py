@@ -311,20 +311,39 @@ class trainer:
         if self.trainerExists:
             return
 
+        query = '''
+        DO
+        $do$
+        BEGIN
+
+        IF NOT EXISTS (SELECT 1 FROM trainer WHERE discord_id=%(discord)s) THEN
+            INSERT INTO trainer (discord_id) VALUES(%(discord)s);
+        END IF;
+
+        IF NOT EXISTS (SELECT 1 FROM inventory WHERE discord_id=%(discord)s) THEN
+            INSERT INTO inventory (discord_id) VALUES(%(discord)s);
+        END IF;
+
+        END;
+        $do$
+        '''
+
         db = dbconn()
-        queryString = 'SELECT 1 FROM trainer WHERE discord_id=%s'
-        results = db.queryAll(queryString, (self.discordId,))
-        # if trainer does not exist
-        if len(results) == 0:
-            # insert new row into trainer table
-            updateQuery = 'INSERT INTO trainer (discord_id) VALUES(%s)'
-            db.execute(updateQuery, (self.discordId,))
-        # if trainers' inventory does not exist
-        queryString = 'SELECT 1 FROM inventory WHERE discord_id=%s'
-        results = db.queryAll(queryString, (self.discordId,))
-        if len(results) == 0:
-            updateQuery = 'INSERT INTO inventory (discord_id) VALUES(%s)'
-            db.execute(updateQuery, (self.discordId,))
+        db.execute(query, { 'discord': self.discordId })
+
+        # queryString = 'SELECT 1 FROM trainer WHERE discord_id=%s'
+        # results = db.queryAll(queryString, (self.discordId,))
+        # # if trainer does not exist
+        # if len(results) == 0:
+        #     # insert new row into trainer table
+        #     updateQuery = 'INSERT INTO trainer (discord_id) VALUES(%s)'
+        #     db.execute(updateQuery, (self.discordId,))
+        # # if trainers' inventory does not exist
+        # queryString = 'SELECT 1 FROM inventory WHERE discord_id=%s'
+        # results = db.queryAll(queryString, (self.discordId,))
+        # if len(results) == 0:
+        #     updateQuery = 'INSERT INTO inventory (discord_id) VALUES(%s)'
+        #     db.execute(updateQuery, (self.discordId,))
 
         self.trainerExists = True
 
