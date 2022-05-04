@@ -32,7 +32,7 @@ class db:
 
         # self.conn = pg.connect(
         #     host=(
-        #         params and params.host) or "192.168.5.10",
+        #         params and params.host) or "postgresql.joshkohut.com",
         #     dbname=(params and params.dbname) or "pokemon_db",
         #     user=(params and params.user) or "redbot",
         #     # todo remove password from source control
