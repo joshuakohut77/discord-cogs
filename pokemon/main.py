@@ -333,7 +333,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 else:
                     await interaction.edit_origin(
                         embed=embed,
-                        file=file,
+                        # file=file,
                         components=[btns]
                     )
                     interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
