@@ -275,9 +275,6 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         else:
             await ctx.send(f'areaId: {trainer.getAreaId()} - No actions available')
 
-    def nextBtnClick(self, x):
-        return x.custom_id == "next" or x.custom_id == 'previous' or x.custom_id == 'stats' or x.custom_id == 'pokedex' or x.custom_id == 'active'
-
     @_trainer.command()
     async def pc(self, ctx: commands.Context, user: Union[discord.Member,discord.User] = None):
         author: Union[discord.Member,discord.User] = ctx.author
@@ -299,6 +296,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         if pokeLength == 0:
             await ctx.reply(content=f'{user.display_name} does not have any Pokemon.')
             return
+
+        def nextBtnClick():
+            return lambda x: x.custom_id == "next" or x.custom_id == 'previous' or x.custom_id == 'stats' or x.custom_id == 'pokedex' or x.custom_id == 'active'
+
 
         # TODO: there is a better way to do this that doesn't involve a loop
         #       discord-components gives an example use case
@@ -329,14 +330,14 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                         file=file,
                         components=[btns]
                     )
-                    interaction = await self.bot.wait_for("button_click", check=self.nextBtnClick, timeout=30)
+                    interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
                 else:
                     await interaction.edit_origin(
                         embed=embed,
                         file=file,
                         components=[btns]
                     )
-                    interaction = await self.bot.wait_for("button_click", check=self.nextBtnClick, timeout=30)
+                    interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
                 
                 # Users who are not the author cannot click other users buttons
                 if interaction.user.id != author.id:
