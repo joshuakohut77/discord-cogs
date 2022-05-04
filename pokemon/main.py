@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, Dict, List, TYPE_CHECKING
+from typing import Any, Dict, List, Union, TYPE_CHECKING
 from abc import ABCMeta
 from discord.embeds import Embed
 from discord.member import Member
@@ -163,7 +163,6 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
     # Commands:
     #
     # [p]trainer pokedex <user> - user is optional
-    # [p]trainer pokemon <user> - owned pokemon user optional
     # [p]trainer action - UI provides buttons to interact
     #
     # [p]pokemon stats <id> - unique id of pokemon in db (stats + moves)
@@ -258,10 +257,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         await ctx.send(embed=embed)
 
     @_trainer.command()
-    async def action(self, ctx: commands.Context, user: discord.Member = None):
-        if user is None:
-            user = ctx.author
-
+    async def action(self, ctx: commands.Context):
+        user = ctx.author
         
         trainer = TrainerClass(str(user.id))
         areaMethods = trainer.getAreaMethods()
@@ -278,16 +275,22 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         else:
             await ctx.send(f'areaId: {trainer.getAreaId()} - No actions available')
 
-    @_trainer.command()
-    async def pc(self, ctx: commands.Context, user: discord.Member = None):
-        if user is None:
-            user = ctx.author
+    def nextBtnClick(self, x):
+        return x.custom_id == "next" or x.custom_id == 'previous' or x.custom_id == 'stats' or x.custom_id == 'pokedex' or x.custom_id == 'active'
 
-        def nextBtnClick():
-            return lambda x: x.custom_id == "next" or x.custom_id == 'previous' or x.custom_id == 'stats' or x.custom_id == 'pokedex' or x.custom_id == 'active'
+    @_trainer.command()
+    async def pc(self, ctx: commands.Context, user: Union[discord.Member,discord.User] = None):
+        author: Union[discord.Member,discord.User] = ctx.author
+
+        if user is None:
+            user = author
 
         trainer = TrainerClass(str(user.id))
         pokeList = trainer.getPokemon()
+
+        # TODO: we should just get the ids since that's all we need
+        active = trainer.getActivePokemon()
+        starter = trainer.getStarterPokemon()
 
         interaction: discord_components.Interaction = None
         pokeLength = len(pokeList)
@@ -297,6 +300,9 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             await ctx.reply(content=f'{user.display_name} does not have any Pokemon.')
             return
 
+        # TODO: there is a better way to do this that doesn't involve a loop
+        #       discord-components gives an example use case
+        #       https://github.com/kiki7000/discord.py-components/blob/master/examples/paginator.py
         while True:
             try:
                 pokemon: PokemonClass = pokeList[i]
@@ -308,12 +314,14 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 if i < pokeLength - 1:
                     btns.append(Button(style=ButtonStyle.gray, label="Next", custom_id='next'))
 
-                # TODO: starter should not be releasable
-                # TODO: active should not be releasable
                 btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
                 btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
-                btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active'))
-                btns.append(Button(style=ButtonStyle.red, label="Release", custom_id='release'))
+
+                activeDisabled = (active is not None) and (pokemon.id == active.id)
+                btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled))
+                
+                releaseDisabled = (active is not None and pokemon.id == active.id) or (starter is not None and pokemon.id == starter.id)
+                btns.append(Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=releaseDisabled))
 
                 if interaction is None:
                     await ctx.send(
@@ -321,17 +329,20 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                         file=file,
                         components=[btns]
                     )
-                    interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
-                    # message = interaction.message
+                    interaction = await self.bot.wait_for("button_click", check=self.nextBtnClick, timeout=30)
                 else:
                     await interaction.edit_origin(
                         embed=embed,
                         file=file,
                         components=[btns]
                     )
-                    interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
-                    # message = interaction.message
+                    interaction = await self.bot.wait_for("button_click", check=self.nextBtnClick, timeout=30)
                 
+                # Users who are not the author cannot click other users buttons
+                if interaction.user.id != author.id:
+                    await interaction.send('You\'re not the author of this action.')
+                    continue
+
                 if interaction.custom_id == 'next':
                     i = i + 1
                 if (interaction.custom_id == 'previous'):
