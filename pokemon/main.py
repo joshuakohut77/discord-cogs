@@ -282,6 +282,9 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         if user is None:
             user = author
 
+        def nextBtnClick():
+            return lambda x: x.custom_id == "next" or x.custom_id == 'previous' or x.custom_id == 'stats' or x.custom_id == 'pokedex' or x.custom_id == 'active'
+
         trainer = TrainerClass(str(user.id))
         pokeList = trainer.getPokemon()
 
@@ -296,10 +299,6 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         if pokeLength == 0:
             await ctx.reply(content=f'{user.display_name} does not have any Pokemon.')
             return
-
-        def nextBtnClick():
-            return lambda x: x.custom_id == "next" or x.custom_id == 'previous' or x.custom_id == 'stats' or x.custom_id == 'pokedex' or x.custom_id == 'active'
-
 
         # TODO: there is a better way to do this that doesn't involve a loop
         #       discord-components gives an example use case
@@ -318,10 +317,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
                 btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
 
-                activeDisabled = (active is not None) and (pokemon.id == active.id)
+                # activeDisabled = (active is not None) and (pokemon.id == active.id)
                 btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active'))
                 
-                releaseDisabled = (active is not None and pokemon.id == active.id) or (starter is not None and pokemon.id == starter.id)
+                # releaseDisabled = (active is not None and pokemon.id == active.id) or (starter is not None and pokemon.id == starter.id)
                 btns.append(Button(style=ButtonStyle.red, label="Release", custom_id='release'))
 
                 if interaction is None:
