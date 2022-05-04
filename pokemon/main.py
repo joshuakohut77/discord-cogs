@@ -277,10 +277,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
     @_trainer.command()
     async def pc(self, ctx: commands.Context, user: Union[discord.Member,discord.User] = None):
-        author: Union[discord.Member,discord.User] = ctx.author
+        # author: Union[discord.Member,discord.User] = ctx.author
 
         if user is None:
-            user = author
+            user = ctx.author
 
         def nextBtnClick():
             return lambda x: x.custom_id == "next" or x.custom_id == 'previous' or x.custom_id == 'stats' or x.custom_id == 'pokedex' or x.custom_id == 'active'
@@ -288,9 +288,9 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         trainer = TrainerClass(str(user.id))
         pokeList = trainer.getPokemon()
 
-        # TODO: we should just get the ids since that's all we need
-        active = trainer.getActivePokemon()
-        starter = trainer.getStarterPokemon()
+        # # TODO: we should just get the ids since that's all we need
+        # active = trainer.getActivePokemon()
+        # starter = trainer.getStarterPokemon()
 
         interaction: discord_components.Interaction = None
         pokeLength = len(pokeList)
