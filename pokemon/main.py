@@ -250,7 +250,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         embed.set_author(name=f"{user.display_name}",
                          icon_url=str(user.avatar_url))
 
-        emojiId = '<:pokeball:971276030952222751>'
+        # guild = self.bot.get_guild(971138995042025494)
+        
+        # emojiId = '<:pokeball:971276030952222751>'
+        emojiId = '<:pokeball:971276308074094614>'
 
         embed.add_field(name=f"{emojiId} Pokeballs", value=f'{inv.pokeball}', inline=True)
         embed.add_field(name=f"▶️  Potion", value=f'{inv.potion}', inline=True)
