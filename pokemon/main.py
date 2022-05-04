@@ -275,9 +275,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         else:
             await ctx.send(f'areaId: {trainer.getAreaId()} - No actions available')
 
+    # TODO: Apparently there is a limit of 5 buttons at a time
     @_trainer.command()
     async def pc(self, ctx: commands.Context, user: Union[discord.Member,discord.User] = None):
-        # author: Union[discord.Member,discord.User] = ctx.author
+        author: Union[discord.Member,discord.User] = ctx.author
 
         if user is None:
             user = ctx.author
@@ -288,8 +289,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         trainer = TrainerClass(str(user.id))
         pokeList = trainer.getPokemon()
 
-        # # TODO: we should just get the ids since that's all we need
-        # active = trainer.getActivePokemon()
+        # TODO: we should just get the ids since that's all we need
+        active = trainer.getActivePokemon()
         # starter = trainer.getStarterPokemon()
 
         interaction: discord_components.Interaction = None
@@ -317,9 +318,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
                 btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
 
-                # activeDisabled = (active is not None) and (pokemon.id == active.id)
-                btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active'))
+                activeDisabled = (active is not None) and (pokemon.id == active.id)
+                btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled))
                 
+                # TODO: need to add the release button somewhere
                 # # releaseDisabled = (active is not None and pokemon.id == active.id) or (starter is not None and pokemon.id == starter.id)
                 # btns.append(Button(style=ButtonStyle.red, label="Release", custom_id='release'))
 
@@ -333,15 +335,15 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 else:
                     await interaction.edit_origin(
                         embed=embed,
-                        # file=file,
+                        file=file,
                         components=[btns]
                     )
                     interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
                 
-                # # Users who are not the author cannot click other users buttons
-                # if interaction.user.id != author.id:
-                #     await interaction.send('You\'re not the author of this action.')
-                #     continue
+                # Users who are not the author cannot click other users buttons
+                if interaction.user.id != author.id:
+                    await interaction.send('You\'re not the author of this action.')
+                    continue
 
                 if interaction.custom_id == 'next':
                     i = i + 1
