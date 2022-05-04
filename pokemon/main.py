@@ -319,10 +319,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
 
                 activeDisabled = (active is not None) and (pokemon.id == active.id)
-                btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled))
+                btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active'))
                 
                 releaseDisabled = (active is not None and pokemon.id == active.id) or (starter is not None and pokemon.id == starter.id)
-                btns.append(Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=releaseDisabled))
+                btns.append(Button(style=ButtonStyle.red, label="Release", custom_id='release'))
 
                 if interaction is None:
                     await ctx.send(
