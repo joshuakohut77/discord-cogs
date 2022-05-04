@@ -250,7 +250,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         embed.set_author(name=f"{user.display_name}",
                          icon_url=str(user.avatar_url))
 
-        embed.add_field(name=f"▶️  Pokeballs", value=f'{inv.pokeball}', inline=True)
+        embed.add_field(name=f":pokeball: Pokeballs", value=f'{inv.pokeball}', inline=True)
         embed.add_field(name=f"▶️  Potion", value=f'{inv.potion}', inline=True)
         embed.add_field(name=f"▶️  Money", value=f'{inv.money}', inline=True)
 
