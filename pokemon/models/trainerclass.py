@@ -198,17 +198,19 @@ class trainer:
         pokemon1 = self.getActivePokemon()
         if pokemon1 is None:
             return 'You do not have an active Pokemon'
-        areaId = self.getAreaId()
+        locationId = self.getLocationId()
         loc = location()
-        areaEncounters = loc.getAreaEncounterDetails(areaId)
+        areaIdList = loc.getAreaList(locationId)
+        areaEncounters = loc.getAreaEncounterDetails(areaIdList)
         return loc.getMethods(areaEncounters)
 
     def getRandomEncounter(self, method):
         """ gets a random encounter in the current area using the selected method """
         pokemon = None
-        areaId = self.getAreaId()
+        locationId = self.getLocationId()
         loc = location()
-        areaEncounters = loc.getAreaEncounterDetails(areaId)
+        areaIdList = loc.getAreaList(locationId)
+        areaEncounters = loc.getAreaEncounterDetails(areaIdList)
         randomEncounter = loc.generateEncounter(areaEncounters, method)
         if randomEncounter is not None:
             # this means a pokemon was found with the method
@@ -279,16 +281,16 @@ class trainer:
                 pokemon.save(self.discordId)
         return
 
-    def getAreaId(self):
-        """ returns the current area Id of the trainer """
-        db = dbconn()
-        queryString = 'SELECT "areaId" FROM trainer WHERE discord_id=%s'
-        result = db.querySingle(queryString, (self.discordId,))
-        areaId = result[0]
+    # def getAreaId(self):
+    #     """ returns the current area Id of the trainer """
+    #     db = dbconn()
+    #     queryString = 'SELECT "areaId" FROM trainer WHERE discord_id=%s'
+    #     result = db.querySingle(queryString, (self.discordId,))
+    #     areaId = result[0]
 
-        # delete and close connection
-        del db
-        return areaId
+    #     # delete and close connection
+    #     del db
+    #     return areaId
 
     def getLocationId(self):
         """ returns the current location Id of the trainer """
