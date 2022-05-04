@@ -329,7 +329,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                     await ctx.send(
                         embed=embed,
                         file=file,
-                        components=[btns]
+                        components=[btns, [Button(style=ButtonStyle.gray, label='Test', custom_id='test')]]
                     )
                     interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
                 else:
@@ -342,7 +342,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 
                 # Users who are not the author cannot click other users buttons
                 if interaction.user.id != author.id:
-                    await interaction.send('You\'re not the author of this action.')
+                    await interaction.send('This is not for you.')
                     continue
 
                 if interaction.custom_id == 'next':
