@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 from abc import ABCMeta
+from discord import emoji
 from discord.embeds import Embed
 from discord.member import Member
 import discord_components
@@ -253,7 +254,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         # guild = self.bot.get_guild(971138995042025494)
         
         # emojiId = '<:pokeball:971276030952222751>'
-        emojiId = '<:pokeball:971276308074094614>'
+        # emojiId = '<:pokeball:971276308074094614>'
+        emojiId = '<:greatball:971276308124414004>'
 
         embed.add_field(name=f"{emojiId} Pokeballs", value=f'{inv.pokeball}', inline=True)
         embed.add_field(name=f"▶️  Potion", value=f'{inv.potion}', inline=True)
