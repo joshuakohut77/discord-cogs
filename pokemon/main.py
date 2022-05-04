@@ -339,10 +339,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                     )
                     interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
                 
-                # Users who are not the author cannot click other users buttons
-                if interaction.user.id != author.id:
-                    await interaction.send('You\'re not the author of this action.')
-                    continue
+                # # Users who are not the author cannot click other users buttons
+                # if interaction.user.id != author.id:
+                #     await interaction.send('You\'re not the author of this action.')
+                #     continue
 
                 if interaction.custom_id == 'next':
                     i = i + 1
