@@ -13,14 +13,15 @@ STARTER_LEVEL = 6
 VERSION_GROUP_NAME = 'red-blue'
 
 class Pokemon:
-    def __init__(self, id_or_name=None):
+    def __init__(self, discordId, id_or_name=None):
         self.trainerId = None
-        self.discordId = None
+        self.discordId = discordId
         self.id_or_name = id_or_name
         self.name = None
         self.id = None
         self.nickName = None
-        self.spriteURL = None
+        self.frontSpriteURL = None
+        self.backSpriteURL = None
         self.growthRate = None
         self.currentLevel = None
         self.currentExp = None
@@ -30,6 +31,7 @@ class Pokemon:
         # self.types = None
         self.type1 = None
         self.type2 = None
+        self.shiny = False
         self.hp = PokeStats('hp')
         self.attack = PokeStats('attack')
         self.defense = PokeStats('defense')
@@ -48,7 +50,8 @@ class Pokemon:
             pokemon = pb.pokemon(self.id_or_name)
             self.name = pokemon.species.name
             self.id = pokemon.id
-            self.spriteURL = self.__getSpritePath()
+            self.frontSpriteURL = self.__getFrontSpritePath()
+            self.backSpriteURL = self.__getBackSpritePath()
             self.growthRate = pb.pokemon_species(pokemon.id).growth_rate.name
             self.base_exp = pokemon.base_experience
             moves = self.getMoves()
@@ -66,6 +69,8 @@ class Pokemon:
             # load pokemon from db using trainerId as unique primary key from Pokemon table
             self.wildPokemon = False
             self.__loadPokemonFromDB(pokemonId)
+            self.frontSpriteURL = self.__getFrontSpritePath()
+            self.backSpriteURL = self.__getBackSpritePath()
             return
 
     def create(self, level):
@@ -276,14 +281,14 @@ class Pokemon:
         
         # delete and close connection
         del db
-        
+
         # for result in results:
         self.trainerId = result[0]
         self.discordId = result[1]
         self.id_or_name = result[2]
         self.name = result[3]
         self.id = result[2]
-        self.spriteURL = result[4]
+        # self.spriteURL = result[4]
         self.growthRate = result[5]
         self.currentLevel = result[6]
         self.currentExp = result[7]
@@ -326,21 +331,21 @@ class Pokemon:
         if self.trainerId is None:
             queryString = """
                 INSERT INTO
-                    pokemon("discord_id", "pokemonId", "pokemonName", "spriteURL", "growthRate", "currentLevel", "currentExp", "traded", "base_hp", "base_attack", "base_defense", "base_speed", "base_special_attack", "base_special_defense", "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", "move_4", "type_1", "type_2", "nickName", "currentHP")
+                    pokemon("discord_id", "pokemonId", "pokemonName", "growthRate", "currentLevel", "currentExp", "traded", "base_hp", "base_attack", "base_defense", "base_speed", "base_special_attack", "base_special_defense", "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", "move_4", "type_1", "type_2", "nickName", "currentHP")
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     RETURNING id
             """
-            values = (self.discordId, self.id, self.name, self.spriteURL, self.growthRate, self.currentLevel, self.currentExp, self.traded, self.hp.base, self.attack.base, self.defense.base, self.speed.base, self.special_attack.base, self.special_defense.base, self.hp.IV, self.attack.IV,
+            values = (self.discordId, self.id, self.name, self.growthRate, self.currentLevel, self.currentExp, self.traded, self.hp.base, self.attack.base, self.defense.base, self.speed.base, self.special_attack.base, self.special_defense.base, self.hp.IV, self.attack.IV,
                     self.defense.IV, self.speed.IV, self.special_attack.IV, self.special_defense.IV, self.hp.EV, self.attack.EV, self.defense.EV, self.speed.EV, self.special_attack.EV, self.special_defense.EV, self.move_1, self.move_2, self.move_3, self.move_4, self.type1, self.type2, self.nickName, self.currentHP)
             trainerIds = db.executeAndReturn(queryString, values)
             self.trainerId = trainerIds[0]
         else:
             queryString = """
                 UPDATE pokemon
-                    SET "discord_id"=%s, "pokemonId"=%s, "pokemonName"=%s, "spriteURL"=%s, "growthRate"=%s, "currentLevel"=%s, "currentExp"=%s, "traded"=%s, "base_hp"=%s, "base_attack"=%s, "base_defense"=%s, "base_speed"=%s, "base_special_attack"=%s, "base_special_defense"=%s, "IV_hp"=%s, "IV_attack"=%s, "IV_defense"=%s, "IV_speed"=%s, "IV_special_attack"=%s, "IV_special_defense"=%s, "EV_hp"=%s, "EV_attack"=%s, "EV_defense"=%s, "EV_speed"=%s, "EV_special_attack"=%s, "EV_special_defense"=%s, "move_1"=%s, "move_2"=%s, "move_3"=%s, "move_4"=%s, "currentHP"=%s
+                    SET "discord_id"=%s, "pokemonId"=%s, "pokemonName"=%s, "growthRate"=%s, "currentLevel"=%s, "currentExp"=%s, "traded"=%s, "base_hp"=%s, "base_attack"=%s, "base_defense"=%s, "base_speed"=%s, "base_special_attack"=%s, "base_special_defense"=%s, "IV_hp"=%s, "IV_attack"=%s, "IV_defense"=%s, "IV_speed"=%s, "IV_special_attack"=%s, "IV_special_defense"=%s, "EV_hp"=%s, "EV_attack"=%s, "EV_defense"=%s, "EV_speed"=%s, "EV_special_attack"=%s, "EV_special_defense"=%s, "move_1"=%s, "move_2"=%s, "move_3"=%s, "move_4"=%s, "currentHP"=%s
                     WHERE id = %s;
             """
-            values = (self.discordId, self.id, self.name, self.spriteURL, self.growthRate, self.currentLevel, self.currentExp, self.traded, self.hp.base, self.attack.base, self.defense.base, self.speed.base, self.special_attack.base, self.special_defense.base, self.hp.IV, self.attack.IV,
+            values = (self.discordId, self.id, self.name, self.growthRate, self.currentLevel, self.currentExp, self.traded, self.hp.base, self.attack.base, self.defense.base, self.speed.base, self.special_attack.base, self.special_defense.base, self.hp.IV, self.attack.IV,
                     self.defense.IV, self.speed.IV, self.special_attack.IV, self.special_defense.IV, self.hp.EV, self.attack.EV, self.defense.EV, self.speed.EV, self.special_attack.EV, self.special_defense.EV, self.move_1, self.move_2, self.move_3, self.move_4, self.currentHP, self.trainerId)
             db.execute(queryString, values)
 
@@ -378,10 +383,37 @@ class Pokemon:
                     moveDict[moveName] = moveLevel
         return moveDict
 
-    def __getSpritePath(self):
-        """ returns a path to pokemon sprite on disk """
-        return "/data/cogs/CogManager/cogs/pokemon/sprites/pokemon/%s.png" %self.name
+    def __getFrontSpritePath(self):
+        """ returns a path to pokemon front sprite """
+        basePath = self.__getSpriteBasePath()
+        return basePath + "%s.png" %self.id
 
+    def __getBackSpritePath(self):
+        """ returns a path to pokemon back sprite """
+        basePath = self.__getSpriteBasePath()
+        return basePath + "back/%s.png" %self.id
+
+    def __getSpriteBasePath(self):
+        """ returns a base path to pokemon sprites """
+        #query the db to see if they're using legacy sprites or not
+        db = dbconn()
+        queryString = 'SELECT "legacySprites" FROM trainer WHERE "discord_id" = %s'
+        result = db.querySingle(queryString, (self.discordId,))
+        # delete object and close connection
+        del db
+        legacySprites = False
+        if len(result) > 0:
+            legacySprites = result[0]
+        
+        if legacySprites:
+            basePath = "https://pokesprites.joshkohut.com/sprites/pokemon/versions/generation-i/red-blue/transparent/"
+        else:
+            basePath = "https://pokesprites.joshkohut.com/sprites/pokemon/"
+        
+        # if the pokemon is a shiny, there is no legacy shiny, so the path will be overwritten regardless
+        if self.shiny:
+            basePath = "https://pokesprites.joshkohut.com/sprites/pokemon/shiny/"
+        return basePath
 
     def __getPokemonType(self, pokemon: APIResource = None):
         """ returns string of pokemons base type """
