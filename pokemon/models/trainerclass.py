@@ -17,6 +17,7 @@ RELEASE_MONEY_MODIFIER = 15 # when you release a pokemon, you will get 15*level 
 
 class trainer:
     def __init__(self, discordId):
+        self.faulted = False
         self.discordId = str(discordId)
         self.trainerExists = False
         # check create trainer if exists or not
@@ -57,7 +58,7 @@ class trainer:
 
         # create pokemon with unique stats using the pokemon class
         if starterId is not None:
-            pokemon = pokeClass(starterId)
+            pokemon = pokeClass(self.discordId, starterId)
             pokemon.load(pokemonId=starterId)
         else:
             pokeId: int = None
@@ -73,7 +74,7 @@ class trainer:
                 starter = random.choice(sequence)
                 pokeId = list(starter.values())[0]
 
-            pokemon = pokeClass(pokeId)
+            pokemon = pokeClass(self.discordId, pokeId)
             pokemon.create(STARTER_LEVEL)
 
             # BUG:  It is possible for the pokemon to save to the db as one of the
@@ -95,14 +96,14 @@ class trainer:
         return pokemon
 
     def addPokemon(self, pokeId: int):
-        pokemon = pokeClass(pokeId)
+        pokemon = pokeClass(self.discordId, pokeId)
         pokemon.create(STARTER_LEVEL)
         pokemon.save(self.discordId)
         return pokemon
 
     def releasePokemon(self, pokemonId):
         """ release a pokemon and get any rewards from it """
-        pokemon = pokeClass()
+        pokemon = pokeClass(self.discordId)
         pokemon.load(pokemonId)
         level = pokemon.currentLevel
         pokemon.release()
@@ -121,7 +122,7 @@ class trainer:
 
         for row in results:
             pokemonId = row[0]
-            pokemon = pokeClass()
+            pokemon = pokeClass(self.discordId)
             pokemon.load(pokemonId=pokemonId)
             pokemonList.append(pokemon)
         # delete and close connection
@@ -139,7 +140,7 @@ class trainer:
         if pokemonId is None:
             pokemon = "You do not have an active Pokemon!"
         else:
-            pokemon = pokeClass()
+            pokemon = pokeClass(self.discordId)
             pokemon.load(pokemonId=pokemonId)
 
         # delete and close connection
@@ -218,13 +219,13 @@ class trainer:
             min_level = randomEncounter['min_level']
             max_level = randomEncounter['max_level']
             level = random.randrange(int(min_level), int(max_level)+1)
-            pokemon = pokeClass(name)
+            pokemon = pokeClass(self.discordId, name)
             pokemon.create(level)
         
         return pokemon
 
     # def getPokemon(self, pokemonId):
-    #     pokemon = pokeClass(pokemonId)
+    #     pokemon = pokeClass(self.discordId, pokemonId)
     #     pokemon.load()
     #     return pokemon
 
@@ -281,27 +282,20 @@ class trainer:
                 pokemon.save(self.discordId)
         return
 
-    # def getAreaId(self):
-    #     """ returns the current area Id of the trainer """
-    #     db = dbconn()
-    #     queryString = 'SELECT "areaId" FROM trainer WHERE discord_id=%s'
-    #     result = db.querySingle(queryString, (self.discordId,))
-    #     areaId = result[0]
-
-    #     # delete and close connection
-    #     del db
-    #     return areaId
-
     def getLocationId(self):
         """ returns the current location Id of the trainer """
-        db = dbconn()
-        queryString = 'SELECT "locationId" FROM trainer WHERE discord_id=%s'
-        result = db.querySingle(queryString, (self.discordId,))
-        locationId = result[0]
-
-        # delete and close connection
-        del db
-        return locationId
+        locationId = None
+        try:
+            db = dbconn()
+            queryString = 'SELECT "locationId" FROM trainer WHERE discord_id=%(discord)s'
+            result = db.querySingle(queryString, { 'discord': self.discordId })
+            locationId = result[0]
+        except:
+            self.faulted = True
+        finally:
+            # delete and close connection
+            del db
+            return locationId
 
     ####
     # Private Class Methods
@@ -320,6 +314,7 @@ class trainer:
             db.executeWithoutCommit('INSERT INTO inventory (discord_id) VALUES(%(discord)s) ON CONFLICT DO NOTHING;', { 'discord': self.discordId })
             db.commit()
         except:
+            self.faulted = True
             db.rollback()
 
         self.trainerExists = True
@@ -330,7 +325,7 @@ class trainer:
     def __healPokemon(self, pokemonId, item):
         """ heals a pokemons currentHP """
         # this function is only designed to work with potion, super-potion, hyper-potion, max-potion
-        pokemon = pokeClass()
+        pokemon = pokeClass(self.discordId)
         pokemon.load(pokemonId)
         statsDict = pokemon.getPokeStats()
         maxHP = statsDict['hp']
