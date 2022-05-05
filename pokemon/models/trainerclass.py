@@ -306,21 +306,18 @@ class trainer:
         # Only do this check once
         if self.trainerExists:
             return
-
-        db = dbconn()
-
         try:
+            db = dbconn()        
             db.executeWithoutCommit('INSERT INTO trainer (discord_id) VALUES(%(discord)s) ON CONFLICT DO NOTHING;', { 'discord': self.discordId })
             db.executeWithoutCommit('INSERT INTO inventory (discord_id) VALUES(%(discord)s) ON CONFLICT DO NOTHING;', { 'discord': self.discordId })
             db.commit()
+            self.trainerExists = True
         except:
             self.faulted = True
             db.rollback()
-
-        self.trainerExists = True
-
-        # delete and close connection
-        del db
+        finally:
+            # delete and close connection
+            del db   
 
     def __healPokemon(self, pokemonId, item):
         """ heals a pokemons currentHP """
