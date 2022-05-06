@@ -20,6 +20,8 @@ MAX_BATTLE_TURNS = 50
 class encounter:
     def __init__(self, pokemon1, pokemon2):
         # pokemon1 for PvE will always be the discord trainers pokemon
+        self.faulted = False
+        
         self.pokemon1 = pokemon1
         self.pokemon2 = pokemon2
         pokedex(self.pokemon1.discordId, pokemon2)
@@ -125,7 +127,8 @@ class encounter:
 
         if pokemonCaught:
             # pokemon caught successfully. Save it to the trainers inventory
-            self.pokemon2.save(self.pokemon1.discordId)
+            self.pokemon2.discordId = self.pokemon1.discordId
+            self.pokemon2.save()
             retMsg = "You successfully caught the pokemon"
         else:
             retMsg = "You failed to catch the pokemon. The pokemon ran away!"
