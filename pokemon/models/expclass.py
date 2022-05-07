@@ -4,7 +4,8 @@ import config
 import pokebase as pb
 
 # Global Config Variables
-OVERALL_EXPERIENCE_MODIFIER = config.overall_experience_modifier
+OVERALL_EXPERIENCE_MODIFIER = 3
+# OVERALL_EXPERIENCE_MODIFIER = config.overall_experience_modifier
 
 class experiance:
     def __init__(self, pokemon):
