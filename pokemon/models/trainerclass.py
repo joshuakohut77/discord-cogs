@@ -103,8 +103,10 @@ class trainer:
                 #       if it fails.
                 
                 # save starter into
-                pokemon.discordId = self.discordId
                 pokemon.save()
+                if pokemon.faulted:
+                    self.faulted = True
+                    return "error occured during pokemon save()"
 
                 starterId = pokemon.trainerId
                 
