@@ -234,12 +234,15 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         """
         user = ctx.author
 
-        store = StoreClass(str(user.id))
-        res = store.buyItemEx(item, count)
+        trainer = TrainerClass(user.id)
+        locationId = trainer.getLocationId()
+        store = StoreClass(user.id, locationId)
+        res = store.buyItem(item, count)
 
         await ctx.send(res)
         await ctx.send(f'{user.display_name} bought {count} {item}')
-    
+
+
 
     @_trainer.command()
     async def bag(self, ctx: commands.Context, user: discord.Member = None):
