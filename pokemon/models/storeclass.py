@@ -10,9 +10,10 @@ from loggerclass import logger as log
 logger = log()
 
 class store:
-    def __init__(self, discordId):
+    def __init__(self, discordId, locationId):
         self.faulted = False
         self.discordId = discordId
+        self.locationId = locationId
         self.storeList = []
         self.storeMap = {}
         self.__loadStore()
@@ -21,11 +22,11 @@ class store:
         """ loads a trainers store into the class object """
         storeList = []
         try:
-            trainerObj = trainer(self.discordId)
-            locationId = trainerObj.getLocationId()
+            # trainerObj = trainer(self.discordId)
+            # locationId = trainerObj.getLocationId()
             db = dbconn()
             queryString = 'SELECT "item", "price" FROM store WHERE "locationId"=%(locationId)s'
-            results = db.queryAll(queryString, { 'locationId':locationId })
+            results = db.queryAll(queryString, { 'locationId':self.locationId })
             for row in results:
                 item = row[0]
                 price = row[1]

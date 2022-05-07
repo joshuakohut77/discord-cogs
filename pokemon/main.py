@@ -206,16 +206,18 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         pass
 
     @_pokemart.command()
-    async def list(self, ctx: commands.Context, user: discord.Member = None) -> None:
+    async def shop(self, ctx: commands.Context, user: discord.Member = None) -> None:
         
         if user is None:
             user = ctx.author
         
+        trainer = TrainerClass(user.id)
+        location = trainer.getLocation()
         store = StoreClass(user.id)
 
         # Create the embed object
         file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/items/poke-ball.png", filename="poke-ball.png")
-        embed = discord.Embed(title=f"Pokemart - TODO: Area Name")
+        embed = discord.Embed(title=f"Pokemart - {location.name}")
         embed.set_thumbnail(url=f"attachment://poke-ball.png")
         # embed.set_author(name=f"{user.display_name}",
         #                  icon_url=str(user.avatar_url))
