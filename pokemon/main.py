@@ -296,9 +296,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         if inv.fullheal > 0:
             items.append(f'{constant.FULLHEAL} **Fullheal** — {inv.fullheal}')
 
-        embed.add_field(name=f"Items", value=f'''
-        {'\r\n'.join(items)}
-        ''', inline=False)
+        trainerItems = "\r\n".join(items)
+        embed.add_field(name=f"Items", value=trainerItems, inline=False)
 
 
         # # guild = self.bot.get_guild(971138995042025494)
