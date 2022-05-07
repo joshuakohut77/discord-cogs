@@ -105,43 +105,14 @@ class Pokemon:
             if self.trainerId is None:
                 queryString = """
                     INSERT INTO
-                        pokemon("discord_id", "pokemonId", "pokemonName", "growthRate", 
-                            "currentLevel", "currentExp", "traded", "base_hp", 
-                            "base_attack", "base_defense", "base_speed", "base_special_attack", 
-                            "base_special_defense", "IV_hp", "IV_attack", "IV_defense", 
-                            "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", 
-                            "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", 
-                            "EV_special_defense", "move_1", "move_2", "move_3", "move_4", 
-                            "type_1", "type_2", "nickName", "currentHP")
-                        VALUES (%(discordId)s, %(pokemonId)s, %(pokemonName)s,
-                            %(growthRate)s, %(currentLevel)s, %(currentExp)s,
-                            %(traded)s, %(base_hp)s,v%(base_attack)s,
-                            %(base_defense)s, %(base_speed)s,
-                            %(base_special_attack)s, %(base_special_defense)s,
-                            %(IV_hp)s, %(IV_attack)s, %(IV_defense)s, 
-                            %(IV_speed)s, %(IV_special_attack)s,
-                            %(IV_special_defense)s, %(EV_hp)s, 
-                            %(EV_attack)s, %(EV_defense)s, %(EV_speed)s,
-                            %(EV_special_attack)s, %(EV_special_defense)s,
-                            %(move_1)s, %(move_2)s, %(move_3)s, %(move_4)s, 
-                            %(type_1)s, %(type_2)s, %(nickName)s, %(currentHP)s)
+                        pokemon("discord_id", "pokemonId", "pokemonName", "growthRate", "currentLevel", "currentExp", "traded", "base_hp", "base_attack", "base_defense", "base_speed", "base_special_attack", "base_special_defense", "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", "move_4", "type_1", "type_2", "nickName", "currentHP")
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         RETURNING id
                 """
-                values = {'discordId': self.discordId, 'pokemonId': self.id, 'pokemonName': self.name,
-                          'growthRate': self.growthRate, 'currentLevel': self.currentLevel, 'currentExp': self.currentExp,
-                          'traded': self.traded, 'base_hp': self.hp.base, 'base_attack': self.attack.base,
-                          'base_defense': self.defense.base, 'base_speed': self.speed.base,
-                          'base_special_attack': self.special_attack.base, 'base_special_defense': self.special_defense.base,
-                          'IV_hp': self.hp.IV, 'IV_attack': self.attack.IV, 'IV_defense': self.defense.IV,
-                          'IV_speed': self.speed.IV, 'IV_special_attack': self.special_attack.IV,
-                          'IV_special_defense': self.special_defense.IV, 'EV_hp': self.hp.EV,
-                          'EV_attack': self.attack.EV, 'EV_defense': self.defense.EV, 'EV_speed': self.speed.EV,
-                          'EV_special_attack': self.special_attack.EV, 'EV_special_defense': self.special_defense.EV,
-                          'move_1': self.move_1, 'move_2': self.move_2, 'move_3': self.move_3, 'move_4': self.move_4,
-                          'type_1': self.type1, 'type_2': self.type2, 'nickName': self.nickName, 'currentHP': self.currentHP}
+                values = (self.discordId, self.id, self.name, self.growthRate, self.currentLevel, self.currentExp, self.traded, self.hp.base, self.attack.base, self.defense.base, self.speed.base, self.special_attack.base, self.special_defense.base, self.hp.IV, self.attack.IV,
+                        self.defense.IV, self.speed.IV, self.special_attack.IV, self.special_defense.IV, self.hp.EV, self.attack.EV, self.defense.EV, self.speed.EV, self.special_attack.EV, self.special_defense.EV, self.move_1, self.move_2, self.move_3, self.move_4, self.type1, self.type2, self.nickName, self.currentHP)
                 trainerIds = db.executeAndReturn(queryString, values)
-                if trainerIds:
-                    self.trainerId = trainerIds[0]
+                self.trainerId = trainerIds[0]
             else:
                 queryString = """
                     UPDATE pokemon
