@@ -3,7 +3,7 @@ from typing import List
 
 class Location:
     def __init__(self, results: List):
-        self.location = results[0]
+        self.locationId = results[0]
         self.name = results[1]
         self.north = results[2]
         self.east = results[3]
