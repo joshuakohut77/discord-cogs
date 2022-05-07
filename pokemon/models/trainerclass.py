@@ -71,6 +71,9 @@ class trainer:
             if starterId is not None:
                 pokemon = pokeClass(self.discordId, starterId)
                 pokemon.load(pokemonId=starterId)
+                if pokemon.faulted:
+                    self.faulted = True
+                    return "error occured during pokemon load()"
             else:
                 pokeId: int = None
                 # trainer does not yet have a starter, create one
@@ -87,6 +90,9 @@ class trainer:
 
                 pokemon = pokeClass(self.discordId, pokeId)
                 pokemon.create(STARTER_LEVEL)
+                if pokemon.faulted:
+                    self.faulted = True
+                    return "error occured during pokemon create()"
 
                 # BUG:  It is possible for the pokemon to save to the db as one of the
                 #       trainers pokemon, but fail to update the trainer with the starter.
@@ -113,16 +119,28 @@ class trainer:
     def addPokemon(self, pokeId: int):
         pokemon = pokeClass(self.discordId, pokeId)
         pokemon.create(STARTER_LEVEL)
+        if pokemon.faulted:
+            self.faulted = True
+            return "error occured during pokemon create()"
         pokemon.discordId = self.discordId
         pokemon.save()
+        if pokemon.faulted:
+            self.faulted = True
+            return "error occured during pokemon save()"
         return pokemon
 
     def releasePokemon(self, pokemonId):
         """ release a pokemon and get any rewards from it """
         pokemon = pokeClass(self.discordId)
         pokemon.load(pokemonId)
+        if pokemon.faulted:
+            self.faulted = True
+            return "error occured during pokemon load()"
         level = pokemon.currentLevel
         pokemon.release()
+        if pokemon.faulted:
+            self.faulted = True
+            return "error occured during pokemon release()"
         inventory = inv(self.discordId)
         releaseMoney = level * RELEASE_MONEY_MODIFIER
         inventory.money += releaseMoney
@@ -142,6 +160,9 @@ class trainer:
                 pokemonId = row[0]
                 pokemon = pokeClass(self.discordId)
                 pokemon.load(pokemonId=pokemonId)
+                if pokemon.faulted:
+                    self.faulted = True
+                    return "error occured during pokemon load()"
                 pokemonList.append(pokemon)
         except:
             self.faulted = True
@@ -165,6 +186,9 @@ class trainer:
                 else:
                     pokemon = pokeClass(self.discordId)
                     pokemon.load(pokemonId=pokemonId)
+                    if pokemon.faulted:
+                        self.faulted = True
+                        return "error occured during pokemon load()"
         except:
             self.faulted = True
             logger.error(excInfo=sys.exc_info())
@@ -207,7 +231,11 @@ class trainer:
         if pokemon1 is None:
             return 'You do not have an active Pokemon'        
         enc = encounter(pokemon1, pokemon2)
-        return enc.fight()
+        retVal = enc.fight()
+        if enc.faulted:
+            self.faulted = True
+            return "error occurred during encounter.fight()"
+        return retVal
 
     def catch(self, pokemon2, item):
         """ creates a catch encounter """
@@ -215,7 +243,11 @@ class trainer:
         if pokemon1 is None:
             return 'You do not have an active Pokemon'        
         enc = encounter(pokemon1, pokemon2)
-        return enc.catch(item)
+        retVal = enc.catch(item)
+        if enc.faulted:
+            self.faulted = True
+            return "error occurred during encounter.catch()"
+        return retVal
 
     def runAway(self, pokemon2):
         """ creates a run away encounter """
@@ -223,7 +255,11 @@ class trainer:
         if pokemon1 is None:
             return 'You do not have an active Pokemon'        
         enc = encounter(pokemon1, pokemon2)
-        return enc.runAway()
+        retVal = enc.runAway()
+        if enc.faulted:
+            self.faulted = True
+            return "error occurred during encounter.runAway()"
+        return retVal
 
     def getAreaMethods(self):
         """ returns the encounter methods in the trainers area """
@@ -269,6 +305,9 @@ class trainer:
             level = random.randrange(int(min_level), int(max_level)+1)
             pokemon = pokeClass(self.discordId, name)
             pokemon.create(level)
+            if pokemon.faulted:
+                self.faulted = True
+                return "error occured during pokemon create()"
         
         return pokemon
 
@@ -373,6 +412,9 @@ class trainer:
         # this function is only designed to work with potion, super-potion, hyper-potion, max-potion
         pokemon = pokeClass(self.discordId)
         pokemon.load(pokemonId)
+        if pokemon.faulted:
+            self.faulted = True
+            return "error occured during pokemon load()"
         statsDict = pokemon.getPokeStats()
         maxHP = statsDict['hp']
         currentHP = pokemon.currentHP
