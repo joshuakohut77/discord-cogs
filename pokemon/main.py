@@ -213,7 +213,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         
         trainer = TrainerClass(user.id)
         location = trainer.getLocation()
-        store = StoreClass(user.id)
+        store = StoreClass(user.id, location.locationId)
 
         # Create the embed object
         file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/items/poke-ball.png", filename="poke-ball.png")
