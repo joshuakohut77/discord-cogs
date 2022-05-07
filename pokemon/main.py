@@ -254,8 +254,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         embed.add_field(name=f"Items", value=f'''
         {constant.POKEBALL} **Pokeballs** — {inv.pokeball}
-        {constant.POTION} **Potion** — {inv.potion}
-        {constant.REVIVE} **Revive** — {inv.revive}
+        {constant.POTION} **Potion**      — {inv.potion}
+        {constant.REVIVE} **Revive**      — {inv.revive}
         ''', inline=False)
 
 
