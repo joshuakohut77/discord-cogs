@@ -253,9 +253,12 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                          icon_url=str(user.avatar_url))
 
         # guild = self.bot.get_guild(971138995042025494)
-
+        # \u200b
+        # A device for catching wild Pokémon. It's thrown like a ball, comfortably encapsulating its target.
         if inv.pokeball > 0:
-            embed.add_field(name=f"{constant.POKEBALL} Pokeballs `— test`", value=f'— {inv.pokeball} [link](https://www.youtube.com/watch?v=dQw4w9WgXcQ)', inline=False)
+            embed.add_field(name=f"\u200b", value=f'{constant.POKEBALL} **Pokeballs** — {inv.pokeball}', inline=False)
+            # embed.add_field(name=f"{constant.POKEBALL} Pokeballs `— {inv.pokeball}`", value=f'A device for catching wild Pokémon. It\'s thrown like a ball, comfortably encapsulating its target.', inline=False)
+            # embed.add_field(name=f"{constant.POKEBALL} Pokeballs `— test`", value=f'— {inv.pokeball} [link](https://www.youtube.com/watch?v=dQw4w9WgXcQ)', inline=False)
         if inv.greatball > 0:
             embed.add_field(name=f"{constant.GREATBALL}  Greatballs", value=f'{inv.potion}', inline=False)
         if inv.ultraball > 0:
