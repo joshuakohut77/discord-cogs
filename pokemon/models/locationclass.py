@@ -1,11 +1,14 @@
 # location class
-
+import sys
 import pokebase as pb
 import random
+from loggerclass import logger as log
+
 # import config
 
 # VERSION_DETAILS_LIST = config.version_details_list
 VERSION_DETAILS_LIST = ['red', 'blue']
+logger = log()
 
 """
 list of cities and locations: https://pokeapi.co/api/v2/region/1/
@@ -40,6 +43,7 @@ class location:
                                     pokemonEncounterList.append(encounterDetails)
         except:
             self.faulted = True
+            logger.error(excInfo=sys.exc_info())
         finally:
             return pokemonEncounterList
 
@@ -55,6 +59,7 @@ class location:
                 locationList.append({name: locationNumber})
         except:
             self.faulted = True
+            logger.error(excInfo=sys.exc_info())
         finally:
             return locationList
 
@@ -69,6 +74,7 @@ class location:
                 areaList.append({name: areaNumber})
         except:
             self.faulted = True
+            logger.error(excInfo=sys.exc_info())
         finally:
             return areaList
 
@@ -82,6 +88,7 @@ class location:
                     methodList.append(method)
         except:
             self.faulted = True
+            logger.error(excInfo=sys.exc_info())
         finally:
             return methodList
 
@@ -106,6 +113,7 @@ class location:
                         encounter = x
         except:
             self.faulted = True
+            logger.error(excInfo=sys.exc_info())
         finally:
             return encounter
 
