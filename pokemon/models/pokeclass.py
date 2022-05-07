@@ -1,16 +1,18 @@
 # pokemon user class
 
+import sys
+import math
 import pokebase as pb
 import random
-import math
-from time import time
-
+from dbclass import db as dbconn
+from loggerclass import logger as log
 from pokebase.interface import APIResource
 from statclass import PokeStats
-from dbclass import db as dbconn
+from time import time
 
 STARTER_LEVEL = 6
 VERSION_GROUP_NAME = 'red-blue'
+logger = log()
 
 class Pokemon:
     def __init__(self, discordId, id_or_name=None):
@@ -162,6 +164,7 @@ class Pokemon:
                     moveList = [result[0], result[1], result[2], result[3]]
             except:
                 self.faulted = True
+                logger.error(excInfo=sys.exc_info())
             finally:
                 # delete object and close connection
                 del db
@@ -174,106 +177,116 @@ class Pokemon:
         self.currentHP = newCurrentHP
         levelUp = False
         retMsg = ''
-        if newCurrentHP > 0:
-            self.currentExp = self.currentExp + expGained
+        try:
+            if newCurrentHP > 0:
+                self.currentExp = self.currentExp + expGained
 
-            # {'hp': 0, 'attack': 0, 'defense': 0, 'special-attack': 0, 'special-defense': 0, 'speed': 6}
-            if evGained is not None:
-                self.hp.EV = self.hp.EV + evGained['hp']
-                self.attack.EV = self.attack.EV + evGained['attack']
-                self.defense.EV = self.defense.EV + evGained['defense']
-                self.speed.EV = self.speed.EV + evGained['speed']
-                self.special_attack.EV = self.special_attack.EV + \
-                    evGained['special-attack']
-                self.special_defense.EV = self.special_defense.EV + \
-                    evGained['special-defense']
+                # {'hp': 0, 'attack': 0, 'defense': 0, 'special-attack': 0, 'special-defense': 0, 'speed': 6}
+                if evGained is not None:
+                    self.hp.EV = self.hp.EV + evGained['hp']
+                    self.attack.EV = self.attack.EV + evGained['attack']
+                    self.defense.EV = self.defense.EV + evGained['defense']
+                    self.speed.EV = self.speed.EV + evGained['speed']
+                    self.special_attack.EV = self.special_attack.EV + \
+                        evGained['special-attack']
+                    self.special_defense.EV = self.special_defense.EV + \
+                        evGained['special-defense']
 
-            # get the base exp of the next level
-            nextLevelBaseExp = self.__getBaseLevelExperience(
-                level=self.currentLevel+1)
-            if self.currentExp >= nextLevelBaseExp:
-                # pokemon leveled up. recurrsively check exp thresholds to determine the new level
-                for x in range(99):
-                    tempLevelBaseExp = self.__getBaseLevelExperience(
-                        level=self.currentLevel+x)
-                    if tempLevelBaseExp > self.currentExp:
-                        self.currentLevel = self.currentLevel + x-1
-                        # if a pokemon gains multiple levels, notifications of moves learned will be skipped. 
-                        # this next section is to handle that unique case
-                        if (x-1) > 1:
-                            moveList = self.getMoves(reload=True)
-                        else:
-                            moveList = self.getMoves()
-                        levelUp = True
-                        newMove = self.__getNewMoves()
-                        if newMove != '':
-                            retMsg += 'Your pokemon learned %s. ' % (newMove)
-                        
-                        self.move_1 = moveList[3]
-                        self.move_2 = moveList[2]
-                        self.move_3 = moveList[1]
-                        self.move_4 = moveList[0]
-                        evolvedForm = self.__checkForEvolution()
-                        if evolvedForm is not None:
-                            retMsg += 'Your pokemon is evolving......... Your pokemon evolved into %s!' %(evolvedForm)
-                            evolvedPokemon = Pokemon(evolvedForm)
-                            evolvedPokemon.create(self.currentLevel)
-                            evolvedPokemon.discordId = self.discordId
-                            evolvedPokemon.save()
-                            self.__delete()
-                        break
+                # get the base exp of the next level
+                nextLevelBaseExp = self.__getBaseLevelExperience(
+                    level=self.currentLevel+1)
+                if self.currentExp >= nextLevelBaseExp:
+                    # pokemon leveled up. recurrsively check exp thresholds to determine the new level
+                    for x in range(99):
+                        tempLevelBaseExp = self.__getBaseLevelExperience(
+                            level=self.currentLevel+x)
+                        if tempLevelBaseExp > self.currentExp:
+                            self.currentLevel = self.currentLevel + x-1
+                            # if a pokemon gains multiple levels, notifications of moves learned will be skipped. 
+                            # this next section is to handle that unique case
+                            if (x-1) > 1:
+                                moveList = self.getMoves(reload=True)
+                            else:
+                                moveList = self.getMoves()
+                            levelUp = True
+                            newMove = self.__getNewMoves()
+                            if newMove != '':
+                                retMsg += 'Your pokemon learned %s. ' % (newMove)
+                            
+                            self.move_1 = moveList[3]
+                            self.move_2 = moveList[2]
+                            self.move_3 = moveList[1]
+                            self.move_4 = moveList[0]
+                            evolvedForm = self.__checkForEvolution()
+                            if evolvedForm is not None:
+                                retMsg += 'Your pokemon is evolving......... Your pokemon evolved into %s!' %(evolvedForm)
+                                evolvedPokemon = Pokemon(evolvedForm)
+                                evolvedPokemon.create(self.currentLevel)
+                                evolvedPokemon.discordId = self.discordId
+                                evolvedPokemon.save()
+                                self.__delete()
+                            break
 
-        # save all above changes included the change in currentHP
-        self.save()
-        return levelUp, retMsg
+            # save all above changes included the change in currentHP
+            self.save()
+        except:
+            self.faulted = True
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            return levelUp, retMsg
 
     def getEvolutions(self):
         """ returns a dictionary of the pokemons evolution chain """
         # todo consider how to loop this. It's hard coded for a maximum of 2 evolutions or 3 pokemon 
         # the API format makes it difficult to loop for this information. 
 
-        pokemon = pb.pokemon_species(self.id)
-
-        evoChainId = self.__getUrlNumber(pokemon.evolution_chain.url)
-        
         evolutionList = []
-        evo = pb.evolution_chain(int(evoChainId))
-        name = evo.chain.species.name
-        min_level = None
+        try:
+            pokemon = pb.pokemon_species(self.id)
 
-        evo_details = evo.chain.evolution_details
-        evolves_to = None
-        if evo_details != []:
-            trigger = evo_details.triger.name
-            if trigger == 'level-up':
-                min_level = evo_details.min_level
-
-        evolves_to = evo.chain.evolves_to
-        evolutionList.append({'name': name, 'min_level': min_level})
-
-        if evolves_to is not None and evolves_to != []:
-            name = evolves_to[0].species.name
-            evo_details = evolves_to[0].evolution_details
+            evoChainId = self.__getUrlNumber(pokemon.evolution_chain.url)
+            
+            
+            evo = pb.evolution_chain(int(evoChainId))
+            name = evo.chain.species.name
             min_level = None
+
+            evo_details = evo.chain.evolution_details
+            evolves_to = None
             if evo_details != []:
-                trigger = evo_details[0].trigger.name
+                trigger = evo_details.triger.name
                 if trigger == 'level-up':
-                    min_level = evo_details[0].min_level
-            evolves_to = evolves_to[0].evolves_to
+                    min_level = evo_details.min_level
+
+            evolves_to = evo.chain.evolves_to
             evolutionList.append({'name': name, 'min_level': min_level})
 
-        if evolves_to is not None and evolves_to != []:
-            name = evolves_to[0].species.name
-            evo_details = evolves_to[0].evolution_details
-            min_level = None
-            if evo_details != []:
-                trigger = evo_details[0].trigger.name
-                if trigger == 'level-up':
-                    min_level = evo_details[0].min_level
-            evolves_to = evolves_to[0].evolves_to
-            evolutionList.append({'name': name, 'min_level': min_level})
+            if evolves_to is not None and evolves_to != []:
+                name = evolves_to[0].species.name
+                evo_details = evolves_to[0].evolution_details
+                min_level = None
+                if evo_details != []:
+                    trigger = evo_details[0].trigger.name
+                    if trigger == 'level-up':
+                        min_level = evo_details[0].min_level
+                evolves_to = evolves_to[0].evolves_to
+                evolutionList.append({'name': name, 'min_level': min_level})
 
-        return evolutionList
+            if evolves_to is not None and evolves_to != []:
+                name = evolves_to[0].species.name
+                evo_details = evolves_to[0].evolution_details
+                min_level = None
+                if evo_details != []:
+                    trigger = evo_details[0].trigger.name
+                    if trigger == 'level-up':
+                        min_level = evo_details[0].min_level
+                evolves_to = evolves_to[0].evolves_to
+                evolutionList.append({'name': name, 'min_level': min_level})
+        except:
+            self.faulted = True
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            return evolutionList
 
     ####
     # Private Class Methods
@@ -295,6 +308,7 @@ class Pokemon:
             result = db.querySingle(queryString, { 'pokemonId': int(pokemonId) })
         except:
             self.faulted = True
+            logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
             del db
@@ -412,6 +426,7 @@ class Pokemon:
                 db.execute(queryString, values)
         except:
             self.faulted = True
+            logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connectino
             del db
@@ -427,6 +442,7 @@ class Pokemon:
             db.execute(pokemonUpdateQuery, { 'newDiscordId':newDiscordId, 'trainerId':self.trainerId })
         except:
             self.faulted = True
+            logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
             del db
@@ -469,6 +485,7 @@ class Pokemon:
             result = db.querySingle(queryString, { 'discordId': self.discordId })
         except:
             self.faulted = True
+            logger.error(excInfo=sys.exc_info())
         finally:
             # delete object and close connection
             del db

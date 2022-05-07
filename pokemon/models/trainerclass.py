@@ -1,19 +1,21 @@
 # trainer class
-
+import sys
+import random
 from dbclass import db as dbconn
-from pokeclass import Pokemon as pokeClass
+from encounterclass import encounter
 from inventoryclass import inventory as inv
 from locationclass import location
-from encounterclass import encounter
-# import config
-import random
+from loggerclass import logger as log
+from pokeclass import Pokemon as pokeClass
 from time import time
 
+# import config
 # STARTER_LEVEL = config.starterLevel
 # TOTAL_POKEMON = config.total_pokemon
 STARTER_LEVEL = 5
 TOTAL_POKEMON = 150
 RELEASE_MONEY_MODIFIER = 15 # when you release a pokemon, you will get 15*level of released pokemon
+logger = log()
 
 class trainer:
     def __init__(self, discordId):
@@ -43,6 +45,7 @@ class trainer:
             self.faulted = True
             retMsg = "Error occured while trying to delete trainer"
             db.rollback()
+            logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
             del db
@@ -102,6 +105,7 @@ class trainer:
                 db.execute(updateString, { 'starterId': starterId, 'discordId': self.discordId })
         except:
             self.faulted = True
+            logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
             del db
@@ -140,6 +144,7 @@ class trainer:
                 pokemonList.append(pokemon)
         except:
             self.faulted = True
+            logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
             del db
@@ -161,6 +166,7 @@ class trainer:
                     pokemon.load(pokemonId=pokemonId)
         except:
             self.faulted = True
+            logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
             del db
@@ -188,6 +194,7 @@ class trainer:
         except:
             self.faulted = True 
             retMsg = 'An error occured'
+            logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
             del db
@@ -264,6 +271,7 @@ class trainer:
                 pokedex.append(pokeDict)
         except:
             self.faulted = True
+            logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
             del db
@@ -312,6 +320,7 @@ class trainer:
                 locationId = result[0]
         except:
             self.faulted = True
+            logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
             del db
@@ -335,6 +344,7 @@ class trainer:
         except:
             self.faulted = True
             db.rollback()
+            logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
             del db   

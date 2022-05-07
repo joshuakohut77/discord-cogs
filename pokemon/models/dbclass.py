@@ -2,7 +2,6 @@
 
 import psycopg as pg
 
-
 # The python equivalent of dotnets IDisposable pattern is their Context Managers
 # https://book.pythontips.com/en/latest/context_managers.html
 #
@@ -17,7 +16,7 @@ import psycopg as pg
 #
 # According to their best practices, creating lots of cursors should not be a problem:
 # https://www.psycopg.org/docs/faq.html#best-practices
-#
+
 class db:
     def __init__(self, params=None):
         # TODO: need a better way to pass in db configs through all the objects.

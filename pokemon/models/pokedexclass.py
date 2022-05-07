@@ -1,8 +1,10 @@
 # pokedex class
-
-from dbclass import db as dbconn
+import sys
 from datetime import datetime
+from dbclass import db as dbconn
+from loggerclass import logger as log
 
+logger = log()
 
 class pokedex:
     def __init__(self, discordId, pokemon):
@@ -33,6 +35,7 @@ class pokedex:
             db.execute(updateQuery, values)
         except:
             self.faulted = True
+            logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
             del db

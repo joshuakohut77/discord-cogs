@@ -1,15 +1,7 @@
 import sys
 import traceback
-import inspect
 
-#------------------------------------------
-#		Josh Kohut / John Hanna / Francis Rainville (Grantek) 2020-07-08
-#		Description: Logger Object
-#------------------------------------------
 class logger:
-				
-    # def __init__(self):  
-
 
     def error(self, excInfo=None, msg="", verbose=True):
         """ prints out error messages """

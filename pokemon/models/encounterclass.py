@@ -1,11 +1,14 @@
 # encounter class
+
+import sys
+import pokebase as pb
+import random
 from dbclass import db as dbconn
 from expclass import experiance as exp
 from inventoryclass import inventory as inv
-import pokebase as pb
+from loggerclass import logger as log
 from pokedexclass import pokedex
 # import config
-import random
 
 # POKEMON_WIN_RATE =  config.pokemon_win_rate
 # POKEMON_CATCH_RATE = config.pokemon_catch_rate
@@ -13,15 +16,14 @@ import random
 POKEMON_WIN_RATE = 95
 POKEMON_CATCH_RATE = 85
 MAX_BATTLE_TURNS = 50
+logger = log()
 
 # this class is to handle encounters with pokemon.
-
-
 class encounter:
     def __init__(self, pokemon1, pokemon2):
         # pokemon1 for PvE will always be the discord trainers pokemon
         self.faulted = False
-        
+
         self.pokemon1 = pokemon1
         self.pokemon2 = pokemon2
         pokedex(self.pokemon1.discordId, pokemon2)
@@ -217,14 +219,20 @@ class encounter:
 
     def __getDamageTypeMultiplier(self, moveType, defendingType):
         """ returns a multiplier for the type-effectiveness """
-        db = dbconn()
-        # TODO update this query string to not use string replacement like this. Psycog has a method 
-        queryString = """SELECT %s FROM "type-effectiveness" WHERE source = '%s'""" %(defendingType, moveType)
-        result = db.querySingle(queryString)
-        dmgMult = result[0]
-        # delete and close connection
-        del db
-        return dmgMult
+        dmgMult = None
+        try:
+            db = dbconn()
+            # TODO update this query string to not use string replacement like this. Psycog has a method 
+            queryString = """SELECT %s FROM "type-effectiveness" WHERE source = '%s'""" %(defendingType, moveType)
+            result = db.querySingle(queryString)
+            dmgMult = result[0]
+        except:
+            self.faulted = True
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            # delete and close connection
+            del db
+            return dmgMult
 
     def __removeNullMoves(self, moveList):
         """ returns a list of moves without any nulls """
