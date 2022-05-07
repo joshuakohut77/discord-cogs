@@ -14,8 +14,8 @@ from time import time
 import location
 
 # Global Config Variables
-STARTER_LEVEL = config.starterLevel
-RELEASE_MONEY_MODIFIER = config.release_money_modifier 
+STARTER_LEVEL = 5 #config.starterLevel
+RELEASE_MONEY_MODIFIER = 15 #config.release_money_modifier 
 # Class Logger
 logger = log()
 
