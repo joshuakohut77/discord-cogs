@@ -1,13 +1,13 @@
 # location class
 import sys
+import config
 import pokebase as pb
 import random
 from loggerclass import logger as log
 
-# import config
-
-# VERSION_DETAILS_LIST = config.version_details_list
-VERSION_DETAILS_LIST = ['red', 'blue']
+# Global Config Variables
+VERSION_DETAILS_LIST = config.version_details_list
+# Class Logger
 logger = log()
 
 """

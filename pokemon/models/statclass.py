@@ -2,9 +2,8 @@
 
 class PokeStats:
     def __init__(self, name):
-            self.name = name
-            self.base = 0
-            self.IV = 0
-            self.EV = 0
-
-            
+        self.faulted = False
+        self.name = name
+        self.base = 0
+        self.IV = 0
+        self.EV = 0

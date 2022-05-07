@@ -1,5 +1,6 @@
 # trainer class
 import sys
+import config
 import random
 from dbclass import db as dbconn
 from encounterclass import encounter
@@ -9,12 +10,10 @@ from loggerclass import logger as log
 from pokeclass import Pokemon as pokeClass
 from time import time
 
-# import config
-# STARTER_LEVEL = config.starterLevel
-# TOTAL_POKEMON = config.total_pokemon
-STARTER_LEVEL = 5
-TOTAL_POKEMON = 150
-RELEASE_MONEY_MODIFIER = 15 # when you release a pokemon, you will get 15*level of released pokemon
+# Global Config Variables
+STARTER_LEVEL = config.starterLevel
+RELEASE_MONEY_MODIFIER = config.release_money_modifier 
+# Class Logger
 logger = log()
 
 class trainer:
@@ -33,12 +32,12 @@ class trainer:
             # use milliseconds as a way to get a unique number. used to soft delete a value and still retain original discordId
             milliString = str(int(time() * 1000))
             newDiscordId = self.discordId + '_' + milliString
-            pokemonUpdateQuery = 'UPDATE pokemon SET discord_id = %s WHERE discord_id = %s'
-            db.executeWithoutCommit(pokemonUpdateQuery, (newDiscordId, self.discordId))
-            trainerUpdateQuery = 'UPDATE trainer SET discord_id = %s WHERE discord_id = %s'
-            db.executeWithoutCommit(trainerUpdateQuery, (newDiscordId, self.discordId))
-            inventoryUpdateQuery = 'UPDATE inventory SET discord_id = %s WHERE discord_id = %s'
-            db.executeWithoutCommit(inventoryUpdateQuery, (newDiscordId, self.discordId))
+            pokemonUpdateQuery = 'UPDATE pokemon SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
+            db.executeWithoutCommit(pokemonUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            trainerUpdateQuery = 'UPDATE trainer SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
+            db.executeWithoutCommit(trainerUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            inventoryUpdateQuery = 'UPDATE inventory SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
+            db.executeWithoutCommit(inventoryUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             db.commit()
             retMsg = "Trainer deleted successfully!"
         except:

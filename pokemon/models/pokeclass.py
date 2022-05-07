@@ -1,6 +1,7 @@
 # pokemon user class
 
 import sys
+import config
 import math
 import pokebase as pb
 import random
@@ -10,8 +11,10 @@ from pokebase.interface import APIResource
 from statclass import PokeStats
 from time import time
 
-STARTER_LEVEL = 6
-VERSION_GROUP_NAME = 'red-blue'
+# Global Config Variables
+STARTER_LEVEL = config.starterLevel
+VERSION_GROUP_NAME = config.version_group_name
+# Class Logger
 logger = log()
 
 class Pokemon:
