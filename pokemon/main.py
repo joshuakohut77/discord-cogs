@@ -260,41 +260,43 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
             # embed.add_field(name=f"{constant.POKEBALL} Pokeballs `— {inv.pokeball}`", value=f'A device for catching wild Pokémon. It\'s thrown like a ball, comfortably encapsulating its target.', inline=False)
             # embed.add_field(name=f"{constant.POKEBALL} Pokeballs `— test`", value=f'— {inv.pokeball} [link](https://www.youtube.com/watch?v=dQw4w9WgXcQ)', inline=False)
         if inv.greatball > 0:
-            embed.add_field(name=f"{constant.GREATBALL}  Greatballs", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"{constant.GREATBALL}  Greatballs", value=f'{inv.greatball}', inline=False)
         if inv.ultraball > 0:
-            embed.add_field(name=f"{constant.ULTRABALL}  Ultraballs", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"{constant.ULTRABALL}  Ultraballs", value=f'{inv.ultraball}', inline=False)
         if inv.masterball > 0:
-            embed.add_field(name=f"{constant.MASTERBALL}  Masterballs", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"{constant.MASTERBALL}  Masterballs", value=f'{inv.masterball}', inline=False)
         if inv.potion > 0:
-            embed.add_field(name=f"{constant.POTION}  Potion", value=f'— {inv.potion}', inline=True)
+            embed.add_field(name=f"\u200b", value=f'{constant.POTION} **Potion** — {inv.potion}', inline=True)
+            # embed.add_field(name=f"{constant.POTION}  Potion", value=f'— {inv.potion}', inline=True)
         if inv.superpotion > 0:
-            embed.add_field(name=f"{constant.SUPERPOTION}  Superpotion", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"{constant.SUPERPOTION}  Superpotion", value=f'{inv.superpotion}', inline=False)
         if inv.hyperpotion > 0:
-            embed.add_field(name=f"{constant.HYPERPOTION}  Hyperpotion", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"{constant.HYPERPOTION}  Hyperpotion", value=f'{inv.hyperpotion}', inline=False)
         if inv.maxpotion > 0:
-            embed.add_field(name=f"{constant.MAXPOTION}  Maxpotion", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"{constant.MAXPOTION}  Maxpotion", value=f'{inv.maxpotion}', inline=False)
         if inv.revive > 0:
-            embed.add_field(name=f"{constant.REVIVE}  Revive", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"\u200b", value=f'{constant.REVIVE} **Revive** — {inv.revive}', inline=True)
+            # embed.add_field(name=f"{constant.REVIVE}  Revive", value=f'{inv.potion}', inline=False)
         if inv.fullrestore > 0:
-            embed.add_field(name=f"{constant.FULLRESTORE}  Full Restore", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"{constant.FULLRESTORE}  Full Restore", value=f'{inv.fullrestore}', inline=False)
         if inv.repel > 0:
-            embed.add_field(name=f"{constant.REPEL}  Repel", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"{constant.REPEL}  Repel", value=f'{inv.repel}', inline=False)
         if inv.maxrepel > 0:
-            embed.add_field(name=f"{constant.MAXREPEL}  Max Repel", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"{constant.MAXREPEL}  Max Repel", value=f'{inv.maxrepel}', inline=False)
         if inv.escaperope > 0:
-            embed.add_field(name=f"{constant.ESCAPEROPE}  Escape Rope", value=f'{inv.potion}', inline=False)   
+            embed.add_field(name=f"{constant.ESCAPEROPE}  Escape Rope", value=f'{inv.escaperope}', inline=False)   
         if inv.awakening > 0:
-            embed.add_field(name=f"{constant.AWAKENING}  Awakening", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"{constant.AWAKENING}  Awakening", value=f'{inv.awakening}', inline=False)
         if inv.antidote > 0:
-            embed.add_field(name=f"{constant.ANTIDOTE}  Antidote", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"{constant.ANTIDOTE}  Antidote", value=f'{inv.antidote}', inline=False)
         if inv.iceheal > 0:
-            embed.add_field(name=f"{constant.ICEHEAL}  Iceheal", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"{constant.ICEHEAL}  Iceheal", value=f'{inv.iceheal}', inline=False)
         if inv.burnheal > 0:
-            embed.add_field(name=f"{constant.BURNHEAL}  Burnheal", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"{constant.BURNHEAL}  Burnheal", value=f'{inv.burnheal}', inline=False)
         if inv.paralyzeheal > 0:
-            embed.add_field(name=f"{constant.PARALYZEHEAL}  Paralyzeheal", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"{constant.PARALYZEHEAL}  Paralyzeheal", value=f'{inv.paralyzeheal}', inline=False)
         if inv.fullheal > 0:
-            embed.add_field(name=f"{constant.FULLHEAL}  Fullheal", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"{constant.FULLHEAL}  Fullheal", value=f'{inv.fullheal}', inline=False)
 
 
         # embed.add_field(name=f"{constant.COIN}  Money", value=f'{inv.money}', inline=True)
