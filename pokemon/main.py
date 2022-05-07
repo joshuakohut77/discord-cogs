@@ -562,6 +562,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         # This will create the trainer if it doesn't exist
         trainer = TrainerClass(str(user.id))
         pokemon = trainer.getStarterPokemon()
+
+        if type(pokemon) is str:
+            await ctx.send(pokemon)
+        
         active = trainer.getActivePokemon()
 
         embed, file = createPokemonEmbed(user, pokemon)
