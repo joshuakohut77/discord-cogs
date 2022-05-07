@@ -19,6 +19,7 @@ import psycopg as pg
 
 class db:
     def __init__(self, params=None):
+        self.faulted = False
         # TODO: need a better way to pass in db configs through all the objects.
         self.conn = pg.connect(
             host=(

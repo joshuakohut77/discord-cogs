@@ -1,12 +1,17 @@
 # store class
 
+import sys
 from dbclass import db as dbconn
 from inventoryclass import inventory as inv
 from trainerclass import trainer
+from loggerclass import logger as log
 
+# Class Logger
+logger = log()
 
 class store:
     def __init__(self, discordId):
+        self.faulted = False
         self.discordId = discordId
         self.storeList = []
         self.storeMap = {}
@@ -15,29 +20,33 @@ class store:
     def __loadStore(self):
         """ loads a trainers store into the class object """
         storeList = []
-        trainerObj = trainer(self.discordId)
-        locationId = trainerObj.getLocationId()
-        db = dbconn()
-        queryString = 'SELECT "item", "price" FROM store WHERE "locationId"=%s'
-        results = db.queryAll(queryString, (locationId,))
-        for row in results:
-            item = row[0]
-            price = row[1]
-            storeOption = {'item': item, 'price': price,
-                           'spriteUrl': self.__getSpriteUrl(item)}
-            storeList.append(storeOption)
+        try:
+            trainerObj = trainer(self.discordId)
+            locationId = trainerObj.getLocationId()
+            db = dbconn()
+            queryString = 'SELECT "item", "price" FROM store WHERE "locationId"=%(locationId)s'
+            results = db.queryAll(queryString, { 'locationId':locationId })
+            for row in results:
+                item = row[0]
+                price = row[1]
+                storeOption = {'item': item, 'price': price,
+                            'spriteUrl': self.__getSpriteUrl(item)}
+                storeList.append(storeOption)
 
-        self.storeMap = {}
-        for item in storeList:
-            if item['item'] not in self.storeMap.keys():
-                self.storeMap[item['item']] = {}
+            self.storeMap = {}
+            for item in storeList:
+                if item['item'] not in self.storeMap.keys():
+                    self.storeMap[item['item']] = {}
 
-            if item['item'] in self.storeMap.keys():
-                self.storeMap[item['item']]['price'] = item['price']
-
-        # delete and close connection
-        del db
-        self.storeList = storeList
+                if item['item'] in self.storeMap.keys():
+                    self.storeMap[item['item']]['price'] = item['price']
+        except:
+            self.faulted = True
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            # delete and close connection
+            del db
+            self.storeList = storeList
 
     def buyItemEx(self, name, quantity):
         """ buy and item and update trainers inventory Ex"""

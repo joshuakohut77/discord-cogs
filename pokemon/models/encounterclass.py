@@ -1,6 +1,7 @@
 # encounter class
 
 import sys
+import config
 import pokebase as pb
 import random
 from dbclass import db as dbconn
@@ -8,14 +9,10 @@ from expclass import experiance as exp
 from inventoryclass import inventory as inv
 from loggerclass import logger as log
 from pokedexclass import pokedex
-# import config
 
-# POKEMON_WIN_RATE =  config.pokemon_win_rate
-# POKEMON_CATCH_RATE = config.pokemon_catch_rate
-
-POKEMON_WIN_RATE = 95
-POKEMON_CATCH_RATE = 85
-MAX_BATTLE_TURNS = 50
+# Global Config Variables
+MAX_BATTLE_TURNS = config.max_battle_turns
+# Class Logger
 logger = log()
 
 # this class is to handle encounters with pokemon.
@@ -34,10 +31,7 @@ class encounter:
         # todo update with better fight outcome algorithm
         if self.pokemon1.currentHP == 0:
             return "Your active Pokemon has no HP left!"
-        # if random.randrange(1, 100) <= POKEMON_WIN_RATE:
-        #     retMsg = self.__victory()
-        # else:
-        #     retMsg = self.__defeat()
+
         retMsg = self.battle()
         return retMsg
 

@@ -4,6 +4,7 @@ from datetime import datetime
 from dbclass import db as dbconn
 from loggerclass import logger as log
 
+# Class Logger
 logger = log()
 
 class pokedex:

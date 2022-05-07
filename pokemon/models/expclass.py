@@ -1,11 +1,14 @@
 # pokemon experiance class
 # this is designed to calculate the experience of the defeated pokemon
+import config
 import pokebase as pb
-# from .config import *
-OVERALL_EXPERIENCE_MODIFIER = 3
+
+# Global Config Variables
+OVERALL_EXPERIENCE_MODIFIER = config.overall_experience_modifier
 
 class experiance:
     def __init__(self, pokemon):
+        self.faulted = False
         self.pokemon = pokemon
 
     def getExpGained(self):
