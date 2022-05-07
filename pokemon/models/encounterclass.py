@@ -120,11 +120,17 @@ class encounter:
                 pokemonCaught = True
 
         inventory.save()
+        if inventory.faulted:
+            self.faulted = True
+            return "error occured during inventory save()"
 
         if pokemonCaught:
             # pokemon caught successfully. Save it to the trainers inventory
             self.pokemon2.discordId = self.pokemon1.discordId
             self.pokemon2.save()
+            if self.pokemon2.faulted:
+                self.faulted = True
+                return 'error occured during pokemon2 save()'
             retMsg = "You successfully caught the pokemon"
         else:
             retMsg = "You failed to catch the pokemon. The pokemon ran away!"
@@ -136,6 +142,9 @@ class encounter:
         expObj = exp(self.pokemon2)
         expGained = expObj.getExpGained()
         evGained = expObj.getEffortValue()
+        if expObj.faulted:
+            self.faulted = True
+            return "error occured during expericne calculations"
         newCurrentHP = self.pokemon1.currentHP
 
         levelUp, retMsg = self.pokemon1.processBattleOutcome(
@@ -156,6 +165,9 @@ class encounter:
         evGained = None
         newCurrentHP = 0
         self.pokemon1.processBattleOutcome(expGained, evGained, newCurrentHP)
+        if self.pokemon1.faulted:
+            self.faulted = True
+            return "error occured during processBattleOutcome"
         return "Your Pokemon Fainted."
 
     def __calculateDamageTaken(self):

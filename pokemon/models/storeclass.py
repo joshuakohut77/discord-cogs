@@ -68,6 +68,9 @@ class store:
             elif name == 'potion':
                 inventory.potion = inventory.potion + quantity
             inventory.save()
+            if inventory.faulted:
+                self.faulted = True
+                return "Error occured during inventory save()"
             return "You successfully bought that item!"
 
     def buyItem(self, name, quantity):
@@ -121,6 +124,9 @@ class store:
             elif name == 'max-potion':
                 inventory.maxpotion += quantity                                                                                                                                                                                                                
             inventory.save()
+            if inventory.faulted:
+                self.faulted = True
+                return "Error occured during inventory save()"
             return "You successfully bought that item!"
 
         

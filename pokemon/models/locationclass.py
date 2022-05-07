@@ -46,7 +46,7 @@ class location:
             logger.error(excInfo=sys.exc_info())
         finally:
             return pokemonEncounterList
-
+    
     def getLocationList(self, region=1):
         """ returns a dictionary list of locations and their unique API number """
         # default region to 1 for Gen1 pokemon locations
