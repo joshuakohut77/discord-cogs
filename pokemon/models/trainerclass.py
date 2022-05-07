@@ -127,7 +127,9 @@ class trainer:
         releaseMoney = level * RELEASE_MONEY_MODIFIER
         inventory.money += releaseMoney
         inventory.save()
-        return 
+        if inventory.faulted:
+            self.faulted = True
+            return "error occurred during inventory.save()"
 
     def getPokemon(self):
         """ returns a list of pokemon objects for every pokemon in the database belonging to the trainer """
@@ -232,8 +234,18 @@ class trainer:
         locationId = self.getLocationId()
         loc = location()
         areaIdList = loc.getAreaList(locationId)
+        if loc.faulted:
+            self.faulted =  True
+            return "error occurred during loc.getAreaList"
         areaEncounters = loc.getAreaEncounterDetails(areaIdList)
-        return loc.getMethods(areaEncounters)
+        if loc.faulted:
+            self.faulted =  True
+            return "error occurred during loc.getAreaEncounterDetails"
+        methods = loc.getMethods(areaEncounters)
+        if loc.faulted:
+            self.faulted =  True
+            return "error occurred during loc.getMethods"
+        return methods
 
     def getRandomEncounter(self, method):
         """ gets a random encounter in the current area using the selected method """
@@ -242,7 +254,13 @@ class trainer:
         loc = location()
         areaIdList = loc.getAreaList(locationId)
         areaEncounters = loc.getAreaEncounterDetails(areaIdList)
+        if loc.faulted:
+            self.faulted =  True
+            return "error occurred during loc.getAreaEncounterDetails"
         randomEncounter = loc.generateEncounter(areaEncounters, method)
+        if loc.faulted:
+            self.faulted =  True
+            return "error occurred during loc.generateEncounter"
         if randomEncounter is not None:
             # this means a pokemon was found with the method
             name = randomEncounter['name']
@@ -292,7 +310,9 @@ class trainer:
             inventory.maxpotion -= 1
         self.__healPokemon(pokeTrainerId, item)
         inventory.save()
-        return
+        if inventory.faulted:
+            self.faulted = True
+            return "error occurred during inventory.save()"
 
     def healAll(self):
         """ heals all pokemon to max HP """
