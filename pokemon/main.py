@@ -255,7 +255,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         # guild = self.bot.get_guild(971138995042025494)
 
         if inv.pokeball > 0:
-            embed.add_field(name=f"{constant.POKEBALL} Pokeballs [link](https://www.youtube.com/watch?v=dQw4w9WgXcQ)", value=f'{inv.pokeball}', inline=False)
+            embed.add_field(name=f"{constant.POKEBALL} Pokeballs", value=f'{inv.pokeball} [link](https://www.youtube.com/watch?v=dQw4w9WgXcQ)', inline=False)
         if inv.greatball > 0:
             embed.add_field(name=f"{constant.GREATBALL}  Greatballs", value=f'{inv.potion}', inline=False)
         if inv.ultraball > 0:
@@ -263,7 +263,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         if inv.masterball > 0:
             embed.add_field(name=f"{constant.MASTERBALL}  Masterballs", value=f'{inv.potion}', inline=False)
         if inv.potion > 0:
-            embed.add_field(name=f"{constant.POTION}  Potion", value=f'{inv.potion}', inline=False)
+            embed.add_field(name=f"{constant.POTION}  Potion", value=f'', inline=True)
+            embed.add_field(name=f"", value=f'— {inv.potion}', inline=True)
         if inv.superpotion > 0:
             embed.add_field(name=f"{constant.SUPERPOTION}  Superpotion", value=f'{inv.potion}', inline=False)
         if inv.hyperpotion > 0:
