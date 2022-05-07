@@ -250,12 +250,12 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         name = uuid.uuid4()
         file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/bag.png", filename=f"{name}.png")
         # Create the embed object
-        embed = discord.Embed(title=f"Items")
+        embed = discord.Embed(title=f"Bag")
         embed.set_thumbnail(url=f"attachment://{name}.png")
         embed.set_author(name=f"{user.display_name}",
                          icon_url=str(user.avatar_url))
 
-        embed.add_field(name=f"\u200b", value=f'''
+        embed.add_field(name=f"Items", value=f'''
         {constant.POKEBALL} **Pokeballs** — {inv.pokeball}
         {constant.POTION} **Potion** — {inv.potion}
         {constant.REVIVE} **Revive** — {inv.revive}
@@ -311,7 +311,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         # embed.add_field(name=f"{constant.COIN}  Money", value=f'{inv.money}', inline=True)
 
-        await ctx.send(embed=embed)
+        await ctx.send(embed=embed, file=file)
 
     @_trainer.command()
     async def action(self, ctx: commands.Context):
