@@ -245,112 +245,105 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         if user is None:
             user = ctx.author
 
-        inv = InventoryClass(str(user.id))
-
-        name = uuid.uuid4()
-        file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/bag.png", filename=f"{name}.png")
-        # Create the embed object
-        embed = discord.Embed(title=f"Bag")
-        embed.set_thumbnail(url=f"attachment://{name}.png")
-        embed.set_author(name=f"{user.display_name}",
-                         icon_url=str(user.avatar_url))
-
-        items = []
-
-        if inv.pokeball > 0:
-            items.append(f'{constant.POKEBALL} **Pokeballs** — {inv.pokeball}')
-        if inv.greatball > 0:
-            items.append(f'{constant.GREATBALL} **Greatballs** — {inv.greatball}')
-        if inv.ultraball > 0:
-            items.append(f'{constant.ULTRABALL} **Ultraball** — {inv.ultraball}')
-        if inv.masterball > 0:
-            items.append(f'{constant.MASTERBALL} **Masterball** — {inv.masterball}')
-        if inv.potion > 0:
-            items.append(f'{constant.POTION} **Potion** — {inv.potion}')
-        if inv.superpotion > 0:
-            items.append(f'{constant.SUPERPOTION} **Superpotion** — {inv.superpotion}')
-        if inv.hyperpotion > 0:
-            items.append(f'{constant.HYPERPOTION} **Hyperpotion** — {inv.hyperpotion}')
-        if inv.maxpotion > 0:
-            items.append(f'{constant.MAXPOTION} **Maxpotion** — {inv.maxpotion}')
-        if inv.revive > 0:
-            items.append(f'{constant.REVIVE} **Revive** — {inv.revive}')
-        if inv.fullrestore > 0:
-            items.append(f'{constant.FULLRESTORE} **Full Restore** — {inv.fullrestore}')
-        if inv.repel > 0:
-            items.append(f'{constant.REPEL} **Repel** — {inv.repel}')
-        if inv.maxrepel > 0:
-            items.append(f'{constant.MAXREPEL} **Max Repel** — {inv.maxrepel}')
-        if inv.escaperope > 0:
-            items.append(f'{constant.ESCAPEROPE} **Escape Rope** — {inv.escaperope}')
-        if inv.awakening > 0:
-            items.append(f'{constant.AWAKENING} **Awakening** — {inv.awakening}')
-        if inv.antidote > 0:
-            items.append(f'{constant.ANTIDOTE} **Antidote** — {inv.antidote}')
-        if inv.iceheal > 0:
-            items.append(f'{constant.ICEHEAL} **Iceheal** — {inv.iceheal}')
-        if inv.burnheal > 0:
-            items.append(f'{constant.BURNHEAL} **Burnheal** — {inv.burnheal}')
-        if inv.paralyzeheal > 0:
-            items.append(f'{constant.PARALYZEHEAL} **Paralyzeheal** — {inv.paralyzeheal}')
-        if inv.fullheal > 0:
-            items.append(f'{constant.FULLHEAL} **Fullheal** — {inv.fullheal}')
-
-        trainerItems = "\r\n".join(items)
-        embed.add_field(name=f"Items", value=trainerItems, inline=False)
-
+        def nextBtnClick():
+            return lambda x: x.custom_id == "items" or x.custom_id == 'keyitems'
 
         # # guild = self.bot.get_guild(971138995042025494)
         # # \u200b
         # # A device for catching wild Pokémon. It's thrown like a ball, comfortably encapsulating its target.
-        
-        # if inv.pokeball > 0:
-        #     embed.add_field(name=f"\u200b", value=f'{constant.POKEBALL} **Pokeballs** — {inv.pokeball}', inline=False)
-        #     # embed.add_field(name=f"{constant.POKEBALL} Pokeballs `— {inv.pokeball}`", value=f'A device for catching wild Pokémon. It\'s thrown like a ball, comfortably encapsulating its target.', inline=False)
-        #     # embed.add_field(name=f"{constant.POKEBALL} Pokeballs `— test`", value=f'— {inv.pokeball} [link](https://www.youtube.com/watch?v=dQw4w9WgXcQ)', inline=False)
-        # if inv.greatball > 0:
-        #     embed.add_field(name=f"{constant.GREATBALL}  Greatballs", value=f'{inv.greatball}', inline=False)
-        # if inv.ultraball > 0:
-        #     embed.add_field(name=f"{constant.ULTRABALL}  Ultraballs", value=f'{inv.ultraball}', inline=False)
-        # if inv.masterball > 0:
-        #     embed.add_field(name=f"{constant.MASTERBALL}  Masterballs", value=f'{inv.masterball}', inline=False)
-        # if inv.potion > 0:
-        #     embed.add_field(name=f"\u200b", value=f'{constant.POTION} **Potion** — {inv.potion}', inline=False)
-        #     # embed.add_field(name=f"{constant.POTION}  Potion", value=f'— {inv.potion}', inline=True)
-        # if inv.superpotion > 0:
-        #     embed.add_field(name=f"{constant.SUPERPOTION}  Superpotion", value=f'{inv.superpotion}', inline=False)
-        # if inv.hyperpotion > 0:
-        #     embed.add_field(name=f"{constant.HYPERPOTION}  Hyperpotion", value=f'{inv.hyperpotion}', inline=False)
-        # if inv.maxpotion > 0:
-        #     embed.add_field(name=f"{constant.MAXPOTION}  Maxpotion", value=f'{inv.maxpotion}', inline=False)
-        # if inv.revive > 0:
-        #     embed.add_field(name=f"\u200b", value=f'{constant.REVIVE} **Revive** — {inv.revive}', inline=False)
-        #     # embed.add_field(name=f"{constant.REVIVE}  Revive", value=f'{inv.potion}', inline=False)
-        # if inv.fullrestore > 0:
-        #     embed.add_field(name=f"{constant.FULLRESTORE}  Full Restore", value=f'{inv.fullrestore}', inline=False)
-        # if inv.repel > 0:
-        #     embed.add_field(name=f"{constant.REPEL}  Repel", value=f'{inv.repel}', inline=False)
-        # if inv.maxrepel > 0:
-        #     embed.add_field(name=f"{constant.MAXREPEL}  Max Repel", value=f'{inv.maxrepel}', inline=False)
-        # if inv.escaperope > 0:
-        #     embed.add_field(name=f"{constant.ESCAPEROPE}  Escape Rope", value=f'{inv.escaperope}', inline=False)   
-        # if inv.awakening > 0:
-        #     embed.add_field(name=f"{constant.AWAKENING}  Awakening", value=f'{inv.awakening}', inline=False)
-        # if inv.antidote > 0:
-        #     embed.add_field(name=f"{constant.ANTIDOTE}  Antidote", value=f'{inv.antidote}', inline=False)
-        # if inv.iceheal > 0:
-        #     embed.add_field(name=f"{constant.ICEHEAL}  Iceheal", value=f'{inv.iceheal}', inline=False)
-        # if inv.burnheal > 0:
-        #     embed.add_field(name=f"{constant.BURNHEAL}  Burnheal", value=f'{inv.burnheal}', inline=False)
-        # if inv.paralyzeheal > 0:
-        #     embed.add_field(name=f"{constant.PARALYZEHEAL}  Paralyzeheal", value=f'{inv.paralyzeheal}', inline=False)
-        # if inv.fullheal > 0:
-        #     embed.add_field(name=f"{constant.FULLHEAL}  Fullheal", value=f'{inv.fullheal}', inline=False)
+
+        inv = InventoryClass(str(user.id))
+
+        interaction: discord_components.Interaction = None
+        state = 'Items'
+
+        while True:
+            try:
+                name = uuid.uuid4()
+                file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/bag.png", filename=f"{name}.png")
+                # Create the embed object
+                embed = discord.Embed(title=f"Bag")
+                embed.set_thumbnail(url=f"attachment://{name}.png")
+                embed.set_author(name=f"{user.display_name}",
+                                icon_url=str(user.avatar_url))
+
+                if state == 'Items':
+                    items = []
+
+                    if inv.pokeball > 0:
+                        items.append(f'{constant.POKEBALL} **Pokeballs** — {inv.pokeball}')
+                    if inv.greatball > 0:
+                        items.append(f'{constant.GREATBALL} **Greatballs** — {inv.greatball}')
+                    if inv.ultraball > 0:
+                        items.append(f'{constant.ULTRABALL} **Ultraball** — {inv.ultraball}')
+                    if inv.masterball > 0:
+                        items.append(f'{constant.MASTERBALL} **Masterball** — {inv.masterball}')
+                    if inv.potion > 0:
+                        items.append(f'{constant.POTION} **Potion** — {inv.potion}')
+                    if inv.superpotion > 0:
+                        items.append(f'{constant.SUPERPOTION} **Superpotion** — {inv.superpotion}')
+                    if inv.hyperpotion > 0:
+                        items.append(f'{constant.HYPERPOTION} **Hyperpotion** — {inv.hyperpotion}')
+                    if inv.maxpotion > 0:
+                        items.append(f'{constant.MAXPOTION} **Maxpotion** — {inv.maxpotion}')
+                    if inv.revive > 0:
+                        items.append(f'{constant.REVIVE} **Revive** — {inv.revive}')
+                    if inv.fullrestore > 0:
+                        items.append(f'{constant.FULLRESTORE} **Full Restore** — {inv.fullrestore}')
+                    if inv.repel > 0:
+                        items.append(f'{constant.REPEL} **Repel** — {inv.repel}')
+                    if inv.maxrepel > 0:
+                        items.append(f'{constant.MAXREPEL} **Max Repel** — {inv.maxrepel}')
+                    if inv.escaperope > 0:
+                        items.append(f'{constant.ESCAPEROPE} **Escape Rope** — {inv.escaperope}')
+                    if inv.awakening > 0:
+                        items.append(f'{constant.AWAKENING} **Awakening** — {inv.awakening}')
+                    if inv.antidote > 0:
+                        items.append(f'{constant.ANTIDOTE} **Antidote** — {inv.antidote}')
+                    if inv.iceheal > 0:
+                        items.append(f'{constant.ICEHEAL} **Iceheal** — {inv.iceheal}')
+                    if inv.burnheal > 0:
+                        items.append(f'{constant.BURNHEAL} **Burnheal** — {inv.burnheal}')
+                    if inv.paralyzeheal > 0:
+                        items.append(f'{constant.PARALYZEHEAL} **Paralyzeheal** — {inv.paralyzeheal}')
+                    if inv.fullheal > 0:
+                        items.append(f'{constant.FULLHEAL} **Fullheal** — {inv.fullheal}')
+
+                    trainerItems = "\r\n".join(items)
+                    embed.add_field(name=state, value=trainerItems, inline=False)
+                else:
+                    embed.add_field(name=state, value="", inline=False)
 
 
-        # embed.add_field(name=f"{constant.COIN}  Money", value=f'{inv.money}', inline=True)
+                # await ctx.send(embed=embed, file=file)
+                btns = []
+                if state == 'Items':
+                    btns.append(Button(style=ButtonStyle.gray, label='Key Items →', custom_id='keyitems'))
+                if state == 'Key Items':
+                    btns.append(Button(style=ButtonStyle.gray, label="← Items", custom_id='items'))
 
-        await ctx.send(embed=embed, file=file)
+
+                if interaction is None:
+                    await ctx.send(
+                        embed=embed,
+                        file=file,
+                        components=[btns, [Button(style=ButtonStyle.gray, label='Test', custom_id='test'),Button(style=ButtonStyle.gray, label='Test', custom_id='test2'),Button(style=ButtonStyle.gray, label='Test', custom_id='test3')]]
+                    )
+                    interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
+                else:
+                    await interaction.edit_origin(
+                        embed=embed,
+                        file=file,
+                        components=[btns]
+                    )
+                    interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
+
+                if interaction.custom_id == 'keyitems':
+                    state = 'Key Items'
+                if (interaction.custom_id == 'items'):
+                    state = 'Items'
+            except asyncio.TimeoutError:
+                break
 
     @_trainer.command()
     async def action(self, ctx: commands.Context):
