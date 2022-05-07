@@ -29,6 +29,7 @@ from models.trainerclass import trainer as TrainerClass
 from models.pokeclass import Pokemon as PokemonClass
 from models.storeclass import store as StoreClass
 from models.inventoryclass import inventory as InventoryClass
+import constant
 
 
 NORMAL_GREY = 0xa8a77d
@@ -246,36 +247,54 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         inv = InventoryClass(str(user.id))
 
         # Create the embed object
-        embed = discord.Embed(title=f"Inventory")
-        embed.set_thumbnail(url=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png")
+        embed = discord.Embed(title=f"Items")
+        embed.set_thumbnail(url=f"https://discord.com/assets/9354845e25932052065dd6c1e08afb5e.svg")
         embed.set_author(name=f"{user.display_name}",
                          icon_url=str(user.avatar_url))
 
         # guild = self.bot.get_guild(971138995042025494)
 
-        pokeball = '<:pokeball:971276308074094614>'
-        greatball = '<:greatball:971276308124414004>'
-        ultraball = '<:ultraball:971276308313145374>'
-        masterball = '<:masterball:971276308355112980>'
-        potion = '<:potion:971276307906301975>'
-        superpotion = '<:superpotion:971276308409638922>'
-        hyperpotion = '<:hyperpotion:971276308342509588>'
-        maxpotion = '<:maxpotion:971276308359307284>'
-        revive = '<:revive:971276307923083275>'
-        fullrestore = '<:fullrestore:971276308350906399>'
-        repel = '<:repel:971276308342530068>'
-        maxrepel = '<:maxrepel:971276308447387648>'
-        awakening = '<:awakening:971276308036341792>'
-        escaperope = '<:escaperope:971276308329938984>'
-        fullheal = '<:fullheal:971276307969241160>'
-        iceheal = '<:iceheal:971276308338323466>'
-        burnheal = '<:burnheal:971276308367683654>'
-        paralyzeheal = '<:paralyzeheal:971276308418019328>'
-        antidote = '<:antidote:971276308325748746>'
+        if inv.pokeball > 0:
+            embed.add_field(name=f"{constant.POKEBALL} Pokeballs [link](https://www.youtube.com/watch?v=dQw4w9WgXcQ)", value=f'{inv.pokeball}', inline=False)
+        if inv.greatball > 0:
+            embed.add_field(name=f"{constant.GREATBALL}  Greatballs", value=f'{inv.potion}', inline=False)
+        if inv.ultraball > 0:
+            embed.add_field(name=f"{constant.ULTRABALL}  Ultraballs", value=f'{inv.potion}', inline=False)
+        if inv.masterball > 0:
+            embed.add_field(name=f"{constant.MASTERBALL}  Masterballs", value=f'{inv.potion}', inline=False)
+        if inv.potion > 0:
+            embed.add_field(name=f"{constant.POTION}  Potion", value=f'{inv.potion}', inline=False)
+        if inv.superpotion > 0:
+            embed.add_field(name=f"{constant.SUPERPOTION}  Superpotion", value=f'{inv.potion}', inline=False)
+        if inv.hyperpotion > 0:
+            embed.add_field(name=f"{constant.HYPERPOTION}  Hyperpotion", value=f'{inv.potion}', inline=False)
+        if inv.maxpotion > 0:
+            embed.add_field(name=f"{constant.MAXPOTION}  Maxpotion", value=f'{inv.potion}', inline=False)
+        if inv.revive > 0:
+            embed.add_field(name=f"{constant.REVIVE}  Revive", value=f'{inv.potion}', inline=False)
+        if inv.fullrestore > 0:
+            embed.add_field(name=f"{constant.FULLRESTORE}  Full Restore", value=f'{inv.potion}', inline=False)
+        if inv.repel > 0:
+            embed.add_field(name=f"{constant.REPEL}  Repel", value=f'{inv.potion}', inline=False)
+        if inv.maxrepel > 0:
+            embed.add_field(name=f"{constant.MAXREPEL}  Max Repel", value=f'{inv.potion}', inline=False)
+        if inv.escaperope > 0:
+            embed.add_field(name=f"{constant.ESCAPEROPE}  Escape Rope", value=f'{inv.potion}', inline=False)   
+        if inv.awakening > 0:
+            embed.add_field(name=f"{constant.AWAKENING}  Awakening", value=f'{inv.potion}', inline=False)
+        if inv.antidote > 0:
+            embed.add_field(name=f"{constant.ANTIDOTE}  Antidote", value=f'{inv.potion}', inline=False)
+        if inv.iceheal > 0:
+            embed.add_field(name=f"{constant.ICEHEAL}  Iceheal", value=f'{inv.potion}', inline=False)
+        if inv.burnheal > 0:
+            embed.add_field(name=f"{constant.BURNHEAL}  Burnheal", value=f'{inv.potion}', inline=False)
+        if inv.paralyzeheal > 0:
+            embed.add_field(name=f"{constant.PARALYZEHEAL}  Paralyzeheal", value=f'{inv.potion}', inline=False)
+        if inv.fullheal > 0:
+            embed.add_field(name=f"{constant.FULLHEAL}  Fullheal", value=f'{inv.potion}', inline=False)
 
-        embed.add_field(name=f"{pokeball} Pokeballs", value=f'{inv.pokeball}', inline=True)
-        embed.add_field(name=f"{potion}  Potion", value=f'{inv.potion}', inline=True)
-        embed.add_field(name=f":coin:  Money", value=f'{inv.money}', inline=True)
+
+        # embed.add_field(name=f"{constant.COIN}  Money", value=f'{inv.money}', inline=True)
 
         await ctx.send(embed=embed)
 
