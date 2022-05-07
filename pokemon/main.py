@@ -312,7 +312,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                     trainerItems = "\r\n".join(items)
                     embed.add_field(name=state, value=trainerItems, inline=False)
                 else:
-                    embed.add_field(name=state, value="", inline=False)
+                    embed.add_field(name=state, value="No key items", inline=False)
 
 
                 # await ctx.send(embed=embed, file=file)
@@ -327,7 +327,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                     await ctx.send(
                         embed=embed,
                         file=file,
-                        components=[btns, [Button(style=ButtonStyle.gray, label='Test', custom_id='test'),Button(style=ButtonStyle.gray, label='Test', custom_id='test2'),Button(style=ButtonStyle.gray, label='Test', custom_id='test3')]]
+                        components=[btns]
                     )
                     interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
                 else:
