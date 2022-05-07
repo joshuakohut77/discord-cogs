@@ -297,25 +297,24 @@ class Pokemon:
 
     def __loadPokemonFromDB(self, pokemonId):
         """ loads and creates a pokemon object from the database """
-        result = None
-        try:
-            db = dbconn()
-            queryString = '''SELECT "id", "discord_id", "pokemonId", "pokemonName", 
-                "growthRate", "currentLevel", "currentExp", traded, base_hp, base_attack, 
-                base_defense, base_speed, base_special_attack, base_special_defense, 
-                "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", 
-                "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", 
-                "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", 
-                "move_4", "type_1", "type_2", "nickName", "currentHP" 
-                FROM pokemon WHERE "id" = %(pokemonId)s'''
-            result = db.querySingle(queryString, { 'pokemonId': int(pokemonId) })
-        except:
-            self.faulted = True
-            logger.error(excInfo=sys.exc_info())
-        finally:
-            # delete and close connection
-            del db
-            return None
+        # try:
+        db = dbconn()
+        queryString = '''SELECT "id", "discord_id", "pokemonId", "pokemonName", 
+            "growthRate", "currentLevel", "currentExp", traded, base_hp, base_attack, 
+            base_defense, base_speed, base_special_attack, base_special_defense, 
+            "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", 
+            "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", 
+            "EV_special_attack", "EV_special_defense", "move_1", "move_2", "move_3", 
+            "move_4", "type_1", "type_2", "nickName", "currentHP" 
+            FROM pokemon WHERE "id" = %(pokemonId)s'''
+        result = db.querySingle(queryString, { 'pokemonId': int(pokemonId) })
+        # except:
+        #     self.faulted = True
+        #     logger.error(excInfo=sys.exc_info())
+        # finally:
+        #     # delete and close connection
+        #     del db
+        #     return None
         
         if result:
             self.trainerId = result[0]
