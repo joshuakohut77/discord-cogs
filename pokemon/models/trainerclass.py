@@ -1,5 +1,6 @@
 # trainer class
 import sys
+from typing import final
 import config
 import random
 from dbclass import db as dbconn
@@ -7,8 +8,10 @@ from encounterclass import encounter
 from inventoryclass import inventory as inv
 from locationclass import location
 from loggerclass import logger as log
+from models.location import Location
 from pokeclass import Pokemon as pokeClass
 from time import time
+import location
 
 # Global Config Variables
 STARTER_LEVEL = config.starterLevel
@@ -383,6 +386,27 @@ class trainer:
             # delete and close connection
             del db
             return locationId
+    
+    def getLocation(self):
+        try:
+            db = dbconn()
+            queryStr = """
+            SELECT
+                locations.*
+            FROM locations
+                join trainer on trainer."locationId" = locations."locationId"
+            WHERE trainer."discord_id" = %(discordId)s
+            """
+            result = db.querySingle(queryStr, { 'discordId': self.discordId })
+            if result:
+                location = Location(result)
+                return location
+            else:
+                raise 'Location not found'
+        except:
+            self.faulted = True
+        finally:
+            del db
 
     ####
     # Private Class Methods
