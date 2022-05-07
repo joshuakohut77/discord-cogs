@@ -252,14 +252,30 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                          icon_url=str(user.avatar_url))
 
         # guild = self.bot.get_guild(971138995042025494)
-        
-        # emojiId = '<:pokeball:971276030952222751>'
-        # emojiId = '<:pokeball:971276308074094614>'
-        emojiId = '<:greatball:971276308124414004>'
 
-        embed.add_field(name=f"{emojiId} Pokeballs", value=f'{inv.pokeball}', inline=True)
-        embed.add_field(name=f"▶️  Potion", value=f'{inv.potion}', inline=True)
-        embed.add_field(name=f"▶️  Money", value=f'{inv.money}', inline=True)
+        pokeball = '<:pokeball:971276308074094614>'
+        greatball = '<:greatball:971276308124414004>'
+        ultraball = '<:ultraball:971276308313145374>'
+        masterball = '<:masterball:971276308355112980>'
+        potion = '<:potion:971276307906301975>'
+        superpotion = '<:superpotion:971276308409638922>'
+        hyperpotion = '<:hyperpotion:971276308342509588>'
+        maxpotion = '<:maxpotion:971276308359307284>'
+        revive = '<:revive:971276307923083275>'
+        fullrestore = '<:fullrestore:971276308350906399>'
+        repel = '<:repel:971276308342530068>'
+        maxrepel = '<:maxrepel:971276308447387648>'
+        awakening = '<:awakening:971276308036341792>'
+        escaperope = '<:escaperope:971276308329938984>'
+        fullheal = '<:fullheal:971276307969241160>'
+        iceheal = '<:iceheal:971276308338323466>'
+        burnheal = '<:burnheal:971276308367683654>'
+        paralyzeheal = '<:paralyzeheal:971276308418019328>'
+        antidote = '<:antidote:971276308325748746>'
+
+        embed.add_field(name=f"{pokeball} Pokeballs", value=f'{inv.pokeball}', inline=True)
+        embed.add_field(name=f"{potion}  Potion", value=f'{inv.potion}', inline=True)
+        embed.add_field(name=f":coin:  Money", value=f'{inv.money}', inline=True)
 
         await ctx.send(embed=embed)
 
