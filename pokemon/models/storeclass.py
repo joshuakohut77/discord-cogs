@@ -9,8 +9,9 @@ from loggerclass import logger as log
 # Class Logger
 logger = log()
 
+
 class store:
-    def __init__(self, discordId, locationId):
+    def __init__(self, discordId: str, locationId: int):
         self.faulted = False
         self.discordId = discordId
         self.locationId = locationId
@@ -26,12 +27,12 @@ class store:
             # locationId = trainerObj.getLocationId()
             db = dbconn()
             queryString = 'SELECT "item", "price" FROM store WHERE "locationId"=%(locationId)s'
-            results = db.queryAll(queryString, { 'locationId':self.locationId })
+            results = db.queryAll(queryString, {'locationId': self.locationId})
             for row in results:
                 item = row[0]
                 price = row[1]
                 storeOption = {'item': item, 'price': price,
-                            'spriteUrl': self.__getSpriteUrl(item)}
+                               'spriteUrl': self.__getSpriteUrl(item)}
                 storeList.append(storeOption)
 
             self.storeMap = {}
@@ -49,40 +50,15 @@ class store:
             del db
             self.storeList = storeList
 
-    def buyItemEx(self, name, quantity):
-        """ buy and item and update trainers inventory Ex"""
-        if name not in self.storeMap.keys():
-            return "Item not available"
-
-        price = self.storeMap[name]['price']
-        totalPrice = price * quantity
-
-        inventory = inv(self.discordId)
-
-        if inventory.money < totalPrice:
-            return 'You do not have enough money to buy that.'
-        else:
-            inventory.money = inventory.money - totalPrice
-            # todo update this so it's not hard coded
-            if name == 'poke-ball':
-                inventory.pokeball = inventory.pokeball + quantity
-            elif name == 'potion':
-                inventory.potion = inventory.potion + quantity
-            inventory.save()
-            if inventory.faulted:
-                self.faulted = True
-                return "Error occured during inventory save()"
-            return "You successfully bought that item!"
-
     def buyItem(self, name, quantity):
         """ buy and item and update trainers inventory """
         if name not in self.storeMap.keys():
             return "Item not available"
-        
+
         inventory = inv(self.discordId)
         price = self.storeMap[name]['price']
         totalPrice = price * quantity
-        
+
         if inventory.money < totalPrice:
             return 'You do not have enough money to buy that.'
         else:
@@ -91,7 +67,7 @@ class store:
             elif name == 'great-ball':
                 inventory.greatball += quantity
             elif name == 'ultra-ball':
-                inventory.ultraball += quantity            
+                inventory.ultraball += quantity
             elif name == 'master-ball':
                 inventory.masterball += quantity
             elif name == 'potion':
@@ -123,16 +99,13 @@ class store:
             elif name == 'antidote':
                 inventory.antidote += quantity
             elif name == 'max-potion':
-                inventory.maxpotion += quantity                                                                                                                                                                                                                
+                inventory.maxpotion += quantity
             inventory.save()
             if inventory.faulted:
                 self.faulted = True
                 return "Error occured during inventory save()"
             return "You successfully bought that item!"
 
-        
-
     def __getSpriteUrl(self, itemName):
         """ returns a path to item sprite on disk """
-        return "/data/cogs/CogManager/cogs/pokemon/sprites/items/%s.png" %itemName
-
+        return "/data/cogs/CogManager/cogs/pokemon/sprites/items/%s.png" % itemName
