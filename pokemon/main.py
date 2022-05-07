@@ -255,16 +255,56 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         embed.set_author(name=f"{user.display_name}",
                          icon_url=str(user.avatar_url))
 
+        items = []
+
+        if inv.pokeball > 0:
+            items.append(f'{constant.POKEBALL} **Pokeballs** — {inv.pokeball}')
+        if inv.greatball > 0:
+            items.append(f'{constant.GREATBALL} **Greatballs** — {inv.greatball}')
+        if inv.ultraball > 0:
+            items.append(f'{constant.ULTRABALL} **Ultraball** — {inv.ultraball}')
+        if inv.masterball > 0:
+            items.append(f'{constant.MASTERBALL} **Masterball** — {inv.masterball}')
+        if inv.potion > 0:
+            items.append(f'{constant.POTION} **Potion** — {inv.potion}')
+        if inv.superpotion > 0:
+            items.append(f'{constant.SUPERPOTION} **Superpotion** — {inv.superpotion}')
+        if inv.hyperpotion > 0:
+            items.append(f'{constant.HYPERPOTION} **Hyperpotion** — {inv.hyperpotion}')
+        if inv.maxpotion > 0:
+            items.append(f'{constant.MAXPOTION} **Maxpotion** — {inv.maxpotion}')
+        if inv.revive > 0:
+            items.append(f'{constant.REVIVE} **Revive** — {inv.revive}')
+        if inv.fullrestore > 0:
+            items.append(f'{constant.FULLRESTORE} **Full Restore** — {inv.fullrestore}')
+        if inv.repel > 0:
+            items.append(f'{constant.REPEL} **Repel** — {inv.repel}')
+        if inv.maxrepel > 0:
+            items.append(f'{constant.MAXREPEL} **Max Repel** — {inv.maxrepel}')
+        if inv.escaperope > 0:
+            items.append(f'{constant.ESCAPEROPE} **Escape Rope** — {inv.escaperope}')
+        if inv.awakening > 0:
+            items.append(f'{constant.AWAKENING} **Awakening** — {inv.awakening}')
+        if inv.antidote > 0:
+            items.append(f'{constant.ANTIDOTE} **Antidote** — {inv.antidote}')
+        if inv.iceheal > 0:
+            items.append(f'{constant.ICEHEAL} **Iceheal** — {inv.iceheal}')
+        if inv.burnheal > 0:
+            items.append(f'{constant.BURNHEAL} **Burnheal** — {inv.burnheal}')
+        if inv.paralyzeheal > 0:
+            items.append(f'{constant.PARALYZEHEAL} **Paralyzeheal** — {inv.paralyzeheal}')
+        if inv.fullheal > 0:
+            items.append(f'{constant.FULLHEAL} **Fullheal** — {inv.fullheal}')
+
         embed.add_field(name=f"Items", value=f'''
-        {constant.POKEBALL} **Pokeballs** — {inv.pokeball}
-        {constant.POTION} **Potion** — {inv.potion}
-        {constant.REVIVE} **Revive** — {inv.revive}
+        {'\r\n'.join(items)}
         ''', inline=False)
 
 
         # # guild = self.bot.get_guild(971138995042025494)
         # # \u200b
         # # A device for catching wild Pokémon. It's thrown like a ball, comfortably encapsulating its target.
+        
         # if inv.pokeball > 0:
         #     embed.add_field(name=f"\u200b", value=f'{constant.POKEBALL} **Pokeballs** — {inv.pokeball}', inline=False)
         #     # embed.add_field(name=f"{constant.POKEBALL} Pokeballs `— {inv.pokeball}`", value=f'A device for catching wild Pokémon. It\'s thrown like a ball, comfortably encapsulating its target.', inline=False)
