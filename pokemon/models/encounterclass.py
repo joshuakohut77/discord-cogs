@@ -11,7 +11,8 @@ from loggerclass import logger as log
 from pokedexclass import pokedex
 
 # Global Config Variables
-MAX_BATTLE_TURNS = config.max_battle_turns
+MAX_BATTLE_TURNS = 50
+# MAX_BATTLE_TURNS = config.max_battle_turns
 # Class Logger
 logger = log()
 
