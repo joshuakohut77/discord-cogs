@@ -30,6 +30,7 @@ from models.pokeclass import Pokemon as PokemonClass
 from models.storeclass import store as StoreClass
 from models.inventoryclass import inventory as InventoryClass
 import constant
+import uuid
 
 
 NORMAL_GREY = 0xa8a77d
@@ -246,16 +247,18 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         inv = InventoryClass(str(user.id))
 
+        name = uuid.uuid4()
+        file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/bag.png", filename=f"{name}.png")
         # Create the embed object
-        embed = discord.Embed(title=f"Bag")
-        embed.set_thumbnail(url=f"https://discord.com/assets/9354845e25932052065dd6c1e08afb5e.svg")
+        embed = discord.Embed(title=f"Items")
+        embed.set_thumbnail(url=f"attachment://{name}.png")
         embed.set_author(name=f"{user.display_name}",
                          icon_url=str(user.avatar_url))
 
-        embed.add_field(name=f"Items", value=f'''
+        embed.add_field(name=f"\u200b", value=f'''
         {constant.POKEBALL} **Pokeballs** — {inv.pokeball}
-        {constant.POTION} **Potion** **     ** — {inv.potion}
-        {constant.REVIVE} **Revive**      — {inv.revive}
+        {constant.POTION} **Potion** — {inv.potion}
+        {constant.REVIVE} **Revive** — {inv.revive}
         ''', inline=False)
 
 
