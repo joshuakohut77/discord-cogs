@@ -467,7 +467,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
                 btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
 
-                activeDisabled = (active is not None) and (pokemon.trainerId == active.id)
+                activeDisabled = (active is not None) and (pokemon.trainerId == active.trainerId)
                 btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled))
                 
                 # TODO: need to add the release button somewhere
@@ -604,7 +604,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
         
         # Disable the "Set Active" button if the starter is currently the active pokemon
-        disabled = (active is not None) and (pokemon.trainerId == active.id)
+        disabled = (active is not None) and (pokemon.trainerId == active.trainerId)
         btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=disabled))
 
         await ctx.send(embed=embed, components=[btns])
