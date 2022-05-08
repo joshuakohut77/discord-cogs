@@ -607,8 +607,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         disabled = (active is not None) and (pokemon.trainerId == active.trainerId)
         btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=disabled))
 
-        # await ctx.send(embed=embed, components=[btns])
-        await ctx.send(pokemon.frontSpriteURL)
+        await ctx.send(embed=embed, components=[btns])
+        # await ctx.send(pokemon.frontSpriteURL)
 
     @_trainer.command()
     async def active(self, ctx: commands.Context, user: discord.Member = None) -> None:
