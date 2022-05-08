@@ -59,9 +59,12 @@ class Pokemon:
         self.frontSpriteURL = self.__getFrontSpritePath()
         self.backSpriteURL = self.__getBackSpritePath()
 
+    # TODO: make static method
     def create(self, level):
         """ creates a new pokemon with generated stats at a given level """
         # this function is used to create new pokemon and will auto generate their level 1 moves
+        discordId = self.discordId
+        self.discordId = None
         self.currentLevel = level
 
         pokemon = pb.pokemon(self.pokedexId)
@@ -96,6 +99,7 @@ class Pokemon:
         self.move_4 = moveList[3]
         statsDict = self.getPokeStats()
         self.currentHP = statsDict['hp']
+        self.discordId = discordId
 
     def save(self):
         """ saves a pokemon to the database """
