@@ -122,7 +122,7 @@ def createPokemonEmbed(user: Member, pokemon: PokemonClass) -> tuple[Embed, disc
     embed.add_field(
         name="Defense", value=f"{stats['defense']}", inline=True)
 
-    file = discord.File(f"{pokemon.spriteURL}", filename=f"{pokemon.name}.png")
+    file = discord.File(f"{pokemon.frontSpriteURL}", filename=f"{pokemon.name}.png")
     embed.set_thumbnail(url=f"attachment://{pokemon.name}.png")
     return embed, file
 
