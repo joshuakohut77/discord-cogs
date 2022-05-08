@@ -127,7 +127,7 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class Starter:
+class Starter(commands.Cog):
     """Starer"""
 
     def __init__(self, bot: Red):
