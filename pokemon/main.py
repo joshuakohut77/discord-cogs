@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 from abc import ABCMeta
-from starter import Starter
 import random
 
 import discord
@@ -18,6 +17,7 @@ if TYPE_CHECKING:
 from redbot.core import Config, commands
 import asyncio
 
+from .starter import Starter
 from .event import EventMixin
 
 # import pokebase as pb
