@@ -120,7 +120,7 @@ class StarterMixin(MixinMeta):
         author = interaction.message.author
 
         if user.id != author.id:
-            await interaction.send('This is not for you.')
+            await interaction.send(f'{user.id} :: {author.id}')
 
         trainer = TrainerClass(str(user.id))
         pokemon = trainer.getStarterPokemon()
