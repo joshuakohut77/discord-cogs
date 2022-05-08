@@ -116,6 +116,7 @@ class trainer:
         except:
             self.faulted = True
             logger.error(excInfo=sys.exc_info())
+            raise
         finally:
             # delete and close connection
             del db
