@@ -93,7 +93,7 @@ def getTypeColor(type: str) -> discord.Colours:
         color = discord.Colour(FAIRY_PINK)
     return color
 
-def createPokemonEmbed(user: Member, pokemon: PokemonClass) -> tuple[Embed, discord.File]:
+def createPokemonEmbedWithFile(user: Member, pokemon: PokemonClass) -> tuple[Embed, discord.File]:
     stats = pokemon.getPokeStats()
     color = getTypeColor(pokemon.type1)
 
@@ -125,6 +125,40 @@ def createPokemonEmbed(user: Member, pokemon: PokemonClass) -> tuple[Embed, disc
     file = discord.File(f"{pokemon.frontSpriteURL}", filename=f"{pokemon.pokemonName}.png")
     embed.set_thumbnail(url=f"attachment://{pokemon.pokemonName}.png")
     return embed, file
+
+def createPokemonEmbedWithUrl(user: Member, pokemon: PokemonClass) -> Embed:
+    stats = pokemon.getPokeStats()
+    color = getTypeColor(pokemon.type1)
+
+    # Create the embed object
+    embed = discord.Embed(title=f"#{pokemon.trainerId}  {pokemon.pokemonName.capitalize()}", color=color)
+    embed.set_author(name=f"{user.display_name}",
+                    icon_url=str(user.avatar_url))
+    
+    types = pokemon.type1
+    if pokemon.type2 is not None:
+        types += ', ' + pokemon.type2
+        
+    embed.add_field(
+        name="Type", value=f"{types}", inline=True)
+    
+    if pokemon.nickName is not None:
+        embed.add_field(
+            name="Nickname", value=f"{pokemon.nickName}", inline=False)
+    
+    embed.add_field(
+        name="Level", value=f"{pokemon.currentLevel}", inline=False)
+    embed.add_field(
+        name="HP", value=f"{pokemon.currentHP} / {stats['hp']}", inline=False)
+    embed.add_field(
+        name="Attack", value=f"{stats['attack']}", inline=True)
+    embed.add_field(
+        name="Defense", value=f"{stats['defense']}", inline=True)
+
+    # file = discord.File(f"{pokemon.frontSpriteURL}", filename=f"{pokemon.pokemonName}.png")
+    # embed.set_thumbnail(url=f"attachment://{pokemon.pokemonName}.png")
+    embed.set_thumbnail(url=pokemon.frontSpriteURL)
+    return embed
 
 
 class CompositeClass(commands.CogMeta, ABCMeta):
@@ -422,7 +456,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         while True:
             try:
                 pokemon: PokemonClass = pokeList[i]
-                embed, file = createPokemonEmbed(user, pokemon)
+                embed, file = createPokemonEmbedWithUrl(user, pokemon)
                 
                 btns = []
                 if i > 0:
@@ -563,7 +597,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         pokemon = trainer.getStarterPokemon()
         active = trainer.getActivePokemon()
 
-        embed, file = createPokemonEmbed(user, pokemon)
+        embed, file = createPokemonEmbedWithUrl(user, pokemon)
 
         btns = []
         btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
@@ -589,7 +623,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
         btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
 
-        embed, file = createPokemonEmbed(user, pokemon)
+        embed, file = createPokemonEmbedWithUrl(user, pokemon)
         await ctx.send(embed=embed, file=file)       
 
 
