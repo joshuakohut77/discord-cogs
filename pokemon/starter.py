@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
 # import emojis
 from redbot.core import Config, commands
+from .abcd import MixinMeta
 # import asyncio
 
 # from .event import EventMixin
@@ -127,12 +128,12 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class Starter(commands.Cog):
-    """Starer"""
+class Starter(MixinMeta):
+    """Starter"""
 
-    def __init__(self, bot: Red):
-        self.client = DiscordComponents(bot)
-        self.bot: Red = bot
+    # def __init__(self, bot: Red):
+    #     self.client = DiscordComponents(bot)
+    #     self.bot: Red = bot
 
     @commands.group(name="test")
     @commands.guild_only()

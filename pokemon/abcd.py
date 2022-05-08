@@ -6,8 +6,10 @@ if TYPE_CHECKING:
     from redbot.core.bot import Red
 
 from abc import ABC
+from discord_components.client import DiscordComponents
 
 class MixinMeta(ABC):
     def __init__(self, *args):
         self.bot: Red
         self.config: Config
+        self.client: DiscordComponents
