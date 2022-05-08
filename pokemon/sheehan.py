@@ -1,5 +1,5 @@
 # from models.trainerclass import trainer as TrainerClass
-from models.locationclass import location as LocationClass
+from services.locationclass import location as LocationClass
 
 # trainer = TrainerClass('509767223938777108')
 # areaId = trainer.getAreaId()
