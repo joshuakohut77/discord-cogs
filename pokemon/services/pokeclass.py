@@ -68,8 +68,8 @@ class Pokemon:
         self.currentLevel = level
 
         pokemon = pb.pokemon(self.pokedexId)
-        self.name = pokemon.species.name
-        self.id = pokemon.id
+        self.pokemonName = pokemon.species.name
+        self.pokedexId = pokemon.id
         self.frontSpriteURL = self.__getFrontSpritePath()
         self.backSpriteURL = self.__getBackSpritePath()
         self.growthRate = pb.pokemon_species(pokemon.id).growth_rate.name
@@ -131,7 +131,7 @@ class Pokemon:
                             %(type_1)s, %(type_2)s, %(nickName)s, %(currentHP)s)
                         RETURNING id
                 """
-                values = {'discordId': self.discordId, 'pokemonId': self.id, 'pokemonName': self.name,
+                values = {'discordId': self.discordId, 'pokemonId': self.pokedexId, 'pokemonName': self.pokemonName,
                           'growthRate': self.growthRate, 'currentLevel': self.currentLevel, 'currentExp': self.currentExp,
                           'traded': self.traded, 'base_hp': self.hp.base, 'base_attack': self.attack.base,
                           'base_defense': self.defense.base, 'base_speed': self.speed.base,
@@ -163,7 +163,7 @@ class Pokemon:
                             "move_4"=%(move_4)s, "nickName"=%(nickName)s, "currentHP"=%(currentHP)s
                         WHERE id = %(trainerId)s;
                 """
-                values = {'discordId': self.discordId, 'pokemonId': self.id, 'pokemonName': self.name,
+                values = {'discordId': self.discordId, 'pokemonId': self.pokedexId, 'pokemonName': self.pokemonName,
                           'growthRate': self.growthRate, 'currentLevel': self.currentLevel, 'currentExp': self.currentExp,
                           'traded': self.traded, 'base_hp': self.hp.base, 'base_attack': self.attack.base,
                           'base_defense': self.defense.base, 'base_speed': self.speed.base,
@@ -190,8 +190,8 @@ class Pokemon:
 
     def print(self):
         """ prints out most pokemon information for debugging """
-        print('Id:', self.id)
-        print('Name:', self.name)
+        print('Id:', self.pokedexId)
+        print('Name:', self.pokemonName)
         print('Level:', self.currentLevel)
         print('Exp:', self.currentExp)
         print('Traded:', self.traded)
@@ -328,7 +328,7 @@ class Pokemon:
 
         evolutionList = []
         try:
-            pokemon = pb.pokemon_species(self.id)
+            pokemon = pb.pokemon_species(self.pokedexId)
 
             evoChainId = self.__getUrlNumber(pokemon.evolution_chain.url)
 
@@ -458,7 +458,7 @@ class Pokemon:
     def __getPokemonLevelMoves(self, pokemon: APIResource = None):
         """ returns a dictionary of {move: level} for a pokemons base move set"""
         if pokemon is None:
-            pokemon = pb.pokemon(self.id)
+            pokemon = pb.pokemon(self.pokedexId)
 
         moveDict = {}
         for move in pokemon.moves:
@@ -476,12 +476,12 @@ class Pokemon:
     def __getFrontSpritePath(self):
         """ returns a path to pokemon front sprite """
         basePath = self.__getSpriteBasePath()
-        return basePath + "%s.png" % self.id
+        return basePath + "%s.png" % self.pokedexId
 
     def __getBackSpritePath(self):
         """ returns a path to pokemon back sprite """
         basePath = self.__getSpriteBasePath()
-        return basePath + "back/%s.png" % self.id
+        return basePath + "back/%s.png" % self.pokedexId
 
     def __getSpriteBasePath(self):
         """ returns a base path to pokemon sprites """
@@ -515,7 +515,7 @@ class Pokemon:
     def __getPokemonType(self, pokemon: APIResource = None):
         """ returns string of pokemons base type """
         if pokemon is None:
-            pokemon = pb.pokemon(self.id)
+            pokemon = pb.pokemon(self.pokedexId)
 
         typeList = []
         for type in pokemon.types:
@@ -576,7 +576,7 @@ class Pokemon:
     def __getPokemonBaseStats(self):
         """ returns dictionary of {stat: value} for a pokemons base stats """
         baseDict = {}
-        pokemon = pb.pokemon(self.id)
+        pokemon = pb.pokemon(self.pokedexId)
         for stat in pokemon.stats:
             statName = stat.stat.name
             statVal = stat.base_stat
@@ -631,7 +631,7 @@ class Pokemon:
         for item in evoList:
             name = item['name']
             min_level = item['min_level']
-            if min_level is not None and name != self.name:
+            if min_level is not None and name != self.pokemonName:
                 # possible evolution
                 if self.currentLevel >= min_level:
                     # eligibal evolution, continue checking for more
