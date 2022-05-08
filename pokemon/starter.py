@@ -168,7 +168,7 @@ class StarterMixin(MixinMeta):
         author = interaction.message.author
 
         if user.id != author.id:
-            interaction.send('This is not for you.')
+            await interaction.send('This is not for you.')
 
         # This will create the trainer if it doesn't exist
         trainer = TrainerClass(str(user.id))
@@ -198,7 +198,7 @@ class StarterMixin(MixinMeta):
         author = interaction.message.author
 
         if user.id != author.id:
-            interaction.send('This is not for you.')
+            await interaction.send('This is not for you.')
 
         trainer = TrainerClass(str(user.id))
         pokemon = trainer.getStarterPokemon()
@@ -243,7 +243,7 @@ class StarterMixin(MixinMeta):
         btns = []
         
         btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="About", custom_id='stats'),
+            Button(style=ButtonStyle.green, label="About", custom_id='about'),
             self.on_about_click,
         ))
         # btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
@@ -254,5 +254,5 @@ class StarterMixin(MixinMeta):
         btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=disabled))
 
 
-        await interaction.edit_origin(embed=embed)
+        await interaction.edit_origin(embed=embed, components=[btns])
 
