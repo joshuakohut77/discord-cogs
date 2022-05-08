@@ -98,7 +98,7 @@ def createPokemonEmbed(user: Member, pokemon: PokemonClass) -> tuple[Embed, disc
     color = getTypeColor(pokemon.type1)
 
     # Create the embed object
-    embed = discord.Embed(title=f"#{pokemon.id}  {pokemon.name.capitalize()}", color=color)
+    embed = discord.Embed(title=f"#{pokemon.trainerId}  {pokemon.name.capitalize()}", color=color)
     embed.set_author(name=f"{user.display_name}",
                     icon_url=str(user.avatar_url))
     
@@ -433,7 +433,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
                 btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
 
-                activeDisabled = (active is not None) and (pokemon.id == active.id)
+                activeDisabled = (active is not None) and (pokemon.trainerId == active.id)
                 btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled))
                 
                 # TODO: need to add the release button somewhere
@@ -570,7 +570,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
         
         # Disable the "Set Active" button if the starter is currently the active pokemon
-        disabled = (active is not None) and (pokemon.id == active.id)
+        disabled = (active is not None) and (pokemon.trainerId == active.id)
         btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=disabled))
 
         await ctx.send(embed=embed, file=file, components=[btns])
