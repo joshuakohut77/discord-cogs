@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 from abc import ABCMeta
-import random
+# import random
 
 import discord
 from discord import (Embed, Member)
@@ -15,9 +15,9 @@ if TYPE_CHECKING:
 
 # import emojis
 from redbot.core import Config, commands
-import asyncio
+# import asyncio
 
-from .event import EventMixin
+# from .event import EventMixin
 
 # import pokebase as pb
 # import psycopg as pg
