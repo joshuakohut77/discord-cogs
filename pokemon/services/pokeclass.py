@@ -493,7 +493,6 @@ class Pokemon:
         # finally:
         #     # delete object and close connection
         #     del db
-        #     return None
 
         # legacySprites = False
         # if result:
