@@ -22,13 +22,14 @@ import asyncio
 
 from .event import EventMixin
 
-import pokebase as pb
-import psycopg as pg
+# import pokebase as pb
+# import psycopg as pg
 # from .models.helpers import *
-from models.trainerclass import trainer as TrainerClass
-from models.pokeclass import Pokemon as PokemonClass
-from models.storeclass import store as StoreClass
-from models.inventoryclass import inventory as InventoryClass
+from services.trainerclass import trainer as TrainerClass
+from services.pokeclass import Pokemon as PokemonClass
+from services.storeclass import store as StoreClass
+from services.inventoryclass import inventory as InventoryClass
+
 import constant
 import uuid
 
@@ -562,11 +563,6 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         # This will create the trainer if it doesn't exist
         trainer = TrainerClass(str(user.id))
         pokemon = trainer.getStarterPokemon()
-
-        
-        await ctx.send(pokemon.trainerId)
-        return
-        
         active = trainer.getActivePokemon()
 
         embed, file = createPokemonEmbed(user, pokemon)

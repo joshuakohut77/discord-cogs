@@ -1,7 +1,7 @@
 from typing import List
 
 
-class Location:
+class LocationModel:
     def __init__(self, results: List):
         self.locationId = results[0]
         self.name = results[1]
