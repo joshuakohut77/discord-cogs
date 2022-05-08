@@ -456,7 +456,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         while True:
             try:
                 pokemon: PokemonClass = pokeList[i]
-                embed, file = createPokemonEmbedWithUrl(user, pokemon)
+                embed = createPokemonEmbedWithUrl(user, pokemon)
                 
                 btns = []
                 if i > 0:
@@ -477,14 +477,14 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
                 if interaction is None:
                     await ctx.send(
                         embed=embed,
-                        file=file,
+                        # file=file,
                         components=[btns, [Button(style=ButtonStyle.gray, label='Test', custom_id='test'),Button(style=ButtonStyle.gray, label='Test', custom_id='test2'),Button(style=ButtonStyle.gray, label='Test', custom_id='test3')]]
                     )
                     interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
                 else:
                     await interaction.edit_origin(
                         embed=embed,
-                        file=file,
+                        # file=file,
                         components=[btns]
                     )
                     interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
@@ -597,7 +597,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         pokemon = trainer.getStarterPokemon()
         active = trainer.getActivePokemon()
 
-        embed, file = createPokemonEmbedWithUrl(user, pokemon)
+        embed = createPokemonEmbedWithUrl(user, pokemon)
 
         btns = []
         btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
@@ -607,7 +607,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         disabled = (active is not None) and (pokemon.trainerId == active.id)
         btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=disabled))
 
-        await ctx.send(embed=embed, file=file, components=[btns])
+        await ctx.send(embed=embed, components=[btns])
 
     @_trainer.command()
     async def active(self, ctx: commands.Context, user: discord.Member = None) -> None:
@@ -623,8 +623,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
         btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
 
-        embed, file = createPokemonEmbedWithUrl(user, pokemon)
-        await ctx.send(embed=embed, file=file)       
+        embed = createPokemonEmbedWithUrl(user, pokemon)
+        await ctx.send(embed=embed)       
 
 
     # @_trainer.command()
