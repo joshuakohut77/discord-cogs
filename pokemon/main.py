@@ -1,11 +1,11 @@
 from __future__ import annotations
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 from abc import ABCMeta
-from discord.embeds import Embed
-from discord.member import Member
-import discord_components
 import random
-from discord_components.interaction import Interaction
+
+import discord
+from discord import (Embed, Member)
+from discord_components import (DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
 
 from pokebase.loaders import pokedex
 
@@ -14,8 +14,6 @@ if TYPE_CHECKING:
     from redbot.core.bot import Red
 
 # import emojis
-import discord
-from discord_components import DiscordComponents, ButtonStyle, ComponentsBot, Button
 from redbot.core import Config, commands
 import asyncio
 
@@ -315,7 +313,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         inv = InventoryClass(str(user.id))
 
-        interaction: discord_components.Interaction = None
+        interaction: Interaction = None
         state = 'Items'
 
         while True:
@@ -425,6 +423,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         else:
             await ctx.send(f'areaId: {trainer.getAreaId()} - No actions available')
 
+
     # TODO: Apparently there is a limit of 5 buttons at a time
     @_trainer.command()
     async def pc(self, ctx: commands.Context, user: Union[discord.Member,discord.User] = None):
@@ -443,7 +442,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         active = trainer.getActivePokemon()
         # starter = trainer.getStarterPokemon()
 
-        interaction: discord_components.Interaction = None
+        interaction: Interaction = None
         pokeLength = len(pokeList)
         i = 0
 
@@ -524,7 +523,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         pokedex = trainer.getPokedex()
 
-        interaction: discord_components.Interaction = None
+        interaction: Interaction = None
         i = 0
         while True:
             try:
@@ -601,11 +600,12 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         embed = createPokemonEmbedWithUrl(user, pokemon)
 
         btns = []
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
-            self.on_stats_click,
-        ))
-        # btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
+        
+        # btns.append(self.client.add_callback(
+        #     Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
+        #     self.on_stats_click,
+        # ))
+        btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
         btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
         
         # Disable the "Set Active" button if the starter is currently the active pokemon
