@@ -146,6 +146,7 @@ class Starter(MixinMeta):
     @_test.command()
     async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
         """Show the starter pokemon for the trainer."""
+        await ctx.send('test starter')
         if user is None:
             user = ctx.author
 
