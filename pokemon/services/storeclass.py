@@ -3,7 +3,6 @@
 import sys
 from dbclass import db as dbconn
 from inventoryclass import inventory as inv
-from trainerclass import trainer
 from loggerclass import logger as log
 
 # Class Logger
@@ -23,8 +22,6 @@ class store:
         """ loads a trainers store into the class object """
         storeList = []
         try:
-            # trainerObj = trainer(self.discordId)
-            # locationId = trainerObj.getLocationId()
             db = dbconn()
             queryString = 'SELECT "item", "price" FROM store WHERE "locationId"=%(locationId)s'
             results = db.queryAll(queryString, {'locationId': self.locationId})
