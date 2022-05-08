@@ -18,7 +18,7 @@ class EventMixin(MixinMeta):
     __slots__: tuple = ()
 
 
-    @commands.Cog.listener('button_click')
+    @commands.Cog.listener()
     async def on_button_click(self, interaction: Interaction):
         interaction.respond('btn clicked')
         pass

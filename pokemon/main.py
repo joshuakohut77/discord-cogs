@@ -169,7 +169,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):
-        DiscordComponents(bot)
+        self.client = DiscordComponents(bot)
         self.bot: Red = bot
         self.config: Config = Config.get_conf(
             self, identifier=4206980085, force_registration=True)
@@ -601,11 +601,11 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         btns = []
         
-        # btns.append(self.client.add_callback(
-        #     Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
-        #     self.on_stats_click,
-        # ))
-        btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
+            self.on_stats_click,
+        ))
+        # btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
         btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
         
         # Disable the "Set Active" button if the starter is currently the active pokemon
