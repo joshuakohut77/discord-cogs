@@ -8,9 +8,9 @@ from encounterclass import encounter
 from inventoryclass import inventory as inv
 from locationclass import location
 from loggerclass import logger as log
-from models.location import LocationModel
 from pokeclass import Pokemon as pokeClass
 from time import time
+import models.location as Models
 
 # Global Config Variables
 STARTER_LEVEL = 5 #config.starterLevel
@@ -401,7 +401,7 @@ class trainer:
             """
             result = db.querySingle(queryStr, { 'discordId': self.discordId })
             if result:
-                location = LocationModel(result)
+                location = Models.LocationModel(result)
                 return location
             else:
                 raise 'Location not found'
