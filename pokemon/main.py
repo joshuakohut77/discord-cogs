@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 from redbot.core import Config, commands
 import asyncio
 
-from .starter import Starter
+from .starter import StarterMixin
 from .event import EventMixin
 
 # import pokebase as pb
@@ -166,7 +166,7 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class Pokemon(Starter, EventMixin, commands.Cog, metaclass=CompositeClass):
+class Pokemon(StarterMixin, commands.Cog, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):

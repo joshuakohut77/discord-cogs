@@ -13,20 +13,11 @@ from pokebase.loaders import pokedex
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
-# import emojis
 from redbot.core import Config, commands
 from .abcd import MixinMeta
-# import asyncio
 
-# from .event import EventMixin
-
-# import pokebase as pb
-# import psycopg as pg
-# from .models.helpers import *
 from services.trainerclass import trainer as TrainerClass
 from services.pokeclass import Pokemon as PokemonClass
-from services.storeclass import store as StoreClass
-from services.inventoryclass import inventory as InventoryClass
 
 
 NORMAL_GREY = 0xa8a77d
@@ -124,7 +115,7 @@ def createPokemonEmbedWithUrl(user: Member, pokemon: PokemonClass) -> Embed:
 
 
 
-class Starter(MixinMeta):
+class StarterMixin(MixinMeta):
     """Starter"""
 
     # def __init__(self, bot: Red):
@@ -143,6 +134,7 @@ class Starter(MixinMeta):
     async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
         """Show the starter pokemon for the trainer."""
         await ctx.send('test starter')
+
         if user is None:
             user = ctx.author
 
