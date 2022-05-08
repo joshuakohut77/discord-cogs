@@ -18,10 +18,10 @@ class EventMixin(MixinMeta):
     __slots__: tuple = ()
 
 
-    @commands.Cog.listener()
-    async def on_button_click(self, interaction: Interaction):
-        interaction.respond('btn clicked')
-        pass
+    # @commands.Cog.listener()
+    # async def on_button_click(self, interaction: Interaction):
+    #     interaction.respond('btn clicked')
+    #     pass
 
     # @commands.Cog.listener()
     # async def on_reaction_add(self, reaction: discord.Reaction, user) -> None:
