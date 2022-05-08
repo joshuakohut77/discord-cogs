@@ -5,6 +5,7 @@ from discord.embeds import Embed
 from discord.member import Member
 import discord_components
 import random
+from discord_components.interaction import Interaction
 
 from pokebase.loaders import pokedex
 
@@ -600,7 +601,11 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         embed = createPokemonEmbedWithUrl(user, pokemon)
 
         btns = []
-        btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
+            self.on_stats_click,
+        ))
+        # btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
         btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
         
         # Disable the "Set Active" button if the starter is currently the active pokemon
@@ -609,6 +614,10 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
         await ctx.send(embed=embed, components=[btns])
         # await ctx.send(pokemon.frontSpriteURL)
+
+    def on_stats_click(self, interaction: Interaction):
+        interaction.send('stats clicked')
+        pass
 
     @_trainer.command()
     async def active(self, ctx: commands.Context, user: discord.Member = None) -> None:
