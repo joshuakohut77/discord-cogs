@@ -564,7 +564,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         pokemon = trainer.getStarterPokemon()
 
         
-        await ctx.send(pokemon)
+        await ctx.send(pokemon.trainerId)
         return
         
         active = trainer.getActivePokemon()
