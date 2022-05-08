@@ -170,6 +170,7 @@ class Pokemon(Starter, EventMixin, commands.Cog, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.client = DiscordComponents(bot)
         self.bot: Red = bot
         self.config: Config = Config.get_conf(
