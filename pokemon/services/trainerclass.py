@@ -127,7 +127,7 @@ class trainer:
         if pokemon.faulted:
             self.faulted = True
             return "error occured during pokemon create()"
-        pokemon.discordId = self.discordId
+
         pokemon.save()
         if pokemon.faulted:
             self.faulted = True
