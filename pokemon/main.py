@@ -196,6 +196,7 @@ class Pokemon(StarterMixin, commands.Cog, metaclass=CompositeClass):
 
         return commands.check(pred)
 
+
     #
     # Commands:
     #
