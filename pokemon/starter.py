@@ -134,7 +134,7 @@ class Starter:
         self.client = DiscordComponents(bot)
         self.bot: Red = bot
 
-    @commands.group(name="trainer")
+    @commands.group(name="test")
     @commands.guild_only()
     async def _test(self, ctx: commands.Context) -> None:
         """Base command to manage the trainer (user).
