@@ -123,10 +123,6 @@ def createPokemonEmbedWithUrl(user: Member, pokemon: PokemonClass) -> Embed:
     return embed
 
 
-class CompositeClass(commands.CogMeta, ABCMeta):
-    __slots__: tuple = ()
-    pass
-
 
 class Starter(MixinMeta):
     """Starter"""
