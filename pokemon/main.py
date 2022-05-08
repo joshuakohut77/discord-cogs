@@ -1,12 +1,10 @@
 from __future__ import annotations
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 from abc import ABCMeta
-from discord import emoji
 from discord.embeds import Embed
 from discord.member import Member
 import discord_components
 import random
-from discord_components import component
 
 from pokebase.loaders import pokedex
 

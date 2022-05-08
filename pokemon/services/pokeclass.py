@@ -119,7 +119,7 @@ class Pokemon:
                             "type_1", "type_2", "nickName", "currentHP")
                         VALUES (%(discordId)s, %(pokemonId)s, %(pokemonName)s,
                             %(growthRate)s, %(currentLevel)s, %(currentExp)s,
-                            %(traded)s, %(base_hp)s,v%(base_attack)s,
+                            %(traded)s, %(base_hp)s,%(base_attack)s,
                             %(base_defense)s, %(base_speed)s,
                             %(base_special_attack)s, %(base_special_defense)s,
                             %(IV_hp)s, %(IV_attack)s, %(IV_defense)s, 
