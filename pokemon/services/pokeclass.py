@@ -490,7 +490,7 @@ class Pokemon:
         try:
             db = dbconn()
             queryString = 'SELECT "legacySprites" FROM trainer WHERE "discord_id" = %(discordId)s'
-            result = db.querySingle(queryString, { 'discordId': self.discordId })
+            result = db.querySingle(queryString, { 'discordId': str(self.discordId) })
         except:
             self.faulted = True
             logger.error(excInfo=sys.exc_info())

@@ -1,5 +1,6 @@
 import sys
 import traceback
+import logging
 
 class logger:
 
@@ -26,6 +27,7 @@ class logger:
                 errorMsg = msg						
         
         if verbose:
+            logging.error(errorMsg)
             print(errorMsg)
 
         return errorMsg 
