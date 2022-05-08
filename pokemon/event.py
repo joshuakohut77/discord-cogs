@@ -1,5 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+
+from discord_components.interaction import Interaction
 from .abc import MixinMeta
 
 # if TYPE_CHECKING:
@@ -15,120 +17,126 @@ import psycopg as pg
 class EventMixin(MixinMeta):
     __slots__: tuple = ()
 
-    @commands.Cog.listener()
-    async def on_reaction_add(self, reaction: discord.Reaction, user) -> None:
-        if self.pokelist is None:
-            reaction.message.reply('not found')
-            return
 
-        # name = list(self.pokelist.keys())[0]
-        # await reaction.message.reply(name)
-        # await reaction.message.reply(user.id)
+    @commands.Cog.listener('button_click')
+    async def on_button_click(self, interaction: Interaction):
+        interaction.respond('btn clicked')
+        pass
 
-        # TODO: this throws an error if the key is not found
-        trainerPokemon = None
-        try:
-            trainerPokemon = self.pokelist[f'{user.id}']
-        except:
-            return
+    # @commands.Cog.listener()
+    # async def on_reaction_add(self, reaction: discord.Reaction, user) -> None:
+    #     if self.pokelist is None:
+    #         reaction.message.reply('not found')
+    #         return
 
-        if trainerPokemon is None:
-            return
+    #     # name = list(self.pokelist.keys())[0]
+    #     # await reaction.message.reply(name)
+    #     # await reaction.message.reply(user.id)
 
-        if trainerPokemon['message_id'] != reaction.message.id:
-            return
+    #     # TODO: this throws an error if the key is not found
+    #     trainerPokemon = None
+    #     try:
+    #         trainerPokemon = self.pokelist[f'{user.id}']
+    #     except:
+    #         return
 
-        reactionId = reaction.emoji
-        if not isinstance(reactionId, str):
-            reactionId = reaction.emoji.id
+    #     if trainerPokemon is None:
+    #         return
 
-        # print(reactionId)
-        # await reaction.message.reply(reactionId)
+    #     if trainerPokemon['message_id'] != reaction.message.id:
+    #         return
 
-        arrow_forwards = '▶️'
-        arrow_backwards = '◀️'
+    #     reactionId = reaction.emoji
+    #     if not isinstance(reactionId, str):
+    #         reactionId = reaction.emoji.id
 
-        if reactionId == arrow_forwards:
-            # TODO: don't store these credentials in source control,
-            #       eventually just pass them in as part of the cog config
-            conn = pg.connect(
-                host="REDACTED_HOST",
-                dbname="pokemon_db",
-                user="redbot",
-                password="REDACTED_PASSWORD",
-                port=REDACTED_PORT)
+    #     # print(reactionId)
+    #     # await reaction.message.reply(reactionId)
 
-            # TODO: there is a much better way to do this, still playing
-            cur = conn.cursor()
+    #     arrow_forwards = '▶️'
+    #     arrow_backwards = '◀️'
 
-            cur.execute(
-                'select * from trainer_pokemon where trainer_id = %(trainer)s', {'trainer': trainerPokemon['trainer_id']})
+    #     if reactionId == arrow_forwards:
+    #         # TODO: don't store these credentials in source control,
+    #         #       eventually just pass them in as part of the cog config
+    #         conn = pg.connect(
+    #             host="REDACTED_HOST",
+    #             dbname="pokemon_db",
+    #             user="redbot",
+    #             password="REDACTED_PASSWORD",
+    #             port=REDACTED_PORT)
 
-            pokemon = cur.fetchall()
+    #         # TODO: there is a much better way to do this, still playing
+    #         cur = conn.cursor()
 
-            nextIdx = trainerPokemon['index'] + 1
-            if nextIdx <= len(pokemon) - 1:
-                nextPokemon = pokemon[nextIdx]
+    #         cur.execute(
+    #             'select * from trainer_pokemon where trainer_id = %(trainer)s', {'trainer': trainerPokemon['trainer_id']})
 
-                name = nextPokemon[1]
-                pokemon = pb.pokemon(name)
-                sprite = pb.SpriteResource('pokemon', pokemon.id)
+    #         pokemon = cur.fetchall()
 
-                embed = discord.Embed(title=f"#{pokemon.id} {pokemon.name}")
-                embed.set_author(name=f"{user.display_name}",
-                                 icon_url=str(user.avatar_url))
-                embed.add_field(
-                    name="Weight", value=f"{pokemon.weight}", inline=True)
-                embed.add_field(
-                    name="Height", value=f"{pokemon.height}", inline=True)
-                embed.set_thumbnail(url=f"{sprite.url}")
+    #         nextIdx = trainerPokemon['index'] + 1
+    #         if nextIdx <= len(pokemon) - 1:
+    #             nextPokemon = pokemon[nextIdx]
 
-                trainerPokemon['index'] = nextIdx
+    #             name = nextPokemon[1]
+    #             pokemon = pb.pokemon(name)
+    #             sprite = pb.SpriteResource('pokemon', pokemon.id)
 
-                await reaction.message.edit(embed=embed)
-                await reaction.message.clear_reactions()
-                await reaction.message.add_reaction('◀️')
-                await reaction.message.add_reaction('▶️')
+    #             embed = discord.Embed(title=f"#{pokemon.id} {pokemon.name}")
+    #             embed.set_author(name=f"{user.display_name}",
+    #                              icon_url=str(user.avatar_url))
+    #             embed.add_field(
+    #                 name="Weight", value=f"{pokemon.weight}", inline=True)
+    #             embed.add_field(
+    #                 name="Height", value=f"{pokemon.height}", inline=True)
+    #             embed.set_thumbnail(url=f"{sprite.url}")
 
-        # TODO: copypasta
-        if reactionId == arrow_backwards:
-            # TODO: don't store these credentials in source control,
-            #       eventually just pass them in as part of the cog config
-            conn = pg.connect(
-                host="private-REDACTED_HOST",
-                dbname="pokemon_db",
-                user="redbot",
-                password="REDACTED_PASSWORD",
-                port=REDACTED_PORT)
+    #             trainerPokemon['index'] = nextIdx
 
-            # TODO: there is a much better way to do this, still playing
-            cur = conn.cursor()
+    #             await reaction.message.edit(embed=embed)
+    #             await reaction.message.clear_reactions()
+    #             await reaction.message.add_reaction('◀️')
+    #             await reaction.message.add_reaction('▶️')
 
-            cur.execute(
-                'select * from trainer_pokemon where trainer_id = %(trainer)s', {'trainer': trainerPokemon['trainer_id']})
+    #     # TODO: copypasta
+    #     if reactionId == arrow_backwards:
+    #         # TODO: don't store these credentials in source control,
+    #         #       eventually just pass them in as part of the cog config
+    #         conn = pg.connect(
+    #             host="private-REDACTED_HOST",
+    #             dbname="pokemon_db",
+    #             user="redbot",
+    #             password="REDACTED_PASSWORD",
+    #             port=REDACTED_PORT)
 
-            pokemon = cur.fetchall()
+    #         # TODO: there is a much better way to do this, still playing
+    #         cur = conn.cursor()
 
-            nextIdx = trainerPokemon['index'] - 1
-            if nextIdx <= len(pokemon) - 1:
-                nextPokemon = pokemon[nextIdx]
+    #         cur.execute(
+    #             'select * from trainer_pokemon where trainer_id = %(trainer)s', {'trainer': trainerPokemon['trainer_id']})
 
-                name = nextPokemon[1]
-                pokemon = pb.pokemon(name)
-                sprite = pb.SpriteResource('pokemon', pokemon.id)
+    #         pokemon = cur.fetchall()
 
-                embed = discord.Embed(title=f"#{pokemon.id} {pokemon.name}")
-                embed.set_author(name=f"{user.display_name}",
-                                 icon_url=str(user.avatar_url))
-                embed.add_field(
-                    name="Weight", value=f"{pokemon.weight}", inline=True)
-                embed.add_field(
-                    name="Height", value=f"{pokemon.height}", inline=True)
-                embed.set_thumbnail(url=f"{sprite.url}")
+    #         nextIdx = trainerPokemon['index'] - 1
+    #         if nextIdx <= len(pokemon) - 1:
+    #             nextPokemon = pokemon[nextIdx]
 
-                trainerPokemon['index'] = nextIdx
+    #             name = nextPokemon[1]
+    #             pokemon = pb.pokemon(name)
+    #             sprite = pb.SpriteResource('pokemon', pokemon.id)
 
-                await reaction.message.edit(embed=embed)
-                await reaction.message.clear_reactions()
-                await reaction.message.add_reaction('◀️')
-                await reaction.message.add_reaction('▶️')
+    #             embed = discord.Embed(title=f"#{pokemon.id} {pokemon.name}")
+    #             embed.set_author(name=f"{user.display_name}",
+    #                              icon_url=str(user.avatar_url))
+    #             embed.add_field(
+    #                 name="Weight", value=f"{pokemon.weight}", inline=True)
+    #             embed.add_field(
+    #                 name="Height", value=f"{pokemon.height}", inline=True)
+    #             embed.set_thumbnail(url=f"{sprite.url}")
+
+    #             trainerPokemon['index'] = nextIdx
+
+    #             await reaction.message.edit(embed=embed)
+    #             await reaction.message.clear_reactions()
+    #             await reaction.message.add_reaction('◀️')
+    #             await reaction.message.add_reaction('▶️')
