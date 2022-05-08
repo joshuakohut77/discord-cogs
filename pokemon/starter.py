@@ -130,8 +130,8 @@ class StarterMixin(MixinMeta):
         pass
 
 
-    @commands.command(name='test2')
-    async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
+    @commands.command()
+    async def stats(self, ctx: commands.Context, user: discord.Member = None) -> None:
         """Show the starter pokemon for the trainer."""
         await ctx.send('test starter')
 
