@@ -214,7 +214,7 @@ class Pokemon:
     def getMoves(self, reload=False):
         """ returns a list of the pokemon's current moves """
         moveList = []
-        if not self.discordId or reload == True:
+        if (self.discordId is None) or (reload == True):
             moveDict = self.__getPokemonLevelMoves()
             level = self.currentLevel
             # user starter level for pokemon without a level

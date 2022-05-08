@@ -6,7 +6,7 @@ import random
 from dbclass import db as dbconn
 from encounterclass import encounter
 from inventoryclass import inventory as inv
-from locationclass import location
+from locationclass import location as LocationClass
 from loggerclass import logger as log
 from pokeclass import Pokemon as pokeClass
 from time import time
@@ -272,9 +272,9 @@ class trainer:
         pokemon = self.getActivePokemon()
         if pokemon is None:
             return 'You do not have an active Pokemon'
-        locationId = self.getLocationId()
-        loc = location()
-        areaIdList = loc.getAreaList(locationId)
+        location = self.getLocation()
+        loc = LocationClass()
+        areaIdList = loc.getAreaList(location.locationId)
         if loc.faulted:
             self.faulted =  True
             return "error occurred during loc.getAreaList"
@@ -291,9 +291,9 @@ class trainer:
     def getRandomEncounter(self, method):
         """ gets a random encounter in the current area using the selected method """
         pokemon = None
-        locationId = self.getLocationId()
-        loc = location()
-        areaIdList = loc.getAreaList(locationId)
+        location = self.getLocation()
+        loc = LocationClass()
+        areaIdList = loc.getAreaList(location.locationId)
         areaEncounters = loc.getAreaEncounterDetails(areaIdList)
         if loc.faulted:
             self.faulted =  True
@@ -371,23 +371,6 @@ class trainer:
                 pokemon.discordId = self.discordId
                 pokemon.save()
         return
-
-    def getLocationId(self):
-        """ returns the current location Id of the trainer """
-        locationId = None
-        try:
-            db = dbconn()
-            queryString = 'SELECT "locationId" FROM trainer WHERE discord_id=%(discordId)s'
-            result = db.querySingle(queryString, { 'discordId': self.discordId })
-            if result:
-                locationId = result[0]
-        except:
-            self.faulted = True
-            logger.error(excInfo=sys.exc_info())
-        finally:
-            # delete and close connection
-            del db
-            return locationId
     
     def getLocation(self):
         try:

@@ -258,8 +258,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         user = ctx.author
 
         trainer = TrainerClass(user.id)
-        locationId = trainer.getLocationId()
-        store = StoreClass(str(user.id), locationId)
+        location = trainer.getLocation()
+        store = StoreClass(str(user.id), location.locationId)
         res = store.buyItem(item, count)
 
         await ctx.send(res)
