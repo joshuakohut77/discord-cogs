@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 from abc import ABCMeta
+from starter import Starter
 import random
 
 import discord
@@ -165,7 +166,7 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
+class Pokemon(Starter, EventMixin, commands.Cog, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):
@@ -587,8 +588,7 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
 
     @_trainer.command()
     async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
-        """Show the starter pokemon for the trainer.
-        """
+        """Show the starter pokemon for the trainer."""
         if user is None:
             user = ctx.author
 
