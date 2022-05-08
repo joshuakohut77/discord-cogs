@@ -1,5 +1,6 @@
 import discord
 from discord import (Embed, Member)
+from discord.colour import Colour
 
 from services.pokeclass import Pokemon as PokemonClass
 
@@ -23,7 +24,7 @@ DARK_BROWN = 0x6c594a
 FAIRY_PINK = 0xe29dac
 
 
-def getTypeColor(type: str) -> discord.Colours:
+def getTypeColor(type: str) -> Colour:
     color = discord.colour.Color.dark_gray()
 
     if 'normal' in type:
