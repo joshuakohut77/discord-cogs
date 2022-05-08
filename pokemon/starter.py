@@ -101,14 +101,18 @@ def createPokemonEmbedWithUrl(user: Member, pokemon: PokemonClass) -> Embed:
         embed.add_field(
             name="Nickname", value=f"{pokemon.nickName}", inline=False)
     
-    embed.add_field(
-        name="Level", value=f"{pokemon.currentLevel}", inline=False)
-    embed.add_field(
-        name="HP", value=f"{pokemon.currentHP} / {stats['hp']}", inline=False)
-    embed.add_field(
-        name="Attack", value=f"{stats['attack']}", inline=True)
-    embed.add_field(
-        name="Defense", value=f"{stats['defense']}", inline=True)
+    if pokemon.move_1:
+        embed.add_field(
+            name="Move 1", value=f"{pokemon.move_1}", inline=False)
+    if pokemon.move_2:
+        embed.add_field(
+            name="Move 2", value=f"{pokemon.move_2}", inline=False)
+    if pokemon.move_3:
+        embed.add_field(
+            name="Move 3", value=f"{pokemon.move_3}", inline=False)
+    if pokemon.move_4:
+        embed.add_field(
+            name="Move 1", value=f"{pokemon.move_4}", inline=False)
 
     embed.set_thumbnail(url=pokemon.frontSpriteURL)
     return embed
@@ -157,14 +161,48 @@ class StarterMixin(MixinMeta):
         btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=disabled))
 
         await ctx.send(embed=embed, components=[btns])
-        # await ctx.send(pokemon.frontSpriteURL)
 
+
+    async def on_about_click(self, interaction: Interaction):
+        user = interaction.user
+        author = interaction.message.author
+
+        if user.id != author.id:
+            interaction.send('This is not for you.')
+
+        # This will create the trainer if it doesn't exist
+        trainer = TrainerClass(str(user.id))
+        pokemon = trainer.getStarterPokemon()
+        active = trainer.getActivePokemon()
+
+        embed = createPokemonEmbedWithUrl(user, pokemon)
+
+        btns = []
+        
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
+            self.on_stats_click,
+        ))
+        # btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
+        btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
+        
+        # Disable the "Set Active" button if the starter is currently the active pokemon
+        disabled = (active is not None) and (pokemon.trainerId == active.trainerId)
+        btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=disabled))
+
+        await interaction.edit_origin(embed=embed, components=[btns])
+    
 
     async def on_stats_click(self, interaction: Interaction):
         user = interaction.user
+        author = interaction.message.author
+
+        if user.id != author.id:
+            interaction.send('This is not for you.')
 
         trainer = TrainerClass(str(user.id))
         pokemon = trainer.getStarterPokemon()
+        active = trainer.getActivePokemon()
 
         stats = pokemon.getPokeStats()
         color = getTypeColor(pokemon.type1)
@@ -201,6 +239,20 @@ class StarterMixin(MixinMeta):
             name="Speed", value=f"{stats['speed']}", inline=True)
 
         embed.set_thumbnail(url=pokemon.frontSpriteURL)
+
+        btns = []
+        
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="About", custom_id='stats'),
+            self.on_about_click,
+        ))
+        # btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
+        btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
+        
+        # Disable the "Set Active" button if the starter is currently the active pokemon
+        disabled = (active is not None) and (pokemon.trainerId == active.trainerId)
+        btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=disabled))
+
 
         await interaction.edit_origin(embed=embed)
 
