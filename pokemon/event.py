@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from discord_components.interaction import Interaction
-from .abc import MixinMeta
+from .abcd import MixinMeta
 
 # if TYPE_CHECKING:
 #     import discord

@@ -615,9 +615,8 @@ class Pokemon(EventMixin, commands.Cog, metaclass=CompositeClass):
         await ctx.send(embed=embed, components=[btns])
         # await ctx.send(pokemon.frontSpriteURL)
 
-    def on_stats_click(self, interaction: Interaction):
-        interaction.send('stats clicked')
-        pass
+    async def on_stats_click(self, interaction: Interaction):
+        await interaction.send('stats clicked')
 
     @_trainer.command()
     async def active(self, ctx: commands.Context, user: discord.Member = None) -> None:
