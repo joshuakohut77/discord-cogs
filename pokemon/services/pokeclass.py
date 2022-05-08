@@ -485,27 +485,27 @@ class Pokemon:
 
     def __getSpriteBasePath(self):
         """ returns a base path to pokemon sprites """
-        # #query the db to see if they're using legacy sprites or not
-        # result = None
-        # try:
-        #     db = dbconn()
-        #     queryString = 'SELECT "legacySprites" FROM trainer WHERE "discord_id" = %(discordId)s'
-        #     result = db.querySingle(queryString, { 'discordId': self.discordId })
-        # except:
-        #     self.faulted = True
-        #     logger.error(excInfo=sys.exc_info())
-        # finally:
-        #     # delete object and close connection
-        #     del db
+        #query the db to see if they're using legacy sprites or not
+        result = None
+        try:
+            db = dbconn()
+            queryString = 'SELECT "legacySprites" FROM trainer WHERE "discord_id" = %(discordId)s'
+            result = db.querySingle(queryString, { 'discordId': self.discordId })
+        except:
+            self.faulted = True
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            # delete object and close connection
+            del db
 
-        # legacySprites = False
-        # if result:
-        #     legacySprites = result[0]
+        legacySprites = False
+        if result:
+            legacySprites = result[0]
 
-        # if legacySprites:
-        #     basePath = "https://pokesprites.joshkohut.com/sprites/pokemon/versions/generation-i/red-blue/transparent/"
-        # else:
-        basePath = "https://pokesprites.joshkohut.com/sprites/pokemon/"
+        if legacySprites:
+            basePath = "https://pokesprites.joshkohut.com/sprites/pokemon/versions/generation-i/red-blue/transparent/"
+        else:
+            basePath = "https://pokesprites.joshkohut.com/sprites/pokemon/"
 
         # if the pokemon is a shiny, there is no legacy shiny, so the path will be overwritten regardless
         if self.shiny:
