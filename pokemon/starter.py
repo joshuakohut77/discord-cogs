@@ -15,12 +15,14 @@ from redbot.core import commands
 
 from services.trainerclass import trainer as TrainerClass
 from services.pokeclass import Pokemon as PokemonClass
-
+from services.loggerclass import logger as log
 
 from .abcd import MixinMeta
 from .functions import (createStatsEmbed, getTypeColor,
                         createPokemonAboutEmbed)
 
+
+logger = log()
 
 class StarterMixin(MixinMeta):
     """Starter"""
@@ -40,6 +42,11 @@ class StarterMixin(MixinMeta):
         """Show the currect active pokemon for the trainer."""
         if user is None:
             user = ctx.author
+
+        try:
+            1/0
+        except:
+            logger.error(excInfo=sys.exc_info())
 
          # This will create the trainer if it doesn't exist
         trainer = TrainerClass(str(user.id))
