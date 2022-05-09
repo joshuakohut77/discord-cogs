@@ -26,7 +26,7 @@ from .pokemart import PokemartMixin
 # import psycopg as pg
 # from .models.helpers import *
 from services.trainerclass import trainer as TrainerClass
-from services.pokeclass import Pokemon as PokemonClass
+# from services.pokeclass import Pokemon as PokemonClass
 # from services.storeclass import store as StoreClass
 from services.inventoryclass import inventory as InventoryClass
 
@@ -107,73 +107,6 @@ class Pokemon(StarterMixin, PokemartMixin, commands.Cog, metaclass=CompositeClas
         """Base command to manage the trainer (user).
         """
         pass
-
-    # @commands.group(name="pokemart")
-    # @commands.guild_only()
-    # async def _pokemart(self, ctx: commands.Context) -> None:
-    #     """Base command to manage the pokemart (store)
-    #     """
-    #     pass
-
-    # @_pokemart.command()
-    # async def shop(self, ctx: commands.Context, user: discord.Member = None) -> None:
-        
-    #     if user is None:
-    #         user = ctx.author
-        
-    #     trainer = TrainerClass(user.id)
-    #     location = trainer.getLocation()
-    #     store = StoreClass(str(user.id), location.locationId)
-
-    #     # Create the embed object
-    #     file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/items/poke-ball.png", filename="poke-ball.png")
-    #     embed = discord.Embed(title=f"Pokemart - {location.name}")
-    #     embed.set_thumbnail(url=f"attachment://poke-ball.png")
-    #     # embed.set_author(name=f"{user.display_name}",
-    #     #                  icon_url=str(user.avatar_url))
-
-    #     # poke-ball,200,
-    #     # great-ball,600,
-    #     # ultra-ball,1200
-    #     # potion,300
-    #     # super-potion,700
-    #     # hyper-potion,1500
-    #     # max-potion,2500
-
-    #     # antidote,100
-    #     # awakening,200
-    #     # burn-heal,250
-    #     # paralyze-heal,200
-    #     # ice-heal,250
-    #     # full-heal,600
-
-    #     # escape-rope,550
-    #     # repel,350
-    #     # revive,1500
-    #     # super-repel,500
-    #     # max-repel,700
-    #     # full-restore,3000
-
-    #     for item in store.storeList:
-    #         embed.add_field(name=f"▶️  {item['item']} — {item['price']}", value='description of item', inline=False)
-
-    #     await ctx.send(file=file, embed=embed)
-    #     await ctx.tick()
-
-    # @_pokemart.command()
-    # async def buy(self, ctx: commands.Context, item: str, count: int = 1) -> None:
-    #     """List the pokemart items available to you
-    #     """
-    #     user = ctx.author
-
-    #     trainer = TrainerClass(user.id)
-    #     location = trainer.getLocation()
-    #     store = StoreClass(str(user.id), location.locationId)
-    #     res = store.buyItem(item, count)
-
-    #     await ctx.send(res)
-    #     await ctx.send(f'{user.display_name} bought {count} {item}')
-
 
 
     @_trainer.command()
@@ -302,93 +235,6 @@ class Pokemon(StarterMixin, PokemartMixin, commands.Cog, metaclass=CompositeClas
             await ctx.send(f'areaId: {trainer.getAreaId()} - No actions available')
 
 
-    # TODO: Apparently there is a limit of 5 buttons at a time
-    @_trainer.command()
-    async def pc(self, ctx: commands.Context, user: Union[discord.Member,discord.User] = None):
-        author: Union[discord.Member,discord.User] = ctx.author
-
-        if user is None:
-            user = ctx.author
-
-        def nextBtnClick():
-            return lambda x: x.custom_id == "next" or x.custom_id == 'previous' or x.custom_id == 'stats' or x.custom_id == 'pokedex' or x.custom_id == 'active'
-
-        trainer = TrainerClass(str(user.id))
-        pokeList = trainer.getPokemon()
-
-        # TODO: we should just get the ids since that's all we need
-        active = trainer.getActivePokemon()
-        # starter = trainer.getStarterPokemon()
-
-        interaction: Interaction = None
-        pokeLength = len(pokeList)
-        i = 0
-
-        if pokeLength == 0:
-            await ctx.reply(content=f'{user.display_name} does not have any Pokemon.')
-            return
-
-        # TODO: there is a better way to do this that doesn't involve a loop
-        #       discord-components gives an example use case
-        #       https://github.com/kiki7000/discord.py-components/blob/master/examples/paginator.py
-        while True:
-            try:
-                pokemon: PokemonClass = pokeList[i]
-                embed = createPokemonAboutEmbed(user, pokemon)
-                
-                btns = []
-                if i > 0:
-                    btns.append(Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'))
-                if i < pokeLength - 1:
-                    btns.append(Button(style=ButtonStyle.gray, label="Next", custom_id='next'))
-
-                btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
-                btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
-
-                activeDisabled = (active is not None) and (pokemon.trainerId == active.trainerId)
-                btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled))
-                
-                # TODO: need to add the release button somewhere
-                # # releaseDisabled = (active is not None and pokemon.id == active.id) or (starter is not None and pokemon.id == starter.id)
-                # btns.append(Button(style=ButtonStyle.red, label="Release", custom_id='release'))
-
-                if interaction is None:
-                    await ctx.send(
-                        embed=embed,
-                        # file=file,
-                        components=[btns, [Button(style=ButtonStyle.gray, label='Test', custom_id='test'),Button(style=ButtonStyle.gray, label='Test', custom_id='test2'),Button(style=ButtonStyle.gray, label='Test', custom_id='test3')]]
-                    )
-                    interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
-                else:
-                    await interaction.edit_origin(
-                        embed=embed,
-                        # file=file,
-                        components=[btns]
-                    )
-                    interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
-                
-                # Users who are not the author cannot click other users buttons
-                if interaction.user.id != author.id:
-                    await interaction.send('This is not for you.')
-                    continue
-
-                if interaction.custom_id == 'next':
-                    i = i + 1
-                if (interaction.custom_id == 'previous'):
-                    i = i - 1
-                if interaction.custom_id == 'active':
-                    res = trainer.setActivePokemon(pokemon.trainerId)
-                    await interaction.send(content=f'{res}')
-                    break
-                if interaction.custom_id == 'stats':
-                    await interaction.send('Not implemented')
-                    break
-                if interaction.custom_id == 'pokedex':
-                    await interaction.send('Not implemented')
-                    break
-            except asyncio.TimeoutError:
-                break
-
     @_trainer.command()
     async def pokedex(self, ctx: commands.Context, user: discord.Member = None):
         if user is None:
@@ -495,22 +341,22 @@ class Pokemon(StarterMixin, PokemartMixin, commands.Cog, metaclass=CompositeClas
     # async def on_stats_click(self, interaction: Interaction):
     #     await interaction.send('stats clicked')
 
-    @_trainer.command()
-    async def active(self, ctx: commands.Context, user: discord.Member = None) -> None:
-        """Show the currect active pokemon for the trainer."""
-        if user is None:
-            user = ctx.author
+    # @_trainer.command()
+    # async def active(self, ctx: commands.Context, user: discord.Member = None) -> None:
+    #     """Show the currect active pokemon for the trainer."""
+    #     if user is None:
+    #         user = ctx.author
 
-         # This will create the trainer if it doesn't exist
-        trainer = TrainerClass(str(user.id))
-        pokemon = trainer.getActivePokemon()
+    #      # This will create the trainer if it doesn't exist
+    #     trainer = TrainerClass(str(user.id))
+    #     pokemon = trainer.getActivePokemon()
 
-        btns = []
-        btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
-        btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
+    #     btns = []
+    #     btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
+    #     btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
 
-        embed = createPokemonAboutEmbed(user, pokemon)
-        await ctx.send(embed=embed)       
+    #     embed = createPokemonAboutEmbed(user, pokemon)
+    #     await ctx.send(embed=embed)       
 
 
     # @_trainer.command()
