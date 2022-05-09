@@ -104,7 +104,10 @@ class InventoryMixin(MixinMeta):
         embed.add_field(name='Key Items', value="No key items", inline=False)
 
         btns = []
-        btns.append(Button(style=ButtonStyle.gray, label="← Items", custom_id='items'))
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.gray, label="← Items", custom_id='items'),
+            self.on_items_click,
+        ))
 
         message = await interaction.edit_origin(embed=embed, file=file, components=[btns])
         self.__inventory[str(user.id)] = message.id
@@ -166,6 +169,9 @@ class InventoryMixin(MixinMeta):
         embed.add_field(name='Items', value=trainerItems, inline=False)
 
         btns = []
-        btns.append(Button(style=ButtonStyle.gray, label='Key Items →', custom_id='keyitems'))
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.gray, label='Key Items →', custom_id='keyitems'),
+            self.on_keyitems_click,
+        ))
 
         return embed, file, btns
