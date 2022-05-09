@@ -53,11 +53,17 @@ class StarterMixin(MixinMeta):
         pokemon = trainer.getActivePokemon()
 
         btns = []
-        btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
-        btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
+            self.on_stats_click,
+        ))
+        btns.append(Button(style=ButtonStyle.green,
+                    label="Pokedex", custom_id='pokedex'))
+        # btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
+        # btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
 
         embed = createPokemonAboutEmbed(user, pokemon)
-        await ctx.send(embed=embed)       
+        await ctx.send(embed=embed, components=[btns])       
 
 
     @_trainer.command()
