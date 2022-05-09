@@ -18,8 +18,9 @@ class MixinMeta(ABC):
         self.config: Config
         self.client: DiscordComponents
 
-    @abstractmethod
     @commands.group(name="trainer")
     @commands.guild_only()
-    async def _trainer(self, ctx: commands.Context):
-        raise NotImplementedError
+    async def _trainer(self, ctx: commands.Context) -> None:
+        """Base command to manage the trainer (user).
+        """
+        pass

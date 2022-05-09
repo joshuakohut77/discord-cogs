@@ -100,12 +100,12 @@ class Pokemon(StarterMixin, commands.Cog, metaclass=CompositeClass):
         await ctx.send(f'{pokemon.pokemonName} added.')
         pass
 
-    @commands.group(name="trainer")
-    @commands.guild_only()
-    async def _trainer(self, ctx: commands.Context) -> None:
-        """Base command to manage the trainer (user).
-        """
-        pass
+    # @commands.group(name="trainer")
+    # @commands.guild_only()
+    # async def _trainer(self, ctx: commands.Context) -> None:
+    #     """Base command to manage the trainer (user).
+    #     """
+    #     pass
 
     @commands.group(name="pokemart")
     @commands.guild_only()
