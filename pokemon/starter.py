@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 import discord
 from discord import (Embed, Member)
+from discord import message
 from discord_components import (
     DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
 
@@ -26,6 +27,7 @@ class StarterMixin(MixinMeta):
     # def __init__(self, bot: Red):
     #     self.client = DiscordComponents(bot)
     #     self.bot: Red = bot
+    __trainers = {}
 
     @commands.group(name="test")
     @commands.guild_only()
@@ -34,7 +36,7 @@ class StarterMixin(MixinMeta):
         """
         pass
 
-    @commands.command()
+    @_test.command()
     async def stats(self, ctx: commands.Context, user: discord.Member = None) -> None:
         """Show the starter pokemon for the trainer."""
         if user is None:
@@ -63,14 +65,24 @@ class StarterMixin(MixinMeta):
         btns.append(Button(style=ButtonStyle.blue, label="Set Active",
                     custom_id='active', disabled=disabled))
 
-        await ctx.send(embed=embed, components=[btns])
+        message: discord.Message = await ctx.send(embed=embed, components=[btns])
+        self.__trainers[str(user.id)] = message.id
 
     async def on_about_click(self, interaction: Interaction):
         user = interaction.user
-        author = interaction.message.author
+        messageId = interaction.message.id
 
-        if user.id != author.id:
+        if str(user.id) not in self.__trainers.keys():
             await interaction.send('This is not for you.')
+        else:
+            originalMessageId = self.__trainers[str(user.id)]
+            if originalMessageId != messageId:
+                await interaction.send('This is not for you.')
+
+        # author = interaction.message.author
+
+        # if user.id != author.id:
+        #     await interaction.send('This is not for you.')
 
         # This will create the trainer if it doesn't exist
         trainer = TrainerClass(str(user.id))
@@ -99,7 +111,6 @@ class StarterMixin(MixinMeta):
         ))
 
         await interaction.edit_origin(embed=embed, components=[btns])
-
 
     async def on_set_active_click(self, interaction: Interaction):
         user = interaction.user
