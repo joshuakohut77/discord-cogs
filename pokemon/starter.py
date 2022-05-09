@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 
-import sys
 import discord
 from discord import (Embed, Member)
 from discord import message
@@ -15,19 +14,27 @@ from redbot.core import commands
 
 from services.trainerclass import trainer as TrainerClass
 from services.pokeclass import Pokemon as PokemonClass
-from services.loggerclass import logger as log
 
 from .abcd import MixinMeta
 from .functions import (createStatsEmbed, getTypeColor,
                         createPokemonAboutEmbed)
 
 
-logger = log()
+class TrainerState:
+    discordId: str
+    pokemonId: int
+    messageId: int
+
+    def __init__(self, discordId: str, pokemonId: int, messageId: int) -> None:
+        self.discordId = discordId
+        self.pokemonId = pokemonId
+        self.messageId = messageId
+
 
 class StarterMixin(MixinMeta):
     """Starter"""
 
-    __trainers = {}
+    __trainers: dict[str, TrainerState] = {}
 
 
     @commands.group(name="trainer")
@@ -43,18 +50,13 @@ class StarterMixin(MixinMeta):
         if user is None:
             user = ctx.author
 
-        try:
-            1/0
-        except:
-            logger.error(excInfo=sys.exc_info())
-
          # This will create the trainer if it doesn't exist
         trainer = TrainerClass(str(user.id))
         pokemon = trainer.getActivePokemon()
 
         btns = []
         btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Stats", custom_id=f'{pokemon.trainerId}'),
+            Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
             self.on_stats_click,
         ))
         btns.append(Button(style=ButtonStyle.green,
@@ -64,7 +66,7 @@ class StarterMixin(MixinMeta):
 
         embed = createPokemonAboutEmbed(user, pokemon)
         message = await ctx.send(embed=embed, components=[btns])       
-        self.__trainers[str(user.id)] = message.id
+        self.__trainers[str(user.id)] = TrainerState(str(user.id), pokemon.trainerId, message.id)
 
 
     @_trainer.command()
@@ -83,7 +85,7 @@ class StarterMixin(MixinMeta):
         btns = []
 
         btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Stats", custom_id=f'{pokemon.trainerId}'),
+            Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
             self.on_stats_click,
         ))
         # btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
@@ -94,22 +96,25 @@ class StarterMixin(MixinMeta):
         disabled = (active is not None) and (
             pokemon.trainerId == active.trainerId)
         btns.append(Button(style=ButtonStyle.blue, label="Set Active",
-                    custom_id=f'{pokemon.trainerId}', disabled=disabled))
+                    custom_id='setactive', disabled=disabled))
 
         message: discord.Message = await ctx.send(embed=embed, components=[btns])
-        self.__trainers[str(user.id)] = message.id
+        self.__trainers[str(user.id)] = TrainerState(str(user.id), pokemon.trainerId, message.id)
 
 
     async def on_about_click(self, interaction: Interaction):
         user = interaction.user
         messageId = interaction.message.id
 
+        state: TrainerState
         if str(user.id) not in self.__trainers.keys():
             await interaction.send('This is not for you.')
+            return
         else:
-            originalMessageId = self.__trainers[str(user.id)]
-            if originalMessageId != messageId:
+            state = self.__trainers[str(user.id)]
+            if state.messageId != messageId:
                 await interaction.send('This is not for you.')
+                return
 
 
         # TODO: all i need is the active id, get that when the trainer is first loaded
@@ -117,8 +122,7 @@ class StarterMixin(MixinMeta):
         active = trainer.getActivePokemon()
         # pokemon = trainer.getStarterPokemon()
 
-        # NOTE: not sure how I feel about this...
-        pokemonId = int(interaction.custom_id)
+        pokemonId = state.pokemonId
         pokemon = PokemonClass(str(user.id))
         pokemon.load(pokemonId)   
 
@@ -127,7 +131,7 @@ class StarterMixin(MixinMeta):
         btns = []
 
         btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Stats", custom_id=f'{pokemon.trainerId}'),
+            Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
             self.on_stats_click,
         ))
         btns.append(Button(style=ButtonStyle.green,
@@ -138,32 +142,30 @@ class StarterMixin(MixinMeta):
             pokemon.trainerId == active.trainerId)
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.blue, label="Set Active",
-                   custom_id=f'{pokemon.trainerId}', disabled=disabled),
+                   custom_id='setactive', disabled=disabled),
             self.on_set_active_click,
         ))
 
         message = await interaction.edit_origin(embed=embed, components=[btns])
-        self.__trainers[str(user.id)] = message.id
+        self.__trainers[str(user.id)] = TrainerState(str(user.id), pokemon.trainerId, message.id)
     
 
     async def on_stats_click(self, interaction: Interaction):
         user = interaction.user
         messageId = interaction.message.id
 
+        state: TrainerState
         if str(user.id) not in self.__trainers.keys():
             await interaction.send('This is not for you.')
+            return
         else:
-            originalMessageId = self.__trainers[str(user.id)]
-            if originalMessageId != messageId:
+            state = self.__trainers[str(user.id)]
+            if state.messageId != messageId:
                 await interaction.send('This is not for you.')
+                return
         
-        # author = interaction.message.author
 
-        # if user.id != author.id:
-        #     await interaction.send(f'{user.id} :: {author.id}')
-
-        # NOTE: not sure how I feel about this...
-        pokemonId = int(interaction.custom_id)
+        pokemonId = state.pokemonId
         pokemon = PokemonClass(str(user.id))
         pokemon.load(pokemonId)        
 
@@ -175,7 +177,7 @@ class StarterMixin(MixinMeta):
         btns = []
 
         btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="About", custom_id=f'{pokemon.trainerId}'),
+            Button(style=ButtonStyle.green, label="About", custom_id='about'),
             self.on_about_click,
         ))
         # btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
@@ -183,24 +185,22 @@ class StarterMixin(MixinMeta):
                     label="Pokedex", custom_id='pokedex'))
 
         message = await interaction.edit_origin(embed=embed, components=[btns])
-        self.__trainers[str(user.id)] = message.id
+        self.__trainers[str(user.id)] = TrainerState(str(user.id), pokemon.trainerId, message.id)
 
 
     async def on_pokedex_click(self, interaction: Interaction):
         user = interaction.user
         messageId = interaction.message.id
 
+        state: TrainerState
         if str(user.id) not in self.__trainers.keys():
             await interaction.send('This is not for you.')
+            return
         else:
-            originalMessageId = self.__trainers[str(user.id)]
-            if originalMessageId != messageId:
+            state = self.__trainers[str(user.id)]
+            if state.messageId != messageId:
                 await interaction.send('This is not for you.')
-        
-        # author = interaction.message.author
-
-        # if user.id != author.id:
-        #     await interaction.send('This is not for you.')
+                return
 
         # TODO: all i need is the active id, get that when the trainer is first loaded
         trainer = TrainerClass(str(user.id))
@@ -211,27 +211,31 @@ class StarterMixin(MixinMeta):
         btns = []
 
         btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="About", custom_id=f'{pokemon.trainerId}'),
+            Button(style=ButtonStyle.green, label="About", custom_id='about'),
             self.on_about_click,
         ))
         btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Stats", custom_id=f'{pokemon.trainerId}'),
+            Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
             self.on_stats_click,
         ))
 
-        await interaction.edit_origin(embed=embed, components=[btns])
+        message = await interaction.edit_origin(embed=embed, components=[btns])
+        self.__trainers[str(user.id)] = TrainerState(str(user.id), pokemon.trainerId, message.id)
 
 
     async def on_set_active_click(self, interaction: Interaction):
         user = interaction.user
         messageId = interaction.message.id
 
+        state: TrainerState
         if str(user.id) not in self.__trainers.keys():
             await interaction.send('This is not for you.')
+            return
         else:
-            originalMessageId = self.__trainers[str(user.id)]
-            if originalMessageId != messageId:
+            state = self.__trainers[str(user.id)]
+            if state.messageId != messageId:
                 await interaction.send('This is not for you.')
+                return
         
         # author = interaction.message.author
 
@@ -240,7 +244,6 @@ class StarterMixin(MixinMeta):
 
         trainer = TrainerClass(str(user.id))
 
-        pokemon = trainer.getStarterPokemon()
-        trainer.setActivePokemon(pokemon.trainerId)
+        trainer.setActivePokemon(state.pokemonId)
 
         await self.on_about_click(interaction)
