@@ -22,20 +22,10 @@ from .functions import (createStatsEmbed, getTypeColor,
                         createPokemonAboutEmbed)
 
 
-class StarterMixin(MixinMeta):
+class PcMixin(MixinMeta):
     """Starter"""
 
-    # def __init__(self, bot: Red):
-    #     self.client = DiscordComponents(bot)
-    #     self.bot: Red = bot
-    __trainers = {}
 
-    # @commands.group(name="test")
-    # @commands.guild_only()
-    # async def _test(self, ctx: commands.Context) -> None:
-    #     """Base command to manage the trainer (user).
-    #     """
-    #     pass
     @commands.group(name="trainer")
     @commands.guild_only()
     async def _trainer(self, ctx: commands.Context) -> None:
