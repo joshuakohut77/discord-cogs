@@ -27,7 +27,7 @@ class logger:
                 errorMsg = msg						
         
         if verbose:
-            logging.error(errorMsg)
+            # logging.error(errorMsg)
             print(errorMsg)
 
         return errorMsg 
