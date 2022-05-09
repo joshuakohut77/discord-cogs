@@ -67,6 +67,39 @@ def getTypeColor(type: str) -> Colour:
     return color
 
 
+def createPokemonEmbedWithFile(user: Member, pokemon: PokemonClass):
+    stats = pokemon.getPokeStats()
+    color = getTypeColor(pokemon.type1)
+
+    # Create the embed object
+    embed = discord.Embed(title=f"#{pokemon.trainerId}  {pokemon.pokemonName.capitalize()}", color=color)
+    embed.set_author(name=f"{user.display_name}",
+                    icon_url=str(user.avatar_url))
+    
+    types = pokemon.type1
+    if pokemon.type2 is not None:
+        types += ', ' + pokemon.type2
+        
+    embed.add_field(
+        name="Type", value=f"{types}", inline=True)
+    
+    if pokemon.nickName is not None:
+        embed.add_field(
+            name="Nickname", value=f"{pokemon.nickName}", inline=False)
+    
+    embed.add_field(
+        name="Level", value=f"{pokemon.currentLevel}", inline=False)
+    embed.add_field(
+        name="HP", value=f"{pokemon.currentHP} / {stats['hp']}", inline=False)
+    embed.add_field(
+        name="Attack", value=f"{stats['attack']}", inline=True)
+    embed.add_field(
+        name="Defense", value=f"{stats['defense']}", inline=True)
+
+    file = discord.File(f"{pokemon.frontSpriteURL}", filename=f"{pokemon.pokemonName}.png")
+    embed.set_thumbnail(url=f"attachment://{pokemon.pokemonName}.png")
+    return embed, file
+
 def createPokemonAboutEmbed(user: Member, pokemon: PokemonClass) -> Embed:
     color = getTypeColor(pokemon.type1)
 
