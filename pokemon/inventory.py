@@ -110,7 +110,7 @@ class InventoryMixin(MixinMeta):
         self.__inventory[str(user.id)] = message.id
 
 
-    def createItemsEmbed(user: User):
+    def createItemsEmbed(self, user: User):
         inv = InventoryClass(str(user.id))
 
         name = uuid.uuid4()
