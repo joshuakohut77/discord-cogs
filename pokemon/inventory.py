@@ -26,7 +26,7 @@ from .functions import (createStatsEmbed, getTypeColor,
                         createPokemonAboutEmbed)
 
 
-class StarterMixin(MixinMeta):
+class InventoryMixin(MixinMeta):
     """Starter"""
 
     __inventory = {}

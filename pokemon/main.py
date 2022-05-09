@@ -21,6 +21,7 @@ from .functions import (createPokemonAboutEmbed)
 from .starter import StarterMixin
 from .pokemart import PokemartMixin
 from .pc import PcMixin
+from .inventory import InventoryMixin
 # from .event import EventMixin
 
 # import pokebase as pb
@@ -42,7 +43,7 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class Pokemon(StarterMixin, PcMixin, PokemartMixin, commands.Cog, metaclass=CompositeClass):
+class Pokemon(StarterMixin, PcMixin, PokemartMixin, InventoryMixin, commands.Cog, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):
