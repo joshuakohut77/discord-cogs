@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 import discord
 from discord import (Embed, Member)
 from discord import message
+from discord.abc import User
 from discord_components import (
     DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
 
@@ -88,7 +89,6 @@ class StarterMixin(MixinMeta):
             Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
             self.on_stats_click,
         ))
-        # btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
         btns.append(Button(style=ButtonStyle.green,
                     label="Pokedex", custom_id='pokedex'))
 
@@ -104,17 +104,12 @@ class StarterMixin(MixinMeta):
 
     async def on_about_click(self, interaction: Interaction):
         user = interaction.user
-        messageId = interaction.message.id
 
-        state: TrainerState
-        if str(user.id) not in self.__trainers.keys():
+        if not self.__checkTrainerState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
-        else:
-            state = self.__trainers[str(user.id)]
-            if state.messageId != messageId:
-                await interaction.send('This is not for you.')
-                return
+
+        state = self.__trainers[str(user.id)]
 
 
         # TODO: all i need is the active id, get that when the trainer is first loaded
@@ -152,17 +147,12 @@ class StarterMixin(MixinMeta):
 
     async def on_stats_click(self, interaction: Interaction):
         user = interaction.user
-        messageId = interaction.message.id
 
-        state: TrainerState
-        if str(user.id) not in self.__trainers.keys():
+        if not self.__checkTrainerState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
-        else:
-            state = self.__trainers[str(user.id)]
-            if state.messageId != messageId:
-                await interaction.send('This is not for you.')
-                return
+
+        state = self.__trainers[str(user.id)]
         
 
         pokemonId = state.pokemonId
@@ -180,7 +170,6 @@ class StarterMixin(MixinMeta):
             Button(style=ButtonStyle.green, label="About", custom_id='about'),
             self.on_about_click,
         ))
-        # btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
         btns.append(Button(style=ButtonStyle.green,
                     label="Pokedex", custom_id='pokedex'))
 
@@ -190,21 +179,16 @@ class StarterMixin(MixinMeta):
 
     async def on_pokedex_click(self, interaction: Interaction):
         user = interaction.user
-        messageId = interaction.message.id
-
-        state: TrainerState
-        if str(user.id) not in self.__trainers.keys():
+        
+        if not self.__checkTrainerState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
-        else:
-            state = self.__trainers[str(user.id)]
-            if state.messageId != messageId:
-                await interaction.send('This is not for you.')
-                return
 
-        # TODO: all i need is the active id, get that when the trainer is first loaded
-        trainer = TrainerClass(str(user.id))
-        pokemon = trainer.getStarterPokemon()
+        state = self.__trainers[str(user.id)]
+
+        pokemonId = state.pokemonId
+        pokemon = PokemonClass(str(user.id))
+        pokemon.load(pokemonId)
 
         embed = createStatsEmbed(user, pokemon)
 
@@ -247,3 +231,13 @@ class StarterMixin(MixinMeta):
         trainer.setActivePokemon(state.pokemonId)
 
         await self.on_about_click(interaction)
+
+    def __checkTrainerState(self, user: discord.User, message: discord.Message):
+        state: TrainerState
+        if str(user.id) not in self.__trainers.keys():
+            return False
+        else:
+            state = self.__trainers[str(user.id)]
+            if state.messageId != message.id:
+                return False
+        return True
