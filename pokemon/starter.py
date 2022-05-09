@@ -47,7 +47,7 @@ class StarterMixin(MixinMeta):
 
         btns = []
         btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
+            Button(style=ButtonStyle.green, label="Stats", custom_id=f'{pokemon.trainerId}'),
             self.on_stats_click,
         ))
         btns.append(Button(style=ButtonStyle.green,
