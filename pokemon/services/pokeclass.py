@@ -20,7 +20,8 @@ logger = log()
 
 class Pokemon:
     def __init__(self, discordId, pokedexId: int = None):
-        self.faulted = False
+        self.statuscode = 69 
+        self.message = '' 
 
         self.trainerId = None
         self.discordId = discordId
@@ -52,7 +53,9 @@ class Pokemon:
     def load(self, pokemonId=None):
         """ populates the object with stats from pokeapi """
         if pokemonId is None:
-            raise 'pokeclass#load pokemonId is None'
+            self.statuscode = 96
+            self.message = 'pokeclass#load pokemonId is None'
+            return
         
         # load pokemon from db using trainerId as unique primary key from Pokemon table
         self.__loadPokemonFromDB(pokemonId)
@@ -63,43 +66,47 @@ class Pokemon:
     def create(self, level):
         """ creates a new pokemon with generated stats at a given level """
         # this function is used to create new pokemon and will auto generate their level 1 moves
-        discordId = self.discordId
-        self.discordId = None
-        self.currentLevel = level
+        if type(level) != int:
+            self.statuscode = 96
+            self.message = 'pokeclass#create level is not an int'
+        if level <= 0 or level > 100:
+            self.statuscode = 96
+            self.message = 'pokeclass#create level must be greater than 0 and less than or equal to 100'
+        
+        try:
+            self.currentLevel = level
 
-        pokemon = pb.pokemon(self.pokedexId)
-        self.pokemonName = pokemon.species.name
-        self.pokedexId = pokemon.id
-        self.frontSpriteURL = self.__getFrontSpritePath()
-        self.backSpriteURL = self.__getBackSpritePath()
-        self.growthRate = pb.pokemon_species(pokemon.id).growth_rate.name
-        self.base_exp = pokemon.base_experience
-        moves = self.getMoves()
-        self.move_1 = moves[0]
-        self.move_2 = moves[1]
-        self.move_3 = moves[2]
-        self.move_4 = moves[3]
+            pokemon = pb.pokemon(self.pokedexId)
+            self.pokemonName = pokemon.species.name
+            self.pokedexId = pokemon.id
+            self.frontSpriteURL = self.__getFrontSpritePath()
+            self.backSpriteURL = self.__getBackSpritePath()
+            self.growthRate = pb.pokemon_species(pokemon.id).growth_rate.name
+            self.base_exp = pokemon.base_experience
 
-        types = self.__getPokemonType(pokemon)
-        if len(types) > 0:
-            self.type1 = types[0]
-            if len(types) > 1:
-                self.type2 = types[1]
+            types = self.__getPokemonType(pokemon)
+            if len(types) > 0:
+                self.type1 = types[0]
+                if len(types) > 1:
+                    self.type2 = types[1]
 
-        self.traded = False
-        self.currentExp = self.__getBaseLevelExperience()
-        ivDict = self.__generatePokemonIV()
-        evDict = self.__generatePokemonEV()
-        baseDict = self.__getPokemonBaseStats()
-        self.__setPokeStats(baseDict, ivDict, evDict)
-        moveList = self.getMoves()
-        self.move_1 = moveList[0]
-        self.move_2 = moveList[1]
-        self.move_3 = moveList[2]
-        self.move_4 = moveList[3]
-        statsDict = self.getPokeStats()
-        self.currentHP = statsDict['hp']
-        self.discordId = discordId
+            self.traded = False
+            self.currentExp = self.__getBaseLevelExperience()
+            ivDict = self.__generatePokemonIV()
+            evDict = self.__generatePokemonEV()
+            baseDict = self.__getPokemonBaseStats()
+            self.__setPokeStats(baseDict, ivDict, evDict)
+            moveList = self.getMoves()
+            self.move_1 = moveList[0]
+            self.move_2 = moveList[1]
+            self.move_3 = moveList[2]
+            self.move_4 = moveList[3]
+            statsDict = self.getPokeStats()
+            self.currentHP = statsDict['hp']
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+
 
     def save(self):
         """ saves a pokemon to the database """
@@ -178,10 +185,10 @@ class Pokemon:
 
                 db.execute(queryString, values)
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
-            # delete and close connectino
+            # delete and close connection
             del db
 
     def release(self):
@@ -203,41 +210,50 @@ class Pokemon:
     def getPokeStats(self):
         """ returns a dictionary of a pokemon's unique stats based off level, EV, and IV """
         statsDict = {}
-        level = self.currentLevel
-
-        statsDict['hp'] = self.__calculateUniqueStat(self.hp) + level + 10
-        statsDict['attack'] = self.__calculateUniqueStat(self.attack) + 5
-        statsDict['defense'] = self.__calculateUniqueStat(self.defense) + 5
-        statsDict['speed'] = self.__calculateUniqueStat(self.speed) + 5
-        statsDict['special-attack'] = self.__calculateUniqueStat(
-            self.special_attack) + 5
-        statsDict['special-defense'] = self.__calculateUniqueStat(
-            self.special_defense) + 5
-        return statsDict
+        try:
+            level = self.currentLevel
+            statsDict['hp'] = self.__calculateUniqueStat(self.hp) + level + 10
+            statsDict['attack'] = self.__calculateUniqueStat(self.attack) + 5
+            statsDict['defense'] = self.__calculateUniqueStat(self.defense) + 5
+            statsDict['speed'] = self.__calculateUniqueStat(self.speed) + 5
+            statsDict['special-attack'] = self.__calculateUniqueStat(
+                self.special_attack) + 5
+            statsDict['special-defense'] = self.__calculateUniqueStat(
+                self.special_defense) + 5
+        except:
+             self.statuscode = 96
+             logger.error(excInfo=sys.exc_info())
+        finally:
+            return statsDict
 
     def getMoves(self, reload=False):
         """ returns a list of the pokemon's current moves """
         moveList = []
+
         if (self.discordId is None) or (reload == True):
-            moveDict = self.__getPokemonLevelMoves()
-            level = self.currentLevel
-            # user starter level for pokemon without a level
-            if level is None:
-                level = STARTER_LEVEL
-            # itterate throught he dictionary selecting the top 4 highest moves at the current level
-            defaultList = sorted(
-                moveDict.items(), key=lambda x: x[1], reverse=True)
-            for move in defaultList:
-                moveLevel = move[1]
-                moveName = move[0]
-                if int(moveLevel) <= level:
-                    moveList.append(moveName)
-            # check if list is padded to move and if not, append blank moves
-            if len(moveList) < 4:
-                diff = 4-len(moveList)
-                for x in range(diff):
-                    x = None
-                    moveList.append(x)
+            try:
+                moveDict = self.__getPokemonLevelMoves()
+                level = self.currentLevel
+                # user starter level for pokemon without a level
+                if level is None:
+                    level = STARTER_LEVEL
+                # itterate throught he dictionary selecting the top 4 highest moves at the current level
+                defaultList = sorted(
+                    moveDict.items(), key=lambda x: x[1], reverse=True)
+                for move in defaultList:
+                    moveLevel = move[1]
+                    moveName = move[0]
+                    if int(moveLevel) <= level:
+                        moveList.append(moveName)
+                # check if list is padded to move and if not, append blank moves
+                if len(moveList) < 4:
+                    diff = 4-len(moveList)
+                    for x in range(diff):
+                        x = None
+                        moveList.append(x)
+            except:
+                self.statuscode = 96
+                logger.error(excInfo=sys.exc_info())
         else:
             try:
                 db = dbconn()
@@ -247,7 +263,7 @@ class Pokemon:
                 if result:
                     moveList = [result[0], result[1], result[2], result[3]]
             except:
-                self.faulted = True
+                self.statuscode = 96
                 logger.error(excInfo=sys.exc_info())
             finally:
                 # delete object and close connection
@@ -316,7 +332,7 @@ class Pokemon:
             # save all above changes included the change in currentHP
             self.save()
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             return levelUp, retMsg
@@ -368,7 +384,7 @@ class Pokemon:
                 evolves_to = evolves_to[0].evolves_to
                 evolutionList.append({'name': name, 'min_level': min_level})
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             return evolutionList
@@ -437,6 +453,9 @@ class Pokemon:
             self.type2 = result[31]
             self.nickName = result[32]
             self.currentHP = result[33]
+        
+        # delete and close connection
+        del db
 
     def __delete(self):
         """ soft deletes pokemon from database """
@@ -449,7 +468,7 @@ class Pokemon:
             db.execute(pokemonUpdateQuery, {
                        'newDiscordId': newDiscordId, 'trainerId': self.trainerId})
         except:
-            self.faulted = True
+            self.statuscode = 69
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
@@ -457,21 +476,25 @@ class Pokemon:
 
     def __getPokemonLevelMoves(self, pokemon: APIResource = None):
         """ returns a dictionary of {move: level} for a pokemons base move set"""
-        if pokemon is None:
-            pokemon = pb.pokemon(self.pokedexId)
-
         moveDict = {}
-        for move in pokemon.moves:
-            for version in move.version_group_details:
-                if version.version_group.name != VERSION_GROUP_NAME:
-                    continue
-                elif version.move_learn_method.name != 'level-up':
-                    continue
-                else:
-                    moveName = move.move.name
-                    moveLevel = version.level_learned_at
-                    moveDict[moveName] = moveLevel
-        return moveDict
+        try:
+            if pokemon is None:
+                pokemon = pb.pokemon(self.pokedexId)
+            
+            for move in pokemon.moves:
+                for version in move.version_group_details:
+                    if version.version_group.name != VERSION_GROUP_NAME:
+                        continue
+                    elif version.move_learn_method.name != 'level-up':
+                        continue
+                    else:
+                        moveName = move.move.name
+                        moveLevel = version.level_learned_at
+                        moveDict[moveName] = moveLevel
+        except:
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            return moveDict
 
     def __getFrontSpritePath(self):
         """ returns a path to pokemon front sprite """
@@ -492,7 +515,7 @@ class Pokemon:
             queryString = 'SELECT "legacySprites" FROM trainer WHERE "discord_id" = %(discordId)s'
             result = db.querySingle(queryString, { 'discordId': str(self.discordId) })
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete object and close connection
@@ -514,23 +537,32 @@ class Pokemon:
 
     def __getPokemonType(self, pokemon: APIResource = None):
         """ returns string of pokemons base type """
-        if pokemon is None:
-            pokemon = pb.pokemon(self.pokedexId)
-
         typeList = []
-        for type in pokemon.types:
-            typeList.append(type.type.name)
+        try:
+            if pokemon is None:
+                pokemon = pb.pokemon(self.pokedexId)
 
-        return typeList
+            for type in pokemon.types:
+                typeList.append(type.type.name)
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            return typeList
 
     def __getNewMoves(self):
         """ returns a pokemons moves at a specific level """
         newMove = ''
-        moveDict = self.__getPokemonLevelMoves()
-        for key, value in moveDict.items():
-            if value == self.currentLevel:
-                newMove = key
-        return newMove
+        try:
+            moveDict = self.__getPokemonLevelMoves()
+            for key, value in moveDict.items():
+                if value == self.currentLevel:
+                    newMove = key
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            return newMove
 
     def __calculateUniqueStat(self, statObj):
         """ returns integer of a stat calculated from various parameters """
@@ -550,22 +582,27 @@ class Pokemon:
         # attack, defense, speed, special_attack, and special_defense are random 0-15
         # hp is calculated from the other IV using a binary string conversion formula
         ivDict = {}
-        attack = random.randrange(0, 16)
-        defense = random.randrange(0, 16)
-        speed = random.randrange(0, 16)
-        special_attack = random.randrange(0, 16)
-        special_defense = special_attack
+        try:
+            attack = random.randrange(0, 16)
+            defense = random.randrange(0, 16)
+            speed = random.randrange(0, 16)
+            special_attack = random.randrange(0, 16)
+            special_defense = special_attack
 
-        hp = int(format(attack, 'b').zfill(4)[3] + format(defense, 'b').zfill(4)[
-                 3] + format(speed, 'b').zfill(4)[3] + format(special_attack, 'b').zfill(4)[3], 2)
+            hp = int(format(attack, 'b').zfill(4)[3] + format(defense, 'b').zfill(4)[
+                    3] + format(speed, 'b').zfill(4)[3] + format(special_attack, 'b').zfill(4)[3], 2)
 
-        ivDict['hp'] = hp
-        ivDict['attack'] = attack
-        ivDict['defense'] = defense
-        ivDict['speed'] = speed
-        ivDict['special-attack'] = special_attack
-        ivDict['special-defense'] = special_defense
-        return ivDict
+            ivDict['hp'] = hp
+            ivDict['attack'] = attack
+            ivDict['defense'] = defense
+            ivDict['speed'] = speed
+            ivDict['special-attack'] = special_attack
+            ivDict['special-defense'] = special_defense
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            return ivDict
 
     def __generatePokemonEV(self):
         """ returns dictionary of base generated effort values """
@@ -576,18 +613,23 @@ class Pokemon:
     def __getPokemonBaseStats(self):
         """ returns dictionary of {stat: value} for a pokemons base stats """
         baseDict = {}
-        pokemon = pb.pokemon(self.pokedexId)
-        for stat in pokemon.stats:
-            statName = stat.stat.name
-            statVal = stat.base_stat
-            baseDict[statName] = statVal
-        return baseDict
+        try:
+            pokemon = pb.pokemon(self.pokedexId)
+            for stat in pokemon.stats:
+                statName = stat.stat.name
+                statVal = stat.base_stat
+                baseDict[statName] = statVal
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            return baseDict
 
     def __getBaseLevelExperience(self, level=None):
         """ returns minimum total experience at a given level """
         if level is None:
             level = self.currentLevel
-        if self.growthRate == 'Fast':
+        if self.growthRate == 'fast':
             return round(0.8 * (level ** 3))
         elif self.growthRate == 'medium-fast':
             return round(level ** 3)
@@ -596,7 +638,9 @@ class Pokemon:
         elif self.growthRate == 'slow':
             return round(1.25 * (level ** 3))
         else:
-            return None
+            self.statuscode = 96
+            self.message = 'pokemons growRate was not valid. '
+            return 0
 
     def __setPokeStats(self, baseDict, ivDict, evDict):
         """ populates PokeStats class value with given stats """
