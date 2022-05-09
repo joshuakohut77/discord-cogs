@@ -19,14 +19,15 @@ import asyncio
 
 from .functions import (createPokemonAboutEmbed)
 from .starter import StarterMixin
-from .event import EventMixin
+from .pokemart import PokemartMixin
+# from .event import EventMixin
 
 # import pokebase as pb
 # import psycopg as pg
 # from .models.helpers import *
 from services.trainerclass import trainer as TrainerClass
 from services.pokeclass import Pokemon as PokemonClass
-from services.storeclass import store as StoreClass
+# from services.storeclass import store as StoreClass
 from services.inventoryclass import inventory as InventoryClass
 
 import constant
@@ -40,7 +41,7 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class Pokemon(StarterMixin, commands.Cog, metaclass=CompositeClass):
+class Pokemon(StarterMixin, PokemartMixin, commands.Cog, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):
@@ -107,71 +108,71 @@ class Pokemon(StarterMixin, commands.Cog, metaclass=CompositeClass):
         """
         pass
 
-    @commands.group(name="pokemart")
-    @commands.guild_only()
-    async def _pokemart(self, ctx: commands.Context) -> None:
-        """Base command to manage the pokemart (store)
-        """
-        pass
+    # @commands.group(name="pokemart")
+    # @commands.guild_only()
+    # async def _pokemart(self, ctx: commands.Context) -> None:
+    #     """Base command to manage the pokemart (store)
+    #     """
+    #     pass
 
-    @_pokemart.command()
-    async def shop(self, ctx: commands.Context, user: discord.Member = None) -> None:
+    # @_pokemart.command()
+    # async def shop(self, ctx: commands.Context, user: discord.Member = None) -> None:
         
-        if user is None:
-            user = ctx.author
+    #     if user is None:
+    #         user = ctx.author
         
-        trainer = TrainerClass(user.id)
-        location = trainer.getLocation()
-        store = StoreClass(str(user.id), location.locationId)
+    #     trainer = TrainerClass(user.id)
+    #     location = trainer.getLocation()
+    #     store = StoreClass(str(user.id), location.locationId)
 
-        # Create the embed object
-        file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/items/poke-ball.png", filename="poke-ball.png")
-        embed = discord.Embed(title=f"Pokemart - {location.name}")
-        embed.set_thumbnail(url=f"attachment://poke-ball.png")
-        # embed.set_author(name=f"{user.display_name}",
-        #                  icon_url=str(user.avatar_url))
+    #     # Create the embed object
+    #     file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/items/poke-ball.png", filename="poke-ball.png")
+    #     embed = discord.Embed(title=f"Pokemart - {location.name}")
+    #     embed.set_thumbnail(url=f"attachment://poke-ball.png")
+    #     # embed.set_author(name=f"{user.display_name}",
+    #     #                  icon_url=str(user.avatar_url))
 
-        # poke-ball,200,
-        # great-ball,600,
-        # ultra-ball,1200
-        # potion,300
-        # super-potion,700
-        # hyper-potion,1500
-        # max-potion,2500
+    #     # poke-ball,200,
+    #     # great-ball,600,
+    #     # ultra-ball,1200
+    #     # potion,300
+    #     # super-potion,700
+    #     # hyper-potion,1500
+    #     # max-potion,2500
 
-        # antidote,100
-        # awakening,200
-        # burn-heal,250
-        # paralyze-heal,200
-        # ice-heal,250
-        # full-heal,600
+    #     # antidote,100
+    #     # awakening,200
+    #     # burn-heal,250
+    #     # paralyze-heal,200
+    #     # ice-heal,250
+    #     # full-heal,600
 
-        # escape-rope,550
-        # repel,350
-        # revive,1500
-        # super-repel,500
-        # max-repel,700
-        # full-restore,3000
+    #     # escape-rope,550
+    #     # repel,350
+    #     # revive,1500
+    #     # super-repel,500
+    #     # max-repel,700
+    #     # full-restore,3000
 
-        for item in store.storeList:
-            embed.add_field(name=f"▶️  {item['item']} — {item['price']}", value='description of item', inline=False)
+    #     for item in store.storeList:
+    #         embed.add_field(name=f"▶️  {item['item']} — {item['price']}", value='description of item', inline=False)
 
-        await ctx.send(file=file, embed=embed)
-        await ctx.tick()
+    #     await ctx.send(file=file, embed=embed)
+    #     await ctx.tick()
 
-    @_pokemart.command()
-    async def buy(self, ctx: commands.Context, item: str, count: int = 1) -> None:
-        """List the pokemart items available to you
-        """
-        user = ctx.author
+    # @_pokemart.command()
+    # async def buy(self, ctx: commands.Context, item: str, count: int = 1) -> None:
+    #     """List the pokemart items available to you
+    #     """
+    #     user = ctx.author
 
-        trainer = TrainerClass(user.id)
-        location = trainer.getLocation()
-        store = StoreClass(str(user.id), location.locationId)
-        res = store.buyItem(item, count)
+    #     trainer = TrainerClass(user.id)
+    #     location = trainer.getLocation()
+    #     store = StoreClass(str(user.id), location.locationId)
+    #     res = store.buyItem(item, count)
 
-        await ctx.send(res)
-        await ctx.send(f'{user.display_name} bought {count} {item}')
+    #     await ctx.send(res)
+    #     await ctx.send(f'{user.display_name} bought {count} {item}')
 
 
 
