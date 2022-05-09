@@ -120,10 +120,19 @@ class StarterMixin(MixinMeta):
 
     async def on_set_active_click(self, interaction: Interaction):
         user = interaction.user
-        author = interaction.message.author
+        messageId = interaction.message.id
 
-        if user.id != author.id:
+        if str(user.id) not in self.__trainers.keys():
             await interaction.send('This is not for you.')
+        else:
+            originalMessageId = self.__trainers[str(user.id)]
+            if originalMessageId != messageId:
+                await interaction.send('This is not for you.')
+        
+        # author = interaction.message.author
+
+        # if user.id != author.id:
+        #     await interaction.send('This is not for you.')
 
         trainer = TrainerClass(str(user.id))
 
@@ -134,10 +143,19 @@ class StarterMixin(MixinMeta):
 
     async def on_stats_click(self, interaction: Interaction):
         user = interaction.user
-        author = interaction.message.author
+        messageId = interaction.message.id
 
-        if user.id != author.id:
-            await interaction.send(f'{user.id} :: {author.id}')
+        if str(user.id) not in self.__trainers.keys():
+            await interaction.send('This is not for you.')
+        else:
+            originalMessageId = self.__trainers[str(user.id)]
+            if originalMessageId != messageId:
+                await interaction.send('This is not for you.')
+        
+        # author = interaction.message.author
+
+        # if user.id != author.id:
+        #     await interaction.send(f'{user.id} :: {author.id}')
 
         trainer = TrainerClass(str(user.id))
         pokemon = trainer.getStarterPokemon()
@@ -158,10 +176,19 @@ class StarterMixin(MixinMeta):
 
     async def on_pokedex_click(self, interaction: Interaction):
         user = interaction.user
-        author = interaction.message.author
+        messageId = interaction.message.id
 
-        if user.id != author.id:
+        if str(user.id) not in self.__trainers.keys():
             await interaction.send('This is not for you.')
+        else:
+            originalMessageId = self.__trainers[str(user.id)]
+            if originalMessageId != messageId:
+                await interaction.send('This is not for you.')
+        
+        # author = interaction.message.author
+
+        # if user.id != author.id:
+        #     await interaction.send('This is not for you.')
 
         # TODO: all i need is the active id, get that when the trainer is first loaded
         trainer = TrainerClass(str(user.id))
