@@ -16,7 +16,8 @@ list of cities and locations: https://pokeapi.co/api/v2/region/1/
 
 class location:
     def __init__(self):
-        self.faulted = False
+        self.statuscode = 69
+        self.message = ''
     
     def getAreaEncounterDetails(self, areaIdList):
         """ returns a list of encounter details in json format """
@@ -42,7 +43,7 @@ class location:
                                             continue
                                     pokemonEncounterList.append(encounterDetails)
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             return pokemonEncounterList
@@ -58,7 +59,7 @@ class location:
                 locationNumber = self.__getUrlNumber(location.url)
                 locationList.append({name: locationNumber})
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             return locationList
@@ -73,7 +74,7 @@ class location:
                 areaNumber = self.__getUrlNumber(area.url)
                 areaList.append({name: areaNumber})
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             return areaList
@@ -87,7 +88,7 @@ class location:
                 if method not in methodList:
                     methodList.append(method)
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             return methodList
@@ -112,7 +113,7 @@ class location:
                     if randNum <= chance:
                         encounter = x
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             return encounter
