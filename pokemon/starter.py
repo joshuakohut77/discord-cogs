@@ -43,6 +43,24 @@ class StarterMixin(MixinMeta):
         pass
 
     @_trainer.command()
+    async def active(self, ctx: commands.Context, user: discord.Member = None) -> None:
+        """Show the currect active pokemon for the trainer."""
+        if user is None:
+            user = ctx.author
+
+         # This will create the trainer if it doesn't exist
+        trainer = TrainerClass(str(user.id))
+        pokemon = trainer.getActivePokemon()
+
+        btns = []
+        btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
+        btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
+
+        embed = createPokemonAboutEmbed(user, pokemon)
+        await ctx.send(embed=embed)       
+
+
+    @_trainer.command()
     async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
         """Show the starter pokemon for the trainer."""
         if user is None:
@@ -139,7 +157,7 @@ class StarterMixin(MixinMeta):
         pokemon = trainer.getStarterPokemon()
         trainer.setActivePokemon(pokemon.trainerId)
 
-        self.on_about_click(interaction)
+        await self.on_about_click(interaction)
 
     async def on_stats_click(self, interaction: Interaction):
         user = interaction.user
