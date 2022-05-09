@@ -35,6 +35,12 @@ class StarterMixin(MixinMeta):
     #     """Base command to manage the trainer (user).
     #     """
     #     pass
+    @commands.group(name="trainer")
+    @commands.guild_only()
+    async def _trainer(self, ctx: commands.Context) -> None:
+        """Base command to manage the trainer (user).
+        """
+        pass
 
     @_trainer.command()
     async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
