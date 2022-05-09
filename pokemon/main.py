@@ -462,34 +462,34 @@ class Pokemon(StarterMixin, commands.Cog, metaclass=CompositeClass):
         # interaction = await self.bot.wait_for("button_click", check=nextBtnClick())
         # await ctx.send(embed=embed)
 
-    @_trainer.command()
-    async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
-        """Show the starter pokemon for the trainer."""
-        if user is None:
-            user = ctx.author
+    # @_trainer.command()
+    # async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
+    #     """Show the starter pokemon for the trainer."""
+    #     if user is None:
+    #         user = ctx.author
 
-        # This will create the trainer if it doesn't exist
-        trainer = TrainerClass(str(user.id))
-        pokemon = trainer.getStarterPokemon()
-        active = trainer.getActivePokemon()
+    #     # This will create the trainer if it doesn't exist
+    #     trainer = TrainerClass(str(user.id))
+    #     pokemon = trainer.getStarterPokemon()
+    #     active = trainer.getActivePokemon()
 
-        embed = createPokemonAboutEmbed(user, pokemon)
+    #     embed = createPokemonAboutEmbed(user, pokemon)
 
-        btns = []
+    #     btns = []
         
-        # btns.append(self.client.add_callback(
-        #     Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
-        #     self.on_stats_click,
-        # ))
-        btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
-        btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
+    #     # btns.append(self.client.add_callback(
+    #     #     Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
+    #     #     self.on_stats_click,
+    #     # ))
+    #     btns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
+    #     btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
         
-        # Disable the "Set Active" button if the starter is currently the active pokemon
-        disabled = (active is not None) and (pokemon.trainerId == active.trainerId)
-        btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=disabled))
+    #     # Disable the "Set Active" button if the starter is currently the active pokemon
+    #     disabled = (active is not None) and (pokemon.trainerId == active.trainerId)
+    #     btns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=disabled))
 
-        await ctx.send(embed=embed, components=[btns])
-        # await ctx.send(pokemon.frontSpriteURL)
+    #     await ctx.send(embed=embed, components=[btns])
+    #     # await ctx.send(pokemon.frontSpriteURL)
 
     # async def on_stats_click(self, interaction: Interaction):
     #     await interaction.send('stats clicked')

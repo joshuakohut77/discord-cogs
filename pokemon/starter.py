@@ -29,15 +29,15 @@ class StarterMixin(MixinMeta):
     #     self.bot: Red = bot
     __trainers = {}
 
-    @commands.group(name="test")
-    @commands.guild_only()
-    async def _test(self, ctx: commands.Context) -> None:
-        """Base command to manage the trainer (user).
-        """
-        pass
+    # @commands.group(name="test")
+    # @commands.guild_only()
+    # async def _test(self, ctx: commands.Context) -> None:
+    #     """Base command to manage the trainer (user).
+    #     """
+    #     pass
 
-    @_test.command()
-    async def stats(self, ctx: commands.Context, user: discord.Member = None) -> None:
+    @_trainer.command()
+    async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
         """Show the starter pokemon for the trainer."""
         if user is None:
             user = ctx.author
