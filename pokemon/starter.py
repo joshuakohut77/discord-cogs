@@ -87,10 +87,11 @@ class StarterMixin(MixinMeta):
         disabled = (active is not None) and (
             pokemon.trainerId == active.trainerId)
         btns.append(Button(style=ButtonStyle.blue, label="Set Active",
-                    custom_id='active', disabled=disabled))
+                    custom_id=f'{pokemon.trainerId}', disabled=disabled))
 
         message: discord.Message = await ctx.send(embed=embed, components=[btns])
         self.__trainers[str(user.id)] = message.id
+
 
     async def on_about_click(self, interaction: Interaction):
         user = interaction.user
@@ -130,7 +131,7 @@ class StarterMixin(MixinMeta):
             pokemon.trainerId == active.trainerId)
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.blue, label="Set Active",
-                   custom_id='active', disabled=disabled),
+                   custom_id=f'{pokemon.trainerId}', disabled=disabled),
             self.on_set_active_click,
         ))
 
