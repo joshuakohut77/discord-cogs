@@ -63,7 +63,8 @@ class StarterMixin(MixinMeta):
         # btns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
 
         embed = createPokemonAboutEmbed(user, pokemon)
-        await ctx.send(embed=embed, components=[btns])       
+        message = await ctx.send(embed=embed, components=[btns])       
+        self.__trainers[str(user.id)] = message.id
 
 
     @_trainer.command()
@@ -140,7 +141,8 @@ class StarterMixin(MixinMeta):
             self.on_set_active_click,
         ))
 
-        await interaction.edit_origin(embed=embed, components=[btns])
+        message = await interaction.edit_origin(embed=embed, components=[btns])
+        self.__trainers[str(user.id)] = message.id
 
     async def on_set_active_click(self, interaction: Interaction):
         user = interaction.user
@@ -196,7 +198,8 @@ class StarterMixin(MixinMeta):
         btns.append(Button(style=ButtonStyle.green,
                     label="Pokedex", custom_id='pokedex'))
 
-        await interaction.edit_origin(embed=embed, components=[btns])
+        message = await interaction.edit_origin(embed=embed, components=[btns])
+        self.__trainers[str(user.id)] = message.id
 
     async def on_pokedex_click(self, interaction: Interaction):
         user = interaction.user
