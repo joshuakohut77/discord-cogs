@@ -9,7 +9,9 @@ OVERALL_EXPERIENCE_MODIFIER = 3
 
 class experiance:
     def __init__(self, pokemon):
-        self.faulted = False
+        self.statuscode = 69
+        self.message = ''
+
         self.pokemon = pokemon
 
     def getExpGained(self):

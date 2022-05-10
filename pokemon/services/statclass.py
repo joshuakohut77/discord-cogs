@@ -2,7 +2,9 @@
 
 class PokeStats:
     def __init__(self, name):
-        self.faulted = False
+        self.statuscode = 69
+        self.message = ''
+        
         self.name = name
         self.base = 0
         self.IV = 0

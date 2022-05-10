@@ -8,7 +8,8 @@ logger = log()
 
 class inventory:
     def __init__(self, discordId):
-        self.faulted = False
+        self.statuscode = 69
+        self.message = ''
 
         self.discordId = discordId
         self.money = None
@@ -55,7 +56,7 @@ class inventory:
                             'discordId': self.discordId }
             db.execute(updateString, values)
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
@@ -94,7 +95,7 @@ class inventory:
                 self.maxpotion = result[18]
                 self.antidote = result[19]
         except:
-            self.faulted
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection

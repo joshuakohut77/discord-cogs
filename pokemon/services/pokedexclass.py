@@ -9,7 +9,9 @@ logger = log()
 
 class pokedex:
     def __init__(self, discordId, pokemon):
-        self.faulted = False
+        self.statuscode = 69
+        self.message = ''
+
         self.discordId = discordId
         self.pokemon = pokemon
         self.__pokedex()
@@ -35,7 +37,7 @@ class pokedex:
                         'pokemonName':self.pokemon.name, 'now':now }
             db.execute(updateQuery, values)
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection

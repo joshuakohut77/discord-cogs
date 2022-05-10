@@ -20,7 +20,8 @@ logger = log()
 class encounter:
     def __init__(self, pokemon1, pokemon2):
         # pokemon1 for PvE will always be the discord trainers pokemon
-        self.faulted = False
+        self.statuscode = 69
+        self.message = ''
 
         self.pokemon1 = pokemon1
         self.pokemon2 = pokemon2
@@ -31,17 +32,20 @@ class encounter:
         # two pokemon fight with an outcome calling victory or defeat
         # todo update with better fight outcome algorithm
         if self.pokemon1.currentHP == 0:
-            return "Your active Pokemon has no HP left!"
+            self.statuscode = 96
+            self.message = "Your active Pokemon has no HP left!"
+            return
 
-        retMsg = self.battle()
-        return retMsg
+        self.battle()
+        self.statuscode = 420
 
     def battle(self):
         """ this function simulates a live battle between two pokemon """
         # get pokemons current fighting HP
         battleHP1 = self.pokemon1.currentHP
         if battleHP1 <= 0:
-            return "Your active Pokemon has no HP left!"
+            self.statuscode = 96
+            self.message = "Your active Pokemon has no HP left!"
         battleHP2 = self.pokemon2.currentHP
         # get pokemons list of moves
         battleMoves1 = self.__removeNullMoves(self.pokemon1.getMoves())
@@ -56,7 +60,8 @@ class encounter:
             print('%s did %s damage' %(self.pokemon1.name, str(damage)))
             if battleHP2 <=0:
                 self.pokemon1.currentHP = battleHP1
-                retMsg = self.__victory()
+                self.__victory()
+                self.statuscode = 420
                 break
             randMoveSelector = random.randrange(1, len(battleMoves2)+1)
             damage = self.__calculateDamageOfMove(battleMoves2[randMoveSelector-1])
@@ -65,15 +70,15 @@ class encounter:
             print('%s did %s damage' %(self.pokemon2.name, str(damage)))
             if battleHP1 <=0:
                 self.pokemon1.currentHP = battleHP1
-                retMsg = self.__defeat()
+                self.__defeat()
+                self.statuscode = 420
                 break
             
             # max number of turns has occured. Break out of potential infinite loop
             if x == MAX_BATTLE_TURNS - 1:
-                retMsg = 'Failed to defeat enemy pokemon. The Pokemon ran away'
+                self.statuscode = 96
+                self.message = 'Failed to defeat enemy pokemon. The Pokemon ran away'
                 break
-        
-        return retMsg
 
 
 
@@ -81,16 +86,19 @@ class encounter:
         """ run away from battle """
         # todo add a very small chance to not run away and result in defeat using random
         if random.randrange(1,100) <= 8:
-            retMsg = 'You failed to run away! '
-            retMsg = retMsg + self.__defeat()
+            self.statuscode = 96
+            self.message = 'You failed to run away! ' + self.message
+            self.__defeat()
         else:
-            return "You successfully got away"
+            self.statuscode = 420
+            self.message = "You successfully got away"
 
     def catch(self, item=None):
         # roll chance to catch pokemon and it either runs away or
         #poke-ball, great-ball, ultra-ball, master-ball
         if not self.pokemon2.wildPokemon:
-            return False, "You can only catch Wild Pokemon!"
+            self.statuscode = 96
+            self.message = "You can only catch Wild Pokemon!"
         pokemonCaught = False
         inventory = inv(self.pokemon1.discordId)
         if item == 'poke-ball':
@@ -121,19 +129,21 @@ class encounter:
                 pokemonCaught = True
 
         inventory.save()
-        if inventory.faulted:
-            self.faulted = True
-            return "error occured during inventory save()"
+        if inventory.statuscode == 96:
+            self.statuscode = 96
+            self.message = "error occured during inventory save()"
 
         if pokemonCaught:
             # pokemon caught successfully. Save it to the trainers inventory
             self.pokemon2.discordId = self.pokemon1.discordId
             self.pokemon2.save()
-            if self.pokemon2.faulted:
-                self.faulted = True
-                return 'error occured during pokemon2 save()'
+            if self.pokemon2.statuscode == 96:
+                self.statuscode = 96
+                self.message = 'error occured during pokemon2 save()'
+            self.statuscode = 420
             retMsg = "You successfully caught the pokemon"
         else:
+            self.statuscode = 96
             retMsg = "You failed to catch the pokemon. The pokemon ran away!"
         return retMsg
 
@@ -143,9 +153,9 @@ class encounter:
         expObj = exp(self.pokemon2)
         expGained = expObj.getExpGained()
         evGained = expObj.getEffortValue()
-        if expObj.faulted:
-            self.faulted = True
-            return "error occured during expericne calculations"
+        if expObj.statuscode == 96:
+            self.statuscode = 96
+            self.message = "error occured during expericne calculations"
         newCurrentHP = self.pokemon1.currentHP
 
         levelUp, retMsg = self.pokemon1.processBattleOutcome(
@@ -157,7 +167,8 @@ class encounter:
             resultString = resultString + ' Your Pokemon leveled up!'
         if retMsg != '':
             resultString = resultString + ' ' + retMsg
-
+        self.statuscode = 420
+        self.message = resultString
         return resultString
 
     def __defeat(self):
@@ -166,16 +177,16 @@ class encounter:
         evGained = None
         newCurrentHP = 0
         self.pokemon1.processBattleOutcome(expGained, evGained, newCurrentHP)
-        if self.pokemon1.faulted:
-            self.faulted = True
-            return "error occured during processBattleOutcome"
-        return "Your Pokemon Fainted."
+        if self.pokemon1.statuscode == 96:
+            self.statuscode = 96
+            self.message = "error occured during processBattleOutcome"
+        self.statuscode = 420
+        self.message = "Your Pokemon Fainted."
 
     def __calculateDamageTaken(self):
         """ calculates the damage taken during a fight """
         # todo update with better HP algorithm
         newCurrentHP = self.pokemon1.currentHP - 3
-
         if newCurrentHP < 0:
             newCurrentHP = 0
         return newCurrentHP
@@ -234,7 +245,7 @@ class encounter:
             result = db.querySingle(queryString)
             dmgMult = result[0]
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
