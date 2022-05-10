@@ -49,9 +49,10 @@ class MapMixin(MixinMeta):
         if location.south is not None:
             btns.append(Button(style=ButtonStyle.gray, label=f"{location.south} ↓"))
         if location.east is not None:
-            btns.append(Button(style=ButtonStyle.gray, emoji=':arrow_right:', label=f"{location.east}"))
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=':arrow_right:')
+            btns.append(Button(style=ButtonStyle.gray, emoji=emote, label=f"{location.east}"))
         if location.west is not None:
-            btns.append(Button(style=ButtonStyle.gray, emoji=':arrow_left:', label=f"{location.west}"))
+            btns.append(Button(style=ButtonStyle.gray, emoji=emote, label=f"{location.west}"))
 
         await ctx.send(
             content=location.name,
