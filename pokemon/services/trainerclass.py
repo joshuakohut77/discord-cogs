@@ -323,7 +323,7 @@ class trainer:
             self.statuscode =  96
             self.message = "error occurred during loc.getAreaEncounterDetails"
             return
-        randomEncounter = loc.generateEncounter(areaEncounters, method)
+        randomEncounter = loc.action(areaEncounters, method)
         if loc.statuscode == 96:
             self.statuscode =  96
             self.message = "error occurred during loc.generateEncounter"

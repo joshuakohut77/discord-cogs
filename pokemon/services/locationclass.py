@@ -15,9 +15,11 @@ list of cities and locations: https://pokeapi.co/api/v2/region/1/
 """
 
 class location:
-    def __init__(self):
+    def __init__(self, discordId = None):
         self.statuscode = 69
         self.message = ''
+
+        self.discorId = discordId
     
     def getAreaEncounterDetails(self, areaIdList):
         """ returns a list of encounter details in json format """
@@ -93,7 +95,7 @@ class location:
         finally:
             return methodList
 
-    def generateEncounter(self, areaEncounters, selectedMethod):
+    def action(self, areaEncounters, selectedMethod):
         """ returns a list of chance items for the given method in that area """
         encounter = None
         try:
