@@ -4,7 +4,7 @@ import config
 import pokebase as pb
 import random
 from loggerclass import logger as log
-from trainerclass import trainer as trainerClass
+from dbclass import db as dbconn
 
 # Global Config Variables
 VERSION_DETAILS_LIST = config.version_details_list
@@ -20,7 +20,7 @@ class location:
         self.statuscode = 69
         self.message = ''
 
-        self.discorId = discordId
+        self.discordId = discordId
     
     def getAreaEncounterDetails(self, areaIdList):
         """ returns a list of encounter details in json format """
@@ -86,7 +86,7 @@ class location:
         """ returns a list of methods available in that area """
         methodList = []
         try:
-            if self.discorId is not None and areaEncounters is None:
+            if self.discordId is not None and areaEncounters is None:
                 locationId = self.__getCurrentLocation()
                 if locationId > 0:
                     areaList = self.getAreaList(locationId)
@@ -105,7 +105,7 @@ class location:
         """ returns a list of chance items for the given method in that area """
         encounter = None
         try:
-            if self.discorId is not None and areaEncounters is None:
+            if self.discordId is not None and areaEncounters is None:
                 locationId = self.__getCurrentLocation()
                 if locationId > 0:
                     areaList = self.getAreaList(locationId)
@@ -140,12 +140,23 @@ class location:
     def __getCurrentLocation(self):
         """ returns the location of the discordId user if not None """
         locationId = 0
-        if self.discorId is not None:
-            trainer = trainerClass(self.discorId)
-            # check if trainer is valid
-            if trainer.trainerExists:
-                locObj = trainer.getLocation()
-                # check if obj faulted
-                if trainer.statuscode == 69:
-                    locationId = locObj.locationId
-        return locationId
+        try:
+            db = dbconn()
+            if self.discordId is not None:
+                queryStr = """
+                SELECT
+                    "locationId"
+                FROM trainer
+                    WHERE trainer."discord_id" = %(discordId)s
+                """
+                result = db.querySingle(queryStr, { 'discordId': self.discordId })
+                if result:
+                    locationId = result[0]
+                    return locationId
+                else:
+                    self.statuscode = 96
+                    self.message = 'Location not found'
+        except:
+            self.statuscode = 96
+        finally:
+            del db
