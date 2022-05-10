@@ -421,6 +421,24 @@ class trainer:
             self.statuscode = 96
         finally:
             del db
+    
+    def setLocation(self, locationId):
+        """ updates the trainer table to set the locationId """
+        try:
+            db = dbconn()
+            updateString = """
+            UPDATE trainer
+                SET "locationId"=%(locationId)s
+            WHERE trainer."discord_id" = %(discordId)s
+            """
+            db.execute(updateString, { 'locationId': locationId, 'discordId': self.discordId })
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+            raise
+        finally:
+            # delete and close connection
+            del db
 
     ####
     # Private Class Methods
