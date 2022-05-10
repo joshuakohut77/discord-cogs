@@ -98,7 +98,6 @@ class location:
         encounter = None
         try:
             totalChance = 0
-            selectedMethod = 'walk'
             for x in areaEncounters:
                 method = x['method']
                 if method == selectedMethod:
