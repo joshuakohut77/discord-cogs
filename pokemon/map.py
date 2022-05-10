@@ -45,13 +45,13 @@ class MapMixin(MixinMeta):
 
         btns = []
         if location.north is not None:
-            btns.append(Button(style=ButtonStyle.gray, label=f"{location.north}"))
+            btns.append(Button(style=ButtonStyle.gray, label=f"{location.north} ↑"))
         if location.south is not None:
-            btns.append(Button(style=ButtonStyle.gray, label=f"{location.south}"))
+            btns.append(Button(style=ButtonStyle.gray, label=f"{location.south} ↓"))
         if location.east is not None:
-            btns.append(Button(style=ButtonStyle.gray, label=f"{location.east}"))
+            btns.append(Button(style=ButtonStyle.gray, label=f"{location.east} →"))
         if location.west is not None:
-            btns.append(Button(style=ButtonStyle.gray, label=f"{location.west}"))
+            btns.append(Button(style=ButtonStyle.gray, label=f"← {location.west}"))
 
         await ctx.send(
             content=location.name,
