@@ -115,7 +115,6 @@ class StarterMixin(MixinMeta):
         # TODO: all i need is the active id, get that when the trainer is first loaded
         trainer = TrainerClass(str(user.id))
         active = trainer.getActivePokemon()
-        # pokemon = trainer.getStarterPokemon()
 
         pokemonId = state.pokemonId
         pokemon = PokemonClass(str(user.id))
@@ -209,28 +208,19 @@ class StarterMixin(MixinMeta):
 
     async def on_set_active_click(self, interaction: Interaction):
         user = interaction.user
-        messageId = interaction.message.id
 
-        state: TrainerState
-        if str(user.id) not in self.__trainers.keys():
+        if not self.__checkTrainerState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
-        else:
-            state = self.__trainers[str(user.id)]
-            if state.messageId != messageId:
-                await interaction.send('This is not for you.')
-                return
-        
-        # author = interaction.message.author
 
-        # if user.id != author.id:
-        #     await interaction.send('This is not for you.')
+        state = self.__trainers[str(user.id)]
 
         trainer = TrainerClass(str(user.id))
 
         trainer.setActivePokemon(state.pokemonId)
 
         await self.on_about_click(interaction)
+
 
     def __checkTrainerState(self, user: discord.User, message: discord.Message):
         state: TrainerState
