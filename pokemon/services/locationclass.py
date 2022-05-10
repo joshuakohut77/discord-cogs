@@ -4,6 +4,7 @@ import config
 import pokebase as pb
 import random
 from loggerclass import logger as log
+from trainerclass import trainer 
 
 # Global Config Variables
 VERSION_DETAILS_LIST = config.version_details_list
@@ -81,10 +82,15 @@ class location:
         finally:
             return areaList
 
-    def getMethods(self, areaEncounters):
+    def getMethods(self, areaEncounters=None):
         """ returns a list of methods available in that area """
         methodList = []
         try:
+            if self.discorId is not None:
+                locationId = self.__getCurrentLocation()
+                if locationId > 0:
+                    areaList = self.getAreaList(locationId)
+                    areaEncounters = self.getAreaEncounterDetails(areaList)
             for x in areaEncounters:
                 method = x['method']
                 if method not in methodList:
@@ -95,10 +101,15 @@ class location:
         finally:
             return methodList
 
-    def action(self, areaEncounters, selectedMethod):
+    def action(self, selectedMethod, areaEncounters=None):
         """ returns a list of chance items for the given method in that area """
         encounter = None
         try:
+            if self.discorId is not None:
+                locationId = self.__getCurrentLocation()
+                if locationId > 0:
+                    areaList = self.getAreaList(locationId)
+                    areaEncounters = self.getAreaEncounterDetails(areaList)
             totalChance = 0
             for x in areaEncounters:
                 method = x['method']
@@ -126,5 +137,15 @@ class location:
             split.pop()
         return split[-1]
 
-
-
+    def __getCurrentLocation(self):
+        """ returns the location of the discordId user if not None """
+        locationId = 0
+        if self.discorId is not None:
+            trainer = trainer(self.discorId)
+            # check if trainer is valid
+            if trainer.trainerExists:
+                locObj = trainer.getLocation()
+                # check if obj faulted
+                if trainer.statuscode == 69:
+                    locationId = locObj.locationId
+        return locationId
