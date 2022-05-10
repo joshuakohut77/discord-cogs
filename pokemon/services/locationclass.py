@@ -4,7 +4,7 @@ import config
 import pokebase as pb
 import random
 from loggerclass import logger as log
-from trainerclass import trainer 
+from trainerclass import trainer as trainerClass
 
 # Global Config Variables
 VERSION_DETAILS_LIST = config.version_details_list
@@ -86,7 +86,7 @@ class location:
         """ returns a list of methods available in that area """
         methodList = []
         try:
-            if self.discorId is not None:
+            if self.discorId is not None and areaEncounters is None:
                 locationId = self.__getCurrentLocation()
                 if locationId > 0:
                     areaList = self.getAreaList(locationId)
@@ -105,7 +105,7 @@ class location:
         """ returns a list of chance items for the given method in that area """
         encounter = None
         try:
-            if self.discorId is not None:
+            if self.discorId is not None and areaEncounters is None:
                 locationId = self.__getCurrentLocation()
                 if locationId > 0:
                     areaList = self.getAreaList(locationId)
@@ -141,7 +141,7 @@ class location:
         """ returns the location of the discordId user if not None """
         locationId = 0
         if self.discorId is not None:
-            trainer = trainer(self.discorId)
+            trainer = trainerClass(self.discorId)
             # check if trainer is valid
             if trainer.trainerExists:
                 locObj = trainer.getLocation()
