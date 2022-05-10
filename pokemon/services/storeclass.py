@@ -60,7 +60,7 @@ class store:
         totalPrice = price * quantity
 
         if inventory.money < totalPrice:
-            self.statuscode = 96
+            self.statuscode = 69
             self.message = 'You do not have enough money to buy that.'
         else:
             if name == 'poke-ball':
@@ -106,7 +106,7 @@ class store:
                 self.statuscode = 96
                 self.message = "Error occured during inventory save()"
             self.statuscode = 420
-            self.message = "You successfully bought that item!"
+            self.message = f"You successfully bought {quantity} {name}"
 
     def __getSpriteUrl(self, itemName):
         """ returns a path to item sprite on disk """
