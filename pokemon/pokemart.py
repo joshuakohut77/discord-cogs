@@ -89,7 +89,10 @@ class PokemartMixin(MixinMeta):
         trainer = TrainerClass(user.id)
         location = trainer.getLocation()
         store = StoreClass(str(user.id), location.locationId)
-        res = store.buyItem(item, count)
+        store.buyItem(item, count)
 
-        await ctx.send(res)
-        await ctx.send(f'{user.display_name} bought {count} {item}')
+        if store.statuscode == 69 or store.statuscode == 420:
+            await ctx.send(store.message)
+
+        # await ctx.send(res)
+        # await ctx.send(f'{user.display_name} bought {count} {item}')
