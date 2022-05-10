@@ -52,7 +52,7 @@ class store:
     def buyItem(self, name, quantity):
         """ buy and item and update trainers inventory """
         if name not in self.storeMap.keys():
-            self.statuscode = 96
+            self.statuscode = 420
             self.message = "Item not available"
 
         inventory = inv(self.discordId)
