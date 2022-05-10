@@ -41,7 +41,7 @@ class inventory:
             updateString = '''UPDATE inventory set "money"=%(money)s, "poke-ball"=%(pokeball)s, "potion"=%(potion)s,
                                 "great-ball"=%(greatball)s, "ultra-ball"=%(ultraball)s, "super-potion"=%(superpotion)s, 
                                 "hyper-potion"=%(hyperpotion)s, "revive"=%(revive)s, "full-restore"=%(fullrestore)s, 
-                                "repel"=%(repel)s, "awakening"=%(awakening)s, "master-ball"=%(masterball)s
+                                "repel"=%(repel)s, "awakening"=%(awakening)s, "master-ball"=%(masterball)s,
                                 "escape-rope"=%(escaperope)s, "full-heal"=%(fullheal)s, "ice-heal"=%(iceheal)s, 
                                 "max-repel"=%(maxrepel)s, "burn-heal"=%(burnheal)s, "paralyze-heal"=%(paralyzeheal)s, 
                                 "max-potion"=%(maxpotion)s, "antidote"=%(antidote)s
