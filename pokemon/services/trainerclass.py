@@ -20,7 +20,9 @@ logger = log()
 
 class trainer:
     def __init__(self, discordId):
-        self.faulted = False
+        self.statuscode = 69 
+        self.message = '' 
+
         self.discordId = str(discordId)
         self.trainerExists = False
         # check create trainer if exists or not
@@ -42,8 +44,9 @@ class trainer:
             db.executeWithoutCommit(inventoryUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             db.commit()
             retMsg = "Trainer deleted successfully!"
+            self.statuscode = 420
         except:
-            self.faulted = True
+            self.statuscode = 96
             retMsg = "Error occured while trying to delete trainer"
             db.rollback()
             logger.error(excInfo=sys.exc_info())
@@ -56,7 +59,9 @@ class trainer:
     def getStarterPokemon(self):
         """Returns a random starter pokemon dictionary {pokemon: id} """
         if not self.trainerExists:
-            return None
+            self.statuscode = 96
+            self.message = 'Trainer does not exist'
+        
         pokemon = None
         try:
             db = dbconn()
@@ -73,9 +78,9 @@ class trainer:
             if starterId is not None:
                 pokemon = pokeClass(self.discordId, starterId)
                 pokemon.load(pokemonId=starterId)
-                if pokemon.faulted:
-                    self.faulted = True
-                    return "error occured during pokemon load()"
+                if pokemon.statuscode == 96:
+                    self.statuscode = 96
+                    return
             else:
                 pokeId: int = None
                 # trainer does not yet have a starter, create one
@@ -92,9 +97,8 @@ class trainer:
 
                 pokemon = pokeClass(self.discordId, pokeId)
                 pokemon.create(STARTER_LEVEL)
-                if pokemon.faulted:
-                    self.faulted = True
-                    return "error occured during pokemon create()"
+                if pokemon.statuscode == 96:
+                    self.statuscode = 96
 
                 # BUG:  It is possible for the pokemon to save to the db as one of the
                 #       trainers pokemon, but fail to update the trainer with the starter.
@@ -103,9 +107,8 @@ class trainer:
                 
                 # save starter into
                 pokemon.save()
-                if pokemon.faulted:
-                    self.faulted = True
-                    return "error occured during pokemon save()"
+                if pokemon.statuscode == 96:
+                    self.statuscode = 96
 
                 starterId = pokemon.trainerId
                 
@@ -113,7 +116,7 @@ class trainer:
                 updateString = 'UPDATE trainer SET "starterId"=%(starterId)s, "activePokemon"=%(starterId)s WHERE "discord_id"=%(discordId)s'
                 db.execute(updateString, { 'starterId': starterId, 'discordId': self.discordId })
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
             raise
         finally:
@@ -124,35 +127,40 @@ class trainer:
     def addPokemon(self, pokeId: int):
         pokemon = pokeClass(self.discordId, pokeId)
         pokemon.create(STARTER_LEVEL)
-        if pokemon.faulted:
-            self.faulted = True
-            return "error occured during pokemon create()"
+        if pokemon.statuscode == 96:
+            self.statuscode = 96
+            self.message = "error occured during pokemon create()"
+            return
 
         pokemon.save()
-        if pokemon.faulted:
-            self.faulted = True
-            return "error occured during pokemon save()"
+        if pokemon.statuscode == 96:
+            self.statuscode = 96
+            self.message = "error occured during pokemon save()"
+            return
         return pokemon
 
     def releasePokemon(self, pokemonId):
         """ release a pokemon and get any rewards from it """
         pokemon = pokeClass(self.discordId)
         pokemon.load(pokemonId)
-        if pokemon.faulted:
-            self.faulted = True
-            return "error occured during pokemon load()"
+        if pokemon.statuscode == 96:
+            self.statuscode = 96
+            self.message = "error occured during pokemon load()"
+            return
         level = pokemon.currentLevel
         pokemon.release()
-        if pokemon.faulted:
-            self.faulted = True
-            return "error occured during pokemon release()"
+        if pokemon.statuscode == 96:
+            self.statuscode = 96
+            self.message = "error occured during pokemon release()"
+            return
         inventory = inv(self.discordId)
         releaseMoney = level * RELEASE_MONEY_MODIFIER
         inventory.money += releaseMoney
         inventory.save()
-        if inventory.faulted:
-            self.faulted = True
-            return "error occurred during inventory.save()"
+        if inventory.statuscode == 96:
+            self.statuscode = 96
+            self.message = "error occurred during inventory.save()"
+            return
 
     def getPokemon(self):
         """ returns a list of pokemon objects for every pokemon in the database belonging to the trainer """
@@ -165,12 +173,13 @@ class trainer:
                 pokemonId = row[0]
                 pokemon = pokeClass(self.discordId)
                 pokemon.load(pokemonId=pokemonId)
-                if pokemon.faulted:
-                    self.faulted = True
-                    return "error occured during pokemon load()"
+                if pokemon.statuscode == 96:
+                    self.statuscode = 96
+                    self.message = "error occured during pokemon load()"
+                    return
                 pokemonList.append(pokemon)
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
@@ -191,11 +200,12 @@ class trainer:
                 else:
                     pokemon = pokeClass(self.discordId)
                     pokemon.load(pokemonId=pokemonId)
-                    if pokemon.faulted:
-                        self.faulted = True
-                        return "error occured during pokemon load()"
+                    if pokemon.statuscode == 96:
+                        self.statuscode = 96
+                        self.message = "error occured during pokemon load()"
+                        return
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
@@ -221,9 +231,9 @@ class trainer:
                 retMsg = 'New Active Pokemon Set!'
             else:
                 retMsg = 'Cannot set fainted Pokemon as active.'
+            self.statuscode = 420
         except:
-            self.faulted = True 
-            retMsg = 'An error occured'
+            self.statuscode = 96 
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
@@ -234,36 +244,43 @@ class trainer:
         """ creates a fight encounter """
         pokemon1 = self.getActivePokemon()
         if pokemon1 is None:
-            return 'You do not have an active Pokemon'        
+            self.statuscode = 96
+            self.message = 'You do not have an active Pokemon'        
+            return
         enc = encounter(pokemon1, pokemon2)
         retVal = enc.fight()
-        if enc.faulted:
-            self.faulted = True
-            return "error occurred during encounter.fight()"
+        if enc.statuscode == 96:
+            self.statuscode = 96
+            self.message = "error occurred during encounter.fight()"
+            return
         return retVal
 
     def catch(self, pokemon2, item):
         """ creates a catch encounter """
         pokemon1 = self.getActivePokemon()
         if pokemon1 is None:
-            return 'You do not have an active Pokemon'        
+            self.statuscode = 96
+            self.message = 'You do not have an active Pokemon'
+            return
         enc = encounter(pokemon1, pokemon2)
         retVal = enc.catch(item)
-        if enc.faulted:
-            self.faulted = True
-            return "error occurred during encounter.catch()"
+        if enc.statuscode == 96:
+            self.statuscode = 96
+            self.message = "error occurred during encounter.catch()"
+            return
         return retVal
 
     def runAway(self, pokemon2):
         """ creates a run away encounter """
         pokemon1 = self.getActivePokemon()
         if pokemon1 is None:
-            return 'You do not have an active Pokemon'        
+            self.statuscode = 96
+            self.message = 'You do not have an active Pokemon'        
         enc = encounter(pokemon1, pokemon2)
         retVal = enc.runAway()
-        if enc.faulted:
-            self.faulted = True
-            return "error occurred during encounter.runAway()"
+        if enc.statuscode == 96:
+            self.statuscode = 96
+            self.message = "error occurred during encounter.runAway()"
         return retVal
 
     def getAreaMethods(self):
@@ -271,21 +288,26 @@ class trainer:
         # before starting any area business, verify an active pokemon is set
         pokemon = self.getActivePokemon()
         if pokemon is None:
-            return 'You do not have an active Pokemon'
+            self.statuscode = 96
+            self.message =  'You do not have an active Pokemon'
+            return
         location = self.getLocation()
         loc = LocationClass()
         areaIdList = loc.getAreaList(location.locationId)
-        if loc.faulted:
-            self.faulted =  True
-            return "error occurred during loc.getAreaList"
+        if loc.statuscode == 96:
+            self.statuscode =  96
+            self.message =  "error occurred during loc.getAreaList"
+            return 
         areaEncounters = loc.getAreaEncounterDetails(areaIdList)
-        if loc.faulted:
-            self.faulted =  True
-            return "error occurred during loc.getAreaEncounterDetails"
+        if loc.statuscode == 96:
+            self.statuscode =  96
+            self.message = "error occurred during loc.getAreaEncounterDetails"
+            return
         methods = loc.getMethods(areaEncounters)
-        if loc.faulted:
-            self.faulted =  True
-            return "error occurred during loc.getMethods"
+        if loc.statuscode == 96:
+            self.statuscode =  96
+            self.message = "error occurred during loc.getMethods"
+            return
         return methods
 
     def getRandomEncounter(self, method):
@@ -295,13 +317,15 @@ class trainer:
         loc = LocationClass()
         areaIdList = loc.getAreaList(location.locationId)
         areaEncounters = loc.getAreaEncounterDetails(areaIdList)
-        if loc.faulted:
-            self.faulted =  True
-            return "error occurred during loc.getAreaEncounterDetails"
+        if loc.statuscode == 96:
+            self.statuscode =  96
+            self.message = "error occurred during loc.getAreaEncounterDetails"
+            return
         randomEncounter = loc.generateEncounter(areaEncounters, method)
-        if loc.faulted:
-            self.faulted =  True
-            return "error occurred during loc.generateEncounter"
+        if loc.statuscode == 96:
+            self.statuscode =  96
+            self.message = "error occurred during loc.generateEncounter"
+            return
         if randomEncounter is not None:
             # this means a pokemon was found with the method
             name = randomEncounter['name']
@@ -310,9 +334,10 @@ class trainer:
             level = random.randrange(int(min_level), int(max_level)+1)
             pokemon = pokeClass(self.discordId, name)
             pokemon.create(level)
-            if pokemon.faulted:
-                self.faulted = True
-                return "error occured during pokemon create()"
+            if pokemon.statuscode == 96:
+                self.statuscode = 96
+                self.message = "error occured during pokemon create()"
+                return
         
         return pokemon
 
@@ -331,7 +356,7 @@ class trainer:
                             'name': pokemonName, 'lastSeen': mostRecent}
                 pokedex.append(pokeDict)
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
@@ -354,9 +379,10 @@ class trainer:
             inventory.maxpotion -= 1
         self.__healPokemon(pokeTrainerId, item)
         inventory.save()
-        if inventory.faulted:
-            self.faulted = True
-            return "error occurred during inventory.save()"
+        if inventory.statuscode == 96:
+            self.statuscode = 96
+            self.message = "error occurred during inventory.save()"
+            return
 
     def healAll(self):
         """ heals all pokemon to max HP """
@@ -387,9 +413,10 @@ class trainer:
                 location = Models.LocationModel(result)
                 return location
             else:
-                raise 'Location not found'
+                self.statuscode = 96
+                self.message = 'Location not found'
         except:
-            self.faulted = True
+            self.statuscode = 96
         finally:
             del db
 
@@ -409,7 +436,7 @@ class trainer:
             db.commit()
             self.trainerExists = True
         except:
-            self.faulted = True
+            self.statuscode = 96
             db.rollback()
             logger.error(excInfo=sys.exc_info())
         finally:
@@ -421,9 +448,9 @@ class trainer:
         # this function is only designed to work with potion, super-potion, hyper-potion, max-potion
         pokemon = pokeClass(self.discordId)
         pokemon.load(pokemonId)
-        if pokemon.faulted:
-            self.faulted = True
-            return "error occured during pokemon load()"
+        if pokemon.statuscode == 96:
+            self.statuscode = 96
+            self.message = "error occured during pokemon load()"
         statsDict = pokemon.getPokeStats()
         maxHP = statsDict['hp']
         currentHP = pokemon.currentHP
@@ -442,4 +469,7 @@ class trainer:
         pokemon.currentHP = newHP
         pokemon.discordId = self.discordId
         pokemon.save()
-
+        if pokemon.statuscode == 96:
+            self.statuscode = 96
+            self.message = "error occurred during pokemon.save()"
+            return

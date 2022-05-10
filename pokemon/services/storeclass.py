@@ -11,7 +11,9 @@ logger = log()
 
 class store:
     def __init__(self, discordId: str, locationId: int):
-        self.faulted = False
+        self.statuscode = 69
+        self.message = ''
+
         self.discordId = discordId
         self.locationId = locationId
         self.storeList = []
@@ -40,7 +42,7 @@ class store:
                 if item['item'] in self.storeMap.keys():
                     self.storeMap[item['item']]['price'] = item['price']
         except:
-            self.faulted = True
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
@@ -50,14 +52,16 @@ class store:
     def buyItem(self, name, quantity):
         """ buy and item and update trainers inventory """
         if name not in self.storeMap.keys():
-            return "Item not available"
+            self.statuscode = 96
+            self.message = "Item not available"
 
         inventory = inv(self.discordId)
         price = self.storeMap[name]['price']
         totalPrice = price * quantity
 
         if inventory.money < totalPrice:
-            return 'You do not have enough money to buy that.'
+            self.statuscode = 96
+            self.message = 'You do not have enough money to buy that.'
         else:
             if name == 'poke-ball':
                 inventory.pokeball += quantity
@@ -98,10 +102,11 @@ class store:
             elif name == 'max-potion':
                 inventory.maxpotion += quantity
             inventory.save()
-            if inventory.faulted:
-                self.faulted = True
-                return "Error occured during inventory save()"
-            return "You successfully bought that item!"
+            if inventory.statuscode == 96:
+                self.statuscode = 96
+                self.message = "Error occured during inventory save()"
+            self.statuscode = 420
+            self.message = "You successfully bought that item!"
 
     def __getSpriteUrl(self, itemName):
         """ returns a path to item sprite on disk """
