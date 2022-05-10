@@ -33,16 +33,28 @@ class MapMixin(MixinMeta):
         """
 
     @_trainer.command()
-    async def map(self, ctx: commands.Context, user: discord.User):
+    async def map(self, ctx: commands.Context, user: discord.User = None):
         if user is None:
             user = ctx.author
 
-                
+        
         trainer = TrainerClass(str(user.id))
         location = trainer.getLocation()
 
         file = discord.File(f"{location.spritePath}", filename=f"{location.name}.png")
 
+        btns = []
+        if location.north is not None:
+            btns.append(Button(style=ButtonStyle.gray, label=f"{location.north}"))
+        if location.south is not None:
+            btns.append(Button(style=ButtonStyle.gray, label=f"{location.south}"))
+        if location.east is not None:
+            btns.append(Button(style=ButtonStyle.gray, label=f"{location.east}"))
+        if location.west is not None:
+            btns.append(Button(style=ButtonStyle.gray, label=f"{location.west}"))
+
         await ctx.send(
-            file=file
+            content=location.name,
+            file=file,
+            components=[btns]
         )
