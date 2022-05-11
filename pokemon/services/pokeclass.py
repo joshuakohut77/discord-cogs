@@ -468,7 +468,7 @@ class Pokemon:
             db.execute(pokemonUpdateQuery, {
                        'newDiscordId': newDiscordId, 'trainerId': self.trainerId})
         except:
-            self.statuscode = 69
+            self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
