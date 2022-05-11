@@ -3,6 +3,7 @@ import sys
 import config
 import pokebase as pb
 import random
+from keyitemsclass import keyitems as kitems
 from loggerclass import logger as log
 from dbclass import db as dbconn
 

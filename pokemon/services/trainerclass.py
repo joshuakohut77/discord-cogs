@@ -6,7 +6,6 @@ import random
 from dbclass import db as dbconn
 from encounterclass import encounter
 from inventoryclass import inventory as inv
-from keyitemsclass import keyitems as kitems
 from locationclass import location as LocationClass
 from loggerclass import logger as log
 from pokeclass import Pokemon as pokeClass
