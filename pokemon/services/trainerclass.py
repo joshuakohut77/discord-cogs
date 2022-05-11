@@ -6,6 +6,7 @@ import random
 from dbclass import db as dbconn
 from encounterclass import encounter
 from inventoryclass import inventory as inv
+from keyitemsclass import keyitems as kitems
 from locationclass import location as LocationClass
 from loggerclass import logger as log
 from pokeclass import Pokemon as pokeClass
@@ -285,32 +286,38 @@ class trainer:
             self.message = "error occurred during encounter.runAway()"
         return retVal
 
-    def getAreaMethods(self):
-        """ returns the encounter methods in the trainers area """
-        # before starting any area business, verify an active pokemon is set
-        pokemon = self.getActivePokemon()
-        if pokemon is None:
-            self.statuscode = 96
-            self.message =  'You do not have an active Pokemon'
-            return
-        location = self.getLocation()
-        loc = LocationClass()
-        areaIdList = loc.getAreaList(location.locationId)
-        if loc.statuscode == 96:
-            self.statuscode =  96
-            self.message =  "error occurred during loc.getAreaList"
-            return 
-        areaEncounters = loc.getAreaEncounterDetails(areaIdList)
-        if loc.statuscode == 96:
-            self.statuscode =  96
-            self.message = "error occurred during loc.getAreaEncounterDetails"
-            return
-        methods = loc.getMethods(areaEncounters)
-        if loc.statuscode == 96:
-            self.statuscode =  96
-            self.message = "error occurred during loc.getMethods"
-            return
-        return methods
+    # def getAreaMethods(self):
+    #     """ returns the encounter methods in the trainers area """
+    #     # before starting any area business, verify an active pokemon is set
+    #     pokemon = self.getActivePokemon()
+    #     if pokemon is None:
+    #         self.statuscode = 96
+    #         self.message =  'You do not have an active Pokemon'
+    #         return
+    #     location = self.getLocation()
+    #     loc = LocationClass()
+    #     areaIdList = loc.getAreaList(location.locationId)
+    #     if loc.statuscode == 96:
+    #         self.statuscode =  96
+    #         self.message =  "error occurred during loc.getAreaList"
+    #         return 
+    #     areaEncounters = loc.getAreaEncounterDetails(areaIdList)
+    #     if loc.statuscode == 96:
+    #         self.statuscode =  96
+    #         self.message = "error occurred during loc.getAreaEncounterDetails"
+    #         return
+    #     methods = loc.getMethods(areaEncounters)
+    #     if loc.statuscode == 96:
+    #         self.statuscode =  96
+    #         self.message = "error occurred during loc.getMethods"
+    #         return
+    #     return methods
+
+    def action(self, method):
+        """ handles action  """
+
+
+        return
 
     def getRandomEncounter(self, method):
         """ gets a random encounter in the current area using the selected method """
