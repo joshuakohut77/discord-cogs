@@ -102,8 +102,8 @@ class location:
             return methodList
 
     def action(self, selectedMethod, areaEncounters=None):
-        """ returns a list of chance items for the given method in that area """
-        encounter = None
+        """ returns a single encounter based on location and method """
+        areaEncounterPokemon = None
         try:
             if self.discordId is not None and areaEncounters is None:
                 locationId = self.__getCurrentLocation()
@@ -123,12 +123,12 @@ class location:
                     randNum = random.randrange(1, totalChance+1)
                     chance = x['chance']
                     if randNum <= chance:
-                        encounter = x
+                        areaEncounterPokemon = x
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
-            return encounter
+            return areaEncounterPokemon
 
     def __getUrlNumber(self, url):
         """ takes a url string and parses the unique key value from the end of the url """
