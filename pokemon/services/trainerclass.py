@@ -313,33 +313,46 @@ class trainer:
     #         return
     #     return methods
 
-    def action(self, method):
+    def encounter(self, method):
         """ handles action  """
+        pokemon = None
+        try:
+            pokemon = self.__getEncounter(method)
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            return pokemon
+    
+    def gift(self):
+        """ handles a gift action """
+        retMsg = ''
+        try:
+            method = 'gift'
+            pokemon = self.__getEncounter(method)
+            pokemon.save()
+            retMsg = 'You received %s!' %pokemon.pokemonName
+            self.statuscode = 420
+            self.message = retMsg
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
 
 
-        return
-
-    def getRandomEncounter(self, method):
+    def __getEncounter(self, method):
         """ gets a random encounter in the current area using the selected method """
         pokemon = None
-        location = self.getLocation()
-        loc = LocationClass()
-        areaIdList = loc.getAreaList(location.locationId)
-        areaEncounters = loc.getAreaEncounterDetails(areaIdList)
-        if loc.statuscode == 96:
-            self.statuscode =  96
-            self.message = "error occurred during loc.getAreaEncounterDetails"
-            return
-        randomEncounter = loc.action(areaEncounters, method)
+        loc = LocationClass(self.discordId)
+        selectedEncounter = loc.action(method)
         if loc.statuscode == 96:
             self.statuscode =  96
             self.message = "error occurred during loc.generateEncounter"
             return
-        if randomEncounter is not None:
+        if selectedEncounter is not None:
             # this means a pokemon was found with the method
-            name = randomEncounter['name']
-            min_level = randomEncounter['min_level']
-            max_level = randomEncounter['max_level']
+            name = selectedEncounter['name']
+            min_level = selectedEncounter['min_level']
+            max_level = selectedEncounter['max_level']
             level = random.randrange(int(min_level), int(max_level)+1)
             pokemon = pokeClass(self.discordId, name)
             pokemon.create(level)
