@@ -6,6 +6,7 @@ import random
 from keyitemsclass import keyitems as kitems
 from loggerclass import logger as log
 from dbclass import db as dbconn
+from models.location import LocationModel
 
 # Global Config Variables
 VERSION_DETAILS_LIST = config.version_details_list
@@ -51,6 +52,29 @@ class location:
             logger.error(excInfo=sys.exc_info())
         finally:
             return pokemonEncounterList
+
+    def getLocationByName(self, locationName: str):
+        """ Queries and returns location based off of location name """
+        try:
+            db = dbconn()
+            if self.discordId is not None:
+                queryStr = """
+                SELECT
+                    *
+                FROM locations
+                    WHERE locations."name" = %(name)s
+                """
+                result = db.querySingle(queryStr, { 'name': locationName })
+                if result:
+                    loc = LocationModel(result)
+                    return loc
+                else:
+                    self.statuscode = 96
+                    self.message = 'Location not found'
+        except:
+            self.statuscode = 96
+        finally:
+            del db
     
     def getLocationList(self, region=1):
         """ returns a dictionary list of locations and their unique API number """
