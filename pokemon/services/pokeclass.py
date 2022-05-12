@@ -29,6 +29,7 @@ class Pokemon:
         self.discordId = discordId
         self.pokedexId = pokedexId
         self.pokemonName = None
+        self.pokebaseObj = None
         self.nickName = None
         self.frontSpriteURL = None
         self.backSpriteURL = None
@@ -76,9 +77,10 @@ class Pokemon:
             self.message = 'pokeclass#create level must be greater than 0 and less than or equal to 100'
         
         try:
-            self.currentLevel = level
 
+            self.currentLevel = level
             pokemon = pb.pokemon(self.pokedexId)
+            self.pokebaseObj = pokemon
             self.pokemonName = pokemon.species.name
             self.pokedexId = pokemon.id
             self.frontSpriteURL = self.__getFrontSpritePath()
@@ -96,16 +98,19 @@ class Pokemon:
             self.currentExp = self.__getBaseLevelExperience()
             ivDict = self.__generatePokemonIV()
             evDict = self.__generatePokemonEV()
-            baseDict = self.__getPokemonBaseStats()
+            baseDict = self.__getPokemonBaseStats(pokemon)
             self.__setPokeStats(baseDict, ivDict, evDict)
-            moveList = self.getMoves(True)
+
+            moveList = self.getMoves(True, pokemon=pokemon)
             self.move_1 = moveList[0]
             self.move_2 = moveList[1]
             self.move_3 = moveList[2]
             self.move_4 = moveList[3]
+
             statsDict = self.getPokeStats()
             self.currentHP = statsDict['hp']
             self.statuscode = 69
+
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
@@ -229,13 +234,16 @@ class Pokemon:
         finally:
             return statsDict
 
-    def getMoves(self, reload=False):
+    def getMoves(self, reload=False, pokemon=None):
         """ returns a list of the pokemon's current moves """
         moveList = []
 
         if (self.discordId is None) or (reload == True):
             try:
-                moveDict = self.__getPokemonLevelMoves()
+                if pokemon is None:
+                    moveDict = self.__getPokemonLevelMoves()
+                else:
+                    moveDict = self.__getPokemonLevelMoves(pokemon=pokemon)
                 level = self.currentLevel
                 # user starter level for pokemon without a level
                 if level is None:
@@ -308,9 +316,9 @@ class Pokemon:
                             # if a pokemon gains multiple levels, notifications of moves learned will be skipped.
                             # this next section is to handle that unique case
                             if (x-1) > 1:
-                                moveList = self.getMoves(reload=True)
+                                moveList = self.getMoves(reload=True, pokemon=self.pokebaseObj)
                             else:
-                                moveList = self.getMoves()
+                                moveList = self.getMoves(pokemon=self.pokebaseObj)
                             levelUp = True
                             newMove = self.__getNewMoves()
                             if newMove != '':
@@ -553,11 +561,14 @@ class Pokemon:
         finally:
             return typeList
 
-    def __getNewMoves(self):
+    def __getNewMoves(self, pokemon=None):
         """ returns a pokemons moves at a specific level """
         newMove = ''
         try:
-            moveDict = self.__getPokemonLevelMoves()
+            if pokemon is None:
+                moveDict = self.__getPokemonLevelMoves()
+            else:
+                moveDict = self.__getPokemonLevelMoves(pokemon=pokemon)
             for key, value in moveDict.items():
                 if value == self.currentLevel:
                     newMove = key
@@ -613,11 +624,12 @@ class Pokemon:
                   'special-attack': 1, 'special-defense': 1}
         return evDict
 
-    def __getPokemonBaseStats(self):
+    def __getPokemonBaseStats(self, pokemon=None):
         """ returns dictionary of {stat: value} for a pokemons base stats """
         baseDict = {}
         try:
-            pokemon = pb.pokemon(self.pokedexId)
+            if pokemon is None:
+                pokemon = pb.pokemon(self.pokedexId)
             for stat in pokemon.stats:
                 statName = stat.stat.name
                 statVal = stat.base_stat
