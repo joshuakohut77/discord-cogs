@@ -105,6 +105,7 @@ class Pokemon:
             self.move_4 = moveList[3]
             statsDict = self.getPokeStats()
             self.currentHP = statsDict['hp']
+            self.statuscode = 69
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
