@@ -1,6 +1,8 @@
 # pokemon user class
 
 import sys
+
+import discord
 import config
 import math
 import pokebase as pb
@@ -96,7 +98,7 @@ class Pokemon:
             evDict = self.__generatePokemonEV()
             baseDict = self.__getPokemonBaseStats()
             self.__setPokeStats(baseDict, ivDict, evDict)
-            moveList = self.getMoves()
+            moveList = self.getMoves(True)
             self.move_1 = moveList[0]
             self.move_2 = moveList[1]
             self.move_3 = moveList[2]

@@ -85,7 +85,10 @@ class ActionsMixin(MixinMeta):
         if method == 'walk':
             trainer = TrainerClass(str(user.id))
             pokemon = trainer.encounter(method)
-            await interaction.message.reply(f'You encountered a {pokemon.pokemonName}!')
+            if pokemon is None:
+                await interaction.message.reply(f'No pokemon encountered.')
+            else:
+                await interaction.message.reply(f'You encountered a {pokemon.pokemonName}!')
             return
 
 
