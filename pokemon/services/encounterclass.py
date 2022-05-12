@@ -38,6 +38,7 @@ class encounter:
 
         self.battle()
         self.statuscode = 420
+        return self.message
 
     def battle(self):
         """ this function simulates a live battle between two pokemon """
@@ -92,6 +93,7 @@ class encounter:
         else:
             self.statuscode = 420
             self.message = "You successfully got away"
+        return self.message
 
     def catch(self, item=None):
         # roll chance to catch pokemon and it either runs away or
