@@ -23,6 +23,7 @@ from .pokemart import PokemartMixin
 from .pc import PcMixin
 from .inventory import InventoryMixin
 from .map import MapMixin
+from .actions import ActionsMixin
 # from .event import EventMixin
 
 # import pokebase as pb
@@ -45,7 +46,7 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class Pokemon(StarterMixin, PcMixin, PokemartMixin, InventoryMixin, MapMixin, commands.Cog, metaclass=CompositeClass):
+class Pokemon(StarterMixin, PcMixin, PokemartMixin, InventoryMixin, MapMixin, ActionsMixin, commands.Cog, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):
@@ -111,28 +112,6 @@ class Pokemon(StarterMixin, PcMixin, PokemartMixin, InventoryMixin, MapMixin, co
         """Base command to manage the trainer (user).
         """
         pass
-
-
-    @_trainer.command()
-    async def action(self, ctx: commands.Context):
-        user = ctx.author
-        
-        # trainer = TrainerClass(str(user.id))
-        location = LocationClass(str(user.id))
-        methods = location.getMethods()
-        # areaMethods = trainer.getAreaMethods()
-
-        btns = []
-        for method in methods:
-            btns.append(Button(style=ButtonStyle.gray, label=f"{method}", custom_id=f'{method}'))
-
-        if len(btns) > 0:
-            await ctx.send(
-                "What do you want to do?",
-                components=[btns]
-            )
-        else:
-            await ctx.send(f'location - No actions available')
 
 
     @_trainer.command()
