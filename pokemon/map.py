@@ -139,7 +139,6 @@ class MapMixin(MixinMeta):
 
         state = self.__locations[str(user.id)]
         east = state.location.east
-        await interaction.send(east)
 
         loc = LocationClass()
         direction = loc.getLocationByName(east)
@@ -147,6 +146,7 @@ class MapMixin(MixinMeta):
             await interaction.send(loc.message)
             return
 
+        await interaction.send(direction.name)
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
         await interaction.respond(f'You walked to {east}')
