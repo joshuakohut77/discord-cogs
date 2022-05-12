@@ -89,7 +89,7 @@ class ActionsMixin(MixinMeta):
                 await interaction.send('No pokemon encountered.')
             else:
                 await interaction.send(f'You encountered a {pokemon.pokemonName}!')
-                await interaction.user.send(f'You encountered a {pokemon.pokemonName}!')
+                # await interaction.user.send(f'You encountered a {pokemon.pokemonName}!')
             return
 
 
