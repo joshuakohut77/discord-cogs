@@ -66,10 +66,10 @@ class ActionsMixin(MixinMeta):
             ))
    
         message = await ctx.send(
-            content=location.name,
+            content="What do you want to do?",
             components=[btns]
         )
-        self.__locations[str(user.id)] = ActionState(str(user.id), model, message.id)
+        self.__useractions[str(user.id)] = ActionState(str(user.id), model, message.id)
 
 
     async def on_action(self, interaction: Interaction):
