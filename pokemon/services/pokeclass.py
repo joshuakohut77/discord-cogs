@@ -2,7 +2,7 @@
 
 import sys
 
-import discord
+# import discord
 import config
 import math
 import pokebase as pb
