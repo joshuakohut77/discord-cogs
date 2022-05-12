@@ -67,7 +67,7 @@ class MapMixin(MixinMeta):
             ))
         else:
             ne.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬆', label=f"N/A"),
+                Button(style=ButtonStyle.gray, emoji='⬆', label=f"--"),
                 self.on_north,
             ))
         if location.east is not None:
@@ -77,7 +77,7 @@ class MapMixin(MixinMeta):
             ))
         else:
             ne.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='➡', label=f"N/A"),
+                Button(style=ButtonStyle.gray, emoji='➡', label=f"--"),
                 self.on_east,
             ))
         if location.south is not None:
@@ -87,7 +87,7 @@ class MapMixin(MixinMeta):
             ))
         else:
             sw.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬇', label=f"N/A"),
+                Button(style=ButtonStyle.gray, emoji='⬇', label=f"--"),
                 self.on_south,
             ))
         if location.west is not None:
@@ -97,7 +97,7 @@ class MapMixin(MixinMeta):
             ))
         else:
             sw.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬅', label=f"N/A"),
+                Button(style=ButtonStyle.gray, emoji='⬅', label=f"--"),
                 self.on_west,
             ))
             # emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument='⬅️')
@@ -119,6 +119,10 @@ class MapMixin(MixinMeta):
         state = self.__locations[str(user.id)]
         north = state.location.north
 
+        if north is None:
+            await interaction.send('You can not travel North from here.')
+            return
+
         loc = LocationClass()
         direction = loc.getLocationByName(north)
         if loc.statuscode == 96:
@@ -127,7 +131,7 @@ class MapMixin(MixinMeta):
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        await interaction.send(f'You walked north to {north}')
+        await interaction.send(f'You walked North to {north}.')
         
 
     async def on_south(self, interaction: Interaction):
@@ -140,6 +144,10 @@ class MapMixin(MixinMeta):
         state = self.__locations[str(user.id)]
         south = state.location.south
 
+        if south is None:
+            await interaction.send('You can not travel South from here.')
+            return
+
         loc = LocationClass()
         direction = loc.getLocationByName(south)
         if loc.statuscode == 96:
@@ -148,7 +156,7 @@ class MapMixin(MixinMeta):
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        await interaction.send(f'You walked south to {south}')
+        await interaction.send(f'You walked South to {south}.')
 
     async def on_east(self, interaction: Interaction):
         user = interaction.user
@@ -160,6 +168,10 @@ class MapMixin(MixinMeta):
         state = self.__locations[str(user.id)]
         east = state.location.east
 
+        if east is None:
+            await interaction.send('You can not travel East from here.')
+            return
+
         loc = LocationClass()
         direction = loc.getLocationByName(east)
         if loc.statuscode == 96:
@@ -168,7 +180,7 @@ class MapMixin(MixinMeta):
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        await interaction.send(f'You walked east to {east}')
+        await interaction.send(f'You walked East to {east}.')
 
     async def on_west(self, interaction: Interaction):
         user = interaction.user
@@ -180,6 +192,10 @@ class MapMixin(MixinMeta):
         state = self.__locations[str(user.id)]
         west = state.location.west
 
+        if west is None:
+            await interaction.send('You can not travel West from here.')
+            return
+
         loc = LocationClass()
         direction = loc.getLocationByName(west)
         if loc.statuscode == 96:
@@ -188,7 +204,7 @@ class MapMixin(MixinMeta):
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        await interaction.send(f'You walked west to {west}')
+        await interaction.send(f'You walked West to {west}.')
 
 
     def __checkTrainerState(self, user: discord.User, message: discord.Message):
