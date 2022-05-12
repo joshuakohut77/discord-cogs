@@ -76,6 +76,9 @@ class ActionsMixin(MixinMeta):
     async def on_action(self, interaction: Interaction):
         user = interaction.user
 
+        await interaction.send('on_action')
+        return
+
         if not self.__checkTrainerState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
