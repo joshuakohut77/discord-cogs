@@ -76,36 +76,53 @@ class Pokemon:
             self.message = 'pokeclass#create level must be greater than 0 and less than or equal to 100'
         
         try:
-            self.currentLevel = level
 
+            self.currentLevel = level
+            time1 = time()
             pokemon = pb.pokemon(self.pokedexId)
+            time2 = time()
+            print(time2-time1) # 10s
+            time1=time2
             self.pokemonName = pokemon.species.name
             self.pokedexId = pokemon.id
             self.frontSpriteURL = self.__getFrontSpritePath()
             self.backSpriteURL = self.__getBackSpritePath()
             self.growthRate = pb.pokemon_species(pokemon.id).growth_rate.name
             self.base_exp = pokemon.base_experience
-
+            time2 = time()
+            print(time2-time1) # 1.8s
+            time1=time2
             types = self.__getPokemonType(pokemon)
             if len(types) > 0:
                 self.type1 = types[0]
                 if len(types) > 1:
                     self.type2 = types[1]
-
+            time2 = time()
+            print(time2-time1) # 0s
+            time1=time2
             self.traded = False
             self.currentExp = self.__getBaseLevelExperience()
             ivDict = self.__generatePokemonIV()
             evDict = self.__generatePokemonEV()
-            baseDict = self.__getPokemonBaseStats()
+            baseDict = self.__getPokemonBaseStats(pokemon)
             self.__setPokeStats(baseDict, ivDict, evDict)
-            moveList = self.getMoves(True)
+            time2 = time()
+            print(time2-time1) # 11s
+            time1=time2
+            moveList = self.getMoves(True, pokemon=pokemon)
             self.move_1 = moveList[0]
             self.move_2 = moveList[1]
             self.move_3 = moveList[2]
             self.move_4 = moveList[3]
+            time2 = time()
+            print(time2-time1) # 11s
+            time1=time2
             statsDict = self.getPokeStats()
             self.currentHP = statsDict['hp']
             self.statuscode = 69
+            time2 = time()
+            print(time2-time1) #0s
+            time1=time2
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
@@ -229,13 +246,16 @@ class Pokemon:
         finally:
             return statsDict
 
-    def getMoves(self, reload=False):
+    def getMoves(self, reload=False, pokemon=None):
         """ returns a list of the pokemon's current moves """
         moveList = []
 
         if (self.discordId is None) or (reload == True):
             try:
-                moveDict = self.__getPokemonLevelMoves()
+                if pokemon is None:
+                    moveDict = self.__getPokemonLevelMoves()
+                else:
+                    moveDict = self.__getPokemonLevelMoves(pokemon=pokemon)
                 level = self.currentLevel
                 # user starter level for pokemon without a level
                 if level is None:
@@ -553,11 +573,14 @@ class Pokemon:
         finally:
             return typeList
 
-    def __getNewMoves(self):
+    def __getNewMoves(self, pokemon=None):
         """ returns a pokemons moves at a specific level """
         newMove = ''
         try:
-            moveDict = self.__getPokemonLevelMoves()
+            if pokemon is None:
+                moveDict = self.__getPokemonLevelMoves()
+            else:
+                moveDict = self.__getPokemonLevelMoves(pokemon=pokemon)
             for key, value in moveDict.items():
                 if value == self.currentLevel:
                     newMove = key
@@ -613,11 +636,12 @@ class Pokemon:
                   'special-attack': 1, 'special-defense': 1}
         return evDict
 
-    def __getPokemonBaseStats(self):
+    def __getPokemonBaseStats(self, pokemon=None):
         """ returns dictionary of {stat: value} for a pokemons base stats """
         baseDict = {}
         try:
-            pokemon = pb.pokemon(self.pokedexId)
+            if pokemon is None:
+                pokemon = pb.pokemon(self.pokedexId)
             for stat in pokemon.stats:
                 statName = stat.stat.name
                 statVal = stat.base_stat
