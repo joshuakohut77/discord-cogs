@@ -61,16 +61,17 @@ class ActionsMixin(MixinMeta):
         btns = []
         for method in methods:
             btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, label=f"{method}", custom_id=f'{method}'),
+                Button(style=ButtonStyle.gray,
+                       label=f"{method}", custom_id=f'{method}'),
                 self.on_action
             ))
-   
+
         message = await ctx.send(
             content="What do you want to do?",
             components=[btns]
         )
-        self.__useractions[str(user.id)] = ActionState(str(user.id), model, message.id)
-
+        self.__useractions[str(user.id)] = ActionState(
+            str(user.id), model, message.id)
 
     async def on_action(self, interaction: Interaction):
         user = interaction.user
@@ -87,11 +88,9 @@ class ActionsMixin(MixinMeta):
             pokemon = trainer.encounter(method)
             if pokemon is None:
                 await interaction.send('No pokemon encountered.')
-            else:
-                await interaction.send(f'You encountered a {pokemon.pokemonName}!')
-                # await interaction.user.send(f'You encountered a {pokemon.pokemonName}!')
-            return
-
+                return
+            
+            await interaction.send(f'You encountered a {pokemon.pokemonName}!')
 
     def __checkTrainerState(self, user: discord.User, message: discord.Message):
         state: ActionState
