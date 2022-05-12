@@ -45,6 +45,10 @@ class PokemartMixin(MixinMeta):
         location = trainer.getLocation()
         store = StoreClass(str(user.id), location.locationId)
 
+        if store.statuscode == 420:
+            await ctx.send(store.message)
+            return
+
         # Create the embed object
         file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/items/poke-ball.png", filename="poke-ball.png")
         embed = discord.Embed(title=f"Pokemart - {location.name}")

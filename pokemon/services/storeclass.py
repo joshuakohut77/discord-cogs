@@ -27,6 +27,15 @@ class store:
             db = dbconn()
             queryString = 'SELECT "item", "price" FROM store WHERE "locationId"=%(locationId)s'
             results = db.queryAll(queryString, {'locationId': self.locationId})
+
+            # If there are not items, then there is no PokeMart
+            # at this location.
+            # Relay that message back to the user
+            if len(results) == 0:
+                self.message = 'There is not a PokeMart at your location.'
+                self.statuscode = 420
+                return
+
             for row in results:
                 item = row[0]
                 price = row[1]
