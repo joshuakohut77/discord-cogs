@@ -57,20 +57,19 @@ class location:
         """ Queries and returns location based off of location name """
         try:
             db = dbconn()
-            if self.discordId is not None:
-                queryStr = """
-                SELECT
-                    *
-                FROM locations
-                    WHERE locations."name" = %(name)s
-                """
-                result = db.querySingle(queryStr, { 'name': locationName })
-                if result:
-                    loc = LocationModel(result)
-                    return loc
-                else:
-                    self.statuscode = 96
-                    self.message = 'Location not found'
+            queryStr = """
+            SELECT
+                *
+            FROM locations
+                WHERE locations."name" = %(name)s
+            """
+            result = db.querySingle(queryStr, { 'name': locationName })
+            if result:
+                loc = LocationModel(result)
+                return loc
+            else:
+                self.statuscode = 96
+                self.message = 'Location not found'
         except:
             self.statuscode = 96
         finally:
