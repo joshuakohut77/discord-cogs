@@ -29,6 +29,7 @@ class Pokemon:
         self.discordId = discordId
         self.pokedexId = pokedexId
         self.pokemonName = None
+        self.pokebaseObj = None
         self.nickName = None
         self.frontSpriteURL = None
         self.backSpriteURL = None
@@ -78,51 +79,38 @@ class Pokemon:
         try:
 
             self.currentLevel = level
-            time1 = time()
             pokemon = pb.pokemon(self.pokedexId)
-            time2 = time()
-            print(time2-time1) # 10s
-            time1=time2
+            self.pokebaseObj = pokemon
             self.pokemonName = pokemon.species.name
             self.pokedexId = pokemon.id
             self.frontSpriteURL = self.__getFrontSpritePath()
             self.backSpriteURL = self.__getBackSpritePath()
             self.growthRate = pb.pokemon_species(pokemon.id).growth_rate.name
             self.base_exp = pokemon.base_experience
-            time2 = time()
-            print(time2-time1) # 1.8s
-            time1=time2
+
             types = self.__getPokemonType(pokemon)
             if len(types) > 0:
                 self.type1 = types[0]
                 if len(types) > 1:
                     self.type2 = types[1]
-            time2 = time()
-            print(time2-time1) # 0s
-            time1=time2
+
             self.traded = False
             self.currentExp = self.__getBaseLevelExperience()
             ivDict = self.__generatePokemonIV()
             evDict = self.__generatePokemonEV()
             baseDict = self.__getPokemonBaseStats(pokemon)
             self.__setPokeStats(baseDict, ivDict, evDict)
-            time2 = time()
-            print(time2-time1) # 11s
-            time1=time2
+
             moveList = self.getMoves(True, pokemon=pokemon)
             self.move_1 = moveList[0]
             self.move_2 = moveList[1]
             self.move_3 = moveList[2]
             self.move_4 = moveList[3]
-            time2 = time()
-            print(time2-time1) # 11s
-            time1=time2
+
             statsDict = self.getPokeStats()
             self.currentHP = statsDict['hp']
             self.statuscode = 69
-            time2 = time()
-            print(time2-time1) #0s
-            time1=time2
+
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
@@ -328,9 +316,9 @@ class Pokemon:
                             # if a pokemon gains multiple levels, notifications of moves learned will be skipped.
                             # this next section is to handle that unique case
                             if (x-1) > 1:
-                                moveList = self.getMoves(reload=True)
+                                moveList = self.getMoves(reload=True, pokemon=self.pokebaseObj)
                             else:
-                                moveList = self.getMoves()
+                                moveList = self.getMoves(pokemon=self.pokebaseObj)
                             levelUp = True
                             newMove = self.__getNewMoves()
                             if newMove != '':
