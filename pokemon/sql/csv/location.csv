@@ -35,7 +35,7 @@ locationId,name,north,east,south,west,prerequisites,spritePath
 147,cerulean-cave,,,,,,/data/cogs/CogManager/cogs/pokemon/sprites/locations/cerulean-cave.png
 151,vermilion-city,kanto-route-6,kanto-route-11,ss-anne,,,/data/cogs/CogManager/cogs/pokemon/sprites/locations/vermilion-city.png
 152,kanto-victory-road-1,kanto-victory-road-2,,kanto-route-22,,,/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-victory-road-1.png
-154,viridian-city,,,,,,/data/cogs/CogManager/cogs/pokemon/sprites/locations/viridian-city.png
+154,viridian-city,kanto-route-2,,kanto-route-1,kanto-route-22,,/data/cogs/CogManager/cogs/pokemon/sprites/locations/viridian-city.png
 155,viridian-forest,,,,,,/data/cogs/CogManager/cogs/pokemon/sprites/locations/viridian-forest.png
 157,kanto-route-23,indigo-plateau,,kanto-victory-road-2,,,/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-23.png
 158,power-plant,,,,kanto-route-10,,/data/cogs/CogManager/cogs/pokemon/sprites/locations/power-plant.png
