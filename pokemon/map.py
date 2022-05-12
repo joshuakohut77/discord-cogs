@@ -139,6 +139,7 @@ class MapMixin(MixinMeta):
 
         state = self.__locations[str(user.id)]
         east = state.location.east
+        await interaction.send(east)
 
         loc = LocationClass()
         direction = loc.getLocationByName(east)
