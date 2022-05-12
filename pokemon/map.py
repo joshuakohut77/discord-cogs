@@ -107,7 +107,7 @@ class MapMixin(MixinMeta):
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        await interaction.respond(f'You walked to {north}')
+        await interaction.send(f'You walked north to {north}')
         
 
     async def on_south(self, interaction: Interaction):
@@ -128,7 +128,7 @@ class MapMixin(MixinMeta):
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        await interaction.respond(f'You walked to {south}')
+        await interaction.send(f'You walked south to {south}')
 
     async def on_east(self, interaction: Interaction):
         user = interaction.user
@@ -148,7 +148,7 @@ class MapMixin(MixinMeta):
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        await interaction.respond(f'You walked to {east}')
+        await interaction.send(f'You walked east to {east}')
 
     async def on_west(self, interaction: Interaction):
         user = interaction.user
@@ -168,7 +168,7 @@ class MapMixin(MixinMeta):
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        await interaction.respond(f'You walked to {west}')
+        await interaction.send(f'You walked west to {west}')
 
 
     def __checkTrainerState(self, user: discord.User, message: discord.Message):
