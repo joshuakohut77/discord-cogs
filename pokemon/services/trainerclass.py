@@ -285,54 +285,73 @@ class trainer:
             self.message = "error occurred during encounter.runAway()"
         return retVal
 
-    def getAreaMethods(self):
-        """ returns the encounter methods in the trainers area """
-        # before starting any area business, verify an active pokemon is set
-        pokemon = self.getActivePokemon()
-        if pokemon is None:
-            self.statuscode = 96
-            self.message =  'You do not have an active Pokemon'
-            return
-        location = self.getLocation()
-        loc = LocationClass()
-        areaIdList = loc.getAreaList(location.locationId)
-        if loc.statuscode == 96:
-            self.statuscode =  96
-            self.message =  "error occurred during loc.getAreaList"
-            return 
-        areaEncounters = loc.getAreaEncounterDetails(areaIdList)
-        if loc.statuscode == 96:
-            self.statuscode =  96
-            self.message = "error occurred during loc.getAreaEncounterDetails"
-            return
-        methods = loc.getMethods(areaEncounters)
-        if loc.statuscode == 96:
-            self.statuscode =  96
-            self.message = "error occurred during loc.getMethods"
-            return
-        return methods
+    # def getAreaMethods(self):
+    #     """ returns the encounter methods in the trainers area """
+    #     # before starting any area business, verify an active pokemon is set
+    #     pokemon = self.getActivePokemon()
+    #     if pokemon is None:
+    #         self.statuscode = 96
+    #         self.message =  'You do not have an active Pokemon'
+    #         return
+    #     location = self.getLocation()
+    #     loc = LocationClass()
+    #     areaIdList = loc.getAreaList(location.locationId)
+    #     if loc.statuscode == 96:
+    #         self.statuscode =  96
+    #         self.message =  "error occurred during loc.getAreaList"
+    #         return 
+    #     areaEncounters = loc.getAreaEncounterDetails(areaIdList)
+    #     if loc.statuscode == 96:
+    #         self.statuscode =  96
+    #         self.message = "error occurred during loc.getAreaEncounterDetails"
+    #         return
+    #     methods = loc.getMethods(areaEncounters)
+    #     if loc.statuscode == 96:
+    #         self.statuscode =  96
+    #         self.message = "error occurred during loc.getMethods"
+    #         return
+    #     return methods
 
-    def getRandomEncounter(self, method):
+    def encounter(self, method):
+        """ handles action  """
+        pokemon = None
+        try:
+            pokemon = self.__getEncounter(method)
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            return pokemon
+    
+    def gift(self):
+        """ handles a gift action """
+        retMsg = ''
+        try:
+            method = 'gift'
+            pokemon = self.__getEncounter(method)
+            pokemon.save()
+            retMsg = 'You received %s!' %pokemon.pokemonName
+            self.statuscode = 420
+            self.message = retMsg
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+
+
+    def __getEncounter(self, method):
         """ gets a random encounter in the current area using the selected method """
         pokemon = None
-        location = self.getLocation()
-        loc = LocationClass()
-        areaIdList = loc.getAreaList(location.locationId)
-        areaEncounters = loc.getAreaEncounterDetails(areaIdList)
-        if loc.statuscode == 96:
-            self.statuscode =  96
-            self.message = "error occurred during loc.getAreaEncounterDetails"
-            return
-        randomEncounter = loc.generateEncounter(areaEncounters, method)
+        loc = LocationClass(self.discordId)
+        selectedEncounter = loc.action(method)
         if loc.statuscode == 96:
             self.statuscode =  96
             self.message = "error occurred during loc.generateEncounter"
             return
-        if randomEncounter is not None:
+        if selectedEncounter is not None:
             # this means a pokemon was found with the method
-            name = randomEncounter['name']
-            min_level = randomEncounter['min_level']
-            max_level = randomEncounter['max_level']
+            name = selectedEncounter['name']
+            min_level = selectedEncounter['min_level']
+            max_level = selectedEncounter['max_level']
             level = random.randrange(int(min_level), int(max_level)+1)
             pokemon = pokeClass(self.discordId, name)
             pokemon.create(level)
@@ -420,6 +439,24 @@ class trainer:
         except:
             self.statuscode = 96
         finally:
+            del db
+    
+    def setLocation(self, locationId):
+        """ updates the trainer table to set the locationId """
+        try:
+            db = dbconn()
+            updateString = """
+            UPDATE trainer
+                SET "locationId"=%(locationId)s
+            WHERE trainer."discord_id" = %(discordId)s
+            """
+            db.execute(updateString, { 'locationId': locationId, 'discordId': self.discordId })
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+            raise
+        finally:
+            # delete and close connection
             del db
 
     ####
