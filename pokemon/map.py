@@ -58,26 +58,46 @@ class MapMixin(MixinMeta):
 
         file = discord.File(f"{location.spritePath}", filename=f"{location.name}.png")
 
-        btns = []
+        ne = []
+        sw = []
         if location.north is not None:
-            btns.append(self.client.add_callback(
+            ne.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji='⬆', label=f"{location.north}"),
                 self.on_north,
             ))
-        if location.south is not None:
-            btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬇', label=f"{location.south}"),
-                self.on_south,
+        else:
+            ne.append(self.client.add_callback(
+                Button(style=ButtonStyle.gray, emoji='⬆', label=f"N/A"),
+                self.on_north,
             ))
         if location.east is not None:
-            btns.append(self.client.add_callback(
+            ne.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji='➡', label=f"{location.east}"),
                 self.on_east,
             ))
-            # emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument='⬅️')
+        else:
+            ne.append(self.client.add_callback(
+                Button(style=ButtonStyle.gray, emoji='➡', label=f"N/A"),
+                self.on_east,
+            ))
+        if location.south is not None:
+            sw.append(self.client.add_callback(
+                Button(style=ButtonStyle.gray, emoji='⬇', label=f"{location.south}"),
+                self.on_south,
+            ))
+        else:
+            sw.append(self.client.add_callback(
+                Button(style=ButtonStyle.gray, emoji='⬇', label=f"N/A"),
+                self.on_south,
+            ))
         if location.west is not None:
-            btns.append(self.client.add_callback(
+            sw.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji='⬅', label=f"{location.west}"),
+                self.on_west,
+            ))
+        else:
+            sw.append(self.client.add_callback(
+                Button(style=ButtonStyle.gray, emoji='⬅', label=f"N/A"),
                 self.on_west,
             ))
             # emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument='⬅️')
@@ -85,7 +105,7 @@ class MapMixin(MixinMeta):
         message = await ctx.send(
             content=location.name,
             file=file,
-            components=[btns]
+            components=[ne, sw]
         )
         self.__locations[str(user.id)] = LocationState(str(user.id), location, message.id)
 
