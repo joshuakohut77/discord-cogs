@@ -148,6 +148,7 @@ class location:
                     chance = x['chance']
                     if randNum <= chance:
                         areaEncounterPokemon = x
+                        break
                         # TODO: Should we be break-ing here after the first successful encounter?
         except:
             self.statuscode = 96
