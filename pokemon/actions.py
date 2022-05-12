@@ -76,9 +76,6 @@ class ActionsMixin(MixinMeta):
     async def on_action(self, interaction: Interaction):
         user = interaction.user
 
-        await interaction.send('on_action')
-        return
-
         if not self.__checkTrainerState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
@@ -93,7 +90,7 @@ class ActionsMixin(MixinMeta):
                 await interaction.send('No pokemon encountered.')
                 return
             
-            await interaction.send(f'You encountered a {pokemon.pokemonName}!')
+            await interaction.send(f'You encountered a pokemon!')
 
     def __checkTrainerState(self, user: discord.User, message: discord.Message):
         state: ActionState
