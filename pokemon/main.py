@@ -29,6 +29,7 @@ from .map import MapMixin
 # import psycopg as pg
 # from .models.helpers import *
 from services.trainerclass import trainer as TrainerClass
+from services.locationclass import location as LocationClass
 # from services.pokeclass import Pokemon as PokemonClass
 # from services.storeclass import store as StoreClass
 # from services.inventoryclass import inventory as InventoryClass
@@ -116,11 +117,13 @@ class Pokemon(StarterMixin, PcMixin, PokemartMixin, InventoryMixin, MapMixin, co
     async def action(self, ctx: commands.Context):
         user = ctx.author
         
-        trainer = TrainerClass(str(user.id))
-        areaMethods = trainer.getAreaMethods()
+        # trainer = TrainerClass(str(user.id))
+        location = LocationClass(str(user.id))
+        methods = location.getMethods()
+        # areaMethods = trainer.getAreaMethods()
 
         btns = []
-        for method in areaMethods:
+        for method in methods:
             btns.append(Button(style=ButtonStyle.gray, label=f"{method}", custom_id=f'{method}'))
 
         if len(btns) > 0:
@@ -129,7 +132,7 @@ class Pokemon(StarterMixin, PcMixin, PokemartMixin, InventoryMixin, MapMixin, co
                 components=[btns]
             )
         else:
-            await ctx.send(f'areaId: {trainer.getAreaId()} - No actions available')
+            await ctx.send(f'location - No actions available')
 
 
     @_trainer.command()
