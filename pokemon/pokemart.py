@@ -81,48 +81,65 @@ class PokemartMixin(MixinMeta):
 
         for item in store.storeList:
             emoji = '▶️'
-            description = 'description here'
+            description = ''
 
             if item['item'] == 'poke-ball':
                 emoji = constant.POKEBALL
+                description = "A device for catching wild Pokémon. It's thrown like a ball, comfortably encapsulating its target."
             elif item['item'] == 'great-ball':
                 emoji = constant.GREATBALL
+                description = "A high-performance Ball with a higher catch rate than a standard Poké Ball."
             elif item['item'] == 'ultra-ball':
                 emoji = constant.ULTRABALL
+                description = "An ultra-performance Ball with a higher catch rate than a Great Ball."
             elif item['item'] == 'master-ball':
                 emoji = constant.MASTERBALL
+                description = "The best Poké Ball with the ultimate level of performance. With it, you will catch any wild Pokémon without fail."
             elif item['item'] == 'potion':
                 emoji = constant.POTION
+                description = "Restores HP that have been lost in battle by 20 HP."
             elif item['item'] == 'super-potion':
                 emoji = constant.SUPERPOTION
+                description = "Restores HP that have been lost in battle by 50 HP."
             elif item['item'] == 'hyper-potion':
                 emoji = constant.HYPERPOTION
+                description = "Restores HP that have been lost in battle by 200 HP."
             elif item['item'] == 'max-potion':
                 emoji = constant.MAXPOTION
+                description = "Fully restores HP that have been lost in battle."
             elif item['item'] == 'revive':
                 emoji = constant.REVIVE
+                description = "Revives a fainted Pokémon and restores half its maximum HP."
             elif item['item'] == 'full-restore':
                 emoji = constant.FULLRESTORE
+                description = "Fully restores HP and cures all ailments, such as poisoning."
             elif item['item'] == 'repel':
                 emoji = constant.REPEL
+                description = "An aerosol spray that keeps wild Pokémon away."
             elif item['item'] == 'max-repel':
                 emoji = constant.MAXREPEL
+                description = "Keeps wild Pokémon away. Longer lasting than Super Repel."
             elif item['item'] == 'escape-rope':
                 emoji = constant.ESCAPEROPE
+                description = "When in a place like a cave, this returns you to the last Pokémon Center visited."
             elif item['item'] == 'awakening':
                 emoji = constant.AWAKENING
+                description = "Awakens a Pokémon that has fallen asleep."
             elif item['item'] == 'antidote':
                 emoji = constant.ANTIDOTE
-            elif item['item'] == 'antidote':
-                emoji = constant.ANTIDOTE
+                description = "An antidote for curing a poisoned Pokémon."
             elif item['item'] == 'ice-heal':
                 emoji = constant.ICEHEAL
+                description = "Thaws out a Pokémon that has been frozen solid."
             elif item['item'] == 'burn-heal':
                 emoji = constant.BURNHEAL
+                description = "Medicine for curing a Pokémon that is suffering from burn."
             elif item['item'] == 'paralyze-heal':
                 emoji = constant.PARALYZEHEAL
+                description = "Cures a Pokémon that is suffering from paralysis."
             elif item['item'] == 'full-heal':
                 emoji = constant.FULLHEAL
+                description = "Cures a Pokémon of any ailment except for fainting."
             
             embed.add_field(name=f"{emoji}  {item['item']} — {item['price']}", value=description, inline=False)
 
