@@ -72,7 +72,8 @@ class inventory:
                             "master-ball", "potion", "super-potion", "hyper-potion", "revive", 
                             "full-restore", "repel", "awakening", "escape-rope", "full-heal",
                             "ice-heal", "max-repel", "burn-heal", "paralyze-heal", 
-                            "max-potion", "antidote", "super-repel" FROM inventory WHERE "discord_id"=%(discordId)s'''
+                            "max-potion", "antidote", "super-repel" 
+                            FROM inventory WHERE "discord_id"=%(discordId)s'''
             result = db.querySingle(queryString, { 'discordId': self.discordId })
             if len(result) > 0:
                 self.money = result[0]
