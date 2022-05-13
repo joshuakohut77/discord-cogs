@@ -56,6 +56,7 @@ class inventory:
         self.xattack = None
         self.xdefense = None
         self.xspatk = None
+        self.xspdef = None
         self.xspeed = None
         self.firestone = None
         self.waterstone = None
@@ -82,7 +83,7 @@ class inventory:
                                 "ether"=%(ether)s, "nugget"=%(nugget)s, "old-amber"=%(oldamber)s, 
                                 "poke-doll"=%(pokedoll)s, "pp-up"=%(ppup)s, "soda-pop"=%(sodapop)s, 
                                 "town-map"=%(townmap)s, "x-accuracy"=%(xaccuracy)s, "x-attack"=%(xattack)s, 
-                                "x-defense"=%(xdefense)s, "x-sp-atk"=%(xspatk)s, 
+                                "x-defense"=%(xdefense)s, "x-sp-atk"=%(xspatk)s, "x-sp-def"=%(xspatk)s, 
                                 "x-speed"=%(xspeed)s, "fire-stone"=%(firestone)s, 
                                 "water-stone"=%(waterstone)s, "thunder-stone"=%(thunderstone)s, 
                                 "leaf-stone"=%(leafstone)s, "moon-stone"=%(moonstone)s
@@ -102,8 +103,8 @@ class inventory:
                             'ether': self.ether, 'nugget': self.nugget, 'oldamber': self.oldamber, 
                             'pokedoll': self.pokedoll, 'ppup': self.ppup, 'sodapop': self.sodapop, 
                             'townmap': self.townmap, 'xaccuracy': self.xaccuracy, 
-                            'xattack': self.xattack, 'xdefense': self.xdefense, 
-                            'xspatk': self.xspatk, 'xspeed': self.xspeed, 'firestone': self.firestone, 
+                            'xattack': self.xattack, 'xdefense': self.xdefense, 'xspatk': self.xspatk, 
+                            'xspdef': self.xspdef, 'xspeed': self.xspeed, 'firestone': self.firestone, 
                             'waterstone': self.waterstone, 'thunderstone': self.thunderstone, 
                             'leafstone': self.leafstone, 'moonstone': self.moonstone, 'discordId': self.discordId }
             db.execute(updateString, values)
@@ -128,7 +129,8 @@ class inventory:
                             "helix-fossil", "hp-up", lemonade, elixer, "max-elixir", 
                             "max-ether", ether, nugget, "old-amber", "poke-doll", 
                             "pp-up", "soda-pop", "town-map", "x-accuracy", "x-defense", 
-                            "x-attack", "x-sp-atk", "x-speed", "fire-stone", "water-stone", 
+                            "x-attack", "x-sp-atk", "x-sp-def", "x-speed", 
+                            "fire-stone", "water-stone", 
                             "thunder-stone", "leaf-stone", "moon-stone" 
                             FROM inventory WHERE "discord_id"=%(discordId)s'''
             result = db.querySingle(queryString, { 'discordId': self.discordId })
@@ -177,12 +179,13 @@ class inventory:
                 self.xdefense = result[41]
                 self.xattack = result[42]
                 self.xspatk = result[43]
-                self.xspeed = result[44]
-                self.firestone = result[45]
-                self.waterstone = result[46]
-                self.thunderstone = result[47]
-                self.leafstone = result[48]
-                self.moonstone = result[49]
+                self.xspdef = result[44]
+                self.xspeed = result[45]
+                self.firestone = result[46]
+                self.waterstone = result[47]
+                self.thunderstone = result[48]
+                self.leafstone = result[49]
+                self.moonstone = result[50]
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
