@@ -127,27 +127,29 @@ class InventoryMixin(MixinMeta):
         items = []
 
         if inv.pokeball > 0:
-            items.append(f'{constant.POKEBALL} **Pokeballs** — {inv.pokeball}')
+            items.append(f'{constant.POKEBALL} **Poke balls** — {inv.pokeball}')
         if inv.greatball > 0:
-            items.append(f'{constant.GREATBALL} **Greatballs** — {inv.greatball}')
+            items.append(f'{constant.GREATBALL} **Great balls** — {inv.greatball}')
         if inv.ultraball > 0:
-            items.append(f'{constant.ULTRABALL} **Ultraball** — {inv.ultraball}')
+            items.append(f'{constant.ULTRABALL} **Ultra balls** — {inv.ultraball}')
         if inv.masterball > 0:
-            items.append(f'{constant.MASTERBALL} **Masterball** — {inv.masterball}')
+            items.append(f'{constant.MASTERBALL} **Master ball** — {inv.masterball}')
         if inv.potion > 0:
             items.append(f'{constant.POTION} **Potion** — {inv.potion}')
         if inv.superpotion > 0:
-            items.append(f'{constant.SUPERPOTION} **Superpotion** — {inv.superpotion}')
+            items.append(f'{constant.SUPERPOTION} **Super potion** — {inv.superpotion}')
         if inv.hyperpotion > 0:
-            items.append(f'{constant.HYPERPOTION} **Hyperpotion** — {inv.hyperpotion}')
+            items.append(f'{constant.HYPERPOTION} **Hyper potion** — {inv.hyperpotion}')
         if inv.maxpotion > 0:
-            items.append(f'{constant.MAXPOTION} **Maxpotion** — {inv.maxpotion}')
+            items.append(f'{constant.MAXPOTION} **Max potion** — {inv.maxpotion}')
         if inv.revive > 0:
             items.append(f'{constant.REVIVE} **Revive** — {inv.revive}')
         if inv.fullrestore > 0:
             items.append(f'{constant.FULLRESTORE} **Full Restore** — {inv.fullrestore}')
         if inv.repel > 0:
             items.append(f'{constant.REPEL} **Repel** — {inv.repel}')
+        if inv.superrepel > 0:
+            items.append(f'{constant.REPEL} **Super Repel** — {inv.superrepel}')
         if inv.maxrepel > 0:
             items.append(f'{constant.MAXREPEL} **Max Repel** — {inv.maxrepel}')
         if inv.escaperope > 0:
@@ -164,6 +166,63 @@ class InventoryMixin(MixinMeta):
             items.append(f'{constant.PARALYZEHEAL} **Paralyzeheal** — {inv.paralyzeheal}')
         if inv.fullheal > 0:
             items.append(f'{constant.FULLHEAL} **Fullheal** — {inv.fullheal}')
+        if inv.calcium > 0:
+            items.append(f'{constant.CALCIUM} **Calcium** — {inv.calcium}')
+        if inv.carbos > 0:
+            items.append(f'{constant.CARBOS} **Carbos** — {inv.carbos}')
+        if inv.coincase > 0:
+            items.append(f'{constant.COINCASE} **Coin Case** — {inv.coincase}')
+        if inv.direhit > 0:
+            items.append(f'{constant.DIREHIT} **Direhit** — {inv.direhit}')
+        if inv.domefossil > 0:
+            items.append(f'{constant.DOMEFOSSIL} **Dome Fossil** — {inv.domefossil}')
+        if inv.helixfossil > 0:
+            items.append(f'{constant.HELIXFOSSIL} **Helix Fossil** — {inv.helixfossil}')
+        if inv.freshwater > 0:
+            items.append(f'{constant.FRESHWATER} **Freshwater** — {inv.freshwater}')
+        if inv.hpup > 0:
+            items.append(f'{constant.HPUP} **HP Up** — {inv.hpup}')
+        if inv.lemonade > 0:
+            items.append(f'{constant.LEMONADE} **Lemonade** — {inv.lemonade}')
+        if inv.elixer > 0:
+            items.append(f'{constant.ELIXIR} **Elixir** — {inv.elixer}')
+        if inv.maxelixer > 0:
+            items.append(f'{constant.MAXELIXIR} **Max Elixir** — {inv.maxelixer}')
+        if inv.maxether > 0:
+            items.append(f'{constant.MAXETHER} **Max Ether** — {inv.maxether}')
+        if inv.ether > 0:
+            items.append(f'{constant.ETHER} **Ether** — {inv.ether}')
+        if inv.nugget > 0:
+            items.append(f'{constant.NUGGET} **Nugget** — {inv.nugget}')
+        if inv.oldamber > 0:
+            items.append(f'{constant.OLDAMBER} **Old Amber** — {inv.oldamber}')
+        if inv.pokedoll > 0:
+            items.append(f'{constant.POKEDOLL} **Poke Doll** — {inv.pokedoll}')
+        if inv.ppup > 0:
+            items.append(f'{constant.PPUP} **PP Up** — {inv.ppup}')
+        if inv.sodapop > 0:
+            items.append(f'{constant.SODAPOP} **Soda Pop** — {inv.sodapop}')
+        if inv.townmap > 0:
+            items.append(f'{constant.TOWNMAP} **Town Map** — {inv.townmap}')
+        if inv.xaccuracy > 0:
+            items.append(f'{constant.XACCURACY} **X Accuracy** — {inv.xaccuracy}')
+        if inv.xdefense > 0:
+            items.append(f'{constant.XDEFENSE} **X Defense** — {inv.xdefense}')
+        if inv.xspatk > 0:
+            items.append(f'{constant.XSPATTACK} **X Sp. Attack** — {inv.xspatk}')
+        if inv.xspeed > 0:
+            items.append(f'{constant.XSPEED} **X Speed** — {inv.xspeed}')
+        if inv.firestone > 0:
+            items.append(f'{constant.FIRESTONE} **Firestone** — {inv.firestone}')
+        if inv.waterstone > 0:
+            items.append(f'{constant.WATERSTONE} **Waterstone** — {inv.waterstone}')
+        if inv.thunderstone > 0:
+            items.append(f'{constant.THUNDERSTONE} **Thunderstone** — {inv.thunderstone}')
+        if inv.leafstone > 0:
+            items.append(f'{constant.LEAFSTONE} **Leafstone** — {inv.leafstone}')
+        if inv.moonstone > 0:
+            items.append(f'{constant.MOONSTONE} **Moonstone** — {inv.moonstone}')
+
 
         trainerItems = "\r\n".join(items)
         embed.add_field(name='Items', value=trainerItems, inline=False)
