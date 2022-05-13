@@ -28,6 +28,24 @@ class encounter:
         self.pokemon2 = pokemon2
         pokedex(self.pokemon1.discordId, pokemon2)
 
+    def trade(self):
+        """ trades pokemon between two trainers """
+        discordId1 = self.pokemon1.discordId
+        discordId2 = self.pokemon2.discordId
+        
+        self.pokemon1.discordId = discordId2
+        self.pokemon2.discordId = discordId1
+        self.pokemon1.traded = True
+        self.pokemon2.traded = True
+        
+        self.pokemon1.save()
+        self.pokemon2.save()
+
+        # leaderboard stats
+        lb = leaderboard(self.pokemon1.discordId)
+        lb.trades()
+
+
     def fight(self):
         """ two pokemon fight and a outcome is decided """
         # two pokemon fight with an outcome calling victory or defeat
