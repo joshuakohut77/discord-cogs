@@ -26,6 +26,37 @@ class leaderboard:
         self.total_completions = None
         self.total_trades = None
 
+    def load(self):
+        """ loads and populates the class object """
+        try:
+            db = dbconn()
+            queryString = """
+                SELECT total_battles, total_victory, total_defeat, total_actions, 
+                    total_balls_thrown, total_catch, total_run_away, total_released, 
+                    total_evolved, total_easter_eggs, total_completions, total_trades 
+                    WHERE discord_id = %(discordId)s
+                """
+            result = db.querySingle(queryString, { 'discordId': self.discordId })
+            if result:
+                self.total_battles = result[0]
+                self.total_victory = result[1]
+                self.total_defeat = result[2]
+                self.total_actions = result[3]
+                self.total_balls_thrown = result[4]
+                self.total_catch = result[5]
+                self.total_run_away = result[6]
+                self.total_released = result[7]
+                self.total_evolved = result[8]
+                self.total_easter_eggs = result[9]
+                self.total_completions = result[10]
+                self.total_trades = result[11]
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            # delete and close connection
+            del db  
+
     def victory(self):
         try:
             db = dbconn()
