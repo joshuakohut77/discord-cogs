@@ -93,11 +93,11 @@ class PokemartMixin(MixinMeta):
                 emoji = constant.MASTERBALL
             elif item['item'] == 'potion':
                 emoji = constant.POTION
-            elif item['item'] == 'superpotion':
+            elif item['item'] == 'super-potion':
                 emoji = constant.SUPERPOTION
-            elif item['item'] == 'hyperpotion':
+            elif item['item'] == 'hyper-potion':
                 emoji = constant.HYPERPOTION
-            elif item['item'] == 'maxpotion':
+            elif item['item'] == 'max-potion':
                 emoji = constant.MAXPOTION
             elif item['item'] == 'revive':
                 emoji = constant.REVIVE
@@ -115,9 +115,9 @@ class PokemartMixin(MixinMeta):
                 emoji = constant.ANTIDOTE
             elif item['item'] == 'antidote':
                 emoji = constant.ANTIDOTE
-            elif item['item'] == 'iceheal':
+            elif item['item'] == 'ice-heal':
                 emoji = constant.ICEHEAL
-            elif item['item'] == 'burnheal':
+            elif item['item'] == 'burn-heal':
                 emoji = constant.BURNHEAL
             elif item['item'] == 'paralyze-heal':
                 emoji = constant.PARALYZEHEAL
