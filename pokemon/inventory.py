@@ -212,6 +212,8 @@ class InventoryMixin(MixinMeta):
             items.append(f'{constant.XSPATTACK} **X Sp. Attack** — {inv.xspatk}')
         if inv.xspeed > 0:
             items.append(f'{constant.XSPEED} **X Speed** — {inv.xspeed}')
+        if inv.xattack > 0:
+            items.append(f'{constant.XATTACK} **X Attack** — {inv.xattack}')
         if inv.firestone > 0:
             items.append(f'{constant.FIRESTONE} **Firestone** — {inv.firestone}')
         if inv.waterstone > 0:
