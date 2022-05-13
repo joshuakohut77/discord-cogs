@@ -53,6 +53,7 @@ class inventory:
         self.sodapop = None
         self.townmap = None
         self.xaccuracy = None
+        self.xattack = None
         self.xdefense = None
         self.xspatk = None
         self.xspeed = None
@@ -80,7 +81,8 @@ class inventory:
                                 "elixer"=%(elixer)s, "max-elixer"=%(maxelixer)s, "max-ether"=%(maxether)s, 
                                 "ether"=%(ether)s, "nugget"=%(nugget)s, "old-amber"=%(oldamber)s, 
                                 "poke-doll"=%(pokedoll)s, "pp-up"=%(ppup)s, "soda-pop"=%(sodapop)s, 
-                                "town-map"=%(townmap)s, "x-accuracy"=%(xaccuracy)s, "x-defense"=%(xdefense)s, 
+                                "town-map"=%(townmap)s, "x-accuracy"=%(xaccuracy)s, "x-attack"=%(xattack)s, 
+                                "x-defense"=%(xdefense)s, 
                                 "x-sp-atk"=%(xspatk)s, "x-speed"=%(xspeed)s, "fire-stone"=%(firestone)s, 
                                 "water-stone"=%(waterstone)s, "thunder-stone"=%(thunderstone)s, 
                                 "leaf-stone"=%(leafstone)s, "moon-stone"=%(moonstone)s
@@ -99,7 +101,7 @@ class inventory:
                             'elixer': self.elixer, 'maxelixer': self.maxelixer, 'maxether': self.maxether, 
                             'ether': self.ether, 'nugget': self.nugget, 'oldamber': self.oldamber, 
                             'pokedoll': self.pokedoll, 'ppup': self.ppup, 'sodapop': self.sodapop, 
-                            'townmap': self.townmap, 'xaccuracy': self.xaccuracy, 'xdefense': self.xdefense, 
+                            'townmap': self.townmap, 'xaccuracy': self.xaccuracy, 'xattack': self.xattack, 'xdefense': self.xdefense, 
                             'xspatk': self.xspatk, 'xspeed': self.xspeed, 'firestone': self.firestone, 
                             'waterstone': self.waterstone, 'thunderstone': self.thunderstone, 
                             'leafstone': self.leafstone, 'moonstone': self.moonstone, 'discordId': self.discordId }
@@ -125,6 +127,7 @@ class inventory:
                             "helix-fossil", "hp-up", lemonade, elixer, "max-elixir", 
                             "max-ether", ether, nugget, "old-amber", "poke-doll", 
                             "pp-up", "soda-pop", "town-map", "x-accuracy", "x-defense", 
+                            "x-attack", 
                             "x-sp-atk", "x-speed", "fire-stone", "water-stone", 
                             "thunder-stone", "leaf-stone", "moon-stone" 
                             FROM inventory WHERE "discord_id"=%(discordId)s'''
@@ -171,14 +174,15 @@ class inventory:
                 self.sodapop = result[38]
                 self.townmap = result[39]
                 self.xaccuracy = result[40]
-                self.xdefense = result[41]
-                self.xspatk = result[42]
-                self.xspeed = result[43]
-                self.firestone = result[44]
-                self.waterstone = result[45]
-                self.thunderstone = result[46]
-                self.leafstone = result[47]
-                self.moonstone = result[48]
+                self.xaccuracy = result[41]
+                self.xdefense = result[42]
+                self.xspatk = result[43]
+                self.xspeed = result[44]
+                self.firestone = result[45]
+                self.waterstone = result[46]
+                self.thunderstone = result[47]
+                self.leafstone = result[48]
+                self.moonstone = result[49]
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
