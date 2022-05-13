@@ -20,6 +20,7 @@ from services.storeclass import store as StoreClass
 from .abcd import MixinMeta
 from .functions import (createStatsEmbed, getTypeColor,
                         createPokemonAboutEmbed)
+import constant
 
 
 class PokemartMixin(MixinMeta):
@@ -79,7 +80,51 @@ class PokemartMixin(MixinMeta):
         # full-restore,3000
 
         for item in store.storeList:
-            embed.add_field(name=f"▶️  {item['item']} — {item['price']}", value='description of item', inline=False)
+            emoji = '▶️'
+            description = 'description here'
+
+            if item['item'] == 'poke-ball':
+                emoji = constant.POKEBALL
+            elif item['item'] == 'great-ball':
+                emoji = constant.GREATBALL
+            elif item['item'] == 'ultra-ball':
+                emoji = constant.ULTRABALL
+            elif item['item'] == 'master-ball':
+                emoji = constant.MASTERBALL
+            elif item['item'] == 'potion':
+                emoji = constant.POTION
+            elif item['item'] == 'superpotion':
+                emoji = constant.SUPERPOTION
+            elif item['item'] == 'hyperpotion':
+                emoji = constant.HYPERPOTION
+            elif item['item'] == 'maxpotion':
+                emoji = constant.MAXPOTION
+            elif item['item'] == 'revive':
+                emoji = constant.REVIVE
+            elif item['item'] == 'full-restore':
+                emoji = constant.FULLRESTORE
+            elif item['item'] == 'repel':
+                emoji = constant.REPEL
+            elif item['item'] == 'max-repel':
+                emoji = constant.MAXREPEL
+            elif item['item'] == 'escape-rope':
+                emoji = constant.ESCAPEROPE
+            elif item['item'] == 'awakening':
+                emoji = constant.AWAKENING
+            elif item['item'] == 'antidote':
+                emoji = constant.ANTIDOTE
+            elif item['item'] == 'antidote':
+                emoji = constant.ANTIDOTE
+            elif item['item'] == 'iceheal':
+                emoji = constant.ICEHEAL
+            elif item['item'] == 'burnheal':
+                emoji = constant.BURNHEAL
+            elif item['item'] == 'paralyze-heal':
+                emoji = constant.PARALYZEHEAL
+            elif item['item'] == 'full-heal':
+                emoji = constant.FULLHEAL
+            
+            embed.add_field(name=f"{emoji}  {item['item']} — {item['price']}", value=description, inline=False)
 
         await ctx.send(file=file, embed=embed)
         await ctx.tick()
