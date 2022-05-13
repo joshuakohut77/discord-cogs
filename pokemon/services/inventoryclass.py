@@ -82,8 +82,8 @@ class inventory:
                                 "ether"=%(ether)s, "nugget"=%(nugget)s, "old-amber"=%(oldamber)s, 
                                 "poke-doll"=%(pokedoll)s, "pp-up"=%(ppup)s, "soda-pop"=%(sodapop)s, 
                                 "town-map"=%(townmap)s, "x-accuracy"=%(xaccuracy)s, "x-attack"=%(xattack)s, 
-                                "x-defense"=%(xdefense)s, 
-                                "x-sp-atk"=%(xspatk)s, "x-speed"=%(xspeed)s, "fire-stone"=%(firestone)s, 
+                                "x-defense"=%(xdefense)s, "x-sp-atk"=%(xspatk)s, 
+                                "x-speed"=%(xspeed)s, "fire-stone"=%(firestone)s, 
                                 "water-stone"=%(waterstone)s, "thunder-stone"=%(thunderstone)s, 
                                 "leaf-stone"=%(leafstone)s, "moon-stone"=%(moonstone)s
                                 WHERE "discord_id"=%(discordId)s'''
@@ -101,7 +101,8 @@ class inventory:
                             'elixer': self.elixer, 'maxelixer': self.maxelixer, 'maxether': self.maxether, 
                             'ether': self.ether, 'nugget': self.nugget, 'oldamber': self.oldamber, 
                             'pokedoll': self.pokedoll, 'ppup': self.ppup, 'sodapop': self.sodapop, 
-                            'townmap': self.townmap, 'xaccuracy': self.xaccuracy, 'xattack': self.xattack, 'xdefense': self.xdefense, 
+                            'townmap': self.townmap, 'xaccuracy': self.xaccuracy, 
+                            'xattack': self.xattack, 'xdefense': self.xdefense, 
                             'xspatk': self.xspatk, 'xspeed': self.xspeed, 'firestone': self.firestone, 
                             'waterstone': self.waterstone, 'thunderstone': self.thunderstone, 
                             'leafstone': self.leafstone, 'moonstone': self.moonstone, 'discordId': self.discordId }
@@ -127,8 +128,7 @@ class inventory:
                             "helix-fossil", "hp-up", lemonade, elixer, "max-elixir", 
                             "max-ether", ether, nugget, "old-amber", "poke-doll", 
                             "pp-up", "soda-pop", "town-map", "x-accuracy", "x-defense", 
-                            "x-attack", 
-                            "x-sp-atk", "x-speed", "fire-stone", "water-stone", 
+                            "x-attack", "x-sp-atk", "x-speed", "fire-stone", "water-stone", 
                             "thunder-stone", "leaf-stone", "moon-stone" 
                             FROM inventory WHERE "discord_id"=%(discordId)s'''
             result = db.querySingle(queryString, { 'discordId': self.discordId })
