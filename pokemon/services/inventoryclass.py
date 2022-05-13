@@ -78,7 +78,7 @@ class inventory:
                                 "calcium"=%(calcium)s, "carbos"=%(carbos)s, "coin-case"=%(coincase)s,
                                 "dire-hit"=%(direhit)s, "dome-fossil"=%(domefossil)s, "fresh-water"=%(freshwater)s,
                                 "helix-fossil"=%(helixfossil)s, "hp-up"=%(hpup)s, "lemonade"=%(lemonade)s, 
-                                "elixer"=%(elixer)s, "max-elixer"=%(maxelixer)s, "max-ether"=%(maxether)s, 
+                                "elixer"=%(elixer)s, "max-elixir"=%(maxelixer)s, "max-ether"=%(maxether)s, 
                                 "ether"=%(ether)s, "nugget"=%(nugget)s, "old-amber"=%(oldamber)s, 
                                 "poke-doll"=%(pokedoll)s, "pp-up"=%(ppup)s, "soda-pop"=%(sodapop)s, 
                                 "town-map"=%(townmap)s, "x-accuracy"=%(xaccuracy)s, "x-attack"=%(xattack)s, 
