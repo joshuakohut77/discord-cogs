@@ -176,13 +176,14 @@ class inventory:
                 self.xaccuracy = result[40]
                 self.xaccuracy = result[41]
                 self.xdefense = result[42]
-                self.xspatk = result[43]
-                self.xspeed = result[44]
-                self.firestone = result[45]
-                self.waterstone = result[46]
-                self.thunderstone = result[47]
-                self.leafstone = result[48]
-                self.moonstone = result[49]
+                self.xattack = result[43]
+                self.xspatk = result[44]
+                self.xspeed = result[45]
+                self.firestone = result[46]
+                self.waterstone = result[47]
+                self.thunderstone = result[48]
+                self.leafstone = result[49]
+                self.moonstone = result[50]
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
