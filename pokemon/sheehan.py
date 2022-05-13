@@ -9,10 +9,13 @@ sys.path.append(os.path.join(os.path.dirname(
 
 from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
+from services.storeclass import store as StoreClass
 
 
 trainer = TrainerClass('509767223938777108')
-pokemon = trainer.encounter('walk')
+
+store = StoreClass(trainer.discordId, 232)
+# pokemon = trainer.encounter('walk')
 # areaId = trainer.getAreaId()
 
 # Location: 88 - Kanto Route 1

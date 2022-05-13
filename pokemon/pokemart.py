@@ -116,6 +116,9 @@ class PokemartMixin(MixinMeta):
             elif item['item'] == 'repel':
                 emoji = constant.REPEL
                 description = "An aerosol spray that keeps wild Pokémon away."
+            elif item['item'] == 'super-repel':
+                emoji = constant.SUPERREPEL
+                description = "Keeps wild Pokémon away. Longer lasting than Repel."
             elif item['item'] == 'max-repel':
                 emoji = constant.MAXREPEL
                 description = "Keeps wild Pokémon away. Longer lasting than Super Repel."
