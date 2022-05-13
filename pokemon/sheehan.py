@@ -10,9 +10,11 @@ sys.path.append(os.path.join(os.path.dirname(
 from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
 from services.storeclass import store as StoreClass
+from services.inventoryclass import inventory as InventoryClass
 
 
 trainer = TrainerClass('509767223938777108')
+inv = InventoryClass(trainer.discordId)
 
 store = StoreClass(trainer.discordId, 232)
 # pokemon = trainer.encounter('walk')
