@@ -32,6 +32,7 @@ class inventory:
         self.paralyzeheal = None
         self.maxpotion = None
         self.antidote = None
+        self.superrepel = None
         self.__loadInventory()
 
     def save(self):
@@ -44,7 +45,7 @@ class inventory:
                                 "repel"=%(repel)s, "awakening"=%(awakening)s, "master-ball"=%(masterball)s,
                                 "escape-rope"=%(escaperope)s, "full-heal"=%(fullheal)s, "ice-heal"=%(iceheal)s, 
                                 "max-repel"=%(maxrepel)s, "burn-heal"=%(burnheal)s, "paralyze-heal"=%(paralyzeheal)s, 
-                                "max-potion"=%(maxpotion)s, "antidote"=%(antidote)s
+                                "max-potion"=%(maxpotion)s, "antidote"=%(antidote)s, "super-repel"=%(superrepel)s
                                 WHERE "discord_id"=%(discordId)s'''
             values = { 'money': self.money, 'pokeball':self.pokeball,
                             'potion': self.potion, 'greatball': self.greatball, 'ultraball': self.ultraball,
@@ -53,7 +54,7 @@ class inventory:
                             'masterball': self.masterball, 'escaperope': self.escaperope, 'fullheal': self.fullheal, 
                             'iceheal': self.iceheal, 'maxrepel': self.maxrepel, 'burnheal': self.burnheal, 
                             'paralyzeheal': self.paralyzeheal, 'maxpotion': self.maxpotion, 'antidote': self.antidote, 
-                            'discordId': self.discordId }
+                            'superrepel': self.superrepel, 'discordId': self.discordId }
             db.execute(updateString, values)
         except:
             self.statuscode = 96
@@ -71,7 +72,7 @@ class inventory:
                             "master-ball", "potion", "super-potion", "hyper-potion", "revive", 
                             "full-restore", "repel", "awakening", "escape-rope", "full-heal",
                             "ice-heal", "max-repel", "burn-heal", "paralyze-heal", 
-                            "max-potion", "antidote" FROM inventory WHERE "discord_id"=%(discordId)s'''
+                            "max-potion", "antidote", "super-repel" FROM inventory WHERE "discord_id"=%(discordId)s'''
             result = db.querySingle(queryString, { 'discordId': self.discordId })
             if len(result) > 0:
                 self.money = result[0]
@@ -94,6 +95,7 @@ class inventory:
                 self.paralyzeheal = result[17]
                 self.maxpotion = result[18]
                 self.antidote = result[19]
+                self.antidote = result[20]
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
