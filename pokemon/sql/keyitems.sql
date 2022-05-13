@@ -23,9 +23,9 @@ CREATE TABLE IF NOT EXISTS public.keyitems
     oaks_parcel boolean DEFAULT false,
     ss_ticket boolean DEFAULT false,
     bicycle boolean DEFAULT false,
-    "old-rod" boolean DEFAULT false,
-    "good-rod" boolean DEFAULT false,
-    "super-rod" boolean DEFAULT false,
+    old_rod boolean DEFAULT false,
+    good_rod boolean DEFAULT false,
+    super_rod boolean DEFAULT false,
     item_finder boolean DEFAULT false,
     CONSTRAINT keyitems_pkey PRIMARY KEY (discord_id)
 )
