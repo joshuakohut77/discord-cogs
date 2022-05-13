@@ -7,6 +7,7 @@ import random
 from dbclass import db as dbconn
 from expclass import experiance as exp
 from inventoryclass import inventory as inv
+from leaderboardclass import leaderboard
 from loggerclass import logger as log
 from pokedexclass import pokedex
 
@@ -81,16 +82,17 @@ class encounter:
                 self.message = 'Failed to defeat enemy pokemon. The Pokemon ran away'
                 break
 
-
-
     def runAway(self):
         """ run away from battle """
         # todo add a very small chance to not run away and result in defeat using random
         if random.randrange(1,100) <= 8:
-            self.statuscode = 96
+            self.statuscode = 420
             self.message = 'You failed to run away! ' + self.message
             self.__defeat()
         else:
+            # leaderboard stats
+            lb = leaderboard(self.pokemon1.discordId)
+            lb.run_away()
             self.statuscode = 420
             self.message = "You successfully got away"
         return self.message
@@ -99,7 +101,7 @@ class encounter:
         # roll chance to catch pokemon and it either runs away or
         #poke-ball, great-ball, ultra-ball, master-ball
         if not self.pokemon2.wildPokemon:
-            self.statuscode = 96
+            self.statuscode = 420
             self.message = "You can only catch Wild Pokemon!"
         pokemonCaught = False
         inventory = inv(self.pokemon1.discordId)
@@ -130,12 +132,19 @@ class encounter:
             if catchRate >= breakFree:
                 pokemonCaught = True
 
+        # leaderboard stats
+        lb = leaderboard(self.pokemon1.discordId)
+        lb.balls_thrown()
+
         inventory.save()
         if inventory.statuscode == 96:
             self.statuscode = 96
             self.message = "error occured during inventory save()"
 
         if pokemonCaught:
+            # leaderboard stats
+            lb = leaderboard(self.pokemon1.discordId)
+            lb.catch()
             # pokemon caught successfully. Save it to the trainers inventory
             self.pokemon2.discordId = self.pokemon1.discordId
             self.pokemon2.save()
@@ -158,6 +167,7 @@ class encounter:
         if expObj.statuscode == 96:
             self.statuscode = 96
             self.message = "error occured during expericne calculations"
+            return 
         newCurrentHP = self.pokemon1.currentHP
 
         levelUp, retMsg = self.pokemon1.processBattleOutcome(
@@ -169,6 +179,11 @@ class encounter:
             resultString = resultString + ' Your Pokemon leveled up!'
         if retMsg != '':
             resultString = resultString + ' ' + retMsg
+
+        # leaderboard stats
+        lb = leaderboard(self.pokemon1.discordId)
+        lb.victory()
+
         self.statuscode = 420
         self.message = resultString
         return resultString
@@ -182,6 +197,12 @@ class encounter:
         if self.pokemon1.statuscode == 96:
             self.statuscode = 96
             self.message = "error occured during processBattleOutcome"
+            return
+        
+        # leaderboard stats
+        lb = leaderboard(self.pokemon1.discordId)
+        lb.defeat()
+
         self.statuscode = 420
         self.message = "Your Pokemon Fainted."
 

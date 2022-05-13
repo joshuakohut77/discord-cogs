@@ -46,6 +46,8 @@ class trainer:
             db.executeWithoutCommit(keyItemsUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             leaderBoardUpdateQuery = 'UPDATE leaderboard SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(leaderBoardUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            pokedexUpdateQuery = 'UPDATE pokedex SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
+            db.executeWithoutCommit(pokedexUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             db.commit()
             retMsg = "Trainer deleted successfully!"
             self.statuscode = 420
@@ -165,6 +167,10 @@ class trainer:
             self.statuscode = 96
             self.message = "error occurred during inventory.save()"
             return
+        
+        # leaderboard stats
+        lb = leaderboard(self.pokemon1.discordId)
+        lb.released()
 
     def getPokemon(self):
         """ returns a list of pokemon objects for every pokemon in the database belonging to the trainer """
@@ -362,6 +368,9 @@ class trainer:
                 self.message = "error occured during pokemon create()"
                 return
         
+        # leaderboard stats
+        lb = leaderboard(self.pokemon1.discordId)
+        lb.actions()
         return pokemon
 
     def getPokedex(self):
