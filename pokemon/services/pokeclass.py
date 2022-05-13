@@ -331,6 +331,9 @@ class Pokemon:
                             self.move_4 = moveList[0]
                             evolvedForm = self.__checkForEvolution()
                             if evolvedForm is not None:
+                                # leaderboard stats
+                                lb = leaderboard(self.pokemon1.discordId)
+                                lb.evolved()
                                 retMsg += 'Your pokemon is evolving......... Your pokemon evolved into %s!' % (
                                     evolvedForm)
                                 evolvedPokemon = Pokemon(evolvedForm)
