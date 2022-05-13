@@ -62,7 +62,8 @@ class store:
         """ buy and item and update trainers inventory """
         if name not in self.storeMap.keys():
             self.statuscode = 420
-            self.message = "Item not available"
+            self.message = "Item not available at current Poke Mart."
+            return
 
         inventory = inv(self.discordId)
         price = self.storeMap[name]['price']
