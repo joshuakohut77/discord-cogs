@@ -124,7 +124,7 @@ class PokemartMixin(MixinMeta):
             
             embed.add_field(name=f"{emoji}  {item['item']} — {item['price']}", value=description, inline=False)
 
-        await ctx.send(file=file, embed=embed)
+        await ctx.send(embed=embed)
         await ctx.tick()
 
     @_pokemart.command()
