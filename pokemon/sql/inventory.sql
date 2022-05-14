@@ -54,6 +54,8 @@ CREATE TABLE IF NOT EXISTS public.inventory
     "thunder-stone" integer DEFAULT 0,
     "leaf-stone" integer DEFAULT 0,
     "moon-stone" integer DEFAULT 0,
+    "x-attack" integer DEFAULT 0,
+    "x-sp-def" integer DEFAULT 0,
     CONSTRAINT inventory_pkey PRIMARY KEY (discord_id)
 )
 
