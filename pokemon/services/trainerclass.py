@@ -369,7 +369,8 @@ class trainer:
         pokedex = []
         try:
             db = dbconn()
-            queryString = 'SELECT "pokemonId", "pokemonName", "mostRecent" FROM pokedex WHERE "discord_id"=%(discordId)s ORDER BY "pokemonId"'
+            queryString = '''SELECT "pokemonId", "pokemonName", "mostRecent" 
+                FROM pokedex WHERE "discord_id"=%(discordId)s ORDER BY "pokemonId"'''
             results = db.queryAll(queryString, { 'discordId': self.discordId })
             for row in results:
                 pokemonId = row[0]
