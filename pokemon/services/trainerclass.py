@@ -6,6 +6,7 @@ import random
 from dbclass import db as dbconn
 from encounterclass import encounter
 from inventoryclass import inventory as inv
+from keyitemsclass import keyitems as kitems
 from leaderboardclass import leaderboard
 from locationclass import location as LocationClass
 from loggerclass import logger as log
@@ -170,7 +171,7 @@ class trainer:
             return
         
         # leaderboard stats
-        lb = leaderboard(self.pokemon1.discordId)
+        lb = leaderboard(self.discordId)
         lb.released()
 
     def getPokemon(self):
@@ -356,6 +357,7 @@ class trainer:
             self.statuscode =  96
             self.message = "error occurred during loc.generateEncounter"
             return
+        
         if selectedEncounter is not None:
             # this means a pokemon was found with the method
             name = selectedEncounter['name']
@@ -370,7 +372,7 @@ class trainer:
                 return
         
         # leaderboard stats
-        lb = leaderboard(self.pokemon1.discordId)
+        lb = leaderboard(self.discordId)
         lb.actions()
         return pokemon
 
