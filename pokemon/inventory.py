@@ -62,11 +62,10 @@ class InventoryMixin(MixinMeta):
         # # \u200b
         # # A device for catching wild Pokémon. It's thrown like a ball, comfortably encapsulating its target.
 
-        embed, file, btns = self.createItemsEmbed(user)
+        embed, btns = self.createItemsEmbed(user)
 
         message = await ctx.send(
             embed=embed,
-            file=file,
             components=[btns]
         )
         self.__inventory[str(user.id)] = message.id
