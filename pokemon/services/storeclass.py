@@ -73,6 +73,7 @@ class store:
             self.statuscode = 420
             self.message = 'You do not have enough money to buy that.'
         else:
+            inventory.money = inventory.money - totalPrice
             if name == 'poke-ball':
                 inventory.pokeball += quantity
             elif name == 'great-ball':
