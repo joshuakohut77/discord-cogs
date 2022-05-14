@@ -29,7 +29,7 @@ class PokemartMixin(MixinMeta):
     # __trainers = {}
 
 
-    @commands.group(name="pokemart")
+    @commands.group(name="pokemart", aliases=['mart'])
     @commands.guild_only()
     async def _pokemart(self, ctx: commands.Context) -> None:
         """Base command to manage the pokemart (store)
