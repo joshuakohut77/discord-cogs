@@ -106,7 +106,7 @@ class Pokemon(StarterMixin, PcMixin, PokemartMixin, InventoryMixin, MapMixin, Ac
         await ctx.send(f'{pokemon.pokemonName} added.')
         pass
 
-    @commands.group(name="trainer")
+    @commands.group(name="trainer", aliases=['t'])
     @commands.guild_only()
     async def _trainer(self, ctx: commands.Context) -> None:
         """Base command to manage the trainer (user).
