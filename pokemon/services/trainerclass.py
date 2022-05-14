@@ -357,7 +357,22 @@ class trainer:
             self.statuscode =  96
             self.message = "error occurred during loc.generateEncounter"
             return
-        
+        keyitems = kitems(self.discordId)
+        if method == 'old-rod':
+            if not keyitems.old_rod:
+                self.statuscode = 420
+                self.message = "You do not own the old-rod"
+                return
+        elif method == 'good-rod':
+            if not keyitems.good_rod:
+                self.statuscode = 420
+                self.message = "You do not own the good-rod"
+                return  
+        elif method == 'super-rod':
+            if not keyitems.super_rod:
+                self.statuscode = 420
+                self.message = "You do not own the super-rod"
+                return  
         if selectedEncounter is not None:
             # this means a pokemon was found with the method
             name = selectedEncounter['name']
