@@ -93,6 +93,9 @@ class InventoryMixin(MixinMeta):
             if originalMessageId != messageId:
                 await interaction.send('This is not for you.')
         
+
+        inv = InventoryClass(str(user.id))
+
         name = uuid.uuid4()
         file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/bag.png", filename=f"{name}.png")
         # Create the embed object
@@ -101,7 +104,17 @@ class InventoryMixin(MixinMeta):
         embed.set_author(name=f"{user.display_name}",
                         icon_url=str(user.avatar_url))
 
+        items = []
+
+        if inv.pokeball > 0:
+            items.append(f'{constant.POKEBALL} **Poke balls** — {inv.pokeball}')
+        if inv.greatball > 0:
+            items.append(f'{constant.GREATBALL} **Great balls** — {inv.greatball}')
+
         embed.add_field(name='Key Items', value="No key items", inline=False)
+
+        trainerItems = "\r\n".join(items) if len(items) > 0 else 'No key items yet.'
+        embed.add_field(name='Key Items', value=trainerItems, inline=False)
 
         btns = []
         btns.append(self.client.add_callback(
@@ -226,7 +239,7 @@ class InventoryMixin(MixinMeta):
             items.append(f'{constant.MOONSTONE} **Moonstone** — {inv.moonstone}')
 
 
-        trainerItems = "\r\n".join(items)
+        trainerItems = "\r\n".join(items) if len(items) > 0 else 'No items yet.'
         embed.add_field(name='Items', value=trainerItems, inline=False)
 
         btns = []
