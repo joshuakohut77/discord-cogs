@@ -111,10 +111,13 @@ class store:
                 inventory.antidote += quantity
             elif name == 'max-potion':
                 inventory.maxpotion += quantity
+            
             inventory.save()
+            
             if inventory.statuscode == 96:
                 self.statuscode = 96
                 self.message = "Error occured during inventory save()"
+                return
             self.statuscode = 420
             self.message = f"You successfully bought {quantity} {name}"
 
