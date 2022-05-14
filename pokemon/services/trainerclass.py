@@ -346,6 +346,16 @@ class trainer:
                 self.statuscode = 420
                 self.message = "You do not own the super-rod"
                 return  
+        elif method == 'surf':
+            if not keyitems.HM03:
+                self.statuscode = 420
+                self.message = "You do not own HM03"
+                return  
+        elif method == 'pokeflute':
+            if not keyitems.pokeflute:
+                self.statuscode = 420
+                self.message = "You do not own the pokeflute"
+                return  
         if selectedEncounter is not None:
             # this means a pokemon was found with the method
             name = selectedEncounter['name']
