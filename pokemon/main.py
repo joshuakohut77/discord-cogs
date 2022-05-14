@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 from abc import ABCMeta
-import random
 
 import discord
 from discord import (Embed, Member)
@@ -24,13 +23,14 @@ from .pc import PcMixin
 from .inventory import InventoryMixin
 from .map import MapMixin
 from .actions import ActionsMixin
+from .debug import DebugMixin
 # from .event import EventMixin
 
 # import pokebase as pb
 # import psycopg as pg
 # from .models.helpers import *
 from services.trainerclass import trainer as TrainerClass
-from services.locationclass import location as LocationClass
+# from services.locationclass import location as LocationClass
 # from services.pokeclass import Pokemon as PokemonClass
 # from services.storeclass import store as StoreClass
 # from services.inventoryclass import inventory as InventoryClass
@@ -46,7 +46,7 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class Pokemon(StarterMixin, PcMixin, PokemartMixin, InventoryMixin, MapMixin, ActionsMixin, commands.Cog, metaclass=CompositeClass):
+class Pokemon(StarterMixin, PcMixin, PokemartMixin, InventoryMixin, MapMixin, ActionsMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):
@@ -86,25 +86,6 @@ class Pokemon(StarterMixin, PcMixin, PokemartMixin, InventoryMixin, MapMixin, Ac
     # [p]pokemon stats <id> - unique id of pokemon in db (stats + moves)
     # [p]pokemon wiki <id> - any pokemon general wiki
 
-    @commands.group(name="debug")
-    @commands.guild_only()
-    async def _debug(self, ctx: commands.Context) -> None:
-        """Base command to manage the trainer (user).
-        """
-        pass
-
-    @_debug.command()
-    async def add(self, ctx: commands.Context, user: discord.Member = None) -> None:
-        if user is None:
-            user = ctx.author
-
-        trainer = TrainerClass(str(user.id))
-        ids = range(1, 152)
-        id = random.choice(ids)
-        pokemon = trainer.addPokemon(id)
-
-        await ctx.send(f'{pokemon.pokemonName} added.')
-        pass
 
     @commands.group(name="trainer", aliases=['t'])
     @commands.guild_only()

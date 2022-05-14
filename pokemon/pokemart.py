@@ -51,9 +51,9 @@ class PokemartMixin(MixinMeta):
             return
 
         # Create the embed object
-        file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/items/poke-ball.png", filename="poke-ball.png")
+        # file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/items/poke-ball.png", filename="poke-ball.png")
         embed = discord.Embed(title=f"Pokemart - {location.name}")
-        embed.set_thumbnail(url=f"attachment://poke-ball.png")
+        embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/locations/poke_mart.png")
         # embed.set_author(name=f"{user.display_name}",
         #                  icon_url=str(user.avatar_url))
 

@@ -79,11 +79,12 @@ class InventoryMixin(MixinMeta):
             await interaction.send('This is not for you.')
             return
 
-        name = uuid.uuid4()
-        file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/bag.png", filename=f"{name}.png")
+        # name = uuid.uuid4()
+        # file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/bag.png", filename=f"{name}.png")
+        
         # Create the embed object
         embed = discord.Embed(title=f"Bag")
-        embed.set_thumbnail(url=f"attachment://{name}.png")
+        embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/trainer_bag.png")
         embed.set_author(name=f"{user.display_name}",
                         icon_url=str(user.avatar_url))
         
@@ -126,11 +127,12 @@ class InventoryMixin(MixinMeta):
 
         inv = KeyItemClass(str(user.id))
 
-        name = uuid.uuid4()
-        file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/bag.png", filename=f"{name}.png")
+        # name = uuid.uuid4()
+        # file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/bag.png", filename=f"{name}.png")
+
         # Create the embed object
         embed = discord.Embed(title=f"Bag")
-        embed.set_thumbnail(url=f"attachment://{name}.png")
+        embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/trainer_bag.png")
         embed.set_author(name=f"{user.display_name}",
                         icon_url=str(user.avatar_url))
 
@@ -155,7 +157,6 @@ class InventoryMixin(MixinMeta):
         if inv.item_finder:
             items.append(f'{constant.ITEM_FINDER} **Item Finder**')
 
-        embed.add_field(name='Key Items', value="No key items", inline=False)
 
         trainerItems = "\r\n".join(items) if len(items) > 0 else 'No key items yet.'
         embed.add_field(name='Key Items', value=trainerItems, inline=False)
@@ -177,11 +178,12 @@ class InventoryMixin(MixinMeta):
     def createItemsEmbed(self, user: User):
         inv = InventoryClass(str(user.id))
 
-        name = uuid.uuid4()
-        file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/bag.png", filename=f"{name}.png")
+        # name = uuid.uuid4()
+        # file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/bag.png", filename=f"{name}.png")
+
         # Create the embed object
         embed = discord.Embed(title=f"Bag")
-        embed.set_thumbnail(url=f"attachment://{name}.png")
+        embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/trainer_bag.png")
         embed.set_author(name=f"{user.display_name}",
                         icon_url=str(user.avatar_url))
 
