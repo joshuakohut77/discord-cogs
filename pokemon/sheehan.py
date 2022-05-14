@@ -17,7 +17,7 @@ trainer = TrainerClass('509767223938777108')
 # inv = InventoryClass(trainer.discordId)
 
 store = StoreClass(trainer.discordId, 232)
-store.buyItem('burn-heal', 1)
+store.buyItem('super-potion', 1)
 # pokemon = trainer.encounter('walk')
 # areaId = trainer.getAreaId()
 
