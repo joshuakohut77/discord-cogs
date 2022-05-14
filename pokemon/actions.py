@@ -47,8 +47,8 @@ class ActionsMixin(MixinMeta):
         """Base command to manage the trainer (user).
         """
 
-    @_trainer.command()
-    async def action(self, ctx: commands.Context):
+    @_trainer.command(aliases=['enc'])
+    async def encounter(self, ctx: commands.Context):
         user = ctx.author
 
         trainer = TrainerClass(str(user.id))
