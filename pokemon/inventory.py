@@ -1,4 +1,5 @@
 from __future__ import annotations
+from re import S
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 from discord.abc import User
@@ -33,6 +34,16 @@ class InventoryMixin(MixinMeta):
     __inventory = {}
 
 
+    def __checkInventoryState(self, user: discord.User, message: discord.Message):
+        if str(user.id) not in self.__inventory.keys():
+            return False
+        else:
+            originalMessageId = self.__inventory[str(user.id)]
+            if originalMessageId != message.id:
+                return False
+        return True
+
+
     @commands.group(name="trainer")
     @commands.guild_only()
     async def _trainer(self, ctx: commands.Context) -> None:
@@ -61,19 +72,42 @@ class InventoryMixin(MixinMeta):
         self.__inventory[str(user.id)] = message.id
 
 
+    async def on_hm_click(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.__checkInventoryState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+        name = uuid.uuid4()
+        file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/bag.png", filename=f"{name}.png")
+        # Create the embed object
+        embed = discord.Embed(title=f"Bag")
+        embed.set_thumbnail(url=f"attachment://{name}.png")
+        embed.set_author(name=f"{user.display_name}",
+                        icon_url=str(user.avatar_url))
+        
+        embed.add_field(name='HMs', value='HMs are not implemented yet.', inline=False)
+
+        btns = []
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.gray, label="← Key Items", custom_id='keyitems'),
+            self.on_keyitems_click,
+        ))
+
+        message = await interaction.edit_origin(embed=embed, file=file, components=[btns])
+        self.__inventory[str(user.id)] = message.id
+
+
     async def on_items_click(self, interaction: Interaction):
         user = interaction.user
-        messageId = interaction.message.id
 
-        if str(user.id) not in self.__inventory.keys():
+        if not self.__checkInventoryState(user, interaction.message):
             await interaction.send('This is not for you.')
-        else:
-            originalMessageId = self.__inventory[str(user.id)]
-            if originalMessageId != messageId:
-                await interaction.send('This is not for you.')
+            return
+        
         
         embed, file, btns = self.createItemsEmbed(user)
-
 
         await interaction.edit_origin(
             embed=embed,
@@ -85,15 +119,10 @@ class InventoryMixin(MixinMeta):
 
     async def on_keyitems_click(self, interaction: Interaction):
         user = interaction.user
-        messageId = interaction.message.id
 
-        if str(user.id) not in self.__inventory.keys():
+        if not self.__checkInventoryState(user, interaction.message):
             await interaction.send('This is not for you.')
-        else:
-            originalMessageId = self.__inventory[str(user.id)]
-            if originalMessageId != messageId:
-                await interaction.send('This is not for you.')
-        
+            return
 
         inv = KeyItemClass(str(user.id))
 
@@ -111,6 +140,20 @@ class InventoryMixin(MixinMeta):
             items.append(f'{constant.POKEFLUTE} **Pokeflute**')
         if inv.silph_scope:
             items.append(f'{constant.SILPH_SCOPE} **Silph Scope**')
+        if inv.oaks_parcel:
+            items.append(f'{constant.OAK_PARCEL} **Oak Parcel**')
+        if inv.ss_ticket:
+            items.append(f'{constant.SS_TICKET} **SS Ticket**')
+        if inv.bicycle:
+            items.append(f'{constant.BICYCLE} **Bicycle**')
+        if inv.old_rod:
+            items.append(f'{constant.OLD_ROD} **Old Rod**')
+        if inv.good_rod:
+            items.append(f'{constant.GOODROD} **Good Rod**')
+        if inv.super_rod:
+            items.append(f'{constant.SUPER_ROD} **Super Rod**')
+        if inv.item_finder:
+            items.append(f'{constant.ITEM_FINDER} **Item Finder**')
 
         embed.add_field(name='Key Items', value="No key items", inline=False)
 
@@ -121,6 +164,10 @@ class InventoryMixin(MixinMeta):
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.gray, label="← Items", custom_id='items'),
             self.on_items_click,
+        ))
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.gray, label='HMs →', custom_id='hms'),
+            self.on_hm_click,
         ))
 
         message = await interaction.edit_origin(embed=embed, file=file, components=[btns])
