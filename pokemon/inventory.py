@@ -96,7 +96,7 @@ class InventoryMixin(MixinMeta):
             self.on_keyitems_click,
         ))
 
-        message = await interaction.edit_origin(embed=embed, file=file, components=[btns])
+        message = await interaction.edit_origin(embed=embed, components=[btns])
         self.__inventory[str(user.id)] = message.id
 
 
@@ -108,11 +108,10 @@ class InventoryMixin(MixinMeta):
             return
         
         
-        embed, file, btns = self.createItemsEmbed(user)
+        embed, btns = self.createItemsEmbed(user)
 
         await interaction.edit_origin(
             embed=embed,
-            file=file,
             components=[btns]
         )
         self.__inventory[str(user.id)] = message.id
@@ -171,7 +170,7 @@ class InventoryMixin(MixinMeta):
             self.on_hm_click,
         ))
 
-        message = await interaction.edit_origin(embed=embed, file=file, components=[btns])
+        message = await interaction.edit_origin(embed=embed, components=[btns])
         self.__inventory[str(user.id)] = message.id
 
 
@@ -298,4 +297,4 @@ class InventoryMixin(MixinMeta):
             self.on_keyitems_click,
         ))
 
-        return embed, file, btns
+        return embed, btns
