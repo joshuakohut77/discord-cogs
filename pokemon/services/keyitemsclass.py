@@ -53,7 +53,7 @@ class keyitems:
                     silph_scope, 
                     oaks_parcel, 
                     ss_ticket, 
-                    bicycle, "old-rod", "good-rod", "super-rod", 
+                    bicycle, "old_rod", "good_rod", "super_rod", 
                     item_finder
                     FROM keyitems WHERE discord_id=%(discordId)s
             '''
@@ -105,7 +105,7 @@ class keyitems:
                     oaks_parcel=%(oaks_parcel)s, 
                     ss_ticket=%(ss_ticket)s, 
                     bicycle=%(bicycle)s, 
-                    "old-rod"=%(old_rod)s, "good-rod"=%(good_rod)s, "super-rod"=%(super_rod)s, 
+                    "old_rod"=%(old_rod)s, "good_rod"=%(good_rod)s, "super_rod"=%(super_rod)s, 
                     item_finder=%(item_finder)s
 	                    WHERE discord_id=%(discordId)s;
                 '''
@@ -117,7 +117,7 @@ class keyitems:
                             'pokeflute':self.pokeflute, 'silph_scope':self.silph_scope,
                             'oaks_parcel':self.oaks_parcel, 'ss_ticket':self.ss_ticket,
                             'bicycle':self.bicycle, 'item_finder':self.item_finder,
-                            'old-rod':self.old_rod, 'good-rod':self.good_rod, 'super-rod':self.super_rod,
+                            'old_rod':self.old_rod, 'good_rod':self.good_rod, 'super_rod':self.super_rod,
                             'discordId':self.discordId }
                 db.execute(updateString, values)
         except:
