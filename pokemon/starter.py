@@ -128,8 +128,10 @@ class StarterMixin(MixinMeta):
             Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
             self.on_stats_click,
         ))
-        btns.append(Button(style=ButtonStyle.green,
-                    label="Pokedex", custom_id='pokedex'))
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
+            self.on_pokedex_click
+        ))
 
         # Disable the "Set Active" button if the starter is currently the active pokemon
         disabled = (active is not None) and (
@@ -143,6 +145,16 @@ class StarterMixin(MixinMeta):
         message = await interaction.edit_origin(embed=embed, components=[btns])
         self.__trainers[str(user.id)] = TrainerState(str(user.id), pokemon.trainerId, message.id)
     
+
+    async def on_pokedex_click(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.__checkTrainerState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+        await interaction.send('Pokedex is not implemented yet')
+
 
     async def on_stats_click(self, interaction: Interaction):
         user = interaction.user
