@@ -19,6 +19,7 @@ from redbot.core import commands
 
 from services.trainerclass import trainer as TrainerClass
 from services.inventoryclass import inventory as InventoryClass
+from services.keyitemsclass import keyitems as KeyItemClass
 
 
 from .abcd import MixinMeta
@@ -94,7 +95,7 @@ class InventoryMixin(MixinMeta):
                 await interaction.send('This is not for you.')
         
 
-        inv = InventoryClass(str(user.id))
+        inv = KeyItemClass(str(user.id))
 
         name = uuid.uuid4()
         file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/bag.png", filename=f"{name}.png")
@@ -106,10 +107,10 @@ class InventoryMixin(MixinMeta):
 
         items = []
 
-        if inv.pokeball > 0:
-            items.append(f'{constant.POKEBALL} **Poke balls** — {inv.pokeball}')
-        if inv.greatball > 0:
-            items.append(f'{constant.GREATBALL} **Great balls** — {inv.greatball}')
+        if inv.pokeflute:
+            items.append(f'{constant.POKEFLUTE} **Pokeflute**')
+        if inv.silph_scope:
+            items.append(f'{constant.SILPH_SCOPE} **Silph Scope**')
 
         embed.add_field(name='Key Items', value="No key items", inline=False)
 

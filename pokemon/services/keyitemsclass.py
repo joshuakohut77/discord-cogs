@@ -13,28 +13,28 @@ class keyitems:
 
         self.discordId = discordId
         # below are all Booleans
-        self.HM01 = None
-        self.HM02 = None
-        self.HM03 = None
-        self.HM04 = None
-        self.HM05 = None
-        self.badge_boulder = None
-        self.badge_cascade = None
-        self.badge_thunder = None
-        self.badge_rainbow = None
-        self.badge_soul = None
-        self.badge_marsh = None
-        self.badge_volcano = None
-        self.badge_earth = None
-        self.pokeflute = None
-        self.silph_scope = None
-        self.oaks_parcel = None
-        self.ss_ticket = None
-        self.bicycle = None
-        self.old_rod = None
-        self.good_rod = None
-        self.super_rod = None
-        self.item_finder = None
+        self.HM01 = False
+        self.HM02 = False
+        self.HM03 = False
+        self.HM04 = False
+        self.HM05 = False
+        self.badge_boulder = False
+        self.badge_cascade = False
+        self.badge_thunder = False
+        self.badge_rainbow = False
+        self.badge_soul = False
+        self.badge_marsh = False
+        self.badge_volcano = False
+        self.badge_earth = False
+        self.pokeflute = False
+        self.silph_scope = False
+        self.oaks_parcel = False
+        self.ss_ticket = False
+        self.bicycle = False
+        self.old_rod = False
+        self.good_rod = False
+        self.super_rod = False
+        self.item_finder = False
         # populate keyitems object
         self.__loadKeyItems()
 
