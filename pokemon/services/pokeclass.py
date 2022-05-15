@@ -16,6 +16,7 @@ from time import time
 # Global Config Variables
 STARTER_LEVEL = config.starterLevel
 VERSION_GROUP_NAME = config.version_group_name
+MAX_PARTY_SIZE = 6
 # Class Logger
 logger = log()
 

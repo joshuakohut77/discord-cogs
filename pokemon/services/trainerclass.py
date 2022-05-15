@@ -17,6 +17,7 @@ import models.location as Models
 # Global Config Variables
 STARTER_LEVEL = 5 #config.starterLevel
 RELEASE_MONEY_MODIFIER = 15 #config.release_money_modifier 
+MAX_PARTY_SIZE = 6
 # Class Logger
 logger = log()
 
