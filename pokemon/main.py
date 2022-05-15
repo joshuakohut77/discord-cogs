@@ -24,6 +24,7 @@ from .inventory import InventoryMixin
 from .map import MapMixin
 from .actions import ActionsMixin
 from .debug import DebugMixin
+from .card import TrainerCardMixin
 # from .event import EventMixin
 
 # import pokebase as pb
@@ -46,7 +47,7 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class Pokemon(StarterMixin, PcMixin, PokemartMixin, InventoryMixin, MapMixin, ActionsMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
+class Pokemon(StarterMixin, PcMixin, PokemartMixin, InventoryMixin, MapMixin, TrainerCardMixin, ActionsMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):
