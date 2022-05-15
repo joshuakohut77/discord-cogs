@@ -59,20 +59,24 @@ class TrainerCardMixin(MixinMeta):
         embed = discord.Embed(title=f"Trainer")
         embed.set_author(name=f"{user.display_name}", icon_url=str(user.avatar_url))
         
-        embed.add_field(name='Money', value=f'{inventory.money}', inline=False)
+        embed.add_field(name='Money', value=f'¥{inventory.money}', inline=False)
 
         badges = []
-        badges.append(constant.BADGE_BOULDER)
-        badges.append(constant.BADGE_CASCADE)
-        badges.append(constant.BADGE_EARTH)
-        badges.append(constant.BADGE_MARSH)
-        badges.append(constant.BADGE_RAINBOW)
-        badges.append(constant.BADGE_SOUL)
-        badges.append(constant.BADGE_THUNDER)
-        badges.append(constant.BADGE_VOLCANO)
+        badges.append(constant.BADGE_BOULDER_01)
+        badges.append(constant.BADGE_CASCADE_02)
+        badges.append(constant.BADGE_THUNDER_03)
+        badges.append(constant.BADGE_RAINBOW_04)
+        badges.append(constant.BADGE_SOUL_05)
+        badges.append(constant.BADGE_MARSH_06)
+        badges.append(constant.BADGE_VOLCANO_07)
+        badges.append(constant.BADGE_EARTH_08)
 
         badgeText = " ".join(badges) if len(badges) > 0 else "--"
         embed.add_field(name='Badges', value=badgeText, inline=False)
+
+        embed.add_field(name='Pokedex', value='0')
+        embed.add_field(name='Started', value='2022/05/14')
+
         # pokemon = trainer.getActivePokemon()
 
         # btns = []
