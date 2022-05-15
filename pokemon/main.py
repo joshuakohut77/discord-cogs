@@ -26,6 +26,16 @@ from .card import TrainerCardMixin
 from services.trainerclass import trainer as TrainerClass
 
 
+# Things left to do
+# trainer pc release pokemon (should get small $ for it)
+# pokemart sell item (should get 10% back for it)
+# add start date to trainer stats
+# cleanup all the typings, cbs should be private/mangled
+# one state mapping instead of multiple
+# pretty up location names
+# capitalize set active pokemon name
+# nickname pokemon
+
 
 class CompositeClass(commands.CogMeta, ABCMeta):
     __slots__: tuple = ()
