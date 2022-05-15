@@ -425,6 +425,28 @@ class trainer:
         finally:
             # delete and close connection
             del db
+    
+    def getPartySize(self):
+        """ returns a count of trainers party size """
+        partySize = 0
+        try:
+            db = dbconn()
+            queryString = """
+            SELECT COUNT(*)  FROM
+                Pokemon WHERE party = True 
+                AND "discord_id" = %(discordId)s
+            """
+            result = db.querySingle(queryString, { 'discordId': self.discordId })
+            if result:
+                partySize = result[0]
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+            raise
+        finally:
+            # delete and close connection
+            del db
+            return partySize
 
     ####
     # Private Class Methods
