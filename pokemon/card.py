@@ -24,20 +24,11 @@ from .functions import (createStatsEmbed, getTypeColor,
                         createPokemonAboutEmbed)
 
 
-class TrainerCardState:
-    discordId: str
-    pokemonId: int
-    messageId: int
-
-    def __init__(self, discordId: str, messageId: int) -> None:
-        self.discordId = discordId
-        self.messageId = messageId
-
 
 class TrainerCardMixin(MixinMeta):
     """Trainer Card"""
 
-    __cards: dict[str, TrainerCardState] = {}
+    __cards: dict[str, str] = {}
 
 
     @commands.group(name="trainer")
@@ -48,7 +39,7 @@ class TrainerCardMixin(MixinMeta):
         pass
 
     @_trainer.command()
-    async def card(self, ctx: commands.Context, user: discord.Member = None) -> None:
+    async def card(self, ctx: commands.Context, user: Union[discord.Member,discord.User] = None) -> None:
         if user is None:
             user = ctx.author
 
@@ -65,8 +56,8 @@ class TrainerCardMixin(MixinMeta):
             self.on_stats_click,
         ))
  
-        message = await ctx.send(embed=embed, components=[btns])     
-        self.__cards[str(user.id)] = TrainerCardState(str(user.id), message.id)
+        message: discord.Message = await ctx.send(embed=embed, components=[btns])     
+        self.__cards[str(user.id)] = message.id
 
 
     async def on_stats_click(self, interaction: Interaction):
@@ -96,7 +87,7 @@ class TrainerCardMixin(MixinMeta):
         ))
  
         message = await interaction.edit_origin(embed=embed, components=[btns])     
-        self.__cards[str(user.id)] = TrainerCardState(str(user.id), message.id)
+        self.__cards[str(user.id)] = message.id
 
     async def on_about_click(self, interaction: Interaction):
         user = interaction.user
@@ -119,7 +110,7 @@ class TrainerCardMixin(MixinMeta):
         ))
  
         message = await interaction.edit_origin(embed=embed, components=[btns])     
-        self.__cards[str(user.id)] = TrainerCardState(str(user.id), message.id)
+        self.__cards[str(user.id)] = message.id
 
 
     def __createAboutEmbed(self, user: discord.User, inventory: InventoryClass):
@@ -146,12 +137,11 @@ class TrainerCardMixin(MixinMeta):
         return embed
 
 
-    def __checkTrainerState(self, user: discord.User, message: discord.Message):
-        state: TrainerCardState
+    def __checkCardState(self, user: discord.User, message: discord.Message):
         if str(user.id) not in self.__cards.keys():
             return False
         else:
-            state = self.__cards[str(user.id)]
-            if state.messageId != message.id:
+            originalMessageId = self.__cards[str(user.id)]
+            if originalMessageId != message.id:
                 return False
         return True
