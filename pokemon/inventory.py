@@ -29,7 +29,7 @@ from .functions import (createStatsEmbed, getTypeColor,
 
 
 class InventoryMixin(MixinMeta):
-    """Starter"""
+    """Inventory"""
 
     __inventory = {}
 
