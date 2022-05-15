@@ -320,60 +320,6 @@ class trainer:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
 
-
-    def __getEncounter(self, method):
-        """ gets a random encounter in the current area using the selected method """
-        pokemon = None
-        loc = LocationClass(self.discordId)
-        selectedEncounter = loc.action(method)
-        if loc.statuscode == 96:
-            self.statuscode =  96
-            self.message = "error occurred during loc.generateEncounter"
-            return
-        keyitems = kitems(self.discordId)
-        if method == 'old-rod':
-            if not keyitems.old_rod:
-                self.statuscode = 420
-                self.message = "You do not own the old-rod"
-                return
-        elif method == 'good-rod':
-            if not keyitems.good_rod:
-                self.statuscode = 420
-                self.message = "You do not own the good-rod"
-                return  
-        elif method == 'super-rod':
-            if not keyitems.super_rod:
-                self.statuscode = 420
-                self.message = "You do not own the super-rod"
-                return  
-        elif method == 'surf':
-            if not keyitems.HM03:
-                self.statuscode = 420
-                self.message = "You do not own HM03"
-                return  
-        elif method == 'pokeflute':
-            if not keyitems.pokeflute:
-                self.statuscode = 420
-                self.message = "You do not own the pokeflute"
-                return  
-        if selectedEncounter is not None:
-            # this means a pokemon was found with the method
-            name = selectedEncounter['name']
-            min_level = selectedEncounter['min_level']
-            max_level = selectedEncounter['max_level']
-            level = random.randrange(int(min_level), int(max_level)+1)
-            pokemon = pokeClass(self.discordId, name)
-            pokemon.create(level)
-            if pokemon.statuscode == 96:
-                self.statuscode = 96
-                self.message = "error occured during pokemon create()"
-                return
-        
-        # leaderboard stats
-        lb = leaderboard(self.discordId)
-        lb.actions()
-        return pokemon
-
     def getPokedex(self):
         """ returns a list of dictionary from the trainers pokedex """
         pokedex = []
@@ -504,6 +450,59 @@ class trainer:
         finally:
             # delete and close connection
             del db   
+    
+    def __getEncounter(self, method):
+        """ gets a random encounter in the current area using the selected method """
+        pokemon = None
+        loc = LocationClass(self.discordId)
+        selectedEncounter = loc.action(method)
+        if loc.statuscode == 96:
+            self.statuscode =  96
+            self.message = "error occurred during loc.generateEncounter"
+            return
+        keyitems = kitems(self.discordId)
+        if method == 'old-rod':
+            if not keyitems.old_rod:
+                self.statuscode = 420
+                self.message = "You do not own the old-rod"
+                return
+        elif method == 'good-rod':
+            if not keyitems.good_rod:
+                self.statuscode = 420
+                self.message = "You do not own the good-rod"
+                return  
+        elif method == 'super-rod':
+            if not keyitems.super_rod:
+                self.statuscode = 420
+                self.message = "You do not own the super-rod"
+                return  
+        elif method == 'surf':
+            if not keyitems.HM03:
+                self.statuscode = 420
+                self.message = "You do not own HM03"
+                return  
+        elif method == 'pokeflute':
+            if not keyitems.pokeflute:
+                self.statuscode = 420
+                self.message = "You do not own the pokeflute"
+                return  
+        if selectedEncounter is not None:
+            # this means a pokemon was found with the method
+            name = selectedEncounter['name']
+            min_level = selectedEncounter['min_level']
+            max_level = selectedEncounter['max_level']
+            level = random.randrange(int(min_level), int(max_level)+1)
+            pokemon = pokeClass(self.discordId, name)
+            pokemon.create(level)
+            if pokemon.statuscode == 96:
+                self.statuscode = 96
+                self.message = "error occured during pokemon create()"
+                return
+        
+        # leaderboard stats
+        lb = leaderboard(self.discordId)
+        lb.actions()
+        return pokemon
 
     def __healPokemon(self, pokemonId, item):
         """ heals a pokemons currentHP """
