@@ -256,7 +256,10 @@ class PcMixin(MixinMeta):
 
 
     async def __on_pokedex_click(self, interaction: Interaction):
-        pass
+        await interaction.send('Pokedex is not implemented yet')
+
+    async def __on_release(self, interaction: Interaction):
+        await interaction.send('Pokedex is not implemented yet')
 
 
     def __pokemonCard(self, user: discord.User, state: PokemonState):

@@ -17,7 +17,7 @@ class DebugMixin(MixinMeta):
     """Debug"""
 
 
-    @commands.group(name="debug")
+    @commands.group(name="debug", aliases=['d'])
     @commands.guild_only()
     async def _debug(self, ctx: commands.Context) -> None:
         """Base command to manage the trainer (user).
