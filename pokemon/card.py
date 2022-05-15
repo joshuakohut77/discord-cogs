@@ -63,7 +63,7 @@ class TrainerCardMixin(MixinMeta):
     async def on_stats_click(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.__checkTrainerState(user, interaction.message):
+        if not self.__checkCardState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
 
@@ -92,7 +92,7 @@ class TrainerCardMixin(MixinMeta):
     async def on_about_click(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.__checkTrainerState(user, interaction.message):
+        if not self.__checkCardState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
 
