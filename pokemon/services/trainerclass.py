@@ -420,6 +420,12 @@ class trainer:
 
     def healAll(self):
         """ heals all pokemon to max HP """
+        location = self.getLocation()
+        if not location.pokecenter:
+            self.statuscode = 420
+            self.message = "There is no Poke Center at your location"
+            return
+        
         pokeList = self.getPokemon()
         for pokemon in pokeList:
             trainerId = pokemon.trainerId
@@ -430,6 +436,8 @@ class trainer:
                 pokemon.currentHP = maxHP
                 pokemon.discordId = self.discordId
                 pokemon.save()
+        self.statuscode = 420
+        self.message = "Your pokemon have been healed back to full health!"
         return
     
     def getLocation(self):
