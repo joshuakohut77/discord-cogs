@@ -254,7 +254,7 @@ class PcMixin(MixinMeta):
         pass
 
 
-    async def pokemonCard(self, user: discord.User, state: PokemonState):
+    def pokemonCard(self, user: discord.User, state: PokemonState):
         pokeList = state.pokemon
         pokeLength = len(pokeList)
         i = state.idx
