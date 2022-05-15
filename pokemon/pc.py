@@ -174,9 +174,9 @@ class PcMixin(MixinMeta):
         state = self.__pokemon[str(user.id)]
         state.idx = state.idx + 1
 
-        embed, btns = self.pokemonCard(user, state)
+        embed, firstRow, secondRow = self.pokemonCard(user, state)
 
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow])
         
         self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
         
@@ -187,9 +187,9 @@ class PcMixin(MixinMeta):
         state = self.__pokemon[str(user.id)]
         state.idx = state.idx - 1
 
-        embed, btns = self.pokemonCard(user, state)
+        embed, firstRow, secondRow = self.pokemonCard(user, state)
 
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow])
         
         self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
 
@@ -290,7 +290,7 @@ class PcMixin(MixinMeta):
             Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled),
             self.on_set_active
         ))
-        return embed, [firstRowBtns, secondRowBtns]
+        return embed, firstRowBtns, secondRowBtns
 
 
     # # TODO: Apparently there is a limit of 5 buttons at a time
