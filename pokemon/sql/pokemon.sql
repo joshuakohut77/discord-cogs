@@ -8,10 +8,9 @@ CREATE TABLE IF NOT EXISTS public.pokemon
     discord_id character varying COLLATE pg_catalog."default" NOT NULL,
     "pokemonId" integer,
     "pokemonName" character varying COLLATE pg_catalog."default",
-    "type_1" character varying COLLATE pg_catalog."default",
-    "type_2" character varying COLLATE pg_catalog."default",
+    type_1 character varying COLLATE pg_catalog."default",
+    type_2 character varying COLLATE pg_catalog."default",
     "nickName" character varying COLLATE pg_catalog."default",
-    "spriteURL" character varying COLLATE pg_catalog."default",
     "growthRate" character varying COLLATE pg_catalog."default",
     "currentLevel" integer,
     "currentExp" integer,
@@ -39,6 +38,7 @@ CREATE TABLE IF NOT EXISTS public.pokemon
     move_4 character varying COLLATE pg_catalog."default",
     traded boolean,
     "currentHP" integer,
+    party boolean DEFAULT false,
     CONSTRAINT pokemon_pkey PRIMARY KEY (id)
 )
 
