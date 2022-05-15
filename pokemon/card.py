@@ -143,6 +143,7 @@ class TrainerCardMixin(MixinMeta):
 
         embed.add_field(name='Pokedex', value='0')
         embed.add_field(name='Started', value='2022/05/14')
+        return embed
 
 
     def __checkTrainerState(self, user: discord.User, message: discord.Message):
