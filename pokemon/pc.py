@@ -293,7 +293,7 @@ class PcMixin(MixinMeta):
         activeDisabled = (activeId is not None) and (pokemon.trainerId == activeId)
         secondRowBtns.append(self.client.add_callback(
             Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled),
-            self.on_set_active
+            self.__on_set_active
         ))
         return embed, firstRowBtns, secondRowBtns
 
