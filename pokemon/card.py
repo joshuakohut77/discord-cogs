@@ -13,8 +13,10 @@ if TYPE_CHECKING:
 
 from redbot.core import commands
 
+import constant
 from services.trainerclass import trainer as TrainerClass
-from services.pokeclass import Pokemon as PokemonClass
+from services.inventoryclass import inventory as InventoryClass
+from services.keyitemsclass import keyitems as KeyItemsClass
 
 from .abcd import MixinMeta
 from .functions import (createStatsEmbed, getTypeColor,
@@ -26,9 +28,8 @@ class TrainerCardState:
     pokemonId: int
     messageId: int
 
-    def __init__(self, discordId: str, pokemonId: int, messageId: int) -> None:
+    def __init__(self, discordId: str, messageId: int) -> None:
         self.discordId = discordId
-        self.pokemonId = pokemonId
         self.messageId = messageId
 
 
@@ -51,7 +52,27 @@ class TrainerCardMixin(MixinMeta):
             user = ctx.author
 
         #  # This will create the trainer if it doesn't exist
-        # trainer = TrainerClass(str(user.id))
+        trainer = TrainerClass(str(user.id))
+        inventory = InventoryClass(trainer.discordId)
+        keyitems = KeyItemsClass(trainer.discordId)
+        
+        embed = discord.Embed(title=f"Trainer")
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.avatar_url))
+        
+        embed.add_field(name='Money', value=f'{inventory.money}', inline=False)
+
+        badges = []
+        badges.append(constant.BADGE_BOULDER)
+        badges.append(constant.BADGE_CASCADE)
+        badges.append(constant.BADGE_EARTH)
+        badges.append(constant.BADGE_MARSH)
+        badges.append(constant.BADGE_RAINBOW)
+        badges.append(constant.BADGE_SOUL)
+        badges.append(constant.BADGE_THUNDER)
+        badges.append(constant.BADGE_VOLCANO)
+
+        badgeText = " ".join(badges) if len(badges) > 0 else "--"
+        embed.add_field(name='Badges', value=badgeText, inline=False)
         # pokemon = trainer.getActivePokemon()
 
         # btns = []
@@ -62,12 +83,12 @@ class TrainerCardMixin(MixinMeta):
         # btns.append(Button(style=ButtonStyle.green,
         #             label="Pokedex", custom_id='pokedex'))
         # Create the embed object
-        embed = discord.Embed(title=f"{user.display_name}",)
-        embed.set_author(name=f"{user.display_name}", icon_url=str(user.avatar_url))
+
         
         # embed.set_thumbnail(url=pokemon.frontSpriteURL)
-            # message = await ctx.send(embed=embed, components=[btns])       
-        # self.__trainers[str(user.id)] = TrainerState(str(user.id), pokemon.trainerId, message.id)
+            # message = await ctx.send(embed=embed, components=[btns])  
+        message = await ctx.send(embed=embed, components=[])     
+        self.__cards[str(user.id)] = TrainerCardState(str(user.id), message.id)
 
 
     async def on_click(self, interaction: Interaction):
