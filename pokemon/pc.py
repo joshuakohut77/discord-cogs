@@ -163,9 +163,13 @@ class PcMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         trainer.setActivePokemon(pokemon.trainerId)
 
-        message = await interaction.channel.send(f'{user.display_name} set their active pokemon to {pokemon.pokemonName}.')
+        await interaction.channel.send(f'{user.display_name} set their active pokemon to {pokemon.pokemonName}.')
+        
+        embed, firstRow, secondRow = self.pokemonCard(user, state)
 
-        self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, pokemon.trainerId, state.idx)
+        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow])
+        
+        self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
         
 
     async def on_next_click(self, interaction: Interaction):
@@ -197,9 +201,9 @@ class PcMixin(MixinMeta):
     async def on_stats_click(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.__checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
-            return
+        # if not self.__checkPokemonState(user, interaction.message):
+        #     await interaction.send('This is not for you.')
+        #     return
 
         state = self.__pokemon[str(user.id)]
 
