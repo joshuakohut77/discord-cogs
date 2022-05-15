@@ -179,7 +179,7 @@ class Pokemon:
                             "EV_defense"=%(EV_defense)s, "EV_speed"=%(EV_speed)s, 
                             "EV_special_attack"=%(EV_special_attack)s, "EV_special_defense"=%(EV_special_defense)s,
                             "move_1"=%(move_1)s, "move_2"=%(move_2)s, "move_3"=%(move_3)s, 
-                            "move_4"=%(move_4)s, "nickName"=%(nickName)s, "currentHP"=%(currentHP)s
+                            "move_4"=%(move_4)s, "nickName"=%(nickName)s, "currentHP"=%(currentHP)s, "party"=%(party)s
                         WHERE id = %(trainerId)s;
                 """
                 values = {'discordId': self.discordId, 'pokemonId': self.pokedexId, 'pokemonName': self.pokemonName,
@@ -193,7 +193,8 @@ class Pokemon:
                           'EV_attack': self.attack.EV, 'EV_defense': self.defense.EV, 'EV_speed': self.speed.EV,
                           'EV_special_attack': self.special_attack.EV, 'EV_special_defense': self.special_defense.EV,
                           'move_1': self.move_1, 'move_2': self.move_2, 'move_3': self.move_3, 'move_4': self.move_4,
-                          'nickName': self.nickName, 'currentHP': self.currentHP, 'trainerId': self.trainerId}
+                          'nickName': self.nickName, 'currentHP': self.currentHP, 'party': self.party, 
+                          'trainerId': self.trainerId }
 
                 db.execute(queryString, values)
         except:
