@@ -6,8 +6,6 @@ import discord
 from discord import (Embed, Member)
 from discord_components import (DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
 
-from pokebase.loaders import pokedex
-
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -16,7 +14,6 @@ if TYPE_CHECKING:
 from redbot.core import Config, commands
 import asyncio
 
-from .functions import (createPokemonAboutEmbed)
 from .starter import StarterMixin
 from .pokemart import PokemartMixin
 from .pc import PcMixin
@@ -25,20 +22,8 @@ from .map import MapMixin
 from .actions import ActionsMixin
 from .debug import DebugMixin
 from .card import TrainerCardMixin
-# from .event import EventMixin
 
-# import pokebase as pb
-# import psycopg as pg
-# from .models.helpers import *
 from services.trainerclass import trainer as TrainerClass
-# from services.locationclass import location as LocationClass
-# from services.pokeclass import Pokemon as PokemonClass
-# from services.storeclass import store as StoreClass
-# from services.inventoryclass import inventory as InventoryClass
-
-# import constant
-# import uuid
-
 
 
 
