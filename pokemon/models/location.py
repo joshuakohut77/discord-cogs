@@ -12,3 +12,5 @@ class LocationModel:
         self.west = results[5]
         self.prerequisites = results[6]
         self.spritePath = results[7]
+        self.pokecenter = results[8]
+        self.gym = results[9]
