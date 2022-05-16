@@ -248,6 +248,10 @@ class PcMixin(MixinMeta):
             Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled),
             self.__on_set_active
         ))
+        secondRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled),
+            self.__on_release_click
+        ))
 
         message = await interaction.edit_origin(embed=embed, components=[firstRowBtns, secondRowBtns])
         
@@ -258,8 +262,35 @@ class PcMixin(MixinMeta):
     async def __on_pokedex_click(self, interaction: Interaction):
         await interaction.send('Pokedex is not implemented yet')
 
-    async def __on_release(self, interaction: Interaction):
-        await interaction.send('Pokedex is not implemented yet')
+
+    async def __on_release_click(self, interaction: Interaction):
+        user = interaction.user
+        state = self.__pokemon[str(user.id)]
+
+        pokeList = state.pokemon
+        pokeLength = len(pokeList)
+        i = state.idx
+        activeId = state.active
+
+        pokemon: PokemonClass = pokeList[i]
+
+        if pokemon.trainerId == activeId:
+            await interaction.send('You cannot release your active pokemon.')
+            return
+
+        trainer = TrainerClass(str(user.id))
+        starter = trainer.getStarterPokemon()
+
+        if pokemon.trainerId == starter.trainerId:
+            await interaction.send('You cannot release your starter pokemon.')
+            return
+
+        pokemon.release()
+
+        if i < pokeLength - 1:
+            await self.__on_next_click(interaction)
+        else:
+            await self.__on_prev_click(interaction)
 
 
     def __pokemonCard(self, user: discord.User, state: PokemonState):
