@@ -8,6 +8,7 @@ import math
 import pokebase as pb
 import random
 from dbclass import db as dbconn
+from leaderboardclass import leaderboard
 from loggerclass import logger as log
 from pokebase.interface import APIResource
 from statclass import PokeStats
@@ -347,7 +348,7 @@ class Pokemon:
                             evolvedForm = self.__checkForEvolution()
                             if evolvedForm is not None:
                                 # leaderboard stats
-                                lb = leaderboard(self.pokemon1.discordId)
+                                lb = leaderboard(self.discordId)
                                 lb.evolved()
                                 retMsg += 'Your pokemon is evolving......... Your pokemon evolved into %s!' % (
                                     evolvedForm)
