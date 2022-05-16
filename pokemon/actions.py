@@ -58,6 +58,10 @@ class ActionsMixin(MixinMeta):
         methods = location.getMethods()
         # areaMethods = trainer.getAreaMethods()
 
+        if len(methods) == 0:
+            await ctx.send('No encounters available at your location.')
+            return
+
         btns = []
         for method in methods:
             btns.append(self.client.add_callback(

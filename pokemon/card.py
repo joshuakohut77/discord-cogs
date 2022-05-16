@@ -69,13 +69,13 @@ class TrainerCardMixin(MixinMeta):
         embed = discord.Embed(title=f"Trainer")
         embed.set_author(name=f"{user.display_name}", icon_url=str(user.avatar_url))
         
-        embed.add_field(name='Battles', value=f'¥{stats.total_battles}', inline=True)
-        embed.add_field(name='Victories', value=f'¥{stats.total_victory}', inline=True)
-        embed.add_field(name='Defeats', value=f'¥{stats.total_defeat}', inline=True)
-        embed.add_field(name='Pokemon Caught', value=f'¥{stats.total_catch}', inline=True)
-        embed.add_field(name='Pokemon Released', value=f'¥{stats.total_released}', inline=True)
-        embed.add_field(name='Pokemon Evolved', value=f'¥{stats.total_evolved}', inline=True)
-        embed.add_field(name='Pokemon Traded', value=f'¥{stats.total_trades}', inline=True)
+        embed.add_field(name='Battles', value=f'{stats.total_battles}', inline=True)
+        embed.add_field(name='Victories', value=f'{stats.total_victory}', inline=True)
+        embed.add_field(name='Defeats', value=f'{stats.total_defeat}', inline=True)
+        embed.add_field(name='Pokemon Caught', value=f'{stats.total_catch}', inline=True)
+        embed.add_field(name='Pokemon Released', value=f'{stats.total_released}', inline=True)
+        embed.add_field(name='Pokemon Evolved', value=f'{stats.total_evolved}', inline=True)
+        embed.add_field(name='Pokemon Traded', value=f's{stats.total_trades}', inline=True)
 
         btns = []
         btns.append(self.client.add_callback(
