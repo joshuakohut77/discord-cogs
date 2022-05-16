@@ -56,7 +56,6 @@ class ActionsMixin(MixinMeta):
 
         location = LocationClass(str(user.id))
         methods = location.getMethods()
-        # areaMethods = trainer.getAreaMethods()
 
         if len(methods) == 0:
             await ctx.send('No encounters available at your location.')
@@ -67,7 +66,7 @@ class ActionsMixin(MixinMeta):
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray,
                        label=f"{method}", custom_id=f'{method}'),
-                self.on_action
+                self.__on_action
             ))
 
         message = await ctx.send(
@@ -77,10 +76,10 @@ class ActionsMixin(MixinMeta):
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), model, message.id)
 
-    async def on_action(self, interaction: Interaction):
+    async def __on_action(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.__checkTrainerState(user, interaction.message):
+        if not self.__checkUserActionState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
 
@@ -96,7 +95,7 @@ class ActionsMixin(MixinMeta):
             
             await interaction.send(f'You encountered a pokemon!')
 
-    def __checkTrainerState(self, user: discord.User, message: discord.Message):
+    def __checkUserActionState(self, user: discord.User, message: discord.Message):
         state: ActionState
         if str(user.id) not in self.__useractions.keys():
             return False
