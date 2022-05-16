@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS public.keyitems
     good_rod boolean DEFAULT false,
     super_rod boolean DEFAULT false,
     item_finder boolean DEFAULT false,
+    oaks_parcel_delivered boolean DEFAULT false,
     CONSTRAINT keyitems_pkey PRIMARY KEY (discord_id)
 )
 

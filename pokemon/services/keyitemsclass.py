@@ -29,6 +29,7 @@ class keyitems:
         self.pokeflute = False
         self.silph_scope = False
         self.oaks_parcel = False
+        self.oaks_parcel_delivered = False
         self.ss_ticket = False
         self.bicycle = False
         self.old_rod = False
@@ -37,8 +38,6 @@ class keyitems:
         self.item_finder = False
         # populate keyitems object
         self.__loadKeyItems()
-
-    
 
     def __loadKeyItems(self):
         """ loads key items from database into object """
@@ -51,7 +50,7 @@ class keyitems:
                     badge_soul, badge_marsh, badge_volcano, badge_earth, 
                     pokeflute, 
                     silph_scope, 
-                    oaks_parcel, 
+                    oaks_parcel, oaks_parcel_delivered,
                     ss_ticket, 
                     bicycle, "old_rod", "good_rod", "super_rod", 
                     item_finder
@@ -75,12 +74,13 @@ class keyitems:
                 self.pokeflute = result[13]
                 self.silph_scope = result[14]
                 self.oaks_parcel = result[15]
-                self.ss_ticket = result[16]
-                self.bicycle = result[17]
-                self.old_rod = result[18]
-                self.good_rod = result[19]
-                self.super_rod = result[20]
-                self.item_finder = result[21]
+                self.oaks_parcel_delivered = result[16]
+                self.ss_ticket = result[17]
+                self.bicycle = result[18]
+                self.old_rod = result[19]
+                self.good_rod = result[20]
+                self.super_rod = result[21]
+                self.item_finder = result[22]
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
@@ -102,7 +102,7 @@ class keyitems:
                     badge_volcano=%(badge_volcano)s, badge_earth=%(badge_earth)s, 
                     pokeflute=%(pokeflute)s, 
                     silph_scope=%(silph_scope)s, 
-                    oaks_parcel=%(oaks_parcel)s, 
+                    oaks_parcel=%(oaks_parcel)s, oaks_parcel_delivered=%(oaks_parcel_delivered)s, 
                     ss_ticket=%(ss_ticket)s, 
                     bicycle=%(bicycle)s, 
                     "old_rod"=%(old_rod)s, "good_rod"=%(good_rod)s, "super_rod"=%(super_rod)s, 
@@ -115,8 +115,9 @@ class keyitems:
                             'badge_soul':self.badge_soul, 'badge_marsh':self.badge_marsh,
                             'badge_volcano':self.badge_volcano, 'badge_earth':self.badge_earth,
                             'pokeflute':self.pokeflute, 'silph_scope':self.silph_scope,
-                            'oaks_parcel':self.oaks_parcel, 'ss_ticket':self.ss_ticket,
-                            'bicycle':self.bicycle, 'item_finder':self.item_finder,
+                            'oaks_parcel':self.oaks_parcel, 'oaks_parcel_delivered':self.oaks_parcel_delivered,
+                            'ss_ticket':self.ss_ticket, 'bicycle':self.bicycle, 
+                            'item_finder':self.item_finder,
                             'old_rod':self.old_rod, 'good_rod':self.good_rod, 'super_rod':self.super_rod,
                             'discordId':self.discordId }
                 db.execute(updateString, values)
