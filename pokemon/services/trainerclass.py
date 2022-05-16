@@ -449,19 +449,63 @@ class trainer:
             del db
             return partySize
 
-    def withdraw(self):
+    def withdraw(self, trainerId):
         """ withdraw pokemon  """
-        # TODO finish
+        currentPartySize = self.getPartySize()
+        if currentPartySize < MAX_PARTY_SIZE:
+            self.__withdraw(trainerId)
+        else:
+            self.statuscode = 420
+            self.message = "You already have a full party!"
         return
     
-    def deposit(self):
-        """ """
-        # TODO finish
+    def deposit(self, trainerId):
+        """ deposit pokemon """
+        currentPartySize = self.getPartySize()
+        if currentPartySize > 1:
+            self.__deposit(trainerId)
+        else:
+            self.statuscode = 420
+            self.message = "You must keep at least one pokemon in your party!"
         return
 
     ####
     # Private Class Methods
     ####
+
+    def __withdraw(self, trainerId):
+        """ withdraw pokemon """
+        try:
+            db = dbconn()
+            updateString = """
+            UPDATE Pokemon SET party = True
+                WHERE "id" = %(trainerId)s AND "discord_id" = %(discordId)s
+            """
+            db.execute(updateString, { 'trainerId': trainerId, 'discordId': self.discordId })
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+            raise
+        finally:
+            # delete and close connection
+            del db
+        
+    def __deposit(self, trainerId):
+        """ deposit pokemon """
+        try:
+            db = dbconn()
+            updateString = """
+            UPDATE Pokemon SET party = False
+                WHERE "id" = %(trainerId)s AND "discord_id" = %(discordId)s
+            """
+            db.execute(updateString, { 'trainerId': trainerId, 'discordId': self.discordId })
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+            raise
+        finally:
+            # delete and close connection
+            del db
 
     def __checkCreateTrainer(self):
         """ this will check if a trainerId exists and if not, insert them into the database """
