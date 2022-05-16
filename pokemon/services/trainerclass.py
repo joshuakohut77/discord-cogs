@@ -11,6 +11,7 @@ from leaderboardclass import leaderboard
 from locationclass import location as LocationClass
 from loggerclass import logger as log
 from pokeclass import Pokemon as pokeClass
+from datetime import datetime
 from time import time
 import models.location as Models
 
@@ -528,6 +529,7 @@ class trainer:
             db.executeWithoutCommit('INSERT INTO leaderboard (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
             db.commit()
             self.trainerExists = True
+            self.startdate = datetime.now().date()
         except:
             self.statuscode = 96
             db.rollback()
