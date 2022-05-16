@@ -3,6 +3,7 @@
 import sys
 from dbclass import db as dbconn
 from inventoryclass import inventory as inv
+from keyitemsclass import keyitems as kitems
 from loggerclass import logger as log
 
 # Class Logger
@@ -25,6 +26,14 @@ class store:
         storeList = []
         try:
             db = dbconn()
+            # this section is to check if user has Oaks Parcel
+            if self.locationId == 154:
+                keyitems = keyitems(self.discordId)
+                if not keyitems.oaks_parcel:
+                    self.statuscode = 420
+                    self.message = 'here takes the oaks_parcel'
+                    return 
+
             queryString = 'SELECT "item", "price" FROM store WHERE "locationId"=%(locationId)s'
             results = db.queryAll(queryString, {'locationId': self.locationId})
 
