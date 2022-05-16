@@ -83,7 +83,7 @@ class ActionsMixin(MixinMeta):
             await interaction.send('This is not for you.')
             return
 
-        await interaction.respond(type=5)
+        await interaction.respond(type=5, content="Walking through tall grass...")
 
         state = self.__useractions[str(user.id)]
         method = interaction.custom_id
