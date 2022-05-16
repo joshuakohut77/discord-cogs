@@ -175,12 +175,15 @@ class trainer:
         lb = leaderboard(self.discordId)
         lb.released()
 
-    def getPokemon(self):
+    def getPokemon(self, party=False):
         """ returns a list of pokemon objects for every pokemon in the database belonging to the trainer """
         pokemonList = []
         try:
             db = dbconn()
-            queryString = 'SELECT id FROM pokemon WHERE discord_id = %(discordId)s'
+            if party:
+                queryString = 'SELECT id FROM pokemon WHERE party = True AND discord_id = %(discordId)s'
+            else:
+                queryString = 'SELECT id FROM pokemon WHERE discord_id = %(discordId)s'
             results = db.queryAll(queryString, { 'discordId': self.discordId })
             for row in results:
                 pokemonId = row[0]
@@ -373,7 +376,7 @@ class trainer:
             self.message = "There is no Poke Center at your location"
             return
         
-        pokeList = self.getPokemon()
+        pokeList = self.getPokemon(party=True)
         for pokemon in pokeList:
             trainerId = pokemon.trainerId
             pokemon.load(trainerId)
