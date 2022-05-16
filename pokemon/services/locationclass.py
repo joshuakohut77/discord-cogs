@@ -135,21 +135,17 @@ class location:
                     areaList = self.getAreaList(locationId)
                     areaEncounters = self.getAreaEncounterDetails(areaList)
             totalChance = 0
+            encounterList = []
             for x in areaEncounters:
                 method = x['method']
                 if method == selectedMethod:
                     chance = x['chance']
+                    for counter in range(chance):
+                        encounterList.append(x)
                     totalChance += chance
-            for x in areaEncounters:
-                method = x['method']
-                if method == selectedMethod:
-                    chance = x['chance']
-                    randNum = random.randrange(1, totalChance+1)
-                    chance = x['chance']
-                    if randNum <= chance:
-                        areaEncounterPokemon = x
-                        break
-                        # TODO: Should we be break-ing here after the first successful encounter?
+            
+            randNum = random.randrange(0, totalChance)
+            areaEncounterPokemon = encounterList[randNum]
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
