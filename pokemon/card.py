@@ -53,14 +53,14 @@ class TrainerCardMixin(MixinMeta):
         btns = []
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
-            self.on_stats_click,
+            self.__on_stats_click,
         ))
  
         message: discord.Message = await ctx.send(embed=embed, components=[btns])     
         self.__cards[str(user.id)] = message.id
 
 
-    async def on_stats_click(self, interaction: Interaction):
+    async def __on_stats_click(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkCardState(user, interaction.message):
@@ -83,13 +83,13 @@ class TrainerCardMixin(MixinMeta):
         btns = []
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.green, label="About", custom_id='about'),
-            self.on_about_click,
+            self.__on_about_click,
         ))
  
         message = await interaction.edit_origin(embed=embed, components=[btns])     
         self.__cards[str(user.id)] = message.id
 
-    async def on_about_click(self, interaction: Interaction):
+    async def __on_about_click(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkCardState(user, interaction.message):
