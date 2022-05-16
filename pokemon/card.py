@@ -20,9 +20,6 @@ from services.keyitemsclass import keyitems as KeyItemsClass
 from services.leaderboardclass import leaderboard as LeaderBoardClass
 
 from .abcd import MixinMeta
-from .functions import (createStatsEmbed, getTypeColor,
-                        createPokemonAboutEmbed)
-
 
 
 class TrainerCardMixin(MixinMeta):
@@ -48,7 +45,7 @@ class TrainerCardMixin(MixinMeta):
         inventory = InventoryClass(trainer.discordId)
         keyitems = KeyItemsClass(trainer.discordId)
         
-        embed = self.__createAboutEmbed(user, inventory)
+        embed = self.__createAboutEmbed(user, inventory, keyitems)
 
         btns = []
         btns.append(self.client.add_callback(
@@ -101,33 +98,41 @@ class TrainerCardMixin(MixinMeta):
         inventory = InventoryClass(trainer.discordId)
         keyitems = KeyItemsClass(trainer.discordId)
         
-        embed = self.__createAboutEmbed(user, inventory)
+        embed = self.__createAboutEmbed(user, inventory, keyitems)
 
         btns = []
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
-            self.on_stats_click,
+            self.__on_stats_click,
         ))
  
         message = await interaction.edit_origin(embed=embed, components=[btns])     
         self.__cards[str(user.id)] = message.id
 
 
-    def __createAboutEmbed(self, user: discord.User, inventory: InventoryClass):
+    def __createAboutEmbed(self, user: discord.User, inventory: InventoryClass, keyitems: KeyItemsClass):
         embed = discord.Embed(title=f"Trainer")
         embed.set_author(name=f"{user.display_name}", icon_url=str(user.avatar_url))
         
         embed.add_field(name='Money', value=f'¥{inventory.money}', inline=False)
 
         badges = []
-        badges.append(constant.BADGE_BOULDER_01)
-        badges.append(constant.BADGE_CASCADE_02)
-        badges.append(constant.BADGE_THUNDER_03)
-        badges.append(constant.BADGE_RAINBOW_04)
-        badges.append(constant.BADGE_SOUL_05)
-        badges.append(constant.BADGE_MARSH_06)
-        badges.append(constant.BADGE_VOLCANO_07)
-        badges.append(constant.BADGE_EARTH_08)
+        if keyitems.badge_boulder:
+            badges.append(constant.BADGE_BOULDER_01)
+        if keyitems.badge_cascade:
+            badges.append(constant.BADGE_CASCADE_02)
+        if keyitems.badge_thunder:
+            badges.append(constant.BADGE_THUNDER_03)
+        if keyitems.badge_rainbow:
+            badges.append(constant.BADGE_RAINBOW_04)
+        if keyitems.badge_soul:
+            badges.append(constant.BADGE_SOUL_05)
+        if keyitems.badge_marsh:
+            badges.append(constant.BADGE_MARSH_06)
+        if keyitems.badge_volcano:
+            badges.append(constant.BADGE_VOLCANO_07)
+        if keyitems.badge_earth:
+            badges.append(constant.BADGE_EARTH_08)
 
         badgeText = " ".join(badges) if len(badges) > 0 else "--"
         embed.add_field(name='Badges', value=badgeText, inline=False)
