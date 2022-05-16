@@ -33,12 +33,12 @@ from services.trainerclass import trainer as TrainerClass
 # one state mapping instead of multiple
 # pretty up location names
 # nickname pokemon
-# - Trainer Bag -- Key Items, HMs
-# - Trainer Card -- Badges, Money, Stats
-# - Aliases
+# - [x] Trainer Bag -- Key Items, HMs
+# - [x] Trainer Card -- Badges, Money, Stats
+# - [x] Aliases
+# - [x] Refactor trainer pc to use callbacks
 # - Encounters
 # - Pokedex
-# - Refactor trainer pc to use callbacks
 # - Flesh out the *debug module to help us test the game
 
 
