@@ -86,8 +86,25 @@ class InventoryMixin(MixinMeta):
         embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/trainer_bag.png")
         embed.set_author(name=f"{user.display_name}",
                         icon_url=str(user.avatar_url))
+
+        keyitems = KeyItemClass(str(user.id))
+
+        hms = []
+
+        if (keyitems.HM01):
+            hms.append(f'{constant.HM01} HM 01')
+        if (keyitems.HM02):
+            hms.append(f'{constant.HM02} HM 02')
+        if (keyitems.HM03):
+            hms.append(f'{constant.HM03} HM 03')
+        if (keyitems.HM04):
+            hms.append(f'{constant.HM04} HM 04')
+        if (keyitems.HM05):
+            hms.append(f'{constant.HM05} HM 05')
         
-        embed.add_field(name='HMs', value='HMs are not implemented yet.', inline=False)
+
+        trainerHMs = "\r\n".join(hms) if len(hms) > 0 else 'No HMs yet.'
+        embed.add_field(name='HMs', value=trainerHMs, inline=False)
 
         btns = []
         btns.append(self.client.add_callback(

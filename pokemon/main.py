@@ -32,8 +32,14 @@ from services.trainerclass import trainer as TrainerClass
 # cleanup all the typings, cbs should be private/mangled
 # one state mapping instead of multiple
 # pretty up location names
-# capitalize set active pokemon name
 # nickname pokemon
+# - Trainer Bag -- Key Items, HMs
+# - Trainer Card -- Badges, Money, Stats
+# - Aliases
+# - Encounters
+# - Pokedex
+# - Refactor trainer pc to use callbacks
+# - Flesh out the *debug module to help us test the game
 
 
 class CompositeClass(commands.CogMeta, ABCMeta):

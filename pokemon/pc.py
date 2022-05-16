@@ -104,7 +104,7 @@ class PcMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         trainer.setActivePokemon(pokemon.trainerId)
 
-        await interaction.channel.send(f'{user.display_name} set their active pokemon to {pokemon.pokemonName}.')
+        await interaction.channel.send(f'{user.display_name} set their active pokemon to {pokemon.pokemonName.capitalize()}.')
         
         state.active = pokemon.trainerId
         embed, firstRow, secondRow = self.__pokemonStatsCard(user, state)
@@ -214,7 +214,7 @@ class PcMixin(MixinMeta):
 
         pokemon.release()
 
-        await interaction.channel.send(f'{user.display_name} released {pokemon.pokemonName}')
+        await interaction.channel.send(f'{user.display_name} released {pokemon.pokemonName.capitalize()}')
         pokeList = trainer.getPokemon()
         pokeLength = len(pokeList)
         self.__pokemon[str(user.id)] = PokemonState(str(user.id), state.messageId, pokeList, state.active, state.idx)
