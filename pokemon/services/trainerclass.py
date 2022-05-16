@@ -28,6 +28,7 @@ class trainer:
 
         self.discordId = str(discordId)
         self.trainerExists = False
+        self.startdate = None
         # check create trainer if exists or not
         self.__checkCreateTrainer()
 
@@ -512,11 +513,15 @@ class trainer:
 
     def __checkCreateTrainer(self):
         """ this will check if a trainerId exists and if not, insert them into the database """
-        # Only do this check once
-        if self.trainerExists:
-            return
         try:
             db = dbconn()
+            # do this check to see if trainer exists
+            queryString = 'SELECT startdate FROM trainer WHERE "discord_id" = %(discordId)s'
+            result = db.querySingle(queryString, { 'discordId': self.discordId })
+            if result:
+                self.startdate = result[0]
+                return
+        
             db.executeWithoutCommit('INSERT INTO trainer (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
             db.executeWithoutCommit('INSERT INTO inventory (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
             db.executeWithoutCommit('INSERT INTO keyitems (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
