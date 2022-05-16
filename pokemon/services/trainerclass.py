@@ -516,7 +516,7 @@ class trainer:
         try:
             db = dbconn()
             # do this check to see if trainer exists
-            queryString = 'SELECT startdate FROM trainer WHERE "discord_id = %(discordId)s'
+            queryString = 'SELECT startdate FROM trainer WHERE "discord_id" = %(discordId)s'
             result = db.querySingle(queryString, { 'discordId': self.discordId })
             if result:
                 self.startdate = result[0]
