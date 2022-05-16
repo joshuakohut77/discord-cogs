@@ -25,7 +25,6 @@ class store:
         """ loads a trainers store into the class object """
         storeList = []
         try:
-            db = dbconn()
             # this section is to check if user has Oaks Parcel
             if self.locationId == 154:
                 keyitems = keyitems(self.discordId)
@@ -33,7 +32,7 @@ class store:
                     self.statuscode = 420
                     self.message = 'here takes the oaks_parcel'
                     return 
-
+            db = dbconn()
             queryString = 'SELECT "item", "price" FROM store WHERE "locationId"=%(locationId)s'
             results = db.queryAll(queryString, {'locationId': self.locationId})
 
