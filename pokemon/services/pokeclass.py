@@ -16,6 +16,7 @@ from time import time
 # Global Config Variables
 STARTER_LEVEL = config.starterLevel
 VERSION_GROUP_NAME = config.version_group_name
+MAX_PARTY_SIZE = 6
 # Class Logger
 logger = log()
 
@@ -41,6 +42,7 @@ class Pokemon:
         self.type1 = None
         self.type2 = None
         self.shiny = False
+        self.party = None
         self.hp = PokeStats('hp')
         self.attack = PokeStats('attack')
         self.defense = PokeStats('defense')
@@ -131,7 +133,7 @@ class Pokemon:
                             "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", 
                             "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", 
                             "EV_special_defense", "move_1", "move_2", "move_3", "move_4", 
-                            "type_1", "type_2", "nickName", "currentHP")
+                            "type_1", "type_2", "nickName", "currentHP", "party")
                         VALUES (%(discordId)s, %(pokemonId)s, %(pokemonName)s,
                             %(growthRate)s, %(currentLevel)s, %(currentExp)s,
                             %(traded)s, %(base_hp)s,%(base_attack)s,
@@ -143,7 +145,8 @@ class Pokemon:
                             %(EV_attack)s, %(EV_defense)s, %(EV_speed)s,
                             %(EV_special_attack)s, %(EV_special_defense)s,
                             %(move_1)s, %(move_2)s, %(move_3)s, %(move_4)s, 
-                            %(type_1)s, %(type_2)s, %(nickName)s, %(currentHP)s)
+                            %(type_1)s, %(type_2)s, %(nickName)s, 
+                            %(currentHP)s, %(party)s)
                         RETURNING id
                 """
                 values = {'discordId': self.discordId, 'pokemonId': self.pokedexId, 'pokemonName': self.pokemonName,
@@ -157,7 +160,8 @@ class Pokemon:
                           'EV_attack': self.attack.EV, 'EV_defense': self.defense.EV, 'EV_speed': self.speed.EV,
                           'EV_special_attack': self.special_attack.EV, 'EV_special_defense': self.special_defense.EV,
                           'move_1': self.move_1, 'move_2': self.move_2, 'move_3': self.move_3, 'move_4': self.move_4,
-                          'type_1': self.type1, 'type_2': self.type2, 'nickName': self.nickName, 'currentHP': self.currentHP}
+                          'type_1': self.type1, 'type_2': self.type2, 'nickName': self.nickName, 
+                          'currentHP': self.currentHP, 'party': self.party }
                 trainerIds = db.executeAndReturn(queryString, values)
                 if trainerIds:
                     self.trainerId = trainerIds[0]
@@ -175,7 +179,7 @@ class Pokemon:
                             "EV_defense"=%(EV_defense)s, "EV_speed"=%(EV_speed)s, 
                             "EV_special_attack"=%(EV_special_attack)s, "EV_special_defense"=%(EV_special_defense)s,
                             "move_1"=%(move_1)s, "move_2"=%(move_2)s, "move_3"=%(move_3)s, 
-                            "move_4"=%(move_4)s, "nickName"=%(nickName)s, "currentHP"=%(currentHP)s
+                            "move_4"=%(move_4)s, "nickName"=%(nickName)s, "currentHP"=%(currentHP)s, "party"=%(party)s
                         WHERE id = %(trainerId)s;
                 """
                 values = {'discordId': self.discordId, 'pokemonId': self.pokedexId, 'pokemonName': self.pokemonName,
@@ -189,7 +193,8 @@ class Pokemon:
                           'EV_attack': self.attack.EV, 'EV_defense': self.defense.EV, 'EV_speed': self.speed.EV,
                           'EV_special_attack': self.special_attack.EV, 'EV_special_defense': self.special_defense.EV,
                           'move_1': self.move_1, 'move_2': self.move_2, 'move_3': self.move_3, 'move_4': self.move_4,
-                          'nickName': self.nickName, 'currentHP': self.currentHP, 'trainerId': self.trainerId}
+                          'nickName': self.nickName, 'currentHP': self.currentHP, 'party': self.party, 
+                          'trainerId': self.trainerId }
 
                 db.execute(queryString, values)
         except:
@@ -202,6 +207,16 @@ class Pokemon:
     def release(self):
         """ release a pokemon """
         return self.__delete()
+
+    def withdraw(self):
+        """ withdraw pokemon  """
+        # TODO finish
+        return
+    
+    def deposit(self):
+        """ """
+        # TODO finish
+        return
 
     def print(self):
         """ prints out most pokemon information for debugging """
@@ -428,7 +443,8 @@ class Pokemon:
             "move_1", "move_2", "move_3", "move_4",
             "type_1", "type_2",
             "nickName",
-            "currentHP" 
+            "currentHP",
+            "party"
             FROM pokemon WHERE "id" = %(pokemonId)s'''
         result = db.querySingle(queryString, {'pokemonId': int(pokemonId)})
 
@@ -467,6 +483,7 @@ class Pokemon:
             self.type2 = result[31]
             self.nickName = result[32]
             self.currentHP = result[33]
+            self.party = result[34]
         
         # delete and close connection
         del db
