@@ -449,6 +449,16 @@ class trainer:
             del db
             return partySize
 
+    def withdraw(self):
+        """ withdraw pokemon  """
+        # TODO finish
+        return
+    
+    def deposit(self):
+        """ """
+        # TODO finish
+        return
+
     ####
     # Private Class Methods
     ####

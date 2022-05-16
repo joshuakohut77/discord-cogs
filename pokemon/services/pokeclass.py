@@ -209,15 +209,6 @@ class Pokemon:
         """ release a pokemon """
         return self.__delete()
 
-    def withdraw(self):
-        """ withdraw pokemon  """
-        # TODO finish
-        return
-    
-    def deposit(self):
-        """ """
-        # TODO finish
-        return
 
     def print(self):
         """ prints out most pokemon information for debugging """
