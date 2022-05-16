@@ -256,6 +256,10 @@ class PcMixin(MixinMeta):
 
         pokemon.release()
 
+        await interaction.channel.send(f'{user.display_name} released {pokemon.pokemonName}')
+        pokeList.remove(pokemon)
+        state.pokemon = pokeList
+
         if i < pokeLength - 1:
             await self.__on_next_click(interaction)
         else:
@@ -302,7 +306,7 @@ class PcMixin(MixinMeta):
             Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled),
             self.__on_release_click
         ))
-        
+
         return embed, firstRowBtns, secondRowBtns
 
 
