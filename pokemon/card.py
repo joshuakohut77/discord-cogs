@@ -45,7 +45,7 @@ class TrainerCardMixin(MixinMeta):
         inventory = InventoryClass(trainer.discordId)
         keyitems = KeyItemsClass(trainer.discordId)
         
-        embed = self.__createAboutEmbed(user, inventory, keyitems)
+        embed = self.__createAboutEmbed(user, trainer, inventory, keyitems)
 
         btns = []
         btns.append(self.client.add_callback(
@@ -98,7 +98,7 @@ class TrainerCardMixin(MixinMeta):
         inventory = InventoryClass(trainer.discordId)
         keyitems = KeyItemsClass(trainer.discordId)
         
-        embed = self.__createAboutEmbed(user, inventory, keyitems)
+        embed = self.__createAboutEmbed(user, trainer, inventory, keyitems)
 
         btns = []
         btns.append(self.client.add_callback(
@@ -110,7 +110,7 @@ class TrainerCardMixin(MixinMeta):
         self.__cards[str(user.id)] = message.id
 
 
-    def __createAboutEmbed(self, user: discord.User, inventory: InventoryClass, keyitems: KeyItemsClass):
+    def __createAboutEmbed(self, user: discord.User, trainer: TrainerClass, inventory: InventoryClass, keyitems: KeyItemsClass):
         embed = discord.Embed(title=f"Trainer")
         embed.set_author(name=f"{user.display_name}", icon_url=str(user.avatar_url))
         
@@ -138,7 +138,7 @@ class TrainerCardMixin(MixinMeta):
         embed.add_field(name='Badges', value=badgeText, inline=False)
 
         embed.add_field(name='Pokedex', value='0')
-        embed.add_field(name='Started', value='2022/05/14')
+        embed.add_field(name='Started', value=f'{trainer.startdate}')
         return embed
 
 
