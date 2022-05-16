@@ -64,19 +64,13 @@ class PcMixin(MixinMeta):
     # TODO: Apparently there is a limit of 5 buttons at a time
     @_trainer.command()
     async def pc(self, ctx: commands.Context, user: Union[discord.Member,discord.User] = None):
-        # author: Union[discord.Member,discord.User] = ctx.author
-
         if user is None:
             user = ctx.author
-
-        # def nextBtnClick():
-        #     return lambda x: x.custom_id == "next" or x.custom_id == 'previous' or x.custom_id == 'stats' or x.custom_id == 'pokedex' or x.custom_id == 'active'
 
         trainer = TrainerClass(str(user.id))
         pokeList = trainer.getPokemon()
         # TODO: we should just get the ids since that's all we need
         active = trainer.getActivePokemon()
-        # starter = trainer.getStarterPokemon()
 
         # interaction: Interaction = None
         pokeLength = len(pokeList)
@@ -116,10 +110,10 @@ class PcMixin(MixinMeta):
             Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled),
             self.__on_set_active
         ))
-        
-        # TODO: need to add the release button somewhere
-        # # releaseDisabled = (active is not None and pokemon.id == active.id) or (starter is not None and pokemon.id == starter.id)
-        # btns.append(Button(style=ButtonStyle.red, label="Release", custom_id='release'))
+        secondRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled),
+            self.__on_release_click
+        ))
 
         # if interaction is None:
         message = await ctx.send(
@@ -127,31 +121,6 @@ class PcMixin(MixinMeta):
             components=[firstRowBtns, secondRowBtns]
         )
         self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, pokeList, active.trainerId, i)
-        # interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
-        # else:
-        #     await interaction.edit_origin(
-        #         embed=embed,
-        #         # file=file,
-        #         components=[firstRowBtns, secondRowBtns]
-        #     )
-        #     interaction = await self.bot.wait_for("button_click", check=nextBtnClick(), timeout=30)
-        
-        # # Users who are not the author cannot click other users buttons
-        # if interaction.user.id != author.id:
-        #     await interaction.send('This is not for you.')
-        #     return
-
-        # if interaction.custom_id == 'next':
-        #     i = i + 1
-        # if (interaction.custom_id == 'previous'):
-        #     i = i - 1
-        # if interaction.custom_id == 'active':
-        #     res = trainer.setActivePokemon(pokemon.trainerId)
-        #     await interaction.send(content=f'{res}')
-        # if interaction.custom_id == 'stats':
-        #     await interaction.send('Not implemented')
-        # if interaction.custom_id == 'pokedex':
-        #     await interaction.send('Not implemented')
 
     
     async def __on_set_active(self, interaction: Interaction):
@@ -329,6 +298,11 @@ class PcMixin(MixinMeta):
             Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled),
             self.__on_set_active
         ))
+        secondRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled),
+            self.__on_release_click
+        ))
+        
         return embed, firstRowBtns, secondRowBtns
 
 
