@@ -86,14 +86,14 @@ class ActionsMixin(MixinMeta):
         state = self.__useractions[str(user.id)]
         method = interaction.custom_id
 
-        if method == 'walk':
-            trainer = TrainerClass(str(user.id))
-            pokemon = trainer.encounter(method)
-            if pokemon is None:
-                await interaction.send('No pokemon encountered.')
-                return
-            
-            await interaction.send(f'You encountered a pokemon!')
+        # if method == 'walk':
+        trainer = TrainerClass(str(user.id))
+        pokemon: PokemonClass = trainer.encounter(method)
+        if pokemon is None:
+            await interaction.send('No pokemon encountered.')
+            return
+        
+        await interaction.send(f'You encountered a wild {pokemon.pokemonName}!')
 
     def __checkUserActionState(self, user: discord.User, message: discord.Message):
         state: ActionState
