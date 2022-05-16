@@ -27,7 +27,6 @@ from services.trainerclass import trainer as TrainerClass
 
 
 # Things left to do
-# trainer pc release pokemon (should get small $ for it)
 # pokemart sell item (should get 10% back for it)
 # add start date to trainer stats
 # cleanup all the typings, cbs should be private/mangled
