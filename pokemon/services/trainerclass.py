@@ -267,10 +267,10 @@ class trainer:
             return
         enc = encounter(pokemon1, pokemon2)
         retVal = enc.fight()
-        if enc.statuscode == 96:
-            self.statuscode = 96
-            self.message = "error occurred during encounter.fight()"
-            return
+
+        # propagate whatever the fight statuscode/message is
+        self.statuscode = enc.statuscode
+        self.message = enc.message
         return retVal
 
     def catch(self, pokemon2, item):
