@@ -23,7 +23,7 @@ class encounter:
     pokemon1: PokemonClass
     pokemon2: PokemonClass
 
-    def __init__(self, pokemon1, pokemon2):
+    def __init__(self, pokemon1: PokemonClass, pokemon2: PokemonClass):
         # pokemon1 for PvE will always be the discord trainers pokemon
         self.statuscode = 69
         self.message = ''
