@@ -3,12 +3,14 @@ import sys
 from datetime import datetime
 from dbclass import db as dbconn
 from loggerclass import logger as log
+from pokeclass import Pokemon as PokemonClass
 
 # Class Logger
 logger = log()
 
+
 class pokedex:
-    def __init__(self, discordId, pokemon):
+    def __init__(self, discordId: str, pokemon: PokemonClass):
         self.statuscode = 69
         self.message = ''
 
@@ -23,18 +25,20 @@ class pokedex:
             db = dbconn()
             queryString = '''SELECT 1 FROM pokedex 
                             WHERE "discord_id"=%(discordId)s AND "pokemonId"=%(pokemonId)s'''
-            values = { 'discordId':self.discordId, 'pokemonId':self.pokemon.id }
+            values = {'discordId': self.discordId,
+                      'pokemonId': self.pokemon.pokedexId}
             result = db.querySingle(queryString, values)
             if result:
                 updateQuery = '''UPDATE pokedex SET "mostRecent"=%(now)s 
                                 WHERE "discord_id"=%(discordId)s AND "pokemonId"=%(pokemonId)s'''
-                values = { 'now':now, 'discordId':self.discordId, 'pokemonId':str(self.pokemon.id) }
+                values = {'now': now, 'discordId': self.discordId,
+                          'pokemonId': self.pokemon.pokedexId}
             else:
                 updateQuery = '''INSERT INTO pokedex ("discord_id", "pokemonId", 
                                     "pokemonName", "mostRecent") 
                                     VALUES (%(discordId)s, %(pokemonId)s, %(pokemonName)s, %(now)s)'''
-                values = { 'discordId':self.discordId, 'pokemonId':str(self.pokemon.id),
-                        'pokemonName':self.pokemon.name, 'now':now }
+                values = {'discordId': self.discordId, 'pokemonId': str(self.pokemon.pokedexId),
+                          'pokemonName': self.pokemon.pokemonName, 'now': now}
             db.execute(updateQuery, values)
         except:
             self.statuscode = 96
