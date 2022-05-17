@@ -97,6 +97,39 @@ class ActionsMixin(MixinMeta):
         
         await interaction.send(f'You encountered a wild {pokemon.pokemonName}!')
 
+        embed = self.__wildPokemonEncounter(user, pokemon)
+
+        message = await interaction.channel.send(
+            content=f'{user.display_name} encountered a {pokemon.pokemonName.capitalize()}!',
+            embed=embed
+        )
+        self.__useractions[str(user.id)] = ActionState(
+            str(user.id), state.location, message.id)
+
+    def __wildPokemonEncounter(user: discord.User, pokemon: PokemonClass):
+        stats = pokemon.getPokeStats()
+        color = getTypeColor(pokemon.type1)
+        # Create the embed object
+        embed = discord.Embed(title=f"Wild {pokemon.pokemonName.capitalize()}", color=color)
+        embed.set_author(name=f"{user.display_name}",
+                        icon_url=str(user.avatar_url))
+        
+        types = pokemon.type1
+        if pokemon.type2 is not None:
+            types += ', ' + pokemon.type2
+            
+        embed.add_field(
+            name="Type", value=f"{types}", inline=True)
+
+        embed.add_field(
+            name="Level", value=f"{pokemon.currentLevel}", inline=False)
+        embed.add_field(
+            name="HP", value=f"{pokemon.currentHP} / {stats['hp']}", inline=False)
+
+        embed.set_thumbnail(url=pokemon.frontSpriteURL)
+        return embed
+
+
     def __checkUserActionState(self, user: discord.User, message: discord.Message):
         state: ActionState
         if str(user.id) not in self.__useractions.keys():
