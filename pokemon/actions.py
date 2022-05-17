@@ -134,7 +134,7 @@ class ActionsMixin(MixinMeta):
         trainer.fight(state.pokemon)
 
         if trainer.statuscode == 96:
-            interaction.send(trainer.message)
+            await interaction.send(trainer.message)
             return
 
         embed = self.__wildPokemonEncounter(user, state.pokemon)
