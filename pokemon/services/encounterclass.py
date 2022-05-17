@@ -55,7 +55,7 @@ class encounter:
         # two pokemon fight with an outcome calling victory or defeat
         # todo update with better fight outcome algorithm
         if self.pokemon1.currentHP == 0:
-            self.statuscode = 96
+            self.statuscode = 420
             self.message = "Your active Pokemon has no HP left!"
             return
 
@@ -66,12 +66,7 @@ class encounter:
     def battle(self):
         """ this function simulates a live battle between two pokemon """
         # get pokemons current fighting HP
-        battleHP1 = self.pokemon1.currentHP
-        if battleHP1 <= 0:
-            self.statuscode = 96
-            self.message = "Your active Pokemon has no HP left!"
-            return
-        
+        battleHP1 = self.pokemon1.currentHP        
         battleHP2 = self.pokemon2.currentHP
         # get pokemons list of moves
         battleMoves1 = self.__removeNullMoves(self.pokemon1.getMoves())
@@ -102,7 +97,7 @@ class encounter:
             
             # max number of turns has occured. Break out of potential infinite loop
             if x == MAX_BATTLE_TURNS - 1:
-                self.statuscode = 96
+                self.statuscode = 420
                 self.message = 'Failed to defeat enemy pokemon. The Pokemon ran away'
                 break
 
