@@ -204,6 +204,30 @@ class trainer:
             del db
             return pokemonList
 
+    def getPokemonById(self, trainerId: int):
+        """ returns a single pokemon object belonging to the trainer """
+        pokemon = None
+        try:
+            db = dbconn()
+            queryString = 'SELECT id FROM pokemon WHERE discord_id = %(discordId)s and trainerId = %(trainerId)s'
+            row = db.querySingle(queryString, { 'discordId': self.discordId, 'trainerId': trainerId })
+
+            pokemonId = row[0]
+            pokemon = pokeClass(self.discordId)
+            pokemon.load(pokemonId=pokemonId)
+
+            if pokemon.statuscode == 96:
+                self.statuscode = 96
+                self.message = "error occured during pokemon load()"
+                return
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            # delete and close connection
+            del db
+            return pokemon
+
     def getActivePokemon(self):
         """ returns pokemon object of active pokemon for the trainer """
         pokemon = None

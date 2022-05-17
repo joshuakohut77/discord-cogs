@@ -192,6 +192,9 @@ class StarterMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
 
         trainer.setActivePokemon(state.pokemonId)
+        pokemon = trainer.getPokemonById(state.pokemonId)
+
+        await interaction.channel.send(f'{user.display_name} set their active pokemon to {pokemon.pokemonName.capitalize()}.')
 
         await self.__on_stats_click(interaction)
 
