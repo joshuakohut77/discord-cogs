@@ -82,8 +82,8 @@ class encounter:
             randMoveSelector = random.randrange(1, len(battleMoves1)+1)
             damage = self.__calculateDamageOfMove(battleMoves1[randMoveSelector-1])
             battleHP2 -= damage
-            print('%s used %s' %(self.pokemon1.name, battleMoves1[randMoveSelector-1]))
-            print('%s did %s damage' %(self.pokemon1.name, str(damage)))
+            print('%s used %s' %(self.pokemon1.pokemonName, battleMoves1[randMoveSelector-1]))
+            print('%s did %s damage' %(self.pokemon1.pokemonName, str(damage)))
             if battleHP2 <=0:
                 self.pokemon1.currentHP = battleHP1
                 self.__victory()
@@ -92,8 +92,8 @@ class encounter:
             randMoveSelector = random.randrange(1, len(battleMoves2)+1)
             damage = self.__calculateDamageOfMove(battleMoves2[randMoveSelector-1])
             battleHP1 -= damage
-            print('%s used %s' %(self.pokemon2.name, battleMoves2[randMoveSelector-1]))
-            print('%s did %s damage' %(self.pokemon2.name, str(damage)))
+            print('%s used %s' %(self.pokemon2.pokemonName, battleMoves2[randMoveSelector-1]))
+            print('%s did %s damage' %(self.pokemon2.pokemonName, str(damage)))
             if battleHP1 <=0:
                 self.pokemon1.currentHP = battleHP1
                 self.__defeat()
