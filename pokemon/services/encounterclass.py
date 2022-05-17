@@ -119,9 +119,11 @@ class encounter:
     def catch(self, item=None):
         # roll chance to catch pokemon and it either runs away or
         #poke-ball, great-ball, ultra-ball, master-ball
-        if not self.pokemon2.wildPokemon:
+        if self.pokemon2.discordId is not None:
             self.statuscode = 420
             self.message = "You can only catch Wild Pokemon!"
+            return
+        
         pokemonCaught = False
         inventory = inv(self.pokemon1.discordId)
         if item == 'poke-ball':
@@ -277,6 +279,7 @@ class encounter:
 
         return calculatedDamage
 
+    # TODO: make this a dict, save a db call
     def __getDamageTypeMultiplier(self, moveType, defendingType):
         """ returns a multiplier for the type-effectiveness """
         dmgMult = None
