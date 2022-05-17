@@ -55,20 +55,7 @@ class StarterMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         pokemon = trainer.getActivePokemon()
 
-        embed = createStatsEmbed(user, pokemon)
-
-        btns = []
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
-            self.__on_moves_click
-        ))
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
-            self.__on_pokedex_click
-        ))
-        btns.append(
-            Button(style=ButtonStyle.blue, label="Set Active", custom_id='setactive', disabled=True)
-        )
+        embed, btns = self.__pokemonStatsCard(user, pokemon, pokemon)
 
         message = await ctx.send(embed=embed, components=[btns])       
         self.__trainers[str(user.id)] = TrainerState(str(user.id), pokemon.trainerId, message.id)
@@ -85,23 +72,7 @@ class StarterMixin(MixinMeta):
         pokemon = trainer.getStarterPokemon()
         active = trainer.getActivePokemon()
 
-        embed = createStatsEmbed(user, pokemon)
-
-        btns = []
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
-            self.__on_moves_click
-        ))
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
-            self.__on_pokedex_click
-        ))
-
-        # Disable the "Set Active" button if the starter is currently the active pokemon
-        disabled = (active is not None) and (
-            pokemon.trainerId == active.trainerId)
-        btns.append(Button(style=ButtonStyle.blue, label="Set Active",
-                    custom_id='setactive', disabled=disabled))
+        embed, btns = self.__pokemonStatsCard(user, pokemon, active)
 
         message: discord.Message = await ctx.send(embed=embed, components=[btns])
         self.__trainers[str(user.id)] = TrainerState(str(user.id), pokemon.trainerId, message.id)
@@ -170,25 +141,40 @@ class StarterMixin(MixinMeta):
 
         state = self.__trainers[str(user.id)]
         
+        trainer = TrainerClass(str(user.id))
+        active = trainer.getActivePokemon()
 
         pokemonId = state.pokemonId
         pokemon = PokemonClass(str(user.id))
         pokemon.load(pokemonId)
 
-        embed = createStatsEmbed(user, pokemon)
-
-        btns = []
-
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="About", custom_id='about'),
-            self.on_about_click,
-        ))
-        btns.append(Button(style=ButtonStyle.green,
-                    label="Pokedex", custom_id='pokedex'))
+        embed, btns = self.__pokemonStatsCard(user, pokemon, active)
 
         message = await interaction.edit_origin(embed=embed, components=[btns])
         self.__trainers[str(user.id)] = TrainerState(str(user.id), pokemon.trainerId, message.id)
 
+
+    def __pokemonStatsCard(self, user: discord.User, pokemon: PokemonClass, active: PokemonClass):
+        embed = createStatsEmbed(user, pokemon)
+
+        btns = []
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
+            self.__on_moves_click
+        ))
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
+            self.__on_pokedex_click
+        ))
+
+        # Disable the "Set Active" button if the starter is currently the active pokemon
+        disabled = (active is not None) and (
+            pokemon.trainerId == active.trainerId)
+        btns.append(Button(style=ButtonStyle.blue, label="Set Active",
+                    custom_id='setactive', disabled=disabled))
+
+        return embed, btns
+    
 
     # async def on_pokedex_click(self, interaction: Interaction):
     #     user = interaction.user
