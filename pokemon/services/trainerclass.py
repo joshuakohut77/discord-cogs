@@ -579,7 +579,7 @@ class trainer:
             min_level = selectedEncounter['min_level']
             max_level = selectedEncounter['max_level']
             level = random.randrange(int(min_level), int(max_level)+1)
-            pokemon = pokeClass(self.discordId, name)
+            pokemon = pokeClass(None, name)
             pokemon.create(level)
             if pokemon.statuscode == 96:
                 self.statuscode = 96
