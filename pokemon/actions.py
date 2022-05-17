@@ -120,8 +120,33 @@ class ActionsMixin(MixinMeta):
             str(user.id), message.id, state.location, pokemon)
 
 
-    def __on_fight_click(self, interaction: Interaction):
-        pass
+    async def __on_fight_click(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.__checkUserActionState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+        await interaction.respond(type=5, content="Battling...")
+
+        state = self.__useractions[str(user.id)]
+        trainer = TrainerClass(str(user.id))
+        trainer.fight(state.pokemon)
+
+        if trainer.statuscode == 96:
+            interaction.send(trainer.message)
+            return
+
+        embed = self.__wildPokemonEncounter(user, state.pokemon)
+
+        btns = []
+
+        await interaction.edit_origin(
+            content=f'{trainer.message}',
+            embed=embed,
+            components=[]
+        )
+        del self.__useractions[str(user.id)]
 
 
     async def __on_runaway_click(self, interaction: Interaction):

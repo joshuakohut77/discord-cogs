@@ -184,7 +184,7 @@ class encounter:
         evGained = expObj.getEffortValue()
         if expObj.statuscode == 96:
             self.statuscode = 96
-            self.message = "error occured during expericne calculations"
+            self.message = "error occured during experience calculations"
             return 
         newCurrentHP = self.pokemon1.currentHP
 
