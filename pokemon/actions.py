@@ -6,7 +6,7 @@ import discord
 from discord import (Embed, Member)
 from discord import message
 from discord_components import (
-    DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
+    DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction, component)
 
 
 if TYPE_CHECKING:
@@ -29,11 +29,13 @@ class ActionState:
     discordId: str
     location: LocationModel
     messageId: int
+    pokemon: PokemonClass
 
-    def __init__(self, discordId: str, location: LocationModel, messageId: int) -> None:
+    def __init__(self, discordId: str, messageId: int, location: LocationModel, pokemon: PokemonClass) -> None:
         self.discordId = discordId
         self.location = location
         self.messageId = messageId
+        self.pokemon = pokemon
 
 
 class ActionsMixin(MixinMeta):
@@ -74,7 +76,7 @@ class ActionsMixin(MixinMeta):
             components=[btns]
         )
         self.__useractions[str(user.id)] = ActionState(
-            str(user.id), model, message.id)
+            str(user.id),message.id, model, None)
 
     async def __on_action(self, interaction: Interaction):
         user = interaction.user
@@ -99,12 +101,59 @@ class ActionsMixin(MixinMeta):
 
         embed = self.__wildPokemonEncounter(user, pokemon)
 
+        btns = []
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Fight", custom_id='fight'),
+            self.__on_fight_click,
+        ))
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Run away", custom_id='runaway'),
+            self.__on_runaway_click,
+        ))
+
         message = await interaction.channel.send(
-            content=f'{user.display_name} encountered a {pokemon.pokemonName.capitalize()}!',
-            embed=embed
+            content=f'{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!',
+            embed=embed,
+            components=[btns]
         )
         self.__useractions[str(user.id)] = ActionState(
-            str(user.id), state.location, message.id)
+            str(user.id), message.id, state.location, pokemon)
+
+
+    def __on_fight_click(self, interaction: Interaction):
+        pass
+
+
+    async def __on_runaway_click(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.__checkUserActionState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+        state = self.__useractions[str(user.id)]
+        trainer = TrainerClass(str(user.id))
+        trainer.runAway(state.pokemon)
+
+        if trainer.statuscode == 96:
+            interaction.send(trainer.message)
+            return
+
+        embed = self.__wildPokemonEncounter(user, state.pokemon)
+
+        btns = []
+
+        await interaction.edit_origin(
+            content=f'{user.display_name} ran away from a wild {state.pokemon.pokemonName.capitalize()}!',
+            embed=embed,
+            components=[]
+        )
+        del self.__useractions[str(user.id)]
+        
+
+    
+    def __wildPokemonRanAway(self, user: discord.User, pokemon: PokemonClass):
+        pass
 
     def __wildPokemonEncounter(self, user: discord.User, pokemon: PokemonClass):
         stats = pokemon.getPokeStats()
