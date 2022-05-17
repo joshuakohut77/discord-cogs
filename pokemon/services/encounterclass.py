@@ -10,6 +10,7 @@ from inventoryclass import inventory as inv
 from leaderboardclass import leaderboard
 from loggerclass import logger as log
 from pokedexclass import pokedex
+from pokeclass import Pokemon as PokemonClass
 
 # Global Config Variables
 MAX_BATTLE_TURNS = 50
@@ -19,6 +20,9 @@ logger = log()
 
 # this class is to handle encounters with pokemon.
 class encounter:
+    pokemon1: PokemonClass
+    pokemon2: PokemonClass
+
     def __init__(self, pokemon1, pokemon2):
         # pokemon1 for PvE will always be the discord trainers pokemon
         self.statuscode = 69
@@ -69,7 +73,7 @@ class encounter:
         battleHP2 = self.pokemon2.currentHP
         # get pokemons list of moves
         battleMoves1 = self.__removeNullMoves(self.pokemon1.getMoves())
-        battleMoves2 = self.__removeNullMoves(self.pokemon2.getMoves())
+        battleMoves2 = self.__removeNullMoves(self.pokemon2.getMoves(reload=True))
 
         # pokemon goes first
         for x in range(MAX_BATTLE_TURNS):
