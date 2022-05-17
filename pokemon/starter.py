@@ -176,36 +176,6 @@ class StarterMixin(MixinMeta):
         return embed, btns
     
 
-    # async def on_pokedex_click(self, interaction: Interaction):
-    #     user = interaction.user
-        
-    #     if not self.__checkTrainerState(user, interaction.message):
-    #         await interaction.send('This is not for you.')
-    #         return
-
-    #     state = self.__trainers[str(user.id)]
-
-    #     pokemonId = state.pokemonId
-    #     pokemon = PokemonClass(str(user.id))
-    #     pokemon.load(pokemonId)
-
-    #     embed = createStatsEmbed(user, pokemon)
-
-    #     btns = []
-
-    #     btns.append(self.client.add_callback(
-    #         Button(style=ButtonStyle.green, label="About", custom_id='about'),
-    #         self.on_about_click,
-    #     ))
-    #     btns.append(self.client.add_callback(
-    #         Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
-    #         self.on_stats_click,
-    #     ))
-
-    #     message = await interaction.edit_origin(embed=embed, components=[btns])
-    #     self.__trainers[str(user.id)] = TrainerState(str(user.id), pokemon.trainerId, message.id)
-
-
     async def __on_set_active_click(self, interaction: Interaction):
         user = interaction.user
 
@@ -219,7 +189,7 @@ class StarterMixin(MixinMeta):
 
         trainer.setActivePokemon(state.pokemonId)
 
-        await self.on_about_click(interaction)
+        await self.__on_stats_click(interaction)
 
 
     def __checkTrainerState(self, user: discord.User, message: discord.Message):
