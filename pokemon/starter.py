@@ -168,10 +168,14 @@ class StarterMixin(MixinMeta):
         ))
 
         # Disable the "Set Active" button if the starter is currently the active pokemon
+        # Disable the "Set Active" button if the starter is currently the active pokemon
         disabled = (active is not None) and (
             pokemon.trainerId == active.trainerId)
-        btns.append(Button(style=ButtonStyle.blue, label="Set Active",
-                    custom_id='setactive', disabled=disabled))
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.blue, label="Set Active",
+                   custom_id='setactive', disabled=disabled),
+            self.__on_set_active_click,
+        ))
 
         return embed, btns
     
