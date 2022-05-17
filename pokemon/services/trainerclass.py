@@ -208,13 +208,8 @@ class trainer:
         """ returns a single pokemon object belonging to the trainer """
         pokemon = None
         try:
-            db = dbconn()
-            queryString = 'SELECT id FROM pokemon WHERE discord_id = %(discordId)s and trainerId = %(trainerId)s'
-            row = db.querySingle(queryString, { 'discordId': self.discordId, 'trainerId': trainerId })
-
-            pokemonId = row[0]
             pokemon = pokeClass(self.discordId)
-            pokemon.load(pokemonId=pokemonId)
+            pokemon.load(pokemonId=trainerId)
 
             if pokemon.statuscode == 96:
                 self.statuscode = 96
@@ -224,8 +219,6 @@ class trainer:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
-            # delete and close connection
-            del db
             return pokemon
 
     def getActivePokemon(self):
