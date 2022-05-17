@@ -106,7 +106,7 @@ class ActionsMixin(MixinMeta):
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), state.location, message.id)
 
-    def __wildPokemonEncounter(user: discord.User, pokemon: PokemonClass):
+    def __wildPokemonEncounter(self, user: discord.User, pokemon: PokemonClass):
         stats = pokemon.getPokeStats()
         color = getTypeColor(pokemon.type1)
         # Create the embed object
