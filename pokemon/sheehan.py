@@ -14,10 +14,11 @@ from services.inventoryclass import inventory as InventoryClass
 
 
 trainer = TrainerClass('509767223938777108')
-active = trainer.getActivePokemon()
+active = trainer.getPokemonById(9)
 
-wild = trainer.encounter('walk')
-msg = trainer.fight(wild)
+# wild = trainer.encounter('walk')
+# msg = trainer.fight(wild)
+
 # inv = InventoryClass(trainer.discordId)
 
 # store = StoreClass(trainer.discordId, 232)
@@ -25,11 +26,11 @@ msg = trainer.fight(wild)
 # pokemon = trainer.encounter('walk')
 # areaId = trainer.getAreaId()
 
-# Location: 88 - Kanto Route 1
-# Location Area: 295 - Kanto Route 1 Area
-loc = LocationClass(trainer.discordId)
-methods = loc.getMethods()
-direction = loc.getLocationByName('kanto-route-3')
+# # Location: 88 - Kanto Route 1
+# # Location Area: 295 - Kanto Route 1 Area
+# loc = LocationClass(trainer.discordId)
+# methods = loc.getMethods()
+# direction = loc.getLocationByName('kanto-route-3')
 
 
 # encounters = loc.getAreaEncounterDetails(295)
