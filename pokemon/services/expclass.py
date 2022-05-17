@@ -2,13 +2,14 @@
 # this is designed to calculate the experience of the defeated pokemon
 import config
 import pokebase as pb
+from pokeclass import Pokemon as PokemonClass
 
 # Global Config Variables
 OVERALL_EXPERIENCE_MODIFIER = 3
 # OVERALL_EXPERIENCE_MODIFIER = config.overall_experience_modifier
 
 class experiance:
-    def __init__(self, pokemon):
+    def __init__(self, pokemon: PokemonClass):
         self.statuscode = 69
         self.message = ''
 
@@ -17,7 +18,7 @@ class experiance:
     def getExpGained(self):
         """ calculates the exp gained from defeating the pokemon """
         # 1 if wild, 1.5 if owned by trainer
-        if self.pokemon.wildPokemon:
+        if self.pokemon.discordId is None:
             a = 1
         else:
             a = 1.5
@@ -31,7 +32,7 @@ class experiance:
     def getEffortValue(self):
         """ returns dictionary of effort values gained upon defeat """
         effortValueDict = {}
-        pokemon = pb.pokemon(self.pokemon.id)
+        pokemon = pb.pokemon(self.pokemon.pokedexId)
         for stat in pokemon.stats:
             statName = stat.stat.name
             effortValue = stat.effort * OVERALL_EXPERIENCE_MODIFIER
