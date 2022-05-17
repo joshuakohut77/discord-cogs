@@ -70,6 +70,8 @@ class encounter:
         if battleHP1 <= 0:
             self.statuscode = 96
             self.message = "Your active Pokemon has no HP left!"
+            return
+        
         battleHP2 = self.pokemon2.currentHP
         # get pokemons list of moves
         battleMoves1 = self.__removeNullMoves(self.pokemon1.getMoves())
