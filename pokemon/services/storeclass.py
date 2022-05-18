@@ -135,6 +135,8 @@ class store:
 
         inventory = inv(self.discordId)
         price = self.__getItemPrice(name)
+        # all selling is half the buying price
+        price = int(price / 2)
         totalPrice = price * quantity
 
         validQuantity = True
