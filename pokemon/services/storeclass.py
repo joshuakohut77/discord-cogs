@@ -215,7 +215,119 @@ class store:
             inventory.maxpotion -= quantity
             if inventory.maxpotion < 0:
                 validQuantity = False
-        
+        elif name == 'super-repel':
+            inventory.superrepel -= quantity
+            if inventory.superrepel < 0:
+                validQuantity = False
+        elif name == 'calcium':
+            inventory.calcium -= quantity
+            if inventory.calcium < 0:
+                validQuantity = False
+        elif name == 'carbos':
+            inventory.carbos -= quantity
+            if inventory.carbos < 0:
+                validQuantity = False
+        elif name == 'coin-case':
+            inventory.coincase -= quantity
+            if inventory.coincase < 0:
+                validQuantity = False
+        elif name == 'dire-hit':
+            inventory.direhit -= quantity
+            if inventory.direhit < 0:
+                validQuantity = False
+        elif name == 'fresh-water':
+            inventory.freshwater -= quantity
+            if inventory.freshwater < 0:
+                validQuantity = False
+        elif name == 'hp-up':
+            inventory.hpup -= quantity
+            if inventory.hpup < 0:
+                validQuantity = False
+        elif name == 'lemonade':
+            inventory.lemonade -= quantity
+            if inventory.lemonade < 0:
+                validQuantity = False
+        elif name == 'elixir':
+            inventory.elixir -= quantity
+            if inventory.elixir < 0:
+                validQuantity = False
+        elif name == 'max-elixir':
+            inventory.maxelixir -= quantity
+            if inventory.maxelixir < 0:
+                validQuantity = False
+        elif name == 'max-ether':
+            inventory.maxether -= quantity
+            if inventory.maxether < 0:
+                validQuantity = False
+        elif name == 'ether':
+            inventory.ether -= quantity
+            if inventory.ether < 0:
+                validQuantity = False
+        elif name == 'nugget':
+            inventory.nugget -= quantity
+            if inventory.nugget < 0:
+                validQuantity = False
+        elif name == 'old-amber':
+            inventory.oldamber -= quantity
+            if inventory.oldamber < 0:
+                validQuantity = False
+        elif name == 'poke-doll':
+            inventory.pokedoll -= quantity
+            if inventory.pokedoll < 0:
+                validQuantity = False
+        elif name == 'pp-up':
+            inventory.ppup -= quantity
+            if inventory.ppup < 0:
+                validQuantity = False
+        elif name == 'soda-pop':
+            inventory.sodapop -= quantity
+            if inventory.sodapop < 0:
+                validQuantity = False
+        elif name == 'x-accuracy':
+            inventory.xaccuracy -= quantity
+            if inventory.xaccuracy < 0:
+                validQuantity = False
+        elif name == 'x-attack':
+            inventory.xattack -= quantity
+            if inventory.xattack < 0:
+                validQuantity = False
+        elif name == 'x-defense':
+            inventory.xdefense -= quantity
+            if inventory.xdefense < 0:
+                validQuantity = False
+        elif name == 'x-sp-atk':
+            inventory.xspatk -= quantity
+            if inventory.xspatk < 0:
+                validQuantity = False
+        elif name == 'x-sp-def':
+            inventory.xspdef -= quantity
+            if inventory.xspdef < 0:
+                validQuantity = False
+        elif name == 'x-speed':
+            inventory.xspeed -= quantity
+            if inventory.xspeed < 0:
+                validQuantity = False
+        elif name == 'fire-stone':
+            inventory.firestone -= quantity
+            if inventory.firestone < 0:
+                validQuantity = False
+        elif name == 'water-stone':
+            inventory.waterstone -= quantity
+            if inventory.waterstone < 0:
+                validQuantity = False
+        elif name == 'thunder-stone':
+            inventory.thunderstone -= quantity
+            if inventory.thunderstone < 0:
+                validQuantity = False
+        elif name == 'leaf-stone':
+            inventory.leafstone -= quantity
+            if inventory.leafstone < 0:
+                validQuantity = False
+        elif name == 'moon-stone':
+            inventory.moonstone -= quantity
+            if inventory.moonstone < 0:
+                validQuantity = False
+
         if not validQuantity:
             self.statuscode = 420
             self.message = "You do not have enough of that item to sell"
