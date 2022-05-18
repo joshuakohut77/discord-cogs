@@ -81,12 +81,12 @@ class PartyMixin(MixinMeta):
             return
 
         state = PokemonState(str(user.id), None, pokeList, active.trainerId, i)
-        embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
+        embed, components = self.__pokemonStatsCard(user, state)
 
         # if interaction is None:
         message = await ctx.send(
             embed=embed,
-            components=[firstRow, secondRow, thirdRow]
+            components=components
         )
         self.__party[str(user.id)] = PokemonState(str(user.id), message.id, pokeList, active.trainerId, i)
 
@@ -107,9 +107,9 @@ class PartyMixin(MixinMeta):
         await interaction.channel.send(f'{user.display_name} set their active pokemon to {pokemon.pokemonName.capitalize()}.')
         
         state.active = pokemon.trainerId
-        embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
+        embed, components = self.__pokemonStatsCard(user, state)
 
-        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow, thirdRow])
+        message = await interaction.edit_origin(embed=embed, components=components)
         
         self.__party[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
         
@@ -124,9 +124,9 @@ class PartyMixin(MixinMeta):
         state = self.__party[str(user.id)]
         state.idx = state.idx + 1
 
-        embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
+        embed, components = self.__pokemonStatsCard(user, state)
 
-        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow, thirdRow])
+        message = await interaction.edit_origin(embed=embed, components=components)
         
         self.__party[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
         
@@ -141,9 +141,9 @@ class PartyMixin(MixinMeta):
         state = self.__party[str(user.id)]
         state.idx = state.idx - 1
 
-        embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
+        embed, components = self.__pokemonStatsCard(user, state)
 
-        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow, thirdRow])
+        message = await interaction.edit_origin(embed=embed, components=components)
         
         self.__party[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
 
@@ -172,9 +172,9 @@ class PartyMixin(MixinMeta):
 
         state = self.__party[str(user.id)]
 
-        embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
+        embed, components = self.__pokemonStatsCard(user, state)
 
-        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow, thirdRow])
+        message = await interaction.edit_origin(embed=embed, components=components)
         
         self.__party[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
 
@@ -213,8 +213,8 @@ class PartyMixin(MixinMeta):
                 state.pokemon = pokeList
                 state.idx = 0
 
-                embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
-                message = await interaction.edit_origin(embed=embed, components=[secondRow, thirdRow])
+                embed, components = self.__pokemonStatsCard(user, state)
+                message = await interaction.edit_origin(embed=embed, components=components)
                 
                 self.__party[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
             elif i < pokeLength - 1:
@@ -317,11 +317,20 @@ class PartyMixin(MixinMeta):
             self.__on_pokemon_deposit
         ))
 
+        # Check that each row has btns in it.
+        # It's not guaranteed that the next/previous btns will
+        # always be there if there is just one pokemon in the list.
+        # Returning an empty component row is a malformed request to discord.
+        # Check each btn row to be safe.
         components = []
         if len(firstRowBtns) > 0:
             components.append(firstRowBtns)
+        if len(secondRowBtns) > 0:
+            components.append(secondRowBtns)
+        if len(thirdRowBtns) > 0:
+            components.append(thirdRowBtns)
 
-        return embed, firstRowBtns, secondRowBtns, thirdRowBtns
+        return embed, components
 
 
     def __pokemonMovesCard(self, user: discord.User, state: PokemonState):
