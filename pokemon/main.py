@@ -16,10 +16,11 @@ import asyncio
 
 from .starter import StarterMixin
 from .pokemart import PokemartMixin
+from .pokecenter import PokecenterMixin
 from .pc import PcMixin
 from .inventory import InventoryMixin
 from .map import MapMixin
-from .actions import ActionsMixin
+from .encounters import EncountersMixin
 from .debug import DebugMixin
 from .card import TrainerCardMixin
 
@@ -27,19 +28,21 @@ from services.trainerclass import trainer as TrainerClass
 
 
 # Things left to do
-# pokemart sell item (should get 10% back for it)
-# add start date to trainer stats
-# cleanup all the typings, cbs should be private/mangled
+# [x] add start date to trainer stats
+# [x] cleanup all the typings, cbs should be private/mangled
 # one state mapping instead of multiple
 # pretty up location names
-# nickname pokemon
-# - [x] Trainer Bag -- Key Items, HMs
-# - [x] Trainer Card -- Badges, Money, Stats
-# - [x] Aliases
-# - [x] Refactor trainer pc to use callbacks
-# - Encounters
-# - Pokedex
-# - Flesh out the *debug module to help us test the game
+# pretty up item names
+# - [high] Encounters - fight / runaway / catch
+# - [high] Use items / heal pokemon
+# - [med] Party
+# - [med] Pokecenter / heal pokemon
+# - [med] Pokedex
+# - [med] Test evolutions in discord
+# - [med] key item blockers
+# - [low] Nickname pokemon
+# - [low] Pokemart sell items
+# - [low] Flesh out the *debug module to help us test the game
 
 
 class CompositeClass(commands.CogMeta, ABCMeta):
@@ -47,7 +50,7 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class Pokemon(StarterMixin, PcMixin, PokemartMixin, InventoryMixin, MapMixin, TrainerCardMixin, ActionsMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
+class Pokemon(StarterMixin, PcMixin, PokemartMixin, PokecenterMixin, InventoryMixin, MapMixin, TrainerCardMixin, EncountersMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):

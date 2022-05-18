@@ -38,8 +38,8 @@ class ActionState:
         self.pokemon = pokemon
 
 
-class ActionsMixin(MixinMeta):
-    """Map"""
+class EncountersMixin(MixinMeta):
+    """Encounters"""
 
     __useractions: dict[str, ActionState] = {}
 

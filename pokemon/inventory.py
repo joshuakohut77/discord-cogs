@@ -4,8 +4,6 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 from discord.abc import User
 import constant
-import uuid
-import asyncio
 
 import discord
 from discord import (Embed, Member)
@@ -22,10 +20,7 @@ from services.trainerclass import trainer as TrainerClass
 from services.inventoryclass import inventory as InventoryClass
 from services.keyitemsclass import keyitems as KeyItemClass
 
-
 from .abcd import MixinMeta
-from .functions import (createStatsEmbed, getTypeColor,
-                        createPokemonAboutEmbed)
 
 
 class InventoryMixin(MixinMeta):
@@ -71,7 +66,7 @@ class InventoryMixin(MixinMeta):
         self.__inventory[str(user.id)] = message.id
 
 
-    async def on_hm_click(self, interaction: Interaction):
+    async def __on_hm_click(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkInventoryState(user, interaction.message):
@@ -109,14 +104,14 @@ class InventoryMixin(MixinMeta):
         btns = []
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.gray, label="← Key Items", custom_id='keyitems'),
-            self.on_keyitems_click,
+            self.__on_keyitems_click,
         ))
 
         message = await interaction.edit_origin(embed=embed, components=[btns])
         self.__inventory[str(user.id)] = message.id
 
 
-    async def on_items_click(self, interaction: Interaction):
+    async def __on_items_click(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkInventoryState(user, interaction.message):
@@ -133,7 +128,7 @@ class InventoryMixin(MixinMeta):
         self.__inventory[str(user.id)] = message.id
     
 
-    async def on_keyitems_click(self, interaction: Interaction):
+    async def __on_keyitems_click(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkInventoryState(user, interaction.message):
@@ -179,11 +174,11 @@ class InventoryMixin(MixinMeta):
         btns = []
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.gray, label="← Items", custom_id='items'),
-            self.on_items_click,
+            self.__on_items_click,
         ))
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.gray, label='HMs →', custom_id='hms'),
-            self.on_hm_click,
+            self.__on_hm_click,
         ))
 
         message = await interaction.edit_origin(embed=embed, components=[btns])
@@ -310,7 +305,7 @@ class InventoryMixin(MixinMeta):
         btns = []
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.gray, label='Key Items →', custom_id='keyitems'),
-            self.on_keyitems_click,
+            self.__on_keyitems_click,
         ))
 
         return embed, btns
