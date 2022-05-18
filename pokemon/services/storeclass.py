@@ -35,6 +35,10 @@ class store:
                     keyitems.oaks_parcel = True
                     keyitems.save()
                     return 
+                elif not keyitems.oaks_parcel_delivered:
+                    self.statuscode = 420
+                    self.message = 'Hey there, take that parcel to Professor Oak please.'
+                    return
             
             queryString = 'SELECT "item", "price" FROM store WHERE "locationId"=%(locationId)s'
             results = db.queryAll(queryString, {'locationId': self.locationId})
