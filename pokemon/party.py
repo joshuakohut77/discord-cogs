@@ -209,7 +209,15 @@ class PartyMixin(MixinMeta):
             pokeLength = len(pokeList)
             self.__party[str(user.id)] = PokemonState(str(user.id), state.messageId, pokeList, state.active, state.idx)
 
-            if i < pokeLength - 1:
+            if pokeLength == 1:
+                state.pokemon = pokeList
+                state.idx = 0
+
+                embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
+                message = await interaction.edit_origin(embed=embed, components=[secondRow, thirdRow])
+                
+                self.__party[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
+            elif i < pokeLength - 1:
                 await self.__on_next_click(interaction)
             else:
                 await self.__on_prev_click(interaction)
