@@ -31,7 +31,10 @@ class store:
                 keyitems = keyitems(self.discordId)
                 if not keyitems.oaks_parcel:
                     self.statuscode = 420
-                    self.message = 'here takes the oaks_parcel'
+                    self.message = '''Hey there, can you deliver this to Professor Oak for me? \n
+                            You received Oaks Parcel!'''
+                    keyitems.oaks_parcel = True
+                    keyitems.save()
                     return 
             
             queryString = 'SELECT "item", "price" FROM store WHERE "locationId"=%(locationId)s'
