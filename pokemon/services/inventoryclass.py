@@ -42,8 +42,8 @@ class inventory:
         self.helixfossil = None
         self.hpup = None
         self.lemonade = None
-        self.elixer = None
-        self.maxelixer = None
+        self.elixir = None
+        self.maxelixir = None
         self.maxether = None
         self.ether = None
         self.nugget = None
@@ -79,7 +79,7 @@ class inventory:
                                 "calcium"=%(calcium)s, "carbos"=%(carbos)s, "coin-case"=%(coincase)s,
                                 "dire-hit"=%(direhit)s, "dome-fossil"=%(domefossil)s, "fresh-water"=%(freshwater)s,
                                 "helix-fossil"=%(helixfossil)s, "hp-up"=%(hpup)s, "lemonade"=%(lemonade)s, 
-                                "elixer"=%(elixer)s, "max-elixir"=%(maxelixer)s, "max-ether"=%(maxether)s, 
+                                "elixir"=%(elixir)s, "max-elixir"=%(maxelixir)s, "max-ether"=%(maxether)s, 
                                 "ether"=%(ether)s, "nugget"=%(nugget)s, "old-amber"=%(oldamber)s, 
                                 "poke-doll"=%(pokedoll)s, "pp-up"=%(ppup)s, "soda-pop"=%(sodapop)s, 
                                 "town-map"=%(townmap)s, "x-accuracy"=%(xaccuracy)s, "x-attack"=%(xattack)s, 
@@ -99,7 +99,7 @@ class inventory:
                             'coincase': self.coincase, 'direhit': self.direhit, 'domefossil': self.domefossil, 
                             'freshwater': self.freshwater, 'helixfossil': self.helixfossil,
                             'hpup': self.hpup, 'lemonade': self.lemonade, 
-                            'elixer': self.elixer, 'maxelixer': self.maxelixer, 'maxether': self.maxether, 
+                            'elixir': self.elixir, 'maxelixir': self.maxelixir, 'maxether': self.maxether, 
                             'ether': self.ether, 'nugget': self.nugget, 'oldamber': self.oldamber, 
                             'pokedoll': self.pokedoll, 'ppup': self.ppup, 'sodapop': self.sodapop, 
                             'townmap': self.townmap, 'xaccuracy': self.xaccuracy, 
@@ -126,7 +126,7 @@ class inventory:
                             "ice-heal", "max-repel", "burn-heal", "paralyze-heal", 
                             "max-potion", "antidote", "super-repel", calcium, carbos, 
                             "coin-case", "dire-hit", "dome-fossil", "fresh-water", 
-                            "helix-fossil", "hp-up", lemonade, elixer, "max-elixir", 
+                            "helix-fossil", "hp-up", lemonade, elixir, "max-elixir", 
                             "max-ether", ether, nugget, "old-amber", "poke-doll", 
                             "pp-up", "soda-pop", "town-map", "x-accuracy", "x-defense", 
                             "x-attack", "x-sp-atk", "x-sp-def", "x-speed", 
@@ -165,8 +165,8 @@ class inventory:
                 self.helixfossil = result[27]
                 self.hpup = result[28]
                 self.lemonade = result[29]
-                self.elixer = result[30]
-                self.maxelixer = result[31]
+                self.elixir = result[30]
+                self.maxelixir = result[31]
                 self.maxether = result[32]
                 self.ether = result[33]
                 self.nugget = result[34]
