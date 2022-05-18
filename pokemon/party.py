@@ -7,7 +7,7 @@ import discord
 from discord import (Embed, Member)
 from discord import message
 from discord_components import (
-    DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
+    DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction, component)
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -316,6 +316,10 @@ class PartyMixin(MixinMeta):
             Button(style=ButtonStyle.blue, label="Deposit", custom_id='deposit', disabled=activeDisabled),
             self.__on_pokemon_deposit
         ))
+
+        components = []
+        if len(firstRowBtns) > 0:
+            components.append(firstRowBtns)
 
         return embed, firstRowBtns, secondRowBtns, thirdRowBtns
 
