@@ -369,8 +369,9 @@ class trainer:
     def heal(self, pokeTrainerId, item):
         """ uses a potion to heal a pokemon """
         # this function is only designed to work with potion, super-potion, hyper-potion, max-potion
-        if 'potion' not in item:
-            return 'You cannot use that item like that'
+        if 'potion' not in item and 'revive' not in item:
+            self.statuscode = 420
+            self.message = 'You cannot use that item like that'
         inventory = inv(self.discordId)
         if item == 'potion':
             inventory.potion -= 1
@@ -380,8 +381,11 @@ class trainer:
             inventory.hyperpotion -= 1
         elif item == 'max-potion':
             inventory.maxpotion -= 1
+        elif item == 'revive':
+            inventory.revive -= 1
         self.__healPokemon(pokeTrainerId, item)
-        inventory.save()
+        if self.statuscode == 69:
+            inventory.save()
         if inventory.statuscode == 96:
             self.statuscode = 96
             self.message = "error occurred during inventory.save()"
@@ -619,6 +623,14 @@ class trainer:
         statsDict = pokemon.getPokeStats()
         maxHP = statsDict['hp']
         currentHP = pokemon.currentHP
+        if item == 'revive':
+            newHP = maxHP
+        
+        # every item below is a potion which cannot be used with fainted pokemon
+        if currentHP <= 0:
+            self.statuscode = 420
+            self.message = "You cannot use a potion on a fainted pokemon"
+            return
         if item == 'potion':
             newHP = currentHP + 20
         elif item == 'super-potion':
@@ -627,7 +639,7 @@ class trainer:
             newHP = currentHP + 200
         elif item == 'max-potion':
             newHP = maxHP
-
+        
         if newHP > maxHP:
             newHP = maxHP
 
