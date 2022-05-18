@@ -255,10 +255,15 @@ class trainer:
         retMsg = ''
         try:
             db = dbconn()
-            queryString = 'SELECT "currentHP" FROM pokemon WHERE id=%(trainerId)s'
+            queryString = 'SELECT "currentHP", "party" FROM pokemon WHERE id=%(trainerId)s'
             result = db.querySingle(queryString, { 'trainerId': trainerId })
             if result:
                 currentHP = result[0]
+                party = result[1]
+                if not party:
+                    self.statuscode = 420
+                    self.message = "You can only set active a pokemon in your party"
+                    return
                 if currentHP > 0:
                     updateString = 'UPDATE trainer SET "activePokemon"=%(trainerId)s WHERE "discord_id"=%(discordId)s'
                     db.execute(updateString, { 'trainerId': trainerId, 'discordId' : self.discordId })
