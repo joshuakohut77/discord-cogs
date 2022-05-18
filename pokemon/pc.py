@@ -81,12 +81,12 @@ class PcMixin(MixinMeta):
             return
 
         state = PokemonState(str(user.id), None, pokeList, active.trainerId, i)
-        embed, firstRow, secondRow = self.__pokemonStatsCard(user, state)
+        embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
 
         # if interaction is None:
         message = await ctx.send(
             embed=embed,
-            components=[firstRow, secondRow]
+            components=[firstRow, secondRow, thirdRow]
         )
         self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, pokeList, active.trainerId, i)
 
@@ -107,9 +107,9 @@ class PcMixin(MixinMeta):
         await interaction.channel.send(f'{user.display_name} set their active pokemon to {pokemon.pokemonName.capitalize()}.')
         
         state.active = pokemon.trainerId
-        embed, firstRow, secondRow = self.__pokemonStatsCard(user, state)
+        embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
 
-        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow])
+        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow, thirdRow])
         
         self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
         
@@ -124,9 +124,9 @@ class PcMixin(MixinMeta):
         state = self.__pokemon[str(user.id)]
         state.idx = state.idx + 1
 
-        embed, firstRow, secondRow = self.__pokemonStatsCard(user, state)
+        embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
 
-        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow])
+        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow, thirdRow])
         
         self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
         
@@ -141,9 +141,9 @@ class PcMixin(MixinMeta):
         state = self.__pokemon[str(user.id)]
         state.idx = state.idx - 1
 
-        embed, firstRow, secondRow = self.__pokemonStatsCard(user, state)
+        embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
 
-        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow])
+        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow, thirdRow])
         
         self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
 
@@ -172,14 +172,42 @@ class PcMixin(MixinMeta):
 
         state = self.__pokemon[str(user.id)]
 
-        embed, firstRow, secondRow = self.__pokemonStatsCard(user, state)
+        embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
 
-        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow])
+        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow, thirdRow])
         
         self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
 
 
+    async def __on_pokemon_withdraw(self, interaction: Interaction):
+        user = interaction.user
 
+        if not self.__checkPokemonState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+        
+        state = self.__pokemon[str(user.id)]
+
+        pokeList = state.pokemon
+        pokeLength = len(pokeList)
+        i = state.idx
+        activeId = state.active
+
+        pokemon: PokemonClass = pokeList[i]
+
+        trainer = TrainerClass(str(user.id))
+        trainer.withdraw(pokemon.trainerId)
+
+        if trainer.statuscode == 420:
+            await interaction.send(trainer.message)
+            return
+        
+        if trainer.statuscode == 69:
+            await interaction.send(f'{pokemon.pokemonName} is now in your party.')
+            return
+        
+
+    
 
     async def __on_pokedex_click(self, interaction: Interaction):
         await interaction.send('Pokedex is not implemented yet')
@@ -267,7 +295,13 @@ class PcMixin(MixinMeta):
             self.__on_release_click
         ))
 
-        return embed, firstRowBtns, secondRowBtns
+        thirdRowBtns = []
+        thirdRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Withdraw", custom_id='moves'),
+            self.__on_pokemon_withdraw
+        ))
+
+        return embed, firstRowBtns, secondRowBtns, thirdRowBtns
 
 
     def __pokemonMovesCard(self, user: discord.User, state: PokemonState):
