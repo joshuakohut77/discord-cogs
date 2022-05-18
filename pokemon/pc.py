@@ -297,7 +297,7 @@ class PcMixin(MixinMeta):
 
         thirdRowBtns = []
         thirdRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Withdraw", custom_id='moves'),
+            Button(style=ButtonStyle.green, label="Withdraw", custom_id='withdraw'),
             self.__on_pokemon_withdraw
         ))
 
