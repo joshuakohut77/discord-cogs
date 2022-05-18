@@ -480,6 +480,7 @@ class trainer:
         currentPartySize = self.getPartySize()
         if currentPartySize < MAX_PARTY_SIZE:
             self.__withdraw(trainerId)
+            self.statuscode = 69
         else:
             self.statuscode = 420
             self.message = "You already have a full party!"

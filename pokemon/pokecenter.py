@@ -26,8 +26,6 @@ import constant
 class PokecenterMixin(MixinMeta):
     """Pokecenter"""
 
-    # __trainers = {}
-
 
     @commands.group(name="pokecenter", aliases=['pmc'])
     @commands.guild_only()
@@ -43,6 +41,9 @@ class PokecenterMixin(MixinMeta):
         
         trainer = TrainerClass(user.id)
         trainer.healAll()
+
+        # partySize = trainer.getPartySize()
+
 
         if trainer.statuscode == 420:
             await ctx.send(trainer.message)
