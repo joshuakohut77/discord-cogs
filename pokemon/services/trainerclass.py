@@ -177,13 +177,15 @@ class trainer:
         lb = leaderboard(self.discordId)
         lb.released()
 
-    def getPokemon(self, party=False):
+    def getPokemon(self, party=False, pc=False):
         """ returns a list of pokemon objects for every pokemon in the database belonging to the trainer """
         pokemonList = []
         try:
             db = dbconn()
             if party:
                 queryString = 'SELECT id FROM pokemon WHERE party = True AND discord_id = %(discordId)s'
+            elif pc:
+                queryString = 'SELECT id FROM pokemon WHERE party = False AND discord_id = %(discordId)s'
             else:
                 queryString = 'SELECT id FROM pokemon WHERE discord_id = %(discordId)s'
             results = db.queryAll(queryString, { 'discordId': self.discordId })
