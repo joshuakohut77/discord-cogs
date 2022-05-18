@@ -28,7 +28,7 @@ class store:
             db = dbconn()
             # this section is to check if user has Oaks Parcel
             if self.locationId == 154:
-                keyitems = keyitems(self.discordId)
+                keyitems = kitems(self.discordId)
                 if not keyitems.oaks_parcel:
                     self.statuscode = 420
                     self.message = '''Hey there, can you deliver this to Professor Oak for me? You received Oaks Parcel!'''
