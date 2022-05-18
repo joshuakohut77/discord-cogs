@@ -42,11 +42,10 @@ class PokecenterMixin(MixinMeta):
             user = ctx.author
         
         trainer = TrainerClass(user.id)
-        location = trainer.healAll()
-        store = StoreClass(str(user.id), location.locationId)
+        trainer.healAll()
 
-        if store.statuscode == 420:
-            await ctx.send(store.message)
+        if trainer.statuscode == 420:
+            await ctx.send(trainer.message)
         else:
             await ctx.send('Something went wrong')
 
