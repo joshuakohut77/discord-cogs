@@ -1,10 +1,7 @@
 from __future__ import annotations
 from typing import Any, Dict, List, Union, TYPE_CHECKING
-import asyncio
 
 import discord
-from discord import (Embed, Member)
-from discord import message
 from discord_components import (
     DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
 
@@ -21,8 +18,6 @@ from services.locationclass import location as LocationClass
 
 from .abcd import MixinMeta
 from services.pokeclass import Pokemon as PokemonClass
-from .functions import (createStatsEmbed, getTypeColor,
-                        createPokemonAboutEmbed)
 
 
 class LocationState:
@@ -63,42 +58,42 @@ class MapMixin(MixinMeta):
         if location.north is not None:
             ne.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji='⬆', label=f"{location.north}"),
-                self.on_north,
+                self.__on_north,
             ))
         else:
             ne.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji='⬆', label=f"--"),
-                self.on_north,
+                self.__on_north,
             ))
         if location.east is not None:
             ne.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji='➡', label=f"{location.east}"),
-                self.on_east,
+                self.__on_east,
             ))
         else:
             ne.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji='➡', label=f"--"),
-                self.on_east,
+                self.__on_east,
             ))
         if location.south is not None:
             sw.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji='⬇', label=f"{location.south}"),
-                self.on_south,
+                self.__on_south,
             ))
         else:
             sw.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji='⬇', label=f"--"),
-                self.on_south,
+                self.__on_south,
             ))
         if location.west is not None:
             sw.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji='⬅', label=f"{location.west}"),
-                self.on_west,
+                self.__on_west,
             ))
         else:
             sw.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji='⬅', label=f"--"),
-                self.on_west,
+                self.__on_west,
             ))
             # emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument='⬅️')
 
@@ -109,10 +104,10 @@ class MapMixin(MixinMeta):
         )
         self.__locations[str(user.id)] = LocationState(str(user.id), location, message.id)
 
-    async def on_north(self, interaction: Interaction):
+    async def __on_north(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.__checkTrainerState(user, interaction.message):
+        if not self.__checkMapState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
 
@@ -134,10 +129,10 @@ class MapMixin(MixinMeta):
         await interaction.send(f'You walked North to {north}.')
         
 
-    async def on_south(self, interaction: Interaction):
+    async def __on_south(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.__checkTrainerState(user, interaction.message):
+        if not self.__checkMapState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
 
@@ -158,10 +153,10 @@ class MapMixin(MixinMeta):
         trainer.setLocation(direction.locationId)
         await interaction.send(f'You walked South to {south}.')
 
-    async def on_east(self, interaction: Interaction):
+    async def __on_east(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.__checkTrainerState(user, interaction.message):
+        if not self.__checkMapState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
 
@@ -182,10 +177,10 @@ class MapMixin(MixinMeta):
         trainer.setLocation(direction.locationId)
         await interaction.send(f'You walked East to {east}.')
 
-    async def on_west(self, interaction: Interaction):
+    async def __on_west(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.__checkTrainerState(user, interaction.message):
+        if not self.__checkMapState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
 
@@ -207,7 +202,7 @@ class MapMixin(MixinMeta):
         await interaction.send(f'You walked West to {west}.')
 
 
-    def __checkTrainerState(self, user: discord.User, message: discord.Message):
+    def __checkMapState(self, user: discord.User, message: discord.Message):
         state: LocationState
         if str(user.id) not in self.__locations.keys():
             return False
