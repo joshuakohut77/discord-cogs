@@ -257,10 +257,10 @@ class InventoryMixin(MixinMeta):
             items.append(f'{constant.HPUP} **HP Up** — {inv.hpup}')
         if inv.lemonade > 0:
             items.append(f'{constant.LEMONADE} **Lemonade** — {inv.lemonade}')
-        if inv.elixer > 0:
-            items.append(f'{constant.ELIXIR} **Elixir** — {inv.elixer}')
-        if inv.maxelixer > 0:
-            items.append(f'{constant.MAXELIXIR} **Max Elixir** — {inv.maxelixer}')
+        if inv.elixir > 0:
+            items.append(f'{constant.ELIXIR} **Elixir** — {inv.elixir}')
+        if inv.maxelixir > 0:
+            items.append(f'{constant.MAXELIXIR} **Max Elixir** — {inv.maxelixir}')
         if inv.maxether > 0:
             items.append(f'{constant.MAXETHER} **Max Ether** — {inv.maxether}')
         if inv.ether > 0:
