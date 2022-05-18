@@ -27,7 +27,7 @@ class store:
         try:
             db = dbconn()
             # this section is to check if user has Oaks Parcel
-            if int(self.locationId) == 154:
+            if self.locationId == 154:
                 keyitems = kitems(self.discordId)
                 if not keyitems.oaks_parcel:
                     self.statuscode = 420
