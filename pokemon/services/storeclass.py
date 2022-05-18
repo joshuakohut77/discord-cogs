@@ -31,8 +31,7 @@ class store:
                 keyitems = keyitems(self.discordId)
                 if not keyitems.oaks_parcel:
                     self.statuscode = 420
-                    self.message = '''Hey there, can you deliver this to Professor Oak for me? \n
-                            You received Oaks Parcel!'''
+                    self.message = '''Hey there, can you deliver this to Professor Oak for me? You received Oaks Parcel!'''
                     keyitems.oaks_parcel = True
                     keyitems.save()
                     return 
