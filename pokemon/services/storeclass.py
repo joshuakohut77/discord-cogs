@@ -130,6 +130,122 @@ class store:
             self.statuscode = 420
             self.message = f"You successfully bought {quantity} {name}"
 
+    def sellItem(self, name, quantity):
+        """ buy and item and update trainers inventory """
+
+        inventory = inv(self.discordId)
+        price = self.__getItemPrice(name)
+        totalPrice = price * quantity
+
+        validQuantity = True
+        inventory.money = inventory.money + totalPrice
+        if name == 'poke-ball':
+            inventory.pokeball -= quantity
+            if inventory.pokeball < 0:
+                validQuantity = False
+        elif name == 'great-ball':
+            inventory.greatball -= quantity
+            if inventory.greatball < 0:
+                validQuantity = False
+        elif name == 'ultra-ball':
+            inventory.ultraball -= quantity
+            if inventory.ultraball < 0:
+                validQuantity = False
+        elif name == 'master-ball':
+            inventory.masterball -= quantity
+            if inventory.masterball < 0:
+                validQuantity = False
+        elif name == 'potion':
+            inventory.potion -= quantity
+            if inventory.potion < 0:
+                validQuantity = False
+        elif name == 'super-potion':
+            inventory.superpotion -= quantity
+            if inventory.superpotion < 0:
+                validQuantity = False
+        elif name == 'hyper-potion':
+            inventory.hyperpotion -= quantity
+            if inventory.hyperpotion < 0:
+                validQuantity = False
+        elif name == 'revive':
+            inventory.revive -= quantity
+            if inventory.revive < 0:
+                validQuantity = False
+        elif name == 'full-restore':
+            inventory.fullrestore -= quantity
+            if inventory.fullrestore < 0:
+                validQuantity = False
+        elif name == 'repel':
+            inventory.repel -= quantity
+            if inventory.repel < 0:
+                validQuantity = False
+        elif name == 'awakening':
+            inventory.awakening -= quantity
+            if inventory.awakening < 0:
+                validQuantity = False
+        elif name == 'escape-rope':
+            inventory.escaperope -= quantity
+            if inventory.escaperope < 0:
+                validQuantity = False
+        elif name == 'full-heal':
+            inventory.fullheal -= quantity
+            if inventory.fullheal < 0:
+                validQuantity = False
+        elif name == 'ice-heal':
+            inventory.iceheal -= quantity
+            if inventory.iceheal < 0:
+                validQuantity = False
+        elif name == 'max-repel':
+            inventory.maxrepel -= quantity
+            if inventory.maxrepel < 0:
+                validQuantity = False
+        elif name == 'burn-heal':
+            inventory.burnheal -= quantity
+            if inventory.burnheal < 0:
+                validQuantity = False
+        elif name == 'paralyze-heal':
+            inventory.paralyzeheal -= quantity
+            if inventory.paralyzeheal < 0:
+                validQuantity = False
+        elif name == 'antidote':
+            inventory.antidote -= quantity
+            if inventory.antidote < 0:
+                validQuantity = False
+        elif name == 'max-potion':
+            inventory.maxpotion -= quantity
+            if inventory.maxpotion < 0:
+                validQuantity = False
+        
+        if not validQuantity:
+            self.statuscode = 420
+            self.message = "You do not have enough of that item to sell"
+            return
+        inventory.save()
+        
+        if inventory.statuscode == 96:
+            self.statuscode = 96
+            self.message = "Error occured during inventory save()"
+            return
+        self.statuscode = 420
+        self.message = f"You successfully sold {quantity} {name}"
+    
+    def __getItemPrice(self, itemName):
+        """ returns the price of the item """
+        price = 0
+        try:
+            db = dbconn()
+            queryString = 'SELECT "price" FROM itempricing WHERE "item"=%(itemName)s'
+            result = db.queryAll(queryString, {'itemName': itemName})
+            if result:
+                price = result[0]
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            # delete and close connection
+            del db 
+            return price
+
     def __getSpriteUrl(self, itemName):
         """ returns a path to item sprite on disk """
         return "/data/cogs/CogManager/cogs/pokemon/sprites/items/%s.png" % itemName
