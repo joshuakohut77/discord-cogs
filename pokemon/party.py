@@ -179,7 +179,7 @@ class PartyMixin(MixinMeta):
         self.__party[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
 
 
-    async def __on_pokemon_withdraw(self, interaction: Interaction):
+    async def __on_pokemon_deposit(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkPartyState(user, interaction.message):
@@ -196,15 +196,23 @@ class PartyMixin(MixinMeta):
         pokemon: PokemonClass = pokeList[i]
 
         trainer = TrainerClass(str(user.id))
-        trainer.withdraw(pokemon.trainerId)
+        trainer.deposit(pokemon.trainerId)
 
         if trainer.statuscode == 420:
             await interaction.send(trainer.message)
             return
         
         if trainer.statuscode == 69:
-            await interaction.send(f'{pokemon.pokemonName} is now in your party.')
-            return
+            await interaction.channel.send(f'{user.display_name} returned {pokemon.pokemonName} to their pc.')
+
+            pokeList = trainer.getPokemon(party=True)
+            pokeLength = len(pokeList)
+            self.__party[str(user.id)] = PokemonState(str(user.id), state.messageId, pokeList, state.active, state.idx)
+
+            if i < pokeLength - 1:
+                await self.__on_next_click(interaction)
+            else:
+                await self.__on_prev_click(interaction)
         
 
     
@@ -297,8 +305,8 @@ class PartyMixin(MixinMeta):
 
         thirdRowBtns = []
         thirdRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Withdraw", custom_id='withdraw'),
-            self.__on_pokemon_withdraw
+            Button(style=ButtonStyle.blue, label="Deposit", custom_id='deposit', disabled=activeDisabled),
+            self.__on_pokemon_deposit
         ))
 
         return embed, firstRowBtns, secondRowBtns, thirdRowBtns
