@@ -195,24 +195,28 @@ class EncountersMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         items = InventoryClass(trainer.discordId)
 
+        ctx = await self.bot.get_context(interaction.message)
+
         btns = []
         if items.pokeball > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.POKEBALL)
             btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji=constant.POKEBALL, label="Poke Ball", custom_id='pokeball'),
+                Button(style=ButtonStyle.gray, emoji=emote, label="Poke Ball", custom_id='pokeball'),
                 self.__on_throw_pokeball,
             ))
         if items.greatball > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.GREATBALL)
             btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji=constant.GREATBALL, label="Great Ball", custom_id='greatball'),
+                Button(style=ButtonStyle.gray, emoji=emote, label="Great Ball", custom_id='greatball'),
                 self.__on_throw_pokeball,
             ))
         if items.ultraball > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.ULTRABALL)
             btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, label=f"Ultra Ball", custom_id='ultraball'),
+                Button(style=ButtonStyle.gray, emoji=emote, label=f"Ultra Ball", custom_id='ultraball'),
                 self.__on_throw_pokeball,
             ))
         if items.masterball > 0:
-            ctx = await self.bot.get_context(interaction.message)
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.MASTERBALL)
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji=emote, label=f"Master Ball", custom_id='masterball'),
