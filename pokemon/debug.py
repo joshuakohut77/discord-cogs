@@ -39,6 +39,7 @@ class DebugMixin(MixinMeta):
         await ctx.send(f'{pokemon.pokemonName} added.')
 
 
+    @_debug.command()
     async def marts(self, ctx: commands.Context):
         db = dbconn()
         queryStr = """
@@ -57,6 +58,7 @@ class DebugMixin(MixinMeta):
         await ctx.send(f'Pokemart locations \r\n {locations}')    
 
 
+    @_debug.command()
     async def loc(self, ctx: commands.Context, id: int = 86):
         user = ctx.author()
 
