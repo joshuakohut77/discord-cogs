@@ -208,12 +208,12 @@ class EncountersMixin(MixinMeta):
             ))
         if items.ultraball > 0:
             btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji=constant.ULTRABALL, label="Ultra Ball", custom_id='ultraball'),
+                Button(style=ButtonStyle.gray, label=f"{constant.ULTRABALL} Ultra Ball", custom_id='ultraball'),
                 self.__on_throw_pokeball,
             ))
         if items.masterball > 0:
             btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji=constant.MASTERBALL, label="Master Ball", custom_id='masterball'),
+                Button(style=ButtonStyle.gray, label=f"{constant.MASTERBALL} Master Ball", custom_id='masterball'),
                 self.__on_throw_pokeball,
             ))
 
