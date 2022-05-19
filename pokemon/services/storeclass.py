@@ -142,13 +142,19 @@ class store:
 
         inventory = inv(self.discordId)
         
-        if name not in self.storeMap.keys():
+        # price = self.storeMap[name]['price']
+        price = self.__getItemPrice(name)
+
+        if self.statuscode == 96:
             self.statuscode = 420
-            self.message = "That item does not exist."
+            self.message = 'That item does not exist.'
             return
-        
-        price = self.storeMap[name]['price']
-        # price = self.__getItemPrice(name)
+
+        if price == 0:
+            self.statuscode = 420
+            self.message = 'That item can\'t be sold.'
+            return
+
         # all selling is half the buying price
         price = int(price / 2)
         totalPrice = price * quantity
@@ -363,7 +369,7 @@ class store:
         try:
             db = dbconn()
             queryString = 'SELECT "price" FROM itempricing WHERE "item"=%(itemName)s'
-            result = db.queryAll(queryString, {'itemName': itemName})
+            result = db.querySingle(queryString, {'itemName': itemName})
             if result:
                 price = result[0]
         except:
