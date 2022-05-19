@@ -54,7 +54,7 @@ class EncountersMixin(MixinMeta):
     @_trainer.command(aliases=['enc'])
     async def encounter(self, ctx: commands.Context):
         user = ctx.author
-
+        
         trainer = TrainerClass(str(user.id))
         model = trainer.getLocation()
 
@@ -212,7 +212,8 @@ class EncountersMixin(MixinMeta):
                 self.__on_throw_pokeball,
             ))
         if items.masterball > 0:
-            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=self.client, argument=constant.MASTERBALL)
+            ctx = self.bot.get_context(interaction.message)
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.MASTERBALL)
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji=emote, label=f"Master Ball", custom_id='masterball'),
                 self.__on_throw_pokeball,
