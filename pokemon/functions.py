@@ -138,6 +138,7 @@ def createPokemonAboutEmbed(user: Member, pokemon: PokemonClass) -> Embed:
 
 def createStatsEmbed(user: Member, pokemon: PokemonClass):
     stats = pokemon.getPokeStats()
+    exp = pokemon.getNextLevelExperience()
     color = getTypeColor(pokemon.type1)
 
     # Create the embed object
@@ -159,7 +160,7 @@ def createStatsEmbed(user: Member, pokemon: PokemonClass):
     embed.add_field(
         name="Level", value=f"{pokemon.currentLevel}", inline=True)
     embed.add_field(
-        name="Experience", value=f"{pokemon.currentExp}", inline=True)
+        name="Experience", value=f"{pokemon.currentExp} / {exp}", inline=True)
     
     embed.add_field(
         name="HP", value=f"{pokemon.currentHP} / {stats['hp']}", inline=False)
