@@ -60,7 +60,7 @@ class DebugMixin(MixinMeta):
 
     @_debug.command()
     async def loc(self, ctx: commands.Context, id: int = 86):
-        user = ctx.author()
+        user = ctx.author
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(locationId=id)
