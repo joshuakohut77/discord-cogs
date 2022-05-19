@@ -212,7 +212,7 @@ class EncountersMixin(MixinMeta):
                 self.__on_throw_pokeball,
             ))
         if items.masterball > 0:
-            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=self.bot, argument=constant.MASTERBALL)
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=self.client, argument=constant.MASTERBALL)
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji=emote, label=f"Master Ball", custom_id='masterball'),
                 self.__on_throw_pokeball,
