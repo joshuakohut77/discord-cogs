@@ -161,6 +161,7 @@ class encounter:
         if inventory.statuscode == 96:
             self.statuscode = 96
             self.message = "error occured during inventory save()"
+            return self.message
 
         if pokemonCaught:
             # leaderboard stats
@@ -173,12 +174,12 @@ class encounter:
                 self.statuscode = 96
                 self.message = 'error occured during pokemon2 save()'
             self.statuscode = 420
-            retMsg = "You successfully caught the pokemon"
+            self.message = "You successfully caught the pokemon"
         else:
             self.statuscode = 96
-            retMsg = "You failed to catch the pokemon. The pokemon ran away!"
-        self.message = retMsg
-        return retMsg
+            self.message = "You failed to catch the pokemon. The pokemon ran away!"
+
+        return self.message
 
     def __victory(self):
         # pokemon1 had victory, calculate gained exp and update current exp
