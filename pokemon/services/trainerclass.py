@@ -310,6 +310,9 @@ class trainer:
             self.statuscode = 96
             self.message = "error occurred during encounter.catch()"
             return
+
+        self.statuscode = enc.statuscode
+        self.message = enc.message
         return retVal
 
     def runAway(self, pokemon2):
