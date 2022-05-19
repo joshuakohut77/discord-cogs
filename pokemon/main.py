@@ -37,7 +37,7 @@ from services.trainerclass import trainer as TrainerClass
 # - [med] Test evolutions in discord
 # - [med] key item blockers
 # - [low] Nickname pokemon
-# - [low] Pokemart sell items
+# - [x] [low] Pokemart sell items
 # - [low] Flesh out the *debug module to help us test the game
 
 
