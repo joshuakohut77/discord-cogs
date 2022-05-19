@@ -574,6 +574,14 @@ class trainer:
     def __getEncounter(self, method):
         """ gets a random encounter in the current area using the selected method """
         pokemon = None
+        activePokemon = self.getActivePokemon()
+        if activePokemon is None:
+            self.statuscode = 420
+            self.message = "You do not have an active pokemon!"
+        if activePokemon.currentHP == 0:
+            self.statuscode = 420
+            self.message = "Your active Pokemon has no HP left!"
+            return
         loc = LocationClass(self.discordId)
         selectedEncounter = loc.action(method)
         if loc.statuscode == 96:
