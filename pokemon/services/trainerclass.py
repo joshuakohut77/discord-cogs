@@ -11,6 +11,7 @@ from leaderboardclass import leaderboard
 from locationclass import location as LocationClass
 from loggerclass import logger as log
 from pokeclass import Pokemon as pokeClass
+from uniqueencounters import uniqueEncounters as uEnc
 from datetime import datetime
 from time import time
 import models.location as Models
@@ -341,19 +342,75 @@ class trainer:
         finally:
             return pokemon
     
-    def gift(self):
+    def gift(self, method='gift'):
         """ handles a gift action """
         retMsg = ''
         try:
-            method = 'gift'
-            pokemon = self.__getEncounter(method)
-            pokemon.save()
-            retMsg = 'You received %s!' %pokemon.pokemonName
-            self.statuscode = 420
-            self.message = retMsg
+            locationId = self.getLocation()
+            if locationId in [67, 86, 120,234]:
+                giftCompleted = False
+                uEncObj = uEnc(self.discordId)
+                if locationId == 67:
+                    if uEncObj.eevee:
+                        giftCompleted = True
+                elif locationId == 86:
+                    if uEncObj.squirtle or uEncObj.charmander or uEncObj.bulbasaur:
+                        giftCompleted = True
+                elif locationId == 120:
+                    if uEncObj.magikarp:
+                        giftCompleted = True
+                elif locationId == 234:
+                    if uEncObj.lapras or uEncObj.hitmonchan or uEncObj.hitmonlee:
+                        giftCompleted = True
+                
+                if giftCompleted:
+                    self.statuscode = 420
+                    self.message = "You have already received the gift in this location"
+
+            if not giftCompleted:
+                method = 'gift'
+                pokemon = self.__getEncounter(method)
+                pokemon.save()
+                retMsg = 'You received %s!' %pokemon.pokemonName
+                self.statuscode = 420
+                self.message = retMsg
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
+
+    def onlyone(self, method='only-one'):
+        """ handles a gift action """
+        pokemon = None
+        try:
+            locationId = self.getLocation()
+            if locationId in [136, 147, 158, 159]:
+                giftCompleted = False
+                uEncObj = uEnc(self.discordId)
+                if locationId == 136:
+                    if uEncObj.articuno:
+                        giftCompleted = True
+                elif locationId == 158:
+                    if uEncObj.zapdos:
+                        giftCompleted = True
+                elif locationId == 159:
+                    if uEncObj.moltres:
+                        giftCompleted = True
+                elif locationId == 147:
+                    if uEncObj.mewtwo:
+                        giftCompleted = True
+                
+                if giftCompleted:
+                    self.statuscode = 420
+                    self.message = "You have already completed that action in this location"
+
+            if not giftCompleted:
+                method = 'only-one'
+                pokemon = self.__getEncounter(method)
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            return pokemon
 
     def getPokedex(self):
         """ returns a list of dictionary from the trainers pokedex """
