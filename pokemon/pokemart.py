@@ -150,6 +150,7 @@ class PokemartMixin(MixinMeta):
         # await ctx.send(f'{user.display_name} bought {count} {item}')
 
 
+    @_pokemart.command()
     async def sell(self, ctx: commands.Context, item: str, count: int = 1) -> Non:
         user = ctx.author
 
