@@ -289,6 +289,9 @@ class Pokemon:
         # return only 4 moves
         return moveList[0: 4]
 
+    def getNextLevelExperience(self):
+        return self.__getBaseLevelExperience(level=self.currentLevel+1)
+
     def processBattleOutcome(self, expGained, evGained, newCurrentHP):
         """ process victory updates and calculations """
 
@@ -311,10 +314,9 @@ class Pokemon:
                         evGained['special-defense']
 
                 # get the base exp of the next level
-                nextLevelBaseExp = self.__getBaseLevelExperience(
-                    level=self.currentLevel+1)
+                nextLevelBaseExp = self.getNextLevelExperience()
                 if self.currentExp >= nextLevelBaseExp:
-                    # pokemon leveled up. recurrsively check exp thresholds to determine the new level
+                    # pokemon leveled up. iteratively check exp thresholds to determine the new level
                     for x in range(99):
                         tempLevelBaseExp = self.__getBaseLevelExperience(
                             level=self.currentLevel+x)

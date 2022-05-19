@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 from redbot.core import commands
 
+import constant
 from models.location import LocationModel
 from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
@@ -197,22 +198,22 @@ class EncountersMixin(MixinMeta):
         btns = []
         if items.pokeball > 0:
             btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.green, label="Poke Ball", custom_id='pokeball'),
+                Button(style=ButtonStyle.gray, emoji=constant.POKEBALL, label="Poke Ball", custom_id='pokeball'),
                 self.__on_throw_pokeball,
             ))
         if items.greatball > 0:
             btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.green, label="Great Ball", custom_id='greatball'),
+                Button(style=ButtonStyle.gray, emoji=constant.GREATBALL, label="Great Ball", custom_id='greatball'),
                 self.__on_throw_pokeball,
             ))
         if items.ultraball > 0:
             btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.green, label="Ultra Ball", custom_id='ultraball'),
+                Button(style=ButtonStyle.gray, emoji=constant.ULTRABALL, label="Ultra Ball", custom_id='ultraball'),
                 self.__on_throw_pokeball,
             ))
         if items.masterball > 0:
             btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.green, label="Master Ball", custom_id='masterball'),
+                Button(style=ButtonStyle.gray, emoji=constant.MASTERBALL, label="Master Ball", custom_id='masterball'),
                 self.__on_throw_pokeball,
             ))
 

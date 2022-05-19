@@ -157,7 +157,10 @@ def createStatsEmbed(user: Member, pokemon: PokemonClass):
             name="Nickname", value=f"{pokemon.nickName}", inline=False)
     
     embed.add_field(
-        name="Level", value=f"{pokemon.currentLevel}", inline=False)
+        name="Level", value=f"{pokemon.currentLevel}", inline=True)
+    embed.add_field(
+        name="Experience", value=f"{pokemon.currentExp}", inline=True)
+    
     embed.add_field(
         name="HP", value=f"{pokemon.currentHP} / {stats['hp']}", inline=False)
     embed.add_field(
