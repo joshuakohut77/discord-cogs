@@ -148,3 +148,21 @@ class PokemartMixin(MixinMeta):
 
         # await ctx.send(res)
         # await ctx.send(f'{user.display_name} bought {count} {item}')
+
+
+    @_pokemart.command()
+    async def sell(self, ctx: commands.Context, item: str, count: int = 1) -> Non:
+        user = ctx.author
+
+        trainer = TrainerClass(user.id)
+        location = trainer.getLocation()
+        store = StoreClass(trainer.discordId, location.locationId)
+
+        if store.statuscode == 420:
+            await ctx.send(store.message)
+            return
+
+        store.sellItem(item, count)
+
+        await ctx.send(store.message)
+

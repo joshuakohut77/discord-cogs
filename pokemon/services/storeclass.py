@@ -141,7 +141,14 @@ class store:
         """ buy and item and update trainers inventory """
 
         inventory = inv(self.discordId)
-        price = self.__getItemPrice(name)
+        
+        if name not in self.storeMap.keys():
+            self.statuscode = 420
+            self.message = "That item does not exist."
+            return
+        
+        price = self.storeMap[name]['price']
+        # price = self.__getItemPrice(name)
         # all selling is half the buying price
         price = int(price / 2)
         totalPrice = price * quantity

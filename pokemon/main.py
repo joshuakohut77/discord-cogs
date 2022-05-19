@@ -32,15 +32,12 @@ from services.trainerclass import trainer as TrainerClass
 # one state mapping instead of multiple
 # pretty up location names
 # pretty up item names
-# - [high] Encounters - fight / runaway / catch
 # - [high] Use items / heal pokemon
-# - [x] [med] Party
-# - [x] [med] Pokecenter / heal pokemone
 # - [med] Pokedex
 # - [med] Test evolutions in discord
 # - [med] key item blockers
 # - [low] Nickname pokemon
-# - [low] Pokemart sell items
+# - [x] [low] Pokemart sell items
 # - [low] Flesh out the *debug module to help us test the game
 
 
