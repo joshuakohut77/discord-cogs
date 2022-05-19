@@ -8,7 +8,9 @@ import discord
 
 from redbot.core import commands
 
+from services.dbclass import db as dbconn
 from services.trainerclass import trainer as TrainerClass
+from models.location import LocationModel
 
 from .abcd import MixinMeta
 
@@ -36,3 +38,31 @@ class DebugMixin(MixinMeta):
 
         await ctx.send(f'{pokemon.pokemonName} added.')
 
+
+    async def marts(self, ctx: commands.Context):
+        db = dbconn()
+        queryStr = """
+        select distinct
+            store."locationId",
+            locations."name"
+        from store
+            join locations on locations."locationId" = store."locationId"
+        """
+        result = db.queryAll(queryStr)
+
+        locations = ''
+        for r in result:
+            locations += f'{r[0]} {r[1]} \r\n'
+
+        await ctx.send(f'Pokemart locations \r\n {locations}')    
+
+
+    async def loc(self, ctx: commands.Context, id: int = 86):
+        user = ctx.author()
+
+        trainer = TrainerClass(str(user.id))
+        trainer.setLocation(locationId=id)
+
+        location = trainer.getLocation()
+
+        await ctx.send(f'Location set to {location.name}.')
