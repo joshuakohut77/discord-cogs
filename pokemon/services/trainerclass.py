@@ -384,26 +384,26 @@ class trainer:
         try:
             locationId = self.getLocation()
             if locationId in [136, 147, 158, 159]:
-                giftCompleted = False
+                onlyoneCompleted = False
                 uEncObj = uEnc(self.discordId)
                 if locationId == 136:
                     if uEncObj.articuno:
-                        giftCompleted = True
+                        onlyoneCompleted = True
                 elif locationId == 158:
                     if uEncObj.zapdos:
-                        giftCompleted = True
+                        onlyoneCompleted = True
                 elif locationId == 159:
                     if uEncObj.moltres:
-                        giftCompleted = True
+                        onlyoneCompleted = True
                 elif locationId == 147:
                     if uEncObj.mewtwo:
-                        giftCompleted = True
+                        onlyoneCompleted = True
                 
-                if giftCompleted:
+                if onlyoneCompleted:
                     self.statuscode = 420
                     self.message = "You have already completed that action in this location"
 
-            if not giftCompleted:
+            if not onlyoneCompleted:
                 method = 'only-one'
                 pokemon = self.__getEncounter(method)
         except:
