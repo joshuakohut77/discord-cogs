@@ -14,14 +14,15 @@ from services.inventoryclass import inventory as InventoryClass
 
 
 trainer = TrainerClass('509767223938777108')
-active = trainer.getPokemonById(9)
+# active = trainer.getPokemonById(9)
+
 
 # wild = trainer.encounter('walk')
 # msg = trainer.fight(wild)
 
 # inv = InventoryClass(trainer.discordId)
 
-# store = StoreClass(trainer.discordId, 232)
+store = StoreClass(trainer.discordId, 154)
 # store.buyItem('super-potion', 1)
 # pokemon = trainer.encounter('walk')
 # areaId = trainer.getAreaId()

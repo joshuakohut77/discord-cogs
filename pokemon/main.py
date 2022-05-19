@@ -29,15 +29,13 @@ from services.trainerclass import trainer as TrainerClass
 
 
 # Things left to do
-# [x] add start date to trainer stats
-# [x] cleanup all the typings, cbs should be private/mangled
 # one state mapping instead of multiple
 # pretty up location names
 # pretty up item names
 # - [high] Encounters - fight / runaway / catch
 # - [high] Use items / heal pokemon
-# - [med] Party
-# - [med] Pokecenter / heal pokemon
+# - [x] [med] Party
+# - [x] [med] Pokecenter / heal pokemone
 # - [med] Pokedex
 # - [med] Test evolutions in discord
 # - [med] key item blockers
