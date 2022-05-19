@@ -25,6 +25,7 @@ class uniqueEncounters:
         self.hitmonchan = False
         self.hitmonlee = False
         self.eevee = False
+        self.snorlax = False
         
         # populate object
         self.__load()
@@ -36,7 +37,7 @@ class uniqueEncounters:
             queryString = '''
                 SELECT articuno, zapdos, moltres, mewtwo, 
                 magikarp, charmander, squirtle, bulbasaur, 
-                lapras, hitmonchan, hitmonlee, eevee
+                lapras, hitmonchan, hitmonlee, eevee, snorlax
 	            FROM "unique-encounters" WHERE discord_id=%(discordId)s
             '''
             result = db.querySingle(queryString, { 'discordId': self.discordId })
@@ -53,6 +54,7 @@ class uniqueEncounters:
                 self.hitmonchan = result[10]
                 self.hitmonlee = result[11]
                 self.eevee = result[12]
+                self.snorlax = result[13]
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
@@ -71,7 +73,7 @@ class uniqueEncounters:
                     "mewtwo"=%(mewtwo)s, "magikarp"=%(magikarp)s, 
                     "charmander"=%(charmander)s, "squirtle"=%(squirtle)s, "bulbasaur"=%(bulbasaur)s, 
                     lapras=%(lapras)s, hitmonchan=%(hitmonchan)s, hitmonlee=%(hitmonlee)s, 
-                    eevee=%(eevee)s,
+                    eevee=%(eevee)s, snorlax=%(snorlax)s,
 	                    WHERE discord_id=%(discordId)s;
                 '''
                 values = { 'articuno':self.articuno, 'zapdos': self.zapdos, 'moltres':self.moltres,
@@ -79,7 +81,7 @@ class uniqueEncounters:
                             'charmander':self.charmander, 'squirtle':self.squirtle,
                             'bulbasaur':self.bulbasaur, 'lapras':self.lapras,
                             'hitmonchan':self.hitmonchan, 'hitmonlee':self.hitmonlee,
-                            'eevee':self.eevee,
+                            'eevee':self.eevee, 'snorlax':self.snorlax,
                             'discordId':self.discordId }
                 db.execute(updateString, values)
         except:
