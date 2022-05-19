@@ -306,10 +306,10 @@ class trainer:
             return
         enc = encounter(pokemon1, pokemon2)
         retVal = enc.catch(item)
-        if enc.statuscode == 96:
-            self.statuscode = 96
-            self.message = "error occurred during encounter.catch()"
-            return
+        # if enc.statuscode == 96:
+        #     self.statuscode = 96
+        #     self.message = "error occurred during encounter.catch()"
+        #     return
 
         self.statuscode = enc.statuscode
         self.message = enc.message
