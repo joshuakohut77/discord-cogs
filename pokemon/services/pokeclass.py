@@ -660,7 +660,7 @@ class Pokemon:
             level = self.currentLevel
         if self.growthRate == 'fast':
             return round(0.8 * (level ** 3))
-        elif self.growthRate == 'medium-fast':
+        elif self.growthRate == 'medium-fast' or self.growthRate == 'medium':
             return round(level ** 3)
         elif self.growthRate == 'medium-slow':
             return round(1.2*(level ** 3)-(15*(level ** 2)) + 100*level - 140)
