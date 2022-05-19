@@ -17,6 +17,7 @@ from redbot.core import commands
 from models.location import LocationModel
 from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
+from services.inventoryclass import inventory as InventoryClass
 
 
 from .abcd import MixinMeta
@@ -110,6 +111,10 @@ class EncountersMixin(MixinMeta):
             Button(style=ButtonStyle.green, label="Run away", custom_id='runaway'),
             self.__on_runaway_click,
         ))
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Catch", custom_id='catch'),
+            self.__on_catch_click,
+        ))
 
         message = await interaction.channel.send(
             content=f'{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!',
@@ -141,7 +146,8 @@ class EncountersMixin(MixinMeta):
 
         btns = []
 
-        await interaction.edit_origin(
+        await interaction.send(trainer.message)
+        await interaction.channel.send(
             content=f'{trainer.message}',
             embed=embed,
             components=[]
@@ -175,6 +181,54 @@ class EncountersMixin(MixinMeta):
         )
         del self.__useractions[str(user.id)]
         
+
+    async def __on_catch_click(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.__checkUserActionState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+
+        state = self.__useractions[str(user.id)]
+        trainer = TrainerClass(str(user.id))
+        items = InventoryClass(trainer.discordId)
+
+        btns = []
+        if items.pokeball > 0:
+            btns.append(self.client.add_callback(
+                Button(style=ButtonStyle.green, label="Poke Ball", custom_id='pokeball'),
+                # self.__on_catch_click,
+            ))
+        if items.greatball > 0:
+            btns.append(self.client.add_callback(
+                Button(style=ButtonStyle.green, label="Great Ball", custom_id='greatball'),
+                # self.__on_catch_click,
+            ))
+        if items.ultraball > 0:
+            btns.append(self.client.add_callback(
+                Button(style=ButtonStyle.green, label="Ultra Ball", custom_id='ultraball'),
+                self.__on_catch_click,
+            ))
+        if items.masterball > 0:
+            btns.append(self.client.add_callback(
+                Button(style=ButtonStyle.green, label="Catch", custom_id='catch'),
+                self.__on_catch_click,
+            ))
+
+        if len(btns) == 0:
+            await interaction.send('You have no balls!')
+            return
+
+        embed = self.__wildPokemonEncounter(user, state.pokemon)
+        
+        message = await interaction.edit_origin(
+            content=f'{user.display_name} encountered a wild {state.pokemon.pokemonName.capitalize()}!',
+            embed=embed,
+            components=[btns]
+        )
+        self.__useractions[str(user.id)] = ActionState(
+            str(user.id), message.id, state.location, state.pokemon)
 
     
     def __wildPokemonRanAway(self, user: discord.User, pokemon: PokemonClass):
