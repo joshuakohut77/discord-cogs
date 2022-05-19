@@ -9,6 +9,7 @@ from expclass import experiance as exp
 from inventoryclass import inventory as inv
 from leaderboardclass import leaderboard
 from loggerclass import logger as log
+from uniqueencounters import uniqueEncounters as uEnc
 from pokedexclass import pokedex
 from pokeclass import Pokemon as PokemonClass
 
@@ -175,6 +176,8 @@ class encounter:
                 self.message = 'error occured during pokemon2 save()'
             self.statuscode = 420
             self.message = "You successfully caught the pokemon"
+            self.__updateUniqueEncounters()
+
         else:
             self.statuscode = 96
             self.message = "You failed to catch the pokemon. The pokemon ran away!"
@@ -184,6 +187,7 @@ class encounter:
     def __victory(self):
         # pokemon1 had victory, calculate gained exp and update current exp
         # calculate money earned, reduced HP points
+        self.__updateUniqueEncounters()
         expObj = exp(self.pokemon2)
         expGained = expObj.getExpGained()
         evGained = expObj.getEffortValue()
@@ -310,3 +314,36 @@ class encounter:
         if moveList[0] is None:
             moveList.pop(0)
         return moveList
+    
+    def __updateUniqueEncounters(self):
+        """ updates the unique encounters table """
+        uEncObj = uEnc(self.pokemon1.discordId)
+        name = self.pokemon1.name
+        if name == 'articuno':
+            uEncObj.articuno = True
+        elif name == 'zapdos':
+            uEncObj.zapdos = True
+        elif name == 'moltres':
+            uEncObj.moltres = True
+        elif name == 'mewtwo':
+            uEncObj.mewtwo = True
+        elif name == 'magikarp':
+            uEncObj.magikarp = True
+        elif name == 'charmander':
+            uEncObj.charmander = True
+        elif name == 'squirtle':
+            uEncObj.squirtle = True
+        elif name == 'bulbasaur':
+            uEncObj.bulbasaur = True
+        elif name == 'lapras':
+            uEncObj.lapras = True
+        elif name == 'hitmonchan':
+            uEncObj.hitmonchan = True
+        elif name == 'hitmonlee':
+            uEncObj.hitmonlee = True                                                                                    
+        elif name == 'eevee':
+            uEncObj.eevee = True
+        elif name == 'snorlax':
+            uEncObj.snorlax = True      
+
+        uEncObj.save()      

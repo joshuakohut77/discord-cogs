@@ -383,7 +383,7 @@ class trainer:
         pokemon = None
         try:
             locationId = self.getLocation()
-            if locationId in [136, 147, 158, 159]:
+            if locationId in [136, 147, 158, 159, 91, 95]:
                 onlyoneCompleted = False
                 uEncObj = uEnc(self.discordId)
                 if locationId == 136:
@@ -398,7 +398,9 @@ class trainer:
                 elif locationId == 147:
                     if uEncObj.mewtwo:
                         onlyoneCompleted = True
-                
+                elif locationId == 91 or locationId == 95:
+                    if uEncObj.snorlax:
+                        onlyoneCompleted = True
                 if onlyoneCompleted:
                     self.statuscode = 420
                     self.message = "You have already completed that action in this location"
@@ -683,6 +685,8 @@ class trainer:
             level = random.randrange(int(min_level), int(max_level)+1)
             pokemon = pokeClass(None, name)
             pokemon.create(level)
+            if method == 'gift' or method == 'only-one':
+                pokemon.uniqueEncounter = True
             if pokemon.statuscode == 96:
                 self.statuscode = 96
                 self.message = "error occured during pokemon create()"
