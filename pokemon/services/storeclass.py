@@ -145,9 +145,9 @@ class store:
         # price = self.storeMap[name]['price']
         price = self.__getItemPrice(name)
 
-        if self.statuscode == 96:
-            self.statuscode = 420
-            self.message = 'That item does not exist.'
+        # Status code can be set to 420 or 96 if the item
+        # does not exist or an error occurs
+        if self.statuscode == 420 or self.statuscode == 96:
             return
 
         if price == 0:
@@ -370,7 +370,10 @@ class store:
             db = dbconn()
             queryString = 'SELECT "price" FROM itempricing WHERE "item"=%(itemName)s'
             result = db.querySingle(queryString, {'itemName': itemName})
-            if result:
+            if result is None:
+                self.message = 'That item does not exist'
+                self.statuscode = 420
+            else:
                 price = result[0]
         except:
             self.statuscode = 96
