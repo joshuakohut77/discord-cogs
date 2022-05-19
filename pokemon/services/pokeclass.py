@@ -55,6 +55,7 @@ class Pokemon:
         self.move_3 = None
         self.move_4 = None
         self.currentHP = None
+        self.uniqueEncounter = False
 
     def load(self, pokemonId=None):
         """ populates the object with stats from pokeapi """
