@@ -558,7 +558,8 @@ class trainer:
             db.executeWithoutCommit('INSERT INTO leaderboard (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
             db.commit()
             self.trainerExists = True
-            self.startdate = datetime.now().date()
+            # Always use UTC time
+            self.startdate = datetime.utcnow().date()
         except:
             self.statuscode = 96
             db.rollback()

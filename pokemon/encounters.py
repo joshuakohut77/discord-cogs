@@ -254,7 +254,7 @@ class EncountersMixin(MixinMeta):
 
         embed = self.__wildPokemonEncounter(user, state.pokemon)
         
-        message = await interaction.edit_origin(
+        await interaction.edit_origin(
             content=f'{trainer.message}',
             embed=embed,
             components=[]

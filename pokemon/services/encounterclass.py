@@ -177,6 +177,7 @@ class encounter:
         else:
             self.statuscode = 96
             retMsg = "You failed to catch the pokemon. The pokemon ran away!"
+        self.message = retMsg
         return retMsg
 
     def __victory(self):
