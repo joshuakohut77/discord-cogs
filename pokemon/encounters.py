@@ -198,22 +198,22 @@ class EncountersMixin(MixinMeta):
         if items.pokeball > 0:
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.green, label="Poke Ball", custom_id='pokeball'),
-                # self.__on_catch_click,
+                self.__on_throw_pokeball,
             ))
         if items.greatball > 0:
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.green, label="Great Ball", custom_id='greatball'),
-                # self.__on_catch_click,
+                self.__on_throw_pokeball,
             ))
         if items.ultraball > 0:
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.green, label="Ultra Ball", custom_id='ultraball'),
-                self.__on_catch_click,
+                self.__on_throw_pokeball,
             ))
         if items.masterball > 0:
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.green, label="Catch", custom_id='catch'),
-                self.__on_catch_click,
+                self.__on_throw_pokeball,
             ))
 
         if len(btns) == 0:
@@ -230,6 +230,9 @@ class EncountersMixin(MixinMeta):
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.id, state.location, state.pokemon)
 
+
+    async def __on_throw_pokeball(self, interaction: Interaction):
+        await interaction.send('Not Implemented')
     
     def __wildPokemonRanAway(self, user: discord.User, pokemon: PokemonClass):
         pass
