@@ -1,12 +1,8 @@
 # pokemon experiance class
 # this is designed to calculate the experience of the defeated pokemon
-import config
-import pokebase as pb
+import json
 from pokeclass import Pokemon as PokemonClass
 
-# Global Config Variables
-OVERALL_EXPERIENCE_MODIFIER = 3
-# OVERALL_EXPERIENCE_MODIFIER = config.overall_experience_modifier
 
 class experiance:
     def __init__(self, pokemon: PokemonClass):
@@ -32,11 +28,9 @@ class experiance:
     def getEffortValue(self):
         """ returns dictionary of effort values gained upon defeat """
         effortValueDict = {}
-        pokemon = pb.pokemon(self.pokemon.pokedexId)
-        for stat in pokemon.stats:
-            statName = stat.stat.name
-            effortValue = stat.effort * OVERALL_EXPERIENCE_MODIFIER
-            effortValueDict[statName] = effortValue
-
+        # TODO replace this load with object in memory
+        pokemonConfig = json.load(open('./configs/pokemon.json', 'r'))
+        effortValueDict = pokemonConfig[self.pokemon.name]['effort']
         return effortValueDict
+
 
