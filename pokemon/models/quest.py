@@ -1,8 +1,6 @@
 
 import json
 
-
-
 class QuestModel:
     
     def __init__(self, quest: json):
