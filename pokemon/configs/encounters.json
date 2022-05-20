@@ -1,5 +1,5 @@
 {
-    "celadon-city": [
+    "67": [
       {
         "name": "poliwag",
         "chance": 50,
@@ -43,7 +43,7 @@
         "method": "gift"
       }
     ],
-    "cerulean-city": [
+    "68": [
       {
         "name": "psyduck",
         "chance": 8,
@@ -80,7 +80,7 @@
         "method": "old-rod"
       }
     ],
-    "cinnabar-island": [
+    "71": [
       {
         "name": "poliwag",
         "chance": 50,
@@ -124,7 +124,7 @@
         "method": "old-rod"
       }
     ],
-    "digletts-cave": [
+    "73": [
       {
         "name": "diglett",
         "chance": 5,
@@ -140,7 +140,7 @@
         "method": "walk"
       }
     ],
-    "fuchsia-city": [
+    "76": [
       {
         "name": "poliwag",
         "chance": 50,
@@ -177,7 +177,7 @@
         "method": "super-rod"
       }
     ],
-    "mt-moon": [
+    "80": [
       {
         "name": "clefairy",
         "chance": 1,
@@ -263,7 +263,7 @@
         "method": "walk"
       }
     ],
-    "pallet-town": [
+    "86": [
       {
         "name": "bulbasaur",
         "chance": 100,
@@ -314,7 +314,7 @@
         "method": "old-rod"
       }
     ],
-    "rock-tunnel": [
+    "87": [
       {
         "name": "zubat",
         "chance": 5,
@@ -372,7 +372,7 @@
         "method": "walk"
       }
     ],
-    "kanto-route-1": [
+    "88": [
       {
         "name": "pidgey",
         "chance": 1,
@@ -388,7 +388,7 @@
         "method": "walk"
       }
     ],
-    "kanto-route-10": [
+    "89": [
       {
         "name": "spearow",
         "chance": 5,
@@ -453,7 +453,7 @@
         "method": "old-rod"
       }
     ],
-    "kanto-route-11": [
+    "90": [
       {
         "name": "spearow",
         "chance": 5,
@@ -518,7 +518,7 @@
         "method": "old-rod"
       }
     ],
-    "kanto-route-12": [
+    "91": [
       {
         "name": "pidgey",
         "chance": 5,
@@ -604,7 +604,7 @@
         "method": "pokeflute"
       }
     ],
-    "kanto-route-13": [
+    "92": [
       {
         "name": "pidgey",
         "chance": 15,
@@ -690,7 +690,7 @@
         "method": "walk"
       }
     ],
-    "kanto-route-14": [
+    "93": [
       {
         "name": "pidgey",
         "chance": 20,
@@ -748,7 +748,7 @@
         "method": "walk"
       }
     ],
-    "kanto-route-15": [
+    "94": [
       {
         "name": "pidgey",
         "chance": 15,
@@ -806,7 +806,7 @@
         "method": "walk"
       }
     ],
-    "kanto-route-16": [
+    "95": [
       {
         "name": "rattata",
         "chance": 5,
@@ -843,7 +843,7 @@
         "method": "pokeflute"
       }
     ],
-    "kanto-route-17": [
+    "96": [
       {
         "name": "raticate",
         "chance": 5,
@@ -908,7 +908,7 @@
         "method": "super-rod"
       }
     ],
-    "kanto-route-18": [
+    "97": [
       {
         "name": "raticate",
         "chance": 5,
@@ -973,7 +973,7 @@
         "method": "super-rod"
       }
     ],
-    "kanto-sea-route-19": [
+    "98": [
       {
         "name": "poliwag",
         "chance": 50,
@@ -1024,7 +1024,7 @@
         "method": "old-rod"
       }
     ],
-    "kanto-route-2": [
+    "99": [
       {
         "name": "caterpie",
         "chance": 1,
@@ -1054,7 +1054,7 @@
         "method": "walk"
       }
     ],
-    "kanto-sea-route-20": [
+    "100": [
       {
         "name": "poliwag",
         "chance": 50,
@@ -1105,7 +1105,7 @@
         "method": "old-rod"
       }
     ],
-    "kanto-sea-route-21": [
+    "101": [
       {
         "name": "pidgey",
         "chance": 10,
@@ -1191,7 +1191,7 @@
         "method": "old-rod"
       }
     ],
-    "kanto-route-22": [
+    "102": [
       {
         "name": "rattata",
         "chance": 10,
@@ -1242,7 +1242,7 @@
         "method": "old-rod"
       }
     ],
-    "kanto-route-24": [
+    "103": [
       {
         "name": "caterpie",
         "chance": 20,
@@ -1335,7 +1335,7 @@
         "method": "old-rod"
       }
     ],
-    "kanto-route-25": [
+    "104": [
       {
         "name": "caterpie",
         "chance": 20,
@@ -1428,7 +1428,7 @@
         "method": "old-rod"
       }
     ],
-    "kanto-route-3": [
+    "109": [
       {
         "name": "pidgey",
         "chance": 10,
@@ -1451,7 +1451,7 @@
         "method": "walk"
       }
     ],
-    "kanto-route-4": [
+    "120": [
       {
         "name": "rattata",
         "chance": 5,
@@ -1488,7 +1488,7 @@
         "method": "gift"
       }
     ],
-    "kanto-route-5": [
+    "130": [
       {
         "name": "pidgey",
         "chance": 5,
@@ -1525,7 +1525,7 @@
         "method": "walk"
       }
     ],
-    "kanto-route-6": [
+    "131": [
       {
         "name": "pidgey",
         "chance": 5,
@@ -1597,7 +1597,7 @@
         "method": "old-rod"
       }
     ],
-    "kanto-route-7": [
+    "132": [
       {
         "name": "pidgey",
         "chance": 10,
@@ -1648,7 +1648,7 @@
         "method": "walk"
       }
     ],
-    "kanto-route-8": [
+    "133": [
       {
         "name": "pidgey",
         "chance": 10,
@@ -1699,7 +1699,7 @@
         "method": "walk"
       }
     ],
-    "kanto-route-9": [
+    "134": [
       {
         "name": "rattata",
         "chance": 5,
@@ -1729,7 +1729,7 @@
         "method": "walk"
       }
     ],
-    "seafoam-islands": [
+    "136": [
       {
         "name": "zubat",
         "chance": 10,
@@ -2137,7 +2137,7 @@
         "method": "only-one"
       }
     ],
-    "cerulean-cave": [
+    "147": [
       {
         "name": "arbok",
         "chance": 10,
@@ -2447,7 +2447,7 @@
         "method": "only-one"
       }
     ],
-    "vermilion-city": [
+    "151": [
       {
         "name": "poliwag",
         "chance": 50,
@@ -2519,8 +2519,8 @@
         "method": "old-rod"
       }
     ],
-    "kanto-victory-road-1": [],
-    "viridian-city": [
+    "152": [],
+    "154": [
       {
         "name": "poliwag",
         "chance": 25,
@@ -2550,7 +2550,7 @@
         "method": "old-rod"
       }
     ],
-    "viridian-forest": [
+    "155": [
       {
         "name": "caterpie",
         "chance": 10,
@@ -2587,7 +2587,7 @@
         "method": "walk"
       }
     ],
-    "kanto-route-23": [
+    "157": [
       {
         "name": "spearow",
         "chance": 15,
@@ -2687,7 +2687,7 @@
         "method": "walk"
       }
     ],
-    "power-plant": [
+    "158": [
       {
         "name": "pikachu",
         "chance": 10,
@@ -2745,7 +2745,7 @@
         "method": "only-one"
       }
     ],
-    "kanto-victory-road-2": [
+    "159": [
       {
         "name": "zubat",
         "chance": 15,
@@ -2922,7 +2922,7 @@
         "method": "walk"
       }
     ],
-    "pokemon-tower": [
+    "160": [
       {
         "name": "gastly",
         "chance": 5,
@@ -3029,7 +3029,7 @@
         "method": "walk"
       }
     ],
-    "pokemon-mansion": [
+    "161": [
       {
         "name": "vulpix",
         "chance": 10,
@@ -3241,7 +3241,7 @@
         "method": "walk"
       }
     ],
-    "kanto-safari-zone": [
+    "162": [
       {
         "name": "nidoran-f",
         "chance": 20,
@@ -3733,10 +3733,10 @@
         "method": "super-rod"
       }
     ],
-    "pewter-city": [],
-    "lavender-town": [],
-    "indigo-plateau": [],
-    "saffron-city": [
+    "231": [],
+    "232": [],
+    "233": [],
+    "234": [
       {
         "name": "hitmonlee",
         "chance": 100,
@@ -3759,5 +3759,5 @@
         "method": "gift"
       }
     ],
-    "ss-anne": []
+    "498": []
   }
