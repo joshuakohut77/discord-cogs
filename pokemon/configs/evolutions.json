@@ -1,0 +1,1730 @@
+{
+    "bulbasaur": [
+      {
+        "name": "bulbasaur",
+        "min_level": null
+      },
+      {
+        "name": "ivysaur",
+        "min_level": 16
+      },
+      {
+        "name": "venusaur",
+        "min_level": 32
+      }
+    ],
+    "ivysaur": [
+      {
+        "name": "bulbasaur",
+        "min_level": null
+      },
+      {
+        "name": "ivysaur",
+        "min_level": 16
+      },
+      {
+        "name": "venusaur",
+        "min_level": 32
+      }
+    ],
+    "venusaur": [
+      {
+        "name": "bulbasaur",
+        "min_level": null
+      },
+      {
+        "name": "ivysaur",
+        "min_level": 16
+      },
+      {
+        "name": "venusaur",
+        "min_level": 32
+      }
+    ],
+    "charmander": [
+      {
+        "name": "charmander",
+        "min_level": null
+      },
+      {
+        "name": "charmeleon",
+        "min_level": 16
+      },
+      {
+        "name": "charizard",
+        "min_level": 36
+      }
+    ],
+    "charmeleon": [
+      {
+        "name": "charmander",
+        "min_level": null
+      },
+      {
+        "name": "charmeleon",
+        "min_level": 16
+      },
+      {
+        "name": "charizard",
+        "min_level": 36
+      }
+    ],
+    "charizard": [
+      {
+        "name": "charmander",
+        "min_level": null
+      },
+      {
+        "name": "charmeleon",
+        "min_level": 16
+      },
+      {
+        "name": "charizard",
+        "min_level": 36
+      }
+    ],
+    "squirtle": [
+      {
+        "name": "squirtle",
+        "min_level": null
+      },
+      {
+        "name": "wartortle",
+        "min_level": 16
+      },
+      {
+        "name": "blastoise",
+        "min_level": 36
+      }
+    ],
+    "wartortle": [
+      {
+        "name": "squirtle",
+        "min_level": null
+      },
+      {
+        "name": "wartortle",
+        "min_level": 16
+      },
+      {
+        "name": "blastoise",
+        "min_level": 36
+      }
+    ],
+    "blastoise": [
+      {
+        "name": "squirtle",
+        "min_level": null
+      },
+      {
+        "name": "wartortle",
+        "min_level": 16
+      },
+      {
+        "name": "blastoise",
+        "min_level": 36
+      }
+    ],
+    "caterpie": [
+      {
+        "name": "caterpie",
+        "min_level": null
+      },
+      {
+        "name": "metapod",
+        "min_level": 7
+      },
+      {
+        "name": "butterfree",
+        "min_level": 10
+      }
+    ],
+    "metapod": [
+      {
+        "name": "caterpie",
+        "min_level": null
+      },
+      {
+        "name": "metapod",
+        "min_level": 7
+      },
+      {
+        "name": "butterfree",
+        "min_level": 10
+      }
+    ],
+    "butterfree": [
+      {
+        "name": "caterpie",
+        "min_level": null
+      },
+      {
+        "name": "metapod",
+        "min_level": 7
+      },
+      {
+        "name": "butterfree",
+        "min_level": 10
+      }
+    ],
+    "weedle": [
+      {
+        "name": "weedle",
+        "min_level": null
+      },
+      {
+        "name": "kakuna",
+        "min_level": 7
+      },
+      {
+        "name": "beedrill",
+        "min_level": 10
+      }
+    ],
+    "kakuna": [
+      {
+        "name": "weedle",
+        "min_level": null
+      },
+      {
+        "name": "kakuna",
+        "min_level": 7
+      },
+      {
+        "name": "beedrill",
+        "min_level": 10
+      }
+    ],
+    "beedrill": [
+      {
+        "name": "weedle",
+        "min_level": null
+      },
+      {
+        "name": "kakuna",
+        "min_level": 7
+      },
+      {
+        "name": "beedrill",
+        "min_level": 10
+      }
+    ],
+    "pidgey": [
+      {
+        "name": "pidgey",
+        "min_level": null
+      },
+      {
+        "name": "pidgeotto",
+        "min_level": 18
+      },
+      {
+        "name": "pidgeot",
+        "min_level": 36
+      }
+    ],
+    "pidgeotto": [
+      {
+        "name": "pidgey",
+        "min_level": null
+      },
+      {
+        "name": "pidgeotto",
+        "min_level": 18
+      },
+      {
+        "name": "pidgeot",
+        "min_level": 36
+      }
+    ],
+    "pidgeot": [
+      {
+        "name": "pidgey",
+        "min_level": null
+      },
+      {
+        "name": "pidgeotto",
+        "min_level": 18
+      },
+      {
+        "name": "pidgeot",
+        "min_level": 36
+      }
+    ],
+    "rattata": [
+      {
+        "name": "rattata",
+        "min_level": null
+      },
+      {
+        "name": "raticate",
+        "min_level": 20
+      }
+    ],
+    "raticate": [
+      {
+        "name": "rattata",
+        "min_level": null
+      },
+      {
+        "name": "raticate",
+        "min_level": 20
+      }
+    ],
+    "spearow": [
+      {
+        "name": "spearow",
+        "min_level": null
+      },
+      {
+        "name": "fearow",
+        "min_level": 20
+      }
+    ],
+    "fearow": [
+      {
+        "name": "spearow",
+        "min_level": null
+      },
+      {
+        "name": "fearow",
+        "min_level": 20
+      }
+    ],
+    "ekans": [
+      {
+        "name": "ekans",
+        "min_level": null
+      },
+      {
+        "name": "arbok",
+        "min_level": 22
+      }
+    ],
+    "arbok": [
+      {
+        "name": "ekans",
+        "min_level": null
+      },
+      {
+        "name": "arbok",
+        "min_level": 22
+      }
+    ],
+    "pikachu": [
+      {
+        "name": "pichu",
+        "min_level": null
+      },
+      {
+        "name": "pikachu",
+        "min_level": null
+      },
+      {
+        "name": "raichu",
+        "min_level": null
+      }
+    ],
+    "raichu": [
+      {
+        "name": "pichu",
+        "min_level": null
+      },
+      {
+        "name": "pikachu",
+        "min_level": null
+      },
+      {
+        "name": "raichu",
+        "min_level": null
+      }
+    ],
+    "sandshrew": [
+      {
+        "name": "sandshrew",
+        "min_level": null
+      },
+      {
+        "name": "sandslash",
+        "min_level": 22
+      }
+    ],
+    "sandslash": [
+      {
+        "name": "sandshrew",
+        "min_level": null
+      },
+      {
+        "name": "sandslash",
+        "min_level": 22
+      }
+    ],
+    "nidoran-f": [
+      {
+        "name": "nidoran-f",
+        "min_level": null
+      },
+      {
+        "name": "nidorina",
+        "min_level": 16
+      },
+      {
+        "name": "nidoqueen",
+        "min_level": null
+      }
+    ],
+    "nidorina": [
+      {
+        "name": "nidoran-f",
+        "min_level": null
+      },
+      {
+        "name": "nidorina",
+        "min_level": 16
+      },
+      {
+        "name": "nidoqueen",
+        "min_level": null
+      }
+    ],
+    "nidoqueen": [
+      {
+        "name": "nidoran-f",
+        "min_level": null
+      },
+      {
+        "name": "nidorina",
+        "min_level": 16
+      },
+      {
+        "name": "nidoqueen",
+        "min_level": null
+      }
+    ],
+    "nidoran-m": [
+      {
+        "name": "nidoran-m",
+        "min_level": null
+      },
+      {
+        "name": "nidorino",
+        "min_level": 16
+      },
+      {
+        "name": "nidoking",
+        "min_level": null
+      }
+    ],
+    "nidorino": [
+      {
+        "name": "nidoran-m",
+        "min_level": null
+      },
+      {
+        "name": "nidorino",
+        "min_level": 16
+      },
+      {
+        "name": "nidoking",
+        "min_level": null
+      }
+    ],
+    "nidoking": [
+      {
+        "name": "nidoran-m",
+        "min_level": null
+      },
+      {
+        "name": "nidorino",
+        "min_level": 16
+      },
+      {
+        "name": "nidoking",
+        "min_level": null
+      }
+    ],
+    "clefairy": [
+      {
+        "name": "cleffa",
+        "min_level": null
+      },
+      {
+        "name": "clefairy",
+        "min_level": null
+      },
+      {
+        "name": "clefable",
+        "min_level": null
+      }
+    ],
+    "clefable": [
+      {
+        "name": "cleffa",
+        "min_level": null
+      },
+      {
+        "name": "clefairy",
+        "min_level": null
+      },
+      {
+        "name": "clefable",
+        "min_level": null
+      }
+    ],
+    "vulpix": [
+      {
+        "name": "vulpix",
+        "min_level": null
+      },
+      {
+        "name": "ninetales",
+        "min_level": null
+      }
+    ],
+    "ninetales": [
+      {
+        "name": "vulpix",
+        "min_level": null
+      },
+      {
+        "name": "ninetales",
+        "min_level": null
+      }
+    ],
+    "jigglypuff": [
+      {
+        "name": "igglybuff",
+        "min_level": null
+      },
+      {
+        "name": "jigglypuff",
+        "min_level": null
+      },
+      {
+        "name": "wigglytuff",
+        "min_level": null
+      }
+    ],
+    "wigglytuff": [
+      {
+        "name": "igglybuff",
+        "min_level": null
+      },
+      {
+        "name": "jigglypuff",
+        "min_level": null
+      },
+      {
+        "name": "wigglytuff",
+        "min_level": null
+      }
+    ],
+    "zubat": [
+      {
+        "name": "zubat",
+        "min_level": null
+      },
+      {
+        "name": "golbat",
+        "min_level": 22
+      },
+      {
+        "name": "crobat",
+        "min_level": null
+      }
+    ],
+    "golbat": [
+      {
+        "name": "zubat",
+        "min_level": null
+      },
+      {
+        "name": "golbat",
+        "min_level": 22
+      },
+      {
+        "name": "crobat",
+        "min_level": null
+      }
+    ],
+    "oddish": [
+      {
+        "name": "oddish",
+        "min_level": null
+      },
+      {
+        "name": "gloom",
+        "min_level": 21
+      },
+      {
+        "name": "vileplume",
+        "min_level": null
+      }
+    ],
+    "gloom": [
+      {
+        "name": "oddish",
+        "min_level": null
+      },
+      {
+        "name": "gloom",
+        "min_level": 21
+      },
+      {
+        "name": "vileplume",
+        "min_level": null
+      }
+    ],
+    "vileplume": [
+      {
+        "name": "oddish",
+        "min_level": null
+      },
+      {
+        "name": "gloom",
+        "min_level": 21
+      },
+      {
+        "name": "vileplume",
+        "min_level": null
+      }
+    ],
+    "paras": [
+      {
+        "name": "paras",
+        "min_level": null
+      },
+      {
+        "name": "parasect",
+        "min_level": 24
+      }
+    ],
+    "parasect": [
+      {
+        "name": "paras",
+        "min_level": null
+      },
+      {
+        "name": "parasect",
+        "min_level": 24
+      }
+    ],
+    "venonat": [
+      {
+        "name": "venonat",
+        "min_level": null
+      },
+      {
+        "name": "venomoth",
+        "min_level": 31
+      }
+    ],
+    "venomoth": [
+      {
+        "name": "venonat",
+        "min_level": null
+      },
+      {
+        "name": "venomoth",
+        "min_level": 31
+      }
+    ],
+    "diglett": [
+      {
+        "name": "diglett",
+        "min_level": null
+      },
+      {
+        "name": "dugtrio",
+        "min_level": 26
+      }
+    ],
+    "dugtrio": [
+      {
+        "name": "diglett",
+        "min_level": null
+      },
+      {
+        "name": "dugtrio",
+        "min_level": 26
+      }
+    ],
+    "meowth": [
+      {
+        "name": "meowth",
+        "min_level": null
+      },
+      {
+        "name": "persian",
+        "min_level": 28
+      }
+    ],
+    "persian": [
+      {
+        "name": "meowth",
+        "min_level": null
+      },
+      {
+        "name": "persian",
+        "min_level": 28
+      }
+    ],
+    "psyduck": [
+      {
+        "name": "psyduck",
+        "min_level": null
+      },
+      {
+        "name": "golduck",
+        "min_level": 33
+      }
+    ],
+    "golduck": [
+      {
+        "name": "psyduck",
+        "min_level": null
+      },
+      {
+        "name": "golduck",
+        "min_level": 33
+      }
+    ],
+    "mankey": [
+      {
+        "name": "mankey",
+        "min_level": null
+      },
+      {
+        "name": "primeape",
+        "min_level": 28
+      }
+    ],
+    "primeape": [
+      {
+        "name": "mankey",
+        "min_level": null
+      },
+      {
+        "name": "primeape",
+        "min_level": 28
+      }
+    ],
+    "growlithe": [
+      {
+        "name": "growlithe",
+        "min_level": null
+      },
+      {
+        "name": "arcanine",
+        "min_level": null
+      }
+    ],
+    "arcanine": [
+      {
+        "name": "growlithe",
+        "min_level": null
+      },
+      {
+        "name": "arcanine",
+        "min_level": null
+      }
+    ],
+    "poliwag": [
+      {
+        "name": "poliwag",
+        "min_level": null
+      },
+      {
+        "name": "poliwhirl",
+        "min_level": 25
+      },
+      {
+        "name": "poliwrath",
+        "min_level": null
+      }
+    ],
+    "poliwhirl": [
+      {
+        "name": "poliwag",
+        "min_level": null
+      },
+      {
+        "name": "poliwhirl",
+        "min_level": 25
+      },
+      {
+        "name": "poliwrath",
+        "min_level": null
+      }
+    ],
+    "poliwrath": [
+      {
+        "name": "poliwag",
+        "min_level": null
+      },
+      {
+        "name": "poliwhirl",
+        "min_level": 25
+      },
+      {
+        "name": "poliwrath",
+        "min_level": null
+      }
+    ],
+    "abra": [
+      {
+        "name": "abra",
+        "min_level": null
+      },
+      {
+        "name": "kadabra",
+        "min_level": 16
+      },
+      {
+        "name": "alakazam",
+        "min_level": null
+      }
+    ],
+    "kadabra": [
+      {
+        "name": "abra",
+        "min_level": null
+      },
+      {
+        "name": "kadabra",
+        "min_level": 16
+      },
+      {
+        "name": "alakazam",
+        "min_level": null
+      }
+    ],
+    "alakazam": [
+      {
+        "name": "abra",
+        "min_level": null
+      },
+      {
+        "name": "kadabra",
+        "min_level": 16
+      },
+      {
+        "name": "alakazam",
+        "min_level": null
+      }
+    ],
+    "machop": [
+      {
+        "name": "machop",
+        "min_level": null
+      },
+      {
+        "name": "machoke",
+        "min_level": 28
+      },
+      {
+        "name": "machamp",
+        "min_level": null
+      }
+    ],
+    "machoke": [
+      {
+        "name": "machop",
+        "min_level": null
+      },
+      {
+        "name": "machoke",
+        "min_level": 28
+      },
+      {
+        "name": "machamp",
+        "min_level": null
+      }
+    ],
+    "machamp": [
+      {
+        "name": "machop",
+        "min_level": null
+      },
+      {
+        "name": "machoke",
+        "min_level": 28
+      },
+      {
+        "name": "machamp",
+        "min_level": null
+      }
+    ],
+    "bellsprout": [
+      {
+        "name": "bellsprout",
+        "min_level": null
+      },
+      {
+        "name": "weepinbell",
+        "min_level": 21
+      },
+      {
+        "name": "victreebel",
+        "min_level": null
+      }
+    ],
+    "weepinbell": [
+      {
+        "name": "bellsprout",
+        "min_level": null
+      },
+      {
+        "name": "weepinbell",
+        "min_level": 21
+      },
+      {
+        "name": "victreebel",
+        "min_level": null
+      }
+    ],
+    "victreebel": [
+      {
+        "name": "bellsprout",
+        "min_level": null
+      },
+      {
+        "name": "weepinbell",
+        "min_level": 21
+      },
+      {
+        "name": "victreebel",
+        "min_level": null
+      }
+    ],
+    "tentacool": [
+      {
+        "name": "tentacool",
+        "min_level": null
+      },
+      {
+        "name": "tentacruel",
+        "min_level": 30
+      }
+    ],
+    "tentacruel": [
+      {
+        "name": "tentacool",
+        "min_level": null
+      },
+      {
+        "name": "tentacruel",
+        "min_level": 30
+      }
+    ],
+    "geodude": [
+      {
+        "name": "geodude",
+        "min_level": null
+      },
+      {
+        "name": "graveler",
+        "min_level": 25
+      },
+      {
+        "name": "golem",
+        "min_level": null
+      }
+    ],
+    "graveler": [
+      {
+        "name": "geodude",
+        "min_level": null
+      },
+      {
+        "name": "graveler",
+        "min_level": 25
+      },
+      {
+        "name": "golem",
+        "min_level": null
+      }
+    ],
+    "golem": [
+      {
+        "name": "geodude",
+        "min_level": null
+      },
+      {
+        "name": "graveler",
+        "min_level": 25
+      },
+      {
+        "name": "golem",
+        "min_level": null
+      }
+    ],
+    "ponyta": [
+      {
+        "name": "ponyta",
+        "min_level": null
+      },
+      {
+        "name": "rapidash",
+        "min_level": 40
+      }
+    ],
+    "rapidash": [
+      {
+        "name": "ponyta",
+        "min_level": null
+      },
+      {
+        "name": "rapidash",
+        "min_level": 40
+      }
+    ],
+    "slowpoke": [
+      {
+        "name": "slowpoke",
+        "min_level": null
+      },
+      {
+        "name": "slowbro",
+        "min_level": 37
+      }
+    ],
+    "slowbro": [
+      {
+        "name": "slowpoke",
+        "min_level": null
+      },
+      {
+        "name": "slowbro",
+        "min_level": 37
+      }
+    ],
+    "magnemite": [
+      {
+        "name": "magnemite",
+        "min_level": null
+      },
+      {
+        "name": "magneton",
+        "min_level": 30
+      },
+      {
+        "name": "magnezone",
+        "min_level": null
+      }
+    ],
+    "magneton": [
+      {
+        "name": "magnemite",
+        "min_level": null
+      },
+      {
+        "name": "magneton",
+        "min_level": 30
+      },
+      {
+        "name": "magnezone",
+        "min_level": null
+      }
+    ],
+    "farfetchd": [
+      {
+        "name": "farfetchd",
+        "min_level": null
+      },
+      {
+        "name": "sirfetchd",
+        "min_level": null
+      }
+    ],
+    "doduo": [
+      {
+        "name": "doduo",
+        "min_level": null
+      },
+      {
+        "name": "dodrio",
+        "min_level": 31
+      }
+    ],
+    "dodrio": [
+      {
+        "name": "doduo",
+        "min_level": null
+      },
+      {
+        "name": "dodrio",
+        "min_level": 31
+      }
+    ],
+    "seel": [
+      {
+        "name": "seel",
+        "min_level": null
+      },
+      {
+        "name": "dewgong",
+        "min_level": 34
+      }
+    ],
+    "dewgong": [
+      {
+        "name": "seel",
+        "min_level": null
+      },
+      {
+        "name": "dewgong",
+        "min_level": 34
+      }
+    ],
+    "grimer": [
+      {
+        "name": "grimer",
+        "min_level": null
+      },
+      {
+        "name": "muk",
+        "min_level": 38
+      }
+    ],
+    "muk": [
+      {
+        "name": "grimer",
+        "min_level": null
+      },
+      {
+        "name": "muk",
+        "min_level": 38
+      }
+    ],
+    "shellder": [
+      {
+        "name": "shellder",
+        "min_level": null
+      },
+      {
+        "name": "cloyster",
+        "min_level": null
+      }
+    ],
+    "cloyster": [
+      {
+        "name": "shellder",
+        "min_level": null
+      },
+      {
+        "name": "cloyster",
+        "min_level": null
+      }
+    ],
+    "gastly": [
+      {
+        "name": "gastly",
+        "min_level": null
+      },
+      {
+        "name": "haunter",
+        "min_level": 25
+      },
+      {
+        "name": "gengar",
+        "min_level": null
+      }
+    ],
+    "haunter": [
+      {
+        "name": "gastly",
+        "min_level": null
+      },
+      {
+        "name": "haunter",
+        "min_level": 25
+      },
+      {
+        "name": "gengar",
+        "min_level": null
+      }
+    ],
+    "gengar": [
+      {
+        "name": "gastly",
+        "min_level": null
+      },
+      {
+        "name": "haunter",
+        "min_level": 25
+      },
+      {
+        "name": "gengar",
+        "min_level": null
+      }
+    ],
+    "onix": [
+      {
+        "name": "onix",
+        "min_level": null
+      },
+      {
+        "name": "steelix",
+        "min_level": null
+      }
+    ],
+    "drowzee": [
+      {
+        "name": "drowzee",
+        "min_level": null
+      },
+      {
+        "name": "hypno",
+        "min_level": 26
+      }
+    ],
+    "hypno": [
+      {
+        "name": "drowzee",
+        "min_level": null
+      },
+      {
+        "name": "hypno",
+        "min_level": 26
+      }
+    ],
+    "krabby": [
+      {
+        "name": "krabby",
+        "min_level": null
+      },
+      {
+        "name": "kingler",
+        "min_level": 28
+      }
+    ],
+    "kingler": [
+      {
+        "name": "krabby",
+        "min_level": null
+      },
+      {
+        "name": "kingler",
+        "min_level": 28
+      }
+    ],
+    "voltorb": [
+      {
+        "name": "voltorb",
+        "min_level": null
+      },
+      {
+        "name": "electrode",
+        "min_level": 30
+      }
+    ],
+    "electrode": [
+      {
+        "name": "voltorb",
+        "min_level": null
+      },
+      {
+        "name": "electrode",
+        "min_level": 30
+      }
+    ],
+    "exeggcute": [
+      {
+        "name": "exeggcute",
+        "min_level": null
+      },
+      {
+        "name": "exeggutor",
+        "min_level": null
+      }
+    ],
+    "exeggutor": [
+      {
+        "name": "exeggcute",
+        "min_level": null
+      },
+      {
+        "name": "exeggutor",
+        "min_level": null
+      }
+    ],
+    "cubone": [
+      {
+        "name": "cubone",
+        "min_level": null
+      },
+      {
+        "name": "marowak",
+        "min_level": 28
+      }
+    ],
+    "marowak": [
+      {
+        "name": "cubone",
+        "min_level": null
+      },
+      {
+        "name": "marowak",
+        "min_level": 28
+      }
+    ],
+    "hitmonlee": [
+      {
+        "name": "tyrogue",
+        "min_level": null
+      },
+      {
+        "name": "hitmonlee",
+        "min_level": 20
+      }
+    ],
+    "hitmonchan": [
+      {
+        "name": "tyrogue",
+        "min_level": null
+      },
+      {
+        "name": "hitmonlee",
+        "min_level": 20
+      }
+    ],
+    "lickitung": [
+      {
+        "name": "lickitung",
+        "min_level": null
+      },
+      {
+        "name": "lickilicky",
+        "min_level": null
+      }
+    ],
+    "koffing": [
+      {
+        "name": "koffing",
+        "min_level": null
+      },
+      {
+        "name": "weezing",
+        "min_level": 35
+      }
+    ],
+    "weezing": [
+      {
+        "name": "koffing",
+        "min_level": null
+      },
+      {
+        "name": "weezing",
+        "min_level": 35
+      }
+    ],
+    "rhyhorn": [
+      {
+        "name": "rhyhorn",
+        "min_level": null
+      },
+      {
+        "name": "rhydon",
+        "min_level": 42
+      },
+      {
+        "name": "rhyperior",
+        "min_level": null
+      }
+    ],
+    "rhydon": [
+      {
+        "name": "rhyhorn",
+        "min_level": null
+      },
+      {
+        "name": "rhydon",
+        "min_level": 42
+      },
+      {
+        "name": "rhyperior",
+        "min_level": null
+      }
+    ],
+    "chansey": [
+      {
+        "name": "happiny",
+        "min_level": null
+      },
+      {
+        "name": "chansey",
+        "min_level": null
+      },
+      {
+        "name": "blissey",
+        "min_level": null
+      }
+    ],
+    "tangela": [
+      {
+        "name": "tangela",
+        "min_level": null
+      },
+      {
+        "name": "tangrowth",
+        "min_level": null
+      }
+    ],
+    "kangaskhan": [
+      {
+        "name": "kangaskhan",
+        "min_level": null
+      }
+    ],
+    "horsea": [
+      {
+        "name": "horsea",
+        "min_level": null
+      },
+      {
+        "name": "seadra",
+        "min_level": 32
+      },
+      {
+        "name": "kingdra",
+        "min_level": null
+      }
+    ],
+    "seadra": [
+      {
+        "name": "horsea",
+        "min_level": null
+      },
+      {
+        "name": "seadra",
+        "min_level": 32
+      },
+      {
+        "name": "kingdra",
+        "min_level": null
+      }
+    ],
+    "goldeen": [
+      {
+        "name": "goldeen",
+        "min_level": null
+      },
+      {
+        "name": "seaking",
+        "min_level": 33
+      }
+    ],
+    "seaking": [
+      {
+        "name": "goldeen",
+        "min_level": null
+      },
+      {
+        "name": "seaking",
+        "min_level": 33
+      }
+    ],
+    "staryu": [
+      {
+        "name": "staryu",
+        "min_level": null
+      },
+      {
+        "name": "starmie",
+        "min_level": null
+      }
+    ],
+    "starmie": [
+      {
+        "name": "staryu",
+        "min_level": null
+      },
+      {
+        "name": "starmie",
+        "min_level": null
+      }
+    ],
+    "mr-mime": [
+      {
+        "name": "mime-jr",
+        "min_level": null
+      },
+      {
+        "name": "mr-mime",
+        "min_level": null
+      },
+      {
+        "name": "mr-rime",
+        "min_level": 42
+      }
+    ],
+    "scyther": [
+      {
+        "name": "scyther",
+        "min_level": null
+      },
+      {
+        "name": "scizor",
+        "min_level": null
+      }
+    ],
+    "jynx": [
+      {
+        "name": "smoochum",
+        "min_level": null
+      },
+      {
+        "name": "jynx",
+        "min_level": 30
+      }
+    ],
+    "electabuzz": [
+      {
+        "name": "elekid",
+        "min_level": null
+      },
+      {
+        "name": "electabuzz",
+        "min_level": 30
+      },
+      {
+        "name": "electivire",
+        "min_level": null
+      }
+    ],
+    "magmar": [
+      {
+        "name": "magby",
+        "min_level": null
+      },
+      {
+        "name": "magmar",
+        "min_level": 30
+      },
+      {
+        "name": "magmortar",
+        "min_level": null
+      }
+    ],
+    "pinsir": [
+      {
+        "name": "pinsir",
+        "min_level": null
+      }
+    ],
+    "tauros": [
+      {
+        "name": "tauros",
+        "min_level": null
+      }
+    ],
+    "magikarp": [
+      {
+        "name": "magikarp",
+        "min_level": null
+      },
+      {
+        "name": "gyarados",
+        "min_level": 20
+      }
+    ],
+    "gyarados": [
+      {
+        "name": "magikarp",
+        "min_level": null
+      },
+      {
+        "name": "gyarados",
+        "min_level": 20
+      }
+    ],
+    "lapras": [
+      {
+        "name": "lapras",
+        "min_level": null
+      }
+    ],
+    "ditto": [
+      {
+        "name": "ditto",
+        "min_level": null
+      }
+    ],
+    "eevee": [
+      {
+        "name": "eevee",
+        "min_level": null
+      },
+      {
+        "name": "vaporeon",
+        "min_level": null
+      }
+    ],
+    "vaporeon": [
+      {
+        "name": "eevee",
+        "min_level": null
+      },
+      {
+        "name": "vaporeon",
+        "min_level": null
+      }
+    ],
+    "jolteon": [
+      {
+        "name": "eevee",
+        "min_level": null
+      },
+      {
+        "name": "vaporeon",
+        "min_level": null
+      }
+    ],
+    "flareon": [
+      {
+        "name": "eevee",
+        "min_level": null
+      },
+      {
+        "name": "vaporeon",
+        "min_level": null
+      }
+    ],
+    "porygon": [
+      {
+        "name": "porygon",
+        "min_level": null
+      },
+      {
+        "name": "porygon2",
+        "min_level": null
+      },
+      {
+        "name": "porygon-z",
+        "min_level": null
+      }
+    ],
+    "omanyte": [
+      {
+        "name": "omanyte",
+        "min_level": null
+      },
+      {
+        "name": "omastar",
+        "min_level": 40
+      }
+    ],
+    "omastar": [
+      {
+        "name": "omanyte",
+        "min_level": null
+      },
+      {
+        "name": "omastar",
+        "min_level": 40
+      }
+    ],
+    "kabuto": [
+      {
+        "name": "kabuto",
+        "min_level": null
+      },
+      {
+        "name": "kabutops",
+        "min_level": 40
+      }
+    ],
+    "kabutops": [
+      {
+        "name": "kabuto",
+        "min_level": null
+      },
+      {
+        "name": "kabutops",
+        "min_level": 40
+      }
+    ],
+    "aerodactyl": [
+      {
+        "name": "aerodactyl",
+        "min_level": null
+      }
+    ],
+    "snorlax": [
+      {
+        "name": "munchlax",
+        "min_level": null
+      },
+      {
+        "name": "snorlax",
+        "min_level": null
+      }
+    ],
+    "articuno": [
+      {
+        "name": "articuno",
+        "min_level": null
+      }
+    ],
+    "zapdos": [
+      {
+        "name": "zapdos",
+        "min_level": null
+      }
+    ],
+    "moltres": [
+      {
+        "name": "moltres",
+        "min_level": null
+      }
+    ],
+    "dratini": [
+      {
+        "name": "dratini",
+        "min_level": null
+      },
+      {
+        "name": "dragonair",
+        "min_level": 30
+      },
+      {
+        "name": "dragonite",
+        "min_level": 55
+      }
+    ],
+    "dragonair": [
+      {
+        "name": "dratini",
+        "min_level": null
+      },
+      {
+        "name": "dragonair",
+        "min_level": 30
+      },
+      {
+        "name": "dragonite",
+        "min_level": 55
+      }
+    ],
+    "dragonite": [
+      {
+        "name": "dratini",
+        "min_level": null
+      },
+      {
+        "name": "dragonair",
+        "min_level": 30
+      },
+      {
+        "name": "dragonite",
+        "min_level": 55
+      }
+    ],
+    "mewtwo": [
+      {
+        "name": "mewtwo",
+        "min_level": null
+      }
+    ]
+  }
