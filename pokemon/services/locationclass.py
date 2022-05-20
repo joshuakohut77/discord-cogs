@@ -1,12 +1,15 @@
 # location class
 import sys
 import config
+import configs.quests
 import pokebase as pb
 import random
 from keyitemsclass import keyitems as kitems
 from loggerclass import logger as log
 from dbclass import db as dbconn
+from questclass import quests as qObj
 from models.location import LocationModel
+from models.quest import QuestModel
 
 # Global Config Variables
 VERSION_DETAILS_LIST = config.version_details_list
@@ -119,6 +122,13 @@ class location:
                 method = x['method']
                 if method not in methodList:
                     methodList.append(method)
+            
+            # This next section checks if there's any valid quests in current area
+            quest = QuestModel(configs.quests.questConfig[locationId])
+            questObj = qObj(self.discordId)
+            if questObj.prerequsitesValid(quest.prerequsites):
+                methodList.append(quest.questName)
+
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
