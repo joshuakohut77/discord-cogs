@@ -1,0 +1,3763 @@
+{
+    "celadon-city": [
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "poliwhirl",
+        "chance": 17,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "eevee",
+        "chance": 100,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "gift"
+      }
+    ],
+    "cerulean-city": [
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      }
+    ],
+    "cinnabar-island": [
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "shellder",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "horsea",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "staryu",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      }
+    ],
+    "digletts-cave": [
+      {
+        "name": "diglett",
+        "chance": 5,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "dugtrio",
+        "chance": 1,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      }
+    ],
+    "fuchsia-city": [
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "seaking",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      }
+    ],
+    "mt-moon": [
+      {
+        "name": "clefairy",
+        "chance": 1,
+        "max_level": 8,
+        "min_level": 8,
+        "method": "walk"
+      },
+      {
+        "name": "zubat",
+        "chance": 4,
+        "max_level": 11,
+        "min_level": 11,
+        "method": "walk"
+      },
+      {
+        "name": "paras",
+        "chance": 5,
+        "max_level": 8,
+        "min_level": 8,
+        "method": "walk"
+      },
+      {
+        "name": "geodude",
+        "chance": 5,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "walk"
+      },
+      {
+        "name": "clefairy",
+        "chance": 4,
+        "max_level": 9,
+        "min_level": 9,
+        "method": "walk"
+      },
+      {
+        "name": "zubat",
+        "chance": 5,
+        "max_level": 11,
+        "min_level": 11,
+        "method": "walk"
+      },
+      {
+        "name": "paras",
+        "chance": 10,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "walk"
+      },
+      {
+        "name": "geodude",
+        "chance": 1,
+        "max_level": 9,
+        "min_level": 9,
+        "method": "walk"
+      },
+      {
+        "name": "clefairy",
+        "chance": 1,
+        "max_level": 12,
+        "min_level": 12,
+        "method": "walk"
+      },
+      {
+        "name": "zubat",
+        "chance": 4,
+        "max_level": 12,
+        "min_level": 12,
+        "method": "walk"
+      },
+      {
+        "name": "paras",
+        "chance": 5,
+        "max_level": 12,
+        "min_level": 12,
+        "method": "walk"
+      },
+      {
+        "name": "geodude",
+        "chance": 10,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "walk"
+      }
+    ],
+    "pallet-town": [
+      {
+        "name": "bulbasaur",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "gift"
+      },
+      {
+        "name": "charmander",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "gift"
+      },
+      {
+        "name": "squirtle",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "gift"
+      },
+      {
+        "name": "poliwag",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "tentacool",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      }
+    ],
+    "rock-tunnel": [
+      {
+        "name": "zubat",
+        "chance": 5,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "walk"
+      },
+      {
+        "name": "machop",
+        "chance": 5,
+        "max_level": 17,
+        "min_level": 17,
+        "method": "walk"
+      },
+      {
+        "name": "geodude",
+        "chance": 10,
+        "max_level": 16,
+        "min_level": 16,
+        "method": "walk"
+      },
+      {
+        "name": "onix",
+        "chance": 1,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "walk"
+      },
+      {
+        "name": "zubat",
+        "chance": 10,
+        "max_level": 18,
+        "min_level": 18,
+        "method": "walk"
+      },
+      {
+        "name": "machop",
+        "chance": 5,
+        "max_level": 17,
+        "min_level": 17,
+        "method": "walk"
+      },
+      {
+        "name": "geodude",
+        "chance": 1,
+        "max_level": 18,
+        "min_level": 18,
+        "method": "walk"
+      },
+      {
+        "name": "onix",
+        "chance": 4,
+        "max_level": 13,
+        "min_level": 13,
+        "method": "walk"
+      }
+    ],
+    "kanto-route-1": [
+      {
+        "name": "pidgey",
+        "chance": 1,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "walk"
+      },
+      {
+        "name": "rattata",
+        "chance": 5,
+        "max_level": 4,
+        "min_level": 4,
+        "method": "walk"
+      }
+    ],
+    "kanto-route-10": [
+      {
+        "name": "spearow",
+        "chance": 5,
+        "max_level": 17,
+        "min_level": 17,
+        "method": "walk"
+      },
+      {
+        "name": "ekans",
+        "chance": 1,
+        "max_level": 17,
+        "min_level": 17,
+        "method": "walk"
+      },
+      {
+        "name": "sandshrew",
+        "chance": 1,
+        "max_level": 17,
+        "min_level": 17,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "poliwhirl",
+        "chance": 17,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "voltorb",
+        "chance": 5,
+        "max_level": 17,
+        "min_level": 17,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      }
+    ],
+    "kanto-route-11": [
+      {
+        "name": "spearow",
+        "chance": 5,
+        "max_level": 17,
+        "min_level": 17,
+        "method": "walk"
+      },
+      {
+        "name": "ekans",
+        "chance": 5,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "walk"
+      },
+      {
+        "name": "sandshrew",
+        "chance": 5,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "shellder",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "drowzee",
+        "chance": 1,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      }
+    ],
+    "kanto-route-12": [
+      {
+        "name": "pidgey",
+        "chance": 5,
+        "max_level": 27,
+        "min_level": 27,
+        "method": "walk"
+      },
+      {
+        "name": "oddish",
+        "chance": 5,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "gloom",
+        "chance": 1,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "venonat",
+        "chance": 10,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "bellsprout",
+        "chance": 5,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "weepinbell",
+        "chance": 1,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "tentacool",
+        "chance": 25,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "snorlax",
+        "chance": 100,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "pokeflute"
+      }
+    ],
+    "kanto-route-13": [
+      {
+        "name": "pidgey",
+        "chance": 15,
+        "max_level": 27,
+        "min_level": 27,
+        "method": "walk"
+      },
+      {
+        "name": "oddish",
+        "chance": 5,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "gloom",
+        "chance": 1,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "venonat",
+        "chance": 10,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "bellsprout",
+        "chance": 5,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "weepinbell",
+        "chance": 1,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "tentacool",
+        "chance": 25,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "ditto",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      }
+    ],
+    "kanto-route-14": [
+      {
+        "name": "pidgey",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "pidgeotto",
+        "chance": 1,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "oddish",
+        "chance": 5,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "gloom",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "venonat",
+        "chance": 10,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "bellsprout",
+        "chance": 5,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "weepinbell",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "ditto",
+        "chance": 15,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      }
+    ],
+    "kanto-route-15": [
+      {
+        "name": "pidgey",
+        "chance": 15,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "pidgeotto",
+        "chance": 1,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "oddish",
+        "chance": 5,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "gloom",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "venonat",
+        "chance": 10,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "bellsprout",
+        "chance": 5,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "weepinbell",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "ditto",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      }
+    ],
+    "kanto-route-16": [
+      {
+        "name": "rattata",
+        "chance": 5,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "raticate",
+        "chance": 1,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "spearow",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "doduo",
+        "chance": 5,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "snorlax",
+        "chance": 100,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "pokeflute"
+      }
+    ],
+    "kanto-route-17": [
+      {
+        "name": "raticate",
+        "chance": 5,
+        "max_level": 29,
+        "min_level": 29,
+        "method": "walk"
+      },
+      {
+        "name": "spearow",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "fearow",
+        "chance": 1,
+        "max_level": 27,
+        "min_level": 27,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "tentacool",
+        "chance": 25,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "super-rod"
+      },
+      {
+        "name": "doduo",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      }
+    ],
+    "kanto-route-18": [
+      {
+        "name": "raticate",
+        "chance": 5,
+        "max_level": 29,
+        "min_level": 29,
+        "method": "walk"
+      },
+      {
+        "name": "spearow",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "fearow",
+        "chance": 1,
+        "max_level": 29,
+        "min_level": 29,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "tentacool",
+        "chance": 25,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "super-rod"
+      },
+      {
+        "name": "doduo",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      }
+    ],
+    "kanto-sea-route-19": [
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "tentacool",
+        "chance": 1,
+        "max_level": 40,
+        "min_level": 40,
+        "method": "surf"
+      },
+      {
+        "name": "shellder",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "horsea",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "staryu",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      }
+    ],
+    "kanto-route-2": [
+      {
+        "name": "caterpie",
+        "chance": 1,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "walk"
+      },
+      {
+        "name": "weedle",
+        "chance": 1,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "walk"
+      },
+      {
+        "name": "pidgey",
+        "chance": 10,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "walk"
+      },
+      {
+        "name": "rattata",
+        "chance": 5,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "walk"
+      }
+    ],
+    "kanto-sea-route-20": [
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "tentacool",
+        "chance": 1,
+        "max_level": 40,
+        "min_level": 40,
+        "method": "surf"
+      },
+      {
+        "name": "shellder",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "horsea",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "staryu",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      }
+    ],
+    "kanto-sea-route-21": [
+      {
+        "name": "pidgey",
+        "chance": 10,
+        "max_level": 21,
+        "min_level": 21,
+        "method": "walk"
+      },
+      {
+        "name": "pidgeotto",
+        "chance": 5,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "rattata",
+        "chance": 10,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "raticate",
+        "chance": 15,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "tentacool",
+        "chance": 1,
+        "max_level": 40,
+        "min_level": 40,
+        "method": "surf"
+      },
+      {
+        "name": "shellder",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "tangela",
+        "chance": 1,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "staryu",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      }
+    ],
+    "kanto-route-22": [
+      {
+        "name": "rattata",
+        "chance": 10,
+        "max_level": 2,
+        "min_level": 2,
+        "method": "walk"
+      },
+      {
+        "name": "spearow",
+        "chance": 5,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-f",
+        "chance": 10,
+        "max_level": 2,
+        "min_level": 2,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 1,
+        "max_level": 4,
+        "min_level": 4,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      }
+    ],
+    "kanto-route-24": [
+      {
+        "name": "caterpie",
+        "chance": 20,
+        "max_level": 7,
+        "min_level": 7,
+        "method": "walk"
+      },
+      {
+        "name": "metapod",
+        "chance": 20,
+        "max_level": 8,
+        "min_level": 8,
+        "method": "walk"
+      },
+      {
+        "name": "weedle",
+        "chance": 20,
+        "max_level": 7,
+        "min_level": 7,
+        "method": "walk"
+      },
+      {
+        "name": "kakuna",
+        "chance": 20,
+        "max_level": 8,
+        "min_level": 8,
+        "method": "walk"
+      },
+      {
+        "name": "pidgey",
+        "chance": 5,
+        "max_level": 13,
+        "min_level": 13,
+        "method": "walk"
+      },
+      {
+        "name": "oddish",
+        "chance": 5,
+        "max_level": 14,
+        "min_level": 14,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "abra",
+        "chance": 1,
+        "max_level": 12,
+        "min_level": 12,
+        "method": "walk"
+      },
+      {
+        "name": "bellsprout",
+        "chance": 5,
+        "max_level": 14,
+        "min_level": 14,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      }
+    ],
+    "kanto-route-25": [
+      {
+        "name": "caterpie",
+        "chance": 20,
+        "max_level": 8,
+        "min_level": 8,
+        "method": "walk"
+      },
+      {
+        "name": "metapod",
+        "chance": 20,
+        "max_level": 9,
+        "min_level": 9,
+        "method": "walk"
+      },
+      {
+        "name": "weedle",
+        "chance": 1,
+        "max_level": 8,
+        "min_level": 8,
+        "method": "walk"
+      },
+      {
+        "name": "kakuna",
+        "chance": 4,
+        "max_level": 7,
+        "min_level": 7,
+        "method": "walk"
+      },
+      {
+        "name": "pidgey",
+        "chance": 15,
+        "max_level": 13,
+        "min_level": 13,
+        "method": "walk"
+      },
+      {
+        "name": "oddish",
+        "chance": 5,
+        "max_level": 14,
+        "min_level": 14,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "abra",
+        "chance": 5,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "walk"
+      },
+      {
+        "name": "bellsprout",
+        "chance": 5,
+        "max_level": 14,
+        "min_level": 14,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      }
+    ],
+    "kanto-route-3": [
+      {
+        "name": "pidgey",
+        "chance": 10,
+        "max_level": 8,
+        "min_level": 8,
+        "method": "walk"
+      },
+      {
+        "name": "spearow",
+        "chance": 5,
+        "max_level": 8,
+        "min_level": 8,
+        "method": "walk"
+      },
+      {
+        "name": "jigglypuff",
+        "chance": 1,
+        "max_level": 7,
+        "min_level": 7,
+        "method": "walk"
+      }
+    ],
+    "kanto-route-4": [
+      {
+        "name": "rattata",
+        "chance": 5,
+        "max_level": 12,
+        "min_level": 12,
+        "method": "walk"
+      },
+      {
+        "name": "spearow",
+        "chance": 5,
+        "max_level": 12,
+        "min_level": 12,
+        "method": "walk"
+      },
+      {
+        "name": "ekans",
+        "chance": 1,
+        "max_level": 12,
+        "min_level": 12,
+        "method": "walk"
+      },
+      {
+        "name": "sandshrew",
+        "chance": 1,
+        "max_level": 12,
+        "min_level": 12,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "gift"
+      }
+    ],
+    "kanto-route-5": [
+      {
+        "name": "pidgey",
+        "chance": 5,
+        "max_level": 16,
+        "min_level": 16,
+        "method": "walk"
+      },
+      {
+        "name": "oddish",
+        "chance": 5,
+        "max_level": 16,
+        "min_level": 16,
+        "method": "walk"
+      },
+      {
+        "name": "meowth",
+        "chance": 1,
+        "max_level": 16,
+        "min_level": 16,
+        "method": "walk"
+      },
+      {
+        "name": "mankey",
+        "chance": 1,
+        "max_level": 16,
+        "min_level": 16,
+        "method": "walk"
+      },
+      {
+        "name": "bellsprout",
+        "chance": 5,
+        "max_level": 16,
+        "min_level": 16,
+        "method": "walk"
+      }
+    ],
+    "kanto-route-6": [
+      {
+        "name": "pidgey",
+        "chance": 5,
+        "max_level": 16,
+        "min_level": 16,
+        "method": "walk"
+      },
+      {
+        "name": "oddish",
+        "chance": 5,
+        "max_level": 16,
+        "min_level": 16,
+        "method": "walk"
+      },
+      {
+        "name": "meowth",
+        "chance": 1,
+        "max_level": 16,
+        "min_level": 16,
+        "method": "walk"
+      },
+      {
+        "name": "mankey",
+        "chance": 1,
+        "max_level": 16,
+        "min_level": 16,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "bellsprout",
+        "chance": 5,
+        "max_level": 16,
+        "min_level": 16,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      }
+    ],
+    "kanto-route-7": [
+      {
+        "name": "pidgey",
+        "chance": 10,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "vulpix",
+        "chance": 5,
+        "max_level": 20,
+        "min_level": 20,
+        "method": "walk"
+      },
+      {
+        "name": "oddish",
+        "chance": 10,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "meowth",
+        "chance": 1,
+        "max_level": 20,
+        "min_level": 20,
+        "method": "walk"
+      },
+      {
+        "name": "mankey",
+        "chance": 1,
+        "max_level": 20,
+        "min_level": 20,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 5,
+        "max_level": 20,
+        "min_level": 20,
+        "method": "walk"
+      },
+      {
+        "name": "bellsprout",
+        "chance": 10,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      }
+    ],
+    "kanto-route-8": [
+      {
+        "name": "pidgey",
+        "chance": 10,
+        "max_level": 20,
+        "min_level": 20,
+        "method": "walk"
+      },
+      {
+        "name": "ekans",
+        "chance": 5,
+        "max_level": 19,
+        "min_level": 19,
+        "method": "walk"
+      },
+      {
+        "name": "sandshrew",
+        "chance": 5,
+        "max_level": 19,
+        "min_level": 19,
+        "method": "walk"
+      },
+      {
+        "name": "vulpix",
+        "chance": 1,
+        "max_level": 18,
+        "min_level": 18,
+        "method": "walk"
+      },
+      {
+        "name": "meowth",
+        "chance": 10,
+        "max_level": 20,
+        "min_level": 20,
+        "method": "walk"
+      },
+      {
+        "name": "mankey",
+        "chance": 10,
+        "max_level": 20,
+        "min_level": 20,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 1,
+        "max_level": 18,
+        "min_level": 18,
+        "method": "walk"
+      }
+    ],
+    "kanto-route-9": [
+      {
+        "name": "rattata",
+        "chance": 5,
+        "max_level": 17,
+        "min_level": 17,
+        "method": "walk"
+      },
+      {
+        "name": "spearow",
+        "chance": 5,
+        "max_level": 17,
+        "min_level": 17,
+        "method": "walk"
+      },
+      {
+        "name": "ekans",
+        "chance": 1,
+        "max_level": 17,
+        "min_level": 17,
+        "method": "walk"
+      },
+      {
+        "name": "sandshrew",
+        "chance": 1,
+        "max_level": 17,
+        "min_level": 17,
+        "method": "walk"
+      }
+    ],
+    "seafoam-islands": [
+      {
+        "name": "zubat",
+        "chance": 10,
+        "max_level": 21,
+        "min_level": 21,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 5,
+        "max_level": 29,
+        "min_level": 29,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "golduck",
+        "chance": 1,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 1,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 4,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 10,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 10,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "staryu",
+        "chance": 4,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "dewgong",
+        "chance": 4,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "kingler",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "seadra",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "staryu",
+        "chance": 15,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 4,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "golduck",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 15,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 10,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "staryu",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 15,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 15,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "dewgong",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "kingler",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "seadra",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "staryu",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "golbat",
+        "chance": 1,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "golduck",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 5,
+        "max_level": 29,
+        "min_level": 29,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 15,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "staryu",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "articuno",
+        "chance": 100,
+        "max_level": 50,
+        "min_level": 50,
+        "method": "only-one"
+      }
+    ],
+    "cerulean-cave": [
+      {
+        "name": "arbok",
+        "chance": 10,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "raichu",
+        "chance": 4,
+        "max_level": 53,
+        "min_level": 53,
+        "method": "walk"
+      },
+      {
+        "name": "sandslash",
+        "chance": 10,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 20,
+        "max_level": 46,
+        "min_level": 46,
+        "method": "walk"
+      },
+      {
+        "name": "parasect",
+        "chance": 5,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "venomoth",
+        "chance": 10,
+        "max_level": 49,
+        "min_level": 49,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "kadabra",
+        "chance": 5,
+        "max_level": 49,
+        "min_level": 49,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "magneton",
+        "chance": 15,
+        "max_level": 46,
+        "min_level": 46,
+        "method": "walk"
+      },
+      {
+        "name": "dodrio",
+        "chance": 10,
+        "max_level": 49,
+        "min_level": 49,
+        "method": "walk"
+      },
+      {
+        "name": "hypno",
+        "chance": 20,
+        "max_level": 46,
+        "min_level": 46,
+        "method": "walk"
+      },
+      {
+        "name": "kingler",
+        "chance": 8,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "seadra",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "seaking",
+        "chance": 17,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "ditto",
+        "chance": 1,
+        "max_level": 53,
+        "min_level": 53,
+        "method": "walk"
+      },
+      {
+        "name": "wigglytuff",
+        "chance": 5,
+        "max_level": 54,
+        "min_level": 54,
+        "method": "walk"
+      },
+      {
+        "name": "venomoth",
+        "chance": 20,
+        "max_level": 51,
+        "min_level": 51,
+        "method": "walk"
+      },
+      {
+        "name": "kadabra",
+        "chance": 15,
+        "max_level": 51,
+        "min_level": 51,
+        "method": "walk"
+      },
+      {
+        "name": "dodrio",
+        "chance": 20,
+        "max_level": 51,
+        "min_level": 51,
+        "method": "walk"
+      },
+      {
+        "name": "electrode",
+        "chance": 10,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "marowak",
+        "chance": 10,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "rhydon",
+        "chance": 10,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "chansey",
+        "chance": 5,
+        "max_level": 56,
+        "min_level": 56,
+        "method": "walk"
+      },
+      {
+        "name": "ditto",
+        "chance": 1,
+        "max_level": 60,
+        "min_level": 60,
+        "method": "walk"
+      },
+      {
+        "name": "arbok",
+        "chance": 5,
+        "max_level": 57,
+        "min_level": 57,
+        "method": "walk"
+      },
+      {
+        "name": "raichu",
+        "chance": 10,
+        "max_level": 64,
+        "min_level": 64,
+        "method": "walk"
+      },
+      {
+        "name": "sandslash",
+        "chance": 5,
+        "max_level": 57,
+        "min_level": 57,
+        "method": "walk"
+      },
+      {
+        "name": "parasect",
+        "chance": 10,
+        "max_level": 64,
+        "min_level": 64,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowbro",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "kingler",
+        "chance": 8,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "electrode",
+        "chance": 15,
+        "max_level": 55,
+        "min_level": 55,
+        "method": "walk"
+      },
+      {
+        "name": "marowak",
+        "chance": 20,
+        "max_level": 55,
+        "min_level": 55,
+        "method": "walk"
+      },
+      {
+        "name": "rhydon",
+        "chance": 20,
+        "max_level": 55,
+        "min_level": 55,
+        "method": "walk"
+      },
+      {
+        "name": "chansey",
+        "chance": 10,
+        "max_level": 64,
+        "min_level": 64,
+        "method": "walk"
+      },
+      {
+        "name": "seadra",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "seaking",
+        "chance": 17,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "ditto",
+        "chance": 1,
+        "max_level": 67,
+        "min_level": 67,
+        "method": "walk"
+      },
+      {
+        "name": "mewtwo",
+        "chance": 100,
+        "max_level": 70,
+        "min_level": 70,
+        "method": "only-one"
+      }
+    ],
+    "vermilion-city": [
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "shellder",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "shellder",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      }
+    ],
+    "kanto-victory-road-1": [],
+    "viridian-city": [
+      {
+        "name": "poliwag",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "tentacool",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      }
+    ],
+    "viridian-forest": [
+      {
+        "name": "caterpie",
+        "chance": 10,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "walk"
+      },
+      {
+        "name": "metapod",
+        "chance": 10,
+        "max_level": 6,
+        "min_level": 6,
+        "method": "walk"
+      },
+      {
+        "name": "weedle",
+        "chance": 5,
+        "max_level": 3,
+        "min_level": 3,
+        "method": "walk"
+      },
+      {
+        "name": "kakuna",
+        "chance": 5,
+        "max_level": 4,
+        "min_level": 4,
+        "method": "walk"
+      },
+      {
+        "name": "pikachu",
+        "chance": 1,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "walk"
+      }
+    ],
+    "kanto-route-23": [
+      {
+        "name": "spearow",
+        "chance": 15,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "fearow",
+        "chance": 1,
+        "max_level": 43,
+        "min_level": 43,
+        "method": "walk"
+      },
+      {
+        "name": "ekans",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "arbok",
+        "chance": 5,
+        "max_level": 41,
+        "min_level": 41,
+        "method": "walk"
+      },
+      {
+        "name": "sandshrew",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "sandslash",
+        "chance": 5,
+        "max_level": 41,
+        "min_level": 41,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowbro",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "kingler",
+        "chance": 8,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "seadra",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "seaking",
+        "chance": 17,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "ditto",
+        "chance": 5,
+        "max_level": 43,
+        "min_level": 43,
+        "method": "walk"
+      }
+    ],
+    "power-plant": [
+      {
+        "name": "pikachu",
+        "chance": 10,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "raichu",
+        "chance": 1,
+        "max_level": 36,
+        "min_level": 36,
+        "method": "walk"
+      },
+      {
+        "name": "magnemite",
+        "chance": 10,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "magneton",
+        "chance": 5,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "voltorb",
+        "chance": 100,
+        "max_level": 40,
+        "min_level": 40,
+        "method": "only-one"
+      },
+      {
+        "name": "electrode",
+        "chance": 100,
+        "max_level": 43,
+        "min_level": 43,
+        "method": "only-one"
+      },
+      {
+        "name": "electabuzz",
+        "chance": 1,
+        "max_level": 36,
+        "min_level": 36,
+        "method": "walk"
+      },
+      {
+        "name": "zapdos",
+        "chance": 100,
+        "max_level": 50,
+        "min_level": 50,
+        "method": "only-one"
+      }
+    ],
+    "kanto-victory-road-2": [
+      {
+        "name": "zubat",
+        "chance": 15,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 5,
+        "max_level": 41,
+        "min_level": 41,
+        "method": "walk"
+      },
+      {
+        "name": "machop",
+        "chance": 20,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "machoke",
+        "chance": 4,
+        "max_level": 42,
+        "min_level": 42,
+        "method": "walk"
+      },
+      {
+        "name": "geodude",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "graveler",
+        "chance": 5,
+        "max_level": 41,
+        "min_level": 41,
+        "method": "walk"
+      },
+      {
+        "name": "onix",
+        "chance": 10,
+        "max_level": 42,
+        "min_level": 42,
+        "method": "walk"
+      },
+      {
+        "name": "marowak",
+        "chance": 1,
+        "max_level": 43,
+        "min_level": 43,
+        "method": "walk"
+      },
+      {
+        "name": "zubat",
+        "chance": 15,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 5,
+        "max_level": 40,
+        "min_level": 40,
+        "method": "walk"
+      },
+      {
+        "name": "machop",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "machoke",
+        "chance": 5,
+        "max_level": 41,
+        "min_level": 41,
+        "method": "walk"
+      },
+      {
+        "name": "geodude",
+        "chance": 20,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "graveler",
+        "chance": 1,
+        "max_level": 43,
+        "min_level": 43,
+        "method": "walk"
+      },
+      {
+        "name": "onix",
+        "chance": 10,
+        "max_level": 42,
+        "min_level": 42,
+        "method": "walk"
+      },
+      {
+        "name": "marowak",
+        "chance": 4,
+        "max_level": 40,
+        "min_level": 40,
+        "method": "walk"
+      },
+      {
+        "name": "moltres",
+        "chance": 100,
+        "max_level": 50,
+        "min_level": 50,
+        "method": "only-one"
+      },
+      {
+        "name": "zubat",
+        "chance": 15,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 5,
+        "max_level": 41,
+        "min_level": 41,
+        "method": "walk"
+      },
+      {
+        "name": "venomoth",
+        "chance": 10,
+        "max_level": 40,
+        "min_level": 40,
+        "method": "walk"
+      },
+      {
+        "name": "machop",
+        "chance": 20,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "machoke",
+        "chance": 1,
+        "max_level": 45,
+        "min_level": 45,
+        "method": "walk"
+      },
+      {
+        "name": "geodude",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "graveler",
+        "chance": 5,
+        "max_level": 43,
+        "min_level": 43,
+        "method": "walk"
+      },
+      {
+        "name": "onix",
+        "chance": 10,
+        "max_level": 45,
+        "min_level": 45,
+        "method": "walk"
+      }
+    ],
+    "pokemon-tower": [
+      {
+        "name": "gastly",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 1,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 1,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 10,
+        "max_level": 19,
+        "min_level": 19,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 10,
+        "max_level": 20,
+        "min_level": 20,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      }
+    ],
+    "pokemon-mansion": [
+      {
+        "name": "vulpix",
+        "chance": 10,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 10,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "ponyta",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "grimer",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "muk",
+        "chance": 4,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "koffing",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "weezing",
+        "chance": 1,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "vulpix",
+        "chance": 20,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 20,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "ponyta",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "grimer",
+        "chance": 10,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "muk",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "koffing",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "weezing",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "vulpix",
+        "chance": 20,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 20,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "ponyta",
+        "chance": 4,
+        "max_level": 36,
+        "min_level": 36,
+        "method": "walk"
+      },
+      {
+        "name": "grimer",
+        "chance": 15,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "muk",
+        "chance": 5,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "koffing",
+        "chance": 5,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "weezing",
+        "chance": 1,
+        "max_level": 42,
+        "min_level": 42,
+        "method": "walk"
+      },
+      {
+        "name": "magmar",
+        "chance": 10,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "vulpix",
+        "chance": 15,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 15,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "ponyta",
+        "chance": 5,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "grimer",
+        "chance": 10,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "muk",
+        "chance": 10,
+        "max_level": 40,
+        "min_level": 40,
+        "method": "walk"
+      },
+      {
+        "name": "koffing",
+        "chance": 5,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "weezing",
+        "chance": 1,
+        "max_level": 42,
+        "min_level": 42,
+        "method": "walk"
+      },
+      {
+        "name": "magmar",
+        "chance": 4,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      }
+    ],
+    "kanto-safari-zone": [
+      {
+        "name": "nidoran-f",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "nidorina",
+        "chance": 10,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "nidorino",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "parasect",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "venonat",
+        "chance": 15,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "exeggcute",
+        "chance": 10,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "rhyhorn",
+        "chance": 20,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "chansey",
+        "chance": 1,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "scyther",
+        "chance": 4,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "pinsir",
+        "chance": 4,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "dratini",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "nidoran-f",
+        "chance": 20,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "nidorina",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "nidorino",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "paras",
+        "chance": 15,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "parasect",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "doduo",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "exeggcute",
+        "chance": 10,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "kangaskhan",
+        "chance": 4,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "scyther",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "pinsir",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "dratini",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "nidoran-f",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "nidorina",
+        "chance": 10,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "nidorino",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "paras",
+        "chance": 15,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "venomoth",
+        "chance": 5,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "exeggcute",
+        "chance": 10,
+        "max_level": 27,
+        "min_level": 27,
+        "method": "walk"
+      },
+      {
+        "name": "rhyhorn",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "chansey",
+        "chance": 4,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "tauros",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "dratini",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "nidoran-f",
+        "chance": 20,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "nidorina",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "nidorino",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "venonat",
+        "chance": 15,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "venomoth",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "doduo",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "exeggcute",
+        "chance": 10,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "kangaskhan",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "tauros",
+        "chance": 4,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "dratini",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      }
+    ],
+    "pewter-city": [],
+    "lavender-town": [],
+    "indigo-plateau": [],
+    "saffron-city": [
+      {
+        "name": "hitmonlee",
+        "chance": 100,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "gift"
+      },
+      {
+        "name": "hitmonchan",
+        "chance": 100,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "gift"
+      },
+      {
+        "name": "lapras",
+        "chance": 100,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "gift"
+      }
+    ],
+    "ss-anne": []
+  }
