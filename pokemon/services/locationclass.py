@@ -162,6 +162,34 @@ class location:
             logger.error(excInfo=sys.exc_info())
         finally:
             return areaEncounterPokemon
+    
+    def setLocation(self, locationId):
+        """ updates the trainer table to set the locationId """
+        try:
+            db = dbconn()
+
+            # This next section checks if there's any valid quests in current area
+            quest = QuestModel(configs.quests.questConfig[locationId])
+            questObj = qObj(self.discordId)
+            if quest.blockers != []:
+                if questObj.locationBlocked(quest.blockers):
+                    self.statuscode = 420
+                    self.message = 'You have not completed all prior quests to advance'
+                    return
+
+            updateString = """
+            UPDATE trainer
+                SET "locationId"=%(locationId)s
+            WHERE trainer."discord_id" = %(discordId)s
+            """
+            db.execute(updateString, { 'locationId': locationId, 'discordId': self.discordId })
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+            raise
+        finally:
+            # delete and close connection
+            del db
 
     def __getUrlNumber(self, url):
         """ takes a url string and parses the unique key value from the end of the url """

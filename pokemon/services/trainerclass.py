@@ -508,21 +508,11 @@ class trainer:
     
     def setLocation(self, locationId):
         """ updates the trainer table to set the locationId """
-        try:
-            db = dbconn()
-            updateString = """
-            UPDATE trainer
-                SET "locationId"=%(locationId)s
-            WHERE trainer."discord_id" = %(discordId)s
-            """
-            db.execute(updateString, { 'locationId': locationId, 'discordId': self.discordId })
-        except:
-            self.statuscode = 96
-            logger.error(excInfo=sys.exc_info())
-            raise
-        finally:
-            # delete and close connection
-            del db
+        locObj = LocationClass(self.discordId)
+        locObj.setLocation(locationId)
+        if locObj.statuscode != 69:
+            self.statuscode = locObj.statuscode
+            self.message = locObj.message
     
     def getPartySize(self):
         """ returns a count of trainers party size """
