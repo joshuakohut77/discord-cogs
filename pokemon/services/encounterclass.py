@@ -3,7 +3,7 @@
 import sys
 import config
 import json
-# import pokebase as pb
+import pokebase as pb
 import random
 from dbclass import db as dbconn
 from expclass import experiance as exp
@@ -242,68 +242,24 @@ class encounter:
             newCurrentHP = 0
         return newCurrentHP
 
-    def __calculateDamageOfMove(self, move):
-        """ calcualtes the damage of the move against opponent """
-        calculatedDamage = 0
-        moveHit = True
-        pbMove = self.__loadMovesConfig(move)
-        accuracy = pbMove['accuracy']
-        if accuracy is None or accuracy == 'null':
-            accuracy = 100
-        if accuracy < 100:
-            rand_accuracy = random.randrange(1, accuracy+1)
-            if rand_accuracy > accuracy:
-                moveHit = False
-        if moveHit:
-            power = pbMove['power']
-            if power is None:
-                return 0
-            moveType = pbMove['moveType']
-            damage_class = pbMove['damage_class'] # physical or special
-            pokemon1Stats = self.pokemon1.getPokeStats()
-            pokemon2Stats = self.pokemon2.getPokeStats()
-            attack = 0
-            defense = 0
-            if damage_class == 'physical':
-                attack = pokemon1Stats['attack']
-                defense = pokemon2Stats['defense']
-            else:
-                attack = pokemon1Stats['special-attack']
-                defense = pokemon2Stats['special-defense']
-            randmonMult = random.randrange(217, 256) / 255
-            defendingType = self.pokemon2.type1 # type 1 is the primary type 
-            if moveType in defendingType:
-                stab = 1.5
-            else:
-                stab = 1
-            level = self.pokemon1.currentLevel
-            type_effectiveness = self.__getDamageTypeMultiplier(moveType, defendingType)
-
-            # formula found here: https://bulbapedia.bulbagarden.net/wiki/Damage#Example
-            calc_level = ((2*level)/5)+2
-            calc_numerator = ((calc_level * power * (attack/defense))/50) + 2
-            calculatedDamage = round(calc_numerator * randmonMult * stab * type_effectiveness)
-
-        return calculatedDamage
-
     # def __calculateDamageOfMove(self, move):
     #     """ calcualtes the damage of the move against opponent """
     #     calculatedDamage = 0
     #     moveHit = True
-    #     pbMove = pb.move(move)
-    #     accuracy = pbMove.accuracy
-    #     if accuracy is None:
+    #     pbMove = self.__loadMovesConfig(move)
+    #     accuracy = pbMove['accuracy']
+    #     if accuracy is None or accuracy == 'null':
     #         accuracy = 100
     #     if accuracy < 100:
     #         rand_accuracy = random.randrange(1, accuracy+1)
     #         if rand_accuracy > accuracy:
     #             moveHit = False
     #     if moveHit:
-    #         power = pbMove.power
+    #         power = pbMove['power']
     #         if power is None:
     #             return 0
-    #         moveType = pbMove.type.name
-    #         damage_class = pbMove.damage_class.name # physical or special
+    #         moveType = pbMove['moveType']
+    #         damage_class = pbMove['damage_class'] # physical or special
     #         pokemon1Stats = self.pokemon1.getPokeStats()
     #         pokemon2Stats = self.pokemon2.getPokeStats()
     #         attack = 0
@@ -329,6 +285,50 @@ class encounter:
     #         calculatedDamage = round(calc_numerator * randmonMult * stab * type_effectiveness)
 
     #     return calculatedDamage
+
+    def __calculateDamageOfMove(self, move):
+        """ calcualtes the damage of the move against opponent """
+        calculatedDamage = 0
+        moveHit = True
+        pbMove = pb.move(move)
+        accuracy = pbMove.accuracy
+        if accuracy is None:
+            accuracy = 100
+        if accuracy < 100:
+            rand_accuracy = random.randrange(1, accuracy+1)
+            if rand_accuracy > accuracy:
+                moveHit = False
+        if moveHit:
+            power = pbMove.power
+            if power is None:
+                return 0
+            moveType = pbMove.type.name
+            damage_class = pbMove.damage_class.name # physical or special
+            pokemon1Stats = self.pokemon1.getPokeStats()
+            pokemon2Stats = self.pokemon2.getPokeStats()
+            attack = 0
+            defense = 0
+            if damage_class == 'physical':
+                attack = pokemon1Stats['attack']
+                defense = pokemon2Stats['defense']
+            else:
+                attack = pokemon1Stats['special-attack']
+                defense = pokemon2Stats['special-defense']
+            randmonMult = random.randrange(217, 256) / 255
+            defendingType = self.pokemon2.type1 # type 1 is the primary type 
+            if moveType in defendingType:
+                stab = 1.5
+            else:
+                stab = 1
+            level = self.pokemon1.currentLevel
+            type_effectiveness = self.__getDamageTypeMultiplier(moveType, defendingType)
+
+            # formula found here: https://bulbapedia.bulbagarden.net/wiki/Damage#Example
+            calc_level = ((2*level)/5)+2
+            calc_numerator = ((calc_level * power * (attack/defense))/50) + 2
+            calculatedDamage = round(calc_numerator * randmonMult * stab * type_effectiveness)
+
+        return calculatedDamage
 
     # TODO: make this a dict, save a db call
     def __getDamageTypeMultiplier(self, moveType, defendingType):
