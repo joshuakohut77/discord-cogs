@@ -20,6 +20,8 @@ class quests:
     def prerequsitesValid(self, prerequsites: List):
         """ verifies the trainers prerequsites are met """
         requirementsMet = True
+        if prerequsites == []:
+            return
         keyitems = kitems(self.discordId)
         for item in prerequsites:
             if item == 'HM01':
