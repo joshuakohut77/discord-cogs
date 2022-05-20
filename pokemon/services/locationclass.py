@@ -126,8 +126,9 @@ class location:
             # This next section checks if there's any valid quests in current area
             quest = QuestModel(configs.quests.questConfig[locationId])
             questObj = qObj(self.discordId)
-            if questObj.prerequsitesValid(quest.prerequsites):
-                methodList.append(quest.questName)
+            if quest.prerequsites != []:
+                if questObj.prerequsitesValid(quest.prerequsites):
+                    methodList.append(quest.questName)
 
         except:
             self.statuscode = 96
