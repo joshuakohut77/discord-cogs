@@ -14,6 +14,14 @@
         "special-defense": 65,
         "speed": 45
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 1,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "vine-whip": 13,
         "tackle": 1,
@@ -40,6 +48,14 @@
         "special-attack": 80,
         "special-defense": 80,
         "speed": 60
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 1,
+        "special-defense": 1,
+        "speed": 0
       },
       "moves": {
         "vine-whip": 13,
@@ -68,6 +84,14 @@
         "special-defense": 100,
         "speed": 80
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 2,
+        "special-defense": 1,
+        "speed": 0
+      },
       "moves": {
         "vine-whip": 13,
         "tackle": 1,
@@ -95,6 +119,14 @@
         "special-defense": 50,
         "speed": 65
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 1
+      },
       "moves": {
         "scratch": 1,
         "leer": 15,
@@ -120,6 +152,14 @@
         "special-attack": 80,
         "special-defense": 65,
         "speed": 80
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 1,
+        "special-defense": 0,
+        "speed": 1
       },
       "moves": {
         "scratch": 1,
@@ -147,6 +187,14 @@
         "special-defense": 85,
         "speed": 100
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 3,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "scratch": 1,
         "leer": 15,
@@ -172,6 +220,14 @@
         "special-attack": 50,
         "special-defense": 64,
         "speed": 43
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 1,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "tackle": 1,
@@ -199,6 +255,14 @@
         "special-defense": 80,
         "speed": 58
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 1,
+        "special-attack": 0,
+        "special-defense": 1,
+        "speed": 0
+      },
       "moves": {
         "tackle": 1,
         "tail-whip": 1,
@@ -224,6 +288,14 @@
         "special-attack": 85,
         "special-defense": 105,
         "speed": 78
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 3,
+        "speed": 0
       },
       "moves": {
         "tackle": 1,
@@ -251,6 +323,14 @@
         "special-defense": 20,
         "speed": 45
       },
+      "effort": {
+        "hp": 1,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "tackle": 1,
         "string-shot": 1
@@ -271,6 +351,14 @@
         "special-defense": 25,
         "speed": 30
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 2,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "harden": 1
       }
@@ -289,6 +377,14 @@
         "special-attack": 90,
         "special-defense": 80,
         "speed": 70
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 2,
+        "special-defense": 1,
+        "speed": 0
       },
       "moves": {
         "whirlwind": 26,
@@ -315,6 +411,14 @@
         "special-defense": 20,
         "speed": 50
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 1
+      },
       "moves": {
         "poison-sting": 1,
         "string-shot": 1
@@ -335,6 +439,14 @@
         "special-defense": 25,
         "speed": 35
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 2,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "harden": 1
       }
@@ -353,6 +465,14 @@
         "special-attack": 45,
         "special-defense": 80,
         "speed": 75
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 1,
+        "speed": 0
       },
       "moves": {
         "fury-attack": 12,
@@ -377,6 +497,14 @@
         "special-attack": 35,
         "special-defense": 35,
         "speed": 56
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 1
       },
       "moves": {
         "gust": 1,
@@ -403,6 +531,14 @@
         "special-defense": 50,
         "speed": 71
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 2
+      },
       "moves": {
         "gust": 1,
         "wing-attack": 31,
@@ -427,6 +563,14 @@
         "special-attack": 70,
         "special-defense": 70,
         "speed": 101
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 3
       },
       "moves": {
         "gust": 1,
@@ -453,6 +597,14 @@
         "special-defense": 35,
         "speed": 72
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 1
+      },
       "moves": {
         "tackle": 1,
         "tail-whip": 1,
@@ -477,6 +629,14 @@
         "special-defense": 70,
         "speed": 97
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 2
+      },
       "moves": {
         "tackle": 1,
         "tail-whip": 1,
@@ -500,6 +660,14 @@
         "special-attack": 31,
         "special-defense": 31,
         "speed": 70
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 1
       },
       "moves": {
         "fury-attack": 15,
@@ -526,6 +694,14 @@
         "special-defense": 61,
         "speed": 100
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 2
+      },
       "moves": {
         "fury-attack": 15,
         "leer": 9,
@@ -550,6 +726,14 @@
         "special-attack": 40,
         "special-defense": 54,
         "speed": 55
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 1,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "wrap": 1,
@@ -576,6 +760,14 @@
         "special-defense": 79,
         "speed": 80
       },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "wrap": 1,
         "poison-sting": 10,
@@ -600,6 +792,14 @@
         "special-attack": 50,
         "special-defense": 50,
         "speed": 90
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 2
       },
       "moves": {
         "growl": 1,
@@ -626,6 +826,14 @@
         "special-defense": 80,
         "speed": 110
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 3
+      },
       "moves": {
         "growl": 1,
         "thunder-shock": 1,
@@ -646,6 +854,14 @@
         "special-attack": 20,
         "special-defense": 30,
         "speed": 40
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 1,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "scratch": 1,
@@ -671,6 +887,14 @@
         "special-defense": 55,
         "speed": 65
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 2,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "scratch": 1,
         "sand-attack": 10,
@@ -694,6 +918,14 @@
         "special-attack": 40,
         "special-defense": 40,
         "speed": 41
+      },
+      "effort": {
+        "hp": 1,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "scratch": 8,
@@ -721,6 +953,14 @@
         "special-defense": 55,
         "speed": 56
       },
+      "effort": {
+        "hp": 2,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "scratch": 8,
         "double-kick": 50,
@@ -747,6 +987,14 @@
         "special-defense": 85,
         "speed": 76
       },
+      "effort": {
+        "hp": 3,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "scratch": 8,
         "tackle": 1,
@@ -769,6 +1017,14 @@
         "special-attack": 40,
         "special-defense": 40,
         "speed": 50
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 1,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "double-kick": 43,
@@ -796,6 +1052,14 @@
         "special-defense": 55,
         "speed": 65
       },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "double-kick": 50,
         "horn-attack": 8,
@@ -822,6 +1086,14 @@
         "special-defense": 75,
         "speed": 85
       },
+      "effort": {
+        "hp": 0,
+        "attack": 3,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "horn-attack": 8,
         "tackle": 1,
@@ -843,6 +1115,14 @@
         "special-attack": 60,
         "special-defense": 65,
         "speed": 35
+      },
+      "effort": {
+        "hp": 2,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "pound": 1,
@@ -870,6 +1150,14 @@
         "special-defense": 90,
         "speed": 60
       },
+      "effort": {
+        "hp": 3,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "double-slap": 1,
         "sing": 1,
@@ -891,6 +1179,14 @@
         "special-attack": 50,
         "special-defense": 65,
         "speed": 65
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 1
       },
       "moves": {
         "tail-whip": 1,
@@ -917,6 +1213,14 @@
         "special-defense": 100,
         "speed": 100
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 1,
+        "speed": 1
+      },
       "moves": {
         "tail-whip": 1,
         "roar": 1,
@@ -938,6 +1242,14 @@
         "special-attack": 45,
         "special-defense": 25,
         "speed": 20
+      },
+      "effort": {
+        "hp": 2,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "pound": 9,
@@ -965,6 +1277,14 @@
         "special-defense": 50,
         "speed": 45
       },
+      "effort": {
+        "hp": 3,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "double-slap": 1,
         "sing": 1,
@@ -986,6 +1306,14 @@
         "special-attack": 30,
         "special-defense": 40,
         "speed": 55
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 1
       },
       "moves": {
         "wing-attack": 28,
@@ -1010,6 +1338,14 @@
         "special-attack": 65,
         "special-defense": 75,
         "speed": 90
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 2
       },
       "moves": {
         "wing-attack": 32,
@@ -1036,6 +1372,14 @@
         "special-defense": 65,
         "speed": 30
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 1,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "acid": 24,
         "absorb": 1,
@@ -1060,6 +1404,14 @@
         "special-attack": 85,
         "special-defense": 75,
         "speed": 40
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 2,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "acid": 28,
@@ -1086,6 +1438,14 @@
         "special-defense": 90,
         "speed": 50
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 3,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "acid": 1,
         "poison-powder": 15,
@@ -1108,6 +1468,14 @@
         "special-attack": 45,
         "special-defense": 55,
         "speed": 25
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 1,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "scratch": 1,
@@ -1133,6 +1501,14 @@
         "special-defense": 80,
         "speed": 30
       },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 1,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "scratch": 1,
         "growth": 48,
@@ -1156,6 +1532,14 @@
         "special-attack": 40,
         "special-defense": 55,
         "speed": 45
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 1,
+        "speed": 0
       },
       "moves": {
         "tackle": 1,
@@ -1183,6 +1567,14 @@
         "special-defense": 75,
         "speed": 90
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 1,
+        "special-defense": 0,
+        "speed": 1
+      },
       "moves": {
         "tackle": 1,
         "disable": 1,
@@ -1209,6 +1601,14 @@
         "special-defense": 45,
         "speed": 95
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 1
+      },
       "moves": {
         "scratch": 1,
         "sand-attack": 24,
@@ -1233,6 +1633,14 @@
         "special-defense": 70,
         "speed": 120
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 2
+      },
       "moves": {
         "scratch": 1,
         "sand-attack": 24,
@@ -1256,6 +1664,14 @@
         "special-attack": 40,
         "special-defense": 40,
         "speed": 90
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 1
       },
       "moves": {
         "pay-day": 17,
@@ -1282,6 +1698,14 @@
         "special-defense": 65,
         "speed": 115
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 2
+      },
       "moves": {
         "pay-day": 17,
         "scratch": 1,
@@ -1307,6 +1731,14 @@
         "special-defense": 50,
         "speed": 55
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 1,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "scratch": 1,
         "tail-whip": 28,
@@ -1331,6 +1763,14 @@
         "special-defense": 80,
         "speed": 85
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 2,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "scratch": 1,
         "tail-whip": 28,
@@ -1354,6 +1794,14 @@
         "special-attack": 35,
         "special-defense": 45,
         "speed": 70
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 1,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "karate-chop": 15,
@@ -1380,6 +1828,14 @@
         "special-defense": 70,
         "speed": 95
       },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "karate-chop": 15,
         "scratch": 1,
@@ -1404,6 +1860,14 @@
         "special-attack": 70,
         "special-defense": 50,
         "speed": 60
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 1,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "take-down": 30,
@@ -1430,6 +1894,14 @@
         "special-defense": 80,
         "speed": 95
       },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "take-down": 1,
         "leer": 1,
@@ -1451,6 +1923,14 @@
         "special-attack": 40,
         "special-defense": 40,
         "speed": 90
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 1
       },
       "moves": {
         "double-slap": 25,
@@ -1477,6 +1957,14 @@
         "special-defense": 50,
         "speed": 90
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 2
+      },
       "moves": {
         "double-slap": 26,
         "body-slam": 33,
@@ -1502,6 +1990,14 @@
         "special-defense": 90,
         "speed": 70
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 3,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "double-slap": 1,
         "body-slam": 1,
@@ -1524,6 +2020,14 @@
         "special-defense": 55,
         "speed": 90
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 1,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "teleport": 1
       }
@@ -1542,6 +2046,14 @@
         "special-attack": 120,
         "special-defense": 70,
         "speed": 105
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 2,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "disable": 20,
@@ -1568,6 +2080,14 @@
         "special-defense": 95,
         "speed": 120
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 3,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "disable": 20,
         "psybeam": 27,
@@ -1593,6 +2113,14 @@
         "special-defense": 35,
         "speed": 35
       },
+      "effort": {
+        "hp": 0,
+        "attack": 1,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "karate-chop": 1,
         "leer": 25,
@@ -1616,6 +2144,14 @@
         "special-attack": 50,
         "special-defense": 60,
         "speed": 45
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "karate-chop": 1,
@@ -1641,6 +2177,14 @@
         "special-defense": 85,
         "speed": 55
       },
+      "effort": {
+        "hp": 0,
+        "attack": 3,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "karate-chop": 1,
         "leer": 25,
@@ -1664,6 +2208,14 @@
         "special-attack": 70,
         "special-defense": 30,
         "speed": 40
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 1,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "slam": 42,
@@ -1692,6 +2244,14 @@
         "special-defense": 45,
         "speed": 55
       },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "slam": 49,
         "vine-whip": 1,
@@ -1719,6 +2279,14 @@
         "special-defense": 70,
         "speed": 70
       },
+      "effort": {
+        "hp": 0,
+        "attack": 3,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "wrap": 13,
         "acid": 1,
@@ -1742,6 +2310,14 @@
         "special-attack": 50,
         "special-defense": 100,
         "speed": 70
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 1,
+        "speed": 0
       },
       "moves": {
         "wrap": 13,
@@ -1770,6 +2346,14 @@
         "special-defense": 120,
         "speed": 100
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 2,
+        "speed": 0
+      },
       "moves": {
         "wrap": 13,
         "poison-sting": 18,
@@ -1797,6 +2381,14 @@
         "special-defense": 30,
         "speed": 20
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 1,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "tackle": 1,
         "rock-throw": 16,
@@ -1821,6 +2413,14 @@
         "special-attack": 45,
         "special-defense": 45,
         "speed": 35
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 2,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "tackle": 1,
@@ -1847,6 +2447,14 @@
         "special-defense": 65,
         "speed": 45
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 3,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "tackle": 1,
         "rock-throw": 16,
@@ -1871,6 +2479,14 @@
         "special-attack": 65,
         "special-defense": 65,
         "speed": 90
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 1
       },
       "moves": {
         "stomp": 32,
@@ -1897,6 +2513,14 @@
         "special-defense": 80,
         "speed": 105
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 2
+      },
       "moves": {
         "stomp": 32,
         "take-down": 47,
@@ -1922,6 +2546,14 @@
         "special-defense": 40,
         "speed": 15
       },
+      "effort": {
+        "hp": 1,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "headbutt": 22,
         "growl": 27,
@@ -1946,6 +2578,14 @@
         "special-attack": 100,
         "special-defense": 80,
         "speed": 30
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 2,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "headbutt": 22,
@@ -1973,6 +2613,14 @@
         "special-defense": 55,
         "speed": 45
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 1,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "tackle": 1,
         "supersonic": 29,
@@ -1997,6 +2645,14 @@
         "special-attack": 120,
         "special-defense": 70,
         "speed": 70
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 2,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "tackle": 1,
@@ -2023,6 +2679,14 @@
         "special-defense": 62,
         "speed": 60
       },
+      "effort": {
+        "hp": 0,
+        "attack": 1,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "swords-dance": 23,
         "sand-attack": 1,
@@ -2047,6 +2711,14 @@
         "special-attack": 35,
         "special-defense": 35,
         "speed": 75
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 1,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "fury-attack": 24,
@@ -2073,6 +2745,14 @@
         "special-defense": 60,
         "speed": 110
       },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "fury-attack": 24,
         "growl": 20,
@@ -2098,6 +2778,14 @@
         "special-defense": 70,
         "speed": 45
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 1,
+        "speed": 0
+      },
       "moves": {
         "headbutt": 1,
         "take-down": 45,
@@ -2122,6 +2810,14 @@
         "special-defense": 95,
         "speed": 70
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 2,
+        "speed": 0
+      },
       "moves": {
         "headbutt": 1,
         "take-down": 50,
@@ -2145,6 +2841,14 @@
         "special-attack": 40,
         "special-defense": 50,
         "speed": 25
+      },
+      "effort": {
+        "hp": 1,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "pound": 1,
@@ -2172,6 +2876,14 @@
         "special-defense": 100,
         "speed": 50
       },
+      "effort": {
+        "hp": 1,
+        "attack": 1,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "pound": 1,
         "disable": 1,
@@ -2198,6 +2910,14 @@
         "special-defense": 25,
         "speed": 40
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 1,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "tackle": 1,
         "leer": 39,
@@ -2223,6 +2943,14 @@
         "special-defense": 45,
         "speed": 70
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 2,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "supersonic": 1,
         "aurora-beam": 1,
@@ -2245,6 +2973,14 @@
         "special-attack": 100,
         "special-defense": 35,
         "speed": 80
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 1,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "hypnosis": 27,
@@ -2269,6 +3005,14 @@
         "special-defense": 55,
         "speed": 95
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 2,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "hypnosis": 29,
         "night-shade": 1,
@@ -2292,6 +3036,14 @@
         "special-defense": 75,
         "speed": 110
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 3,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "hypnosis": 29,
         "night-shade": 1,
@@ -2314,6 +3066,14 @@
         "special-attack": 30,
         "special-defense": 45,
         "speed": 70
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 1,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "bind": 15,
@@ -2339,6 +3099,14 @@
         "special-attack": 43,
         "special-defense": 90,
         "speed": 42
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 1,
+        "speed": 0
       },
       "moves": {
         "pound": 1,
@@ -2366,6 +3134,14 @@
         "special-defense": 115,
         "speed": 67
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 2,
+        "speed": 0
+      },
       "moves": {
         "pound": 1,
         "headbutt": 24,
@@ -2392,6 +3168,14 @@
         "special-defense": 25,
         "speed": 50
       },
+      "effort": {
+        "hp": 0,
+        "attack": 1,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "vice-grip": 20,
         "guillotine": 25,
@@ -2416,6 +3200,14 @@
         "special-attack": 50,
         "special-defense": 50,
         "speed": 75
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "vice-grip": 20,
@@ -2442,6 +3234,14 @@
         "special-defense": 55,
         "speed": 100
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 1
+      },
       "moves": {
         "tackle": 1,
         "sonic-boom": 17,
@@ -2467,6 +3267,14 @@
         "special-defense": 80,
         "speed": 150
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 2
+      },
       "moves": {
         "tackle": 1,
         "sonic-boom": 17,
@@ -2491,6 +3299,14 @@
         "special-attack": 60,
         "special-defense": 45,
         "speed": 40
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 1,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "leech-seed": 28,
@@ -2518,6 +3334,14 @@
         "special-defense": 75,
         "speed": 55
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 2,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "stomp": 28,
         "hypnosis": 1,
@@ -2538,6 +3362,14 @@
         "special-attack": 40,
         "special-defense": 50,
         "speed": 35
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 1,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "thrash": 38,
@@ -2564,6 +3396,14 @@
         "special-defense": 80,
         "speed": 45
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 2,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "thrash": 41,
         "leer": 25,
@@ -2588,6 +3428,14 @@
         "special-attack": 35,
         "special-defense": 110,
         "speed": 87
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "double-kick": 1,
@@ -2614,6 +3462,14 @@
         "special-defense": 110,
         "speed": 76
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 2,
+        "speed": 0
+      },
       "moves": {
         "comet-punch": 1,
         "mega-punch": 48,
@@ -2638,6 +3494,14 @@
         "special-attack": 60,
         "special-defense": 75,
         "speed": 30
+      },
+      "effort": {
+        "hp": 2,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "slam": 31,
@@ -2664,6 +3528,14 @@
         "special-defense": 45,
         "speed": 35
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 1,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "tackle": 1,
         "smokescreen": 37,
@@ -2688,6 +3560,14 @@
         "special-attack": 85,
         "special-defense": 70,
         "speed": 60
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 2,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "tackle": 1,
@@ -2714,6 +3594,14 @@
         "special-defense": 30,
         "speed": 25
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 1,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "stomp": 30,
         "horn-attack": 1,
@@ -2739,6 +3627,14 @@
         "special-defense": 45,
         "speed": 40
       },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "stomp": 30,
         "horn-attack": 1,
@@ -2763,6 +3659,14 @@
         "special-attack": 35,
         "special-defense": 105,
         "speed": 50
+      },
+      "effort": {
+        "hp": 2,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "pound": 1,
@@ -2790,6 +3694,14 @@
         "special-defense": 40,
         "speed": 60
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 1,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "bind": 1,
         "slam": 45,
@@ -2816,6 +3728,14 @@
         "special-defense": 80,
         "speed": 90
       },
+      "effort": {
+        "hp": 2,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "comet-punch": 1,
         "mega-punch": 36,
@@ -2841,6 +3761,14 @@
         "special-defense": 25,
         "speed": 60
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 1,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "leer": 24,
         "water-gun": 30,
@@ -2865,6 +3793,14 @@
         "special-defense": 45,
         "speed": 85
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 1,
+        "special-attack": 1,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "leer": 24,
         "water-gun": 30,
@@ -2888,6 +3824,14 @@
         "special-attack": 35,
         "special-defense": 50,
         "speed": 63
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 1,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "horn-attack": 24,
@@ -2915,6 +3859,14 @@
         "special-defense": 80,
         "speed": 68
       },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "horn-attack": 24,
         "fury-attack": 30,
@@ -2940,6 +3892,14 @@
         "special-attack": 70,
         "special-defense": 55,
         "speed": 85
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 1
       },
       "moves": {
         "tackle": 1,
@@ -2967,6 +3927,14 @@
         "special-defense": 85,
         "speed": 115
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 2
+      },
       "moves": {
         "tackle": 1,
         "water-gun": 1,
@@ -2987,6 +3955,14 @@
         "special-attack": 100,
         "special-defense": 120,
         "speed": 90
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 2,
+        "speed": 0
       },
       "moves": {
         "double-slap": 31,
@@ -3012,6 +3988,14 @@
         "special-defense": 80,
         "speed": 105
       },
+      "effort": {
+        "hp": 0,
+        "attack": 1,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "swords-dance": 35,
         "leer": 17,
@@ -3036,6 +4020,14 @@
         "special-attack": 115,
         "special-defense": 95,
         "speed": 95
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 2,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "pound": 1,
@@ -3063,6 +4055,14 @@
         "special-defense": 85,
         "speed": 105
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 2
+      },
       "moves": {
         "thunder-punch": 42,
         "leer": 1,
@@ -3087,6 +4087,14 @@
         "special-attack": 100,
         "special-defense": 85,
         "speed": 93
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 2,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "fire-punch": 43,
@@ -3113,6 +4121,14 @@
         "special-defense": 70,
         "speed": 85
       },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "vice-grip": 1,
         "guillotine": 30,
@@ -3138,6 +4154,14 @@
         "special-defense": 70,
         "speed": 110
       },
+      "effort": {
+        "hp": 0,
+        "attack": 1,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 1
+      },
       "moves": {
         "stomp": 21,
         "tackle": 1,
@@ -3162,6 +4186,14 @@
         "special-defense": 20,
         "speed": 80
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 1
+      },
       "moves": {
         "tackle": 15,
         "splash": 1
@@ -3181,6 +4213,14 @@
         "special-attack": 60,
         "special-defense": 100,
         "speed": 81
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "leer": 32,
@@ -3204,6 +4244,14 @@
         "special-attack": 85,
         "special-defense": 95,
         "speed": 60
+      },
+      "effort": {
+        "hp": 2,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "body-slam": 25,
@@ -3231,6 +4279,14 @@
         "special-defense": 48,
         "speed": 48
       },
+      "effort": {
+        "hp": 1,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "transform": 1
       }
@@ -3249,6 +4305,14 @@
         "special-attack": 45,
         "special-defense": 65,
         "speed": 55
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 1,
+        "speed": 0
       },
       "moves": {
         "sand-attack": 1,
@@ -3273,6 +4337,14 @@
         "special-attack": 110,
         "special-defense": 95,
         "speed": 65
+      },
+      "effort": {
+        "hp": 2,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "sand-attack": 1,
@@ -3302,6 +4374,14 @@
         "special-defense": 95,
         "speed": 130
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 2
+      },
       "moves": {
         "double-kick": 42,
         "sand-attack": 1,
@@ -3329,6 +4409,14 @@
         "special-attack": 95,
         "special-defense": 110,
         "speed": 65
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "sand-attack": 1,
@@ -3358,6 +4446,14 @@
         "special-defense": 75,
         "speed": 40
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 1,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "tackle": 1,
         "psybeam": 23,
@@ -3383,6 +4479,14 @@
         "special-defense": 55,
         "speed": 35
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 1,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "horn-attack": 34,
         "leer": 39,
@@ -3406,6 +4510,14 @@
         "special-attack": 115,
         "special-defense": 70,
         "speed": 55
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 2,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "horn-attack": 34,
@@ -3431,6 +4543,14 @@
         "special-defense": 45,
         "speed": 55
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 1,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "scratch": 1,
         "leer": 44,
@@ -3454,6 +4574,14 @@
         "special-attack": 65,
         "special-defense": 70,
         "speed": 80
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "scratch": 1,
@@ -3479,6 +4607,14 @@
         "special-defense": 75,
         "speed": 130
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 2
+      },
       "moves": {
         "wing-attack": 1,
         "take-down": 45,
@@ -3502,6 +4638,14 @@
         "special-attack": 65,
         "special-defense": 110,
         "speed": 30
+      },
+      "effort": {
+        "hp": 2,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "headbutt": 1,
@@ -3528,6 +4672,14 @@
         "special-defense": 125,
         "speed": 85
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 3,
+        "speed": 0
+      },
       "moves": {
         "mist": 60,
         "ice-beam": 1,
@@ -3550,6 +4702,14 @@
         "special-attack": 125,
         "special-defense": 90,
         "speed": 100
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 3,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "drill-peck": 1,
@@ -3574,6 +4734,14 @@
         "special-defense": 85,
         "speed": 90
       },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 3,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "leer": 51,
         "peck": 1,
@@ -3596,6 +4764,14 @@
         "special-attack": 50,
         "special-defense": 50,
         "speed": 50
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 1,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "slam": 30,
@@ -3622,6 +4798,14 @@
         "special-defense": 70,
         "speed": 70
       },
+      "effort": {
+        "hp": 0,
+        "attack": 2,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "slam": 35,
         "wrap": 1,
@@ -3647,6 +4831,14 @@
         "special-defense": 100,
         "speed": 80
       },
+      "effort": {
+        "hp": 0,
+        "attack": 3,
+        "defense": 0,
+        "special-attack": 0,
+        "special-defense": 0,
+        "speed": 0
+      },
       "moves": {
         "slam": 35,
         "wrap": 1,
@@ -3671,6 +4863,14 @@
         "special-attack": 154,
         "special-defense": 90,
         "speed": 130
+      },
+      "effort": {
+        "hp": 0,
+        "attack": 0,
+        "defense": 0,
+        "special-attack": 3,
+        "special-defense": 0,
+        "speed": 0
       },
       "moves": {
         "disable": 1,
