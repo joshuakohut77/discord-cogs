@@ -27,7 +27,6 @@ class experiance:
 
     def getEffortValue(self):
         """ returns dictionary of effort values gained upon defeat """
-        effortValueDict = {}
         # TODO replace this load with object in memory
         pokemonConfig = json.load(open('./configs/pokemon.json', 'r'))
         effortValueDict = pokemonConfig[self.pokemon.name]['effort']
