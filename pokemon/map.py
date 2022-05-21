@@ -52,7 +52,7 @@ class MapMixin(MixinMeta):
 
         file, btns = self.__createMapCard(location)
 
-        log_channel: discord.TextChannel = self.client.bot.get_channel('971280525312557157')
+        log_channel: discord.TextChannel = self.bot.get_channel('971280525312557157')
         temp_message = await log_channel.send(
             content=f'{user.display_name} is at {location.name}',
             file = file
@@ -151,7 +151,7 @@ class MapMixin(MixinMeta):
 
         file, btns = self.__createMapCard(direction, disabled=False)
 
-        log_channel: discord.TextChannel = self.client.bot.get_channel('971280525312557157')
+        log_channel: discord.TextChannel = self.bot.get_channel('971280525312557157')
         temp_message = await log_channel.send(
             content=f'{user.display_name} walked North to {north}',
             file = file
