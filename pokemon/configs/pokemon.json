@@ -32,7 +32,10 @@
         "solar-beam": 48,
         "poison-powder": 20,
         "sleep-powder": 41
-      }
+      },
+      "height": 7,
+      "weight": 69,
+      "description": "A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON."
     },
     "ivysaur": {
       "id": 2,
@@ -67,7 +70,10 @@
         "solar-beam": 54,
         "poison-powder": 22,
         "sleep-powder": 46
-      }
+      },
+      "height": 10,
+      "weight": 130,
+      "description": "When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs."
     },
     "venusaur": {
       "id": 3,
@@ -102,7 +108,10 @@
         "solar-beam": 65,
         "poison-powder": 22,
         "sleep-powder": 55
-      }
+      },
+      "height": 20,
+      "weight": 1000,
+      "description": "The plant blooms when it is absorbing solar energy. It stays on the move to seek sunlight."
     },
     "charmander": {
       "id": 4,
@@ -136,7 +145,10 @@
         "fire-spin": 46,
         "rage": 22,
         "slash": 30
-      }
+      },
+      "height": 6,
+      "weight": 85,
+      "description": "Obviously prefers hot places. When it rains, steam is said to spout from the tip of its tail."
     },
     "charmeleon": {
       "id": 5,
@@ -170,7 +182,10 @@
         "fire-spin": 56,
         "rage": 24,
         "slash": 33
-      }
+      },
+      "height": 11,
+      "weight": 190,
+      "description": "When it swings its burning tail, it elevates the temperature to unbearably high levels."
     },
     "charizard": {
       "id": 6,
@@ -204,7 +219,10 @@
         "fire-spin": 55,
         "rage": 24,
         "slash": 36
-      }
+      },
+      "height": 17,
+      "weight": 905,
+      "description": "Spits fire that is hot enough to melt boulders. Known to cause forest fires unintentionally."
     },
     "squirtle": {
       "id": 7,
@@ -238,7 +256,10 @@
         "withdraw": 28,
         "skull-bash": 35,
         "bubble": 8
-      }
+      },
+      "height": 5,
+      "weight": 90,
+      "description": "After birth, its back swells and hardens into a shell. Powerfully sprays foam from its mouth."
     },
     "wartortle": {
       "id": 8,
@@ -272,7 +293,10 @@
         "withdraw": 31,
         "skull-bash": 39,
         "bubble": 8
-      }
+      },
+      "height": 10,
+      "weight": 225,
+      "description": "Often hides in water to stalk unwary prey. For swimming fast, it moves its ears to maintain balance."
     },
     "blastoise": {
       "id": 9,
@@ -306,7 +330,10 @@
         "withdraw": 31,
         "skull-bash": 42,
         "bubble": 8
-      }
+      },
+      "height": 16,
+      "weight": 855,
+      "description": "A brutal POKéMON with pressurized water jets on its shell. They are used for high speed tackles."
     },
     "caterpie": {
       "id": 10,
@@ -334,7 +361,10 @@
       "moves": {
         "tackle": 1,
         "string-shot": 1
-      }
+      },
+      "height": 3,
+      "weight": 29,
+      "description": "Its short feet are tipped with suction pads that enable it to tirelessly climb slopes and walls."
     },
     "metapod": {
       "id": 11,
@@ -361,7 +391,10 @@
       },
       "moves": {
         "harden": 1
-      }
+      },
+      "height": 7,
+      "weight": 99,
+      "description": "This POKéMON is vulnerable to attack while its shell is soft, exposing its weak and tender body."
     },
     "butterfree": {
       "id": 12,
@@ -394,7 +427,10 @@
         "stun-spore": 16,
         "sleep-powder": 17,
         "confusion": 12
-      }
+      },
+      "height": 11,
+      "weight": 320,
+      "description": "In battle, it flaps its wings at high speed to release highly toxic dust into the air."
     },
     "weedle": {
       "id": 13,
@@ -422,7 +458,10 @@
       "moves": {
         "poison-sting": 1,
         "string-shot": 1
-      }
+      },
+      "height": 3,
+      "weight": 32,
+      "description": "Often found in forests, eating leaves. It has a sharp venomous stinger on its head."
     },
     "kakuna": {
       "id": 14,
@@ -449,7 +488,10 @@
       },
       "moves": {
         "harden": 1
-      }
+      },
+      "height": 6,
+      "weight": 100,
+      "description": "Almost incapable of moving, this POKéMON can only harden its shell to protect itself from predators."
     },
     "beedrill": {
       "id": 15,
@@ -481,7 +523,10 @@
         "agility": 35,
         "rage": 25,
         "focus-energy": 16
-      }
+      },
+      "height": 10,
+      "weight": 295,
+      "description": "Flies at high speed and attacks using its large venomous stingers on its forelegs and tail."
     },
     "pidgey": {
       "id": 16,
@@ -514,7 +559,10 @@
         "agility": 36,
         "quick-attack": 12,
         "mirror-move": 44
-      }
+      },
+      "height": 3,
+      "weight": 18,
+      "description": "A common sight in forests and woods. It flaps its wings at ground level to kick up blinding sand."
     },
     "pidgeotto": {
       "id": 17,
@@ -547,7 +595,10 @@
         "agility": 40,
         "quick-attack": 12,
         "mirror-move": 49
-      }
+      },
+      "height": 11,
+      "weight": 300,
+      "description": "Very protective of its sprawling territorial area, this POKéMON will fiercely peck at any intruder."
     },
     "pidgeot": {
       "id": 18,
@@ -580,7 +631,10 @@
         "agility": 44,
         "quick-attack": 12,
         "mirror-move": 54
-      }
+      },
+      "height": 15,
+      "weight": 395,
+      "description": "When hunting, it skims the surface of water at high speed to pick off unwary prey such as MAGIKARP."
     },
     "rattata": {
       "id": 19,
@@ -612,7 +666,10 @@
         "focus-energy": 23,
         "hyper-fang": 14,
         "super-fang": 34
-      }
+      },
+      "height": 3,
+      "weight": 35,
+      "description": "Bites anything when it attacks. Small and very quick, it is a common sight in many places."
     },
     "raticate": {
       "id": 20,
@@ -644,7 +701,10 @@
         "focus-energy": 27,
         "hyper-fang": 14,
         "super-fang": 41
-      }
+      },
+      "height": 7,
+      "weight": 185,
+      "description": "It uses its whis­ kers to maintain its balance. It apparently slows down if they are cut off."
     },
     "spearow": {
       "id": 21,
@@ -677,7 +737,10 @@
         "drill-peck": 29,
         "agility": 36,
         "mirror-move": 22
-      }
+      },
+      "height": 3,
+      "weight": 20,
+      "description": "Eats bugs in grassy areas. It has to flap its short wings at high speed to stay airborne."
     },
     "fearow": {
       "id": 22,
@@ -710,7 +773,10 @@
         "drill-peck": 34,
         "agility": 43,
         "mirror-move": 25
-      }
+      },
+      "height": 12,
+      "weight": 380,
+      "description": "With its huge and magnificent wings, it can keep aloft without ever having to land for rest."
     },
     "ekans": {
       "id": 23,
@@ -743,7 +809,10 @@
         "acid": 38,
         "screech": 31,
         "glare": 24
-      }
+      },
+      "height": 20,
+      "weight": 69,
+      "description": "Moves silently and stealthily. Eats the eggs of birds, such as PIDGEY and SPEAROW, whole."
     },
     "arbok": {
       "id": 24,
@@ -776,7 +845,10 @@
         "acid": 47,
         "screech": 36,
         "glare": 27
-      }
+      },
+      "height": 35,
+      "weight": 650,
+      "description": "It is rumored that the ferocious warning markings on its belly differ from area to area."
     },
     "pikachu": {
       "id": 25,
@@ -809,7 +881,10 @@
         "agility": 33,
         "quick-attack": 16,
         "swift": 26
-      }
+      },
+      "height": 4,
+      "weight": 60,
+      "description": "When several of these POKéMON gather, their electricity could build and cause lightning storms."
     },
     "raichu": {
       "id": 26,
@@ -838,7 +913,10 @@
         "growl": 1,
         "thunder-shock": 1,
         "thunder-wave": 1
-      }
+      },
+      "height": 8,
+      "weight": 300,
+      "description": "Its long tail serves as a ground to protect itself from its own high voltage power."
     },
     "sandshrew": {
       "id": 27,
@@ -870,7 +948,10 @@
         "swift": 31,
         "fury-swipes": 38,
         "slash": 17
-      }
+      },
+      "height": 6,
+      "weight": 120,
+      "description": "Burrows deep underground in arid locations far from water. It only emerges to hunt for food."
     },
     "sandslash": {
       "id": 28,
@@ -902,7 +983,10 @@
         "swift": 36,
         "fury-swipes": 47,
         "slash": 17
-      }
+      },
+      "height": 10,
+      "weight": 295,
+      "description": "Curls up into a spiny ball when threatened. It can roll while curled up to attack or escape."
     },
     "nidoran-f": {
       "id": 29,
@@ -936,7 +1020,10 @@
         "bite": 29,
         "growl": 1,
         "fury-swipes": 36
-      }
+      },
+      "height": 4,
+      "weight": 70,
+      "description": "Although small, its venomous barbs render this POKéMON dangerous. The female has smaller horns."
     },
     "nidorina": {
       "id": 30,
@@ -970,7 +1057,10 @@
         "bite": 32,
         "growl": 1,
         "fury-swipes": 41
-      }
+      },
+      "height": 8,
+      "weight": 200,
+      "description": "The female's horn develops slowly. Prefers physical attacks such as clawing and biting."
     },
     "nidoqueen": {
       "id": 31,
@@ -1001,7 +1091,10 @@
         "body-slam": 23,
         "tail-whip": 1,
         "poison-sting": 14
-      }
+      },
+      "height": 13,
+      "weight": 600,
+      "description": "Its hard scales provide strong protection. It uses its hefty bulk to execute powerful moves."
     },
     "nidoran-m": {
       "id": 32,
@@ -1035,7 +1128,10 @@
         "poison-sting": 14,
         "leer": 1,
         "focus-energy": 21
-      }
+      },
+      "height": 5,
+      "weight": 90,
+      "description": "Stiffens its ears to sense danger. The larger its horns, the more powerful its secreted venom."
     },
     "nidorino": {
       "id": 33,
@@ -1069,7 +1165,10 @@
         "poison-sting": 14,
         "leer": 1,
         "focus-energy": 23
-      }
+      },
+      "height": 9,
+      "weight": 195,
+      "description": "An aggressive POKéMON that is quick to attack. The horn on its head secretes a powerful venom."
     },
     "nidoking": {
       "id": 34,
@@ -1099,7 +1198,10 @@
         "tackle": 1,
         "thrash": 23,
         "poison-sting": 14
-      }
+      },
+      "height": 14,
+      "weight": 620,
+      "description": "It uses its powerful tail in battle to smash, constrict, then break the prey's bones."
     },
     "clefairy": {
       "id": 35,
@@ -1133,7 +1235,10 @@
         "defense-curl": 39,
         "light-screen": 48,
         "metronome": 31
-      }
+      },
+      "height": 6,
+      "weight": 75,
+      "description": "Its magical and cute appeal has many admirers. It is rare and found only in certain areas."
     },
     "clefable": {
       "id": 36,
@@ -1163,7 +1268,10 @@
         "sing": 1,
         "minimize": 1,
         "metronome": 1
-      }
+      },
+      "height": 13,
+      "weight": 400,
+      "description": "A timid fairy POKéMON that is rarely seen. It will run and hide the moment it senses people."
     },
     "vulpix": {
       "id": 37,
@@ -1196,7 +1304,10 @@
         "fire-spin": 42,
         "quick-attack": 16,
         "confuse-ray": 28
-      }
+      },
+      "height": 6,
+      "weight": 99,
+      "description": "At the time of birth, it has just one tail. The tail splits from its tip as it grows older."
     },
     "ninetales": {
       "id": 38,
@@ -1226,7 +1337,10 @@
         "roar": 1,
         "ember": 1,
         "quick-attack": 1
-      }
+      },
+      "height": 11,
+      "weight": 199,
+      "description": "Very smart and very vengeful. Grabbing one of its many tails could result in a 1000-year curse."
     },
     "jigglypuff": {
       "id": 39,
@@ -1260,7 +1374,10 @@
         "disable": 14,
         "defense-curl": 19,
         "rest": 29
-      }
+      },
+      "height": 5,
+      "weight": 55,
+      "description": "When its huge eyes light up, it sings a mysteriously soothing melody that lulls its enemies to sleep."
     },
     "wigglytuff": {
       "id": 40,
@@ -1290,7 +1407,10 @@
         "sing": 1,
         "disable": 1,
         "defense-curl": 1
-      }
+      },
+      "height": 10,
+      "weight": 120,
+      "description": "The body is soft and rubbery. When angered, it will suck in air and inflate itself to an enormous size."
     },
     "zubat": {
       "id": 41,
@@ -1322,7 +1442,10 @@
         "confuse-ray": 21,
         "haze": 36,
         "leech-life": 1
-      }
+      },
+      "height": 8,
+      "weight": 75,
+      "description": "Forms colonies in perpetually dark places. Uses ultrasonic waves to identify and approach targets."
     },
     "golbat": {
       "id": 42,
@@ -1355,7 +1478,10 @@
         "confuse-ray": 21,
         "haze": 43,
         "leech-life": 1
-      }
+      },
+      "height": 16,
+      "weight": 550,
+      "description": "Once it strikes, it will not stop draining energy from the victim even if it gets too heavy to fly."
     },
     "oddish": {
       "id": 43,
@@ -1388,7 +1514,10 @@
         "stun-spore": 17,
         "sleep-powder": 19,
         "petal-dance": 33
-      }
+      },
+      "height": 5,
+      "weight": 54,
+      "description": "During the day, it keeps its face buried in the ground. At night, it wanders around sowing its seeds."
     },
     "gloom": {
       "id": 44,
@@ -1421,7 +1550,10 @@
         "stun-spore": 17,
         "sleep-powder": 19,
         "petal-dance": 38
-      }
+      },
+      "height": 8,
+      "weight": 86,
+      "description": "The fluid that oozes from its mouth isn't drool. It is a nectar that is used to attract prey."
     },
     "vileplume": {
       "id": 45,
@@ -1452,7 +1584,10 @@
         "stun-spore": 17,
         "sleep-powder": 19,
         "petal-dance": 1
-      }
+      },
+      "height": 12,
+      "weight": 186,
+      "description": "The larger its petals, the more toxic pollen it contains. Its big head is heavy and hard to hold up."
     },
     "paras": {
       "id": 46,
@@ -1484,7 +1619,10 @@
         "leech-life": 20,
         "spore": 27,
         "slash": 34
-      }
+      },
+      "height": 3,
+      "weight": 54,
+      "description": "Burrows to suck tree roots. The mushrooms on its back grow by draw­ ing nutrients from the bug host."
     },
     "parasect": {
       "id": 47,
@@ -1516,7 +1654,10 @@
         "leech-life": 20,
         "spore": 30,
         "slash": 39
-      }
+      },
+      "height": 10,
+      "weight": 295,
+      "description": "A host-parasite pair in which the parasite mushroom has taken over the host bug. Prefers damp places."
     },
     "venonat": {
       "id": 48,
@@ -1550,7 +1691,10 @@
         "sleep-powder": 38,
         "psychic": 43,
         "leech-life": 27
-      }
+      },
+      "height": 10,
+      "weight": 300,
+      "description": "Lives in the shadows of tall trees where it eats insects. It is attracted by light at night."
     },
     "venomoth": {
       "id": 49,
@@ -1584,7 +1728,10 @@
         "sleep-powder": 43,
         "psychic": 50,
         "leech-life": 27
-      }
+      },
+      "height": 15,
+      "weight": 125,
+      "description": "The dust-like scales covering its wings are color coded to indicate the kinds of poison it has."
     },
     "diglett": {
       "id": 50,
@@ -1616,7 +1763,10 @@
         "earthquake": 40,
         "dig": 19,
         "slash": 31
-      }
+      },
+      "height": 2,
+      "weight": 8,
+      "description": "Lives about one yard underground where it feeds on plant roots. It sometimes appears above ground."
     },
     "dugtrio": {
       "id": 51,
@@ -1648,7 +1798,10 @@
         "earthquake": 47,
         "dig": 19,
         "slash": 35
-      }
+      },
+      "height": 7,
+      "weight": 333,
+      "description": "A team of DIGLETT triplets. It triggers huge earthquakes by burrowing 60 miles underground."
     },
     "meowth": {
       "id": 52,
@@ -1681,7 +1834,10 @@
         "screech": 24,
         "fury-swipes": 33,
         "slash": 44
-      }
+      },
+      "height": 4,
+      "weight": 42,
+      "description": "Adores circular objects. Wanders the streets on a nightly basis to look for dropped loose change."
     },
     "persian": {
       "id": 53,
@@ -1714,7 +1870,10 @@
         "screech": 24,
         "fury-swipes": 37,
         "slash": 51
-      }
+      },
+      "height": 10,
+      "weight": 320,
+      "description": "Although its fur has many admirers, it is tough to raise as a pet because of its fickle meanness."
     },
     "psyduck": {
       "id": 54,
@@ -1746,7 +1905,10 @@
         "hydro-pump": 52,
         "confusion": 36,
         "fury-swipes": 43
-      }
+      },
+      "height": 8,
+      "weight": 196,
+      "description": "While lulling its enemies with its vacant look, this wily POKéMON will use psychokinetic powers."
     },
     "golduck": {
       "id": 55,
@@ -1778,7 +1940,10 @@
         "hydro-pump": 59,
         "confusion": 39,
         "fury-swipes": 48
-      }
+      },
+      "height": 17,
+      "weight": 766,
+      "description": "Often seen swim­ ming elegantly by lake shores. It is often mistaken for the Japanese monster, Kappa."
     },
     "mankey": {
       "id": 56,
@@ -1811,7 +1976,10 @@
         "seismic-toss": 33,
         "focus-energy": 27,
         "fury-swipes": 21
-      }
+      },
+      "height": 5,
+      "weight": 280,
+      "description": "Extremely quick to anger. It could be docile one moment then thrashing away the next instant."
     },
     "primeape": {
       "id": 57,
@@ -1844,7 +2012,10 @@
         "seismic-toss": 37,
         "focus-energy": 27,
         "fury-swipes": 21
-      }
+      },
+      "height": 10,
+      "weight": 320,
+      "description": "Always furious and tenacious to boot. It will not abandon chasing its quarry until it is caught."
     },
     "growlithe": {
       "id": 58,
@@ -1877,7 +2048,10 @@
         "ember": 18,
         "flamethrower": 50,
         "agility": 39
-      }
+      },
+      "height": 7,
+      "weight": 190,
+      "description": "Very protective of its territory. It will bark and bite to repel intruders from its space."
     },
     "arcanine": {
       "id": 59,
@@ -1907,7 +2081,10 @@
         "leer": 1,
         "roar": 1,
         "ember": 1
-      }
+      },
+      "height": 19,
+      "weight": 1550,
+      "description": "A POKéMON that has been admired since the past for its beauty. It runs agilely as if on wings."
     },
     "poliwag": {
       "id": 60,
@@ -1940,7 +2117,10 @@
         "hypnosis": 16,
         "amnesia": 38,
         "bubble": 1
-      }
+      },
+      "height": 6,
+      "weight": 124,
+      "description": "Its newly grown legs prevent it from running. It appears to prefer swimming than trying to stand."
     },
     "poliwhirl": {
       "id": 61,
@@ -1973,7 +2153,10 @@
         "hypnosis": 16,
         "amnesia": 41,
         "bubble": 1
-      }
+      },
+      "height": 10,
+      "weight": 200,
+      "description": "Capable of living in or out of water. When out of water, it sweats to keep its body slimy."
     },
     "poliwrath": {
       "id": 62,
@@ -2003,7 +2186,10 @@
         "body-slam": 1,
         "water-gun": 19,
         "hypnosis": 16
-      }
+      },
+      "height": 13,
+      "weight": 540,
+      "description": "An adept swimmer at both the front crawl and breast stroke. Easily overtakes the best human swimmers."
     },
     "abra": {
       "id": 63,
@@ -2030,7 +2216,10 @@
       },
       "moves": {
         "teleport": 1
-      }
+      },
+      "height": 9,
+      "weight": 195,
+      "description": "Using its ability to read minds, it will identify impending danger and TELEPORT to safety."
     },
     "kadabra": {
       "id": 64,
@@ -2063,7 +2252,10 @@
         "teleport": 1,
         "recover": 31,
         "reflect": 42
-      }
+      },
+      "height": 13,
+      "weight": 565,
+      "description": "It emits special alpha waves from its body that induce headaches just by being close by."
     },
     "alakazam": {
       "id": 65,
@@ -2096,7 +2288,10 @@
         "teleport": 1,
         "recover": 31,
         "reflect": 42
-      }
+      },
+      "height": 15,
+      "weight": 480,
+      "description": "Its brain can out­ perform a super­ computer. Its intelligence quotient is said to be 5,000."
     },
     "machop": {
       "id": 66,
@@ -2128,7 +2323,10 @@
         "low-kick": 20,
         "seismic-toss": 39,
         "focus-energy": 32
-      }
+      },
+      "height": 8,
+      "weight": 195,
+      "description": "Loves to build its muscles. It trains in all styles of martial arts to become even stronger."
     },
     "machoke": {
       "id": 67,
@@ -2160,7 +2358,10 @@
         "low-kick": 20,
         "seismic-toss": 44,
         "focus-energy": 36
-      }
+      },
+      "height": 15,
+      "weight": 705,
+      "description": "Its muscular body is so powerful, it must wear a power save belt to be able to regulate its motions."
     },
     "machamp": {
       "id": 68,
@@ -2192,7 +2393,10 @@
         "low-kick": 20,
         "seismic-toss": 44,
         "focus-energy": 36
-      }
+      },
+      "height": 16,
+      "weight": 1300,
+      "description": "Using its heavy muscles, it throws powerful punches that can send the victim clear over the horizon."
     },
     "bellsprout": {
       "id": 69,
@@ -2227,7 +2431,10 @@
         "poison-powder": 15,
         "stun-spore": 21,
         "sleep-powder": 18
-      }
+      },
+      "height": 7,
+      "weight": 40,
+      "description": "A carnivorous POKéMON that traps and eats bugs. It uses its root feet to soak up needed moisture."
     },
     "weepinbell": {
       "id": 70,
@@ -2262,7 +2469,10 @@
         "poison-powder": 15,
         "stun-spore": 23,
         "sleep-powder": 18
-      }
+      },
+      "height": 10,
+      "weight": 64,
+      "description": "It spits out POISONPOWDER to immobilize the enemy and then finishes it with a spray of ACID."
     },
     "victreebel": {
       "id": 71,
@@ -2294,7 +2504,10 @@
         "poison-powder": 15,
         "stun-spore": 1,
         "sleep-powder": 18
-      }
+      },
+      "height": 17,
+      "weight": 155,
+      "description": "Said to live in huge colonies deep in jungles, although no one has ever returned from there."
     },
     "tentacool": {
       "id": 72,
@@ -2329,7 +2542,10 @@
         "screech": 40,
         "barrier": 33,
         "constrict": 27
-      }
+      },
+      "height": 9,
+      "weight": 455,
+      "description": "Drifts in shallow seas. Anglers who hook them by accident are often punished by its stinging acid."
     },
     "tentacruel": {
       "id": 73,
@@ -2364,7 +2580,10 @@
         "screech": 43,
         "barrier": 35,
         "constrict": 27
-      }
+      },
+      "height": 16,
+      "weight": 550,
+      "description": "The tentacles are normally kept short. On hunts, they are extended to ensnare and immobilize prey."
     },
     "geodude": {
       "id": 74,
@@ -2397,7 +2616,10 @@
         "defense-curl": 11,
         "self-destruct": 21,
         "explosion": 36
-      }
+      },
+      "height": 4,
+      "weight": 200,
+      "description": "Found in fields and mountains. Mistaking them for boulders, people often step or trip on them."
     },
     "graveler": {
       "id": 75,
@@ -2430,7 +2652,10 @@
         "defense-curl": 11,
         "self-destruct": 21,
         "explosion": 43
-      }
+      },
+      "height": 10,
+      "weight": 1050,
+      "description": "Rolls down slopes to move. It rolls over any obstacle without slowing or changing its direction."
     },
     "golem": {
       "id": 76,
@@ -2463,7 +2688,10 @@
         "defense-curl": 11,
         "self-destruct": 21,
         "explosion": 43
-      }
+      },
+      "height": 14,
+      "weight": 3000,
+      "description": "Its boulder-like body is extremely hard. It can easily withstand dynamite blasts without damage."
     },
     "ponyta": {
       "id": 77,
@@ -2496,7 +2724,10 @@
         "ember": 1,
         "fire-spin": 39,
         "agility": 48
-      }
+      },
+      "height": 10,
+      "weight": 300,
+      "description": "Its hooves are 10 times harder than diamonds. It can trample anything completely flat in little time."
     },
     "rapidash": {
       "id": 78,
@@ -2529,7 +2760,10 @@
         "ember": 1,
         "fire-spin": 39,
         "agility": 55
-      }
+      },
+      "height": 17,
+      "weight": 950,
+      "description": "Very competitive, this POKéMON will chase anything that moves fast in the hopes of racing it."
     },
     "slowpoke": {
       "id": 79,
@@ -2562,7 +2796,10 @@
         "confusion": 1,
         "psychic": 48,
         "amnesia": 40
-      }
+      },
+      "height": 12,
+      "weight": 360,
+      "description": "Incredibly slow and dopey. It takes 5 seconds for it to feel pain when under attack."
     },
     "slowbro": {
       "id": 80,
@@ -2596,7 +2833,10 @@
         "psychic": 55,
         "withdraw": 37,
         "amnesia": 44
-      }
+      },
+      "height": 16,
+      "weight": 785,
+      "description": "The SHELLDER that is latched onto SLOWPOKE's tail is said to feed on the host's left over scraps."
     },
     "magnemite": {
       "id": 81,
@@ -2629,7 +2869,10 @@
         "thunder-wave": 35,
         "screech": 47,
         "swift": 41
-      }
+      },
+      "height": 3,
+      "weight": 60,
+      "description": "Uses anti-gravity to stay suspended. Appears without warning and uses THUNDER WAVE and similar moves."
     },
     "magneton": {
       "id": 82,
@@ -2662,7 +2905,10 @@
         "thunder-wave": 38,
         "screech": 54,
         "swift": 46
-      }
+      },
+      "height": 10,
+      "weight": 600,
+      "description": "Formed by several MAGNEMITEs linked together. They frequently appear when sunspots flare up."
     },
     "farfetchd": {
       "id": 83,
@@ -2695,7 +2941,10 @@
         "peck": 1,
         "agility": 31,
         "slash": 39
-      }
+      },
+      "height": 8,
+      "weight": 150,
+      "description": "The sprig of green onions it holds is its weapon. It is used much like a metal sword."
     },
     "doduo": {
       "id": 84,
@@ -2728,7 +2977,10 @@
         "agility": 44,
         "rage": 36,
         "tri-attack": 40
-      }
+      },
+      "height": 14,
+      "weight": 392,
+      "description": "A bird that makes up for its poor flying with its fast foot speed. Leaves giant footprints."
     },
     "dodrio": {
       "id": 85,
@@ -2761,7 +3013,10 @@
         "agility": 51,
         "rage": 39,
         "tri-attack": 45
-      }
+      },
+      "height": 18,
+      "weight": 852,
+      "description": "Uses its three brains to execute complex plans. While two heads sleep, one head stays awake."
     },
     "seel": {
       "id": 86,
@@ -2793,7 +3048,10 @@
         "ice-beam": 50,
         "aurora-beam": 35,
         "rest": 40
-      }
+      },
+      "height": 11,
+      "weight": 900,
+      "description": "The protruding horn on its head is very hard. It is used for bashing through thick ice."
     },
     "dewgong": {
       "id": 87,
@@ -2825,7 +3083,10 @@
         "ice-beam": 56,
         "aurora-beam": 35,
         "rest": 44
-      }
+      },
+      "height": 17,
+      "weight": 1200,
+      "description": "Stores thermal energy in its body. Swims at a steady 8 knots even in intensely cold waters."
     },
     "grimer": {
       "id": 88,
@@ -2859,7 +3120,10 @@
         "sludge": 37,
         "poison-gas": 30,
         "acid-armor": 55
-      }
+      },
+      "height": 9,
+      "weight": 300,
+      "description": "Appears in filthy areas. Thrives by sucking up polluted sludge that is pumped out of factories."
     },
     "muk": {
       "id": 89,
@@ -2893,7 +3157,10 @@
         "sludge": 37,
         "poison-gas": 30,
         "acid-armor": 60
-      }
+      },
+      "height": 12,
+      "weight": 300,
+      "description": "Thickly covered with a filthy, vile sludge. It is so toxic, even its footprints contain poison."
     },
     "shellder": {
       "id": 90,
@@ -2926,7 +3193,10 @@
         "aurora-beam": 30,
         "withdraw": 1,
         "clamp": 23
-      }
+      },
+      "height": 3,
+      "weight": 40,
+      "description": "Its hard shell repels any kind of attack. It is vulnerable only when its shell is open."
     },
     "cloyster": {
       "id": 91,
@@ -2957,7 +3227,10 @@
         "withdraw": 1,
         "clamp": 1,
         "spike-cannon": 50
-      }
+      },
+      "height": 15,
+      "weight": 1325,
+      "description": "When attacked, it launches its horns in quick volleys. Its innards have never been seen."
     },
     "gastly": {
       "id": 92,
@@ -2988,7 +3261,10 @@
         "confuse-ray": 1,
         "lick": 1,
         "dream-eater": 35
-      }
+      },
+      "height": 13,
+      "weight": 1,
+      "description": "Almost invisible, this gaseous POKéMON cloaks the target and puts it to sleep without notice."
     },
     "haunter": {
       "id": 93,
@@ -3019,7 +3295,10 @@
         "confuse-ray": 1,
         "lick": 1,
         "dream-eater": 38
-      }
+      },
+      "height": 16,
+      "weight": 1,
+      "description": "Because of its ability to slip through block walls, it is said to be from an­ other dimension."
     },
     "gengar": {
       "id": 94,
@@ -3050,7 +3329,10 @@
         "confuse-ray": 1,
         "lick": 1,
         "dream-eater": 38
-      }
+      },
+      "height": 15,
+      "weight": 405,
+      "description": "Under a full moon, this POKéMON likes to mimic the shadows of people and laugh at their fright."
     },
     "onix": {
       "id": 95,
@@ -3083,7 +3365,10 @@
         "rage": 25,
         "screech": 1,
         "harden": 43
-      }
+      },
+      "height": 88,
+      "weight": 2100,
+      "description": "As it grows, the stone portions of its body harden to become similar to a diamond, but colored black."
     },
     "drowzee": {
       "id": 96,
@@ -3117,7 +3402,10 @@
         "hypnosis": 1,
         "meditate": 37,
         "poison-gas": 29
-      }
+      },
+      "height": 10,
+      "weight": 324,
+      "description": "Puts enemies to sleep then eats their dreams. Occasionally gets sick from eating bad dreams."
     },
     "hypno": {
       "id": 97,
@@ -3151,7 +3439,10 @@
         "hypnosis": 1,
         "meditate": 43,
         "poison-gas": 33
-      }
+      },
+      "height": 16,
+      "weight": 756,
+      "description": "When it locks eyes with an enemy, it will use a mix of PSI moves such as HYPNOSIS and CONFUSION."
     },
     "krabby": {
       "id": 98,
@@ -3184,7 +3475,10 @@
         "harden": 40,
         "bubble": 1,
         "crabhammer": 35
-      }
+      },
+      "height": 4,
+      "weight": 65,
+      "description": "Its pincers are not only powerful weapons, they are used for balance when walking sideways."
     },
     "kingler": {
       "id": 99,
@@ -3217,7 +3511,10 @@
         "harden": 49,
         "bubble": 1,
         "crabhammer": 42
-      }
+      },
+      "height": 13,
+      "weight": 600,
+      "description": "The large pincer has 10000 hp of crushing power. However, its huge size makes it unwieldy to use."
     },
     "voltorb": {
       "id": 100,
@@ -3250,7 +3547,10 @@
         "self-destruct": 22,
         "swift": 36,
         "explosion": 43
-      }
+      },
+      "height": 5,
+      "weight": 104,
+      "description": "Usually found in power plants. Easily mistaken for a POKé BALL, they have zapped many people."
     },
     "electrode": {
       "id": 101,
@@ -3283,7 +3583,10 @@
         "self-destruct": 22,
         "swift": 40,
         "explosion": 50
-      }
+      },
+      "height": 12,
+      "weight": 666,
+      "description": "It stores electric energy under very high pressure. It often explodes with little or no provocation."
     },
     "exeggcute": {
       "id": 102,
@@ -3317,7 +3620,10 @@
         "hypnosis": 1,
         "reflect": 25,
         "barrage": 1
-      }
+      },
+      "height": 4,
+      "weight": 25,
+      "description": "Often mistaken for eggs. When disturbed, they quickly gather and attack in swarms."
     },
     "exeggutor": {
       "id": 103,
@@ -3346,7 +3652,10 @@
         "stomp": 28,
         "hypnosis": 1,
         "barrage": 1
-      }
+      },
+      "height": 20,
+      "weight": 1200,
+      "description": "Legend has it that on rare occasions, one of its heads will drop off and continue on as an EXEGGCUTE."
     },
     "cubone": {
       "id": 104,
@@ -3379,7 +3688,10 @@
         "focus-energy": 31,
         "bone-club": 1,
         "bonemerang": 43
-      }
+      },
+      "height": 4,
+      "weight": 65,
+      "description": "Because it never removes its skull helmet, no one has ever seen this POKéMON's real face."
     },
     "marowak": {
       "id": 105,
@@ -3412,7 +3724,10 @@
         "focus-energy": 33,
         "bone-club": 1,
         "bonemerang": 48
-      }
+      },
+      "height": 10,
+      "weight": 450,
+      "description": "The bone it holds is its key weapon. It throws the bone skillfully like a boomerang to KO targets."
     },
     "hitmonlee": {
       "id": 106,
@@ -3445,7 +3760,10 @@
         "meditate": 1,
         "focus-energy": 43,
         "high-jump-kick": 48
-      }
+      },
+      "height": 15,
+      "weight": 498,
+      "description": "When in a hurry, its legs lengthen progressively. It runs smoothly with extra long, loping strides."
     },
     "hitmonchan": {
       "id": 107,
@@ -3478,7 +3796,10 @@
         "thunder-punch": 43,
         "counter": 53,
         "agility": 1
-      }
+      },
+      "height": 14,
+      "weight": 502,
+      "description": "While apparently doing nothing, it fires punches in lightning fast volleys that are impossible to see."
     },
     "lickitung": {
       "id": 108,
@@ -3511,7 +3832,10 @@
         "disable": 15,
         "screech": 39,
         "defense-curl": 23
-      }
+      },
+      "height": 12,
+      "weight": 655,
+      "description": "Its tongue can be extended like a chameleon's. It leaves a tingling sensation when it licks enemies."
     },
     "koffing": {
       "id": 109,
@@ -3544,7 +3868,10 @@
         "smog": 1,
         "sludge": 32,
         "explosion": 48
-      }
+      },
+      "height": 6,
+      "weight": 10,
+      "description": "Because it stores several kinds of toxic gases in its body, it is prone to exploding without warning."
     },
     "weezing": {
       "id": 110,
@@ -3577,7 +3904,10 @@
         "smog": 1,
         "sludge": 32,
         "explosion": 53
-      }
+      },
+      "height": 12,
+      "weight": 95,
+      "description": "Where two kinds of poison gases meet, 2 KOFFINGs can fuse into a WEEZING over many years."
     },
     "rhyhorn": {
       "id": 111,
@@ -3610,7 +3940,10 @@
         "take-down": 55,
         "tail-whip": 35,
         "leer": 50
-      }
+      },
+      "height": 10,
+      "weight": 1150,
+      "description": "Its massive bones are 1000 times harder than human bones. It can easily knock a trailer flying."
     },
     "rhydon": {
       "id": 112,
@@ -3643,7 +3976,10 @@
         "take-down": 64,
         "tail-whip": 35,
         "leer": 55
-      }
+      },
+      "height": 19,
+      "weight": 1200,
+      "description": "Protected by an armor-like hide, it is capable of living in molten lava of 3,600 degrees."
     },
     "chansey": {
       "id": 113,
@@ -3677,7 +4013,10 @@
         "minimize": 38,
         "defense-curl": 44,
         "light-screen": 48
-      }
+      },
+      "height": 11,
+      "weight": 346,
+      "description": "A rare and elusive POKéMON that is said to bring happiness to those who manage to get it."
     },
     "tangela": {
       "id": 114,
@@ -3711,7 +4050,10 @@
         "stun-spore": 36,
         "sleep-powder": 39,
         "constrict": 1
-      }
+      },
+      "height": 10,
+      "weight": 350,
+      "description": "The whole body is swathed with wide vines that are similar to sea­ weed. Its vines shake as it walks."
     },
     "kangaskhan": {
       "id": 115,
@@ -3744,7 +4086,10 @@
         "bite": 26,
         "rage": 1,
         "dizzy-punch": 46
-      }
+      },
+      "height": 22,
+      "weight": 800,
+      "description": "The infant rarely ventures out of its mother's protective pouch until it is 3 years old."
     },
     "horsea": {
       "id": 116,
@@ -3776,7 +4121,10 @@
         "agility": 37,
         "smokescreen": 19,
         "bubble": 1
-      }
+      },
+      "height": 4,
+      "weight": 80,
+      "description": "Known to shoot down flying bugs with precision blasts of ink from the surface of the water."
     },
     "seadra": {
       "id": 117,
@@ -3808,7 +4156,10 @@
         "agility": 41,
         "smokescreen": 19,
         "bubble": 1
-      }
+      },
+      "height": 12,
+      "weight": 250,
+      "description": "Capable of swim­ ming backwards by rapidly flapping its wing-like pectoral fins and stout tail."
     },
     "goldeen": {
       "id": 118,
@@ -3842,7 +4193,10 @@
         "peck": 1,
         "agility": 54,
         "waterfall": 37
-      }
+      },
+      "height": 6,
+      "weight": 150,
+      "description": "Its tail fin billows like an elegant ballroom dress, giving it the nickname of the Water Queen."
     },
     "seaking": {
       "id": 119,
@@ -3876,7 +4230,10 @@
         "peck": 1,
         "agility": 54,
         "waterfall": 39
-      }
+      },
+      "height": 13,
+      "weight": 390,
+      "description": "In the autumn spawning season, they can be seen swimming power­ fully up rivers and creeks."
     },
     "staryu": {
       "id": 120,
@@ -3910,7 +4267,10 @@
         "minimize": 37,
         "light-screen": 42,
         "swift": 32
-      }
+      },
+      "height": 8,
+      "weight": 345,
+      "description": "An enigmatic POKéMON that can effortlessly regenerate any appendage it loses in battle."
     },
     "starmie": {
       "id": 121,
@@ -3939,7 +4299,10 @@
         "tackle": 1,
         "water-gun": 1,
         "harden": 1
-      }
+      },
+      "height": 11,
+      "weight": 800,
+      "description": "Its central core glows with the seven colors of the rainbow. Some people value the core as a gem."
     },
     "mr-mime": {
       "id": 122,
@@ -3971,7 +4334,10 @@
         "barrier": 1,
         "light-screen": 23,
         "substitute": 47
-      }
+      },
+      "height": 13,
+      "weight": 545,
+      "description": "If interrupted while it is miming, it will slap around the offender with its broad hands."
     },
     "scyther": {
       "id": 123,
@@ -4004,7 +4370,10 @@
         "double-team": 24,
         "focus-energy": 20,
         "slash": 29
-      }
+      },
+      "height": 15,
+      "weight": 560,
+      "description": "With ninja-like agility and speed, it can create the illusion that there is more than one."
     },
     "jynx": {
       "id": 124,
@@ -4038,7 +4407,10 @@
         "blizzard": 58,
         "lick": 18,
         "lovely-kiss": 1
-      }
+      },
+      "height": 14,
+      "weight": 406,
+      "description": "It seductively wiggles its hips as it walks. It can cause people to dance in unison with it."
     },
     "electabuzz": {
       "id": 125,
@@ -4071,7 +4443,10 @@
         "quick-attack": 1,
         "screech": 37,
         "light-screen": 49
-      }
+      },
+      "height": 11,
+      "weight": 300,
+      "description": "Normally found near power plants, they can wander away and cause major blackouts in cities."
     },
     "magmar": {
       "id": 126,
@@ -4104,7 +4479,10 @@
         "smokescreen": 48,
         "confuse-ray": 39,
         "smog": 52
-      }
+      },
+      "height": 13,
+      "weight": 445,
+      "description": "Its body always burns with an orange glow that enables it to hide perfectly among flames."
     },
     "pinsir": {
       "id": 127,
@@ -4137,7 +4515,10 @@
         "harden": 43,
         "focus-energy": 36,
         "slash": 49
-      }
+      },
+      "height": 15,
+      "weight": 550,
+      "description": "If it fails to crush the victim in its pincers, it will swing it around and toss it hard."
     },
     "tauros": {
       "id": 128,
@@ -4169,7 +4550,10 @@
         "tail-whip": 28,
         "leer": 35,
         "rage": 44
-      }
+      },
+      "height": 14,
+      "weight": 884,
+      "description": "When it targets an enemy, it charges furiously while whipping its body with its long tails."
     },
     "magikarp": {
       "id": 129,
@@ -4197,7 +4581,10 @@
       "moves": {
         "tackle": 15,
         "splash": 1
-      }
+      },
+      "height": 9,
+      "weight": 100,
+      "description": "In the distant past, it was somewhat stronger than the horribly weak descendants that exist today."
     },
     "gyarados": {
       "id": 130,
@@ -4228,7 +4615,10 @@
         "hydro-pump": 41,
         "hyper-beam": 52,
         "dragon-rage": 25
-      }
+      },
+      "height": 65,
+      "weight": 2350,
+      "description": "Rarely seen in the wild. Huge and vicious, it is capable of destroying entire cities in a rage."
     },
     "lapras": {
       "id": 131,
@@ -4262,7 +4652,10 @@
         "hydro-pump": 46,
         "ice-beam": 38,
         "confuse-ray": 31
-      }
+      },
+      "height": 25,
+      "weight": 2200,
+      "description": "A POKéMON that has been over­ hunted almost to extinction. It can ferry people across the water."
     },
     "ditto": {
       "id": 132,
@@ -4289,7 +4682,10 @@
       },
       "moves": {
         "transform": 1
-      }
+      },
+      "height": 3,
+      "weight": 40,
+      "description": "Capable of copying an enemy's genetic code to instantly transform itself into a duplicate of the enemy."
     },
     "eevee": {
       "id": 133,
@@ -4321,7 +4717,10 @@
         "tail-whip": 31,
         "bite": 37,
         "quick-attack": 27
-      }
+      },
+      "height": 3,
+      "weight": 65,
+      "description": "Its genetic code is irregular. It may mutate if it is exposed to radiation from element STONEs."
     },
     "vaporeon": {
       "id": 134,
@@ -4357,7 +4756,10 @@
         "quick-attack": 27,
         "haze": 44,
         "acid-armor": 42
-      }
+      },
+      "height": 10,
+      "weight": 290,
+      "description": "Lives close to water. Its long tail is ridged with a fin which is often mistaken for a mermaid's."
     },
     "jolteon": {
       "id": 135,
@@ -4393,7 +4795,10 @@
         "thunder": 54,
         "agility": 44,
         "quick-attack": 27
-      }
+      },
+      "height": 8,
+      "weight": 245,
+      "description": "It accumulates negative ions in the atmosphere to blast out 10000- volt lightning bolts."
     },
     "flareon": {
       "id": 136,
@@ -4429,7 +4834,10 @@
         "fire-spin": 44,
         "quick-attack": 27,
         "rage": 48
-      }
+      },
+      "height": 9,
+      "weight": 250,
+      "description": "When storing thermal energy in its body, its temperature could soar to over 1600 degrees."
     },
     "porygon": {
       "id": 137,
@@ -4462,7 +4870,10 @@
         "sharpen": 1,
         "conversion": 1,
         "tri-attack": 42
-      }
+      },
+      "height": 8,
+      "weight": 365,
+      "description": "A POKéMON that consists entirely of programming code. Capable of moving freely in cyberspace."
     },
     "omanyte": {
       "id": 138,
@@ -4494,7 +4905,10 @@
         "hydro-pump": 53,
         "withdraw": 1,
         "spike-cannon": 46
-      }
+      },
+      "height": 4,
+      "weight": 75,
+      "description": "Although long extinct, in rare cases, it can be genetically resurrected from fossils."
     },
     "omastar": {
       "id": 139,
@@ -4526,7 +4940,10 @@
         "hydro-pump": 49,
         "withdraw": 1,
         "spike-cannon": 44
-      }
+      },
+      "height": 10,
+      "weight": 350,
+      "description": "A prehistoric POKéMON that died out when its heavy shell made it impossible to catch prey."
     },
     "kabuto": {
       "id": 140,
@@ -4558,7 +4975,10 @@
         "absorb": 34,
         "harden": 1,
         "slash": 39
-      }
+      },
+      "height": 5,
+      "weight": 115,
+      "description": "A POKéMON that was resurrected from a fossil found in what was once the ocean floor eons ago."
     },
     "kabutops": {
       "id": 141,
@@ -4590,7 +5010,10 @@
         "absorb": 34,
         "harden": 1,
         "slash": 39
-      }
+      },
+      "height": 13,
+      "weight": 405,
+      "description": "Its sleek shape is perfect for swim­ ming. It slashes prey with its claws and drains the body fluids."
     },
     "aerodactyl": {
       "id": 142,
@@ -4622,7 +5045,10 @@
         "supersonic": 33,
         "hyper-beam": 54,
         "agility": 1
-      }
+      },
+      "height": 18,
+      "weight": 590,
+      "description": "A ferocious, pre­ historic POKéMON that goes for the enemy's throat with its serrated saw-like fangs."
     },
     "snorlax": {
       "id": 143,
@@ -4655,7 +5081,10 @@
         "harden": 41,
         "amnesia": 1,
         "rest": 1
-      }
+      },
+      "height": 21,
+      "weight": 4600,
+      "description": "Very lazy. Just eats and sleeps. As its rotund bulk builds, it becomes steadily more slothful."
     },
     "articuno": {
       "id": 144,
@@ -4686,7 +5115,10 @@
         "blizzard": 51,
         "peck": 1,
         "agility": 55
-      }
+      },
+      "height": 17,
+      "weight": 554,
+      "description": "A legendary bird POKéMON that is said to appear to doomed people who are lost in icy mountains."
     },
     "zapdos": {
       "id": 145,
@@ -4717,7 +5149,10 @@
         "thunder": 51,
         "agility": 55,
         "light-screen": 60
-      }
+      },
+      "height": 16,
+      "weight": 526,
+      "description": "A legendary bird POKéMON that is said to appear from clouds while dropping enormous lightning bolts."
     },
     "moltres": {
       "id": 146,
@@ -4748,7 +5183,10 @@
         "fire-spin": 1,
         "agility": 55,
         "sky-attack": 60
-      }
+      },
+      "height": 20,
+      "weight": 600,
+      "description": "Known as the legendary bird of fire. Every flap of its wings creates a dazzling flash of flames."
     },
     "dratini": {
       "id": 147,
@@ -4781,7 +5219,10 @@
         "dragon-rage": 40,
         "thunder-wave": 10,
         "agility": 20
-      }
+      },
+      "height": 18,
+      "weight": 33,
+      "description": "Long considered a mythical POKéMON until recently when a small colony was found living underwater."
     },
     "dragonair": {
       "id": 148,
@@ -4814,7 +5255,10 @@
         "dragon-rage": 45,
         "thunder-wave": 10,
         "agility": 20
-      }
+      },
+      "height": 40,
+      "weight": 165,
+      "description": "A mystical POKéMON that exudes a gentle aura. Has the ability to change climate conditions."
     },
     "dragonite": {
       "id": 149,
@@ -4847,7 +5291,10 @@
         "dragon-rage": 45,
         "thunder-wave": 10,
         "agility": 20
-      }
+      },
+      "height": 22,
+      "weight": 2100,
+      "description": "An extremely rarely seen marine POKéMON. Its intelligence is said to match that of humans."
     },
     "mewtwo": {
       "id": 150,
@@ -4881,6 +5328,9 @@
         "barrier": 63,
         "swift": 1,
         "amnesia": 81
-      }
+      },
+      "height": 20,
+      "weight": 1220,
+      "description": "It was created by a scientist after years of horrific gene splicing and DNA engineering experiments."
     }
   }
