@@ -1,6 +1,7 @@
 # store class
 
 import sys
+import json
 from dbclass import db as dbconn
 from inventoryclass import inventory as inv
 from keyitemsclass import keyitems as kitems
@@ -367,20 +368,13 @@ class store:
         """ returns the price of the item """
         price = 0
         try:
-            db = dbconn()
-            queryString = 'SELECT "price" FROM itempricing WHERE "item"=%(itemName)s'
-            result = db.querySingle(queryString, {'itemName': itemName})
-            if result is None:
-                self.message = 'That item does not exist'
-                self.statuscode = 420
-            else:
-                price = result[0]
+            # TODO replace this load with object in memory
+            pricingConfig = json.load(open('./configs/itempricing.json', 'r'))
+            price = pricingConfig[itemName]
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
-            # delete and close connection
-            del db 
             return price
 
     def __getSpriteUrl(self, itemName):
