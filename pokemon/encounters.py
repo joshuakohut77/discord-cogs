@@ -117,10 +117,12 @@ class EncountersMixin(MixinMeta):
             await interaction.channel.send('No pokemon encountered.')
             # await interaction.send('No pokemon encountered.')
             return
+
+        active = trainer.getActivePokemon()
         
         # await interaction.send(f'You encountered a wild {pokemon.pokemonName}!')
 
-        embed = self.__wildPokemonEncounter(user, pokemon)
+        embed = self.__wildPokemonEncounter(user, active, pokemon)
 
         btns = []
         btns.append(self.client.add_callback(
@@ -137,7 +139,7 @@ class EncountersMixin(MixinMeta):
         ))
 
         message = await interaction.channel.send(
-            content=f'{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!',
+            # content=f'{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!',
             embed=embed,
             components=[btns]
         )
@@ -291,11 +293,18 @@ class EncountersMixin(MixinMeta):
     def __wildPokemonRanAway(self, user: discord.User, pokemon: PokemonClass):
         pass
 
-    def __wildPokemonEncounter(self, user: discord.User, pokemon: PokemonClass):
+    def __wildPokemonEncounter(self, user: discord.User, active: PokemonClass, pokemon: PokemonClass):
         stats = pokemon.getPokeStats()
         color = getTypeColor(pokemon.type1)
         # Create the embed object
-        embed = discord.Embed(title=f"Wild {pokemon.pokemonName.capitalize()}", color=color)
+        embed = discord.Embed(
+            title=f"Wild {pokemon.pokemonName.capitalize()}",
+            description=f'''
+            {user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!
+            {user.display_name} sent out {active.pokemonName}.
+            ''',
+            color=color
+        )
         embed.set_author(name=f"{user.display_name}",
                         icon_url=str(user.avatar_url))
         
@@ -312,7 +321,7 @@ class EncountersMixin(MixinMeta):
             name="HP", value=f"{pokemon.currentHP} / {stats['hp']}", inline=False)
 
         embed.set_thumbnail(url=pokemon.frontSpriteURL)
-        embed.set_image(url = pokemon.backSpriteURL)
+        embed.set_image(url = active.backSpriteURL)
         return embed
 
 
