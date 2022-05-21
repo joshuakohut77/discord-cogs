@@ -346,9 +346,9 @@ class EncountersMixin(MixinMeta):
         embed.add_field(
             name=f"{active.pokemonName.capitalize()}",
             value=f'''
-**Type**  : {activeTypes}
-**Level** : {active.currentLevel}
-**HP**    : {active.currentHP} / {activeStats['hp']}
+Type : {activeTypes}
+Level : {active.currentLevel}
+HP    : {active.currentHP} / {activeStats['hp']}
             ''',
             inline=True
         )
@@ -356,9 +356,9 @@ class EncountersMixin(MixinMeta):
         embed.add_field(
             name=f"{pokemon.pokemonName.capitalize()}",
             value=f'''
-**Type**  : {types}
-**Level** : {pokemon.currentLevel}
-**HP**    : {pokemon.currentHP} / {stats['hp']}
+Type  : {types}
+Level : {pokemon.currentLevel}
+HP    : {pokemon.currentHP} / {stats['hp']}
             ''',
             inline=True
         )
@@ -389,7 +389,7 @@ class EncountersMixin(MixinMeta):
 #         # Check that the second type is not set to None and is not an empty string.
 #         if pokemon.type2 is not None and pokemon.type2:
 #             types += ', ' + pokemon.type2
-            
+
 #         embed.add_field(
 #             name="Type", value=f"{types}", inline=False)
 #         embed.add_field(
