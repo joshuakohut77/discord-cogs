@@ -4,7 +4,7 @@ from typing import List
 from keyitemsclass import keyitems as kitems
 from loggerclass import logger as log
 import models.quest as QuestModel
-from services.keyitemsclass import keyitems
+from keyitemsclass import keyitems as kitems
 
 # Class Logger
 logger = log()
@@ -22,6 +22,7 @@ class quests:
         locationBlocked = False
         if blockers == []:
             return
+        keyitems = kitems(self.discordId)
         for item in blockers:
             if item == 'HM01':
                 if not keyitems.HM01:

@@ -1,7 +1,6 @@
 # location class
 import sys
 import config
-import configs.quests
 import json
 import random
 from keyitemsclass import keyitems as kitems
@@ -21,7 +20,7 @@ list of cities and locations: https://pokeapi.co/api/v2/region/1/
 """
 
 class location:
-    def __init__(self, discordId = None):
+    def __init__(self, discordId=None):
         self.statuscode = 69
         self.message = ''
 
@@ -40,14 +39,17 @@ class location:
         return loc
 
 
-    def getMethods(self, areaEncounters=None):
+    def getMethods(self):
         """ returns a list of methods available in that area """
         methodList = []
+        locationId = 0
         try:
             # TODO replace this load with object in memory
             encountersConfig = json.load(open('./configs/encounters.json', 'r'))
-
-            if self.discordId is not None and areaEncounters is None:
+            if self.discordId is None:
+                self.statuscode = 420
+                self.message = 'discordId required in location constructor'
+            else:
                 locationId = self.__getCurrentLocation()
                 if locationId > 0:
                     areaEncounters = encountersConfig[str(locationId)]
@@ -56,8 +58,11 @@ class location:
                 if method not in methodList:
                     methodList.append(method)
             
+            
             # This next section checks if there's any valid quests in current area
-            quest = QuestModel(configs.quests.questConfig[locationId])
+            # TODO replace this load with object in memory
+            questsConfig = json.load(open('./configs/quests.json', 'r'))
+            quest = QuestModel(questsConfig[str(locationId)])
             questObj = qObj(self.discordId)
             if quest.prerequsites != []:
                 if questObj.prerequsitesValid(quest.prerequsites):
@@ -69,13 +74,17 @@ class location:
         finally:
             return methodList
 
-    def action(self, selectedMethod, areaEncounters=None):
+    def action(self, selectedMethod):
         """ returns a single encounter based on location and method """
         areaEncounterPokemon = None
+        locationId = 0
         try:
             # TODO replace this load with object in memory
-            encountersConfig = json.load(open('./configs/encounters.json', 'r'))
-            if self.discordId is not None and areaEncounters is None:
+            if self.discordId is None:
+                self.statuscode = 420
+                self.message = 'discordId required in location constructor'
+            else:
+                encountersConfig = json.load(open('./configs/encounters.json', 'r'))
                 locationId = self.__getCurrentLocation()
                 if locationId > 0:
                     areaEncounters = encountersConfig[str(locationId)]
@@ -103,7 +112,9 @@ class location:
             db = dbconn()
 
             # This next section checks if there's any valid quests in current area
-            quest = QuestModel(configs.quests.questConfig[locationId])
+            # TODO replace this load with object in memory
+            questsConfig = json.load(open('./configs/quests.json', 'r'))
+            quest = QuestModel(questsConfig[str(locationId)])
             questObj = qObj(self.discordId)
             if quest.blockers != []:
                 if questObj.locationBlocked(quest.blockers):
