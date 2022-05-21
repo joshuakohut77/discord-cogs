@@ -1,0 +1,202 @@
+{
+    "poke-ball": {
+      "item": "poke-ball",
+      "price": 200
+    },
+    "great-ball": {
+      "item": "great-ball",
+      "price": 600
+    },
+    "ultra-ball": {
+      "item": "ultra-ball",
+      "price": 800
+    },
+    "master-ball": {
+      "item": "master-ball",
+      "price": 0
+    },
+    "potion": {
+      "item": "potion",
+      "price": 200
+    },
+    "super-potion": {
+      "item": "super-potion",
+      "price": 700
+    },
+    "hyper-potion": {
+      "item": "hyper-potion",
+      "price": 1500
+    },
+    "revive": {
+      "item": "revive",
+      "price": 2000
+    },
+    "full-restore": {
+      "item": "full-restore",
+      "price": 3000
+    },
+    "repel": {
+      "item": "repel",
+      "price": 400
+    },
+    "awakening": {
+      "item": "awakening",
+      "price": 200
+    },
+    "escape-rope": {
+      "item": "escape-rope",
+      "price": 300
+    },
+    "full-heal": {
+      "item": "full-heal",
+      "price": 400
+    },
+    "ice-heal": {
+      "item": "ice-heal",
+      "price": 200
+    },
+    "max-repel": {
+      "item": "max-repel",
+      "price": 900
+    },
+    "burn-heal": {
+      "item": "burn-heal",
+      "price": 200
+    },
+    "paralyze-heal": {
+      "item": "paralyze-heal",
+      "price": 200
+    },
+    "max-potion": {
+      "item": "max-potion",
+      "price": 2500
+    },
+    "antidote": {
+      "item": "antidote",
+      "price": 200
+    },
+    "super-repel": {
+      "item": "super-repel",
+      "price": 700
+    },
+    "calcium": {
+      "item": "calcium",
+      "price": 10000
+    },
+    "carbos": {
+      "item": "carbos",
+      "price": 10000
+    },
+    "coin-case": {
+      "item": "coin-case",
+      "price": 0
+    },
+    "dire-hit": {
+      "item": "dire-hit",
+      "price": 1000
+    },
+    "dome-fossil": {
+      "item": "dome-fossil",
+      "price": 7000
+    },
+    "fresh-water": {
+      "item": "fresh-water",
+      "price": 200
+    },
+    "helix-fossil": {
+      "item": "helix-fossil",
+      "price": 7000
+    },
+    "hp-up": {
+      "item": "hp-up",
+      "price": 10000
+    },
+    "lemonade": {
+      "item": "lemonade",
+      "price": 400
+    },
+    "max-ether": {
+      "item": "max-ether",
+      "price": 2000
+    },
+    "ether": {
+      "item": "ether",
+      "price": 1200
+    },
+    "nugget": {
+      "item": "nugget",
+      "price": 10000
+    },
+    "old-amber": {
+      "item": "old-amber",
+      "price": 10000
+    },
+    "poke-doll": {
+      "item": "poke-doll",
+      "price": 300
+    },
+    "pp-up": {
+      "item": "pp-up",
+      "price": 10000
+    },
+    "soda-pop": {
+      "item": "soda-pop",
+      "price": 300
+    },
+    "town-map": {
+      "item": "town-map",
+      "price": 0
+    },
+    "x-accuracy": {
+      "item": "x-accuracy",
+      "price": 1000
+    },
+    "x-attack": {
+      "item": "x-attack",
+      "price": 1000
+    },
+    "x-defense": {
+      "item": "x-defense",
+      "price": 2000
+    },
+    "x-speed": {
+      "item": "x-speed",
+      "price": 1000
+    },
+    "fire-stone": {
+      "item": "fire-stone",
+      "price": 3000
+    },
+    "water-stone": {
+      "item": "water-stone",
+      "price": 3000
+    },
+    "thunder-stone": {
+      "item": "thunder-stone",
+      "price": 3000
+    },
+    "leaf-stone": {
+      "item": "leaf-stone",
+      "price": 3000
+    },
+    "moon-stone": {
+      "item": "moon-stone",
+      "price": 3000
+    },
+    "elixir": {
+      "item": "elixir",
+      "price": 3000
+    },
+    "max-elixir": {
+      "item": "max-elixir",
+      "price": 4500
+    },
+    "x-sp-atk": {
+      "item": "x-sp-atk",
+      "price": 1000
+    },
+    "x-sp-def": {
+      "item": "x-sp-def",
+      "price": 2000
+    }
+  }
