@@ -71,7 +71,7 @@ class encounter:
         battleHP2 = self.pokemon2.currentHP
         # get pokemons list of moves
         battleMoves1 = self.__removeNullMoves(self.pokemon1.getMoves())
-        battleMoves2 = self.__removeNullMoves(self.pokemon2.getMoves(reload=True))
+        battleMoves2 = self.__removeNullMoves(self.pokemon2.getMoves())
 
         # pokemon goes first
         for x in range(MAX_BATTLE_TURNS):
