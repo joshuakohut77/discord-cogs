@@ -312,7 +312,7 @@ class EncountersMixin(MixinMeta):
             name="HP", value=f"{pokemon.currentHP} / {stats['hp']}", inline=False)
 
         embed.set_thumbnail(url=pokemon.frontSpriteURL)
-        embed.set_image(pokemon.frontSpriteURL)
+        embed.set_image(url = pokemon.frontSpriteURL)
         return embed
 
 
