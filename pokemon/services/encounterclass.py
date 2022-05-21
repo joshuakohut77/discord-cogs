@@ -318,7 +318,7 @@ class encounter:
     def __updateUniqueEncounters(self):
         """ updates the unique encounters table """
         uEncObj = uEnc(self.pokemon1.discordId)
-        name = self.pokemon2.name
+        name = self.pokemon2.pokemonName
         if name == 'articuno':
             uEncObj.articuno = True
         elif name == 'zapdos':
