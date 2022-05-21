@@ -82,7 +82,8 @@ class EncountersMixin(MixinMeta):
             components=[btns]
         )
         self.__useractions[str(user.id)] = ActionState(
-            str(user.id),message.id, model, None)
+            str(user.id),message.id, model, None, '')
+
 
     async def __on_action(self, interaction: Interaction):
         user = interaction.user
@@ -152,7 +153,7 @@ class EncountersMixin(MixinMeta):
             components=[btns]
         )
         self.__useractions[str(user.id)] = ActionState(
-            str(user.id), message.id, state.location, pokemon)
+            str(user.id), message.id, state.location, pokemon, desc)
 
 
     async def __on_fight_click(self, interaction: Interaction):
