@@ -60,7 +60,7 @@ class MapMixin(MixinMeta):
         self.__locations[str(user.id)] = LocationState(str(user.id), location, message.id)
     
 
-    async def __createMapCard(self, location: LocationModel):
+    def __createMapCard(self, location: LocationModel):
         file = discord.File(f"{location.spritePath}", filename=f"{location.name}.png")
 
         ne = []
