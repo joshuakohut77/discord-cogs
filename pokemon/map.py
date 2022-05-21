@@ -13,11 +13,10 @@ from redbot.core import commands
 
 from models.location import LocationModel
 from services.trainerclass import trainer as TrainerClass
-from services.locationclass import location as LocationClass
+from services.locationclass2 import location as LocationClass
 
 
 from .abcd import MixinMeta
-from services.pokeclass import Pokemon as PokemonClass
 
 
 class LocationState:
