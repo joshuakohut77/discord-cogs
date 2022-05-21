@@ -9,9 +9,9 @@ from encounterclass import encounter
 from inventoryclass import inventory as inv
 from keyitemsclass import keyitems as kitems
 from leaderboardclass import leaderboard
-from locationclass import location as LocationClass
+from locationclass2 import location as LocationClass
 from loggerclass import logger as log
-from pokeclass import Pokemon as pokeClass
+from pokeclass2 import Pokemon as pokeClass
 from uniqueencounters import uniqueEncounters as uEnc
 from datetime import datetime
 from time import time
