@@ -26,17 +26,7 @@ class store:
         """ loads a trainers store into the class object """
         storeList = []
         try:
-            p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/store.json')
-            storeConfig = json.load(open(p, 'r'))
-            
-            # If there are not items, then there is no PokeMart
-            # at this location.
-            # Relay that message back to the user
-            if str(self.locationId) not in storeConfig:
-                self.message = 'There is not a PokeMart at your location.'
-                self.statuscode = 420
-                return
-            
+            db = dbconn()
             # this section is to check if user has Oaks Parcel
             if self.locationId == 154:
                 keyitems = kitems(self.discordId)
@@ -50,12 +40,21 @@ class store:
                     self.statuscode = 420
                     self.message = 'Hey there, take that parcel to Professor Oak please.'
                     return
+            
+            queryString = 'SELECT "item", "price" FROM store WHERE "locationId"=%(locationId)s'
+            results = db.queryAll(queryString, {'locationId': self.locationId})
 
-            results = storeConfig[str(self.locationId)]
+            # If there are not items, then there is no PokeMart
+            # at this location.
+            # Relay that message back to the user
+            if len(results) == 0:
+                self.message = 'There is not a PokeMart at your location.'
+                self.statuscode = 420
+                return
 
             for row in results:
-                item = row['item']
-                price = row['price']
+                item = row[0]
+                price = row[1]
                 storeOption = {'item': item, 'price': price,
                                'spriteUrl': self.__getSpriteUrl(item)}
                 storeList.append(storeOption)
@@ -71,6 +70,8 @@ class store:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
+            # delete and close connection
+            del db
             self.storeList = storeList
 
     def buyItem(self, name, quantity):
