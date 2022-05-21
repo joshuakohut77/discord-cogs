@@ -3,6 +3,7 @@
 import sys
 
 # import discord
+import os
 import config
 import math
 import json
