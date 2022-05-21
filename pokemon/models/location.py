@@ -1,16 +1,14 @@
-from typing import List
-
+import json
 
 class LocationModel:
     
-    def __init__(self, results: List):
-        self.locationId = results[0]
-        self.name = results[1]
-        self.north = results[2]
-        self.east = results[3]
-        self.south = results[4]
-        self.west = results[5]
-        self.prerequisites = results[6]
-        self.spritePath = results[7]
-        self.pokecenter = results[8]
-        self.gym = results[9]
+    def __init__(self, results: json):
+        self.locationId = results['locationId']
+        self.name = results['name']
+        self.north = results['north']
+        self.east = results['east']
+        self.south = results['south']
+        self.west = results['west']
+        self.spritePath = results['spritePath']
+        self.pokecenter = results['pokecenter']
+        self.gym = results['gym']

@@ -2,6 +2,7 @@
 import sys
 from typing import final
 import config
+import json
 import random
 from dbclass import db as dbconn
 from encounterclass import encounter
@@ -14,7 +15,7 @@ from pokeclass import Pokemon as pokeClass
 from uniqueencounters import uniqueEncounters as uEnc
 from datetime import datetime
 from time import time
-import models.location as Models
+from models.location import LocationModel
 
 # Global Config Variables
 STARTER_LEVEL = 5 #config.starterLevel
@@ -488,16 +489,18 @@ class trainer:
         try:
             db = dbconn()
             queryStr = """
-            SELECT
-                locations.*
-            FROM locations
-                join trainer on trainer."locationId" = locations."locationId"
-            WHERE trainer."discord_id" = %(discordId)s
+            SELECT "locationId"
+                FROM trainer 
+                WHERE "discord_id" = %(discordId)s
             """
             result = db.querySingle(queryStr, { 'discordId': self.discordId })
             if result:
-                location = Models.LocationModel(result)
-                return location
+                # TODO replace this load with object in memory
+                locationsConfig = json.load(open('./configs/locations.json', 'r'))
+
+                locResult = locationsConfig[result]
+                loc = LocationModel(locResult)
+                return loc
             else:
                 self.statuscode = 96
                 self.message = 'Location not found'
