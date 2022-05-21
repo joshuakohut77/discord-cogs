@@ -10,6 +10,7 @@ from encounterclass import encounter
 from inventoryclass import inventory as inv
 from keyitemsclass import keyitems as kitems
 from leaderboardclass import leaderboard
+from pokedexclass import pokedex
 from locationclass2 import location as LocationClass
 from loggerclass import logger as log
 from pokeclass2 import Pokemon as pokeClass
@@ -519,6 +520,11 @@ class trainer:
             self.statuscode = locObj.statuscode
             self.message = locObj.message
     
+    def getPokedex(self):
+        """ returns a trainers pokedex """
+        trainersPokedex = pokedex(self.discordId, None)
+        return trainersPokedex
+
     def getPartySize(self):
         """ returns a count of trainers party size """
         partySize = 0
