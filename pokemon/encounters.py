@@ -1,4 +1,5 @@
 from __future__ import annotations
+from re import A
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 import asyncio
 
@@ -31,13 +32,16 @@ class ActionState:
     discordId: str
     location: LocationModel
     messageId: int
-    pokemon: PokemonClass
 
-    def __init__(self, discordId: str, messageId: int, location: LocationModel, pokemon: PokemonClass) -> None:
+    pokemon: PokemonClass
+    descLog: str
+
+    def __init__(self, discordId: str, messageId: int, location: LocationModel, pokemon: PokemonClass, descLog: str) -> None:
         self.discordId = discordId
         self.location = location
         self.messageId = messageId
         self.pokemon = pokemon
+        self.descLog = descLog
 
 
 class EncountersMixin(MixinMeta):
@@ -121,8 +125,12 @@ class EncountersMixin(MixinMeta):
         active = trainer.getActivePokemon()
         
         # await interaction.send(f'You encountered a wild {pokemon.pokemonName}!')
+        desc = f'''
+{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!
+{user.display_name} sent out {active.pokemonName.capitalize()}.
+        '''
 
-        embed = self.__wildPokemonEncounter(user, active, pokemon)
+        embed = self.__wildPokemonEncounter(user, pokemon, active, desc)
 
         btns = []
         btns.append(self.client.add_callback(
@@ -158,13 +166,24 @@ class EncountersMixin(MixinMeta):
 
         state = self.__useractions[str(user.id)]
         trainer = TrainerClass(str(user.id))
+
+#         descLog = state.descLog + f'''
+# {user.display_name} chose to fight!
+#         '''
+
+        embed = self.__wildPokemonEncounter(user, state.pokemon)
+
+        # await interaction.edit_origin(
+        #     content=f'{trainer.message}',
+        #     embed=embed,
+        #     components=[]
+        # )
+
         trainer.fight(state.pokemon)
 
         if trainer.statuscode == 96:
             await interaction.send(trainer.message)
             return
-
-        embed = self.__wildPokemonEncounter(user, state.pokemon)
 
         btns = []
 
@@ -290,38 +309,42 @@ class EncountersMixin(MixinMeta):
         del self.__useractions[str(user.id)]
     
 
-    def __wildPokemonRanAway(self, user: discord.User, pokemon: PokemonClass):
-        pass
 
-    def __wildPokemonEncounter(self, user: discord.User, active: PokemonClass, pokemon: PokemonClass):
+    def __wildPokemonEncounter(self, user: discord.User, pokemon: PokemonClass, active: PokemonClass, descLog: str):
         stats = pokemon.getPokeStats()
         color = getTypeColor(pokemon.type1)
         # Create the embed object
         embed = discord.Embed(
             title=f"Wild {pokemon.pokemonName.capitalize()}",
-            description=f'''
-{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!
-{user.display_name} sent out {active.pokemonName}.
-            ''',
+            description=descLog,
             color=color
         )
         embed.set_author(name=f"{user.display_name}",
                         icon_url=str(user.avatar_url))
         
         types = pokemon.type1
-        if pokemon.type2 is not None:
+        # Pokemon are not guaranteed to have a second type.
+        # Check that the second type is not set to None and is not an empty string.
+        if pokemon.type2 is not None and pokemon.type2:
             types += ', ' + pokemon.type2
             
         embed.add_field(
-            name="Type", value=f"{types}", inline=True)
+            name="Type", value=f"{types}", inline=False)
 
         embed.add_field(
-            name="Level", value=f"{pokemon.currentLevel}", inline=False)
+            name="Level", value=f"{pokemon.currentLevel}", inline=True)
         embed.add_field(
-            name="HP", value=f"{pokemon.currentHP} / {stats['hp']}", inline=False)
+            name="HP", value=f"{pokemon.currentHP} / {stats['hp']}", inline=True)
 
         embed.set_thumbnail(url=pokemon.frontSpriteURL)
         embed.set_image(url = active.backSpriteURL)
+        
+        activeStats = active.getPokeStats()
+        embed.set_footer(text=f'''
+        {active.pokemonName.capitalize()}
+        Level: {active.currentLevel}
+        HP: {pokemon.currentHP} / {activeStats['hp']}
+        ''')
         return embed
 
 
