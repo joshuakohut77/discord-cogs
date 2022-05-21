@@ -30,10 +30,13 @@ class location:
     def getLocationByName(self, locationName: str):
         """ Queries and returns location based off of location name """
         # TODO replace this load with object in memory
-        locationsConfig = json.load(open('./configs/locations.json', 'r'))
+        locationsConfig = json.load(open('./configs/locationNames.json', 'r'))
 
         result = locationsConfig[locationName]
-        loc = LocationModel(result)
+        # TODO replace this load with object in memory
+        locationsConfig = json.load(open('./configs/locations.json', 'r'))
+        locResult = locationsConfig[str(result)]
+        loc = LocationModel(locResult)
         return loc
 
 
