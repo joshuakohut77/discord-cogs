@@ -1,4 +1,5 @@
 # trainer class
+import os
 import sys
 from typing import final
 import config
@@ -496,7 +497,9 @@ class trainer:
             result = db.querySingle(queryStr, { 'discordId': self.discordId })
             if result:
                 # TODO replace this load with object in memory
-                locationsConfig = json.load(open('./configs/locations.json', 'r'))
+                p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/locations.json')
+                locationsConfig = json.load(open(p, 'r'))
+                # locationsConfig = json.load(open('./configs/locations.json', 'r'))
                 locResult = locationsConfig[str(result[0])]
                 loc = LocationModel(locResult)
                 return loc
