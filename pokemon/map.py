@@ -52,57 +52,71 @@ class MapMixin(MixinMeta):
 
         file, btns = self.__createMapCard(location)
 
+        log_channel: discord.TextChannel = self.bot.get_channel('971280525312557157')
+        temp_message = await log_channel.send(
+            content=f'{user.display_name} is at {location.name}',
+            file = file
+        )
+        attachment: discord.Attachment = temp_message.attachments[0]
+
+        embed = discord.Embed(title = f'{location.name}', description = f'You are at {location.name}.')
+        embed.set_image(url = attachment.url)
+
         message = await ctx.send(
-            content=location.name,
-            file=file,
+            embed=embed,
             components=btns
         )
+        # message = await ctx.send(
+        #     content=location.name,
+        #     file=file,
+        #     components=btns
+        # )
         self.__locations[str(user.id)] = LocationState(str(user.id), location, message.id)
     
 
-    async def __createMapCard(self, location: LocationModel):
+    def __createMapCard(self, location: LocationModel, disabled = False):
         file = discord.File(f"{location.spritePath}", filename=f"{location.name}.png")
 
         ne = []
         sw = []
         if location.north is not None:
             ne.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬆', label=f"{location.north}"),
+                Button(style=ButtonStyle.gray, emoji='⬆', label=f"{location.north}", disabled=disabled),
                 self.__on_north,
             ))
         else:
             ne.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬆', label=f"--"),
+                Button(style=ButtonStyle.gray, emoji='⬆', label=f"--", disabled=disabled),
                 self.__on_north,
             ))
         if location.east is not None:
             ne.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='➡', label=f"{location.east}"),
+                Button(style=ButtonStyle.gray, emoji='➡', label=f"{location.east}", disabled=disabled),
                 self.__on_east,
             ))
         else:
             ne.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='➡', label=f"--"),
+                Button(style=ButtonStyle.gray, emoji='➡', label=f"--", disabled=disabled),
                 self.__on_east,
             ))
         if location.south is not None:
             sw.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬇', label=f"{location.south}"),
+                Button(style=ButtonStyle.gray, emoji='⬇', label=f"{location.south}", disabled=disabled),
                 self.__on_south,
             ))
         else:
             sw.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬇', label=f"--"),
+                Button(style=ButtonStyle.gray, emoji='⬇', label=f"--", disabled=disabled),
                 self.__on_south,
             ))
         if location.west is not None:
             sw.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬅', label=f"{location.west}"),
+                Button(style=ButtonStyle.gray, emoji='⬅', label=f"{location.west}", disabled=disabled),
                 self.__on_west,
             ))
         else:
             sw.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬅', label=f"--"),
+                Button(style=ButtonStyle.gray, emoji='⬅', label=f"--", disabled=disabled),
                 self.__on_west,
             ))
 
@@ -135,13 +149,27 @@ class MapMixin(MixinMeta):
         trainer.setLocation(direction.locationId)
         # await interaction.send(f'You walked North to {north}.')
 
-        file, btns = self.__createMapCard(direction)
+        file, btns = self.__createMapCard(direction, disabled=False)
+
+        log_channel: discord.TextChannel = self.bot.get_channel('971280525312557157')
+        temp_message = await log_channel.send(
+            content=f'{user.display_name} walked North to {north}',
+            file = file
+        )
+        attachment: discord.Attachment = temp_message.attachments[0]
+
+        embed = discord.Embed(title = f'{north}', description = f'You walked North to {north}.')
+        embed.set_image(url = attachment.url)
 
         message = await interaction.edit_origin(
-            content=f'You walked North to {north}.',
-            file=file,
+            embed=embed,
             components=btns
         )
+        # message = await interaction.edit_origin(
+        #     content=f'You walked North to {north}.',
+        #     file=file,
+        #     components=btns
+        # )
         self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
         
 
