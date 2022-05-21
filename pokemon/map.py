@@ -50,6 +50,17 @@ class MapMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         location = trainer.getLocation()
 
+        file, btns = self.__createMapCard(location)
+
+        message = await ctx.send(
+            content=location.name,
+            file=file,
+            components=btns
+        )
+        self.__locations[str(user.id)] = LocationState(str(user.id), location, message.id)
+    
+
+    async def __createMapCard(self, location: LocationModel):
         file = discord.File(f"{location.spritePath}", filename=f"{location.name}.png")
 
         ne = []
@@ -94,14 +105,11 @@ class MapMixin(MixinMeta):
                 Button(style=ButtonStyle.gray, emoji='⬅', label=f"--"),
                 self.__on_west,
             ))
-            # emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument='⬅️')
 
-        message = await ctx.send(
-            content=location.name,
-            file=file,
-            components=[ne, sw]
-        )
-        self.__locations[str(user.id)] = LocationState(str(user.id), location, message.id)
+        btns = [ne, sw]
+
+        return file, btns
+
 
     async def __on_north(self, interaction: Interaction):
         user = interaction.user
@@ -125,7 +133,16 @@ class MapMixin(MixinMeta):
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        await interaction.send(f'You walked North to {north}.')
+        # await interaction.send(f'You walked North to {north}.')
+
+        file, btns = self.__createMapCard(direction)
+
+        message = await interaction.edit_origin(
+            content=f'You walked North to {north}.',
+            file=file,
+            components=btns
+        )
+        self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
         
 
     async def __on_south(self, interaction: Interaction):
@@ -150,7 +167,17 @@ class MapMixin(MixinMeta):
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        await interaction.send(f'You walked South to {south}.')
+        # await interaction.send(f'You walked South to {south}.')
+
+        file, btns = self.__createMapCard(direction)
+
+        message = await interaction.edit_origin(
+            content=f'You walked South to {south}.',
+            file=file,
+            components=btns
+        )
+        self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
+
 
     async def __on_east(self, interaction: Interaction):
         user = interaction.user
@@ -174,7 +201,17 @@ class MapMixin(MixinMeta):
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        await interaction.send(f'You walked East to {east}.')
+        # await interaction.send(f'You walked East to {east}.')
+
+        file, btns = self.__createMapCard(direction)
+
+        message = await interaction.edit_origin(
+            content=f'You walked East to {east}.',
+            file=file,
+            components=btns
+        )
+        self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
+
 
     async def __on_west(self, interaction: Interaction):
         user = interaction.user
@@ -198,7 +235,16 @@ class MapMixin(MixinMeta):
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        await interaction.send(f'You walked West to {west}.')
+        # await interaction.send(f'You walked West to {west}.')
+
+        file, btns = self.__createMapCard(direction)
+
+        message = await interaction.edit_origin(
+            content=f'You walked West to {west}.',
+            file=file,
+            components=btns
+        )
+        self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
 
 
     def __checkMapState(self, user: discord.User, message: discord.Message):
