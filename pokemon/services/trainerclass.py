@@ -417,29 +417,6 @@ class trainer:
         finally:
             return pokemon
 
-    def getPokedex(self):
-        """ returns a list of dictionary from the trainers pokedex """
-        pokedex = []
-        try:
-            db = dbconn()
-            queryString = '''SELECT "pokemonId", "pokemonName", "mostRecent" 
-                FROM pokedex WHERE "discord_id"=%(discordId)s ORDER BY "pokemonId"'''
-            results = db.queryAll(queryString, { 'discordId': self.discordId })
-            for row in results:
-                pokemonId = row[0]
-                pokemonName = row[1]
-                mostRecent = row[2]
-                pokeDict = {'id': pokemonId,
-                            'name': pokemonName, 'lastSeen': mostRecent}
-                pokedex.append(pokeDict)
-        except:
-            self.statuscode = 96
-            logger.error(excInfo=sys.exc_info())
-        finally:
-            # delete and close connection
-            del db
-            return pokedex
-
     def heal(self, pokeTrainerId, item):
         """ uses a potion to heal a pokemon """
         # this function is only designed to work with potion, super-potion, hyper-potion, max-potion
