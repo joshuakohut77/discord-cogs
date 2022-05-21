@@ -497,8 +497,7 @@ class trainer:
             if result:
                 # TODO replace this load with object in memory
                 locationsConfig = json.load(open('./configs/locations.json', 'r'))
-
-                locResult = locationsConfig[result]
+                locResult = locationsConfig[str(result[0])]
                 loc = LocationModel(locResult)
                 return loc
             else:
