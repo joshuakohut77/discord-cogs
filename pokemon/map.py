@@ -151,7 +151,7 @@ class MapMixin(MixinMeta):
 
         file, btns = self.__createMapCard(direction, disabled=False)
 
-        log_channel: discord.TextChannel = self.bot.get_channel('971280525312557157')
+        log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
         temp_message = await log_channel.send(
             content=f'{user.display_name} walked North to {north}',
             file = file
@@ -199,11 +199,26 @@ class MapMixin(MixinMeta):
 
         file, btns = self.__createMapCard(direction)
 
+        log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
+        temp_message = await log_channel.send(
+            content=f'{user.display_name} walked South to {south}',
+            file = file
+        )
+        attachment: discord.Attachment = temp_message.attachments[0]
+
+        embed = discord.Embed(title = f'{south}', description = f'You walked South to {south}.')
+        embed.set_image(url = attachment.url)
+
         message = await interaction.edit_origin(
-            content=f'You walked South to {south}.',
-            file=file,
+            embed=embed,
             components=btns
         )
+
+        # message = await interaction.edit_origin(
+        #     content=f'You walked South to {south}.',
+        #     file=file,
+        #     components=btns
+        # )
         self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
 
 
@@ -233,11 +248,25 @@ class MapMixin(MixinMeta):
 
         file, btns = self.__createMapCard(direction)
 
+        log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
+        temp_message = await log_channel.send(
+            content=f'{user.display_name} walked East to {east}',
+            file = file
+        )
+        attachment: discord.Attachment = temp_message.attachments[0]
+
+        embed = discord.Embed(title = f'{east}', description = f'You walked East to {east}.')
+        embed.set_image(url = attachment.url)
+
         message = await interaction.edit_origin(
-            content=f'You walked East to {east}.',
-            file=file,
+            embed=embed,
             components=btns
         )
+        # message = await interaction.edit_origin(
+        #     content=f'You walked East to {east}.',
+        #     file=file,
+        #     components=btns
+        # )
         self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
 
 
@@ -267,11 +296,25 @@ class MapMixin(MixinMeta):
 
         file, btns = self.__createMapCard(direction)
 
+        log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
+        temp_message = await log_channel.send(
+            content=f'{user.display_name} walked West to {west}',
+            file = file
+        )
+        attachment: discord.Attachment = temp_message.attachments[0]
+
+        embed = discord.Embed(title = f'{west}', description = f'You walked West to {west}.')
+        embed.set_image(url = attachment.url)
+
         message = await interaction.edit_origin(
-            content=f'You walked West to {west}.',
-            file=file,
+            embed=embed,
             components=btns
         )
+        # message = await interaction.edit_origin(
+        #     content=f'You walked West to {west}.',
+        #     file=file,
+        #     components=btns
+        # )
         self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
 
 
