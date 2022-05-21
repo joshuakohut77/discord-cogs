@@ -10,6 +10,7 @@ from encounterclass import encounter
 from inventoryclass import inventory as inv
 from keyitemsclass import keyitems as kitems
 from leaderboardclass import leaderboard
+from pokedexclass import pokedex
 from locationclass2 import location as LocationClass
 from loggerclass import logger as log
 from pokeclass2 import Pokemon as pokeClass
@@ -416,29 +417,6 @@ class trainer:
         finally:
             return pokemon
 
-    def getPokedex(self):
-        """ returns a list of dictionary from the trainers pokedex """
-        pokedex = []
-        try:
-            db = dbconn()
-            queryString = '''SELECT "pokemonId", "pokemonName", "mostRecent" 
-                FROM pokedex WHERE "discord_id"=%(discordId)s ORDER BY "pokemonId"'''
-            results = db.queryAll(queryString, { 'discordId': self.discordId })
-            for row in results:
-                pokemonId = row[0]
-                pokemonName = row[1]
-                mostRecent = row[2]
-                pokeDict = {'id': pokemonId,
-                            'name': pokemonName, 'lastSeen': mostRecent}
-                pokedex.append(pokeDict)
-        except:
-            self.statuscode = 96
-            logger.error(excInfo=sys.exc_info())
-        finally:
-            # delete and close connection
-            del db
-            return pokedex
-
     def heal(self, pokeTrainerId, item):
         """ uses a potion to heal a pokemon """
         # this function is only designed to work with potion, super-potion, hyper-potion, max-potion
@@ -519,6 +497,11 @@ class trainer:
             self.statuscode = locObj.statuscode
             self.message = locObj.message
     
+    def getPokedex(self):
+        """ returns a trainers pokedex """
+        trainersPokedex = pokedex(self.discordId, None)
+        return trainersPokedex
+
     def getPartySize(self):
         """ returns a count of trainers party size """
         partySize = 0
