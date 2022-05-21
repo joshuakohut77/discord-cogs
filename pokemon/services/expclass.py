@@ -32,7 +32,7 @@ class experiance:
         p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/pokemon.json')
         pokemonConfig = json.load(open(p, 'r'))
 
-        effortValueDict = pokemonConfig[self.pokemon.name]['effort']
+        effortValueDict = pokemonConfig[self.pokemon.pokemonName]['effort']
         return effortValueDict
 
 

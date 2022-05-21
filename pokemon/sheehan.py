@@ -14,7 +14,7 @@ from services.inventoryclass import inventory as InventoryClass
 
 
 trainer = TrainerClass('509767223938777108')
-loc = trainer.getLocation()
+loc = trainer.encounter('walk')
 # active = trainer.getPokemonById(9)
 
 
