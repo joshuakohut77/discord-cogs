@@ -1,0 +1,272 @@
+{
+    "68": [
+      {
+        "item": "poke-ball",
+        "price": 200
+      },
+      {
+        "item": "potion",
+        "price": 300
+      },
+      {
+        "item": "super-potion",
+        "price": 700
+      },
+      {
+        "item": "antidote",
+        "price": 100
+      },
+      {
+        "item": "burn-heal",
+        "price": 250
+      },
+      {
+        "item": "paralyze-heal",
+        "price": 200
+      },
+      {
+        "item": "escape-rope",
+        "price": 550
+      },
+      {
+        "item": "awakening",
+        "price": 200
+      },
+      {
+        "item": "repel",
+        "price": 350
+      }
+    ],
+    "71": [
+      {
+        "item": "ultra-ball",
+        "price": 1200
+      },
+      {
+        "item": "great-ball",
+        "price": 600
+      },
+      {
+        "item": "max-repel",
+        "price": 700
+      },
+      {
+        "item": "hyper-potion",
+        "price": 1500
+      },
+      {
+        "item": "escape-rope",
+        "price": 550
+      },
+      {
+        "item": "full-heal",
+        "price": 600
+      },
+      {
+        "item": "revive",
+        "price": 1500
+      }
+    ],
+    "76": [
+      {
+        "item": "ultra-ball",
+        "price": 1200
+      },
+      {
+        "item": "great-ball",
+        "price": 600
+      },
+      {
+        "item": "super-potion",
+        "price": 700
+      },
+      {
+        "item": "hyper-potion",
+        "price": 1500
+      },
+      {
+        "item": "full-heal",
+        "price": 600
+      },
+      {
+        "item": "revive",
+        "price": 1500
+      },
+      {
+        "item": "super-repel",
+        "price": 500
+      }
+    ],
+    "151": [
+      {
+        "item": "poke-ball",
+        "price": 200
+      },
+      {
+        "item": "super-potion",
+        "price": 700
+      },
+      {
+        "item": "paralyze-heal",
+        "price": 200
+      },
+      {
+        "item": "ice-heal",
+        "price": 250
+      },
+      {
+        "item": "awakening",
+        "price": 200
+      },
+      {
+        "item": "repel",
+        "price": 350
+      }
+    ],
+    "154": [
+      {
+        "item": "poke-ball",
+        "price": 200
+      },
+      {
+        "item": "potion",
+        "price": 300
+      },
+      {
+        "item": "antidote",
+        "price": 100
+      },
+      {
+        "item": "burn-heal",
+        "price": 250
+      },
+      {
+        "item": "paralyze-heal",
+        "price": 200
+      }
+    ],
+    "231": [
+      {
+        "item": "poke-ball",
+        "price": 200
+      },
+      {
+        "item": "potion",
+        "price": 300
+      },
+      {
+        "item": "antidote",
+        "price": 100
+      },
+      {
+        "item": "burn-heal",
+        "price": 250
+      },
+      {
+        "item": "paralyze-heal",
+        "price": 200
+      },
+      {
+        "item": "escape-rope",
+        "price": 550
+      },
+      {
+        "item": "awakening",
+        "price": 200
+      }
+    ],
+    "232": [
+      {
+        "item": "great-ball",
+        "price": 600
+      },
+      {
+        "item": "super-potion",
+        "price": 700
+      },
+      {
+        "item": "revive",
+        "price": 1500
+      },
+      {
+        "item": "escape-rope",
+        "price": 550
+      },
+      {
+        "item": "super-repel",
+        "price": 500
+      },
+      {
+        "item": "antidote",
+        "price": 100
+      },
+      {
+        "item": "burn-heal",
+        "price": 250
+      },
+      {
+        "item": "ice-heal",
+        "price": 250
+      },
+      {
+        "item": "paralyze-heal",
+        "price": 200
+      }
+    ],
+    "233": [
+      {
+        "item": "ultra-ball",
+        "price": 1200
+      },
+      {
+        "item": "great-ball",
+        "price": 600
+      },
+      {
+        "item": "full-restore",
+        "price": 3000
+      },
+      {
+        "item": "max-potion",
+        "price": 2500
+      },
+      {
+        "item": "full-heal",
+        "price": 600
+      },
+      {
+        "item": "revive",
+        "price": 1500
+      },
+      {
+        "item": "max-repel",
+        "price": 700
+      }
+    ],
+    "234": [
+      {
+        "item": "great-ball",
+        "price": 600
+      },
+      {
+        "item": "hyper-potion",
+        "price": 1500
+      },
+      {
+        "item": "max-repel",
+        "price": 700
+      },
+      {
+        "item": "escape-rope",
+        "price": 550
+      },
+      {
+        "item": "full-heal",
+        "price": 600
+      },
+      {
+        "item": "revive",
+        "price": 1500
+      }
+    ]
+  }
