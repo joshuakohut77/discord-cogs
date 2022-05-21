@@ -29,25 +29,13 @@ class location:
 
     def getLocationByName(self, locationName: str):
         """ Queries and returns location based off of location name """
-        try:
-            db = dbconn()
-            queryStr = """
-            SELECT
-                *
-            FROM locations
-                WHERE locations."name" = %(name)s
-            """
-            result = db.querySingle(queryStr, { 'name': locationName })
-            if result:
-                loc = LocationModel(result)
-                return loc
-            else:
-                self.statuscode = 96
-                self.message = 'Location not found'
-        except:
-            self.statuscode = 96
-        finally:
-            del db
+        # TODO replace this load with object in memory
+        locationsConfig = json.load(open('./configs/locations.json', 'r'))
+
+        result = locationsConfig[locationName]
+        loc = LocationModel(result)
+        return loc
+
 
     def getMethods(self, areaEncounters=None):
         """ returns a list of methods available in that area """
