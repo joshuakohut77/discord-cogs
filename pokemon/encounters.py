@@ -300,8 +300,8 @@ class EncountersMixin(MixinMeta):
         embed = discord.Embed(
             title=f"Wild {pokemon.pokemonName.capitalize()}",
             description=f'''
-            {user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!
-            {user.display_name} sent out {active.pokemonName}.
+{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!
+{user.display_name} sent out {active.pokemonName}.
             ''',
             color=color
         )
