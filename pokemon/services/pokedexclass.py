@@ -1,9 +1,12 @@
 # pokedex class
+import os
+import json
 import sys
 from datetime import datetime
 from dbclass import db as dbconn
 from loggerclass import logger as log
 from pokeclass import Pokemon as PokemonClass
+from models.pokedex import PokedexModel
 
 # Class Logger
 logger = log()
@@ -16,7 +19,8 @@ class pokedex:
 
         self.discordId = discordId
         self.pokemon = pokemon
-        self.__pokedex()
+        if pokemon is not None:
+            self.__pokedex()
 
     def __pokedex(self):
         """ will update the database with information on the pokemon """
@@ -40,6 +44,38 @@ class pokedex:
                 values = {'discordId': self.discordId, 'pokemonId': str(self.pokemon.pokedexId),
                           'pokemonName': self.pokemon.pokemonName, 'now': now}
             db.execute(updateQuery, values)
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            # delete and close connection
+            del db
+
+    def loadPokedex(self):
+        """ returns the pokedex of a trainer in a model format """
+        try:
+            db = dbconn()
+            p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/pokemon.json')
+            pokemonConfig = json.load(open(p, 'r'))
+            queryString = '''SELECT "pokemonId", "pokemonName", "mostRecent" FROM pokedex 
+                            WHERE "discord_id"=%(discordId)s'''
+            values = { 'discordId': self.discordId }
+            result = db.queryAll(queryString, values)
+
+            pokedexList = []
+            pokemonJson = {}
+            for row in result:
+                pokemonJson['pokemonId'] = row[0]
+                pokemonJson['pokemonName'] = row[1]
+                pokemonJson['mostRecent'] = row[2]
+                pokemonJson['height'] = pokemonConfig[row[1]]['height']
+                pokemonJson['weight'] = pokemonConfig[row[1]]['weight']
+                pokemonJson['description'] = pokemonConfig[row[1]]['description']
+
+                pokedexList.append(PokedexModel(pokemonJson))
+            
+            return pokedexList
+
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
