@@ -580,13 +580,15 @@ class Pokemon:
     def __getPokemonNameById(self, pokedexId):
         """ returns a pokemon name from thier id """
         # TODO replace this load with object in memory
-        pokemonIdConfig = json.load(open('./configs/pokemonId.json', 'r'))
+        p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/pokemonId.json')
+        pokemonIdConfig = json.load(open(p, 'r'))
         return pokemonIdConfig[str(pokedexId)]
 
     def __loadPokemonConfig(self):
         """ loads and returns the pokmonconfig for the current pokemon """
         # TODO replace this load with object in memory
-        pokemonConfig = json.load(open('./configs/pokemon.json', 'r'))
+        p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/pokemon.json')
+        pokemonConfig = json.load(open(p, 'r'))
         
         # check if pokedexId is int and convert to string name
         if type(self.pokedexId) is int:
@@ -600,7 +602,8 @@ class Pokemon:
     def __loadEvolutionConfig(self):
         """ loads and returns the evolutiononfig for the current pokemon """
         # TODO replace this load with object in memory
-        evolutionConfig = json.load(open('./configs/evolutions.json', 'r'))
+        p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/evolutions.json')
+        evolutionConfig = json.load(open(p, 'r'))
 
         # check if pokedexId is int and convert to string name
         if type(self.pokedexId) is int:

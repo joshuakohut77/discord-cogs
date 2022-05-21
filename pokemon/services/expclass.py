@@ -1,5 +1,6 @@
 # pokemon experiance class
 # this is designed to calculate the experience of the defeated pokemon
+import os
 import json
 from pokeclass import Pokemon as PokemonClass
 
@@ -28,7 +29,9 @@ class experiance:
     def getEffortValue(self):
         """ returns dictionary of effort values gained upon defeat """
         # TODO replace this load with object in memory
-        pokemonConfig = json.load(open('./configs/pokemon.json', 'r'))
+        p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/pokemon.json')
+        pokemonConfig = json.load(open(p, 'r'))
+
         effortValueDict = pokemonConfig[self.pokemon.name]['effort']
         return effortValueDict
 
