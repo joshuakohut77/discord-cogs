@@ -342,9 +342,9 @@ class EncountersMixin(MixinMeta):
         
         activeStats = active.getPokeStats()
         embed.set_footer(text=f'''
-        {active.pokemonName.capitalize()}
-        Level: {active.currentLevel}
-        HP: {pokemon.currentHP} / {activeStats['hp']}
+**{active.pokemonName.capitalize()}**
+Level: {active.currentLevel}
+HP: {active.currentHP} / {activeStats['hp']}
         ''')
         return embed
 
