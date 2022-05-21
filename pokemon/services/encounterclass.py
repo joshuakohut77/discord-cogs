@@ -1,5 +1,5 @@
 # encounter class
-
+import os
 import sys
 import config
 import json
@@ -351,8 +351,9 @@ class encounter:
     def __loadMovesConfig(self, move):
         """ loads and returns the evolutiononfig for the current pokemon """
         # TODO replace this load with object in memory
-        movesConfig = json.load(open('./configs/moves.json', 'r'))
-
+        p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/moves.json')
+        movesConfig = json.load(open(p, 'r'))
+        
         # this is the evolution json object from the config file
         moveJson = movesConfig[move]
         return moveJson

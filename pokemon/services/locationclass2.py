@@ -1,4 +1,5 @@
 # location class
+import os
 import sys
 import config
 import json
@@ -29,11 +30,13 @@ class location:
     def getLocationByName(self, locationName: str):
         """ Queries and returns location based off of location name """
         # TODO replace this load with object in memory
-        locationsConfig = json.load(open('./configs/locationNames.json', 'r'))
+        p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/locationNames.json')
+        locationsConfig = json.load(open(p, 'r'))
 
         result = locationsConfig[locationName]
         # TODO replace this load with object in memory
-        locationsConfig = json.load(open('./configs/locations.json', 'r'))
+        p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/locations.json')
+        locationsConfig = json.load(open(p, 'r'))
         locResult = locationsConfig[str(result)]
         loc = LocationModel(locResult)
         return loc
@@ -45,7 +48,8 @@ class location:
         locationId = 0
         try:
             # TODO replace this load with object in memory
-            encountersConfig = json.load(open('./configs/encounters.json', 'r'))
+            p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/encounters.json')
+            encountersConfig = json.load(open(p, 'r'))
             if self.discordId is None:
                 self.statuscode = 420
                 self.message = 'discordId required in location constructor'
@@ -61,7 +65,8 @@ class location:
             
             # This next section checks if there's any valid quests in current area
             # TODO replace this load with object in memory
-            questsConfig = json.load(open('./configs/quests.json', 'r'))
+            p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/quests.json')
+            questsConfig = json.load(open(p, 'r'))
             quest = QuestModel(questsConfig[str(locationId)])
             questObj = qObj(self.discordId)
             if quest.prerequsites != []:
@@ -84,7 +89,8 @@ class location:
                 self.statuscode = 420
                 self.message = 'discordId required in location constructor'
             else:
-                encountersConfig = json.load(open('./configs/encounters.json', 'r'))
+                p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/encounters.json')
+                encountersConfig = json.load(open(p, 'r'))
                 locationId = self.__getCurrentLocation()
                 if locationId > 0:
                     areaEncounters = encountersConfig[str(locationId)]
@@ -113,7 +119,8 @@ class location:
 
             # This next section checks if there's any valid quests in current area
             # TODO replace this load with object in memory
-            questsConfig = json.load(open('./configs/quests.json', 'r'))
+            p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/quests.json')
+            questsConfig = json.load(open(p, 'r'))
             quest = QuestModel(questsConfig[str(locationId)])
             questObj = qObj(self.discordId)
             if quest.blockers != []:

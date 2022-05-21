@@ -1,5 +1,5 @@
 # store class
-
+import os
 import sys
 import json
 from dbclass import db as dbconn
@@ -369,7 +369,8 @@ class store:
         price = 0
         try:
             # TODO replace this load with object in memory
-            pricingConfig = json.load(open('./configs/itempricing.json', 'r'))
+            p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/itempricing.json')
+            pricingConfig = json.load(open(p, 'r'))
             price = pricingConfig[itemName]
         except:
             self.statuscode = 96
