@@ -87,7 +87,25 @@ class EncountersMixin(MixinMeta):
             await interaction.send('This is not for you.')
             return
 
-        await interaction.respond(type=5, content="Walking through tall grass...")
+        location = LocationClass(str(user.id))
+        methods = location.getMethods()
+
+        btns = []
+        for method in methods:
+            color = ButtonStyle.gray
+            if method == interaction.custom_id:
+                color = ButtonStyle.green
+            
+            btns.append(
+                Button(style=color, label=f"{method}", custom_id=f'{method}', disabled=True)
+            )
+
+        await interaction.edit_origin(
+            content="Walking through tall grass...",
+            components=[btns]
+        )
+
+        # await interaction.respond(type=5, content="Walking through tall grass...")
 
         state = self.__useractions[str(user.id)]
         method = interaction.custom_id
@@ -96,10 +114,11 @@ class EncountersMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         pokemon: PokemonClass = trainer.encounter(method)
         if pokemon is None:
-            await interaction.send('No pokemon encountered.')
+            await interaction.channel.send('No pokemon encountered.')
+            # await interaction.send('No pokemon encountered.')
             return
         
-        await interaction.send(f'You encountered a wild {pokemon.pokemonName}!')
+        # await interaction.send(f'You encountered a wild {pokemon.pokemonName}!')
 
         embed = self.__wildPokemonEncounter(user, pokemon)
 
