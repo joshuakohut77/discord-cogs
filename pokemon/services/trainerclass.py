@@ -500,7 +500,7 @@ class trainer:
     def getPokedex(self):
         """ returns a trainers pokedex """
         trainersPokedex = pokedex(self.discordId, None)
-        return trainersPokedex
+        return trainersPokedex.getPokedex()
 
     def getPartySize(self):
         """ returns a count of trainers party size """

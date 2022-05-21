@@ -51,7 +51,7 @@ class pokedex:
             # delete and close connection
             del db
 
-    def loadPokedex(self):
+    def getPokedex(self):
         """ returns the pokedex of a trainer in a model format """
         try:
             db = dbconn()
