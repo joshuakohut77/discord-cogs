@@ -289,19 +289,11 @@ class encounter:
     def __getDamageTypeMultiplier(self, moveType, defendingType):
         """ returns a multiplier for the type-effectiveness """
         dmgMult = None
-        try:
-            db = dbconn()
-            # TODO update this query string to not use string replacement like this. Psycog has a method 
-            queryString = """SELECT %s FROM "type-effectiveness" WHERE source = '%s'""" %(defendingType, moveType)
-            result = db.querySingle(queryString)
-            dmgMult = result[0]
-        except:
-            self.statuscode = 96
-            logger.error(excInfo=sys.exc_info())
-        finally:
-            # delete and close connection
-            del db
-            return dmgMult
+        # TODO replace this load with object in memory
+        p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/typeEffectiveness.json')
+        typeEffectivenessConfig = json.load(open(p, 'r'))
+        dmgMult = typeEffectivenessConfig[moveType][defendingType]
+        return dmgMult
 
     def __removeNullMoves(self, moveList):
         """ returns a list of moves without any nulls """
