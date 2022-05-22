@@ -11,7 +11,7 @@ from leaderboardclass import leaderboard
 from loggerclass import logger as log
 from uniqueencounters import uniqueEncounters as uEnc
 from pokedexclass import pokedex
-from pokeclass2 import Pokemon as PokemonClass
+from pokeclass import Pokemon as PokemonClass
 
 # Global Config Variables
 MAX_BATTLE_TURNS = 50

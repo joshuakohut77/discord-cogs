@@ -18,7 +18,7 @@ from services.trainerclass import trainer as TrainerClass
 from models.state import PokemonState
 
 from .abcd import MixinMeta
-from services.pokeclass2 import Pokemon as PokemonClass
+from services.pokeclass import Pokemon as PokemonClass
 from .functions import (createStatsEmbed, getTypeColor,
                         createPokemonAboutEmbed)
 
