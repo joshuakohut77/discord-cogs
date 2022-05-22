@@ -337,7 +337,7 @@ class EncountersMixin(MixinMeta):
             self.__on_catch_click,
         ))
 
-        message = await interaction.channel.send(
+        message = await interaction.edit_origin(
             # content=f'{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!',
             embed=embed,
             components=[btns]
