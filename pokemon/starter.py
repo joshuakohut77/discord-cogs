@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 from redbot.core import commands
 
 from services.trainerclass import trainer as TrainerClass
-from services.pokeclass2 import Pokemon as PokemonClass
+from services.pokeclass import Pokemon as PokemonClass
 from models.state import PokemonState
 
 from .abcd import MixinMeta
