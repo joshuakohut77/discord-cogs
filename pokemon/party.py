@@ -176,7 +176,7 @@ class PartyMixin(MixinMeta):
 
             pokeList = trainer.getPokemon(party=True)
             pokeLength = len(pokeList)
-            self.setPokemonState(user, PokemonState(str(user.id), state.messageId, pokeList, state.active, state.idx))
+            self.setPokemonState(user, PokemonState(str(user.id), state.messageId, state.card, pokeList, state.active, state.idx))
 
             if pokeLength == 1:
                 state.pokemon = pokeList
