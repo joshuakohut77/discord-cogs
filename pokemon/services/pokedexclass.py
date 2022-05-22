@@ -82,3 +82,21 @@ class pokedex:
         finally:
             # delete and close connection
             del db
+
+    @staticmethod
+    def getPokedexEntry(pokemon: PokemonClass):
+        """ returns the pokedex of a trainer in a model format """
+        p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/pokemon.json')
+        pokemonConfig = json.load(open(p, 'r'))
+
+        pokemonJson = {}
+        
+        pokemonJson['pokemonId'] = pokemon.pokedexId
+        pokemonJson['pokemonName'] = pokemon.pokemonName
+        pokemonJson['mostRecent'] = None
+        pokemonJson['height'] = pokemonConfig[pokemon.pokemonName]['height']
+        pokemonJson['weight'] = pokemonConfig[pokemon.pokemonName]['weight']
+        pokemonJson['description'] = pokemonConfig[pokemon.pokemonName]['description']
+
+        entry = PokedexModel(pokemonJson)
+        return entry

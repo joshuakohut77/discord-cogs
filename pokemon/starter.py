@@ -202,14 +202,3 @@ class StarterMixin(MixinMeta):
         await interaction.channel.send(f'{user.display_name} set their active pokemon to {pokemon.pokemonName.capitalize()}.')
 
         await self.__on_stats_click(interaction)
-
-
-    # def __checkTrainerState(self, user: discord.User, message: discord.Message):
-    #     state: TrainerState
-    #     if str(user.id) not in self.__trainers.keys():
-    #         return False
-    #     else:
-    #         state = self.__trainers[str(user.id)]
-    #         if state.messageId != message.id:
-    #             return False
-    #     return True
