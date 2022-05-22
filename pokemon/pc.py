@@ -55,7 +55,7 @@ class PcMixin(MixinMeta):
             await ctx.reply(content=f'{user.display_name} does not have any Pokemon.')
             return
 
-        state = PokemonState(str(user.id), None, pokeList, active.trainerId, i)
+        state = PokemonState(str(user.id), None, DisplayCard.STATS, pokeList, active.trainerId, i)
         embed, btns = self.__pokemonPcCard(user, state, DisplayCard.STATS)
 
         # if interaction is None:
