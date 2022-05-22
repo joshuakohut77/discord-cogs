@@ -11,9 +11,9 @@ from inventoryclass import inventory as inv
 from keyitemsclass import keyitems as kitems
 from leaderboardclass import leaderboard
 from pokedexclass import pokedex
-from locationclass2 import location as LocationClass
+from locationclass import location as LocationClass
 from loggerclass import logger as log
-from pokeclass2 import Pokemon as pokeClass
+from pokeclass import Pokemon as pokeClass
 from uniqueencounters import uniqueEncounters as uEnc
 from datetime import datetime
 from time import time

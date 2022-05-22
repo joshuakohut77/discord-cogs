@@ -8,7 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(
     os.path.realpath(__file__)), 'services'))
 
 from services.trainerclass import trainer as TrainerClass
-from services.locationclass2 import location as LocationClass
+from services.locationclass import location as LocationClass
 from services.storeclass import store as StoreClass
 from services.inventoryclass import inventory as InventoryClass
 
