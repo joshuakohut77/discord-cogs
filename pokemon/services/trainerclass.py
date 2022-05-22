@@ -198,11 +198,12 @@ class trainer:
             for row in results:
                 pokemonId = row[0]
                 pokemon = pokeClass(self.discordId)
-                pokemon.load(pokemonId=pokemonId)
-                if pokemon.statuscode == 96:
-                    self.statuscode = 96
-                    self.message = "error occured during pokemon load()"
-                    return
+                pokemon.trainerId = pokemonId
+                # pokemon.load(pokemonId=pokemonId)
+                # if pokemon.statuscode == 96:
+                #     self.statuscode = 96
+                #     self.message = "error occured during pokemon load()"
+                #     return
                 pokemonList.append(pokemon)
         except:
             self.statuscode = 96
