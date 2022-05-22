@@ -3,6 +3,7 @@ from discord import (Embed, Member)
 from discord.colour import Colour
 
 from services.pokeclass import Pokemon as PokemonClass
+from models.pokedex import PokedexModel
 
 NORMAL_GREY = 0xa8a77d
 GRASS_GREEN = 0x77bb41
@@ -100,6 +101,7 @@ def createPokemonEmbedWithFile(user: Member, pokemon: PokemonClass):
     embed.set_thumbnail(url=f"attachment://{pokemon.pokemonName}.png")
     return embed, file
 
+
 def createPokemonAboutEmbed(user: Member, pokemon: PokemonClass) -> Embed:
     color = getTypeColor(pokemon.type1)
 
@@ -174,6 +176,29 @@ def createStatsEmbed(user: Member, pokemon: PokemonClass):
         name="Special Defense", value=f"{stats['special-defense']}", inline=True)
     embed.add_field(
         name="Speed", value=f"{stats['speed']}", inline=True)
+
+    embed.set_thumbnail(url=pokemon.frontSpriteURL)
+    return embed
+
+
+def createPokedexEntryEmbed(user: Member, pokemon: PokemonClass, dex: PokedexModel):
+    color = getTypeColor(pokemon.type1)
+
+    # Create the embed object
+    embed = discord.Embed(title=f"#{pokemon.trainerId}  {pokemon.pokemonName.capitalize()}", color=color)
+    embed.set_author(name=f"{user.display_name}",
+                    icon_url=str(user.avatar_url))
+    
+    types = pokemon.type1
+    if pokemon.type2 is not None:
+        types += ', ' + pokemon.type2
+        
+    embed.add_field(name="Type", value=f"{types}", inline=True)
+    
+    embed.add_field(name="Height", value=f"{dex.height}", inline=True)
+    embed.add_field(name="Weight", value=f"{dex.weight}", inline=True)
+
+    embed.add_field(name="Description", value=f"{dex.description}", inline=False)
 
     embed.set_thumbnail(url=pokemon.frontSpriteURL)
     return embed

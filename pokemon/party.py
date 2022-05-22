@@ -277,6 +277,11 @@ class PartyMixin(MixinMeta):
 
         pokemon: PokemonClass = pokeList[i]
 
+        # Kind of a hack, but if the property is still set to None,
+        # then we probably haven't loaded this pokemon yet.
+        if pokemon.pokemonName is None:
+            pokemon.load(pokemonId=pokemon.trainerId)
+
         embed = createStatsEmbed(user, pokemon)
         
         firstRowBtns = []
@@ -340,6 +345,12 @@ class PartyMixin(MixinMeta):
         activeId = state.active
 
         pokemon: PokemonClass = pokeList[i]
+
+        # Kind of a hack, but if the property is still set to None,
+        # then we probably haven't loaded this pokemon yet.
+        if pokemon.pokemonName is None:
+            pokemon.load(pokemonId=pokemon.trainerId)
+
         embed = createPokemonAboutEmbed(user, pokemon)
         
         firstRowBtns = []

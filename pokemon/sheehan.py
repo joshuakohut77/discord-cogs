@@ -11,11 +11,15 @@ from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
 from services.storeclass import store as StoreClass
 from services.inventoryclass import inventory as InventoryClass
+from services.pokedexclass import pokedex as PokedexClass
 
 
 trainer = TrainerClass('509767223938777108')
 dex = trainer.getPokedex()
-dexlist = dex.loadPokedex()
+
+entry = PokedexClass.getPokedexEntry(trainer.getStarterPokemon())
+
+# dexlist = dex.loadPokedex()
 # loc = trainer.encounter('walk')
 # active = trainer.getPokemonById(9)
 

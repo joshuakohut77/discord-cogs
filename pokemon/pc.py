@@ -9,17 +9,20 @@ from discord import message
 from discord_components import (
     DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
 
+from models.pokedex import PokedexModel
+
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
 from redbot.core import commands
 
 from services.trainerclass import trainer as TrainerClass
+from services.pokedexclass import pokedex as PokedexClass
 from models.state import PokemonState
 
 from .abcd import MixinMeta
 from services.pokeclass import Pokemon as PokemonClass
-from .functions import (createStatsEmbed, getTypeColor,
+from .functions import (createPokedexEntryEmbed, createStatsEmbed, getTypeColor,
                         createPokemonAboutEmbed)
 
 
@@ -213,12 +216,23 @@ class PcMixin(MixinMeta):
         if trainer.statuscode == 69:
             await interaction.send(f'{pokemon.pokemonName} is now in your party.')
             return
-        
 
-    
 
     async def __on_pokedex_click(self, interaction: Interaction):
-        await interaction.send('Pokedex is not implemented yet')
+        user = interaction.user
+
+        if not self.checkPokemonState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+        state = self.getPokemonState(user)
+
+        embed, btns = self.__pokemonDexCard(user, state)
+
+        message = await interaction.edit_origin(embed=embed, components=btns)
+        
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
+
 
 
     async def __on_release_click(self, interaction: Interaction):
@@ -339,6 +353,12 @@ class PcMixin(MixinMeta):
         activeId = state.active
 
         pokemon: PokemonClass = pokeList[i]
+
+        # Kind of a hack, but if the property is still set to None,
+        # then we probably haven't loaded this pokemon yet.
+        if pokemon.pokemonName is None:
+            pokemon.load(pokemonId=pokemon.trainerId)
+
         embed = createPokemonAboutEmbed(user, pokemon)
         
         firstRowBtns = []
@@ -391,6 +411,70 @@ class PcMixin(MixinMeta):
         return embed, btns
 
 
+    def __pokemonDexCard(self, user: discord.User, state: PokemonState):
+        pokeList = state.pokemon
+        pokeLength = len(pokeList)
+        i = state.idx
+        activeId = state.active
+
+        pokemon: PokemonClass = pokeList[i]
+
+        # Kind of a hack, but if the property is still set to None,
+        # then we probably haven't loaded this pokemon yet.
+        if pokemon.pokemonName is None:
+            pokemon.load(pokemonId=pokemon.trainerId)
+
+        dex = PokedexClass.getPokedexEntry(pokemon)
+        embed = createPokedexEntryEmbed(user, pokemon, dex)
+        
+        firstRowBtns = []
+        if i > 0:
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'),
+                self.__on_prev_click
+            ))
+        if i < pokeLength - 1:
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
+                self.__on_next_click
+            ))
+
+        secondRowBtns = []
+        secondRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
+            self.__on_moves_click
+        ))
+        secondRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
+            self.__on_pokedex_click
+        ))
+
+        activeDisabled = (activeId is not None) and (pokemon.trainerId == activeId)
+        secondRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled),
+            self.__on_set_active
+        ))
+        secondRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled),
+            self.__on_release_click
+        ))
+
+        thirdRowBtns = []
+        thirdRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Withdraw", custom_id='withdraw'),
+            self.__on_pokemon_withdraw
+        ))
+
+        btns = []
+
+        if len(firstRowBtns) > 0:
+            btns.append(firstRowBtns)
+        if len(secondRowBtns) > 0:
+            btns.append(secondRowBtns)
+        if len(thirdRowBtns) > 0:
+            btns.append(thirdRowBtns)
+
+        return embed, btns
 
 
     # # TODO: Apparently there is a limit of 5 buttons at a time
