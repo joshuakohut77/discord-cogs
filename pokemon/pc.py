@@ -104,6 +104,14 @@ class PcMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         trainer.setActivePokemon(pokemon.trainerId)
 
+        if trainer.statuscode == 420:
+            await interaction.send(trainer.message)
+            return
+
+        if trainer.statuscode == 96:
+            await interaction.send('Something went wrong. Active pokemon not set.')
+            return
+
         await interaction.channel.send(f'{user.display_name} set their active pokemon to {pokemon.pokemonName.capitalize()}.')
         
         state.active = pokemon.trainerId
