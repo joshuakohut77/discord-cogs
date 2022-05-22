@@ -33,11 +33,12 @@ from services.trainerclass import trainer as TrainerClass
 # pretty up location names
 # pretty up item names
 # - [high] Use items / heal pokemon
+# - [low] Add a back btn to catch
+# - [low] Add page numbers to party (pc?)
+# - [low] Nickname pokemon
 # - [med] Pokedex
 # - [med] Test evolutions in discord
 # - [med] key item blockers
-# - [low] Nickname pokemon
-# - [x] [low] Pokemart sell items
 # - [low] Flesh out the *debug module to help us test the game
 
 
