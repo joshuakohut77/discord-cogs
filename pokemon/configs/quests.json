@@ -138,8 +138,8 @@
     "name": "kanto-route-22"
   },
   "103": {
-    "pre-requsites": [],
-    "quest": [],
+    "pre-requsites": ["elite_four"],
+    "quest": ["Mysterious Cave"],
     "blockers": [],
     "name": "kanto-route-24"
   },
@@ -198,7 +198,7 @@
     "name": "seafoam-islands"
   },
   "147": {
-    "pre-requsites": [],
+    "pre-requsites": [""],
     "quest": [],
     "blockers": [],
     "name": "cerulean-cave"

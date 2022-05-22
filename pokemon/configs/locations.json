@@ -366,7 +366,7 @@
       "locationId": 147,
       "name": "cerulean-cave",
       "north": null,
-      "east": null,
+      "east": "kanto-route-24",
       "south": null,
       "west": null,
       "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/cerulean-cave.png",
