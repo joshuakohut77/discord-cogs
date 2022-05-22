@@ -35,7 +35,7 @@ class uniqueEncounters:
         try:
             db = dbconn()
             queryString = '''
-                SELECT articuno, zapdos, moltres, mewtwo, 
+                SELECT discordId, articuno, zapdos, moltres, mewtwo, 
                 magikarp, charmander, squirtle, bulbasaur, 
                 lapras, hitmonchan, hitmonlee, eevee, snorlax
 	            FROM "unique-encounters" WHERE discord_id=%(discordId)s
