@@ -33,14 +33,17 @@ class ActionState:
     location: LocationModel
     messageId: int
 
-    pokemon: PokemonClass
+    activePokemon: PokemonClass
+    wildPokemon: PokemonClass
     descLog: str
 
-    def __init__(self, discordId: str, messageId: int, location: LocationModel, pokemon: PokemonClass, descLog: str) -> None:
+    def __init__(self, discordId: str, messageId: int, location: LocationModel, activePokemon: PokemonClass, wildPokemon: PokemonClass, descLog: str) -> None:
         self.discordId = discordId
         self.location = location
         self.messageId = messageId
-        self.pokemon = pokemon
+
+        self.activePokemon = activePokemon
+        self.wildPokemon = wildPokemon
         self.descLog = descLog
 
 
@@ -82,7 +85,7 @@ class EncountersMixin(MixinMeta):
             components=[btns]
         )
         self.__useractions[str(user.id)] = ActionState(
-            str(user.id),message.id, model, None, '')
+            str(user.id),message.id, model, trainer.getActivePokemon(), None, '')
 
 
     async def __on_action(self, interaction: Interaction):
@@ -117,21 +120,22 @@ class EncountersMixin(MixinMeta):
 
         # if method == 'walk':
         trainer = TrainerClass(str(user.id))
-        pokemon: PokemonClass = trainer.encounter(method)
-        if pokemon is None:
+        wildPokemon: PokemonClass = trainer.encounter(method)
+        if wildPokemon is None:
             await interaction.channel.send('No pokemon encountered.')
             # await interaction.send('No pokemon encountered.')
             return
 
-        active = trainer.getActivePokemon()
+        # active = trainer.getActivePokemon()
+        active = state.activePokemon
         
         # await interaction.send(f'You encountered a wild {pokemon.pokemonName}!')
         desc = f'''
-{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!
+{user.display_name} encountered a wild {wildPokemon.pokemonName.capitalize()}!
 {user.display_name} sent out {active.pokemonName.capitalize()}.
         '''
 
-        embed = self.__wildPokemonEncounter(user, pokemon, active, desc)
+        embed = self.__wildPokemonEncounter(user, wildPokemon, active, desc)
 
         btns = []
         btns.append(self.client.add_callback(
@@ -153,7 +157,7 @@ class EncountersMixin(MixinMeta):
             components=[btns]
         )
         self.__useractions[str(user.id)] = ActionState(
-            str(user.id), message.id, state.location, pokemon, desc)
+            str(user.id), message.id, state.location, active, wildPokemon, desc)
 
 
     async def __on_fight_click(self, interaction: Interaction):
@@ -268,15 +272,20 @@ class EncountersMixin(MixinMeta):
             await interaction.send('You have no balls!')
             return
 
-        embed = self.__wildPokemonEncounter(user, state.pokemon)
+        desc = state.descLog
+        desc += f'''
+{user.display_name} chose to catch the wild {state.wildPokemon.pokemonName.capitalize()}.
+        '''
+
+        embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
         
         message = await interaction.edit_origin(
-            content=f'{user.display_name} encountered a wild {state.pokemon.pokemonName.capitalize()}!',
+            # content=f'{user.display_name} encountered a wild {state.pokemon.pokemonName.capitalize()}!',
             embed=embed,
             components=[btns]
         )
         self.__useractions[str(user.id)] = ActionState(
-            str(user.id), message.id, state.location, state.pokemon)
+            str(user.id), message.id, state.location, state.activePokemon, state.wildPokemon, desc)
 
 
     async def __on_throw_pokeball(self, interaction: Interaction):
@@ -292,47 +301,51 @@ class EncountersMixin(MixinMeta):
         # items = InventoryClass(trainer.discordId)
 
         if interaction.custom_id == 'pokeball':
-            trainer.catch(state.pokemon, 'poke-ball')
+            trainer.catch(state.wildPokemon, 'poke-ball')
         elif interaction.custom_id == 'greatball':
-            trainer.catch(state.pokemon, 'great-ball')
+            trainer.catch(state.wildPokemon, 'great-ball')
         elif interaction.custom_id == 'ultraball':
-            trainer.catch(state.pokemon, 'ultra-ball')
+            trainer.catch(state.wildPokemon, 'ultra-ball')
         elif interaction.custom_id == 'masterball':
-            trainer.catch(state.pokemon, 'master-ball')
+            trainer.catch(state.wildPokemon, 'master-ball')
 
-        embed = self.__wildPokemonEncounter(user, state.pokemon)
+        desc = state.descLog
+        desc += f'''
+{user.display_name} threw a {interaction.custom_id}!
+{trainer.message}
+        '''
+
+        embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
         
         await interaction.edit_origin(
-            content=f'{trainer.message}',
+            # content=f'{trainer.message}',
             embed=embed,
             components=[]
         )
         del self.__useractions[str(user.id)]
     
 
-    def __wildPokemonEncounter(self, user: discord.User, pokemon: PokemonClass, active: PokemonClass, descLog: str):
-        stats = pokemon.getPokeStats()
-        color = getTypeColor(pokemon.type1)
+    def __wildPokemonEncounter(self, user: discord.User, wildPokemon: PokemonClass, activePokemon: PokemonClass, descLog: str):
+        stats = wildPokemon.getPokeStats()
+        color = getTypeColor(wildPokemon.type1)
         # Create the embed object
         embed = discord.Embed(
-            title=f"Wild {pokemon.pokemonName.capitalize()}",
+            title=f"Wild {wildPokemon.pokemonName.capitalize()}",
             # description=descLog,
             color=color
         )
         embed.set_author(name=f"{user.display_name}",
                         icon_url=str(user.avatar_url))
         
-        types = pokemon.type1
+        types = wildPokemon.type1
         # Pokemon are not guaranteed to have a second type.
         # Check that the second type is not set to None and is not an empty string.
-        if pokemon.type2 is not None and pokemon.type2:
-            types += ', ' + pokemon.type2
+        if wildPokemon.type2 is not None and wildPokemon.type2:
+            types += ', ' + wildPokemon.type2
 
-        activeTypes = active.type1
-        # Pokemon are not guaranteed to have a second type.
-        # Check that the second type is not set to None and is not an empty string.
-        if active.type2 is not None and active.type2:
-            activeTypes += ', ' + active.type2
+        activeTypes = activePokemon.type1
+        if activePokemon.type2 is not None and activePokemon.type2:
+            activeTypes += ', ' + activePokemon.type2
             
         # embed.add_field(
         #     name="Type", value=f"{types}", inline=False)
@@ -341,30 +354,30 @@ class EncountersMixin(MixinMeta):
         # embed.add_field(
         #     name="HP", value=f"{pokemon.currentHP} / {stats['hp']}", inline=True)
 
-        activeStats = active.getPokeStats()
+        activeStats = activePokemon.getPokeStats()
 
         embed.add_field(
-            name=f"{active.pokemonName.capitalize()}",
+            name=f"{activePokemon.pokemonName.capitalize()}",
             value=f'''
 Type : {activeTypes}
-Level : {active.currentLevel}
-HP    : {active.currentHP} / {activeStats['hp']}
+Level : {activePokemon.currentLevel}
+HP    : {activePokemon.currentHP} / {activeStats['hp']}
             ''',
             inline=True
         )
 
         embed.add_field(
-            name=f"{pokemon.pokemonName.capitalize()}",
+            name=f"{wildPokemon.pokemonName.capitalize()}",
             value=f'''
 Type  : {types}
-Level : {pokemon.currentLevel}
-HP    : {pokemon.currentHP} / {stats['hp']}
+Level : {wildPokemon.currentLevel}
+HP    : {wildPokemon.currentHP} / {stats['hp']}
             ''',
             inline=True
         )
 
-        embed.set_thumbnail(url=pokemon.frontSpriteURL)
-        embed.set_image(url = active.backSpriteURL)
+        embed.set_thumbnail(url=wildPokemon.frontSpriteURL)
+        embed.set_image(url = activePokemon.backSpriteURL)
         
         # activeStats = active.getPokeStats()
 

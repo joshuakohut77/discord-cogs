@@ -41,7 +41,6 @@ class StarterMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         pokemon = trainer.getActivePokemon()
 
-        # embed, btns = self.__pokemonStatsCard(user, pokemon, pokemon.trainerId)
         state = PokemonState(str(user.id), None, DisplayCard.STATS, [pokemon], pokemon.trainerId, None)
 
         embed, btns = self.__pokemonSingleCard(user, state, state.card)
@@ -126,7 +125,6 @@ class StarterMixin(MixinMeta):
 
         trainer = TrainerClass(str(user.id))
         trainer.setActivePokemon(pokemon.trainerId)
-        # pokemon = trainer.getPokemonById(state.pokemonId)
 
         await interaction.channel.send(f'{user.display_name} set their active pokemon to {pokemon.pokemonName.capitalize()}.')
 
@@ -135,7 +133,6 @@ class StarterMixin(MixinMeta):
 
 
     def __pokemonSingleCard(self, user: discord.User, state: PokemonState, card: DisplayCard):
-        # embed = createStatsEmbed(user, pokemon)
         pokemon = state.pokemon[0]
         activeId = state.active
 
@@ -178,28 +175,3 @@ class StarterMixin(MixinMeta):
 
         return embed, btns
 
-    
-    # def __pokemonMovesCard(self, user: discord.User, pokemon: PokemonClass, activeId: int):
-    #     embed = createPokemonAboutEmbed(user, pokemon)
-
-    #     btns = []
-
-    #     btns.append(self.client.add_callback(
-    #         Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
-    #         self.__on_stats_click,
-    #     ))
-    #     btns.append(self.client.add_callback(
-    #         Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
-    #         self.__on_pokedex_click
-    #     ))
-
-    #     # Disable the "Set Active" button if the starter is currently the active pokemon
-    #     disabled = (activeId is not None) and (
-    #         pokemon.trainerId == activeId)
-    #     btns.append(self.client.add_callback(
-    #         Button(style=ButtonStyle.blue, label="Set Active",
-    #                custom_id='setactive', disabled=disabled),
-    #         self.__on_set_active_click,
-    #     ))
-
-    #     return embed, btns
