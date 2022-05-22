@@ -258,7 +258,6 @@ class trainer:
     def setActivePokemon(self, trainerId):
         """ sets an active pokemon unique Id in the trainer db """
         updateSuccess = False
-        retMsg = ''
         try:
             db = dbconn()
             queryString = 'SELECT "currentHP", "party" FROM pokemon WHERE id=%(trainerId)s'
@@ -276,17 +275,18 @@ class trainer:
                     updateSuccess = True
             
             if updateSuccess:
-                retMsg = 'New Active Pokemon Set!'
+                # The frontend will send back it's own customized message
+                self.statuscode = 69
             else:
-                retMsg = 'Cannot set fainted Pokemon as active.'
-            self.statuscode = 420
+                self.message = 'Cannot set fainted Pokemon as active.'
+                self.statuscode = 420
         except:
             self.statuscode = 96 
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
             del db
-            return retMsg
+            return self.message
     
     def fight(self, pokemon2):
         """ creates a fight encounter """
