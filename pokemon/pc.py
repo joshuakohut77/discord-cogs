@@ -273,6 +273,10 @@ class PcMixin(MixinMeta):
         else:
             dex = PokedexClass.getPokedexEntry(pokemon)
             embed = createPokedexEntryEmbed(user, pokemon, dex)
+
+        embed.set_footer(f'''
+{i + 1} / {pokeLength}
+        ''')
         
         firstRowBtns = []
         if i > 0:

@@ -184,6 +184,8 @@ class EncountersMixin(MixinMeta):
             await interaction.send(trainer.message)
             return
 
+        # c: discord.TextChannel = self.bot.get_channel(1)
+        # c.fetch_message(1)
 
         desc = state.descLog
         desc += f'''{user.display_name} chose to fight!
