@@ -133,7 +133,7 @@ class EncountersMixin(MixinMeta):
         desc = f'''
 {user.display_name} encountered a wild {wildPokemon.pokemonName.capitalize()}!
 {user.display_name} sent out {active.pokemonName.capitalize()}.
-        '''
+'''
 
         embed = self.__wildPokemonEncounter(user, wildPokemon, active, desc)
 
@@ -187,9 +187,11 @@ class EncountersMixin(MixinMeta):
 
         desc = state.descLog
         desc += f'''{user.display_name} chose to fight!
-{trainer.message}'''
+{trainer.message}
+'''
+        active = trainer.getActivePokemon()
 
-        embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
+        embed = self.__wildPokemonEncounter(user, state.wildPokemon, active, desc)
 
         await interaction.send(trainer.message)
         await interaction.channel.send(
@@ -217,7 +219,8 @@ class EncountersMixin(MixinMeta):
 
         desc = state.descLog
         desc += f'''{user.display_name} chose to run away.
-{trainer.message}'''
+{trainer.message}
+'''
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
 
@@ -275,7 +278,8 @@ class EncountersMixin(MixinMeta):
             return
 
         desc = state.descLog
-        desc += f'''{user.display_name} chose to catch the wild {state.wildPokemon.pokemonName.capitalize()}.'''
+        desc += f'''{user.display_name} chose to catch the wild {state.wildPokemon.pokemonName.capitalize()}.
+'''
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
         
@@ -311,7 +315,8 @@ class EncountersMixin(MixinMeta):
 
         desc = state.descLog
         desc += f'''{user.display_name} threw a {interaction.custom_id}!
-{trainer.message}'''
+{trainer.message}
+'''
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
         
