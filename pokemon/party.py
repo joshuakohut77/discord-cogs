@@ -1,13 +1,8 @@
 from __future__ import annotations
-from re import L
 from typing import Any, Dict, List, Union, TYPE_CHECKING
-import asyncio
 
 import discord
-from discord import (Embed, Member)
-from discord import message
-from discord_components import (
-    DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction, component)
+from discord_components import (ButtonStyle, Button, Interaction)
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -15,43 +10,18 @@ if TYPE_CHECKING:
 from redbot.core import commands
 
 from services.trainerclass import trainer as TrainerClass
-from models.state import PokemonState
+from services.pokedexclass import pokedex as PokedexClass
+from models.state import PokemonState, DisplayCard
 
 from .abcd import MixinMeta
 from services.pokeclass import Pokemon as PokemonClass
-from .functions import (createStatsEmbed, getTypeColor,
+from .functions import (createStatsEmbed, createPokedexEntryEmbed,
                         createPokemonAboutEmbed)
 
-
-# class PokemonState:
-#     discordId: str
-#     messageId: int
-#     pokemon: list
-#     active: int
-#     idx: int
-
-#     def __init__(self, discordId: str, messageId: int, pokemon: list, active: int, idx: int) -> None:
-#         self.discordId = discordId
-#         self.messageId = messageId
-#         self.pokemon = pokemon
-#         self.active = active
-#         self.idx = idx
 
 
 class PartyMixin(MixinMeta):
     """Party"""
-
-    # __party: dict[str, PokemonState] = {}
-
-    # def __checkPartyState(self, user: discord.User, message: discord.Message):
-    #     state: PokemonState
-    #     if str(user.id) not in self.__party.keys():
-    #         return False
-    #     else:
-    #         state = self.__party[str(user.id)]
-    #         if state.messageId != message.id:
-    #             return False
-    #     return True
 
 
     @commands.group(name="trainer")
@@ -80,15 +50,14 @@ class PartyMixin(MixinMeta):
             await ctx.reply(content=f'{user.display_name} does not have any Pokemon.')
             return
 
-        state = PokemonState(str(user.id), None, pokeList, active.trainerId, i)
-        embed, components = self.__pokemonStatsCard(user, state)
+        state = PokemonState(str(user.id), None, DisplayCard.STATS, pokeList, active.trainerId, i)
+        embed, components = self.__pokemonPcCard(user, state, state.card)
 
-        # if interaction is None:
         message = await ctx.send(
             embed=embed,
             components=components
         )
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, pokeList, active.trainerId, i))
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, pokeList, active.trainerId, i))
 
     
     async def __on_set_active(self, interaction: Interaction):
@@ -107,11 +76,11 @@ class PartyMixin(MixinMeta):
         await interaction.channel.send(f'{user.display_name} set their active pokemon to {pokemon.pokemonName.capitalize()}.')
         
         state.active = pokemon.trainerId
-        embed, components = self.__pokemonStatsCard(user, state)
+        embed, components = self.__pokemonPcCard(user, state, state.card)
 
         message = await interaction.edit_origin(embed=embed, components=components)
         
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         
 
     async def __on_next_click(self, interaction: Interaction):
@@ -124,11 +93,11 @@ class PartyMixin(MixinMeta):
         state = self.getPokemonState(user)
         state.idx = state.idx + 1
 
-        embed, components = self.__pokemonStatsCard(user, state)
+        embed, components = self.__pokemonPcCard(user, state, state.card)
 
         message = await interaction.edit_origin(embed=embed, components=components)
         
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         
 
     async def __on_prev_click(self, interaction: Interaction):
@@ -141,11 +110,11 @@ class PartyMixin(MixinMeta):
         state = self.getPokemonState(user)
         state.idx = state.idx - 1
 
-        embed, components = self.__pokemonStatsCard(user, state)
+        embed, components = self.__pokemonPcCard(user, state, state.card)
 
         message = await interaction.edit_origin(embed=embed, components=components)
         
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
 
 
     async def __on_moves_click(self, interaction: Interaction):
@@ -157,11 +126,12 @@ class PartyMixin(MixinMeta):
 
         state = self.getPokemonState(user)
 
-        embed, firstRow, secondRow = self.__pokemonMovesCard(user, state)
+        embed, firstRow, secondRow = self.__pokemonPcCard(user, state, DisplayCard.MOVES)
 
         message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow])
         
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.MOVES, state.pokemon, state.active, state.idx))
+
 
     async def __on_stats_click(self, interaction: Interaction):
         user = interaction.user
@@ -172,11 +142,11 @@ class PartyMixin(MixinMeta):
 
         state = self.getPokemonState(user)
 
-        embed, components = self.__pokemonStatsCard(user, state)
+        embed, components = self.__pokemonPcCard(user, state, DisplayCard.STATS)
 
         message = await interaction.edit_origin(embed=embed, components=components)
         
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.STATS, state.pokemon, state.active, state.idx))
 
 
     async def __on_pokemon_deposit(self, interaction: Interaction):
@@ -191,7 +161,6 @@ class PartyMixin(MixinMeta):
         pokeList = state.pokemon
         pokeLength = len(pokeList)
         i = state.idx
-        activeId = state.active
 
         pokemon: PokemonClass = pokeList[i]
 
@@ -213,10 +182,10 @@ class PartyMixin(MixinMeta):
                 state.pokemon = pokeList
                 state.idx = 0
 
-                embed, components = self.__pokemonStatsCard(user, state)
+                embed, components = self.__pokemonPcCard(user, state, state.card)
                 message = await interaction.edit_origin(embed=embed, components=components)
                 
-                self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
+                self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
             elif i < pokeLength - 1:
                 await self.__on_next_click(interaction)
             else:
@@ -224,9 +193,21 @@ class PartyMixin(MixinMeta):
         
 
     
-
     async def __on_pokedex_click(self, interaction: Interaction):
-        await interaction.send('Pokedex is not implemented yet')
+        user = interaction.user
+
+        if not self.checkPokemonState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+        state = self.getPokemonState(user)
+
+        embed, btns = self.__pokemonPcCard(user, state, DisplayCard.DEX)
+
+        message = await interaction.edit_origin(embed=embed, components=btns)
+        
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.DEX, state.pokemon, state.active, state.idx))
+
 
 
     async def __on_release_click(self, interaction: Interaction):
@@ -261,7 +242,7 @@ class PartyMixin(MixinMeta):
         await interaction.channel.send(f'{user.display_name} released {pokemon.pokemonName.capitalize()}')
         pokeList = trainer.getPokemon()
         pokeLength = len(pokeList)
-        self.setPokemonState(user, PokemonState(str(user.id), state.messageId, pokeList, state.active, state.idx))
+        self.setPokemonState(user, PokemonState(str(user.id), state.messageId, state.card, pokeList, state.active, state.idx))
 
         if i < pokeLength - 1:
             await self.__on_next_click(interaction)
@@ -269,7 +250,7 @@ class PartyMixin(MixinMeta):
             await self.__on_prev_click(interaction)
 
 
-    def __pokemonStatsCard(self, user: discord.User, state: PokemonState):
+    def __pokemonPcCard(self, user: discord.User, state: PokemonState, card: DisplayCard):
         pokeList = state.pokemon
         pokeLength = len(pokeList)
         i = state.idx
@@ -282,7 +263,16 @@ class PartyMixin(MixinMeta):
         if pokemon.pokemonName is None:
             pokemon.load(pokemonId=pokemon.trainerId)
 
-        embed = createStatsEmbed(user, pokemon)
+
+        embed: discord.Embed
+
+        if DisplayCard.STATS.value == card.value:
+            embed = createStatsEmbed(user, pokemon)
+        elif DisplayCard.MOVES.value == card.value:
+            embed = createPokemonAboutEmbed(user, pokemon)
+        else:
+            dex = PokedexClass.getPokedexEntry(pokemon)
+            embed = createPokedexEntryEmbed(user, pokemon, dex)
         
         firstRowBtns = []
         if i > 0:
@@ -296,15 +286,22 @@ class PartyMixin(MixinMeta):
                 self.__on_next_click
             ))
 
-        secondRowBtns = []
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
-            self.__on_moves_click
-        ))
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
-            self.__on_pokedex_click
-        ))
+        secondRowBtns = []      
+        if DisplayCard.MOVES.value != card.value:
+            secondRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
+                self.__on_moves_click
+            ))
+        if DisplayCard.STATS.value != card.value:
+            secondRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
+                self.__on_stats_click
+            ))
+        if DisplayCard.DEX.value != card.value:
+            secondRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
+                self.__on_pokedex_click
+            ))
 
         activeDisabled = (activeId is not None) and (pokemon.trainerId == activeId)
         secondRowBtns.append(self.client.add_callback(
@@ -318,7 +315,7 @@ class PartyMixin(MixinMeta):
 
         thirdRowBtns = []
         thirdRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.blue, label="Deposit", custom_id='deposit', disabled=activeDisabled),
+            Button(style=ButtonStyle.green, label="Deposit", custom_id='deposit'),
             self.__on_pokemon_deposit
         ))
 
@@ -327,63 +324,14 @@ class PartyMixin(MixinMeta):
         # always be there if there is just one pokemon in the list.
         # Returning an empty component row is a malformed request to discord.
         # Check each btn row to be safe.
-        components = []
+        btns = []
         if len(firstRowBtns) > 0:
-            components.append(firstRowBtns)
+            btns.append(firstRowBtns)
         if len(secondRowBtns) > 0:
-            components.append(secondRowBtns)
+            btns.append(secondRowBtns)
         if len(thirdRowBtns) > 0:
-            components.append(thirdRowBtns)
+            btns.append(thirdRowBtns)
 
-        return embed, components
+        return embed, btns
 
-
-    def __pokemonMovesCard(self, user: discord.User, state: PokemonState):
-        pokeList = state.pokemon
-        pokeLength = len(pokeList)
-        i = state.idx
-        activeId = state.active
-
-        pokemon: PokemonClass = pokeList[i]
-
-        # Kind of a hack, but if the property is still set to None,
-        # then we probably haven't loaded this pokemon yet.
-        if pokemon.pokemonName is None:
-            pokemon.load(pokemonId=pokemon.trainerId)
-
-        embed = createPokemonAboutEmbed(user, pokemon)
-        
-        firstRowBtns = []
-        if i > 0:
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'),
-                self.__on_prev_click
-            ))
-        if i < pokeLength - 1:
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
-                self.__on_next_click
-            ))
-
-        secondRowBtns = []
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
-            self.__on_stats_click
-        ))
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
-            self.__on_pokedex_click
-        ))
-
-        activeDisabled = (activeId is not None) and (pokemon.trainerId == activeId)
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled),
-            self.__on_set_active
-        ))
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled),
-            self.__on_release_click
-        ))
-
-        return embed, firstRowBtns, secondRowBtns
 
