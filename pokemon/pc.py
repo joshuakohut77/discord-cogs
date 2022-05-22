@@ -4,12 +4,9 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 import asyncio
 
 import discord
-from discord import (Embed, Member)
-from discord import message
 from discord_components import (
     DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
 
-from models.pokedex import PokedexModel
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -18,7 +15,7 @@ from redbot.core import commands
 
 from services.trainerclass import trainer as TrainerClass
 from services.pokedexclass import pokedex as PokedexClass
-from models.state import PokemonState
+from models.state import PokemonState, DisplayCard
 
 from .abcd import MixinMeta
 from services.pokeclass import Pokemon as PokemonClass
@@ -26,35 +23,10 @@ from .functions import (createPokedexEntryEmbed, createStatsEmbed, getTypeColor,
                         createPokemonAboutEmbed)
 
 
-# class PokemonState:
-#     discordId: str
-#     messageId: int
-#     pokemon: list
-#     active: int
-#     idx: int
-
-#     def __init__(self, discordId: str, messageId: int, pokemon: list, active: int, idx: int) -> None:
-#         self.discordId = discordId
-#         self.messageId = messageId
-#         self.pokemon = pokemon
-#         self.active = active
-#         self.idx = idx
 
 
 class PcMixin(MixinMeta):
     """PC"""
-
-    # __pokemon: dict[str, PokemonState] = {}
-
-    # def __checkPokemonState(self, user: discord.User, message: discord.Message):
-    #     state: PokemonState
-    #     if str(user.id) not in self.__pokemon.keys():
-    #         return False
-    #     else:
-    #         state = self.__pokemon[str(user.id)]
-    #         if state.messageId != message.id:
-    #             return False
-    #     return True
 
 
     @commands.group(name="trainer")
@@ -84,14 +56,14 @@ class PcMixin(MixinMeta):
             return
 
         state = PokemonState(str(user.id), None, pokeList, active.trainerId, i)
-        embed, btns = self.__pokemonStatsCard(user, state)
+        embed, btns = self.__pokemonPcCard(user, state, DisplayCard.STATS)
 
         # if interaction is None:
         message = await ctx.send(
             embed=embed,
             components=btns
         )
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, pokeList, active.trainerId, i))
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.STATS, pokeList, active.trainerId, i))
 
     
     async def __on_set_active(self, interaction: Interaction):
@@ -118,11 +90,11 @@ class PcMixin(MixinMeta):
         await interaction.channel.send(f'{user.display_name} set their active pokemon to {pokemon.pokemonName.capitalize()}.')
         
         state.active = pokemon.trainerId
-        embed, btns = self.__pokemonStatsCard(user, state)
+        embed, btns = self.__pokemonPcCard(user, state, state.card)
 
         message = await interaction.edit_origin(embed=embed, components=btns)
         
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         
 
     async def __on_next_click(self, interaction: Interaction):
@@ -135,11 +107,11 @@ class PcMixin(MixinMeta):
         state = self.getPokemonState(user)
         state.idx = state.idx + 1
 
-        embed, btns = self.__pokemonStatsCard(user, state)
+        embed, btns = self.__pokemonPcCard(user, state, state.card)
 
         message = await interaction.edit_origin(embed=embed, components=btns)
         
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         
 
     async def __on_prev_click(self, interaction: Interaction):
@@ -152,11 +124,11 @@ class PcMixin(MixinMeta):
         state = self.getPokemonState(user)
         state.idx = state.idx - 1
 
-        embed, btns = self.__pokemonStatsCard(user, state)
+        embed, btns = self.__pokemonPcCard(user, state, state.card)
 
         message = await interaction.edit_origin(embed=embed, components=btns)
         
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
 
 
     async def __on_moves_click(self, interaction: Interaction):
@@ -168,11 +140,12 @@ class PcMixin(MixinMeta):
 
         state = self.getPokemonState(user)
 
-        embed, btns = self.__pokemonMovesCard(user, state)
+        embed, btns = self.__pokemonPcCard(user, state, DisplayCard.MOVES)
 
         message = await interaction.edit_origin(embed=embed, components=btns)
         
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.MOVES, state.pokemon, state.active, state.idx))
+
 
     async def __on_stats_click(self, interaction: Interaction):
         user = interaction.user
@@ -183,11 +156,11 @@ class PcMixin(MixinMeta):
 
         state = self.getPokemonState(user)
 
-        embed, btns = self.__pokemonStatsCard(user, state)
+        embed, btns = self.__pokemonPcCard(user, state, DisplayCard.STATS)
 
         message = await interaction.edit_origin(embed=embed, components=btns)
         
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.STATS, state.pokemon, state.active, state.idx))
 
 
     async def __on_pokemon_withdraw(self, interaction: Interaction):
@@ -200,11 +173,9 @@ class PcMixin(MixinMeta):
         state = self.getPokemonState(user)
 
         pokeList = state.pokemon
-        pokeLength = len(pokeList)
-        i = state.idx
-        activeId = state.active
+        idx = state.idx
 
-        pokemon: PokemonClass = pokeList[i]
+        pokemon: PokemonClass = pokeList[idx]
 
         trainer = TrainerClass(str(user.id))
         trainer.withdraw(pokemon.trainerId)
@@ -227,11 +198,11 @@ class PcMixin(MixinMeta):
 
         state = self.getPokemonState(user)
 
-        embed, btns = self.__pokemonDexCard(user, state)
+        embed, btns = self.__pokemonPcCard(user, state, DisplayCard.DEX)
 
         message = await interaction.edit_origin(embed=embed, components=btns)
         
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.DEX, state.pokemon, state.active, state.idx))
 
 
 
@@ -268,20 +239,20 @@ class PcMixin(MixinMeta):
         pokeList = trainer.getPokemon()
         pokeLength = len(pokeList)
 
-        state = PokemonState(str(user.id), state.messageId, pokeList, state.active, state.idx)
+        state = PokemonState(str(user.id), state.messageId, state.card, pokeList, state.active, state.idx)
         self.setPokemonState(user, state)
 
         if i < pokeLength - 1:
-            embed, btns = self.__pokemonStatsCard(user, state)
+            embed, btns = self.__pokemonPcCard(user, state, state.card)
 
             message = await interaction.edit_origin(embed=embed, components=btns)
             
-            self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
+            self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         else:
             await self.__on_prev_click(interaction)
 
 
-    def __pokemonStatsCard(self, user: discord.User, state: PokemonState):
+    def __pokemonPcCard(self, user: discord.User, state: PokemonState, card: DisplayCard):
         pokeList = state.pokemon
         pokeLength = len(pokeList)
         i = state.idx
@@ -294,7 +265,16 @@ class PcMixin(MixinMeta):
         if pokemon.pokemonName is None:
             pokemon.load(pokemonId=pokemon.trainerId)
 
-        embed = createStatsEmbed(user, pokemon)
+
+        embed: discord.Embed
+
+        if card.STATS:
+            embed = createStatsEmbed(user, pokemon)
+        elif card.MOVES:
+            embed = createPokemonAboutEmbed(user, pokemon)
+        else:
+            dex = PokedexClass.getPokedexEntry(pokemon)
+            embed = createPokedexEntryEmbed(user, pokemon, dex)
         
         firstRowBtns = []
         if i > 0:
@@ -308,15 +288,22 @@ class PcMixin(MixinMeta):
                 self.__on_next_click
             ))
 
-        secondRowBtns = []
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
-            self.__on_moves_click
-        ))
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
-            self.__on_pokedex_click
-        ))
+        secondRowBtns = []      
+        if not card.MOVES:
+            secondRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
+                self.__on_moves_click
+            ))
+        if not card.Stats:
+            secondRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
+                self.__on_stats_click
+            ))
+        if not card.DEX:
+            secondRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
+                self.__on_pokedex_click
+            ))
 
         activeDisabled = (activeId is not None) and (pokemon.trainerId == activeId)
         secondRowBtns.append(self.client.add_callback(
@@ -346,135 +333,135 @@ class PcMixin(MixinMeta):
         return embed, btns
 
 
-    def __pokemonMovesCard(self, user: discord.User, state: PokemonState):
-        pokeList = state.pokemon
-        pokeLength = len(pokeList)
-        i = state.idx
-        activeId = state.active
+    # def __pokemonMovesCard(self, user: discord.User, state: PokemonState):
+    #     pokeList = state.pokemon
+    #     pokeLength = len(pokeList)
+    #     i = state.idx
+    #     activeId = state.active
 
-        pokemon: PokemonClass = pokeList[i]
+    #     pokemon: PokemonClass = pokeList[i]
 
-        # Kind of a hack, but if the property is still set to None,
-        # then we probably haven't loaded this pokemon yet.
-        if pokemon.pokemonName is None:
-            pokemon.load(pokemonId=pokemon.trainerId)
+    #     # Kind of a hack, but if the property is still set to None,
+    #     # then we probably haven't loaded this pokemon yet.
+    #     if pokemon.pokemonName is None:
+    #         pokemon.load(pokemonId=pokemon.trainerId)
 
-        embed = createPokemonAboutEmbed(user, pokemon)
+    #     embed = createPokemonAboutEmbed(user, pokemon)
         
-        firstRowBtns = []
-        if i > 0:
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'),
-                self.__on_prev_click
-            ))
-        if i < pokeLength - 1:
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
-                self.__on_next_click
-            ))
+    #     firstRowBtns = []
+    #     if i > 0:
+    #         firstRowBtns.append(self.client.add_callback(
+    #             Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'),
+    #             self.__on_prev_click
+    #         ))
+    #     if i < pokeLength - 1:
+    #         firstRowBtns.append(self.client.add_callback(
+    #             Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
+    #             self.__on_next_click
+    #         ))
 
-        secondRowBtns = []
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
-            self.__on_stats_click
-        ))
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
-            self.__on_pokedex_click
-        ))
+    #     secondRowBtns = []
+    #     secondRowBtns.append(self.client.add_callback(
+    #         Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
+    #         self.__on_stats_click
+    #     ))
+    #     secondRowBtns.append(self.client.add_callback(
+    #         Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
+    #         self.__on_pokedex_click
+    #     ))
 
-        activeDisabled = (activeId is not None) and (pokemon.trainerId == activeId)
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled),
-            self.__on_set_active
-        ))
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled),
-            self.__on_release_click
-        ))
+    #     activeDisabled = (activeId is not None) and (pokemon.trainerId == activeId)
+    #     secondRowBtns.append(self.client.add_callback(
+    #         Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled),
+    #         self.__on_set_active
+    #     ))
+    #     secondRowBtns.append(self.client.add_callback(
+    #         Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled),
+    #         self.__on_release_click
+    #     ))
 
-        thirdRowBtns = []
-        thirdRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Withdraw", custom_id='withdraw'),
-            self.__on_pokemon_withdraw
-        ))
+    #     thirdRowBtns = []
+    #     thirdRowBtns.append(self.client.add_callback(
+    #         Button(style=ButtonStyle.green, label="Withdraw", custom_id='withdraw'),
+    #         self.__on_pokemon_withdraw
+    #     ))
 
-        btns = []
+    #     btns = []
 
-        if len(firstRowBtns) > 0:
-            btns.append(firstRowBtns)
-        if len(secondRowBtns) > 0:
-            btns.append(secondRowBtns)
-        if len(thirdRowBtns) > 0:
-            btns.append(thirdRowBtns)
+    #     if len(firstRowBtns) > 0:
+    #         btns.append(firstRowBtns)
+    #     if len(secondRowBtns) > 0:
+    #         btns.append(secondRowBtns)
+    #     if len(thirdRowBtns) > 0:
+    #         btns.append(thirdRowBtns)
 
-        return embed, btns
+    #     return embed, btns
 
 
-    def __pokemonDexCard(self, user: discord.User, state: PokemonState):
-        pokeList = state.pokemon
-        pokeLength = len(pokeList)
-        i = state.idx
-        activeId = state.active
+    # def __pokemonDexCard(self, user: discord.User, state: PokemonState):
+    #     pokeList = state.pokemon
+    #     pokeLength = len(pokeList)
+    #     i = state.idx
+    #     activeId = state.active
 
-        pokemon: PokemonClass = pokeList[i]
+    #     pokemon: PokemonClass = pokeList[i]
 
-        # Kind of a hack, but if the property is still set to None,
-        # then we probably haven't loaded this pokemon yet.
-        if pokemon.pokemonName is None:
-            pokemon.load(pokemonId=pokemon.trainerId)
+    #     # Kind of a hack, but if the property is still set to None,
+    #     # then we probably haven't loaded this pokemon yet.
+    #     if pokemon.pokemonName is None:
+    #         pokemon.load(pokemonId=pokemon.trainerId)
 
-        dex = PokedexClass.getPokedexEntry(pokemon)
-        embed = createPokedexEntryEmbed(user, pokemon, dex)
+    #     dex = PokedexClass.getPokedexEntry(pokemon)
+    #     embed = createPokedexEntryEmbed(user, pokemon, dex)
         
-        firstRowBtns = []
-        if i > 0:
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'),
-                self.__on_prev_click
-            ))
-        if i < pokeLength - 1:
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
-                self.__on_next_click
-            ))
+    #     firstRowBtns = []
+    #     if i > 0:
+    #         firstRowBtns.append(self.client.add_callback(
+    #             Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'),
+    #             self.__on_prev_click
+    #         ))
+    #     if i < pokeLength - 1:
+    #         firstRowBtns.append(self.client.add_callback(
+    #             Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
+    #             self.__on_next_click
+    #         ))
 
-        secondRowBtns = []
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
-            self.__on_moves_click
-        ))
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
-            self.__on_pokedex_click
-        ))
+    #     secondRowBtns = []
+    #     secondRowBtns.append(self.client.add_callback(
+    #         Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
+    #         self.__on_moves_click
+    #     ))
+    #     secondRowBtns.append(self.client.add_callback(
+    #         Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
+    #         self.__on_pokedex_click
+    #     ))
 
-        activeDisabled = (activeId is not None) and (pokemon.trainerId == activeId)
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled),
-            self.__on_set_active
-        ))
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled),
-            self.__on_release_click
-        ))
+    #     activeDisabled = (activeId is not None) and (pokemon.trainerId == activeId)
+    #     secondRowBtns.append(self.client.add_callback(
+    #         Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled),
+    #         self.__on_set_active
+    #     ))
+    #     secondRowBtns.append(self.client.add_callback(
+    #         Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled),
+    #         self.__on_release_click
+    #     ))
 
-        thirdRowBtns = []
-        thirdRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Withdraw", custom_id='withdraw'),
-            self.__on_pokemon_withdraw
-        ))
+    #     thirdRowBtns = []
+    #     thirdRowBtns.append(self.client.add_callback(
+    #         Button(style=ButtonStyle.green, label="Withdraw", custom_id='withdraw'),
+    #         self.__on_pokemon_withdraw
+    #     ))
 
-        btns = []
+    #     btns = []
 
-        if len(firstRowBtns) > 0:
-            btns.append(firstRowBtns)
-        if len(secondRowBtns) > 0:
-            btns.append(secondRowBtns)
-        if len(thirdRowBtns) > 0:
-            btns.append(thirdRowBtns)
+    #     if len(firstRowBtns) > 0:
+    #         btns.append(firstRowBtns)
+    #     if len(secondRowBtns) > 0:
+    #         btns.append(secondRowBtns)
+    #     if len(thirdRowBtns) > 0:
+    #         btns.append(thirdRowBtns)
 
-        return embed, btns
+    #     return embed, btns
 
 
     # # TODO: Apparently there is a limit of 5 buttons at a time

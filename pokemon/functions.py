@@ -195,8 +195,8 @@ def createPokedexEntryEmbed(user: Member, pokemon: PokemonClass, dex: PokedexMod
         
     embed.add_field(name="Type", value=f"{types}", inline=True)
     
-    embed.add_field(name="Height", value=f"{dex.height}", inline=True)
-    embed.add_field(name="Weight", value=f"{dex.weight}", inline=True)
+    embed.add_field(name="Height", value=f"{dex.height} dm", inline=True)
+    embed.add_field(name="Weight", value=f"{dex.weight} hg", inline=True)
 
     embed.add_field(name="Description", value=f"{dex.description}", inline=False)
 
