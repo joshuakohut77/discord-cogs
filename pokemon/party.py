@@ -275,6 +275,7 @@ class PartyMixin(MixinMeta):
             embed = createPokedexEntryEmbed(user, pokemon, dex)
 
         embed.set_footer(text=f'''
+--------------------
 {i + 1} / {pokeLength}
         ''')
         
