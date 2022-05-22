@@ -122,7 +122,10 @@ class EncountersMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         wildPokemon: PokemonClass = trainer.encounter(method)
         if wildPokemon is None:
-            await interaction.channel.send('No pokemon encountered.')
+            if trainer.statuscode == 420:
+                await interaction.channel.send(trainer.message)
+            else:
+                await interaction.channel.send('No pokemon encountered.')
             # await interaction.send('No pokemon encountered.')
             return
 
