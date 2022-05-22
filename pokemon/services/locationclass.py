@@ -71,7 +71,8 @@ class location:
             questObj = qObj(self.discordId)
             if quest.prerequsites != []:
                 if questObj.prerequsitesValid(quest.prerequsites):
-                    methodList.append(quest.questName)
+                    for questMethod in quest.questName:
+                        methodList.append(questMethod)
 
         except:
             self.statuscode = 96

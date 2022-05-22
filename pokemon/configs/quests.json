@@ -1,295 +1,295 @@
 {
   "67": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "celadon-city"
   },
   "68": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "cerulean-city"
   },
   "71": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "cinnabar-island"
   },
   "73": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "digletts-cave"
   },
   "76": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "fuchsia-city"
   },
   "80": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": ["Super Nerd"],
     "blockers": [],
     "name": "mt-moon"
   },
   "86": {
     "pre-requsites": ["oaks_parcel"],
-    "quest": "Professor Oak",
+    "quest": ["Professor Oak"],
     "blockers": [],
     "name": "pallet-town"
   },
   "87": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "rock-tunnel"
   },
   "88": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-1"
   },
   "89": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-10"
   },
   "90": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-11"
   },
   "91": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-12"
   },
   "92": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-13"
   },
   "93": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-14"
   },
   "94": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-15"
   },
   "95": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-16"
   },
   "96": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-17"
   },
   "97": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-18"
   },
   "98": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-sea-route-19"
   },
   "99": {
     "pre-requsites": [],
-    "quest": "",
-    "blockers": [],
+    "quest": [],
+    "blockers": ["oaks_parcel_delivered"],
     "name": "kanto-route-2"
   },
   "100": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-sea-route-20"
   },
   "101": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-sea-route-21"
   },
   "102": {
     "pre-requsites": [],
-    "quest": "",
-    "blockers": [],
+    "quest": [],
+    "blockers": ["oaks_parcel_delivered"],
     "name": "kanto-route-22"
   },
   "103": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-24"
   },
   "104": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-25"
   },
   "109": {
     "pre-requsites": [],
-    "quest": "",
-    "blockers": [],
+    "quest": [],
+    "blockers": ["badge_boulder"],
     "name": "kanto-route-3"
   },
   "120": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-4"
   },
   "130": {
     "pre-requsites": [],
-    "quest": "",
-    "blockers": [],
+    "quest": [],
+    "blockers": ["badge_cascade"],
     "name": "kanto-route-5"
   },
   "131": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-6"
   },
   "132": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-7"
   },
   "133": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-8"
   },
   "134": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-9"
   },
   "136": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "seafoam-islands"
   },
   "147": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "cerulean-cave"
   },
   "151": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": ["Fishing Guru", "Pokemon Fan Club"],
     "blockers": [],
     "name": "vermilion-city"
   },
   "152": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-victory-road-1"
   },
   "154": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "viridian-city"
   },
   "155": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "viridian-forest"
   },
   "157": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-route-23"
   },
   "158": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "power-plant"
   },
   "159": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-victory-road-2"
   },
   "160": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "pokemon-tower"
   },
   "161": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "pokemon-mansion"
   },
   "162": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "kanto-safari-zone"
   },
   "231": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "pewter-city"
   },
   "232": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "lavender-town"
   },
   "233": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "indigo-plateau"
   },
   "234": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "saffron-city"
   },
   "498": {
     "pre-requsites": [],
-    "quest": "",
+    "quest": [],
     "blockers": [],
     "name": "ss-anne"
   }
