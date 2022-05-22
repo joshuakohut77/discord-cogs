@@ -35,10 +35,10 @@ class MixinMeta(ABC):
 
     def checkPokemonState(self, user: discord.User, message: discord.Message):
         state: PokemonState
-        if str(user.id) not in self.__pokemon.keys():
+        if str(user.id) not in self.__pokemonState.keys():
             return False
         else:
-            state = self.__pokemon[str(user.id)]
+            state = self.__pokemonState[str(user.id)]
             if state.messageId != message.id:
                 return False
         return True
