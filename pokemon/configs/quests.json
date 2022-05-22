@@ -1,20 +1,20 @@
 {
   "67": {
     "pre-requsites": [],
-    "quest": [],
+    "quest": ["Cafe", "Rooftop Square", "Rocket Hideout"],
     "blockers": [],
     "name": "celadon-city"
   },
   "68": {
-    "pre-requsites": [],
-    "quest": [],
+    "pre-requsites": ["bike_voucher", "HM01"],
+    "quest": ["Bike Voucher", "SS Anne"],
     "blockers": [],
     "name": "cerulean-city"
   },
   "71": {
     "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
+    "quest": ["Testing Room"],
+    "blockers": ["HM03", "HM04"],
     "name": "cinnabar-island"
   },
   "73": {
@@ -24,9 +24,9 @@
     "name": "digletts-cave"
   },
   "76": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
+    "pre-requsites": ["gold_teeth"],
+    "quest": ["Fishing Dude", "Return Teeth"],
+    "blockers": ["bicycle", "badge_marsh"],
     "name": "fuchsia-city"
   },
   "80": {
@@ -67,8 +67,8 @@
   },
   "91": {
     "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
+    "quest": ["Fishing Brother"],
+    "blockers": ["badge_marsh"],
     "name": "kanto-route-12"
   },
   "92": {
@@ -91,14 +91,14 @@
   },
   "95": {
     "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
+    "quest": ["Secret Resort"],
+    "blockers": ["HM01", "bicycle"],
     "name": "kanto-route-16"
   },
   "96": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": [],
+    "blockers": ["bicycle"],
     "name": "kanto-route-17"
   },
   "97": {
@@ -110,7 +110,7 @@
   "98": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": [],
+    "blockers": ["HM03"],
     "name": "kanto-sea-route-19"
   },
   "99": {
@@ -122,13 +122,13 @@
   "100": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": [],
+    "blockers": ["HM03"],
     "name": "kanto-sea-route-20"
   },
   "101": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": [],
+    "blockers": ["HM03"],
     "name": "kanto-sea-route-21"
   },
   "102": {
@@ -188,13 +188,13 @@
   "134": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": [],
+    "blockers": ["badge_thunder"],
     "name": "kanto-route-9"
   },
   "136": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": [],
+    "blockers": ["HM03", "HM04"],
     "name": "seafoam-islands"
   },
   "147": {
@@ -212,7 +212,7 @@
   "152": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": [],
+    "blockers": ["badge_earth", "badge_volcano"],
     "name": "kanto-victory-road-1"
   },
   "154": {
@@ -236,19 +236,19 @@
   "158": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": [],
+    "blockers": ["HM03"],
     "name": "power-plant"
   },
   "159": {
-    "pre-requsites": [],
-    "quest": [],
+    "pre-requsites": ["HM01"],
+    "quest": ["Oaks Aide"],
     "blockers": [],
     "name": "kanto-victory-road-2"
   },
   "160": {
     "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
+    "quest": ["Free Spirits"],
+    "blockers": ["silph_scope"],
     "name": "pokemon-tower"
   },
   "161": {
@@ -258,39 +258,45 @@
     "name": "pokemon-mansion"
   },
   "162": {
-    "pre-requsites": [],
-    "quest": [],
+    "pre-requsites": ["badge_soul"],
+    "quest": ["Lone House", "The Warden"],
     "blockers": [],
     "name": "kanto-safari-zone"
   },
   "231": {
-    "pre-requsites": [],
-    "quest": [],
+    "pre-requsites": ["HM01"],
+    "quest": ["Museum of Science"],
     "blockers": [],
     "name": "pewter-city"
   },
   "232": {
-    "pre-requsites": [],
-    "quest": [],
+    "pre-requsites": ["silph_scope"],
+    "quest": ["Pokemon Tower", "Mr Fuji"],
     "blockers": [],
     "name": "lavender-town"
   },
   "233": {
     "pre-requsites": [],
-    "quest": [],
+    "quest": ["The Pokemon League"],
     "blockers": [],
     "name": "indigo-plateau"
   },
   "234": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": [],
+    "blockers": ["badge_rainbow", "silph_scope", "pokeflute"],
     "name": "saffron-city"
   },
   "498": {
     "pre-requsites": [],
+    "quest": ["Speak to Captain"],
+    "blockers": ["ss_ticket"],
+    "name": "ss-anne"
+  },
+  "999": {
+    "pre-requsites": [],
     "quest": [],
     "blockers": [],
-    "name": "ss-anne"
+    "name": "underground-path"
   }
 }

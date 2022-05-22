@@ -37,6 +37,7 @@ class keyitems:
         self.super_rod = False
         self.item_finder = False
         self.bike_voucher = False
+        self.gold_teeth = False
         # populate keyitems object
         self.__loadKeyItems()
 
@@ -54,7 +55,7 @@ class keyitems:
                     oaks_parcel, oaks_parcel_delivered,
                     ss_ticket, 
                     bicycle, "old_rod", "good_rod", "super_rod", 
-                    item_finder, bike_voucher
+                    item_finder, bike_voucher, gold_teeth
                     FROM keyitems WHERE discord_id=%(discordId)s
             '''
             result = db.querySingle(queryString, { 'discordId': self.discordId })
@@ -82,7 +83,8 @@ class keyitems:
                 self.good_rod = result[20]
                 self.super_rod = result[21]
                 self.item_finder = result[22]
-                self.bike_voucher = result[22]
+                self.bike_voucher = result[23]
+                self.gold_teeth = result[24]
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
@@ -108,7 +110,7 @@ class keyitems:
                     ss_ticket=%(ss_ticket)s, 
                     bicycle=%(bicycle)s, 
                     "old_rod"=%(old_rod)s, "good_rod"=%(good_rod)s, "super_rod"=%(super_rod)s, 
-                    item_finder=%(item_finder)s, bike_voucher=%(bike_voucher)s
+                    item_finder=%(item_finder)s, bike_voucher=%(bike_voucher)s, gold_teeth=%(gold_teeth)s
 	                    WHERE discord_id=%(discordId)s;
                 '''
                 values = { 'HM01':self.HM01, 'HM02': self.HM02, 'HM03':self.HM03, 'HM04':self.HM04, 'HM05':self.HM05,
@@ -119,7 +121,7 @@ class keyitems:
                             'pokeflute':self.pokeflute, 'silph_scope':self.silph_scope,
                             'oaks_parcel':self.oaks_parcel, 'oaks_parcel_delivered':self.oaks_parcel_delivered,
                             'ss_ticket':self.ss_ticket, 'bicycle':self.bicycle, 
-                            'item_finder':self.item_finder, 'bike_voucher':self.bike_voucher,
+                            'item_finder':self.item_finder, 'bike_voucher':self.bike_voucher, 'gold_teeth':self.gold_teeth,
                             'old_rod':self.old_rod, 'good_rod':self.good_rod, 'super_rod':self.super_rod,
                             'discordId':self.discordId }
                 db.execute(updateString, values)
