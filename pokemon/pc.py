@@ -12,11 +12,11 @@ if TYPE_CHECKING:
 from redbot.core import commands
 
 from services.trainerclass import trainer as TrainerClass
+from services.pokeclass import Pokemon as PokemonClass
 from services.pokedexclass import pokedex as PokedexClass
 from models.state import PokemonState, DisplayCard
 
 from .abcd import MixinMeta
-from services.pokeclass import Pokemon as PokemonClass
 from .functions import (createPokedexEntryEmbed, createStatsEmbed, getTypeColor,
                         createPokemonAboutEmbed)
 
