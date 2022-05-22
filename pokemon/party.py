@@ -88,17 +88,17 @@ class PartyMixin(MixinMeta):
             embed=embed,
             components=components
         )
-        self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, pokeList, active.trainerId, i)
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, pokeList, active.trainerId, i))
 
     
     async def __on_set_active(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.__checkPartyState(user, interaction.message):
+        if not self.checkPokemonState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
 
-        state = self.__pokemon[str(user.id)]
+        state = self.getPokemonState(user)
         pokemon: PokemonClass = state.pokemon[state.idx]
 
         trainer = TrainerClass(str(user.id))
@@ -111,82 +111,82 @@ class PartyMixin(MixinMeta):
 
         message = await interaction.edit_origin(embed=embed, components=components)
         
-        self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
         
 
     async def __on_next_click(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.__checkPartyState(user, interaction.message):
+        if not self.checkPokemonState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
 
-        state = self.__pokemon[str(user.id)]
+        state = self.getPokemonState(user)
         state.idx = state.idx + 1
 
         embed, components = self.__pokemonStatsCard(user, state)
 
         message = await interaction.edit_origin(embed=embed, components=components)
         
-        self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
         
 
     async def __on_prev_click(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.__checkPartyState(user, interaction.message):
+        if not self.checkPokemonState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
 
-        state = self.__pokemon[str(user.id)]
+        state = self.getPokemonState(user)
         state.idx = state.idx - 1
 
         embed, components = self.__pokemonStatsCard(user, state)
 
         message = await interaction.edit_origin(embed=embed, components=components)
         
-        self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
 
 
     async def __on_moves_click(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.__checkPartyState(user, interaction.message):
+        if not self.checkPokemonState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
 
-        state = self.__pokemon[str(user.id)]
+        state = self.getPokemonState(user)
 
         embed, firstRow, secondRow = self.__pokemonMovesCard(user, state)
 
         message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow])
         
-        self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
 
     async def __on_stats_click(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.__checkPartyState(user, interaction.message):
+        if not self.checkPokemonState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
 
-        state = self.__pokemon[str(user.id)]
+        state = self.getPokemonState(user)
 
         embed, components = self.__pokemonStatsCard(user, state)
 
         message = await interaction.edit_origin(embed=embed, components=components)
         
-        self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
 
 
     async def __on_pokemon_deposit(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.__checkPartyState(user, interaction.message):
+        if not self.checkPokemonState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
         
-        state = self.__pokemon[str(user.id)]
+        state = self.getPokemonState(user)
 
         pokeList = state.pokemon
         pokeLength = len(pokeList)
@@ -207,7 +207,7 @@ class PartyMixin(MixinMeta):
 
             pokeList = trainer.getPokemon(party=True)
             pokeLength = len(pokeList)
-            self.__pokemon[str(user.id)] = PokemonState(str(user.id), state.messageId, pokeList, state.active, state.idx)
+            self.setPokemonState(user, PokemonState(str(user.id), state.messageId, pokeList, state.active, state.idx))
 
             if pokeLength == 1:
                 state.pokemon = pokeList
@@ -216,7 +216,7 @@ class PartyMixin(MixinMeta):
                 embed, components = self.__pokemonStatsCard(user, state)
                 message = await interaction.edit_origin(embed=embed, components=components)
                 
-                self.__pokemon[str(user.id)] = PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx)
+                self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
             elif i < pokeLength - 1:
                 await self.__on_next_click(interaction)
             else:
@@ -232,11 +232,11 @@ class PartyMixin(MixinMeta):
     async def __on_release_click(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.__checkPartyState(user, interaction.message):
+        if not self.checkPokemonState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
         
-        state = self.__pokemon[str(user.id)]
+        state = self.getPokemonState(user)
 
         pokeList = state.pokemon
         pokeLength = len(pokeList)
@@ -261,7 +261,7 @@ class PartyMixin(MixinMeta):
         await interaction.channel.send(f'{user.display_name} released {pokemon.pokemonName.capitalize()}')
         pokeList = trainer.getPokemon()
         pokeLength = len(pokeList)
-        self.__pokemon[str(user.id)] = PokemonState(str(user.id), state.messageId, pokeList, state.active, state.idx)
+        self.setPokemonState(user, PokemonState(str(user.id), state.messageId, pokeList, state.active, state.idx))
 
         if i < pokeLength - 1:
             await self.__on_next_click(interaction)
