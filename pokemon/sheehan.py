@@ -1,3 +1,4 @@
+from logging import disable
 import sys
 import os
 
@@ -13,6 +14,12 @@ from services.storeclass import store as StoreClass
 from services.inventoryclass import inventory as InventoryClass
 from services.pokedexclass import pokedex as PokedexClass
 
+from models.state import DisplayCard
+
+card = DisplayCard.STATS
+
+b = card.value == DisplayCard.STATS.value
+c = card.value == DisplayCard.MOVES.value
 
 trainer = TrainerClass('509767223938777108')
 dex = trainer.getPokedex()
