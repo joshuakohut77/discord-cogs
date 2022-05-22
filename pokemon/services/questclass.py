@@ -221,3 +221,28 @@ class quests:
                     break
             
         return requirementsMet
+
+# List of quests 
+"""
+Professor Oak - deliver parcel
+Super Nerd - Get Helix Fossil item
+Fishing Guru - get old-rod item
+Bike Voucher - get bicycle item
+Speak to Captain - get HM01
+Oaks Aide - get HM05
+Museum of Science - get Old Amber
+Cafe - get coin_case item
+Rooftop Square - get lemonade item
+Rocket Hideout - get silph_scope
+Free Spirits - nothing
+Mr Fuji - get pokeflute
+Lone House - get HM03
+Secret Resort - get HM02
+Fishing Brother - get super_rod
+Fishing Dude - get good_rod
+The Warden - get gold_teeth
+Return Teeth - get HM04
+Pokemon Lab - take helix or dome fossile and Old Amber and turn into Pokemon
+SS Anne - get ss_ticket item
+The Pokemon League - battle the elite 4
+"""
