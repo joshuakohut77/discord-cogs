@@ -279,6 +279,12 @@ class EncountersMixin(MixinMeta):
             await interaction.send('You have no balls!')
             return
 
+        secondRow = []
+        secondRow.append(self.client.add_callback(
+            Button(style=ButtonStyle.gray, label=f"Back", custom_id='back'),
+            self.__on_catch_back,
+        ))
+
         desc = state.descLog
         desc += f'''{user.display_name} chose to catch the wild {state.wildPokemon.pokemonName.capitalize()}.
 '''
@@ -288,11 +294,14 @@ class EncountersMixin(MixinMeta):
         message = await interaction.edit_origin(
             # content=f'{user.display_name} encountered a wild {state.pokemon.pokemonName.capitalize()}!',
             embed=embed,
-            components=[btns]
+            components=[btns, secondRow]
         )
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.id, state.location, state.activePokemon, state.wildPokemon, desc)
 
+
+    async def __on_catch_back(self, interaction: Interaction):
+        pass
 
     async def __on_throw_pokeball(self, interaction: Interaction):
         user = interaction.user
