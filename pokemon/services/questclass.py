@@ -245,4 +245,5 @@ Return Teeth - get HM04
 Pokemon Lab - take helix or dome fossile and Old Amber and turn into Pokemon
 SS Anne - get ss_ticket item
 The Pokemon League - battle the elite 4
+Mysterious Cave - move to location 147
 """
