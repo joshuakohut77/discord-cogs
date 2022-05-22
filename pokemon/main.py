@@ -34,7 +34,7 @@ from services.trainerclass import trainer as TrainerClass
 # pretty up item names
 # - [high] Use items / heal pokemon
 # - [low] Add a back btn to catch
-# - [low] Add page numbers to party (pc?)
+# - [low] Don't always say 'walking through tall grass'
 # - [low] Nickname pokemon
 # - [med] Pokedex
 # - [med] Test evolutions in discord
