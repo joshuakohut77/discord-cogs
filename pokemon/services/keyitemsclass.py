@@ -125,7 +125,7 @@ class keyitems:
                             'oaks_parcel':self.oaks_parcel, 'oaks_parcel_delivered':self.oaks_parcel_delivered,
                             'ss_ticket':self.ss_ticket, 'bicycle':self.bicycle, 
                             'item_finder':self.item_finder, 'bike_voucher':self.bike_voucher, 'gold_teeth':self.gold_teeth,
-                            'old_rod':self.old_rod, 'good_rod':self.good_rod, 'super_rod':self.super_rod, , 'elite_four':self.elite_four,
+                            'old_rod':self.old_rod, 'good_rod':self.good_rod, 'super_rod':self.super_rod, 'elite_four':self.elite_four,
                             'discordId':self.discordId }
                 db.execute(updateString, values)
         except:
