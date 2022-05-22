@@ -304,7 +304,47 @@ class EncountersMixin(MixinMeta):
 
 
     async def __on_catch_back(self, interaction: Interaction):
-        pass
+        user = interaction.user
+
+        if not self.__checkUserActionState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+        # active = trainer.getActivePokemon()
+        state = self.__useractions[str(user.id)]
+        wildPokemon = state.wildPokemon
+        active = state.activePokemon
+        
+        # await interaction.send(f'You encountered a wild {pokemon.pokemonName}!')
+        desc = f'''
+{user.display_name} encountered a wild {wildPokemon.pokemonName.capitalize()}!
+{user.display_name} sent out {active.pokemonName.capitalize()}.
+'''
+
+        embed = self.__wildPokemonEncounter(user, wildPokemon, active, desc)
+
+        btns = []
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Fight", custom_id='fight'),
+            self.__on_fight_click,
+        ))
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Run away", custom_id='runaway'),
+            self.__on_runaway_click,
+        ))
+        btns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Catch", custom_id='catch'),
+            self.__on_catch_click,
+        ))
+
+        message = await interaction.channel.send(
+            # content=f'{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!',
+            embed=embed,
+            components=[btns]
+        )
+        self.__useractions[str(user.id)] = ActionState(
+            str(user.id), message.id, state.location, active, wildPokemon, desc)
+
 
     async def __on_throw_pokeball(self, interaction: Interaction):
         user = interaction.user
