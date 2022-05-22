@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 from redbot.core import commands
 
 from services.trainerclass import trainer as TrainerClass
-
+from models.state import PokemonState
 
 from .abcd import MixinMeta
 from services.pokeclass2 import Pokemon as PokemonClass
@@ -23,35 +23,35 @@ from .functions import (createStatsEmbed, getTypeColor,
                         createPokemonAboutEmbed)
 
 
-class PokemonState:
-    discordId: str
-    messageId: int
-    pokemon: list
-    active: int
-    idx: int
+# class PokemonState:
+#     discordId: str
+#     messageId: int
+#     pokemon: list
+#     active: int
+#     idx: int
 
-    def __init__(self, discordId: str, messageId: int, pokemon: list, active: int, idx: int) -> None:
-        self.discordId = discordId
-        self.messageId = messageId
-        self.pokemon = pokemon
-        self.active = active
-        self.idx = idx
+#     def __init__(self, discordId: str, messageId: int, pokemon: list, active: int, idx: int) -> None:
+#         self.discordId = discordId
+#         self.messageId = messageId
+#         self.pokemon = pokemon
+#         self.active = active
+#         self.idx = idx
 
 
 class PcMixin(MixinMeta):
     """PC"""
 
-    __pokemon: dict[str, PokemonState] = {}
+    # __pokemon: dict[str, PokemonState] = {}
 
-    def __checkPokemonState(self, user: discord.User, message: discord.Message):
-        state: PokemonState
-        if str(user.id) not in self.__pokemon.keys():
-            return False
-        else:
-            state = self.__pokemon[str(user.id)]
-            if state.messageId != message.id:
-                return False
-        return True
+    # def __checkPokemonState(self, user: discord.User, message: discord.Message):
+    #     state: PokemonState
+    #     if str(user.id) not in self.__pokemon.keys():
+    #         return False
+    #     else:
+    #         state = self.__pokemon[str(user.id)]
+    #         if state.messageId != message.id:
+    #             return False
+    #     return True
 
 
     @commands.group(name="trainer")
