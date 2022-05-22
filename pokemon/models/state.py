@@ -1,6 +1,6 @@
 
 from typing import Any, Dict, List, Union, TYPE_CHECKING
-from services.pokeclass2 import Pokemon as PokemonClass
+from services.pokeclass import Pokemon as PokemonClass
 
 class PokemonState:
     discordId: str
