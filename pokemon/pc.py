@@ -81,12 +81,12 @@ class PcMixin(MixinMeta):
             return
 
         state = PokemonState(str(user.id), None, pokeList, active.trainerId, i)
-        embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
+        embed, btns = self.__pokemonStatsCard(user, state)
 
         # if interaction is None:
         message = await ctx.send(
             embed=embed,
-            components=[firstRow, secondRow, thirdRow]
+            components=btns
         )
         self.setPokemonState(user, PokemonState(str(user.id), message.id, pokeList, active.trainerId, i))
 
@@ -115,9 +115,9 @@ class PcMixin(MixinMeta):
         await interaction.channel.send(f'{user.display_name} set their active pokemon to {pokemon.pokemonName.capitalize()}.')
         
         state.active = pokemon.trainerId
-        embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
+        embed, btns = self.__pokemonStatsCard(user, state)
 
-        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow, thirdRow])
+        message = await interaction.edit_origin(embed=embed, components=btns)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
         
@@ -132,9 +132,9 @@ class PcMixin(MixinMeta):
         state = self.getPokemonState(user)
         state.idx = state.idx + 1
 
-        embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
+        embed, btns = self.__pokemonStatsCard(user, state)
 
-        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow, thirdRow])
+        message = await interaction.edit_origin(embed=embed, components=btns)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
         
@@ -149,9 +149,9 @@ class PcMixin(MixinMeta):
         state = self.getPokemonState(user)
         state.idx = state.idx - 1
 
-        embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
+        embed, btns = self.__pokemonStatsCard(user, state)
 
-        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow, thirdRow])
+        message = await interaction.edit_origin(embed=embed, components=btns)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
 
@@ -165,9 +165,9 @@ class PcMixin(MixinMeta):
 
         state = self.getPokemonState(user)
 
-        embed, firstRow, secondRow = self.__pokemonMovesCard(user, state)
+        embed, btns = self.__pokemonMovesCard(user, state)
 
-        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow])
+        message = await interaction.edit_origin(embed=embed, components=btns)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
 
@@ -180,9 +180,9 @@ class PcMixin(MixinMeta):
 
         state = self.getPokemonState(user)
 
-        embed, firstRow, secondRow, thirdRow = self.__pokemonStatsCard(user, state)
+        embed, btns = self.__pokemonStatsCard(user, state)
 
-        message = await interaction.edit_origin(embed=embed, components=[firstRow, secondRow, thirdRow])
+        message = await interaction.edit_origin(embed=embed, components=btns)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
 
@@ -253,10 +253,16 @@ class PcMixin(MixinMeta):
         await interaction.channel.send(f'{user.display_name} released {pokemon.pokemonName.capitalize()}')
         pokeList = trainer.getPokemon()
         pokeLength = len(pokeList)
-        self.setPokemonState(user, PokemonState(str(user.id), state.messageId, pokeList, state.active, state.idx))
+
+        state = PokemonState(str(user.id), state.messageId, pokeList, state.active, state.idx)
+        self.setPokemonState(user, state)
 
         if i < pokeLength - 1:
-            await self.__on_next_click(interaction)
+            embed, btns = self.__pokemonStatsCard(user, state)
+
+            message = await interaction.edit_origin(embed=embed, components=btns)
+            
+            self.setPokemonState(user, PokemonState(str(user.id), message.id, state.pokemon, state.active, state.idx))
         else:
             await self.__on_prev_click(interaction)
 
@@ -314,7 +320,16 @@ class PcMixin(MixinMeta):
             self.__on_pokemon_withdraw
         ))
 
-        return embed, firstRowBtns, secondRowBtns, thirdRowBtns
+        btns = []
+
+        if len(firstRowBtns) > 0:
+            btns.append(firstRowBtns)
+        if len(secondRowBtns) > 0:
+            btns.append(secondRowBtns)
+        if len(thirdRowBtns) > 0:
+            btns.append(thirdRowBtns)
+
+        return embed, btns
 
 
     def __pokemonMovesCard(self, user: discord.User, state: PokemonState):
@@ -358,7 +373,22 @@ class PcMixin(MixinMeta):
             self.__on_release_click
         ))
 
-        return embed, firstRowBtns, secondRowBtns
+        thirdRowBtns = []
+        thirdRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Withdraw", custom_id='withdraw'),
+            self.__on_pokemon_withdraw
+        ))
+
+        btns = []
+
+        if len(firstRowBtns) > 0:
+            btns.append(firstRowBtns)
+        if len(secondRowBtns) > 0:
+            btns.append(secondRowBtns)
+        if len(thirdRowBtns) > 0:
+            btns.append(thirdRowBtns)
+
+        return embed, btns
 
 
 
