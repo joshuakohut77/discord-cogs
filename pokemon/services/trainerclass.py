@@ -257,6 +257,7 @@ class trainer:
 
     def setActivePokemon(self, trainerId):
         """ sets an active pokemon unique Id in the trainer db """
+        self.statuscode = 69
         updateSuccess = False
         try:
             db = dbconn()
