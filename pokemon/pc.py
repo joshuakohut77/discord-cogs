@@ -268,9 +268,9 @@ class PcMixin(MixinMeta):
 
         embed: discord.Embed
 
-        if card.STATS:
+        if DisplayCard.STATS.value == card.value:
             embed = createStatsEmbed(user, pokemon)
-        elif card.MOVES:
+        elif DisplayCard.MOVES.value == card.value:
             embed = createPokemonAboutEmbed(user, pokemon)
         else:
             dex = PokedexClass.getPokedexEntry(pokemon)
@@ -289,17 +289,17 @@ class PcMixin(MixinMeta):
             ))
 
         secondRowBtns = []      
-        if not card.MOVES:
+        if DisplayCard.MOVES.value != card.value:
             secondRowBtns.append(self.client.add_callback(
                 Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
                 self.__on_moves_click
             ))
-        if not card.Stats:
+        if DisplayCard.STATS.value != card.value:
             secondRowBtns.append(self.client.add_callback(
                 Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
                 self.__on_stats_click
             ))
-        if not card.DEX:
+        if DisplayCard.DEX.value != card.value:
             secondRowBtns.append(self.client.add_callback(
                 Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
                 self.__on_pokedex_click
