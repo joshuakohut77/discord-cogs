@@ -1,11 +1,9 @@
 from __future__ import annotations
 from re import L
 from typing import Any, Dict, List, Union, TYPE_CHECKING
-import asyncio
 
 import discord
-from discord_components import (
-    DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
+from discord_components import (ButtonStyle, Button, Interaction)
 
 
 if TYPE_CHECKING:
@@ -321,8 +319,12 @@ class PcMixin(MixinMeta):
             self.__on_pokemon_withdraw
         ))
 
+        # Check that each row has btns in it.
+        # It's not guaranteed that the next/previous btns will
+        # always be there if there is just one pokemon in the list.
+        # Returning an empty component row is a malformed request to discord.
+        # Check each btn row to be safe.
         btns = []
-
         if len(firstRowBtns) > 0:
             btns.append(firstRowBtns)
         if len(secondRowBtns) > 0:
@@ -332,136 +334,6 @@ class PcMixin(MixinMeta):
 
         return embed, btns
 
-
-    # def __pokemonMovesCard(self, user: discord.User, state: PokemonState):
-    #     pokeList = state.pokemon
-    #     pokeLength = len(pokeList)
-    #     i = state.idx
-    #     activeId = state.active
-
-    #     pokemon: PokemonClass = pokeList[i]
-
-    #     # Kind of a hack, but if the property is still set to None,
-    #     # then we probably haven't loaded this pokemon yet.
-    #     if pokemon.pokemonName is None:
-    #         pokemon.load(pokemonId=pokemon.trainerId)
-
-    #     embed = createPokemonAboutEmbed(user, pokemon)
-        
-    #     firstRowBtns = []
-    #     if i > 0:
-    #         firstRowBtns.append(self.client.add_callback(
-    #             Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'),
-    #             self.__on_prev_click
-    #         ))
-    #     if i < pokeLength - 1:
-    #         firstRowBtns.append(self.client.add_callback(
-    #             Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
-    #             self.__on_next_click
-    #         ))
-
-    #     secondRowBtns = []
-    #     secondRowBtns.append(self.client.add_callback(
-    #         Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
-    #         self.__on_stats_click
-    #     ))
-    #     secondRowBtns.append(self.client.add_callback(
-    #         Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
-    #         self.__on_pokedex_click
-    #     ))
-
-    #     activeDisabled = (activeId is not None) and (pokemon.trainerId == activeId)
-    #     secondRowBtns.append(self.client.add_callback(
-    #         Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled),
-    #         self.__on_set_active
-    #     ))
-    #     secondRowBtns.append(self.client.add_callback(
-    #         Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled),
-    #         self.__on_release_click
-    #     ))
-
-    #     thirdRowBtns = []
-    #     thirdRowBtns.append(self.client.add_callback(
-    #         Button(style=ButtonStyle.green, label="Withdraw", custom_id='withdraw'),
-    #         self.__on_pokemon_withdraw
-    #     ))
-
-    #     btns = []
-
-    #     if len(firstRowBtns) > 0:
-    #         btns.append(firstRowBtns)
-    #     if len(secondRowBtns) > 0:
-    #         btns.append(secondRowBtns)
-    #     if len(thirdRowBtns) > 0:
-    #         btns.append(thirdRowBtns)
-
-    #     return embed, btns
-
-
-    # def __pokemonDexCard(self, user: discord.User, state: PokemonState):
-    #     pokeList = state.pokemon
-    #     pokeLength = len(pokeList)
-    #     i = state.idx
-    #     activeId = state.active
-
-    #     pokemon: PokemonClass = pokeList[i]
-
-    #     # Kind of a hack, but if the property is still set to None,
-    #     # then we probably haven't loaded this pokemon yet.
-    #     if pokemon.pokemonName is None:
-    #         pokemon.load(pokemonId=pokemon.trainerId)
-
-    #     dex = PokedexClass.getPokedexEntry(pokemon)
-    #     embed = createPokedexEntryEmbed(user, pokemon, dex)
-        
-    #     firstRowBtns = []
-    #     if i > 0:
-    #         firstRowBtns.append(self.client.add_callback(
-    #             Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'),
-    #             self.__on_prev_click
-    #         ))
-    #     if i < pokeLength - 1:
-    #         firstRowBtns.append(self.client.add_callback(
-    #             Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
-    #             self.__on_next_click
-    #         ))
-
-    #     secondRowBtns = []
-    #     secondRowBtns.append(self.client.add_callback(
-    #         Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
-    #         self.__on_moves_click
-    #     ))
-    #     secondRowBtns.append(self.client.add_callback(
-    #         Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
-    #         self.__on_pokedex_click
-    #     ))
-
-    #     activeDisabled = (activeId is not None) and (pokemon.trainerId == activeId)
-    #     secondRowBtns.append(self.client.add_callback(
-    #         Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled),
-    #         self.__on_set_active
-    #     ))
-    #     secondRowBtns.append(self.client.add_callback(
-    #         Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled),
-    #         self.__on_release_click
-    #     ))
-
-    #     thirdRowBtns = []
-    #     thirdRowBtns.append(self.client.add_callback(
-    #         Button(style=ButtonStyle.green, label="Withdraw", custom_id='withdraw'),
-    #         self.__on_pokemon_withdraw
-    #     ))
-
-    #     btns = []
-
-    #     if len(firstRowBtns) > 0:
-    #         btns.append(firstRowBtns)
-    #     if len(secondRowBtns) > 0:
-    #         btns.append(secondRowBtns)
-    #     if len(thirdRowBtns) > 0:
-    #         btns.append(thirdRowBtns)
-
-    #     return embed, btns
 
 
     # # TODO: Apparently there is a limit of 5 buttons at a time
