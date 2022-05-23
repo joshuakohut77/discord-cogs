@@ -250,6 +250,10 @@ class PcMixin(MixinMeta):
             await self.__on_prev_click(interaction)
 
 
+    def __on_items_click(self, interaction: Interaction):
+        pass
+
+
     def __pokemonPcCard(self, user: discord.User, state: PokemonState, card: DisplayCard):
         pokeList = state.pokemon
         pokeLength = len(pokeList)
@@ -322,6 +326,10 @@ class PcMixin(MixinMeta):
         thirdRowBtns.append(self.client.add_callback(
             Button(style=ButtonStyle.green, label="Withdraw", custom_id='withdraw'),
             self.__on_pokemon_withdraw
+        ))
+        thirdRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.blue, label="Items", custom_id='items'),
+            self.__on_items_click
         ))
 
         # Check that each row has btns in it.
