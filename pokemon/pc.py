@@ -268,7 +268,7 @@ class PcMixin(MixinMeta):
 
         ctx = await self.bot.get_context(interaction.message)
 
-        embed, btns = self.__pokemonItemsCard(user, state, state.card, ctx)
+        embed, btns = await self.__pokemonItemsCard(user, state, state.card, ctx)
 
         message = await interaction.edit_origin(embed=embed, components=btns)
         
