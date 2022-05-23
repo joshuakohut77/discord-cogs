@@ -488,6 +488,7 @@ class quests:
     def returnTeeth(self):
         keyitems = kitems(self.discordId)
         keyitems.HM04 = True
+        keyitems.gold_teeth = False
         self.message = """
                             You received HM04"""
         keyitems.save()
