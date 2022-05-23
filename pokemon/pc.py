@@ -296,7 +296,12 @@ class PcMixin(MixinMeta):
         trainer.heal(pokemon.trainerId, item)
 
         if trainer.message:
-            await interaction.send(trainer.message)
+            ctx = await self.bot.get_context(interaction.message)
+            embed, btns = await self.__pokemonItemsCard(user, state, state.card, ctx)
+            message = await interaction.edit_origin(embed=embed, components=btns)
+            self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
+    
+            await interaction.channel.send(f'{user.display_name}, {trainer.message}')
         else:
             await interaction.send('Could not use the item.')
 
@@ -312,18 +317,17 @@ class PcMixin(MixinMeta):
 
         ctx = await self.bot.get_context(interaction.message)
 
-        embed, btns = await self.__pokemonItemsCard(user, state, state.card, ctx)
+        embed, btns = await self.__pokemonItemsCard(user, state, DisplayCard.STATS, ctx)
 
         message = await interaction.edit_origin(embed=embed, components=btns)
         
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.STATS, state.pokemon, state.active, state.idx))
 
 
     async def __pokemonItemsCard(self, user: discord.User, state: PokemonState, card: DisplayCard, ctx: Context):
         pokeList = state.pokemon
         pokeLength = len(pokeList)
         i = state.idx
-        activeId = state.active
 
         pokemon: PokemonClass = pokeList[i]
 
@@ -352,39 +356,51 @@ class PcMixin(MixinMeta):
         inv = InventoryClass(str(user.id))
         
         firstRowBtns = []
+        if i > 0:
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'),
+                self.__on_prev_click
+            ))
+        if i < pokeLength - 1:
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
+                self.__on_next_click
+            ))
+
+        secondRowBtns = []
         if inv.potion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.POTION)
-            firstRowBtns.append(self.client.add_callback(
+            secondRowBtns.append(self.client.add_callback(
                 Button(style=ButtonStyle.grey, emoji=emote, label="Potion", custom_id='potion'),
                 self.__on_use_item
             ))
         if inv.superpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.SUPERPOTION)
-            firstRowBtns.append(self.client.add_callback(
+            secondRowBtns.append(self.client.add_callback(
                 Button(style=ButtonStyle.grey, emoji=emote, label="Super Potion", custom_id='superpotion'),
                 self.__on_use_item
             ))
         if inv.hyperpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.HYPERPOTION)
-            firstRowBtns.append(self.client.add_callback(
+            secondRowBtns.append(self.client.add_callback(
                 Button(style=ButtonStyle.grey, emoji=emote, label="Hyper Potion", custom_id='hyperpotion'),
                 self.__on_use_item
             ))
         if inv.maxpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.MAXPOTION)
-            firstRowBtns.append(self.client.add_callback(
+            secondRowBtns.append(self.client.add_callback(
                 Button(style=ButtonStyle.grey, emoji=emote, label="Max Potion", custom_id='maxpotion'),
                 self.__on_use_item
             ))
         if inv.revive > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.REVIVE)
-            firstRowBtns.append(self.client.add_callback(
+            secondRowBtns.append(self.client.add_callback(
                 Button(style=ButtonStyle.grey, emoji=emote, label="Revive", custom_id='revive'),
                 self.__on_use_item
             ))
 
-        secondRowBtns = []
-        secondRowBtns.append(self.client.add_callback(
+        thirdRowBtns = []
+        thirdRowBtns.append(self.client.add_callback(
             Button(style=ButtonStyle.grey, label="Back", custom_id='back'),
             self.__on_items_back
         ))
@@ -399,6 +415,8 @@ class PcMixin(MixinMeta):
             btns.append(firstRowBtns)
         if len(secondRowBtns) > 0:
             btns.append(secondRowBtns)
+        if len(thirdRowBtns) > 0:
+            btns.append(thirdRowBtns)
 
         return embed, btns
 

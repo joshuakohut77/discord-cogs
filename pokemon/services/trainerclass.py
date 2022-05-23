@@ -723,4 +723,4 @@ class trainer:
         
         diff = newHP - currentHP
         self.statuscode = 420
-        self.message = f'Your pokemon restored {diff} hp!'
+        self.message = f'Your {pokemon.pokemonName.capitalize()} restored {diff} hp!'
