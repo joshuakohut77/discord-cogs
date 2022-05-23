@@ -381,6 +381,7 @@ class trainer:
                 self.message = retMsg
         except:
             self.statuscode = 96
+            self.message = 'error in receiving gift'
             logger.error(excInfo=sys.exc_info())
 
     def onlyone(self, method='only-one'):
