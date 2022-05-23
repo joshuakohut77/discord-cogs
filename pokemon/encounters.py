@@ -204,7 +204,7 @@ class EncountersMixin(MixinMeta):
 
         await interaction.send(trainer.message)
         # await interaction.channel.send(
-        await message.reply(
+        await message.edit(
             content=f'{trainer.message}',
             embed=embed,
             components=[]
