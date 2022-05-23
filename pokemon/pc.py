@@ -271,7 +271,34 @@ class PcMixin(MixinMeta):
 
     
     async def __on_use_item(self, interaction: Interaction):
-        pass
+        user = interaction.user
+
+        if not self.checkPokemonState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+        
+        state = self.getPokemonState(user)
+        pokemon = state.pokemon[state.idx]
+
+        item = ''
+        if interaction.custom_id == 'potion':
+            item = 'potion'
+        elif interaction.custom_id == 'superpotion':
+            item = 'super-potion'
+        elif interaction.custom_id == 'hyperpotion':
+            item = 'hyper-potion'
+        elif interaction.custom_id == 'maxpotion':
+            item = 'max-potion'
+        elif interaction.custom_id == 'revive':
+            item = 'revive'
+
+        trainer = TrainerClass(str(user.id))
+        trainer.heal(pokemon.trainerId, item)
+
+        if trainer.message:
+            await interaction.send(trainer.message)
+        else:
+            await interaction.send('Could not use the item.')
 
 
     async def __on_items_click(self, interaction: Interaction):
@@ -335,6 +362,12 @@ class PcMixin(MixinMeta):
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.SUPERPOTION)
             firstRowBtns.append(self.client.add_callback(
                 Button(style=ButtonStyle.grey, emoji=emote, label="Super Potion", custom_id='superpotion'),
+                self.__on_use_item
+            ))
+        if inv.hyperpotion > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.HYPERPOTION)
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.grey, emoji=emote, label="Hyper Potion", custom_id='hyperpotion'),
                 self.__on_use_item
             ))
         if inv.maxpotion > 0:
