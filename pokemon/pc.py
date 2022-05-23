@@ -108,12 +108,16 @@ class PcMixin(MixinMeta):
         state = self.getPokemonState(user)
         state.idx = state.idx + 1
 
-        embed, btns = self.__pokemonPcCard(user, state, state.card)
-
-        message = await interaction.edit_origin(embed=embed, components=btns)
-        
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
-        
+        if DisplayCard.ITEMS.value == state.card.value:
+            ctx = await self.bot.get_context(interaction.message)
+            embed, btns = await self.__pokemonItemsCard(user, state, DisplayCard.ITEMS, ctx)
+            message = await interaction.edit_origin(embed=embed, components=btns)
+            self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
+        else:
+            embed, btns = self.__pokemonPcCard(user, state, state.card)
+            message = await interaction.edit_origin(embed=embed, components=btns)
+            self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
+    
 
     async def __on_prev_click(self, interaction: Interaction):
         user = interaction.user
@@ -262,11 +266,11 @@ class PcMixin(MixinMeta):
 
         state = self.getPokemonState(user)
 
-        embed, btns = self.__pokemonPcCard(user, state, state.card)
+        embed, btns = self.__pokemonPcCard(user, state, DisplayCard.STATS)
 
         message = await interaction.edit_origin(embed=embed, components=btns)
         
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.STATS, state.pokemon, state.active, state.idx))
 
 
     
@@ -317,11 +321,11 @@ class PcMixin(MixinMeta):
 
         ctx = await self.bot.get_context(interaction.message)
 
-        embed, btns = await self.__pokemonItemsCard(user, state, DisplayCard.STATS, ctx)
+        embed, btns = await self.__pokemonItemsCard(user, state, DisplayCard.ITEMS, ctx)
 
         message = await interaction.edit_origin(embed=embed, components=btns)
         
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.STATS, state.pokemon, state.active, state.idx))
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.ITEMS, state.pokemon, state.active, state.idx))
 
 
     async def __pokemonItemsCard(self, user: discord.User, state: PokemonState, card: DisplayCard, ctx: Context):
@@ -339,7 +343,7 @@ class PcMixin(MixinMeta):
 
         embed: discord.Embed
 
-        if DisplayCard.STATS.value == card.value:
+        if DisplayCard.STATS.value == card.value or DisplayCard.ITEMS.value == card.value:
             embed = createStatsEmbed(user, pokemon)
         elif DisplayCard.MOVES.value == card.value:
             embed = createPokemonAboutEmbed(user, pokemon)

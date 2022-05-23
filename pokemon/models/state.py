@@ -9,6 +9,7 @@ class DisplayCard(Enum):
     STATS = 1
     MOVES = 2
     DEX = 3
+    ITEMS = 4
 
 
 class PokemonState:
