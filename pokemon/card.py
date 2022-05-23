@@ -62,6 +62,7 @@ class TrainerCardMixin(MixinMeta):
             return
 
         stats = LeaderBoardClass(str(user.id))
+        stats.load()
 
         embed = discord.Embed(title=f"Trainer")
         embed.set_author(name=f"{user.display_name}", icon_url=str(user.avatar_url))
