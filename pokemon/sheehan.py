@@ -22,9 +22,10 @@ b = card.value == DisplayCard.STATS.value
 c = card.value == DisplayCard.MOVES.value
 
 trainer = TrainerClass('509767223938777108')
-dex = trainer.getPokedex()
+trainer.gift()
+# dex = trainer.getPokedex()
 
-entry = PokedexClass.getPokedexEntry(trainer.getStarterPokemon())
+# entry = PokedexClass.getPokedexEntry(trainer.getStarterPokemon())
 
 # dexlist = dex.loadPokedex()
 # loc = trainer.encounter('walk')
