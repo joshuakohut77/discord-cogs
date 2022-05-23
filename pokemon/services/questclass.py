@@ -2,7 +2,10 @@
 import sys
 from typing import List
 from keyitemsclass import keyitems as kitems
+from inventoryclass import inventory as inv
+from pokeclass import Pokemon as pokeClass
 from loggerclass import logger as log
+from trainerclass import trainer as trainerClass
 import models.quest as QuestModel
 from keyitemsclass import keyitems as kitems
 
@@ -280,141 +283,272 @@ class quests:
             self.statuscode = 69
             self.message = "unknown quest name received"
         
-        keyitems = kitems(self.discordId)
+        # all quests return a message
+        self.statuscode = 420
         
         if questName == 'Professor Oak':
-            return self.professorOak
+            return self.professorOak()
         elif questName == 'Super Nerd':
-            return self.superNerd
+            return self.superNerd()
         elif questName == 'Fishing Guru':
-            return self.fishingGuru
+            return self.fishingGuru()
         elif questName == 'Bike Voucher':
-            return self.bikeVoucher
+            return self.bikeVoucher()
         elif questName == 'Speak to Captain':
-            return self.speakToCaptain
+            return self.speakToCaptain()
         elif questName == 'Oaks Aide':
-            return self.oaksAide
+            return self.oaksAide()
         elif questName == 'Museum of Science':
-            return self.museumOfScience
+            return self.museumOfScience()
         elif questName == 'Cafe':
-            return self.cafe
+            return self.cafe()
         elif questName == 'Rooftop Square':
-            return self.rooftopSquare
+            return self.rooftopSquare()
         elif questName == 'Rocket Hideout':
-            return self.rocketHideout
+            return self.rocketHideout()
         elif questName == 'Free Spirits':
-            return self.freeSpirits
+            return self.freeSpirits()
         elif questName == 'Mr Fuji':
-            return self.mrFuji
+            return self.mrFuji()
         elif questName == 'Lone House':
-            return self.loneHouse
+            return self.loneHouse()
         elif questName == 'Secret Resort':
-            return self.secretResort
+            return self.secretResort()
         elif questName == 'Fishing Brother':
-            return self.fishingBrother
+            return self.fishingBrother()
         elif questName == 'Fishing Dude':
-            return self.fishingDude
+            return self.fishingDude()
         elif questName == 'The Warden':
-            return self.theWarden
+            return self.theWarden()
         elif questName == 'Return Teeth':
-            return self.returnTeeth
+            return self.returnTeeth()
         elif questName == 'SS Anne':
-            return self.ssAnne
+            return self.ssAnne()
         elif questName == 'The Pokemon League':
-            return self.thePokemonLeague
+            return self.thePokemonLeague()
         elif questName == 'Mysterious Cave':
-            return self.mysteriousCave
+            return self.mysteriousCave()
 
 
         return
     
 
-    def professorOak(self, keyitems):
+    def professorOak(self):
+        keyitems = kitems(self.discordId)
+        keyitems.oaks_parcel_delivered = True
+        keyitems.oaks_parcel = False
+        self.message = """You found Professor Oak in your 
+                            mothers bedroom and delivered his parcel."""
+        keyitems.save()
+        return
+
+    def superNerd(self):
+        inventory = inv(self.discordId)
+        inventory.helixfossil = 1
+        self.message = """Some nerd was super excited about finding two rocks. 
+                            You take one just to ruin his day. 
+                            You received a Helix Fossil!"""
+        inventory.save()
+        return
+
+    def fishingGuru(self):
+        keyitems = kitems(self.discordId)
+        keyitems.old_rod = True
+        self.message = """Some creepy guy gave you an old-rod with missing fishing line. 
+                            You notice bubbles comeing from the lake near you.
+                            You received an Old Rod!"""
+        keyitems.save()
+        return
+
+    def bikeVoucher(self):
+        keyitems = kitems(self.discordId)
+        keyitems.bike_voucher = True
+        self.message = """You met a guy who found out his wife was cheating on him with some professor.
+                            He gave you the bike voucher which was her birthday surprise. 
+                            You received a Bike Voucher!"""
+        keyitems.save()
+        return
+
+    def speakToCaptain(self):
+        keyitems = kitems(self.discordId)
+        keyitems.HM01 = True
+        self.message = """You caught the captain and his crew smuggling black tar heroine.
+                            The captin bribed you to keep quiet.  
+                            You received HM01!"""
+        keyitems.save()
+        return
+
+    def oaksAide(self):
+        keyitems = kitems(self.discordId)
+        keyitems.HM05 = True
+        self.message = """You met Professor Oaks aide. She was jealous to hear about his relationship with your mother.
+                            She gave you a valuable item from Oaks collection. She seemed suspiciously young.
+                            You received HM05!"""
+        keyitems.save()
+        return
+
+    def museumOfScience(self):
+        inventory = inv(self.discordId)
+        inventory.oldamber = 1
+        self.message = """You browsed the Museum of Science and found a cool looking stone. 
+                            You placed the stone in your bag when no one was looking.
+                            The inscription said "Property of John Hammond"
+                            You received some Old Amber!"""
+        inventory.save()
+        return
+
+    def cafe(self):
+        inventory = inv(self.discordId)
+        inventory.coincase = 1
+        self.message = """In a cafe you meet a man who was down on his gambling luck. 
+                            He has bet and lost his wife in a bet. In an attempt to quit
+                            he gives you his coin case.
+                            You received a Coin Case!"""
+        inventory.save()
+        return
+
+    def rooftopSquare(self):
+        inventory = inv(self.discordId)
+        inventory.lemonade = 1
+        self.message = """On the rooftop square you find a little girl flossing for a TikTok video. 
+                            In a blinding rage you crush her body with a vending machine. In the process
+                            a bottle was disloged. 
+                            You received a Lemonade!"""
+        inventory.save()
+        return
+
+    def rocketHideout(self):
+        keyitems = kitems(self.discordId)
+        keyitems.silph_scope = True
+        self.message = """Deep inside Team Rockets hideout, you stumble upon a Free Mason sex ritual. Soon you were discovered.
+                            You tried to use your escape-rope but instead were bound by it.
+                            For two days you were used as a sex slave in an endless train. In a comotose of post nut clarity, 
+                            you grab the Grand Masters scepter and escape. 
+                            You received the Silph Scope!"""
+        keyitems.save()
+        return
+
+    def freeSpirits(self):
+        self.message = """During a search for a Big Tiddy Goth GF you stumble upon some ghosts in a tower. 
+                            Using your Silph Scope you battle your way to the top. You slay an endangered 
+                            pokemon species. Why did you come here again?
+                            You received the Nothing!"""
+        return
+
+    def mrFuji(self):
+        keyitems = kitems(self.discordId)
+        keyitems.pokeflute = True
+        self.message = """You meet a feeble old man alone in his house. You notice a cool instrument haning on his wall. 
+                            You asked if you could have it. He declined. He was alone...
+                            You received the Pokeflute!"""
+        keyitems.save()
+        return
+
+    def loneHouse(self):
+        keyitems = kitems(self.discordId)
+        keyitems.HM03 = True
+        self.message = """Deep inside the safari zone you find a lone house. Inside was a man who told you get off his property. 
+                            You left and reported to the authories he has dirt on the Clintons. The next day you scavanged his house.
+                            You received HM03!"""
+        keyitems.save()
+        return
+
+    def secretResort(self):
+        keyitems = kitems(self.discordId)
+        keyitems.HM02 = True
+        self.message = """
+                            You received HM02!"""
+        keyitems.save()
+        return
+
+    def fishingBrother(self):
+        keyitems = kitems(self.discordId)
+        keyitems.super_rod = True
+        self.message = """
+                            You received a Super Rod!"""
+        keyitems.save()
+        return
+
+    def fishingDude(self):
+        keyitems = kitems(self.discordId)
+        keyitems.good_rod = True
+        self.message = """
+                            You received a Good Rod!"""
+        keyitems.save()
+        return
+
+    def theWarden(self):
+        keyitems = kitems(self.discordId)
+        keyitems.gold_teeth = True
+        self.message = """
+                            You received some Gold Teeth"""
+        keyitems.save()
+        return
+
+    def returnTeeth(self):
+        keyitems = kitems(self.discordId)
+        keyitems.HM04 = True
+        self.message = """
+                            You received HM04"""
+        keyitems.save()
+        return
+
+    def pokemonLab(self):
+        # special quest where you trade in Helix/Dome Fossil and old amber for pokemon later
+        keyitems = kitems(self.discordId)
+        inventory = inv(self.discordId)
+        if inventory.domefossil > 0 or inventory.helixfossil > 0 or inventory.oldamber > 0:
+            if inventory.domefossil > 0:
+                inventory.domefossil = -1
+            if inventory.helixfossil > 0:
+                inventory.helixfossil = -1
+            if inventory.oldamber > 0:
+                inventory.oldamber = -1
+            self.message = """You find some german scientists in a lab. They offer to experiement 
+                                on your prehistoric rocks. You gladly give them your stupid rocks.
+                                """
+            inventory.save()
+        elif keyitems.elite_four:
+            # if beaten elite four give them pokemon.
+            if inventory.domefossil == -1:
+                pokemon1 = pokeClass(self.discordId, 138) # omanyte
+                pokemon1.create(35)
+                pokemon1.save()
+                self.message += " You received Omanyte"
+            if inventory.helixfossil == -1:
+                pokemon2 = pokeClass(self.discordId, 140) # kabuto
+                pokemon2.create(35)
+                pokemon2.save()
+                self.message += " You received Kabuto"
+            if inventory.oldamber == -1:
+                pokemon3 = pokeClass(self.discordId, 142) # aerodactyl
+                pokemon3.create(35)
+                pokemon3.save()
+                self.message += " You received Aerodactyl"
+        else:
+            self.message = """The scientists begin to shout at you in german. You decide to leave"""
         
         return
 
-    def superNerd(self, keyitems):
+    def ssAnne(self):
+        keyitems = kitems(self.discordId)
+        keyitems.ss_ticket = True
+        self.message = """
+                            You received an SS Anne Ticket"""
+        keyitems.save()
+        return
+
+    def thePokemonLeague(self):
+        # start battle with Elite 4
         
         return
 
-    def fishingGuru(self, keyitems):
-        
-        return
-
-    def bikeVoucher(self, keyitems):
-        
-        return
-
-    def speakToCaptain(self, keyitems):
-        
-        return
-
-    def oaksAide(self, keyitems):
-        
-        return
-
-    def museumOfScience(self, keyitems):
-        
-        return
-
-    def cafe(self, keyitems):
-        
-        return
-
-    def rooftopSquare(self, keyitems):
-        
-        return
-
-    def rocketHideout(self, keyitems):
-        
-        return
-
-    def freeSpirits(self, keyitems):
-        
-        return
-
-    def mrFuji(self, keyitems):
-        
-        return
-
-    def loneHouse(self, keyitems):
-        
-        return
-
-    def secretResort(self, keyitems):
-        
-        return
-
-    def fishingBrother(self, keyitems):
-        
-        return
-
-    def fishingDude(self, keyitems):
-        
-        return
-
-    def theWarden(self, keyitems):
-        
-        return
-
-    def returnTeeth(self, keyitems):
-        
-        return
-
-    def pokemonLab(self, keyitems):
-        
-        return
-
-    def ssAnne(self, keyitems):
-        
-        return
-
-    def thePokemonLeague(self, keyitems):
-        
-        return
-
-    def mysteriousCave(self, keyitems):
-        
+    def mysteriousCave(self):
+        # trainer set location to location 147
+        locationId = 147
+        trainer = trainerClass (self.discordId)
+        trainer.setLocation(locationId)
+        self.message = """You notice some fatty out for a walk. You enter inside the mysterious cave to avoid him."""
         return
 
 
