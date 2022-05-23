@@ -112,8 +112,19 @@ class EncountersMixin(MixinMeta):
                 Button(style=color, label=f"{method}", custom_id=f'{method}', disabled=True)
             )
 
+        msg = 'Walking through tall grass...'
+
+        if interaction.custom_id == 'old-rod':
+            msg = 'Fishing with an old rod...'
+        elif interaction.custom_id == 'good-rod':
+            msg = 'Fishing with a good rod...'
+        elif interaction.custom_id == 'super-rod':
+            msg = 'Fishing with a super rod...'
+        elif interaction.custom_id == 'gift':
+            msg = 'Waiting to receive a gift...'
+
         await interaction.edit_origin(
-            content="Walking through tall grass...",
+            content=msg,
             components=[btns]
         )
 
@@ -124,6 +135,13 @@ class EncountersMixin(MixinMeta):
 
         # if method == 'walk':
         trainer = TrainerClass(str(user.id))
+
+
+        if interaction.custom_id == 'gift':
+            trainer.gift()
+            await interaction.channel.send(trainer.message)
+            return
+
         wildPokemon: PokemonClass = trainer.encounter(method)
         if wildPokemon is None:
             if trainer.statuscode == 420:
