@@ -33,8 +33,8 @@ from services.trainerclass import trainer as TrainerClass
 # pretty up location names
 # pretty up item names
 # - [high] Use items / heal pokemon
-# - [low] Add a back btn to catch
-# - [low] Don't always say 'walking through tall grass'
+# - [x][low] Add a back btn to catch
+# - [x][low] Don't always say 'walking through tall grass'
 # - [low] Nickname pokemon
 # - [med] Pokedex
 # - [med] Test evolutions in discord
