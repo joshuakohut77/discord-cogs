@@ -32,6 +32,7 @@ class StarterMixin(MixinMeta):
         pass
 
 
+    @_trainer.command()
     async def nickName(self, ctx: commands.Context, id: int, name: str):
         user = ctx.author
 
@@ -42,7 +43,7 @@ class StarterMixin(MixinMeta):
             pokemon.nickName = name
             pokemon.save()
             ctx.send(f'You changed {pokemon.pokemonName.capitalize()} nickname to {name}')
-        else
+        else:
             ctx.send(f'That pokemon does not exist')
         
 
