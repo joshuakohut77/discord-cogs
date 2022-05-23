@@ -3,30 +3,21 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 
 import discord
-from discord import (Embed, Member)
-from discord import message
-from discord_components import (
-    DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
 from redbot.core import commands
 
+import constant
 from services.trainerclass import trainer as TrainerClass
 from services.storeclass import store as StoreClass
 
-
 from .abcd import MixinMeta
-from .functions import (createStatsEmbed, getTypeColor,
-                        createPokemonAboutEmbed)
-import constant
 
 
 class PokemartMixin(MixinMeta):
     """Pokemart"""
-
-    # __trainers = {}
 
 
     @commands.group(name="pokemart", aliases=['mart'])
@@ -151,7 +142,7 @@ class PokemartMixin(MixinMeta):
 
 
     @_pokemart.command()
-    async def sell(self, ctx: commands.Context, item: str, count: int = 1) -> Non:
+    async def sell(self, ctx: commands.Context, item: str, count: int = 1) -> None:
         user = ctx.author
 
         trainer = TrainerClass(user.id)

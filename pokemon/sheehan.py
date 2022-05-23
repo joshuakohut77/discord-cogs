@@ -13,6 +13,7 @@ from services.locationclass import location as LocationClass
 from services.storeclass import store as StoreClass
 from services.inventoryclass import inventory as InventoryClass
 from services.pokedexclass import pokedex as PokedexClass
+from services.leaderboardclass import leaderboard as LeaderboardClass
 
 from models.state import DisplayCard
 
@@ -22,9 +23,11 @@ b = card.value == DisplayCard.STATS.value
 c = card.value == DisplayCard.MOVES.value
 
 trainer = TrainerClass('509767223938777108')
-trainer.heal(82, 'potion')
+# trainer.heal(82, 'potion')
 # trainer.gift()
 # dex = trainer.getPokedex()
+lb = LeaderboardClass(trainer.discordId)
+lb.load()
 
 # entry = PokedexClass.getPokedexEntry(trainer.getStarterPokemon())
 

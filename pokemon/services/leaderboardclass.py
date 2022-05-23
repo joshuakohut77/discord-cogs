@@ -34,6 +34,7 @@ class leaderboard:
                 SELECT total_battles, total_victory, total_defeat, total_actions, 
                     total_balls_thrown, total_catch, total_run_away, total_released, 
                     total_evolved, total_easter_eggs, total_completions, total_trades 
+                    FROM leaderboard
                     WHERE discord_id = %(discordId)s
                 """
             result = db.querySingle(queryString, { 'discordId': self.discordId })
