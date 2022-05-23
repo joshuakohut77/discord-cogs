@@ -256,7 +256,7 @@ class PcMixin(MixinMeta):
     async def __on_items_back(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.__checkUserActionState(user, interaction.message):
+        if not self.checkPokemonState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
 
@@ -352,7 +352,7 @@ class PcMixin(MixinMeta):
 
         secondRowBtns = []
         secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.grey, emoji=emote, label="Back", custom_id='back'),
+            Button(style=ButtonStyle.grey, label="Back", custom_id='back'),
             self.__on_items_back
         ))
 
