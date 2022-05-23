@@ -351,7 +351,8 @@ class trainer:
         """ handles a gift action """
         retMsg = ''
         try:
-            locationId = self.getLocation()
+            location = self.getLocation()
+            locationId = location.locationId
             if locationId in [67, 86, 120,234]:
                 giftCompleted = False
                 uEncObj = uEnc(self.discordId)
