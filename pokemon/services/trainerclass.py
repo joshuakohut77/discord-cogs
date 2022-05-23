@@ -350,7 +350,7 @@ class trainer:
     
     def quest(self, questName):
         """ handles quest action  """
-        qclass = quests(self.discordId)
+        qclass = quests(str(self.discordId))
 
         qclass.questHandler(questName)
 
@@ -366,7 +366,7 @@ class trainer:
             locationId = location.locationId
             if locationId in [67, 86, 120,234]:
                 giftCompleted = False
-                uEncObj = uEnc(self.discordId)
+                uEncObj = uEnc(str(self.discordId))
                 if locationId == 67:
                     if uEncObj.eevee:
                         giftCompleted = True

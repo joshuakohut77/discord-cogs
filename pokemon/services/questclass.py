@@ -8,7 +8,6 @@ from pokeclass import Pokemon as pokeClass
 from loggerclass import logger as log
 from trainerclass import trainer as trainerClass
 import models.quest as QuestModel
-from keyitemsclass import keyitems as kitems
 
 # Class Logger
 logger = log()
