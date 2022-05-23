@@ -252,6 +252,23 @@ class PcMixin(MixinMeta):
         else:
             await self.__on_prev_click(interaction)
 
+
+    async def __on_items_back(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.__checkUserActionState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+        state = self.getPokemonState(user)
+
+        embed, btns = self.__pokemonPcCard(user, state, state.card)
+
+        message = await interaction.edit_origin(embed=embed, components=btns)
+        
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
+
+
     
     async def __on_use_item(self, interaction: Interaction):
         pass
@@ -307,32 +324,37 @@ class PcMixin(MixinMeta):
         
         inv = InventoryClass(str(user.id))
         
-        secondRowBtns = []
+        firstRowBtns = []
         if inv.potion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.POTION)
-            secondRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.green, emoji=emote, label="Potion", custom_id='potion'),
-                self.__on_moves_click
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.grey, emoji=emote, label="Potion", custom_id='potion'),
+                self.__on_use_item
             ))
         if inv.superpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.SUPERPOTION)
-            secondRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.green, emoji=emote, label="Super Potion", custom_id='superpotion'),
-                self.__on_moves_click
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.grey, emoji=emote, label="Super Potion", custom_id='superpotion'),
+                self.__on_use_item
             ))
         if inv.maxpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.MAXPOTION)
-            secondRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.green, emoji=emote, label="Max Potion", custom_id='maxpotion'),
-                self.__on_moves_click
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.grey, emoji=emote, label="Max Potion", custom_id='maxpotion'),
+                self.__on_use_item
             ))
         if inv.revive > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.REVIVE)
-            secondRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.green, emoji=emote, label="Revive", custom_id='revive'),
-                self.__on_moves_click
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.grey, emoji=emote, label="Revive", custom_id='revive'),
+                self.__on_use_item
             ))
 
+        secondRowBtns = []
+        secondRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.grey, emoji=emote, label="Back", custom_id='back'),
+            self.__on_items_back
+        ))
 
         # Check that each row has btns in it.
         # It's not guaranteed that the next/previous btns will
@@ -340,6 +362,8 @@ class PcMixin(MixinMeta):
         # Returning an empty component row is a malformed request to discord.
         # Check each btn row to be safe.
         btns = []
+        if len(firstRowBtns) > 0:
+            btns.append(firstRowBtns)
         if len(secondRowBtns) > 0:
             btns.append(secondRowBtns)
 
