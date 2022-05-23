@@ -438,13 +438,15 @@ class trainer:
             inventory.maxpotion -= 1
         elif item == 'revive':
             inventory.revive -= 1
+        
         self.__healPokemon(pokeTrainerId, item)
-        if self.statuscode == 69:
-            inventory.save()
+
         if inventory.statuscode == 96:
             self.statuscode = 96
             self.message = "error occurred during inventory.save()"
             return
+        else:
+            inventory.save()
 
     def healAll(self):
         """ heals all pokemon to max HP """
@@ -713,7 +715,12 @@ class trainer:
         pokemon.currentHP = newHP
         pokemon.discordId = self.discordId
         pokemon.save()
+
         if pokemon.statuscode == 96:
             self.statuscode = 96
             self.message = "error occurred during pokemon.save()"
             return
+        
+        diff = newHP - currentHP
+        self.statuscode = 420
+        self.message = f'Your pokemon restored {diff} hp!'
