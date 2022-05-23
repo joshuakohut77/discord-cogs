@@ -32,7 +32,7 @@ from services.trainerclass import trainer as TrainerClass
 # one state mapping instead of multiple
 # pretty up location names
 # pretty up item names
-# - [high] Use items / heal pokemon
+# - [x][high] Use items / heal pokemon
 # - [x][low] Add a back btn to catch
 # - [x][low] Don't always say 'walking through tall grass'
 # - [low] Nickname pokemon
