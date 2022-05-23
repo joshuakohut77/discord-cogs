@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 import discord
 from discord_components import (ButtonStyle, Button, Interaction)
+from redbot.core.commands.context import Context
 
 
 if TYPE_CHECKING:
@@ -11,9 +12,11 @@ if TYPE_CHECKING:
 
 from redbot.core import commands
 
+import constant
 from services.trainerclass import trainer as TrainerClass
 from services.pokeclass import Pokemon as PokemonClass
 from services.pokedexclass import pokedex as PokedexClass
+from services.inventoryclass import inventory as InventoryClass
 from models.state import PokemonState, DisplayCard
 
 from .abcd import MixinMeta
@@ -249,9 +252,98 @@ class PcMixin(MixinMeta):
         else:
             await self.__on_prev_click(interaction)
 
-
-    def __on_items_click(self, interaction: Interaction):
+    
+    async def __on_use_item(self, interaction: Interaction):
         pass
+
+
+    async def __on_items_click(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.checkPokemonState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+        state = self.getPokemonState(user)
+
+        ctx = await self.bot.get_context(interaction.message)
+
+        embed, btns = self.__pokemonItemsCard(user, state, state.card, ctx)
+
+        message = await interaction.edit_origin(embed=embed, components=btns)
+        
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
+
+
+    async def __pokemonItemsCard(self, user: discord.User, state: PokemonState, card: DisplayCard, ctx: Context):
+        pokeList = state.pokemon
+        pokeLength = len(pokeList)
+        i = state.idx
+        activeId = state.active
+
+        pokemon: PokemonClass = pokeList[i]
+
+        # Kind of a hack, but if the property is still set to None,
+        # then we probably haven't loaded this pokemon yet.
+        if pokemon.pokemonName is None:
+            pokemon.load(pokemonId=pokemon.trainerId)
+
+
+        embed: discord.Embed
+
+        if DisplayCard.STATS.value == card.value:
+            embed = createStatsEmbed(user, pokemon)
+        elif DisplayCard.MOVES.value == card.value:
+            embed = createPokemonAboutEmbed(user, pokemon)
+        else:
+            dex = PokedexClass.getPokedexEntry(pokemon)
+            embed = createPokedexEntryEmbed(user, pokemon, dex)
+
+        embed.set_footer(text=f'''
+--------------------
+{i + 1} / {pokeLength}
+        ''')
+        
+        
+        inv = InventoryClass(str(user.id))
+        
+        secondRowBtns = []
+        if inv.potion > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.POTION)
+            secondRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.green, emoji=emote, label="Potion", custom_id='potion'),
+                self.__on_moves_click
+            ))
+        if inv.superpotion > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.SUPERPOTION)
+            secondRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.green, emoji=emote, label="Super Potion", custom_id='superpotion'),
+                self.__on_moves_click
+            ))
+        if inv.maxpotion > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.MAXPOTION)
+            secondRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.green, emoji=emote, label="Max Potion", custom_id='maxpotion'),
+                self.__on_moves_click
+            ))
+        if inv.revive > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.REVIVE)
+            secondRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.green, emoji=emote, label="Revive", custom_id='revive'),
+                self.__on_moves_click
+            ))
+
+
+        # Check that each row has btns in it.
+        # It's not guaranteed that the next/previous btns will
+        # always be there if there is just one pokemon in the list.
+        # Returning an empty component row is a malformed request to discord.
+        # Check each btn row to be safe.
+        btns = []
+        if len(secondRowBtns) > 0:
+            btns.append(secondRowBtns)
+
+        return embed, btns
 
 
     def __pokemonPcCard(self, user: discord.User, state: PokemonState, card: DisplayCard):
