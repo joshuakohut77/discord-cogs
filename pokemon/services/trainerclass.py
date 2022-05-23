@@ -721,6 +721,8 @@ class trainer:
         if pokemon.statuscode == 96:
             self.statuscode = 96
             self.message = "error occured during pokemon load()"
+            return
+        
         statsDict = pokemon.getPokeStats()
         maxHP = statsDict['hp']
         currentHP = pokemon.currentHP
