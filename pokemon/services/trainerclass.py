@@ -14,6 +14,7 @@ from pokedexclass import pokedex
 from locationclass import location as LocationClass
 from loggerclass import logger as log
 from pokeclass import Pokemon as pokeClass
+from questclass import quests
 from uniqueencounters import uniqueEncounters as uEnc
 from datetime import datetime
 from time import time
@@ -347,6 +348,16 @@ class trainer:
         finally:
             return pokemon
     
+    def quest(self, questName):
+        """ handles quest action  """
+        qclass = quests(self.discordId)
+
+        qclass.questHandler(questName)
+
+        self.statuscode = qclass.statuscode
+        self.message = qclass.message
+        return 
+    
     def gift(self, method='gift'):
         """ handles a gift action """
         retMsg = ''
@@ -428,17 +439,38 @@ class trainer:
             self.statuscode = 420
             self.message = 'You cannot use that item like that'
         inventory = inv(self.discordId)
+        invalidQty = False
         if item == 'potion':
-            inventory.potion -= 1
+            if inventory.potion <= 0:
+                invalidQty = True
+            else:
+                inventory.potion -= 1
         elif item == 'super-potion':
-            inventory.superpotion -= 1
+            if inventory.superpotion <= 0:
+                invalidQty = True
+            else:
+                inventory.superpotion -= 1
         elif item == 'hyper-potion':
-            inventory.hyperpotion -= 1
+            if inventory.hyperpotion <= 0:
+                invalidQty = True
+            else:
+                inventory.hyperpotion -= 1
         elif item == 'max-potion':
-            inventory.maxpotion -= 1
+            if inventory.maxpotion <= 0:
+                invalidQty = True
+            else:
+                inventory.maxpotion -= 1
         elif item == 'revive':
-            inventory.revive -= 1
+            if inventory.revive <= 0:
+                invalidQty = True
+            else:
+                inventory.revive -= 1
         
+        if invalidQty:
+            self.statuscode = 420
+            self.message = "You do not have enough of that item"
+            return
+
         self.__healPokemon(pokeTrainerId, item)
 
         if inventory.statuscode == 96:
