@@ -725,7 +725,12 @@ class trainer:
         maxHP = statsDict['hp']
         currentHP = pokemon.currentHP
         if item == 'revive':
-            newHP = maxHP
+            if currentHP > 0:
+                self.statuscode = 420
+                self.message = "You cannot use revive on this pokemon"
+                return
+            else:
+                newHP = round(maxHP/2)
         
         # every item below is a potion which cannot be used with fainted pokemon
         if currentHP <= 0:
