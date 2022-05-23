@@ -432,28 +432,28 @@ class trainer:
         if item == 'potion':
             if inventory.potion <= 0:
                 invalidQty = True
-                break
-            inventory.potion -= 1
+            else:
+                inventory.potion -= 1
         elif item == 'super-potion':
             if inventory.superpotion <= 0:
                 invalidQty = True
-                break
-            inventory.superpotion -= 1
+            else:
+                inventory.superpotion -= 1
         elif item == 'hyper-potion':
             if inventory.hyperpotion <= 0:
                 invalidQty = True
-                break
-            inventory.hyperpotion -= 1
+            else:
+                inventory.hyperpotion -= 1
         elif item == 'max-potion':
             if inventory.maxpotion <= 0:
                 invalidQty = True
-                break
-            inventory.maxpotion -= 1
+            else:
+                inventory.maxpotion -= 1
         elif item == 'revive':
             if inventory.revive <= 0:
                 invalidQty = True
-                break
-            inventory.revive -= 1
+            else:
+                inventory.revive -= 1
         
         if invalidQty:
             self.statuscode = 420
