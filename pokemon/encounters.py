@@ -31,15 +31,19 @@ from .functions import (createStatsEmbed, getTypeColor,
 class ActionState:
     discordId: str
     location: LocationModel
+
+    channelId: int
     messageId: int
 
     activePokemon: PokemonClass
     wildPokemon: PokemonClass
     descLog: str
 
-    def __init__(self, discordId: str, messageId: int, location: LocationModel, activePokemon: PokemonClass, wildPokemon: PokemonClass, descLog: str) -> None:
+    def __init__(self, discordId: str, channelId: int, messageId: int, location: LocationModel, activePokemon: PokemonClass, wildPokemon: PokemonClass, descLog: str) -> None:
         self.discordId = discordId
         self.location = location
+
+        self.channelId = channelId
         self.messageId = messageId
 
         self.activePokemon = activePokemon
@@ -80,12 +84,12 @@ class EncountersMixin(MixinMeta):
                 self.__on_action
             ))
 
-        message = await ctx.send(
+        message: discord.Message = await ctx.send(
             content="What do you want to do?",
             components=[btns]
         )
         self.__useractions[str(user.id)] = ActionState(
-            str(user.id),message.id, model, trainer.getActivePokemon(), None, '')
+            str(user.id), message.channel.id, message.id, model, trainer.getActivePokemon(), None, '')
 
 
     async def __on_action(self, interaction: Interaction):
@@ -160,7 +164,7 @@ class EncountersMixin(MixinMeta):
             components=[btns]
         )
         self.__useractions[str(user.id)] = ActionState(
-            str(user.id), message.id, state.location, active, wildPokemon, desc)
+            str(user.id), message.channel.id, message.id, state.location, active, wildPokemon, desc)
 
 
     async def __on_fight_click(self, interaction: Interaction):
@@ -187,8 +191,8 @@ class EncountersMixin(MixinMeta):
             await interaction.send(trainer.message)
             return
 
-        # c: discord.TextChannel = self.bot.get_channel(1)
-        # c.fetch_message(1)
+        channel: discord.TextChannel = self.bot.get_channel(state.channelId)
+        message: discord.Message = await channel.fetch_message(state.messageId)
 
         desc = state.descLog
         desc += f'''{user.display_name} chose to fight!
@@ -199,7 +203,8 @@ class EncountersMixin(MixinMeta):
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, active, desc)
 
         await interaction.send(trainer.message)
-        await interaction.channel.send(
+        # await interaction.channel.send(
+        await message.reply(
             content=f'{trainer.message}',
             embed=embed,
             components=[]
@@ -300,7 +305,7 @@ class EncountersMixin(MixinMeta):
             components=[btns, secondRow]
         )
         self.__useractions[str(user.id)] = ActionState(
-            str(user.id), message.id, state.location, state.activePokemon, state.wildPokemon, desc)
+            str(user.id), message.channel.id, message.id, state.location, state.activePokemon, state.wildPokemon, desc)
 
 
     async def __on_catch_back(self, interaction: Interaction):
@@ -343,7 +348,7 @@ class EncountersMixin(MixinMeta):
             components=[btns]
         )
         self.__useractions[str(user.id)] = ActionState(
-            str(user.id), message.id, state.location, active, wildPokemon, desc)
+            str(user.id), message.channel.id, message.id, state.location, active, wildPokemon, desc)
 
 
     async def __on_throw_pokeball(self, interaction: Interaction):
