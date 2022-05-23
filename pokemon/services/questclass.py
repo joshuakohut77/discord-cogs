@@ -116,6 +116,21 @@ class quests:
                 if not keyitems.item_finder:
                     locationBlocked = True
                     break
+            
+            if item == 'bike_voucher':
+                if not keyitems.bike_voucher:
+                    locationBlocked = True
+                    break
+            
+            if item == 'gold_teeth':
+                if not keyitems.gold_teeth:
+                    locationBlocked = True
+                    break
+            
+            if item == 'elite_four':
+                if not keyitems.elite_four:
+                    locationBlocked = True
+                    break
         
         return locationBlocked
 
@@ -219,31 +234,211 @@ class quests:
                 if not keyitems.item_finder:
                     requirementsMet = False
                     break
-            
+            if item == 'bike_voucher':
+                if not keyitems.bike_voucher:
+                    requirementsMet = False
+                    break
+            if item == 'gold_teeth':
+                if not keyitems.gold_teeth:
+                    requirementsMet = False
+                    break
+            if item == 'elite_four':
+                if not keyitems.elite_four:
+                    requirementsMet = False
+                    break
+
         return requirementsMet
 
-# List of quests 
-"""
-Professor Oak - deliver parcel
-Super Nerd - Get Helix Fossil item
-Fishing Guru - get old-rod item
-Bike Voucher - get bicycle item
-Speak to Captain - get HM01
-Oaks Aide - get HM05
-Museum of Science - get Old Amber
-Cafe - get coin_case item
-Rooftop Square - get lemonade item
-Rocket Hideout - get silph_scope
-Free Spirits - nothing
-Mr Fuji - get pokeflute
-Lone House - get HM03
-Secret Resort - get HM02
-Fishing Brother - get super_rod
-Fishing Dude - get good_rod
-The Warden - get gold_teeth
-Return Teeth - get HM04
-Pokemon Lab - take helix or dome fossile and Old Amber and turn into Pokemon
-SS Anne - get ss_ticket item
-The Pokemon League - battle the elite 4
-Mysterious Cave - move to location 147
-"""
+    # List of quests 
+    """
+    Professor Oak - deliver parcel
+    Super Nerd - Get Helix Fossil item
+    Fishing Guru - get old-rod item
+    Bike Voucher - get bicycle item
+    Speak to Captain - get HM01
+    Oaks Aide - get HM05
+    Museum of Science - get Old Amber
+    Cafe - get coin_case item
+    Rooftop Square - get lemonade item
+    Rocket Hideout - get silph_scope
+    Free Spirits - nothing
+    Mr Fuji - get pokeflute
+    Lone House - get HM03
+    Secret Resort - get HM02
+    Fishing Brother - get super_rod
+    Fishing Dude - get good_rod
+    The Warden - get gold_teeth
+    Return Teeth - get HM04
+    Pokemon Lab - take helix or dome fossile and Old Amber and turn into Pokemon
+    SS Anne - get ss_ticket item
+    The Pokemon League - battle the elite 4
+    Mysterious Cave - move to location 147
+    """
+    def questHandler(self, questName):
+        """ verifies the trainers prerequsites are met """
+        if not questName:
+            self.statuscode = 69
+            self.message = "unknown quest name received"
+        
+        keyitems = kitems(self.discordId)
+        
+        if questName == 'Professor Oak':
+            return self.professorOak
+        elif questName == 'Super Nerd':
+            return self.superNerd
+        elif questName == 'Fishing Guru':
+            return self.fishingGuru
+        elif questName == 'Bike Voucher':
+            return self.bikeVoucher
+        elif questName == 'Speak to Captain':
+            return self.speakToCaptain
+        elif questName == 'Oaks Aide':
+            return self.oaksAide
+        elif questName == 'Museum of Science':
+            return self.museumOfScience
+        elif questName == 'Cafe':
+            return self.cafe
+        elif questName == 'Rooftop Square':
+            return self.rooftopSquare
+        elif questName == 'Rocket Hideout':
+            return self.rocketHideout
+        elif questName == 'Free Spirits':
+            return self.freeSpirits
+        elif questName == 'Mr Fuji':
+            return self.mrFuji
+        elif questName == 'Lone House':
+            return self.loneHouse
+        elif questName == 'Secret Resort':
+            return self.secretResort
+        elif questName == 'Fishing Brother':
+            return self.fishingBrother
+        elif questName == 'Fishing Dude':
+            return self.fishingDude
+        elif questName == 'The Warden':
+            return self.theWarden
+        elif questName == 'Return Teeth':
+            return self.returnTeeth
+        elif questName == 'SS Anne':
+            return self.ssAnne
+        elif questName == 'The Pokemon League':
+            return self.thePokemonLeague
+        elif questName == 'Mysterious Cave':
+            return self.mysteriousCave
+
+
+        return
+    
+
+    def professorOak(self, keyitems):
+        
+        return
+
+    def superNerd(self, keyitems):
+        
+        return
+
+    def fishingGuru(self, keyitems):
+        
+        return
+
+    def bikeVoucher(self, keyitems):
+        
+        return
+
+    def speakToCaptain(self, keyitems):
+        
+        return
+
+    def oaksAide(self, keyitems):
+        
+        return
+
+    def museumOfScience(self, keyitems):
+        
+        return
+
+    def cafe(self, keyitems):
+        
+        return
+
+    def rooftopSquare(self, keyitems):
+        
+        return
+
+    def rocketHideout(self, keyitems):
+        
+        return
+
+    def freeSpirits(self, keyitems):
+        
+        return
+
+    def mrFuji(self, keyitems):
+        
+        return
+
+    def loneHouse(self, keyitems):
+        
+        return
+
+    def secretResort(self, keyitems):
+        
+        return
+
+    def fishingBrother(self, keyitems):
+        
+        return
+
+    def fishingDude(self, keyitems):
+        
+        return
+
+    def theWarden(self, keyitems):
+        
+        return
+
+    def returnTeeth(self, keyitems):
+        
+        return
+
+    def pokemonLab(self, keyitems):
+        
+        return
+
+    def ssAnne(self, keyitems):
+        
+        return
+
+    def thePokemonLeague(self, keyitems):
+        
+        return
+
+    def mysteriousCave(self, keyitems):
+        
+        return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
