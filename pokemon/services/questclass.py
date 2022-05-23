@@ -1,5 +1,6 @@
 # quests class
 import sys
+import random
 from typing import List
 from keyitemsclass import keyitems as kitems
 from inventoryclass import inventory as inv
@@ -344,10 +345,18 @@ class quests:
 
     def superNerd(self):
         inventory = inv(self.discordId)
-        inventory.helixfossil = 1
+        
+        x = ['Helix Fossil', 'Dome Fossil']
+        fossil = random.choice(x)
+        if fossil == 'Helix Fossil':
+            inventory.helixfossil = 1
+            inventory.domefossil = 0
+        else:
+            inventory.helixfossil = 0
+            inventory.domefossil = 1
         self.message = """Some nerd was super excited about finding two rocks. 
                             You take one just to ruin his day. 
-                            You received a Helix Fossil!"""
+                            You received a %s!""" %(fossil)
         inventory.save()
         return
 
@@ -430,9 +439,9 @@ class quests:
 
     def freeSpirits(self):
         self.message = """During a search for a Big Tiddy Goth GF you stumble upon some ghosts in a tower. 
-                            Using your Silph Scope you battle your way to the top. You slay an endangered 
+                            Using your Silph Scope you battle your way to the top. You slayed an endangered 
                             pokemon species. Why did you come here again?
-                            You received the Nothing!"""
+                            You received Nothing!"""
         return
 
     def mrFuji(self):
@@ -464,7 +473,8 @@ class quests:
     def fishingBrother(self):
         keyitems = kitems(self.discordId)
         keyitems.super_rod = True
-        self.message = """
+        self.message = """You met the brother of a previous fisherman. You shared the story about seeing the bubbles in the water.
+                            He quickly became anxious for you to leave. He offered you a new rod in exchange for your silence.
                             You received a Super Rod!"""
         keyitems.save()
         return
@@ -472,7 +482,8 @@ class quests:
     def fishingDude(self):
         keyitems = kitems(self.discordId)
         keyitems.good_rod = True
-        self.message = """
+        self.message = """Along the path you met a cool fishing dude. All day you spent drinking and fishing together. 
+                            While he was taking a piss you stole his rod simply because it was nicer than yours.
                             You received a Good Rod!"""
         keyitems.save()
         return
@@ -480,7 +491,7 @@ class quests:
     def theWarden(self):
         keyitems = kitems(self.discordId)
         keyitems.gold_teeth = True
-        self.message = """
+        self.message = """Walking through the safari zone you find a set of gold teeth lying next to some dead pokemon.
                             You received some Gold Teeth"""
         keyitems.save()
         return
@@ -489,7 +500,8 @@ class quests:
         keyitems = kitems(self.discordId)
         keyitems.HM04 = True
         keyitems.gold_teeth = False
-        self.message = """
+        self.message = """Speaking to the warden about the dead pokemon you found, he admired your bling bling grille. 
+                            He offered to trade you for the gold teeth. They fit perfectly...
                             You received HM04"""
         keyitems.save()
         return
@@ -534,7 +546,8 @@ class quests:
     def ssAnne(self):
         keyitems = kitems(self.discordId)
         keyitems.ss_ticket = True
-        self.message = """
+        self.message = """Rummaging through someones mailbox you find an evelope. 
+                            Inside it says "For Tommy. Sincerely, The Make a Wish Foundation"
                             You received an SS Anne Ticket"""
         keyitems.save()
         return
@@ -545,7 +558,7 @@ class quests:
         return
 
     def mysteriousCave(self):
-        # trainer set location to location 147
+        # trainer set location to location 147 - cerulean cave
         locationId = 147
         trainer = trainerClass (self.discordId)
         trainer.setLocation(locationId)
