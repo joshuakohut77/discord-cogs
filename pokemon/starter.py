@@ -32,7 +32,7 @@ class StarterMixin(MixinMeta):
         pass
 
 
-    @_trainer.command(name='nickname', alias=['nn'])
+    @_trainer.command(name='nickname', aliases=['nn'])
     async def nickName(self, ctx: commands.Context, id: int, name: str):
         user = ctx.author
 
