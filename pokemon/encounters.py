@@ -122,6 +122,8 @@ class EncountersMixin(MixinMeta):
             msg = 'Fishing with a super rod...'
         elif interaction.custom_id == 'gift':
             msg = 'Waiting to receive a gift...'
+        elif interaction.custom_id == 'pokeflute':
+            msg = 'You played the Poké Flute!'
 
         await interaction.edit_origin(
             content=msg,
@@ -139,6 +141,11 @@ class EncountersMixin(MixinMeta):
 
         if interaction.custom_id == 'gift':
             trainer.gift()
+            await interaction.channel.send(trainer.message)
+            return
+        
+        if interaction.custom_id == 'Fishing Dude':
+            trainer.quest(interaction.custom_id)
             await interaction.channel.send(trainer.message)
             return
 
