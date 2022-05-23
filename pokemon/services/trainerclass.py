@@ -438,6 +438,21 @@ class trainer:
         if 'potion' not in item and 'revive' not in item:
             self.statuscode = 420
             self.message = 'You cannot use that item like that'
+            return
+
+        pokemon = pokeClass(self.discordId)
+        pokemon.load(pokeTrainerId)
+        if pokemon.statuscode == 96:
+            self.statuscode = 96
+            self.message = "error occured during pokemon load()"
+            return
+
+        # only use revive on fainted pokemon
+        if item == 'revive' and pokemon.currentHP > 0:
+            self.statuscode = 420
+            self.message = "You cannot use revive on this pokemon"
+            return
+
         inventory = inv(self.discordId)
         invalidQty = False
         if item == 'potion':
@@ -713,16 +728,9 @@ class trainer:
         lb.actions()
         return pokemon
 
-    def __healPokemon(self, pokemonId, item):
+    def __healPokemon(self, pokemon: pokeClass, item: str):
         """ heals a pokemons currentHP """
-        # this function is only designed to work with potion, super-potion, hyper-potion, max-potion
-        pokemon = pokeClass(self.discordId)
-        pokemon.load(pokemonId)
-        if pokemon.statuscode == 96:
-            self.statuscode = 96
-            self.message = "error occured during pokemon load()"
-            return
-        
+        # this function is only designed to work with potion, super-potion, hyper-potion, max-potion        
         statsDict = pokemon.getPokeStats()
         maxHP = statsDict['hp']
         currentHP = pokemon.currentHP
@@ -739,6 +747,7 @@ class trainer:
             self.statuscode = 420
             self.message = "You cannot use a potion on a fainted pokemon"
             return
+        
         if item == 'potion':
             newHP = currentHP + 20
         elif item == 'super-potion':
