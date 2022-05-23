@@ -14,6 +14,7 @@ from pokedexclass import pokedex
 from locationclass import location as LocationClass
 from loggerclass import logger as log
 from pokeclass import Pokemon as pokeClass
+from questclass import quests
 from uniqueencounters import uniqueEncounters as uEnc
 from datetime import datetime
 from time import time
@@ -346,6 +347,16 @@ class trainer:
             logger.error(excInfo=sys.exc_info())
         finally:
             return pokemon
+    
+    def quest(self, questName):
+        """ handles quest action  """
+        qclass = quests(self.discordId)
+
+        qclass.questHandler(questName)
+
+        self.statuscode = qclass.statuscode
+        self.message = qclass.message
+        return 
     
     def gift(self, method='gift'):
         """ handles a gift action """
