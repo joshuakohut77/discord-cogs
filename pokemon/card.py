@@ -2,9 +2,6 @@ from __future__ import annotations
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 import discord
-from discord import (Embed, Member)
-from discord import message
-from discord.abc import User
 from discord_components import (
     DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
 
@@ -75,7 +72,7 @@ class TrainerCardMixin(MixinMeta):
         embed.add_field(name='Pokemon Caught', value=f'{stats.total_catch}', inline=True)
         embed.add_field(name='Pokemon Released', value=f'{stats.total_released}', inline=True)
         embed.add_field(name='Pokemon Evolved', value=f'{stats.total_evolved}', inline=True)
-        embed.add_field(name='Pokemon Traded', value=f's{stats.total_trades}', inline=True)
+        embed.add_field(name='Pokemon Traded', value=f'{stats.total_trades}', inline=True)
 
         btns = []
         btns.append(self.client.add_callback(
