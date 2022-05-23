@@ -93,7 +93,7 @@ class Pokemon(StarterMixin, PcMixin, PartyMixin, PokemartMixin, PokecenterMixin,
     async def _trainer(self, ctx: commands.Context) -> None:
         """Base command to manage the trainer (user).
         """
-        pass
+        pass       
 
 
     @_trainer.command()
