@@ -17,6 +17,7 @@ from .abcd import MixinMeta
 from services.pokeclass import Pokemon as PokemonClass
 from .functions import (createStatsEmbed, createPokedexEntryEmbed,
                         createPokemonAboutEmbed)
+from .helpers import (getTrainerGivenPokemonName)
 
 
 
@@ -73,7 +74,7 @@ class PartyMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         trainer.setActivePokemon(pokemon.trainerId)
 
-        await interaction.channel.send(f'{user.display_name} set their active pokemon to {pokemon.pokemonName.capitalize()}.')
+        await interaction.channel.send(f'{user.display_name} set their active pokemon to {getTrainerGivenPokemonName(pokemon)}.')
         
         state.active = pokemon.trainerId
         embed, components = self.__pokemonPcCard(user, state, state.card)
@@ -172,7 +173,7 @@ class PartyMixin(MixinMeta):
             return
         
         if trainer.statuscode == 69:
-            await interaction.channel.send(f'{user.display_name} returned {pokemon.pokemonName} to their pc.')
+            await interaction.channel.send(f'{user.display_name} returned {getTrainerGivenPokemonName(pokemon)} to their pc.')
 
             pokeList = trainer.getPokemon(party=True)
             pokeLength = len(pokeList)
@@ -239,7 +240,7 @@ class PartyMixin(MixinMeta):
 
         pokemon.release()
 
-        await interaction.channel.send(f'{user.display_name} released {pokemon.pokemonName.capitalize()}')
+        await interaction.channel.send(f'{user.display_name} released {getTrainerGivenPokemonName(pokemon)}')
         pokeList = trainer.getPokemon()
         pokeLength = len(pokeList)
         self.setPokemonState(user, PokemonState(str(user.id), state.messageId, state.card, pokeList, state.active, state.idx))

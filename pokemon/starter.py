@@ -17,7 +17,7 @@ from models.state import PokemonState, DisplayCard
 from .abcd import MixinMeta
 from .functions import (createStatsEmbed, createPokedexEntryEmbed,
                         createPokemonAboutEmbed)
-
+from .helpers import (getTrainerGivenPokemonName)
 
 
 class StarterMixin(MixinMeta):
@@ -42,7 +42,7 @@ class StarterMixin(MixinMeta):
         if pokemon is not None:
             pokemon.nickName = name
             pokemon.save()
-            await ctx.send(f'You changed {pokemon.pokemonName.capitalize()} nickname to {name}')
+            await ctx.send(f'You changed {getTrainerGivenPokemonName(pokemon)} nickname to {name}')
         else:
             await ctx.send(f'That pokemon does not exist')
         
@@ -143,7 +143,7 @@ class StarterMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         trainer.setActivePokemon(pokemon.trainerId)
 
-        await interaction.channel.send(f'{user.display_name} set their active pokemon to {pokemon.pokemonName.capitalize()}.')
+        await interaction.channel.send(f'{user.display_name} set their active pokemon to {getTrainerGivenPokemonName(pokemon)}.')
 
         await self.__on_stats_click(interaction)
 

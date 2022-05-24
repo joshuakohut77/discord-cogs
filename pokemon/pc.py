@@ -22,6 +22,7 @@ from models.state import PokemonState, DisplayCard
 from .abcd import MixinMeta
 from .functions import (createPokedexEntryEmbed, createStatsEmbed, getTypeColor,
                         createPokemonAboutEmbed)
+from .helpers import (getTrainerGivenPokemonName)
 
 
 
@@ -88,7 +89,7 @@ class PcMixin(MixinMeta):
             await interaction.send('Something went wrong. Active pokemon not set.')
             return
 
-        await interaction.channel.send(f'{user.display_name} set their active pokemon to {pokemon.pokemonName.capitalize()}.')
+        await interaction.channel.send(f'{user.display_name} set their active pokemon to {getTrainerGivenPokemonName(pokemon)}.')
         
         state.active = pokemon.trainerId
         embed, btns = self.__pokemonPcCard(user, state, state.card)
@@ -198,7 +199,7 @@ class PcMixin(MixinMeta):
             return
         
         if trainer.statuscode == 69:
-            await interaction.send(f'{pokemon.pokemonName} is now in your party.')
+            await interaction.send(f'{getTrainerGivenPokemonName(pokemon)} is now in your party.')
             return
 
 
@@ -248,7 +249,7 @@ class PcMixin(MixinMeta):
 
         pokemon.release()
 
-        await interaction.channel.send(f'{user.display_name} released {pokemon.pokemonName.capitalize()}')
+        await interaction.channel.send(f'{user.display_name} released {getTrainerGivenPokemonName(pokemon)}')
         pokeList = trainer.getPokemon()
         pokeLength = len(pokeList)
 
