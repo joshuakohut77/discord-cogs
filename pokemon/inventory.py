@@ -149,7 +149,7 @@ class InventoryMixin(MixinMeta):
         items = []
 
         if inv.pokeflute:
-            items.append(f'{constant.POKEFLUTE} **Pokeflute**')
+            items.append(f'{constant.POKEFLUTE} **Poké Flute**')
         if inv.silph_scope:
             items.append(f'{constant.SILPH_SCOPE} **Silph Scope**')
         if inv.oaks_parcel:
@@ -200,21 +200,21 @@ class InventoryMixin(MixinMeta):
         items = []
 
         if inv.pokeball > 0:
-            items.append(f'{constant.POKEBALL} **Poke balls** — {inv.pokeball}')
+            items.append(f'{constant.POKEBALL} **Poké Balls** — {inv.pokeball}')
         if inv.greatball > 0:
-            items.append(f'{constant.GREATBALL} **Great balls** — {inv.greatball}')
+            items.append(f'{constant.GREATBALL} **Great Balls** — {inv.greatball}')
         if inv.ultraball > 0:
-            items.append(f'{constant.ULTRABALL} **Ultra balls** — {inv.ultraball}')
+            items.append(f'{constant.ULTRABALL} **Ultra Balls** — {inv.ultraball}')
         if inv.masterball > 0:
-            items.append(f'{constant.MASTERBALL} **Master ball** — {inv.masterball}')
+            items.append(f'{constant.MASTERBALL} **Master Ball** — {inv.masterball}')
         if inv.potion > 0:
             items.append(f'{constant.POTION} **Potion** — {inv.potion}')
         if inv.superpotion > 0:
-            items.append(f'{constant.SUPERPOTION} **Super potion** — {inv.superpotion}')
+            items.append(f'{constant.SUPERPOTION} **Super Potions** — {inv.superpotion}')
         if inv.hyperpotion > 0:
-            items.append(f'{constant.HYPERPOTION} **Hyper potion** — {inv.hyperpotion}')
+            items.append(f'{constant.HYPERPOTION} **Hyper Potions** — {inv.hyperpotion}')
         if inv.maxpotion > 0:
-            items.append(f'{constant.MAXPOTION} **Max potion** — {inv.maxpotion}')
+            items.append(f'{constant.MAXPOTION} **Max Potions** — {inv.maxpotion}')
         if inv.revive > 0:
             items.append(f'{constant.REVIVE} **Revive** — {inv.revive}')
         if inv.fullrestore > 0:
@@ -234,11 +234,11 @@ class InventoryMixin(MixinMeta):
         if inv.iceheal > 0:
             items.append(f'{constant.ICEHEAL} **Iceheal** — {inv.iceheal}')
         if inv.burnheal > 0:
-            items.append(f'{constant.BURNHEAL} **Burnheal** — {inv.burnheal}')
+            items.append(f'{constant.BURNHEAL} **Burn Heal** — {inv.burnheal}')
         if inv.paralyzeheal > 0:
-            items.append(f'{constant.PARALYZEHEAL} **Paralyzeheal** — {inv.paralyzeheal}')
+            items.append(f'{constant.PARALYZEHEAL} **Paralyze Heal** — {inv.paralyzeheal}')
         if inv.fullheal > 0:
-            items.append(f'{constant.FULLHEAL} **Fullheal** — {inv.fullheal}')
+            items.append(f'{constant.FULLHEAL} **Full Heal** — {inv.fullheal}')
         if inv.calcium > 0:
             items.append(f'{constant.CALCIUM} **Calcium** — {inv.calcium}')
         if inv.carbos > 0:
@@ -246,13 +246,13 @@ class InventoryMixin(MixinMeta):
         if inv.coincase > 0:
             items.append(f'{constant.COINCASE} **Coin Case** — {inv.coincase}')
         if inv.direhit > 0:
-            items.append(f'{constant.DIREHIT} **Direhit** — {inv.direhit}')
+            items.append(f'{constant.DIREHIT} **Dire Hit** — {inv.direhit}')
         if inv.domefossil > 0:
             items.append(f'{constant.DOMEFOSSIL} **Dome Fossil** — {inv.domefossil}')
         if inv.helixfossil > 0:
             items.append(f'{constant.HELIXFOSSIL} **Helix Fossil** — {inv.helixfossil}')
         if inv.freshwater > 0:
-            items.append(f'{constant.FRESHWATER} **Freshwater** — {inv.freshwater}')
+            items.append(f'{constant.FRESHWATER} **Fresh Water** — {inv.freshwater}')
         if inv.hpup > 0:
             items.append(f'{constant.HPUP} **HP Up** — {inv.hpup}')
         if inv.lemonade > 0:
@@ -283,20 +283,22 @@ class InventoryMixin(MixinMeta):
             items.append(f'{constant.XDEFENSE} **X Defense** — {inv.xdefense}')
         if inv.xspatk > 0:
             items.append(f'{constant.XSPATTACK} **X Sp. Attack** — {inv.xspatk}')
+        if inv.xspdef > 0:
+            items.append(f'{constant.XSPDEFENSE} **X Sp. Defense** — {inv.xspdef}')
         if inv.xspeed > 0:
             items.append(f'{constant.XSPEED} **X Speed** — {inv.xspeed}')
         if inv.xattack > 0:
             items.append(f'{constant.XATTACK} **X Attack** — {inv.xattack}')
         if inv.firestone > 0:
-            items.append(f'{constant.FIRESTONE} **Firestone** — {inv.firestone}')
+            items.append(f'{constant.FIRESTONE} **Fire Stone** — {inv.firestone}')
         if inv.waterstone > 0:
-            items.append(f'{constant.WATERSTONE} **Waterstone** — {inv.waterstone}')
+            items.append(f'{constant.WATERSTONE} **Water Stone** — {inv.waterstone}')
         if inv.thunderstone > 0:
-            items.append(f'{constant.THUNDERSTONE} **Thunderstone** — {inv.thunderstone}')
+            items.append(f'{constant.THUNDERSTONE} **Thunder Stone** — {inv.thunderstone}')
         if inv.leafstone > 0:
-            items.append(f'{constant.LEAFSTONE} **Leafstone** — {inv.leafstone}')
+            items.append(f'{constant.LEAFSTONE} **Leaf Stone** — {inv.leafstone}')
         if inv.moonstone > 0:
-            items.append(f'{constant.MOONSTONE} **Moonstone** — {inv.moonstone}')
+            items.append(f'{constant.MOONSTONE} **Moon Stone** — {inv.moonstone}')
 
 
         trainerItems = "\r\n".join(items) if len(items) > 0 else 'No items yet.'
