@@ -73,7 +73,7 @@ def createPokemonEmbedWithFile(user: Member, pokemon: PokemonClass):
     color = getTypeColor(pokemon.type1)
 
     # Create the embed object
-    embed = discord.Embed(title=f"#{pokemon.trainerId}  {pokemon.pokemonName.capitalize()}", color=color)
+    embed = discord.Embed(title=f"#{pokemon.pokedexId}  {pokemon.pokemonName.capitalize()}", color=color)
     embed.set_author(name=f"{user.display_name}",
                     icon_url=str(user.avatar_url))
     
@@ -87,6 +87,8 @@ def createPokemonEmbedWithFile(user: Member, pokemon: PokemonClass):
     if pokemon.nickName is not None:
         embed.add_field(
             name="Nickname", value=f"{pokemon.nickName}", inline=False)
+
+    embed.add_field(name='Trainer Id', value=f'{pokemon.trainerId}', inline=True)
     
     embed.add_field(
         name="Level", value=f"{pokemon.currentLevel}", inline=False)
@@ -120,6 +122,8 @@ def createPokemonAboutEmbed(user: Member, pokemon: PokemonClass) -> Embed:
     if pokemon.nickName is not None:
         embed.add_field(
             name="Nickname", value=f"{pokemon.nickName}", inline=False)
+
+    embed.add_field(name='Trainer Id', value=f'{pokemon.trainerId}', inline=True)
     
     if pokemon.move_1:
         embed.add_field(
@@ -144,7 +148,7 @@ def createStatsEmbed(user: Member, pokemon: PokemonClass):
     color = getTypeColor(pokemon.type1)
 
     # Create the embed object
-    embed = discord.Embed(title=f"#{pokemon.trainerId}  {pokemon.pokemonName.capitalize()}", color=color)
+    embed = discord.Embed(title=f"#{pokemon.pokedexId}  {pokemon.pokemonName.capitalize()}", color=color)
     embed.set_author(name=f"{user.display_name}",
                     icon_url=str(user.avatar_url))
     
@@ -158,6 +162,8 @@ def createStatsEmbed(user: Member, pokemon: PokemonClass):
     if pokemon.nickName is not None:
         embed.add_field(
             name="Nickname", value=f"{pokemon.nickName}", inline=False)
+
+    embed.add_field(name='Trainer Id', value=f'{pokemon.trainerId}', inline=True)
     
     embed.add_field(
         name="Level", value=f"{pokemon.currentLevel}", inline=True)
