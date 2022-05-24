@@ -315,10 +315,6 @@ class trainer:
             return
         enc = encounter(pokemon1, pokemon2)
         retVal = enc.catch(item)
-        # if enc.statuscode == 96:
-        #     self.statuscode = 96
-        #     self.message = "error occurred during encounter.catch()"
-        #     return
 
         self.statuscode = enc.statuscode
         self.message = enc.message
@@ -377,7 +373,10 @@ class trainer:
                     if uEncObj.magikarp:
                         giftCompleted = True
                 elif locationId == 234:
-                    if uEncObj.lapras or uEncObj.hitmonchan or uEncObj.hitmonlee:
+                    if uEncObj.lapras:
+                        giftCompleted = True
+                if locationId == 234:
+                    if uEncObj.hitmonchan or uEncObj.hitmonlee:
                         giftCompleted = True
                 
                 if giftCompleted:
@@ -723,6 +722,9 @@ class trainer:
             pokemon.create(level)
             if method == 'gift' or method == 'only-one':
                 pokemon.uniqueEncounter = True
+            if method == 'gift':
+                enc = encounter(pokemon, pokemon)
+                enc.updateUniqueEncounters()
             if pokemon.statuscode == 96:
                 self.statuscode = 96
                 self.message = "error occured during pokemon create()"

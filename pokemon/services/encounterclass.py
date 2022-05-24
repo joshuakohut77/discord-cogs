@@ -186,7 +186,7 @@ class encounter:
                 self.message = 'error occured during pokemon2 save()'
             self.statuscode = 420
             self.message = "You successfully caught the pokemon"
-            self.__updateUniqueEncounters()
+            self.updateUniqueEncounters()
 
         else:
             self.statuscode = 96
@@ -197,7 +197,7 @@ class encounter:
     def __victory(self):
         # pokemon1 had victory, calculate gained exp and update current exp
         # calculate money earned, reduced HP points
-        self.__updateUniqueEncounters()
+        self.updateUniqueEncounters()
         expObj = exp(self.pokemon2)
         expGained = expObj.getExpGained()
         evGained = expObj.getEffortValue()
@@ -317,7 +317,7 @@ class encounter:
             moveList.pop(0)
         return moveList
     
-    def __updateUniqueEncounters(self):
+    def updateUniqueEncounters(self):
         """ updates the unique encounters table """
         uEncObj = uEnc(self.pokemon1.discordId)
         name = self.pokemon2.pokemonName
