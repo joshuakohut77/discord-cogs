@@ -26,8 +26,8 @@ trainer = TrainerClass('509767223938777108')
 # trainer.heal(82, 'potion')
 # trainer.gift()
 # dex = trainer.getPokedex()
-lb = LeaderboardClass(trainer.discordId)
-lb.load()
+# lb = LeaderboardClass(trainer.discordId)
+# lb.load()
 
 # entry = PokedexClass.getPokedexEntry(trainer.getStarterPokemon())
 
@@ -41,16 +41,16 @@ lb.load()
 
 # inv = InventoryClass(trainer.discordId)
 
-store = StoreClass(trainer.discordId, 154)
-store.sellItem('ligma', 1)
+# store = StoreClass(trainer.discordId, 154)
+# store.sellItem('ligma', 1)
 # store.buyItem('super-potion', 1)
 # pokemon = trainer.encounter('walk')
 # areaId = trainer.getAreaId()
 
 # # Location: 88 - Kanto Route 1
 # # Location Area: 295 - Kanto Route 1 Area
-# loc = LocationClass(trainer.discordId)
-# methods = loc.getMethods()
+loc = LocationClass(trainer.discordId)
+methods = loc.getMethods()
 # direction = loc.getLocationByName('kanto-route-3')
 
 
