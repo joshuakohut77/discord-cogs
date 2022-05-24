@@ -2,9 +2,7 @@ from __future__ import annotations
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 import discord
-from discord_components import (
-    DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
-
+from discord_components import (ButtonStyle, Button, Interaction)
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -15,8 +13,61 @@ from models.location import LocationModel
 from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
 
-
 from .abcd import MixinMeta
+
+
+locationDisplayNames = {
+    "digletts-cave": 'Digletts Cave',
+    "mt-moon": 'Mt. Moon',
+    "pallet-town": 'Pallet Town',
+    "rock-tunnel": 'Rock Tunnel',
+    "kanto-route-1": 'Route 1',
+    "kanto-route-11": 'Route 11',
+    "kanto-route-12": 'Route 12',
+    "kanto-route-13": 'Route 13',
+    "kanto-route-14": 'Route 14',
+    "kanto-route-15": 'Route 15',
+    "kanto-route-16": 'Route 16',
+    "kanto-route-17": 'Route 17',
+    "kanto-route-18": 'Route 18',
+    "kanto-sea-route-19": 'Sea Route 19',
+    "kanto-route-2": 'Route 2',
+    "kanto-sea-route-20": 'Sea Route 20',
+    "kanto-sea-route-21": 'Sea Route 21',
+    "kanto-route-22": 'Route 22',
+    "kanto-route-24": 'Route 24',
+    "kanto-route-25": 'Route 25',
+    "kanto-route-3": 'Route 3',
+    "kanto-route-5": 'Route 5',
+    "kanto-route-6": 'Route 6',
+    "kanto-route-7": 'Route 7',
+    "kanto-route-8": 'Route 8',
+    "kanto-route-9": 'Route 9',
+    "seafoam-islands": 'Seafoam Islands',
+    "cerulean-cave": 'Cerulean Cave',
+    "kanto-victory-road-1": 'Victory Road 1',
+    "viridian-forest": 'Viridian Forest',
+    "kanto-route-23": 'Route 23',
+    "power-plant": 'Power Plant',
+    "kanto-victory-road-2": 'Victory Road 2',
+    "pokemon-tower": 'Pokémon Tower',
+    "pokemon-mansion": 'Pokémon Mansion',
+    "kanto-safari-zone": 'Safari Zone',
+    "ss-anne": 'S.S. Anne',
+    "celadon-city": 'Celadon City',
+    "kanto-route-10": 'Route 10',
+    "kanto-route-4": 'Route 4',
+    "indigo-plateau": 'Indigo Plateau',
+    "vermilion-city": 'Vermilion City',
+    "pewter-city": 'Pewter City',
+    "lavender-town": 'Lavender Town',
+    "cerulean-city": 'Cerulean City',
+    "cinnabar-island": 'Cinnabar Island',
+    "fuchsia-city": 'Fuchsia City',
+    "saffron-city": 'Saffron City',
+    "viridian-city": 'Viridian City',
+    "underground-path": 'Underground Path'
+}
 
 
 class LocationState:
