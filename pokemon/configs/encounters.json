@@ -2718,14 +2718,14 @@
       },
       {
         "name": "voltorb",
-        "chance": 100,
+        "chance": 20,
         "max_level": 40,
         "min_level": 40,
         "method": "walk"
       },
       {
         "name": "electrode",
-        "chance": 100,
+        "chance": 10,
         "max_level": 43,
         "min_level": 43,
         "method": "walk"
