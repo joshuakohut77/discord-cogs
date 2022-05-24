@@ -68,12 +68,12 @@ class uniqueEncounters:
             db = dbconn()
             if self.discordId is not None:
                 updateString = '''
-                UPDATE keyitems
+                UPDATE "unique-encounters"
 	                SET "articuno"=%(articuno)s, "zapdos"=%(zapdos)s, "moltres"=%(moltres)s,
                     "mewtwo"=%(mewtwo)s, "magikarp"=%(magikarp)s, 
                     "charmander"=%(charmander)s, "squirtle"=%(squirtle)s, "bulbasaur"=%(bulbasaur)s, 
                     lapras=%(lapras)s, hitmonchan=%(hitmonchan)s, hitmonlee=%(hitmonlee)s, 
-                    eevee=%(eevee)s, snorlax=%(snorlax)s,
+                    eevee=%(eevee)s, snorlax=%(snorlax)s
 	                    WHERE discord_id=%(discordId)s;
                 '''
                 values = { 'articuno':self.articuno, 'zapdos': self.zapdos, 'moltres':self.moltres,
