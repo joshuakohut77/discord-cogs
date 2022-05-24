@@ -116,9 +116,9 @@ class encounter:
         """ run away from battle """
         # todo add a very small chance to not run away and result in defeat using random
         if random.randrange(1,100) <= 8:
+            self.__defeat()
             self.statuscode = 420
             self.message = 'You failed to run away! ' + self.message
-            self.__defeat()
         else:
             # leaderboard stats
             lb = leaderboard(self.pokemon1.discordId)

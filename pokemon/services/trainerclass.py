@@ -488,7 +488,7 @@ class trainer:
             self.message = "You do not have enough of that item"
             return
 
-        self.__healPokemon(pokeTrainerId, item)
+        self.__healPokemon(pokemon, item)
 
         if inventory.statuscode == 96:
             self.statuscode = 96
