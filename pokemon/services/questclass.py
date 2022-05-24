@@ -526,17 +526,17 @@ class quests:
                 pokemon1 = pokeClass(self.discordId, 138) # omanyte
                 pokemon1.create(35)
                 pokemon1.save()
-                self.message += " You received Omanyte"
+                self.message += " You received Omanyte."
             if inventory.helixfossil == -1:
                 pokemon2 = pokeClass(self.discordId, 140) # kabuto
                 pokemon2.create(35)
                 pokemon2.save()
-                self.message += " You received Kabuto"
+                self.message += " You received Kabuto."
             if inventory.oldamber == -1:
                 pokemon3 = pokeClass(self.discordId, 142) # aerodactyl
                 pokemon3.create(35)
                 pokemon3.save()
-                self.message += " You received Aerodactyl"
+                self.message += " You received Aerodactyl."
         else:
             self.message = """The scientists begin to shout at you in german. You decide to leave"""
         
