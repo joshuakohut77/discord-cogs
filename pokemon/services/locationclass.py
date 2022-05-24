@@ -57,6 +57,7 @@ class location:
                 locationId = self.__getCurrentLocation()
                 if locationId > 0:
                     areaEncounters = encountersConfig[str(locationId)]
+                    
             for x in areaEncounters:
                 method = x['method']
                 if method not in methodList:

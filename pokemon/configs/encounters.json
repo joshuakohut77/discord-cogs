@@ -2721,14 +2721,14 @@
         "chance": 100,
         "max_level": 40,
         "min_level": 40,
-        "method": "only-one"
+        "method": "walk"
       },
       {
         "name": "electrode",
         "chance": 100,
         "max_level": 43,
         "min_level": 43,
-        "method": "only-one"
+        "method": "walk"
       },
       {
         "name": "electabuzz",
