@@ -84,15 +84,10 @@ class EncountersMixin(MixinMeta):
                 self.__on_action
             ))
 
-        # Check for the possibility of no actions
-        if len(btns) == 0:
-            await ctx.send('There\'s nothing to do here.')
-            return
-
         # Check for the possibility of too many actions
         if len(btns) > 3:
-            firstRow = btns[:2]
-            secondRow = btns[2:]
+            firstRow = btns[:3]
+            secondRow = btns[3:]
             btns = [firstRow, secondRow]
         else:
             btns = [btns]
@@ -125,6 +120,15 @@ class EncountersMixin(MixinMeta):
                 Button(style=color, label=f"{method}", custom_id=f'{method}', disabled=True)
             )
 
+        # Check for the possibility of too many actions
+        if len(btns) > 3:
+            firstRow = btns[:3]
+            secondRow = btns[3:]
+            btns = [firstRow, secondRow]
+        else:
+            btns = [btns]
+        
+
         msg = 'Walking through tall grass...'
 
         if interaction.custom_id == 'old-rod':
@@ -140,7 +144,7 @@ class EncountersMixin(MixinMeta):
 
         await interaction.edit_origin(
             content=msg,
-            components=[btns]
+            components=btns
         )
 
         # await interaction.respond(type=5, content="Walking through tall grass...")
