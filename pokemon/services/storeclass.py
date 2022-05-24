@@ -40,16 +40,17 @@ class store:
             # this section is to check if user has Oaks Parcel
             if self.locationId == 154:
                 keyitems = kitems(self.discordId)
-                if not keyitems.oaks_parcel:
-                    self.statuscode = 420
-                    self.message = '''Hey there, can you deliver this to Professor Oak for me? You received Oaks Parcel!'''
-                    keyitems.oaks_parcel = True
-                    keyitems.save()
-                    return 
-                elif not keyitems.oaks_parcel_delivered:
-                    self.statuscode = 420
-                    self.message = 'Hey there, take that parcel to Professor Oak please.'
-                    return
+                if not keyitems.oaks_parcel_delivered:
+                    if not keyitems.oaks_parcel:
+                        self.statuscode = 420
+                        self.message = '''Hey there, can you deliver this to Professor Oak for me? You received Oaks Parcel!'''
+                        keyitems.oaks_parcel = True
+                        keyitems.save()
+                        return 
+                    elif not keyitems.oaks_parcel_delivered:
+                        self.statuscode = 420
+                        self.message = 'Hey there, take that parcel to Professor Oak please.'
+                        return
 
             results = storeConfig[str(self.locationId)]
 
