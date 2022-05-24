@@ -265,27 +265,6 @@
     ],
     "86": [
       {
-        "name": "bulbasaur",
-        "chance": 100,
-        "max_level": 5,
-        "min_level": 5,
-        "method": "gift"
-      },
-      {
-        "name": "charmander",
-        "chance": 100,
-        "max_level": 5,
-        "min_level": 5,
-        "method": "gift"
-      },
-      {
-        "name": "squirtle",
-        "chance": 100,
-        "max_level": 5,
-        "min_level": 5,
-        "method": "gift"
-      },
-      {
         "name": "poliwag",
         "chance": 25,
         "max_level": 15,
