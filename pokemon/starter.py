@@ -42,7 +42,7 @@ class StarterMixin(MixinMeta):
         if pokemon is not None:
             pokemon.nickName = name
             pokemon.save()
-            await ctx.send(f'You changed {getTrainerGivenPokemonName(pokemon)} nickname to {name}')
+            await ctx.send(f'You changed {pokemon.pokemonName.capitalize()} nickname to {name}')
         else:
             await ctx.send(f'That pokemon does not exist')
         
