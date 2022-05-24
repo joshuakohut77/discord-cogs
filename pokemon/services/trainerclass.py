@@ -676,12 +676,14 @@ class trainer:
             self.statuscode = 420
             self.message = "Your active Pokemon has no HP left!"
             return
+        
         loc = LocationClass(self.discordId)
         selectedEncounter = loc.action(method)
         if loc.statuscode == 96:
             self.statuscode =  96
             self.message = "error occurred during loc.generateEncounter"
             return
+        
         keyitems = kitems(self.discordId)
         if method == 'old-rod':
             if not keyitems.old_rod:

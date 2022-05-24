@@ -162,8 +162,10 @@ class EncountersMixin(MixinMeta):
             return
         
         if interaction.custom_id == 'Fishing Dude' or \
-           interaction.custom_id == 'Lone House' or \
-           interaction.custom_id == 'The Warden':
+                interaction.custom_id == 'Lone House' or \
+                interaction.custom_id == 'The Warden' or \
+                interaction.custom_id == 'Return Teeth' or \
+                interaction.custom_id == 'Fishing Dude':
             trainer.quest(interaction.custom_id)
             await interaction.channel.send(trainer.message)
             return
