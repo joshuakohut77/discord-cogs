@@ -110,7 +110,8 @@ class MapMixin(MixinMeta):
         )
         attachment: discord.Attachment = temp_message.attachments[0]
 
-        embed = discord.Embed(title = f'{location.name}', description = f'You are at {location.name}.')
+        name = locationDisplayNames[location.name]
+        embed = discord.Embed(title = f'{name}', description = f'You are at {name}.')
         embed.set_image(url = attachment.url)
 
         message = await ctx.send(
@@ -131,8 +132,9 @@ class MapMixin(MixinMeta):
         ne = []
         sw = []
         if location.north is not None:
+            north = locationDisplayNames[location.north]
             ne.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬆', label=f"{location.north}", disabled=disabled),
+                Button(style=ButtonStyle.gray, emoji='⬆', label=f"{north}", disabled=disabled),
                 self.__on_north,
             ))
         else:
@@ -141,8 +143,9 @@ class MapMixin(MixinMeta):
                 self.__on_north,
             ))
         if location.east is not None:
+            east = locationDisplayNames[location.east]
             ne.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='➡', label=f"{location.east}", disabled=disabled),
+                Button(style=ButtonStyle.gray, emoji='➡', label=f"{east}", disabled=disabled),
                 self.__on_east,
             ))
         else:
@@ -151,8 +154,9 @@ class MapMixin(MixinMeta):
                 self.__on_east,
             ))
         if location.south is not None:
+            south = locationDisplayNames[location.south]
             sw.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬇', label=f"{location.south}", disabled=disabled),
+                Button(style=ButtonStyle.gray, emoji='⬇', label=f"{south}", disabled=disabled),
                 self.__on_south,
             ))
         else:
@@ -161,8 +165,9 @@ class MapMixin(MixinMeta):
                 self.__on_south,
             ))
         if location.west is not None:
+            west = locationDisplayNames[location.west]
             sw.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬅', label=f"{location.west}", disabled=disabled),
+                Button(style=ButtonStyle.gray, emoji='⬅', label=f"{west}", disabled=disabled),
                 self.__on_west,
             ))
         else:
@@ -209,7 +214,9 @@ class MapMixin(MixinMeta):
         )
         attachment: discord.Attachment = temp_message.attachments[0]
 
-        embed = discord.Embed(title = f'{north}', description = f'You walked North to {north}.')
+        name = locationDisplayNames[direction.name]
+
+        embed = discord.Embed(title = f'{name}', description = f'You walked North to {name}.')
         embed.set_image(url = attachment.url)
 
         message = await interaction.edit_origin(
@@ -257,7 +264,9 @@ class MapMixin(MixinMeta):
         )
         attachment: discord.Attachment = temp_message.attachments[0]
 
-        embed = discord.Embed(title = f'{south}', description = f'You walked South to {south}.')
+        name = locationDisplayNames[direction.name]
+        
+        embed = discord.Embed(title = f'{name}', description = f'You walked South to {name}.')
         embed.set_image(url = attachment.url)
 
         message = await interaction.edit_origin(
@@ -306,7 +315,9 @@ class MapMixin(MixinMeta):
         )
         attachment: discord.Attachment = temp_message.attachments[0]
 
-        embed = discord.Embed(title = f'{east}', description = f'You walked East to {east}.')
+        name = locationDisplayNames[direction.name]
+
+        embed = discord.Embed(title = f'{name}', description = f'You walked East to {name}.')
         embed.set_image(url = attachment.url)
 
         message = await interaction.edit_origin(
@@ -354,7 +365,9 @@ class MapMixin(MixinMeta):
         )
         attachment: discord.Attachment = temp_message.attachments[0]
 
-        embed = discord.Embed(title = f'{west}', description = f'You walked West to {west}.')
+        name = locationDisplayNames[direction.name]
+
+        embed = discord.Embed(title = f'{name}', description = f'You walked West to {name}.')
         embed.set_image(url = attachment.url)
 
         message = await interaction.edit_origin(
