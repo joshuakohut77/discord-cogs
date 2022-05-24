@@ -7,6 +7,7 @@ from inventoryclass import inventory as inv
 from pokeclass import Pokemon as pokeClass
 from loggerclass import logger as log
 import models.quest as QuestModel
+from textwrap import dedent
 
 # Class Logger
 logger = log()
@@ -402,8 +403,9 @@ class quests:
     def professorOak(self):
         self.keyitems.oaks_parcel_delivered = True
         self.keyitems.oaks_parcel = False
-        self.message = """You found Professor Oak in your 
-                            mothers bedroom and delivered his parcel."""
+        self.message = dedent("""\
+                            You found Professor Oak in your 
+                            mothers bedroom and delivered his parcel.""")
         self.keyitems.save()
         return
 
@@ -417,140 +419,157 @@ class quests:
         else:
             self.inventory.helixfossil = 0
             self.inventory.domefossil = 1
-        self.message = """Some nerd was super excited about finding two rocks. 
+        self.message = dedent("""\
+                            Some nerd was super excited about finding two rocks. 
                             You take one just to ruin his day. 
-                            You received a %s!""" %(fossil)
+                            You received a %s!""" %(fossil))
         self.inventory.save()
         return
 
     def fishingGuru(self):
         self.keyitems.old_rod = True
-        self.message = """Some creepy guy gave you an old-rod with missing fishing line. 
+        self.message = dedent("""\
+                            Some creepy guy gave you an old-rod with missing fishing line. 
                             You notice bubbles comeing from the lake near you.
-                            You received an Old Rod!"""
+                            You received an Old Rod!""")
         self.keyitems.save()
         return
 
     def bikeVoucher(self):
         self.keyitems.bike_voucher = True
-        self.message = """You met a guy who found out his wife was cheating on him with some professor.
+        self.message = dedent("""\
+                            You met a guy who found out his wife was cheating on him with some professor.
                             He gave you the bike voucher which was her birthday surprise. 
-                            You received a Bike Voucher!"""
+                            You received a Bike Voucher!""")
         self.keyitems.save()
         return
 
     def speakToCaptain(self):
         self.keyitems.HM01 = True
-        self.message = """You caught the captain and his crew smuggling black tar heroine.
-                            The captin bribed you to keep quiet.  
-                            You received HM01!"""
+        self.message = dedent("""\
+                        You caught the captain and his crew smuggling black tar heroine.
+                        The captin bribed you to keep quiet.  
+                        You received HM01!""")
         self.keyitems.save()
         return
 
     def oaksAide(self):
         self.keyitems.HM05 = True
-        self.message = """You met Professor Oaks aide. She was jealous to hear about his relationship with your mother.
+        self.message = dedent("""\
+                            You met Professor Oaks aide. She was jealous to hear about his relationship with your mother.
                             She gave you a valuable item from Oaks collection. She seemed suspiciously young.
-                            You received HM05!"""
+                            You received HM05!""")
         self.keyitems.save()
         return
 
     def museumOfScience(self):
         self.inventory.oldamber = 1
-        self.message = """You browsed the Museum of Science and found a cool looking stone. 
+        self.message = dedent("""\
+                            You browsed the Museum of Science and found a cool looking stone. 
                             You placed the stone in your bag when no one was looking.
                             The inscription said "Property of John Hammond"
-                            You received some Old Amber!"""
+                            You received some Old Amber!""")
         self.inventory.save()
         return
 
     def cafe(self):
         self.inventory.coincase = 1
-        self.message = """In a cafe you meet a man who was down on his gambling luck. 
+        self.message = dedent("""\
+                            In a cafe you meet a man who was down on his gambling luck. 
                             He has bet and lost his wife in a bet. In an attempt to quit
                             he gives you his coin case.
-                            You received a Coin Case!"""
+                            You received a Coin Case!""")
         self.inventory.save()
         return
 
     def rooftopSquare(self):
         self.inventory.lemonade = 1
-        self.message = """On the rooftop square you find a little girl flossing for a TikTok video. 
+        self.message = dedent("""\
+                            On the rooftop square you find a little girl flossing for a TikTok video. 
                             In a blinding rage you crush her body with a vending machine. In the process
                             a bottle was disloged. 
-                            You received a Lemonade!"""
+                            You received a Lemonade!""")
         self.inventory.save()
         return
 
     def rocketHideout(self):
         self.keyitems.silph_scope = True
-        self.message = """Deep inside Team Rockets hideout, you stumble upon a Free Mason sex ritual. Soon you were discovered.
+        self.message = dedent("""\
+                            Deep inside Team Rockets hideout, you stumble upon a Free Mason sex ritual. Soon you were discovered.
                             You tried to use your escape-rope but instead were bound by it.
                             For two days you were used as a sex slave in an endless train. In a comotose of post nut clarity, 
                             you grab the Grand Masters scepter and escape. 
-                            You received the Silph Scope!"""
+                            You received the Silph Scope!""")
         self.keyitems.save()
         return
 
     def freeSpirits(self):
-        self.message = """During a search for a Big Tiddy Goth GF you stumble upon some ghosts in a tower. 
+        self.message = dedent("""\
+                            During a search for a Big Tiddy Goth GF you stumble upon some ghosts in a tower. 
                             Using your Silph Scope you battle your way to the top. You slayed an endangered 
                             pokemon species. Why did you come here again?
-                            You received Nothing!"""
+                            You received Nothing!""")
         return
 
     def mrFuji(self):
         self.keyitems.pokeflute = True
-        self.message = """You meet a feeble old man alone in his house. You notice a cool instrument haning on his wall. 
+        self.message = dedent("""\
+                            You meet a feeble old man alone in his house. You notice a cool instrument haning on his wall. 
                             You asked if you could have it. He declined. He was alone...
-                            You received the Pokeflute!"""
+                            You received the Pokeflute!""")
         self.keyitems.save()
         return
 
     def loneHouse(self):
         self.keyitems.HM03 = True
-        self.message = """Deep inside the safari zone you find a lone house. Inside was a man who told you get off his property. 
+        self.message = dedent("""\
+                            Deep inside the safari zone you find a lone house. Inside was a man who told you get off his property. 
                             You left and reported to the authories he has dirt on the Clintons. The next day you scavanged his house.
-                            You received HM03!"""
+                            You received HM03!""")
         self.keyitems.save()
         return
 
     def secretResort(self):
         self.keyitems.HM02 = True
-        self.message = """
-                            You received HM02!"""
+        self.message = dedent("""\
+                            
+                            You received HM02!""")
         self.keyitems.save()
         return
 
     def fishingBrother(self):
         self.keyitems.super_rod = True
-        self.message = """You met the brother of a previous fisherman. You shared the story about seeing the bubbles in the water.
+        self.message = dedent("""\
+                            You met the brother of a previous fisherman. You shared the story about seeing the bubbles in the water.
                             He quickly became anxious for you to leave. He offered you a new rod in exchange for your silence.
-                            You received a Super Rod!"""
+                            You received a Super Rod!""")
         self.keyitems.save()
         return
 
     def fishingDude(self):
         self.keyitems.good_rod = True
-        self.message = """Along the path you met a cool fishing dude. All day you spent drinking and fishing together. 
+        self.message = dedent("""\
+                            Along the path you met a cool fishing dude. All day you spent drinking and fishing together. 
                             While he was taking a piss you stole his rod simply because it was nicer than yours.
-                            You received a Good Rod!"""
+                            You received a Good Rod!""")
         self.keyitems.save()
         return
 
     def theWarden(self):
         self.keyitems.gold_teeth = True
-        self.message = """Walking through the safari zone you find a set of gold teeth lying next to some dead pokemon.
-                            You received some Gold Teeth"""
+        self.message = dedent("""\
+                            Walking through the safari zone you find a set of gold teeth lying next to some dead pokemon.
+                            You received some Gold Teeth""")
         self.keyitems.save()
         return
 
     def returnTeeth(self):
         self.keyitems.HM04 = True
         self.keyitems.gold_teeth = False
-        self.message = """Speaking to the warden about the dead pokemon you found, he admired your bling bling grille. 
+        self.message = dedent("""\
+                            Speaking to the warden about the dead pokemon you found, he admired your bling bling grille. 
                             He offered to trade you for the gold teeth. They fit perfectly...
-                            You received HM04"""
+                            You received HM04""")
         self.keyitems.save()
         return
 
@@ -563,9 +582,10 @@ class quests:
                 self.inventory.helixfossil = -1
             if self.inventory.oldamber > 0:
                 self.inventory.oldamber = -1
-            self.message = """You find some german scientists in a lab. They offer to experiement 
+            self.message = dedent("""\
+                                You find some german scientists in a lab. They offer to experiement 
                                 on your prehistoric rocks. You gladly give them your stupid rocks.
-                                """
+                                """)
             self.inventory.save()
         elif self.keyitems.elite_four:
             # if beaten elite four give them pokemon.
@@ -591,9 +611,10 @@ class quests:
 
     def ssAnne(self):
         self.keyitems.ss_ticket = True
-        self.message = """Rummaging through someones mailbox you find an evelope. 
+        self.message = dedent("""\
+                            Rummaging through someones mailbox you find an evelope. 
                             Inside it says "For Tommy. Sincerely, The Make a Wish Foundation"
-                            You received an SS Anne Ticket"""
+                            You received an SS Anne Ticket""")
         self.keyitems.save()
         return
 
