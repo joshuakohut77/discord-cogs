@@ -84,6 +84,10 @@ class EncountersMixin(MixinMeta):
                 self.__on_action
             ))
 
+        if len(btns) == 0:
+            await ctx.send('There\'s nothing to do here.')
+            return
+
         message: discord.Message = await ctx.send(
             content="What do you want to do?",
             components=[btns]
