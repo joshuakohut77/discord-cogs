@@ -6,7 +6,6 @@ from keyitemsclass import keyitems as kitems
 from inventoryclass import inventory as inv
 from pokeclass import Pokemon as pokeClass
 from loggerclass import logger as log
-from trainerclass import trainer as trainerClass
 import models.quest as QuestModel
 
 # Class Logger
@@ -557,12 +556,13 @@ class quests:
         return
 
     def mysteriousCave(self):
-        # trainer set location to location 147 - cerulean cave
-        locationId = 147
-        trainer = trainerClass (self.discordId)
-        trainer.setLocation(locationId)
-        self.message = """You notice some fatty out for a walk. You enter inside the mysterious cave to avoid him."""
-        return
+        pass
+        # # trainer set location to location 147 - cerulean cave
+        # locationId = 147
+        # trainer = trainerClass (self.discordId)
+        # trainer.setLocation(locationId)
+        # self.message = """You notice some fatty out for a walk. You enter inside the mysterious cave to avoid him."""
+        # return
 
 
 
