@@ -186,7 +186,7 @@ class EncountersMixin(MixinMeta):
                 return
 
 
-            await interaction.channel.send(trainer.message)
+            # await interaction.channel.send(trainer.message)
 
         # A wild pokemon encounter
         if ActionType.ENCOUNTER.value == action.type.value:

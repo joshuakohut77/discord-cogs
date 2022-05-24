@@ -58,7 +58,6 @@ class location:
 
     def getMethods(self):
         """ returns a list of methods available in that area """
-        actionList = []
         methodList = []
         locationId = 0
         try:
@@ -124,7 +123,7 @@ class location:
 
             for x in areaEncounters:
                 method = x['method']
-                if method == action:
+                if method == action.value:
                     chance = x['chance']
                     for counter in range(chance):
                         encounterList.append(x)
