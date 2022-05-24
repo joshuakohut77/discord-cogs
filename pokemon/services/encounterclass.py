@@ -73,10 +73,18 @@ class encounter:
         battleMoves1 = self.__removeNullMoves(self.pokemon1.getMoves())
         battleMoves2 = self.__removeNullMoves(self.pokemon2.getMoves())
 
+        statusMovesCount = 0
         # pokemon goes first
         for x in range(MAX_BATTLE_TURNS):
             randMoveSelector = random.randrange(1, len(battleMoves1)+1)
-            damage = self.__calculateDamageOfMove(battleMoves1[randMoveSelector-1])
+            move1 = battleMoves1[randMoveSelector-1]
+            pbMove = self.__loadMovesConfig(move1)
+            power = pbMove['power']
+            if power is None and statusMovesCount >= 1:
+                continue
+            elif power is None:
+                statusMovesCount += 1
+            damage = self.__calculateDamageOfMove(pbMove)
             battleHP2 -= damage
             print('%s used %s' %(self.pokemon1.pokemonName, battleMoves1[randMoveSelector-1]))
             print('%s did %s damage' %(self.pokemon1.pokemonName, str(damage)))
@@ -86,7 +94,9 @@ class encounter:
                 self.statuscode = 420
                 break
             randMoveSelector = random.randrange(1, len(battleMoves2)+1)
-            damage = self.__calculateDamageOfMove(battleMoves2[randMoveSelector-1])
+            move2 = battleMoves2[randMoveSelector-1]
+            pbMove = self.__loadMovesConfig(move2)
+            damage = self.__calculateDamageOfMove(pbMove)
             battleHP1 -= damage
             print('%s used %s' %(self.pokemon2.pokemonName, battleMoves2[randMoveSelector-1]))
             print('%s did %s damage' %(self.pokemon2.pokemonName, str(damage)))
@@ -245,7 +255,7 @@ class encounter:
         """ calcualtes the damage of the move against opponent """
         calculatedDamage = 0
         moveHit = True
-        pbMove = self.__loadMovesConfig(move)
+        pbMove = move
         accuracy = pbMove['accuracy']
         if accuracy is None or accuracy == 'null':
             accuracy = 100
