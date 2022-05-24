@@ -18,119 +18,121 @@ class quests:
         self.message = ''
 
         self.discordId = discordId
+        self.keyitems = kitems(discordId)
+        self.inventory = inv(discordId)
 
     def locationBlocked(self, blockers: List):
         """ verifies the trainer has no blockers to the location """
         locationBlocked = False
         if blockers == []:
             return
-        keyitems = kitems(self.discordId)
+
         for item in blockers:
             if item == 'HM01':
-                if not keyitems.HM01:
+                if not self.keyitems.HM01:
                     locationBlocked = True
                     break
             if item == 'HM02':
-                if not keyitems.HM02:
+                if not self.keyitems.HM02:
                     locationBlocked = True
                     break
             if item == 'HM03':
-                if not keyitems.HM03:
+                if not self.keyitems.HM03:
                     locationBlocked = True
                     break
             if item == 'HM04':
-                if not keyitems.HM04:
+                if not self.keyitems.HM04:
                     locationBlocked = True
                     break
             if item == 'HM05':
-                if not keyitems.HM05:
+                if not self.keyitems.HM05:
                     locationBlocked = True
                     break
             if item == 'badge_boulder':
-                if not keyitems.badge_boulder:
+                if not self.keyitems.badge_boulder:
                     locationBlocked = True
                     break
             if item == 'badge_cascade':
-                if not keyitems.badge_cascade:
+                if not self.keyitems.badge_cascade:
                     locationBlocked = True
                     break
             if item == 'badge_thunder':
-                if not keyitems.badge_thunder:
+                if not self.keyitems.badge_thunder:
                     locationBlocked = True
                     break
             if item == 'badge_rainbow':
-                if not keyitems.badge_rainbow:
+                if not self.keyitems.badge_rainbow:
                     locationBlocked = True
                     break
             if item == 'badge_soul':
-                if not keyitems.badge_soul:
+                if not self.keyitems.badge_soul:
                     locationBlocked = True
                     break
             if item == 'badge_marsh':
-                if not keyitems.badge_marsh:
+                if not self.keyitems.badge_marsh:
                     locationBlocked = True
                     break
             if item == 'badge_volcano':
-                if not keyitems.badge_volcano:
+                if not self.keyitems.badge_volcano:
                     locationBlocked = True
                     break
             if item == 'badge_earth':
-                if not keyitems.badge_earth:
+                if not self.keyitems.badge_earth:
                     locationBlocked = True
                     break
             if item == 'pokeflute':
-                if not keyitems.pokeflute:
+                if not self.keyitems.pokeflute:
                     locationBlocked = True
                     break
             if item == 'silph_scope':
-                if not keyitems.silph_scope:
+                if not self.keyitems.silph_scope:
                     locationBlocked = True
                     break
             if item == 'oaks_parcel':
-                if not keyitems.oaks_parcel:
+                if not self.keyitems.oaks_parcel:
                     locationBlocked = True
                     break
             if item == 'oaks_parcel_delivered':
-                if not keyitems.oaks_parcel_delivered:
+                if not self.keyitems.oaks_parcel_delivered:
                     locationBlocked = True
                     break
             if item == 'ss_ticket':
-                if not keyitems.ss_ticket:
+                if not self.keyitems.ss_ticket:
                     locationBlocked = True
                     break
             if item == 'bicycle':
-                if not keyitems.bicycle:
+                if not self.keyitems.bicycle:
                     locationBlocked = True
                     break
             if item == 'old_rod':
-                if not keyitems.old_rod:
+                if not self.keyitems.old_rod:
                     locationBlocked = True
                     break
             if item == 'good_rod':
-                if not keyitems.good_rod:
+                if not self.keyitems.good_rod:
                     locationBlocked = True
                     break
             if item == 'super_rod':
-                if not keyitems.super_rod:
+                if not self.keyitems.super_rod:
                     locationBlocked = True
                     break
             if item == 'item_finder':
-                if not keyitems.item_finder:
+                if not self.keyitems.item_finder:
                     locationBlocked = True
                     break
             
             if item == 'bike_voucher':
-                if not keyitems.bike_voucher:
+                if not self.keyitems.bike_voucher:
                     locationBlocked = True
                     break
             
             if item == 'gold_teeth':
-                if not keyitems.gold_teeth:
+                if not self.keyitems.gold_teeth:
                     locationBlocked = True
                     break
             
             if item == 'elite_four':
-                if not keyitems.elite_four:
+                if not self.keyitems.elite_four:
                     locationBlocked = True
                     break
         
@@ -141,115 +143,180 @@ class quests:
         """ verifies the trainers prerequsites are met """
         requirementsMet = True
         if prerequsites == []:
-            return
-        keyitems = kitems(self.discordId)
+            return True
+        
         for item in prerequsites:
             if item == 'HM01':
-                if not keyitems.HM01:
+                if not self.keyitems.HM01:
                     requirementsMet = False
                     break
             if item == 'HM02':
-                if not keyitems.HM02:
+                if not self.keyitems.HM02:
                     requirementsMet = False
                     break
             if item == 'HM03':
-                if not keyitems.HM03:
+                if not self.keyitems.HM03:
                     requirementsMet = False
                     break
             if item == 'HM04':
-                if not keyitems.HM04:
+                if not self.keyitems.HM04:
                     requirementsMet = False
                     break
             if item == 'HM05':
-                if not keyitems.HM05:
+                if not self.keyitems.HM05:
                     requirementsMet = False
                     break
             if item == 'badge_boulder':
-                if not keyitems.badge_boulder:
+                if not self.keyitems.badge_boulder:
                     requirementsMet = False
                     break
             if item == 'badge_cascade':
-                if not keyitems.badge_cascade:
+                if not self.keyitems.badge_cascade:
                     requirementsMet = False
                     break
             if item == 'badge_thunder':
-                if not keyitems.badge_thunder:
+                if not self.keyitems.badge_thunder:
                     requirementsMet = False
                     break
             if item == 'badge_rainbow':
-                if not keyitems.badge_rainbow:
+                if not self.keyitems.badge_rainbow:
                     requirementsMet = False
                     break
             if item == 'badge_soul':
-                if not keyitems.badge_soul:
+                if not self.keyitems.badge_soul:
                     requirementsMet = False
                     break
             if item == 'badge_marsh':
-                if not keyitems.badge_marsh:
+                if not self.keyitems.badge_marsh:
                     requirementsMet = False
                     break
             if item == 'badge_volcano':
-                if not keyitems.badge_volcano:
+                if not self.keyitems.badge_volcano:
                     requirementsMet = False
                     break
             if item == 'badge_earth':
-                if not keyitems.badge_earth:
+                if not self.keyitems.badge_earth:
                     requirementsMet = False
                     break
             if item == 'pokeflute':
-                if not keyitems.pokeflute:
+                if not self.keyitems.pokeflute:
                     requirementsMet = False
                     break
             if item == 'silph_scope':
-                if not keyitems.silph_scope:
+                if not self.keyitems.silph_scope:
                     requirementsMet = False
                     break
             if item == 'oaks_parcel':
-                if not keyitems.oaks_parcel:
+                if not self.keyitems.oaks_parcel:
                     requirementsMet = False
                     break
             if item == 'oaks_parcel_delivered':
-                if not keyitems.oaks_parcel_delivered:
+                if not self.keyitems.oaks_parcel_delivered:
                     requirementsMet = False
                     break
             if item == 'ss_ticket':
-                if not keyitems.ss_ticket:
+                if not self.keyitems.ss_ticket:
                     requirementsMet = False
                     break
             if item == 'bicycle':
-                if not keyitems.bicycle:
+                if not self.keyitems.bicycle:
                     requirementsMet = False
                     break
             if item == 'old_rod':
-                if not keyitems.old_rod:
+                if not self.keyitems.old_rod:
                     requirementsMet = False
                     break
             if item == 'good_rod':
-                if not keyitems.good_rod:
+                if not self.keyitems.good_rod:
                     requirementsMet = False
                     break
             if item == 'super_rod':
-                if not keyitems.super_rod:
+                if not self.keyitems.super_rod:
                     requirementsMet = False
                     break
             if item == 'item_finder':
-                if not keyitems.item_finder:
+                if not self.keyitems.item_finder:
                     requirementsMet = False
                     break
             if item == 'bike_voucher':
-                if not keyitems.bike_voucher:
+                if not self.keyitems.bike_voucher:
                     requirementsMet = False
                     break
             if item == 'gold_teeth':
-                if not keyitems.gold_teeth:
+                if not self.keyitems.gold_teeth:
                     requirementsMet = False
                     break
             if item == 'elite_four':
-                if not keyitems.elite_four:
+                print(self.keyitems.elite_four)
+                if not self.keyitems.elite_four:
                     requirementsMet = False
                     break
 
         return requirementsMet
+
+    def questComplete(self, questName):
+        """ checks if trainer has item from quest """
+        
+        if questName == 'Professor Oak':
+            if self.keyitems.oaks_parcel_delivered:
+                return True
+        elif questName == 'Super Nerd':
+            if self.inventory.helixfossil != 0 or self.inventory.domefossil != 0:
+                return True
+        elif questName == 'Fishing Guru':
+            if self.keyitems.old_rod:
+                return True
+        elif questName == 'Bike Voucher':
+            if self.keyitems.bicycle:
+                return True
+        elif questName == 'Speak to Captain':
+            if self.keyitems.HM01:
+                return True
+        elif questName == 'Oaks Aide':
+            if self.keyitems.HM05:
+                return True
+        elif questName == 'Museum of Science':
+            if self.inventory.oldamber != 0:
+                return True
+        elif questName == 'Cafe':
+            if self.inventory.coincase != 0:
+                return True
+        elif questName == 'Rooftop Square':
+            if self.inventory.lemonade != 0:
+                return True
+        elif questName == 'Rocket Hideout':
+            if self.keyitems.silph_scope:
+                return True
+        elif questName == 'Free Spirits':
+            return False 
+        elif questName == 'Mr Fuji':
+            if self.keyitems.pokeflute:
+                return True
+        elif questName == 'Lone House':
+            if self.keyitems.HM03:
+                return True
+        elif questName == 'Secret Resort':
+            if self.keyitems.HM02:
+                return True
+        elif questName == 'Fishing Brother':
+            if self.keyitems.super_rod:
+                return True
+        elif questName == 'Fishing Dude':
+            if self.keyitems.good_rod:
+                return True
+        elif questName == 'The Warden':
+            if self.keyitems.gold_teeth or self.keyitems.HM04:
+                return True
+        elif questName == 'Return Teeth':
+            if not self.keyitems.gold_teeth and self.keyitems.HM04:
+                return True
+        elif questName == 'SS Anne':
+            if self.keyitems.ss_ticket:
+                return True
+        elif questName == 'The Pokemon League':
+            return False 
+        elif questName == 'Mysterious Cave':
+            return False
 
     # List of quests 
     """
@@ -333,106 +400,96 @@ class quests:
     
 
     def professorOak(self):
-        keyitems = kitems(self.discordId)
-        keyitems.oaks_parcel_delivered = True
-        keyitems.oaks_parcel = False
+        self.keyitems.oaks_parcel_delivered = True
+        self.keyitems.oaks_parcel = False
         self.message = """You found Professor Oak in your 
                             mothers bedroom and delivered his parcel."""
-        keyitems.save()
+        self.keyitems.save()
         return
 
     def superNerd(self):
-        inventory = inv(self.discordId)
         
         x = ['Helix Fossil', 'Dome Fossil']
         fossil = random.choice(x)
         if fossil == 'Helix Fossil':
-            inventory.helixfossil = 1
-            inventory.domefossil = 0
+            self.inventory.helixfossil = 1
+            self.inventory.domefossil = 0
         else:
-            inventory.helixfossil = 0
-            inventory.domefossil = 1
+            self.inventory.helixfossil = 0
+            self.inventory.domefossil = 1
         self.message = """Some nerd was super excited about finding two rocks. 
                             You take one just to ruin his day. 
                             You received a %s!""" %(fossil)
-        inventory.save()
+        self.inventory.save()
         return
 
     def fishingGuru(self):
-        keyitems = kitems(self.discordId)
-        keyitems.old_rod = True
+        self.keyitems.old_rod = True
         self.message = """Some creepy guy gave you an old-rod with missing fishing line. 
                             You notice bubbles comeing from the lake near you.
                             You received an Old Rod!"""
-        keyitems.save()
+        self.keyitems.save()
         return
 
     def bikeVoucher(self):
-        keyitems = kitems(self.discordId)
-        keyitems.bike_voucher = True
+        self.keyitems.bike_voucher = True
         self.message = """You met a guy who found out his wife was cheating on him with some professor.
                             He gave you the bike voucher which was her birthday surprise. 
                             You received a Bike Voucher!"""
-        keyitems.save()
+        self.keyitems.save()
         return
 
     def speakToCaptain(self):
-        keyitems = kitems(self.discordId)
-        keyitems.HM01 = True
+        self.keyitems.HM01 = True
         self.message = """You caught the captain and his crew smuggling black tar heroine.
                             The captin bribed you to keep quiet.  
                             You received HM01!"""
-        keyitems.save()
+        self.keyitems.save()
         return
 
     def oaksAide(self):
-        keyitems = kitems(self.discordId)
-        keyitems.HM05 = True
+        self.keyitems.HM05 = True
         self.message = """You met Professor Oaks aide. She was jealous to hear about his relationship with your mother.
                             She gave you a valuable item from Oaks collection. She seemed suspiciously young.
                             You received HM05!"""
-        keyitems.save()
+        self.keyitems.save()
         return
 
     def museumOfScience(self):
-        inventory = inv(self.discordId)
-        inventory.oldamber = 1
+        self.inventory.oldamber = 1
         self.message = """You browsed the Museum of Science and found a cool looking stone. 
                             You placed the stone in your bag when no one was looking.
                             The inscription said "Property of John Hammond"
                             You received some Old Amber!"""
-        inventory.save()
+        self.inventory.save()
         return
 
     def cafe(self):
-        inventory = inv(self.discordId)
-        inventory.coincase = 1
+        self.inventory.coincase = 1
         self.message = """In a cafe you meet a man who was down on his gambling luck. 
                             He has bet and lost his wife in a bet. In an attempt to quit
                             he gives you his coin case.
                             You received a Coin Case!"""
-        inventory.save()
+        self.inventory.save()
         return
 
     def rooftopSquare(self):
-        inventory = inv(self.discordId)
-        inventory.lemonade = 1
+        self.inventory.lemonade = 1
         self.message = """On the rooftop square you find a little girl flossing for a TikTok video. 
                             In a blinding rage you crush her body with a vending machine. In the process
                             a bottle was disloged. 
                             You received a Lemonade!"""
-        inventory.save()
+        self.inventory.save()
         return
 
     def rocketHideout(self):
-        keyitems = kitems(self.discordId)
-        keyitems.silph_scope = True
+        self.keyitems.silph_scope = True
         self.message = """Deep inside Team Rockets hideout, you stumble upon a Free Mason sex ritual. Soon you were discovered.
                             You tried to use your escape-rope but instead were bound by it.
                             For two days you were used as a sex slave in an endless train. In a comotose of post nut clarity, 
                             you grab the Grand Masters scepter and escape. 
                             You received the Silph Scope!"""
-        keyitems.save()
+        self.keyitems.save()
         return
 
     def freeSpirits(self):
@@ -443,95 +500,86 @@ class quests:
         return
 
     def mrFuji(self):
-        keyitems = kitems(self.discordId)
-        keyitems.pokeflute = True
+        self.keyitems.pokeflute = True
         self.message = """You meet a feeble old man alone in his house. You notice a cool instrument haning on his wall. 
                             You asked if you could have it. He declined. He was alone...
                             You received the Pokeflute!"""
-        keyitems.save()
+        self.keyitems.save()
         return
 
     def loneHouse(self):
-        keyitems = kitems(self.discordId)
-        keyitems.HM03 = True
+        self.keyitems.HM03 = True
         self.message = """Deep inside the safari zone you find a lone house. Inside was a man who told you get off his property. 
                             You left and reported to the authories he has dirt on the Clintons. The next day you scavanged his house.
                             You received HM03!"""
-        keyitems.save()
+        self.keyitems.save()
         return
 
     def secretResort(self):
-        keyitems = kitems(self.discordId)
-        keyitems.HM02 = True
+        self.keyitems.HM02 = True
         self.message = """
                             You received HM02!"""
-        keyitems.save()
+        self.keyitems.save()
         return
 
     def fishingBrother(self):
-        keyitems = kitems(self.discordId)
-        keyitems.super_rod = True
+        self.keyitems.super_rod = True
         self.message = """You met the brother of a previous fisherman. You shared the story about seeing the bubbles in the water.
                             He quickly became anxious for you to leave. He offered you a new rod in exchange for your silence.
                             You received a Super Rod!"""
-        keyitems.save()
+        self.keyitems.save()
         return
 
     def fishingDude(self):
-        keyitems = kitems(self.discordId)
-        keyitems.good_rod = True
+        self.keyitems.good_rod = True
         self.message = """Along the path you met a cool fishing dude. All day you spent drinking and fishing together. 
                             While he was taking a piss you stole his rod simply because it was nicer than yours.
                             You received a Good Rod!"""
-        keyitems.save()
+        self.keyitems.save()
         return
 
     def theWarden(self):
-        keyitems = kitems(self.discordId)
-        keyitems.gold_teeth = True
+        self.keyitems.gold_teeth = True
         self.message = """Walking through the safari zone you find a set of gold teeth lying next to some dead pokemon.
                             You received some Gold Teeth"""
-        keyitems.save()
+        self.keyitems.save()
         return
 
     def returnTeeth(self):
-        keyitems = kitems(self.discordId)
-        keyitems.HM04 = True
-        keyitems.gold_teeth = False
+        self.keyitems.HM04 = True
+        self.keyitems.gold_teeth = False
         self.message = """Speaking to the warden about the dead pokemon you found, he admired your bling bling grille. 
                             He offered to trade you for the gold teeth. They fit perfectly...
                             You received HM04"""
-        keyitems.save()
+        self.keyitems.save()
         return
 
     def pokemonLab(self):
         # special quest where you trade in Helix/Dome Fossil and old amber for pokemon later
-        keyitems = kitems(self.discordId)
-        inventory = inv(self.discordId)
-        if inventory.domefossil > 0 or inventory.helixfossil > 0 or inventory.oldamber > 0:
-            if inventory.domefossil > 0:
-                inventory.domefossil = -1
-            if inventory.helixfossil > 0:
-                inventory.helixfossil = -1
-            if inventory.oldamber > 0:
-                inventory.oldamber = -1
+        if self.inventory.domefossil > 0 or self.inventory.helixfossil > 0 or self.inventory.oldamber > 0:
+            if self.inventory.domefossil > 0:
+                self.inventory.domefossil = -1
+            if self.inventory.helixfossil > 0:
+                self.inventory.helixfossil = -1
+            if self.inventory.oldamber > 0:
+                self.inventory.oldamber = -1
             self.message = """You find some german scientists in a lab. They offer to experiement 
                                 on your prehistoric rocks. You gladly give them your stupid rocks.
                                 """
-            inventory.save()
-        elif keyitems.elite_four:
+            self.inventory.save()
+        elif self.keyitems.elite_four:
             # if beaten elite four give them pokemon.
-            if inventory.domefossil == -1:
+            if self.inventory.domefossil == -1:
                 pokemon1 = pokeClass(self.discordId, 138) # omanyte
                 pokemon1.create(35)
                 pokemon1.save()
                 self.message += " You received Omanyte."
-            if inventory.helixfossil == -1:
+            if self.inventory.helixfossil == -1:
                 pokemon2 = pokeClass(self.discordId, 140) # kabuto
                 pokemon2.create(35)
                 pokemon2.save()
                 self.message += " You received Kabuto."
-            if inventory.oldamber == -1:
+            if self.inventory.oldamber == -1:
                 pokemon3 = pokeClass(self.discordId, 142) # aerodactyl
                 pokemon3.create(35)
                 pokemon3.save()
@@ -542,12 +590,11 @@ class quests:
         return
 
     def ssAnne(self):
-        keyitems = kitems(self.discordId)
-        keyitems.ss_ticket = True
+        self.keyitems.ss_ticket = True
         self.message = """Rummaging through someones mailbox you find an evelope. 
                             Inside it says "For Tommy. Sincerely, The Make a Wish Foundation"
                             You received an SS Anne Ticket"""
-        keyitems.save()
+        self.keyitems.save()
         return
 
     def thePokemonLeague(self):

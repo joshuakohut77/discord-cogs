@@ -77,11 +77,6 @@ class location:
             methods = set(map(lambda x: x['method'], areaEncounters))
             for method in methods:
                 methodList.append(actions[method])
-
-            # for x in areaEncounters:
-            #     method = x['method']
-            #     if method not in methodList:
-            #         methodList.append(method)
             
             
             # This next section checks if there's any valid quests in current area
@@ -90,10 +85,11 @@ class location:
             questsConfig = json.load(open(p, 'r'))
             quest = QuestModel(questsConfig[str(locationId)])
             questObj = qObj(self.discordId)
-            if quest.prerequsites != []:
+            if quest.questName != []:
                 if questObj.prerequsitesValid(quest.prerequsites):
                     for questMethod in quest.questName:
-                        methodList.append(ActionModel(questMethod, ActionType.QUEST, questMethod))
+                        if not questObj.questComplete(questMethod):
+                            methodList.append(ActionModel(questMethod, ActionType.QUEST, questMethod))
 
         except:
             self.statuscode = 96
