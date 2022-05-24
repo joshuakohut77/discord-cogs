@@ -84,13 +84,22 @@ class EncountersMixin(MixinMeta):
                 self.__on_action
             ))
 
+        # Check for the possibility of no actions
         if len(btns) == 0:
             await ctx.send('There\'s nothing to do here.')
             return
 
+        # Check for the possibility of too many actions
+        if len(btns) > 3:
+            firstRow = btns[:2]
+            secondRow = btns[2:]
+            btns = [firstRow, secondRow]
+        else:
+            btns = [btns]
+
         message: discord.Message = await ctx.send(
             content="What do you want to do?",
-            components=[btns]
+            components=btns
         )
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, model, trainer.getActivePokemon(), None, '')
