@@ -86,7 +86,7 @@ class keyitems:
                 self.item_finder = result[22]
                 self.bike_voucher = result[23]
                 self.gold_teeth = result[24]
-                self.elite_four = result[24]
+                self.elite_four = result[25]
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
