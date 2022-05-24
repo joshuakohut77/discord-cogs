@@ -21,12 +21,11 @@ from models.actionmodel import ActionModel, ActionType
 from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
 from services.inventoryclass import inventory as InventoryClass
-
+from services.pokeclass import Pokemon as PokemonClass
 
 from .abcd import MixinMeta
-from services.pokeclass import Pokemon as PokemonClass
-from .functions import (createStatsEmbed, getTypeColor,
-                        createPokemonAboutEmbed)
+from .functions import (getTypeColor)
+from .helpers import (getTrainerGivenPokemonName)
 
 
 class ActionState:
@@ -205,7 +204,7 @@ class EncountersMixin(MixinMeta):
         # await interaction.send(f'You encountered a wild {pokemon.pokemonName}!')
         desc = f'''
 {user.display_name} encountered a wild {wildPokemon.pokemonName.capitalize()}!
-{user.display_name} sent out {active.pokemonName.capitalize()}.
+{user.display_name} sent out {getTrainerGivenPokemonName(active)}.
 '''
 
         embed = self.__wildPokemonEncounter(user, wildPokemon, active, desc)
@@ -389,7 +388,7 @@ class EncountersMixin(MixinMeta):
         # await interaction.send(f'You encountered a wild {pokemon.pokemonName}!')
         desc = f'''
 {user.display_name} encountered a wild {wildPokemon.pokemonName.capitalize()}!
-{user.display_name} sent out {active.pokemonName.capitalize()}.
+{user.display_name} sent out {getTrainerGivenPokemonName(active)}.
 '''
 
         embed = self.__wildPokemonEncounter(user, wildPokemon, active, desc)
@@ -485,7 +484,7 @@ class EncountersMixin(MixinMeta):
         activeStats = activePokemon.getPokeStats()
 
         embed.add_field(
-            name=f"{activePokemon.pokemonName.capitalize()}",
+            name=f"{getTrainerGivenPokemonName(activePokemon)}",
             value=f'''
 Type : {activeTypes}
 Level : {activePokemon.currentLevel}
