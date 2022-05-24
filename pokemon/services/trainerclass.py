@@ -400,7 +400,8 @@ class trainer:
         """ handles a gift action """
         pokemon = None
         try:
-            locationId = self.getLocation()
+            location: LocationModel = self.getLocation()
+            locationId = location.locationId
             if locationId in [136, 147, 158, 159, 91, 95]:
                 onlyoneCompleted = False
                 uEncObj = uEnc(self.discordId)
@@ -673,6 +674,7 @@ class trainer:
         if activePokemon is None:
             self.statuscode = 420
             self.message = "You do not have an active pokemon!"
+            return
         if activePokemon.currentHP == 0:
             self.statuscode = 420
             self.message = "Your active Pokemon has no HP left!"
