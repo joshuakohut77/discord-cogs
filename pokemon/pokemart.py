@@ -16,6 +16,228 @@ from services.storeclass import store as StoreClass
 from .abcd import MixinMeta
 
 
+itemDisplayNames = {
+    "poke-ball": {
+        'name': 'Poké Ball',
+        'desc': 'A device for catching wild Pokémon. It\'s thrown like a ball, comfortably encapsulating its target.',
+        'emoji': constant.POKEBALL
+    },
+    "great-ball": {
+        'name': 'Great Ball',
+        'desc': 'A high-performance Ball with a higher catch rate than a standard Poké Ball.',
+        'emoji': constant.GREATBALL
+    },
+    "ultra-ball": {
+        'name': 'Ultra Ball',
+        'desc': 'An ultra-performance Ball with a higher catch rate than a Great Ball.',
+        'emoji': constant.ULTRABALL
+    },
+    "master-ball": {
+        'name': 'Master Ball',
+        'desc': 'The best Poké Ball with the ultimate level of performance. With it, you will catch any wild Pokémon without fail.',
+        'emoji': constant.MASTERBALL
+    },
+    "potion": {
+        'name': 'Potion',
+        'desc': 'Restores HP that have been lost in battle by 20 HP.',
+        'emoji': constant.POTION
+    },
+    "super-potion": {
+        'name': 'Super Potion',
+        'desc': 'Restores HP that have been lost in battle by 50 HP.',
+        'emoji': constant.SUPERPOTION
+    },
+    "hyper-potion": {
+        'name': 'Hyper Potion',
+        'desc': 'Restores HP that have been lost in battle by 200 HP.',
+        'emoji': constant.HYPERPOTION
+    },
+    "max-potion": {
+        'name': 'Max Potion',
+        'desc': 'Fully restores HP that have been lost in battle.',
+        'emoji': constant.MAXPOTION
+    },
+    "revive": {
+        'name': 'Revive',
+        'desc': 'Revives a fainted Pokémon and restores half its maximum HP.',
+        'emoji': constant.REVIVE
+    },
+    "full-restore": {
+        'name': 'Full Restore',
+        'desc': 'Fully restores HP and cures all ailments, such as poisoning.',
+        'emoji': constant.FULLRESTORE
+    },
+    "repel": {
+        'name': 'Repel',
+        'desc': 'An aerosol spray that keeps wild Pokémon away.',
+        'emoji': constant.REPEL
+    },
+    "super-repel": {
+        'name': 'Super Repel',
+        'desc': 'Keeps wild Pokémon away. Longer lasting than Repel.',
+        'emoji': constant.SUPERREPEL
+    },
+    "max-repel": {
+        'name': 'Max Repel',
+        'desc': 'Keeps wild Pokémon away. Longer lasting than Super Repel.',
+        'emoji': constant.MAXREPEL
+    },
+    "awakening": {
+        'name': 'Awakening',
+        'desc': 'Awakens a Pokémon that has fallen asleep.',
+        'emoji': constant.AWAKENING
+    },
+    "escape-rope": {
+        'name': 'Escape Rope',
+        'desc': 'When in a place like a cave, this returns you to the last Pokémon Center visited.',
+        'emoji': constant.ESCAPEROPE
+    },
+    "full-heal": {
+        'name': 'Full Heal',
+        'desc': 'Cures a Pokémon of any ailment except for fainting.',
+        'emoji': constant.FULLHEAL
+    },
+    "ice-heal": {
+        'name': 'Ice Heal',
+        'desc': 'Thaws out a Pokémon that has been frozen solid.',
+        'emoji': constant.ICEHEAL
+    },
+    "burn-heal": {
+        'name': 'Burn Heal',
+        'desc': 'Medicine for curing a Pokémon that is suffering from burn.',
+        'emoji': constant.BURNHEAL
+    },
+    "paralyze-heal": {
+        'name': 'Paralyze Heal',
+        'desc': 'Cures a Pokémon that is suffering from paralysis.',
+        'emoji': constant.PARALYZEHEAL
+    },
+    "antidote": {
+        'name': 'Antidote',
+        'desc': 'An antidote for curing a poisoned Pokémon.',
+        'emoji': constant.ANTIDOTE
+    },
+    "calcium": {
+        'name': 'Calcium',
+        'desc': ''
+    },
+    "carbos": {
+        'name': 'Carbos',
+        'desc': ''
+    },
+    "coin-case": {
+        'name': 'Coin Case',
+        'desc': ''
+    },
+    "dire-hit": {
+        'name': 'Dire Hit',
+        'desc': ''
+    },
+    "dome-fossil": {
+        'name': 'Dome Fossil',
+        'desc': ''
+    },
+    "fresh-water": {
+        'name': 'Fresh Water',
+        'desc': ''
+    },
+    "helix-fossil": {
+        'name': 'Helix Fossil'
+    },
+    "hp-up": {
+        'name': 'HP Up',
+        'desc': ''
+    },
+    "lemonade": {
+        'name': 'Lemonade',
+        'desc': ''
+    },
+    "max-ether": {
+        'name': 'Max Ether',
+        'desc': ''
+    },
+    "ether": {
+        'name': 'Ether',
+        'desc': ''
+    },
+    "nugget": {
+        'name': 'Nugget',
+        'desc': ''
+    },
+    "old-amber": {
+        'name': 'Old Amber',
+        'desc': ''
+    },
+    "poke-doll": {
+        'name': 'Poké Doll',
+        'desc': ''
+    },
+    "pp-up": {
+        'name': 'PP Up',
+        'desc': ''
+    },
+    "soda-pop": {
+        'name': 'Soda Pop',
+        'desc': ''
+    },
+    "town-map": {
+        'name': 'Town Map',
+        'desc': ''
+    },
+    "x-accuracy": {
+        'name': 'X Accuracy',
+        'desc': ''
+    },
+    "x-attack": {
+        'name': 'X Attack',
+        'desc': ''
+    },
+    "x-defense": {
+        'name': 'X Defense',
+        'desc': ''
+    },
+    "x-speed": {
+        'name': 'X Speed',
+        'desc': ''
+    },
+    "fire-stone": {
+        'name': 'Fire Stone',
+        'desc': ''
+    },
+    "water-stone": {
+        'name': 'Water Stone',
+        'desc': ''
+    },
+    "thunder-stone": {
+        'name': 'Thunder Stone',
+        'desc': ''
+    },
+    "leaf-stone": {
+        'name': 'Leaf Stone',
+        'desc': ''
+    },
+    "moon-stone": {
+        'name': 'Moon Stone',
+        'desc': ''
+    },
+    "elixir": {
+        'name': 'Elixir',
+        'desc': ''
+    },
+    "max-elixir": {
+        'name': 'Max Elixir',
+        'desc': ''
+    },
+    "x-sp-atk": {
+        'name': 'X Sp. Attack',
+        'desc': ''
+    },
+    "x-sp-def": {
+        'name': 'X Sp. Defense',
+        'desc': ''
+    }
+}
+
 class PokemartMixin(MixinMeta):
     """Pokemart"""
 
@@ -43,77 +265,83 @@ class PokemartMixin(MixinMeta):
 
         # Create the embed object
         # file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/items/poke-ball.png", filename="poke-ball.png")
-        embed = discord.Embed(title=f"Pokemart - {location.name}")
+        embed = discord.Embed(title=f"Poké Mart - {location.name}")
         embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/locations/poke_mart.png")
         # embed.set_author(name=f"{user.display_name}",
         #                  icon_url=str(user.avatar_url))
 
         for item in store.storeList:
-            emoji = '▶️'
-            description = ''
-
-            if item['item'] == 'poke-ball':
-                emoji = constant.POKEBALL
-                description = "A device for catching wild Pokémon. It's thrown like a ball, comfortably encapsulating its target."
-            elif item['item'] == 'great-ball':
-                emoji = constant.GREATBALL
-                description = "A high-performance Ball with a higher catch rate than a standard Poké Ball."
-            elif item['item'] == 'ultra-ball':
-                emoji = constant.ULTRABALL
-                description = "An ultra-performance Ball with a higher catch rate than a Great Ball."
-            elif item['item'] == 'master-ball':
-                emoji = constant.MASTERBALL
-                description = "The best Poké Ball with the ultimate level of performance. With it, you will catch any wild Pokémon without fail."
-            elif item['item'] == 'potion':
-                emoji = constant.POTION
-                description = "Restores HP that have been lost in battle by 20 HP."
-            elif item['item'] == 'super-potion':
-                emoji = constant.SUPERPOTION
-                description = "Restores HP that have been lost in battle by 50 HP."
-            elif item['item'] == 'hyper-potion':
-                emoji = constant.HYPERPOTION
-                description = "Restores HP that have been lost in battle by 200 HP."
-            elif item['item'] == 'max-potion':
-                emoji = constant.MAXPOTION
-                description = "Fully restores HP that have been lost in battle."
-            elif item['item'] == 'revive':
-                emoji = constant.REVIVE
-                description = "Revives a fainted Pokémon and restores half its maximum HP."
-            elif item['item'] == 'full-restore':
-                emoji = constant.FULLRESTORE
-                description = "Fully restores HP and cures all ailments, such as poisoning."
-            elif item['item'] == 'repel':
-                emoji = constant.REPEL
-                description = "An aerosol spray that keeps wild Pokémon away."
-            elif item['item'] == 'super-repel':
-                emoji = constant.SUPERREPEL
-                description = "Keeps wild Pokémon away. Longer lasting than Repel."
-            elif item['item'] == 'max-repel':
-                emoji = constant.MAXREPEL
-                description = "Keeps wild Pokémon away. Longer lasting than Super Repel."
-            elif item['item'] == 'escape-rope':
-                emoji = constant.ESCAPEROPE
-                description = "When in a place like a cave, this returns you to the last Pokémon Center visited."
-            elif item['item'] == 'awakening':
-                emoji = constant.AWAKENING
-                description = "Awakens a Pokémon that has fallen asleep."
-            elif item['item'] == 'antidote':
-                emoji = constant.ANTIDOTE
-                description = "An antidote for curing a poisoned Pokémon."
-            elif item['item'] == 'ice-heal':
-                emoji = constant.ICEHEAL
-                description = "Thaws out a Pokémon that has been frozen solid."
-            elif item['item'] == 'burn-heal':
-                emoji = constant.BURNHEAL
-                description = "Medicine for curing a Pokémon that is suffering from burn."
-            elif item['item'] == 'paralyze-heal':
-                emoji = constant.PARALYZEHEAL
-                description = "Cures a Pokémon that is suffering from paralysis."
-            elif item['item'] == 'full-heal':
-                emoji = constant.FULLHEAL
-                description = "Cures a Pokémon of any ailment except for fainting."
+            key = item['item']
+            emoji = itemDisplayNames[key]['emoji']
+            description = itemDisplayNames[key]['desc']
+            name = itemDisplayNames[key]['name']
+            price = item['price']
             
-            embed.add_field(name=f"{emoji}  {item['item']} — {item['price']}", value=description, inline=False)
+
+            # if item['item'] == 'poke-ball':
+            #     emoji = constant.POKEBALL
+            #     description = "A device for catching wild Pokémon. It's thrown like a ball, comfortably encapsulating its target."
+            # elif item['item'] == 'great-ball':
+            #     emoji = constant.GREATBALL
+            #     description = "A high-performance Ball with a higher catch rate than a standard Poké Ball."
+            # elif item['item'] == 'ultra-ball':
+            #     emoji = constant.ULTRABALL
+            #     description = "An ultra-performance Ball with a higher catch rate than a Great Ball."
+            # elif item['item'] == 'master-ball':
+            #     emoji = constant.MASTERBALL
+            #     description = "The best Poké Ball with the ultimate level of performance. With it, you will catch any wild Pokémon without fail."
+            # elif item['item'] == 'potion':
+            #     emoji = constant.POTION
+            #     description = "Restores HP that have been lost in battle by 20 HP."
+            # elif item['item'] == 'super-potion':
+            #     emoji = constant.SUPERPOTION
+            #     description = "Restores HP that have been lost in battle by 50 HP."
+
+            # elif item['item'] == 'hyper-potion':
+            #     emoji = constant.HYPERPOTION
+            #     description = "Restores HP that have been lost in battle by 200 HP."
+            # elif item['item'] == 'max-potion':
+            #     emoji = constant.MAXPOTION
+            #     description = "Fully restores HP that have been lost in battle."
+            # elif item['item'] == 'revive':
+            #     emoji = constant.REVIVE
+            #     description = "Revives a fainted Pokémon and restores half its maximum HP."
+            # elif item['item'] == 'full-restore':
+            #     emoji = constant.FULLRESTORE
+            #     description = "Fully restores HP and cures all ailments, such as poisoning."
+            # elif item['item'] == 'repel':
+            #     emoji = constant.REPEL
+            #     description = "An aerosol spray that keeps wild Pokémon away."
+            # elif item['item'] == 'super-repel':
+            #     emoji = constant.SUPERREPEL
+            #     description = "Keeps wild Pokémon away. Longer lasting than Repel."
+            # elif item['item'] == 'max-repel':
+            #     emoji = constant.MAXREPEL
+            #     description = "Keeps wild Pokémon away. Longer lasting than Super Repel."
+
+            # elif item['item'] == 'escape-rope':
+            #     emoji = constant.ESCAPEROPE
+            #     description = "When in a place like a cave, this returns you to the last Pokémon Center visited."
+            # elif item['item'] == 'awakening':
+            #     emoji = constant.AWAKENING
+            #     description = "Awakens a Pokémon that has fallen asleep."
+            # elif item['item'] == 'antidote':
+            #     emoji = constant.ANTIDOTE
+            #     description = "An antidote for curing a poisoned Pokémon."
+            # elif item['item'] == 'ice-heal':
+            #     emoji = constant.ICEHEAL
+            #     description = "Thaws out a Pokémon that has been frozen solid."
+            # elif item['item'] == 'burn-heal':
+            #     emoji = constant.BURNHEAL
+            #     description = "Medicine for curing a Pokémon that is suffering from burn."
+            # elif item['item'] == 'paralyze-heal':
+            #     emoji = constant.PARALYZEHEAL
+            #     description = "Cures a Pokémon that is suffering from paralysis."
+            # elif item['item'] == 'full-heal':
+            #     emoji = constant.FULLHEAL
+            #     description = "Cures a Pokémon of any ailment except for fainting."
+            
+            embed.add_field(name=f"{emoji}  {name} — {price}", value=description, inline=False)
 
         await ctx.send(embed=embed)
         await ctx.tick()

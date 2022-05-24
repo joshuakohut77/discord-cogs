@@ -33,7 +33,7 @@ from services.trainerclass import trainer as TrainerClass
 # pretty up location names
 # pretty up item names
 # - [low] Clean up item names
-# - [low] User nickname everywhere where pokemonname would be
+# - [x][low] User nickname everywhere where pokemonname would be
 # - [low] update party and starter up to parity with pc
 # - [med] Pokedex
 # - [med] Test evolutions in discord
