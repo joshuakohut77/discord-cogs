@@ -10,11 +10,25 @@ from dbclass import db as dbconn
 from questclass import quests as qObj
 from models.location import LocationModel
 from models.quest import QuestModel
+from models.actionmodel import ActionType, ActionModel
 
 # Global Config Variables
 VERSION_DETAILS_LIST = config.version_details_list
 # Class Logger
 logger = log()
+
+
+actions = {
+    'walk': ActionModel('Walk', ActionType.ENCOUNTER, 'walk'),
+    'old-rod': ActionModel('Old Rod', ActionType.ENCOUNTER, 'old-rod'),
+    'good-rod': ActionModel('Good Rod', ActionType.ENCOUNTER, 'good-rod'),
+    'super-rod': ActionModel('Super Rod', ActionType.ENCOUNTER, 'super-rod'),
+    'only-one': ActionModel('Legendary', ActionType.ONLYONE, 'only-one'),
+    'gift': ActionModel('Gift', ActionType.GIFT, 'gift'),
+    'pokeflute': ActionModel('Poké Flute', ActionType.ENCOUNTER, 'pokeflute'),
+    # TODO: ActionModel for each quest?
+}
+
 
 """
 list of cities and locations: https://pokeapi.co/api/v2/region/1/
@@ -44,6 +58,7 @@ class location:
 
     def getMethods(self):
         """ returns a list of methods available in that area """
+        actionList = []
         methodList = []
         locationId = 0
         try:
@@ -57,11 +72,17 @@ class location:
                 locationId = self.__getCurrentLocation()
                 if locationId > 0:
                     areaEncounters = encountersConfig[str(locationId)]
-                    
-            for x in areaEncounters:
-                method = x['method']
-                if method not in methodList:
-                    methodList.append(method)
+
+            # map each method name, then make a set.
+            # A `set` removes duplicate values.
+            methods = set(map(lambda x: x['method'], areaEncounters))
+            for method in methods:
+                methodList.append(actions[method])
+
+            # for x in areaEncounters:
+            #     method = x['method']
+            #     if method not in methodList:
+            #         methodList.append(method)
             
             
             # This next section checks if there's any valid quests in current area
@@ -73,7 +94,7 @@ class location:
             if quest.prerequsites != []:
                 if questObj.prerequsitesValid(quest.prerequsites):
                     for questMethod in quest.questName:
-                        methodList.append(questMethod)
+                        methodList.append(ActionModel(questMethod, ActionType.QUEST, questMethod))
 
         except:
             self.statuscode = 96
@@ -96,11 +117,14 @@ class location:
                 locationId = self.__getCurrentLocation()
                 if locationId > 0:
                     areaEncounters = encountersConfig[str(locationId)]
+            
             totalChance = 0
             encounterList = []
+            action = actions[selectedMethod]
+
             for x in areaEncounters:
                 method = x['method']
-                if method == selectedMethod:
+                if method == action:
                     chance = x['chance']
                     for counter in range(chance):
                         encounterList.append(x)

@@ -17,6 +17,7 @@ from redbot.core import commands
 
 import constant
 from models.location import LocationModel
+from models.actionmodel import ActionModel, ActionType
 from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
 from services.inventoryclass import inventory as InventoryClass
@@ -70,7 +71,7 @@ class EncountersMixin(MixinMeta):
         model = trainer.getLocation()
 
         location = LocationClass(str(user.id))
-        methods = location.getMethods()
+        methods: list[ActionModel] = location.getMethods()
 
         if len(methods) == 0:
             await ctx.send('No encounters available at your location.')
@@ -80,7 +81,7 @@ class EncountersMixin(MixinMeta):
         for method in methods:
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray,
-                       label=f"{method}", custom_id=f'{method}'),
+                       label=f"{method.name}", custom_id=f'{method.value}'),
                 self.__on_action
             ))
 
@@ -108,7 +109,7 @@ class EncountersMixin(MixinMeta):
             return
 
         location = LocationClass(str(user.id))
-        methods = location.getMethods()
+        methods: list[ActionModel] = location.getMethods()
 
         btns = []
         for method in methods:
@@ -117,7 +118,7 @@ class EncountersMixin(MixinMeta):
                 color = ButtonStyle.green
             
             btns.append(
-                Button(style=color, label=f"{method}", custom_id=f'{method}', disabled=True)
+                Button(style=color, label=f"{method.name}", custom_id=f'{method.value}', disabled=True)
             )
 
         # Check for the possibility of too many actions
@@ -129,17 +130,23 @@ class EncountersMixin(MixinMeta):
             btns = [btns]
         
 
+        action: ActionModel
+        for method in methods:
+            if method.value == interaction.custom_id:
+                action = method
+                break
+
         msg = 'Walking through tall grass...'
 
-        if interaction.custom_id == 'old-rod':
+        if action.value == 'old-rod':
             msg = 'Fishing with an old rod...'
-        elif interaction.custom_id == 'good-rod':
+        elif action.value == 'good-rod':
             msg = 'Fishing with a good rod...'
-        elif interaction.custom_id == 'super-rod':
+        elif action.value == 'super-rod':
             msg = 'Fishing with a super rod...'
-        elif interaction.custom_id == 'gift':
+        elif action.value == 'gift':
             msg = 'Waiting to receive a gift...'
-        elif interaction.custom_id == 'pokeflute':
+        elif action.value == 'pokeflute':
             msg = 'You played the Poké Flute!'
 
         await interaction.edit_origin(
@@ -156,28 +163,41 @@ class EncountersMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
 
 
-        if interaction.custom_id == 'gift':
+        if ActionType.GIFT.value == action.type.value:
             trainer.gift()
             await interaction.channel.send(trainer.message)
             return
         
-        if interaction.custom_id == 'Fishing Dude' or \
-                interaction.custom_id == 'Lone House' or \
-                interaction.custom_id == 'The Warden' or \
-                interaction.custom_id == 'Return Teeth' or \
-                interaction.custom_id == 'Fishing Dude':
+        if ActionType.QUEST.value == action.type.value:
             trainer.quest(interaction.custom_id)
             await interaction.channel.send(trainer.message)
             return
 
-        wildPokemon: PokemonClass = trainer.encounter(method)
-        if wildPokemon is None:
-            if trainer.statuscode == 420:
-                await interaction.channel.send(trainer.message)
-            else:
-                await interaction.channel.send('No pokemon encountered.')
-            # await interaction.send('No pokemon encountered.')
-            return
+
+        wildPokemon: PokemonClass
+        # Only one can potentially trigger a pokemon encounter
+        if ActionType.ONLYONE.value == action.type.value:
+            wildPokemon = trainer.onlyone()
+            if wildPokemon is None:
+                if trainer.statuscode == 420:
+                    await interaction.channel.send(trainer.message)
+                else:
+                    await interaction.channel.send('No pokemon encountered.')
+                return
+
+
+            await interaction.channel.send(trainer.message)
+
+        # A wild pokemon encounter
+        if ActionType.ENCOUNTER.value == action.type.value:
+            wildPokemon = trainer.encounter(method)
+            if wildPokemon is None:
+                if trainer.statuscode == 420:
+                    await interaction.channel.send(trainer.message)
+                else:
+                    await interaction.channel.send('No pokemon encountered.')
+                # await interaction.send('No pokemon encountered.')
+                return
 
         # active = trainer.getActivePokemon()
         active = state.activePokemon

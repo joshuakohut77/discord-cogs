@@ -419,6 +419,7 @@ class trainer:
                 elif locationId == 91 or locationId == 95:
                     if uEncObj.snorlax:
                         onlyoneCompleted = True
+                
                 if onlyoneCompleted:
                     self.statuscode = 420
                     self.message = "You have already completed that action in this location"
