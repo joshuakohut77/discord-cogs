@@ -1,4 +1,607 @@
 {
+    "67": {
+      "locationId": 67,
+      "locationName": "celadon-city",
+      "gym-leader": "Erika",
+      "leader_filename": "erika.png",
+      "gym_filename": "Celadon_Gym.png",
+      "gym-name": "Celadon Gym",
+      "badge": "Rainbow Badge",
+      "keyitem": "rainbow_badge",
+      "money": 2871,
+      "pokemon": [
+        {
+          "victreebell": 29
+        },
+        {
+          "tangela": 24
+        },
+        {
+          "vileplume": 29
+        }
+      ],
+      "trainers": [
+        {
+          "1": {
+            "name": "Lass",
+            "filename": "lass.png",
+            "money": 345,
+            "pokemon": [
+              {
+                "bellsproud": 23
+              },
+              {
+                "weepinbell": 23
+              }
+            ]
+          },
+          "2": {
+            "name": "Beauty",
+            "filename": "beauty.png",
+            "money": 1470,
+            "pokemon": [
+              {
+                "oddish": 21
+              },
+              {
+                "bellsproud": 21
+              },
+              {
+                "oddish": 21
+              },
+              {
+                "bellsproud": 21
+              }
+            ]
+          },
+          "3": {
+            "name": "Beauty",
+            "filename": "beauty.png",
+            "money": 1680,
+            "pokemon": [
+              {
+                "bellsproud": 24
+              },
+              {
+                "bellsproud": 24
+              }
+            ]
+          },
+          "4": {
+            "name": "Jr. Trainer",
+            "filename": "jrtainer.png",
+            "money": 480,
+            "pokemon": [
+              {
+                "bulbasaur": 24
+              },
+              {
+                "ivysaur": 24
+              }
+            ]
+          },
+          "5": {
+            "name": "Beauty",
+            "filename": "beauty.png",
+            "money": 1820,
+            "pokemon": [
+              {
+                "exeggcute": 26
+              }
+            ]
+          },
+          "6": {
+            "name": "Cootrainer",
+            "filename": "cooltrainer.png",
+            "money": 840,
+            "pokemon": [
+              {
+                "weepinbell": 24
+              },
+              {
+                "gloom": 24
+              },
+              {
+                "ivysaur": 24
+              }
+            ]
+          },
+          "7": {
+            "name": "Lass",
+            "filename": "lass.png",
+            "money": 345,
+            "pokemon": [
+              {
+                "oddish": 23
+              },
+              {
+                "gloom": 23
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "68": {
+      "locationId": 68,
+      "locationName": "cerulean-city",
+      "gym-leader": "Misty",
+      "leader_filename": "misty.png",
+      "gym_filename": "Cerulean_Gym.png",
+      "gym-name": "Cerulean Gym",
+      "badge": "Cascade Badge",
+      "keyitem": "cascade_badge",
+      "money": 2079,
+      "pokemon": [
+        {
+          "staryu": 18
+        },
+        {
+          "starmie": 21
+        }
+      ],
+      "trainers": [
+        {
+          "1": {
+            "name": "Swimmer",
+            "filename": "swimmer.png",
+            "money": 80,
+            "pokemon": [
+              {
+                "horsea": 16
+              },
+              {
+                "shellder": 16
+              }
+            ]
+          },
+          "2": {
+            "name": "Jr. Trainer",
+            "filename": "jrtrainer.png",
+            "money": 380,
+            "pokemon": [
+              {
+                "goldeen": 19
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "71": {
+      "locationId": 71,
+      "locationName": "cinnabar-island",
+      "gym-leader": "Blaine",
+      "leader_filename": "blaine.png",
+      "gym_filename": "Cinnabar_Gym.png",
+      "gym-name": "Cinnabar Gym",
+      "badge": "Volcano Badge",
+      "keyitem": "volcano_badge",
+      "money": 4653,
+      "pokemon": [
+        {
+          "growlithe": 42
+        },
+        {
+          "ponyta": 40
+        },
+        {
+          "rapidash": 42
+        },
+        {
+          "arcanine": 47
+        }
+      ],
+      "trainers": [
+        {
+          "1": {
+            "name": "Burglar",
+            "filename": "burglar.png",
+            "money": 3240,
+            "pokemon": [
+              {
+                "growlithe": 36
+              },
+              {
+                "vulpix": 36
+              },
+              {
+                "ninetales": 36
+              }
+            ]
+          },
+          "2": {
+            "name": "Super Nerd",
+            "filename": "supernerd.png",
+            "money": 900,
+            "pokemon": [
+              {
+                "growlithe": 36
+              },
+              {
+                "vulpix": 36
+              },
+              {
+                "ninetales": 36
+              }
+            ]
+          },
+          "3": {
+            "name": "Super Nerd",
+            "filename": "supernerd.png",
+            "money": 850,
+            "pokemon": [
+              {
+                "ponyta": 34
+              },
+              {
+                "charmander": 34
+              },
+              {
+                "vulpix": 34
+              },
+              {
+                "growlithe": 34
+              }
+            ]
+          },
+          "4": {
+            "name": "Burglar",
+            "filename": "burglar.png",
+            "money": 3690,
+            "pokemon": [
+              {
+                "ponyta": 41
+              }
+            ]
+          },
+          "5": {
+            "name": "Super Nerd",
+            "filename": "supernerd.png",
+            "money": 1025,
+            "pokemon": [
+              {
+                "rapidash": 41
+              }
+            ]
+          },
+          "6": {
+            "name": "Burglar",
+            "filename": "burglar.png",
+            "money": 3330,
+            "pokemon": [
+              {
+                "vulpix": 37
+              },
+              {
+                "growlithe": 37
+              }
+            ]
+          },
+          "7": {
+            "name": "Super Nerd",
+            "filename": "supernerd.png",
+            "money": 925,
+            "pokemon": [
+              {
+                "growlithe": 37
+              },
+              {
+                "vulpix": 37
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "76": {
+      "locationId": 76,
+      "locationName": "fuchsia-city",
+      "gym-leader": "Koga",
+      "leader_filename": "koga.png",
+      "gym_filename": "Fuchsia_Gym.png",
+      "gym-name": "Fuchsia Gym",
+      "badge": "Soul Badge",
+      "keyitem": "soul_badge",
+      "money": 4257,
+      "pokemon": [
+        {
+          "koffing": 37
+        },
+        {
+          "muk": 39
+        },
+        {
+          "koffing": 37
+        },
+        {
+          "weezing": 43
+        }
+      ],
+      "trainers": [
+        {
+          "1": {
+            "name": "Juggler",
+            "filename": "juggler.png",
+            "money": 1190,
+            "pokemon": [
+              {
+                "drowzee": 34
+              },
+              {
+                "kadabra": 34
+              }
+            ]
+          },
+          "2": {
+            "name": "Juggler",
+            "filename": "juggler.png",
+            "money": 1330,
+            "pokemon": [
+              {
+                "hypno": 38
+              }
+            ]
+          },
+          "3": {
+            "name": "Juggler",
+            "filename": "juggler.png",
+            "money": 1085,
+            "pokemon": [
+              {
+                "drowzee": 31
+              },
+              {
+                "drowzee": 31
+              },
+              {
+                "kadabra": 31
+              },
+              {
+                "drowzee": 31
+              }
+            ]
+          },
+          "4": {
+            "name": "Tamer",
+            "filename": "tamer.png",
+            "money": 1320,
+            "pokemon": [
+              {
+                "arbok": 33
+              },
+              {
+                "sandslash": 33
+              },
+              {
+                "arbok": 33
+              }
+            ]
+          },
+          "5": {
+            "name": "Tamer",
+            "filename": "tamer.png",
+            "money": 1360,
+            "pokemon": [
+              {
+                "sandslash": 34
+              },
+              {
+                "arbok": 34
+              }
+            ]
+          },
+          "6": {
+            "name": "Juggler",
+            "filename": "juggler.png",
+            "money": 1190,
+            "pokemon": [
+              {
+                "drowzee": 34
+              },
+              {
+                "hypno": 34
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "151": {
+      "locationId": 151,
+      "locationName": "vermilion-city",
+      "gym-leader": "Lt. Surge",
+      "leader_filename": "ltsurge.png",
+      "gym_filename": "Vermilion_Gym.png",
+      "gym-name": "Vermilion Gym",
+      "badge": "Thunder Badge",
+      "keyitem": "thunder_badge",
+      "money": 2376,
+      "pokemon": [
+        {
+          "voltorb": 21
+        },
+        {
+          "pikachu": 18
+        },
+        {
+          "raichu": 24
+        }
+      ],
+      "trainers": [
+        {
+          "1": {
+            "name": "Sailor",
+            "filename": "sailor.png",
+            "money": 630,
+            "pokemon": [
+              {
+                "pikachu": 21
+              },
+              {
+                "pikachu": 21
+              }
+            ]
+          },
+          "2": {
+            "name": "Rocker",
+            "filename": "rocker.png",
+            "money": 500,
+            "pokemon": [
+              {
+                "voltorb": 20
+              },
+              {
+                "magnemite": 20
+              },
+              {
+                "voltorb": 20
+              }
+            ]
+          },
+          "3": {
+            "name": "Gentleman",
+            "filename": "gentleman.png",
+            "money": 1610,
+            "pokemon": [
+              {
+                "pikachu": 23
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "154": {
+      "locationId": 154,
+      "locationName": "viridian-city",
+      "gym-leader": "Giovanni",
+      "leader_filename": "giovanni.png",
+      "gym_filename": "Viridian_Gym.png",
+      "gym-name": "Viridian Gym",
+      "badge": "Earth Badge",
+      "keyitem": "earth_badge",
+      "money": 4950,
+      "pokemon": [
+        {
+          "rhyhorn": 45
+        },
+        {
+          "dugtrio": 42
+        },
+        {
+          "nidoqueen": 44
+        },
+        {
+          "nidoking": 45
+        },
+        {
+          "rhydon": 50
+        }
+      ],
+      "trainers": [
+        {
+          "1": {
+            "name": "Tamer",
+            "filename": "tamer.png",
+            "money": 1560,
+            "pokemon": [
+              {
+                "arbok": 39
+              },
+              {
+                "tauros": 39
+              }
+            ]
+          },
+          "2": {
+            "name": "Blackbelt",
+            "filename": "blackbelt.png",
+            "money": 1075,
+            "pokemon": [
+              {
+                "machoke": 43
+              }
+            ]
+          },
+          "3": {
+            "name": "Cooltrainer",
+            "filename": "cooltrainer.png",
+            "money": 1365,
+            "pokemon": [
+              {
+                "nidorino": 39
+              },
+              {
+                "nidoking": 39
+              }
+            ]
+          },
+          "4": {
+            "name": "Tamer",
+            "filename": "tamer.png",
+            "money": 1720,
+            "pokemon": [
+              {
+                "rhyhorn": 43
+              }
+            ]
+          },
+          "5": {
+            "name": "Blackbelt",
+            "filename": "blackbelt.png",
+            "money": 1000,
+            "pokemon": [
+              {
+                "machop": 40
+              },
+              {
+                "machoke": 40
+              }
+            ]
+          },
+          "6": {
+            "name": "Cooltrainer",
+            "filename": "cooltrainer.png",
+            "money": 1365,
+            "pokemon": [
+              {
+                "sandslash": 39
+              },
+              {
+                "dugtrio": 39
+              }
+            ]
+          },
+          "7": {
+            "name": "Cooltrainer",
+            "filename": "cooltrainer.png",
+            "money": 1505,
+            "pokemon": [
+              {
+                "rhyhorn": 43
+              }
+            ]
+          },
+          "8": {
+            "name": "Blackbelt",
+            "filename": "blackbelt.png",
+            "money": 950,
+            "pokemon": [
+              {
+                "machoke": 38
+              },
+              {
+                "machop": 38
+              },
+              {
+                "machoke": 38
+              }
+            ]
+          }
+        }
+      ]
+    },
     "231": {
       "locationId": 231,
       "locationName": "pewter-city",
@@ -8,127 +611,157 @@
       "gym-name": "Pewter Gym",
       "badge": "Boulder Badge",
       "keyitem": "boulder_badge",
-      "money": "1386",
+      "money": 1386,
       "pokemon": [
-        {"geodude": 12},
-        {"onix": 14}
-      ]     
-    },
-    "68": {
-        "locationId": 68,
-        "locationName": "cerulean-city",
-        "gym-leader": "Misty",
-        "leader_filename": "misty.png",
-        "gym_filename": "Cerulean_Gym.png",
-        "gym-name": "Cerulean Gym",
-        "badge": "Cascade Badge",
-        "keyitem": "cascade_badge",
-        "money": "2079",
-        "pokemon": [
-          {"staryu": 18},
-          {"starmie": 21}
-        ]     
-      },
-    "151": {
-        "locationId": 151,
-        "locationName": "vermilion-city",
-        "gym-leader": "Lt. Surge",
-        "leader_filename": "ltsurge.png",
-        "gym_filename": "Vermilion_Gym.png",
-        "gym-name": "Vermilion Gym",
-        "badge": "Thunder Badge",
-        "keyitem": "thunder_badge",
-        "money": "2376",
-        "pokemon": [
-        {"voltorb": 21},
-        {"pikachu": 18},
-        {"raichu": 24}
-        ]     
-    },
-    "67": {
-        "locationId": 67,
-        "locationName": "celadon-city",
-        "gym-leader": "Erika",
-        "leader_filename": "erika.png",
-        "gym_filename": "Celadon_Gym.png",
-        "gym-name": "Celadon Gym",
-        "badge": "Rainbow Badge",
-        "keyitem": "rainbow_badge",
-        "money": "2871",
-        "pokemon": [
-        {"victreebell": 29},
-        {"tangela": 24},
-        {"vileplume": 29}
-        ]     
-    },
-    "76": {
-        "locationId": 76,
-        "locationName": "fuchsia-city",
-        "gym-leader": "Koga",
-        "leader_filename": "koga.png",
-        "gym_filename": "Fuchsia_Gym.png",
-        "gym-name": "Fuchsia Gym",
-        "badge": "Soul Badge",
-        "keyitem": "soul_badge",
-        "money": "4257",
-        "pokemon": [
-        {"koffing": 37},
-        {"muk": 39},
-        {"koffing": 37},
-        {"weezing": 43}
-        ]     
+        {
+          "geodude": 12
+        },
+        {
+          "onix": 14
+        }
+      ],
+      "trainers": [
+        {
+          "1": {
+            "name": "Jr. Trainer",
+            "filename": "jrtrainer.png",
+            "money": 220,
+            "pokemon": [
+              {
+                "diglett": 11
+              },
+              {
+                "sandshrew": 11
+              }
+            ]
+          }
+        }
+      ]
     },
     "234": {
-        "locationId": 234,
-        "locationName": "saffron-city",
-        "gym-leader": "Sabrina",
-        "leader_filename": "sabrina.png",
-        "gym_filename": "Saffron_Gym.png",
-        "gym-name": "Saffron Gym",
-        "badge": "Marsh Badge",
-        "keyitem": "marsh_badge",
-        "money": "4257",
-        "pokemon": [
-        {"kadabra": 38},
-        {"mr-mime": 37},
-        {"venomoth": 38},
-        {"alakazam": 43}
-        ]     
-    },
-    "71": {
-        "locationId": 71,
-        "locationName": "cinnabar-island",
-        "gym-leader": "Blaine",
-        "leader_filename": "blaine.png",
-        "gym_filename": "Cinnabar_Gym.png",
-        "gym-name": "Cinnabar Gym",
-        "badge": "Volcano Badge",
-        "keyitem": "volcano_badge",
-        "money": "4653",
-        "pokemon": [
-        {"growlithe": 42},
-        {"ponyta": 40},
-        {"rapidash": 42},
-        {"arcanine": 47}
-        ]     
-    }    
-    ,
-    "154": {
-        "locationId": 154,
-        "locationName": "viridian-city",
-        "gym-leader": "Giovanni",
-        "leader_filename": "giovanni.png",
-        "gym_filename": "Viridian_Gym.png",
-        "gym-name": "Viridian Gym",
-        "badge": "Earth Badge",
-        "keyitem": "earth_badge",
-        "money": "4950",
-        "pokemon": [
-        {"rhyhorn": 45},
-        {"dugtrio": 42},
-        {"nidoqueen": 44},
-        {"nidoking": 45},
-        {"rhydon": 50}
-        ]
-    } 
-}
+      "locationId": 234,
+      "locationName": "saffron-city",
+      "gym-leader": "Sabrina",
+      "leader_filename": "sabrina.png",
+      "gym_filename": "Saffron_Gym.png",
+      "gym-name": "Saffron Gym",
+      "badge": "Marsh Badge",
+      "keyitem": "marsh_badge",
+      "money": 4257,
+      "pokemon": [
+        {
+          "kadabra": 38
+        },
+        {
+          "mr-mime": 37
+        },
+        {
+          "venomoth": 38
+        },
+        {
+          "alakazam": 43
+        }
+      ],
+      "trainers": [
+        {
+          "1": {
+            "name": "Psychic",
+            "filename": "psychic.png",
+            "money": 330,
+            "pokemon": [
+              {
+                "slowpoke": 33
+              },
+              {
+                "slowpoke": 33
+              },
+              {
+                "slowbro": 33
+              }
+            ]
+          },
+          "2": {
+            "name": "Psychic",
+            "filename": "psychic.png",
+            "money": 340,
+            "pokemon": [
+              {
+                "mr-mime": 34
+              },
+              {
+                "kadabra": 34
+              }
+            ]
+          },
+          "3": {
+            "name": "Channeler",
+            "filename": "channeler.png",
+            "money": 1140,
+            "pokemon": [
+              {
+                "haunter": 38
+              }
+            ]
+          },
+          "4": {
+            "name": "Psychic",
+            "filename": "psychic.png",
+            "money": 380,
+            "pokemon": [
+              {
+                "slowbro": 38
+              }
+            ]
+          },
+          "5": {
+            "name": "Channeler",
+            "filename": "channeler.png",
+            "money": 1020,
+            "pokemon": [
+              {
+                "gastly": 34
+              },
+              {
+                "haunter": 34
+              }
+            ]
+          },
+          "6": {
+            "name": "Channeler",
+            "filename": "channeler.png",
+            "money": 990,
+            "pokemon": [
+              {
+                "gastly": 33
+              },
+              {
+                "gastly": 33
+              },
+              {
+                "haunter": 33
+              }
+            ]
+          },
+          "7": {
+            "name": "Psychic",
+            "filename": "psychic.png",
+            "money": 310,
+            "pokemon": [
+              {
+                "kadabra": 31
+              },
+              {
+                "slowpoke": 31
+              },
+              {
+                "mr-mime": 31
+              },
+              {
+                "kadabra": 31
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
