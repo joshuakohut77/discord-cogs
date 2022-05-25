@@ -111,7 +111,8 @@ class PokecenterMixin(MixinMeta):
         message: discord.Message = await channel.fetch_message(state.messageId)
 
         ctx: Context = await self.bot.get_context(interaction.message)
-        sender: discord.User = ctx.message.server.get_member(int(state.senderDiscordId))
+        sender = await ctx.guild.fetch_member(int(state.senderDiscordId))
+        # sender: discord.User = ctx.message.server.get_member(int(state.senderDiscordId))
         # sender: discord.User = self.bot.get_user(int(state.senderDiscordId))
         
 
