@@ -49,6 +49,7 @@ class PokecenterMixin(MixinMeta):
             await ctx.send('Something went wrong')
 
 
+    @_pokecenter.command()
     async def trade(self, ctx: commands.Context, trainerUser: Union[discord.Member,discord.User], pokemonId: str):
         user: discord.User = ctx.author
 
