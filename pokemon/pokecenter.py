@@ -37,7 +37,7 @@ class TradeState:
 class PokecenterMixin(MixinMeta):
     """Pokecenter"""
     
-    __tradeState: dict[str, TradeState]
+    __tradeState: dict[str, TradeState] = {}
 
     @commands.group(name="pokecenter", aliases=['pmc'])
     @commands.guild_only()
