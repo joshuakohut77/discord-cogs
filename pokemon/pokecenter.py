@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 import discord
 from discord_components import (ButtonStyle, Button, Interaction)
+from redbot.core.commands.context import Context
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -108,7 +109,11 @@ class PokecenterMixin(MixinMeta):
         
         channel: discord.TextChannel = self.bot.get_channel(state.channelId)
         message: discord.Message = await channel.fetch_message(state.messageId)
-        sender: discord.User = self.bot.get_user(int(state.senderDiscordId))
+
+        ctx: Context = await self.bot.get_context(interaction.message)
+        sender: discord.User = ctx.message.server.get_member(int(state.senderDiscordId))
+        # sender: discord.User = self.bot.get_user(int(state.senderDiscordId))
+        
 
         if interaction.custom_id == 'accept':
             pass
@@ -119,7 +124,7 @@ class PokecenterMixin(MixinMeta):
             embed, btns = self.__pokemonSingleCard(user, pokemon)
 
             message: discord.Message = await message.edit(
-                content=f'{user.display_name} declined {state.senderDiscordId}\'s trade..',
+                content=f'{user.display_name} declined {sender.display_name}\'s trade.',
                 embed=embed,
                 components=btns
             )
