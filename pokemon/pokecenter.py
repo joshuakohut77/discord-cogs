@@ -30,7 +30,8 @@ class TradeState:
     channelId: int
 
     def __init__(self, messageId: int, channelId: int) -> None:
-        pass
+        self.messageId = messageId
+        self.channelId = channelId
 
 
 
