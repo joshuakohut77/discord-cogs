@@ -1,4 +1,5 @@
 from __future__ import annotations
+from re import A
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 
@@ -49,4 +50,22 @@ class PokecenterMixin(MixinMeta):
             await ctx.send(trainer.message)
         else:
             await ctx.send('Something went wrong')
+
+
+    async def trade(self, ctx: commands.Context, trainerUser: Union[discord.Member,discord.User], pokemonId: str):
+        user = ctx.author
+
+        trader = TrainerClass(user.id)
+        pokemon = trader.getPokemonById(pokemonId)
+
+        if trader.statuscode == 96:
+            await ctx.send('Trade failed')
+            return
+
+
+        await ctx.send('Other trainer has to accept your trade request')
+
+
+
+        # tradee = TrainerClass(trainerUser.id)
 

@@ -32,7 +32,7 @@ from services.trainerclass import trainer as TrainerClass
 # one state mapping instead of multiple
 # - [x][low] Clean up item names
 # - [x][low] User nickname everywhere where pokemonname would be
-# - [med] Update party and starter up to parity with pc
+# - [x][med] Update party and starter up to parity with pc
 # - [med] Trading with other users
 # - [med] Pokedex
 # - [med] Test evolutions in discord
