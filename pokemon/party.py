@@ -317,7 +317,7 @@ class PartyMixin(MixinMeta):
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.ITEMS, state.pokemon, state.active, state.idx))
 
 
-     async def __on_items_back(self, interaction: Interaction):
+    async def __on_items_back(self, interaction: Interaction):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
