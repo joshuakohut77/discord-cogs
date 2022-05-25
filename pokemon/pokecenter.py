@@ -115,10 +115,11 @@ class PokecenterMixin(MixinMeta):
         else:
             trader = TrainerClass(state.senderDiscordId)
             pokemon = trader.getPokemonById(state.senderPokemonId)
-            embed, btns = self.__pokemonSingleCard(sender, pokemon)
+
+            embed, btns = self.__pokemonSingleCard(user, pokemon)
 
             message: discord.Message = await message.edit(
-                content=f'{user.display_name} declined {sender.display_name}\'s trade..',
+                content=f'{user.display_name} declined {state.senderDiscordId}\'s trade..',
                 embed=embed,
                 components=btns
             )
