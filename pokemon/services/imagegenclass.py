@@ -9,7 +9,7 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 
-class imggen:
+class imagegen:
     def __init__(self):
         self.statuscode = 69
         self.message = ""
