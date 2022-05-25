@@ -21,10 +21,10 @@ from .functions import (createStatsEmbed, getTypeColor,
 
 
 class TradeState:
-    traderDiscordId: str
-    tradeeDiscordId: str
-    traderPokemonId: int
-    tradeePokemonId: int
+    senderDiscordId: str
+    receiverDiscordId: str
+    senderPokemonId: int
+    receiverPokemonId: int
 
     messageId: int
     channelId: int
@@ -88,11 +88,11 @@ class PokecenterMixin(MixinMeta):
         )
 
         state = TradeState(message.id, message.channel.id)
-        state.traderDiscordId = str(user.id)
-        state.tradeeDiscordId = str(trainerUser.id)
-        state.traderPokemonId = pokemon.trainerId
+        state.senderDiscordId = str(user.id)
+        state.receiverDiscordId = str(trainerUser.id)
+        state.senderPokemonId = pokemon.trainerId
 
-        self.__tradeState[state.tradeeDiscordId] = state
+        self.__tradeState[state.receiverDiscordId] = state
 
         # tradee = TrainerClass(trainerUser.id)
 
@@ -108,17 +108,17 @@ class PokecenterMixin(MixinMeta):
         
         channel: discord.TextChannel = self.bot.get_channel(state.channelId)
         message: discord.Message = await channel.fetch_message(state.messageId)
-        userOriginal: discord.User = self.bot.get_user(state.tradeeDiscordId)
+        sender: discord.User = self.bot.get_user(state.senderPokemonId)
 
         if interaction.custom_id == 'accept':
             pass
         else:
-            trader = TrainerClass(state.traderDiscordId)
-            pokemon = trader.getPokemonById(state.traderPokemonId)
-            embed, btns = self.__pokemonSingleCard(userOriginal, pokemon)
+            trader = TrainerClass(state.senderDiscordId)
+            pokemon = trader.getPokemonById(state.senderPokemonId)
+            embed, btns = self.__pokemonSingleCard(sender, pokemon)
 
             message: discord.Message = await message.edit(
-                content=f'{user.display_name} declined {userOriginal.display_name}\'s trade..',
+                content=f'{user.display_name} declined {sender.display_name}\'s trade..',
                 embed=embed,
                 components=btns
             )
