@@ -489,6 +489,10 @@ class PartyMixin(MixinMeta):
             Button(style=ButtonStyle.green, label="Deposit", custom_id='deposit'),
             self.__on_pokemon_deposit
         ))
+        thirdRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.blue, label="Items", custom_id='items'),
+            self.__on_items_click
+        ))
 
         # Check that each row has btns in it.
         # It's not guaranteed that the next/previous btns will
