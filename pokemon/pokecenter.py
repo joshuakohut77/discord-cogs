@@ -108,7 +108,7 @@ class PokecenterMixin(MixinMeta):
         
         channel: discord.TextChannel = self.bot.get_channel(state.channelId)
         message: discord.Message = await channel.fetch_message(state.messageId)
-        sender: discord.User = self.bot.get_user(state.senderPokemonId)
+        sender: discord.User = self.bot.get_user(int(state.senderDiscordId))
 
         if interaction.custom_id == 'accept':
             pass
