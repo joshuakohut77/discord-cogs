@@ -1,0 +1,134 @@
+{
+    "231": {
+      "locationId": 231,
+      "locationName": "pewter-city",
+      "gym-leader": "Brock",
+      "leader_filename": "brock.png",
+      "gym_filename": "Pewter_Gym.png",
+      "gym-name": "Pewter Gym",
+      "badge": "Boulder Badge",
+      "keyitem": "boulder_badge",
+      "money": "1386",
+      "pokemon": [
+        {"geodude": 12},
+        {"onix": 14}
+      ]     
+    },
+    "68": {
+        "locationId": 68,
+        "locationName": "cerulean-city",
+        "gym-leader": "Misty",
+        "leader_filename": "misty.png",
+        "gym_filename": "Cerulean_Gym.png",
+        "gym-name": "Cerulean Gym",
+        "badge": "Cascade Badge",
+        "keyitem": "cascade_badge",
+        "money": "2079",
+        "pokemon": [
+          {"staryu": 18},
+          {"starmie": 21}
+        ]     
+      },
+    "151": {
+        "locationId": 151,
+        "locationName": "vermilion-city",
+        "gym-leader": "Lt. Surge",
+        "leader_filename": "ltsurge.png",
+        "gym_filename": "Vermilion_Gym.png",
+        "gym-name": "Vermilion Gym",
+        "badge": "Thunder Badge",
+        "keyitem": "thunder_badge",
+        "money": "2376",
+        "pokemon": [
+        {"voltorb": 21},
+        {"pikachu": 18},
+        {"raichu": 24}
+        ]     
+    },
+    "67": {
+        "locationId": 67,
+        "locationName": "celadon-city",
+        "gym-leader": "Erika",
+        "leader_filename": "erika.png",
+        "gym_filename": "Celadon_Gym.png",
+        "gym-name": "Celadon Gym",
+        "badge": "Rainbow Badge",
+        "keyitem": "rainbow_badge",
+        "money": "2871",
+        "pokemon": [
+        {"victreebell": 29},
+        {"tangela": 24},
+        {"vileplume": 29}
+        ]     
+    },
+    "76": {
+        "locationId": 76,
+        "locationName": "fuchsia-city",
+        "gym-leader": "Koga",
+        "leader_filename": "koga.png",
+        "gym_filename": "Fuchsia_Gym.png",
+        "gym-name": "Fuchsia Gym",
+        "badge": "Soul Badge",
+        "keyitem": "soul_badge",
+        "money": "4257",
+        "pokemon": [
+        {"koffing": 37},
+        {"muk": 39},
+        {"koffing": 37},
+        {"weezing": 43}
+        ]     
+    },
+    "234": {
+        "locationId": 234,
+        "locationName": "saffron-city",
+        "gym-leader": "Sabrina",
+        "leader_filename": "sabrina.png",
+        "gym_filename": "Saffron_Gym.png",
+        "gym-name": "Saffron Gym",
+        "badge": "Marsh Badge",
+        "keyitem": "marsh_badge",
+        "money": "4257",
+        "pokemon": [
+        {"kadabra": 38},
+        {"mr-mime": 37},
+        {"venomoth": 38},
+        {"alakazam": 43}
+        ]     
+    },
+    "71": {
+        "locationId": 71,
+        "locationName": "cinnabar-island",
+        "gym-leader": "Blaine",
+        "leader_filename": "blaine.png",
+        "gym_filename": "Cinnabar_Gym.png",
+        "gym-name": "Cinnabar Gym",
+        "badge": "Volcano Badge",
+        "keyitem": "volcano_badge",
+        "money": "4653",
+        "pokemon": [
+        {"growlithe": 42},
+        {"ponyta": 40},
+        {"rapidash": 42},
+        {"arcanine": 47}
+        ]     
+    }    
+    ,
+    "154": {
+        "locationId": 154,
+        "locationName": "viridian-city",
+        "gym-leader": "Giovanni",
+        "leader_filename": "giovanni.png",
+        "gym_filename": "Viridian_Gym.png",
+        "gym-name": "Viridian Gym",
+        "badge": "Earth Badge",
+        "keyitem": "earth_badge",
+        "money": "4950",
+        "pokemon": [
+        {"rhyhorn": 45},
+        {"dugtrio": 42},
+        {"nidoqueen": 44},
+        {"nidoking": 45},
+        {"rhydon": 50}
+        ]
+    } 
+}
