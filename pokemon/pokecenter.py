@@ -5,8 +5,6 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 import discord
 from discord_components import (ButtonStyle, Button, Interaction)
 
-from main import Pokemon
-
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
