@@ -20,10 +20,24 @@ from .functions import (createStatsEmbed, getTypeColor,
                         createPokemonAboutEmbed)
 
 
+class TradeState:
+    traderDiscordId: str
+    tradeeDiscordId: str
+    traderPokemonId: int
+    tradeePokemonId: int
+
+    messageId: int
+    channelId: int
+
+    def __init__(self, messageId: int, channelId: int) -> None:
+        pass
+
+
 
 class PokecenterMixin(MixinMeta):
     """Pokecenter"""
-
+    
+    __tradeState: dict[str, TradeState]
 
     @commands.group(name="pokecenter", aliases=['pmc'])
     @commands.guild_only()
@@ -65,21 +79,63 @@ class PokecenterMixin(MixinMeta):
 
         embed, btns = self.__pokemonSingleCard(user, pokemon)
 
-        await ctx.send(
+        message: discord.Message = await ctx.send(
             content=f'{trainerUser.mention} {user.display_name} wants to trade with you.',
             embed=embed,
             components=btns
 
         )
 
+        state = TradeState(message.id, message.channel.id)
+        state.traderDiscordId = str(user.id)
+        state.tradeeDiscordId = str(trainerUser.id)
+        state.traderPokemonId = pokemon.trainerId
+
+        self.__tradeState[state.tradeeDiscordId] = state
+
         # tradee = TrainerClass(trainerUser.id)
 
 
     async def __on_trade_click(self, interaction: Interaction):
-        pass
+        user = interaction.user
+
+        if not self.checkTradeState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+        state = self.__tradeState[str(user.id)]
+        
+        channel: discord.TextChannel = self.bot.get_channel(state.channelId)
+        message: discord.Message = await channel.fetch_message(state.messageId)
+        userOriginal: discord.User = self.bot.get_user(state.tradeeDiscordId)
+
+        if interaction.custom_id == 'accept':
+            pass
+        else:
+            trader = TrainerClass(state.traderDiscordId)
+            pokemon = trader.getPokemonById(state.traderPokemonId)
+            embed, btns = self.__pokemonSingleCard(userOriginal, pokemon)
+
+            message: discord.Message = await message.edit(
+                content=f'{user.display_name} declined {userOriginal.display_name}\'s trade..',
+                embed=embed,
+                components=btns
+            )
+            pass
 
 
-    def __pokemonSingleCard(self, user: discord.User, pokemon: Pokemon):
+    def checkTradeState(self, user: discord.User, message: discord.Message):
+        state: TradeState
+        if str(user.id) not in self.__tradeState.keys():
+            return False
+        else:
+            state = self.__tradeState[str(user.id)]
+            if state.messageId != message.id:
+                return False
+        return True
+    
+
+    def __pokemonSingleCard(self, user: discord.User, pokemon: PokemonClass):
 
         embed = createStatsEmbed(user, pokemon)
 
