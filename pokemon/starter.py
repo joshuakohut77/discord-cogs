@@ -3,15 +3,18 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 import discord
 from discord_components import (ButtonStyle, Button, Interaction)
+from redbot.core.commands.context import Context
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
 from redbot.core import commands
 
+import constant
 from services.trainerclass import trainer as TrainerClass
 from services.pokeclass import Pokemon as PokemonClass
 from services.pokedexclass import pokedex as PokedexClass
+from services.inventoryclass import inventory as InventoryClass
 from models.state import PokemonState, DisplayCard
 
 from .abcd import MixinMeta
@@ -62,7 +65,7 @@ class StarterMixin(MixinMeta):
 
         embed, btns = self.__pokemonSingleCard(user, state, state.card)
 
-        message: discord.Message = await ctx.send(embed=embed, components=[btns])       
+        message: discord.Message = await ctx.send(embed=embed, components=btns)
         self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
 
 
@@ -81,7 +84,7 @@ class StarterMixin(MixinMeta):
 
         embed, btns = self.__pokemonSingleCard(user, state, state.card)
 
-        message: discord.Message = await ctx.send(embed=embed, components=[btns])
+        message: discord.Message = await ctx.send(embed=embed, components=btns)
         self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
 
 
@@ -96,7 +99,7 @@ class StarterMixin(MixinMeta):
 
         embed, btns = self.__pokemonSingleCard(user, state, DisplayCard.MOVES)
 
-        message = await interaction.edit_origin(embed=embed, components=[btns])
+        message = await interaction.edit_origin(embed=embed, components=btns)
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.MOVES, state.pokemon, state.active, None))
     
 
@@ -111,7 +114,7 @@ class StarterMixin(MixinMeta):
 
         embed, btns = self.__pokemonSingleCard(user, state, DisplayCard.DEX)
 
-        message = await interaction.edit_origin(embed=embed, components=[btns])
+        message = await interaction.edit_origin(embed=embed, components=btns)
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.DEX, state.pokemon, state.active, None))
     
 
@@ -126,7 +129,7 @@ class StarterMixin(MixinMeta):
 
         embed, btns = self.__pokemonSingleCard(user, state, DisplayCard.STATS)
 
-        message = await interaction.edit_origin(embed=embed, components=[btns])
+        message = await interaction.edit_origin(embed=embed, components=btns)
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.STATS, state.pokemon, state.active, None))
     
 
@@ -148,6 +151,140 @@ class StarterMixin(MixinMeta):
         await self.__on_stats_click(interaction)
 
 
+    async def __on_items_back(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.checkPokemonState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+        state = self.getPokemonState(user)
+
+        embed, btns = self.__pokemonSingleCard(user, state, DisplayCard.STATS)
+
+        message = await interaction.edit_origin(embed=embed, components=btns)
+        
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.STATS, state.pokemon, state.active, None))
+
+
+    
+    async def __on_use_item(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.checkPokemonState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+        
+        state = self.getPokemonState(user)
+        pokemon = state.pokemon[0]
+
+        item = ''
+        if interaction.custom_id == 'potion':
+            item = 'potion'
+        elif interaction.custom_id == 'superpotion':
+            item = 'super-potion'
+        elif interaction.custom_id == 'hyperpotion':
+            item = 'hyper-potion'
+        elif interaction.custom_id == 'maxpotion':
+            item = 'max-potion'
+        elif interaction.custom_id == 'revive':
+            item = 'revive'
+
+        trainer = TrainerClass(str(user.id))
+        trainer.heal(pokemon.trainerId, item)
+
+        if trainer.message:
+            ctx = await self.bot.get_context(interaction.message)
+            embed, btns = await self.__pokemonItemsCard(user, state, state.card, ctx)
+            message = await interaction.edit_origin(embed=embed, components=btns)
+            self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
+    
+            await interaction.channel.send(f'{user.display_name}, {trainer.message}')
+        else:
+            await interaction.send('Could not use the item.')
+
+
+    async def __on_items_click(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.checkPokemonState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+        state = self.getPokemonState(user)
+
+        ctx = await self.bot.get_context(interaction.message)
+
+        embed, btns = await self.__pokemonItemsCard(user, state, DisplayCard.ITEMS, ctx)
+
+        message = await interaction.edit_origin(embed=embed, components=btns)
+        
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.ITEMS, state.pokemon, state.active, state.idx))
+
+
+
+    async def __pokemonItemsCard(self, user: discord.User, state: PokemonState, card: DisplayCard, ctx: Context):
+        pokemon = state.pokemon[0]
+        activeId = state.active
+
+        if DisplayCard.STATS.value == card.value:
+            embed = createStatsEmbed(user, pokemon)
+        elif DisplayCard.MOVES.value == card.value:
+            embed = createPokemonAboutEmbed(user, pokemon)
+        else:
+            dex = PokedexClass.getPokedexEntry(pokemon)
+            embed = createPokedexEntryEmbed(user, pokemon, dex)
+
+
+        inv = InventoryClass(str(user.id))
+
+
+        firstRowBtns = []
+        if inv.potion > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.POTION)
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.grey, emoji=emote, label="Potion", custom_id='potion'),
+                self.__on_use_item
+            ))
+        if inv.superpotion > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.SUPERPOTION)
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.grey, emoji=emote, label="Super Potion", custom_id='superpotion'),
+                self.__on_use_item
+            ))
+        if inv.hyperpotion > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.HYPERPOTION)
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.grey, emoji=emote, label="Hyper Potion", custom_id='hyperpotion'),
+                self.__on_use_item
+            ))
+        if inv.maxpotion > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.MAXPOTION)
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.grey, emoji=emote, label="Max Potion", custom_id='maxpotion'),
+                self.__on_use_item
+            ))
+        if inv.revive > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.REVIVE)
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.grey, emoji=emote, label="Revive", custom_id='revive'),
+                self.__on_use_item
+            ))
+
+        secondRowBtns = []
+        secondRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.grey, label="Back", custom_id='back'),
+            self.__on_items_back
+        ))
+
+        btns = []
+        if len(firstRowBtns) > 0:
+            btns.append(firstRowBtns)
+        if len(secondRowBtns) > 0:
+            btns.append(secondRowBtns)
+
+        return embed, btns
+
 
     def __pokemonSingleCard(self, user: discord.User, state: PokemonState, card: DisplayCard):
         pokemon = state.pokemon[0]
@@ -162,33 +299,42 @@ class StarterMixin(MixinMeta):
             embed = createPokedexEntryEmbed(user, pokemon, dex)
 
 
-        btns = []
+        firstRowBtns = []
 
         if DisplayCard.MOVES.value != card.value:
-            btns.append(self.client.add_callback(
+            firstRowBtns.append(self.client.add_callback(
                 Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
                 self.__on_moves_click
             ))
         if DisplayCard.STATS.value != card.value:
-            btns.append(self.client.add_callback(
+            firstRowBtns.append(self.client.add_callback(
                 Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
                 self.__on_stats_click,
             ))
         if DisplayCard.DEX.value != card.value:
-            btns.append(self.client.add_callback(
+            firstRowBtns.append(self.client.add_callback(
                 Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
                 self.__on_pokedex_click
             ))
+
+        firstRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.blue, label="Items", custom_id='items'),
+            self.__on_items_click
+        ))
 
         # Disable the "Set Active" button if the starter is currently the active pokemon
         # Disable the "Set Active" button if the starter is currently the active pokemon
         disabled = (activeId is not None) and (
             pokemon.trainerId == activeId)
-        btns.append(self.client.add_callback(
+        firstRowBtns.append(self.client.add_callback(
             Button(style=ButtonStyle.blue, label="Set Active",
                    custom_id='setactive', disabled=disabled),
             self.__on_set_active_click,
         ))
+
+        btns = []
+        if len(firstRowBtns) > 0:
+            btns.append(firstRowBtns)
 
         return embed, btns
 
