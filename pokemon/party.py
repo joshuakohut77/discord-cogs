@@ -60,13 +60,13 @@ class PartyMixin(MixinMeta):
             return
 
         state = PokemonState(str(user.id), None, DisplayCard.STATS, pokeList, active.trainerId, i)
-        embed, components = self.__pokemonPcCard(user, state, state.card, author.id == user.id)
+        embed, btns = self.__pokemonPcCard(user, state, DisplayCard.STATS, author.id == user.id)
 
         message = await ctx.send(
             embed=embed,
-            components=components
+            components=btns
         )
-        self.setPokemonState(author, PokemonState(str(user.id), message.id, state.card, pokeList, active.trainerId, i))
+        self.setPokemonState(author, PokemonState(str(user.id), message.id, DisplayCard.STATS, pokeList, active.trainerId, i))
 
     
     async def __on_set_active(self, interaction: Interaction):
@@ -118,6 +118,7 @@ class PartyMixin(MixinMeta):
             embed, btns = self.__pokemonPcCard(trainerUser, state, state.card, authorIsTrainer)
             message = await interaction.edit_origin(embed=embed, components=btns)
             self.setPokemonState(user, PokemonState(state.discordId, message.id, state.card, state.pokemon, state.active, state.idx))
+    
     
 
     async def __on_prev_click(self, interaction: Interaction):
