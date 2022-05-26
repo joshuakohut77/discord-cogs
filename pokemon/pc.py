@@ -1,5 +1,6 @@
 from __future__ import annotations
 from re import L
+import asyncio
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 import discord
@@ -65,8 +66,7 @@ class PcMixin(MixinMeta):
         # if interaction is None:
         message = await ctx.send(
             embed=embed,
-            components=btns,
-            delete_after=10
+            components=btns
         )
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.STATS, pokeList, active.trainerId, i))
 
@@ -75,7 +75,9 @@ class PcMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            msg = await interaction.send('This is not for you.')
+            await asyncio.sleep(2)
+            msg.delete()
             return
 
         state = self.getPokemonState(user)
