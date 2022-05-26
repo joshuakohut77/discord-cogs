@@ -35,11 +35,10 @@ from services.trainerclass import trainer as TrainerClass
 # - [x][med] Update party and starter up to parity with pc
 # - [x][med] Trading with other users
 # - [x][low] call other release method
-
-# - [low] fix fns where u pass in a user (party)
+# - [x][low] fix fns where u pass in a user
 
 # - [low] better use of logging channel
-# - [low] db tightening, trades probably need reworked
+# - [med] db tightening, trades probably need reworked
 
 # - [low] dismiss/ephemeral messages
 # - [med] Pokedex
