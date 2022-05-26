@@ -23,6 +23,9 @@ from .functions import (createStatsEmbed, createPokedexEntryEmbed,
 from .helpers import (getTrainerGivenPokemonName)
 
 
+DiscordUser = Union[discord.Member,discord.User]
+
+
 class StarterMixin(MixinMeta):
     """Starter"""
 
@@ -52,7 +55,7 @@ class StarterMixin(MixinMeta):
 
 
     @_trainer.command()
-    async def active(self, ctx: commands.Context, user: discord.Member = None) -> None:
+    async def active(self, ctx: commands.Context, user: DiscordUser = None) -> None:
         """Show the currect active pokemon for the trainer."""
         author = ctx.author
 
@@ -65,14 +68,16 @@ class StarterMixin(MixinMeta):
 
         state = PokemonState(str(user.id), None, DisplayCard.STATS, [pokemon], pokemon.trainerId, None)
 
-        embed, btns = self.__pokemonSingleCard(user, state, state.card)
+        authorIsTrainer = user.id == state.discordId
+
+        embed, btns = self.__pokemonSingleCard(user, state, state.card, authorIsTrainer)
 
         message: discord.Message = await ctx.send(embed=embed, components=btns)
         self.setPokemonState(author, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
 
 
     @_trainer.command()
-    async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
+    async def starter(self, ctx: commands.Context, user: DiscordUser = None) -> None:
         """Show the starter pokemon for the trainer."""
         author = ctx.author
 
@@ -86,7 +91,9 @@ class StarterMixin(MixinMeta):
 
         state = PokemonState(str(user.id), None, DisplayCard.STATS, [pokemon], active.trainerId, None)
 
-        embed, btns = self.__pokemonSingleCard(user, state, state.card)
+        authorIsTrainer = user.id == state.discordId
+
+        embed, btns = self.__pokemonSingleCard(user, state, state.card, authorIsTrainer)
 
         message: discord.Message = await ctx.send(embed=embed, components=btns)
         self.setPokemonState(author, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
@@ -101,10 +108,17 @@ class StarterMixin(MixinMeta):
 
         state = self.getPokemonState(user)
 
-        embed, btns = self.__pokemonSingleCard(user, state, DisplayCard.MOVES)
+        # Check if author is trainer
+        authorIsTrainer = user.id == state.discordId
+        trainerUser: DiscordUser = user
+        if not authorIsTrainer:
+            ctx: Context = await self.bot.get_context(interaction.message)
+            trainerUser = await ctx.guild.fetch_member(int(state.discordId))
+
+        embed, btns = self.__pokemonSingleCard(trainerUser, state, DisplayCard.MOVES, authorIsTrainer)
 
         message = await interaction.edit_origin(embed=embed, components=btns)
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.MOVES, state.pokemon, state.active, None))
+        self.setPokemonState(user, PokemonState(state.discordId, message.id, DisplayCard.MOVES, state.pokemon, state.active, None))
     
 
     async def __on_pokedex_click(self, interaction: Interaction):
@@ -116,10 +130,17 @@ class StarterMixin(MixinMeta):
 
         state = self.getPokemonState(user)
 
-        embed, btns = self.__pokemonSingleCard(user, state, DisplayCard.DEX)
+        # Check if author is trainer
+        authorIsTrainer = user.id == state.discordId
+        trainerUser: DiscordUser = user
+        if not authorIsTrainer:
+            ctx: Context = await self.bot.get_context(interaction.message)
+            trainerUser = await ctx.guild.fetch_member(int(state.discordId))
+
+        embed, btns = self.__pokemonSingleCard(trainerUser, state, DisplayCard.DEX, authorIsTrainer)
 
         message = await interaction.edit_origin(embed=embed, components=btns)
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.DEX, state.pokemon, state.active, None))
+        self.setPokemonState(user, PokemonState(state.discordId, message.id, DisplayCard.DEX, state.pokemon, state.active, None))
     
 
     async def __on_stats_click(self, interaction: Interaction):
@@ -131,10 +152,17 @@ class StarterMixin(MixinMeta):
 
         state = self.getPokemonState(user)
 
-        embed, btns = self.__pokemonSingleCard(user, state, DisplayCard.STATS)
+        # Check if author is trainer
+        authorIsTrainer = user.id == state.discordId
+        trainerUser: DiscordUser = user
+        if not authorIsTrainer:
+            ctx: Context = await self.bot.get_context(interaction.message)
+            trainerUser = await ctx.guild.fetch_member(int(state.discordId))
+
+        embed, btns = self.__pokemonSingleCard(trainerUser, state, DisplayCard.STATS, authorIsTrainer)
 
         message = await interaction.edit_origin(embed=embed, components=btns)
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.STATS, state.pokemon, state.active, None))
+        self.setPokemonState(user, PokemonState(state.discordId, message.id, DisplayCard.STATS, state.pokemon, state.active, None))
     
 
     async def __on_set_active_click(self, interaction: Interaction):
@@ -290,7 +318,7 @@ class StarterMixin(MixinMeta):
         return embed, btns
 
 
-    def __pokemonSingleCard(self, user: discord.User, state: PokemonState, card: DisplayCard):
+    def __pokemonSingleCard(self, user: discord.User, state: PokemonState, card: DisplayCard, authorIsTrainer = True):
         pokemon = state.pokemon[0]
         activeId = state.active
 
@@ -321,20 +349,21 @@ class StarterMixin(MixinMeta):
                 self.__on_pokedex_click
             ))
 
-        firstRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.blue, label="Items", custom_id='items'),
-            self.__on_items_click
-        ))
+        if authorIsTrainer:
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.blue, label="Items", custom_id='items'),
+                self.__on_items_click
+            ))
 
-        # Disable the "Set Active" button if the starter is currently the active pokemon
-        # Disable the "Set Active" button if the starter is currently the active pokemon
-        disabled = (activeId is not None) and (
-            pokemon.trainerId == activeId)
-        firstRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.blue, label="Set Active",
-                   custom_id='setactive', disabled=disabled),
-            self.__on_set_active_click,
-        ))
+            # Disable the "Set Active" button if the starter is currently the active pokemon
+            # Disable the "Set Active" button if the starter is currently the active pokemon
+            disabled = (activeId is not None) and (
+                pokemon.trainerId == activeId)
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.blue, label="Set Active",
+                    custom_id='setactive', disabled=disabled),
+                self.__on_set_active_click,
+            ))
 
         btns = []
         if len(firstRowBtns) > 0:
