@@ -42,6 +42,8 @@ class PcMixin(MixinMeta):
     # TODO: Apparently there is a limit of 5 buttons at a time
     @_trainer.command()
     async def pc(self, ctx: commands.Context, user: Union[discord.Member,discord.User] = None):
+        author = ctx.author
+
         if user is None:
             user = ctx.author
 
@@ -103,7 +105,7 @@ class PcMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.send('This is not for you.', ephemeral=True)
             return
 
         state = self.getPokemonState(user)
@@ -247,7 +249,8 @@ class PcMixin(MixinMeta):
             await interaction.send('You cannot release your starter pokemon.')
             return
 
-        pokemon.release()
+        # pokemon.release()
+        trainer.releasePokemon(pokemon.trainerId)
 
         await interaction.channel.send(f'{user.display_name} released {getTrainerGivenPokemonName(pokemon)}')
         pokeList = trainer.getPokemon()
