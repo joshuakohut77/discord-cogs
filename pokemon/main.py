@@ -36,7 +36,8 @@ from services.trainerclass import trainer as TrainerClass
 # - [x][med] Trading with other users
 # - [x][low] call other release method
 
-# - [low] fix fns where u pass in a user
+# - [low] fix fns where u pass in a user (party, bag, card)
+
 # - [low] better use of logging channel
 # - [low] db tightening, trades probably need reworked
 
