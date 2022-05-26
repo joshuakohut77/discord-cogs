@@ -181,7 +181,7 @@ class trainer:
             return
 
         self.statuscode = 420
-        self.messagen = f"You gained ¥{releaseMoney}!"
+        self.message = f"You gained ¥{releaseMoney}!"
         
         # leaderboard stats
         lb = leaderboard(self.discordId)

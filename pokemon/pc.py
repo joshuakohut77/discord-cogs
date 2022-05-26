@@ -121,9 +121,16 @@ class PcMixin(MixinMeta):
             message = await interaction.edit_origin(embed=embed, components=btns)
             self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         else:
-            embed, btns = self.__pokemonPcCard(user, state, state.card, user.id == state.discordId)
+            authorIsTrainer = user.id == state.discordId
+
+            trainerUser: DiscordUser = user
+            if not authorIsTrainer:
+                ctx: Context = await self.bot.get_context(interaction.message)
+                trainerUser = await ctx.guild.fetch_member(int(state.discordId))
+
+            embed, btns = self.__pokemonPcCard(trainerUser, state, state.card, authorIsTrainer)
             message = await interaction.edit_origin(embed=embed, components=btns)
-            self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
+            self.setPokemonState(user, PokemonState(state.discordId, message.id, state.card, state.pokemon, state.active, state.idx))
     
 
     async def __on_prev_click(self, interaction: Interaction):
@@ -142,9 +149,16 @@ class PcMixin(MixinMeta):
             message = await interaction.edit_origin(embed=embed, components=btns)
             self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         else:
-            embed, btns = self.__pokemonPcCard(user, state, state.card, user.id == state.discordId)
+            authorIsTrainer = user.id == state.discordId
+
+            trainerUser: DiscordUser = user
+            if not authorIsTrainer:
+                ctx: Context = await self.bot.get_context(interaction.message)
+                trainerUser = await ctx.guild.fetch_member(int(state.discordId))
+
+            embed, btns = self.__pokemonPcCard(trainerUser, state, state.card, authorIsTrainer)
             message = await interaction.edit_origin(embed=embed, components=btns)
-            self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
+            self.setPokemonState(user, PokemonState(state.discordId, message.id, state.card, state.pokemon, state.active, state.idx))
         
         # embed, btns = self.__pokemonPcCard(user, state, state.card)
         # message = await interaction.edit_origin(embed=embed, components=btns)   
@@ -256,7 +270,7 @@ class PcMixin(MixinMeta):
         trainer.releasePokemon(pokemon.trainerId)
 
         # Send to logging channel
-        await self.sendToLoggingChannel(f'{user.display_name} released {getTrainerGivenPokemonName(pokemon)}')
+        await self.sendToLoggingChannel(f'{user.display_name} released {getTrainerGivenPokemonName(pokemon)}. {trainer.message}')
 
         # Send to message channel
         await interaction.channel.send(f'{user.display_name} released {getTrainerGivenPokemonName(pokemon)}. {trainer.message}', delete_after=5)
