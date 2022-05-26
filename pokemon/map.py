@@ -1,4 +1,5 @@
 from __future__ import annotations
+from functools import _Descriptor
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 import discord
@@ -115,7 +116,11 @@ class MapMixin(MixinMeta):
         attachment: discord.Attachment = temp_message.attachments[0]
 
         name = locationDisplayNames[location.name]
-        embed = discord.Embed(title = f'{name}', description = f'You are at {name}.')
+
+        desc = f'You are at {name}.' if authorIsTrainer else f'{user.display_name} is at {name}.'
+
+        embed = discord.Embed(title = f'{name}', description = desc)
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.avatar_url))
         embed.set_image(url = attachment.url)
 
         message = await ctx.send(
