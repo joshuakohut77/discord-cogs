@@ -123,7 +123,7 @@ class PokecenterMixin(MixinMeta):
         
 
         if interaction.custom_id == 'accept':
-            await interaction.defer().send('You declined this trade.')
+            await interaction.send('You declined this trade.')
 
             trainer = TrainerClass(str(user.id))
             pokemonList = trainer.getPokemon(False, True)
@@ -141,7 +141,7 @@ class PokecenterMixin(MixinMeta):
             state.messageId = message.id
             self.__tradeState[str(user.id)] = state
         else:
-            await interaction.defer().send('You declined this trade.')
+            await interaction.send('You declined this trade.')
 
             trader = TrainerClass(state.senderDiscordId)
             pokemon = trader.getPokemonById(state.senderPokemonId)
