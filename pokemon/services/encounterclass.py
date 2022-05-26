@@ -223,7 +223,7 @@ class encounter:
 
         self.statuscode = 420
         self.message = resultString
-        return resultString
+        return 'victory''
 
     def __defeat(self):
         # pokemon1 lost, update currentHP to 0
@@ -242,6 +242,7 @@ class encounter:
 
         self.statuscode = 420
         self.message = "Your Pokemon Fainted."
+        return 'defeat'
 
     def __calculateDamageTaken(self):
         """ calculates the damage taken during a fight """
