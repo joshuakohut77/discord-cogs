@@ -26,6 +26,7 @@ from .functions import (createPokedexEntryEmbed, createStatsEmbed, getTypeColor,
 from .helpers import (getTrainerGivenPokemonName)
 
 
+DiscordUser = Union[discord.Member,discord.User]
 
 
 class PcMixin(MixinMeta):
@@ -42,8 +43,8 @@ class PcMixin(MixinMeta):
 
     # TODO: Apparently there is a limit of 5 buttons at a time
     @_trainer.command()
-    async def pc(self, ctx: commands.Context, user: Union[discord.Member,discord.User] = None):
-        author = ctx.author
+    async def pc(self, ctx: commands.Context, user: DiscordUser = None):
+        author: DiscordUser = ctx.author
 
         if user is None:
             user = ctx.author
@@ -61,7 +62,7 @@ class PcMixin(MixinMeta):
             return
 
         state = PokemonState(str(user.id), None, DisplayCard.STATS, pokeList, active.trainerId, i)
-        embed, btns = self.__pokemonPcCard(user, state, DisplayCard.STATS)
+        embed, btns = self.__pokemonPcCard(user, state, DisplayCard.STATS, author.id == user.id)
 
         # if interaction is None:
         message = await ctx.send(
@@ -443,7 +444,7 @@ class PcMixin(MixinMeta):
         return embed, btns
 
 
-    def __pokemonPcCard(self, user: discord.User, state: PokemonState, card: DisplayCard):
+    def __pokemonPcCard(self, user: discord.User, state: PokemonState, card: DisplayCard, authorIsTrainer: bool = True):
         pokeList = state.pokemon
         pokeLength = len(pokeList)
         i = state.idx
@@ -484,42 +485,44 @@ class PcMixin(MixinMeta):
                 self.__on_next_click
             ))
 
-        secondRowBtns = []      
-        if DisplayCard.MOVES.value != card.value:
-            secondRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
-                self.__on_moves_click
-            ))
-        if DisplayCard.STATS.value != card.value:
-            secondRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
-                self.__on_stats_click
-            ))
-        if DisplayCard.DEX.value != card.value:
-            secondRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
-                self.__on_pokedex_click
-            ))
+        secondRowBtns = []
+        if authorIsTrainer:
+            if DisplayCard.MOVES.value != card.value:
+                secondRowBtns.append(self.client.add_callback(
+                    Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
+                    self.__on_moves_click
+                ))
+            if DisplayCard.STATS.value != card.value:
+                secondRowBtns.append(self.client.add_callback(
+                    Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
+                    self.__on_stats_click
+                ))
+            if DisplayCard.DEX.value != card.value:
+                secondRowBtns.append(self.client.add_callback(
+                    Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
+                    self.__on_pokedex_click
+                ))
 
-        activeDisabled = (activeId is not None) and (pokemon.trainerId == activeId)
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled),
-            self.__on_set_active
-        ))
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled),
-            self.__on_release_click
-        ))
+            activeDisabled = (activeId is not None) and (pokemon.trainerId == activeId)
+            secondRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled),
+                self.__on_set_active
+            ))
+            secondRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled),
+                self.__on_release_click
+            ))
 
         thirdRowBtns = []
-        thirdRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Withdraw", custom_id='withdraw'),
-            self.__on_pokemon_withdraw
-        ))
-        thirdRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.blue, label="Items", custom_id='items'),
-            self.__on_items_click
-        ))
+        if authorIsTrainer:
+            thirdRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.green, label="Withdraw", custom_id='withdraw'),
+                self.__on_pokemon_withdraw
+            ))
+            thirdRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.blue, label="Items", custom_id='items'),
+                self.__on_items_click
+            ))
 
         # Check that each row has btns in it.
         # It's not guaranteed that the next/previous btns will
