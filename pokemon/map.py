@@ -8,12 +8,16 @@ if TYPE_CHECKING:
     from redbot.core.bot import Red
 
 from redbot.core import commands
+from redbot.core.commands.context import Context
 
 from models.location import LocationModel
 from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
 
 from .abcd import MixinMeta
+
+
+DiscordUser = Union[discord.Member,discord.User]
 
 
 locationDisplayNames = {
@@ -94,20 +98,19 @@ class MapMixin(MixinMeta):
 
     @_trainer.command()
     async def map(self, ctx: commands.Context, user: discord.User = None):
+        author: DiscordUser = ctx.author
+
         if user is None:
             user = ctx.author
 
+        # Check if author is trainer
+        authorIsTrainer = user.id == author.id
         
         trainer = TrainerClass(str(user.id))
         location = trainer.getLocation()
 
-        file, btns = self.__createMapCard(location)
+        file, btns = self.__createMapCard(location, authorIsTrainer)
 
-        # log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
-        # temp_message = await log_channel.send(
-        #     content=f'{user.display_name} is at {location.name}',
-        #     file = file
-        # )
         temp_message = await self.sendToLoggingChannel(f'{user.display_name} is at {location.name}', file)
         attachment: discord.Attachment = temp_message.attachments[0]
 
@@ -127,57 +130,63 @@ class MapMixin(MixinMeta):
         self.__locations[str(user.id)] = LocationState(str(user.id), location, message.id)
     
 
-    def __createMapCard(self, location: LocationModel, disabled = False):
+    def __createMapCard(self, location: LocationModel, authorIsTrainer = True):
         file = discord.File(f"{location.spritePath}", filename=f"{location.name}.png")
 
         ne = []
         sw = []
-        if location.north is not None:
-            north = locationDisplayNames[location.north]
-            ne.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬆', label=f"{north}", disabled=disabled),
-                self.__on_north,
-            ))
-        else:
-            ne.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬆', label=f"--", disabled=disabled),
-                self.__on_north,
-            ))
-        if location.east is not None:
-            east = locationDisplayNames[location.east]
-            ne.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='➡', label=f"{east}", disabled=disabled),
-                self.__on_east,
-            ))
-        else:
-            ne.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='➡', label=f"--", disabled=disabled),
-                self.__on_east,
-            ))
-        if location.south is not None:
-            south = locationDisplayNames[location.south]
-            sw.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬇', label=f"{south}", disabled=disabled),
-                self.__on_south,
-            ))
-        else:
-            sw.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬇', label=f"--", disabled=disabled),
-                self.__on_south,
-            ))
-        if location.west is not None:
-            west = locationDisplayNames[location.west]
-            sw.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬅', label=f"{west}", disabled=disabled),
-                self.__on_west,
-            ))
-        else:
-            sw.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji='⬅', label=f"--", disabled=disabled),
-                self.__on_west,
-            ))
+        if authorIsTrainer:
+            if location.north is not None:
+                north = locationDisplayNames[location.north]
+                ne.append(self.client.add_callback(
+                    Button(style=ButtonStyle.gray, emoji='⬆', label=f"{north}", disabled=False),
+                    self.__on_north,
+                ))
+            else:
+                ne.append(self.client.add_callback(
+                    Button(style=ButtonStyle.gray, emoji='⬆', label=f"--", disabled=False),
+                    self.__on_north,
+                ))
+            if location.east is not None:
+                east = locationDisplayNames[location.east]
+                ne.append(self.client.add_callback(
+                    Button(style=ButtonStyle.gray, emoji='➡', label=f"{east}", disabled=False),
+                    self.__on_east,
+                ))
+            else:
+                ne.append(self.client.add_callback(
+                    Button(style=ButtonStyle.gray, emoji='➡', label=f"--", disabled=False),
+                    self.__on_east,
+                ))
+            if location.south is not None:
+                south = locationDisplayNames[location.south]
+                sw.append(self.client.add_callback(
+                    Button(style=ButtonStyle.gray, emoji='⬇', label=f"{south}", disabled=False),
+                    self.__on_south,
+                ))
+            else:
+                sw.append(self.client.add_callback(
+                    Button(style=ButtonStyle.gray, emoji='⬇', label=f"--", disabled=False),
+                    self.__on_south,
+                ))
+            if location.west is not None:
+                west = locationDisplayNames[location.west]
+                sw.append(self.client.add_callback(
+                    Button(style=ButtonStyle.gray, emoji='⬅', label=f"{west}", disabled=False),
+                    self.__on_west,
+                ))
+            else:
+                sw.append(self.client.add_callback(
+                    Button(style=ButtonStyle.gray, emoji='⬅', label=f"--", disabled=False),
+                    self.__on_west,
+                ))
 
-        btns = [ne, sw]
+        btns = []
+        if len(ne) > 0:
+            btns.append(ne)
+        if len(sw) > 0:
+            btns.append(sw)
+
 
         return file, btns
 
@@ -206,7 +215,7 @@ class MapMixin(MixinMeta):
         trainer.setLocation(direction.locationId)
         # await interaction.send(f'You walked North to {north}.')
 
-        file, btns = self.__createMapCard(direction, disabled=False)
+        file, btns = self.__createMapCard(direction)
 
         log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
         temp_message = await log_channel.send(
