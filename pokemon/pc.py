@@ -68,7 +68,7 @@ class PcMixin(MixinMeta):
             embed=embed,
             components=btns
         )
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.STATS, pokeList, active.trainerId, i))
+        self.setPokemonState(author, PokemonState(str(user.id), message.id, DisplayCard.STATS, pokeList, active.trainerId, i))
 
     
     async def __on_set_active(self, interaction: Interaction):
