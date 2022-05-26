@@ -121,7 +121,7 @@ class PcMixin(MixinMeta):
             message = await interaction.edit_origin(embed=embed, components=btns)
             self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         else:
-            embed, btns = self.__pokemonPcCard(user, state, state.card)
+            embed, btns = self.__pokemonPcCard(user, state, state.card, user.id == state.discordId)
             message = await interaction.edit_origin(embed=embed, components=btns)
             self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
     
@@ -142,7 +142,7 @@ class PcMixin(MixinMeta):
             message = await interaction.edit_origin(embed=embed, components=btns)
             self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         else:
-            embed, btns = self.__pokemonPcCard(user, state, state.card)
+            embed, btns = self.__pokemonPcCard(user, state, state.card, user.id == state.discordId)
             message = await interaction.edit_origin(embed=embed, components=btns)
             self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         
