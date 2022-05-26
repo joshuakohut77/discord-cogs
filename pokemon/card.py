@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from redbot.core.bot import Red
 
 from redbot.core import commands
+from redbot.core.commands.context import Context
 
 import constant
 from services.trainerclass import trainer as TrainerClass
@@ -17,6 +18,20 @@ from services.keyitemsclass import keyitems as KeyItemsClass
 from services.leaderboardclass import leaderboard as LeaderBoardClass
 
 from .abcd import MixinMeta
+
+
+DiscordUser = Union[discord.Member,discord.User]
+
+
+class CardState:
+    discordId: str
+    messageId: int
+    channelId: int
+
+    def __init__(self, discordId: str, messageId: int, channelId: int) -> None:
+        self.discordId = discordId
+        self.messageId = messageId
+        self.channelId = channelId
 
 
 class TrainerCardMixin(MixinMeta):
@@ -33,7 +48,9 @@ class TrainerCardMixin(MixinMeta):
         pass
 
     @_trainer.command()
-    async def card(self, ctx: commands.Context, user: Union[discord.Member,discord.User] = None) -> None:
+    async def card(self, ctx: commands.Context, user: DiscordUser = None) -> None:
+        author: DiscordUser = ctx.author
+
         if user is None:
             user = ctx.author
 
@@ -50,8 +67,8 @@ class TrainerCardMixin(MixinMeta):
             self.__on_stats_click,
         ))
  
-        message: discord.Message = await ctx.send(embed=embed, components=[btns])     
-        self.__cards[str(user.id)] = message.id
+        message: discord.Message = await ctx.send(embed=embed, components=[btns])
+        self.__cards[str(author.id)] = CardState(user.id, message.id, message.channel.id)
 
 
     async def __on_stats_click(self, interaction: Interaction):
@@ -61,11 +78,20 @@ class TrainerCardMixin(MixinMeta):
             await interaction.send('This is not for you.')
             return
 
-        stats = LeaderBoardClass(str(user.id))
+        state: CardState = self.__cards[str(user.id)]
+
+        # Check if author is trainer
+        authorIsTrainer = user.id == state.discordId
+        trainerUser: DiscordUser = user
+        if not authorIsTrainer:
+            ctx: Context = await self.bot.get_context(interaction.message)
+            trainerUser = await ctx.guild.fetch_member(int(state.discordId))
+
+        stats = LeaderBoardClass(str(state.discordId))
         stats.load()
 
         embed = discord.Embed(title=f"Trainer")
-        embed.set_author(name=f"{user.display_name}", icon_url=str(user.avatar_url))
+        embed.set_author(name=f"{trainerUser.display_name}", icon_url=str(trainerUser.avatar_url))
         
         embed.add_field(name='Battles', value=f'{stats.total_battles}', inline=True)
         embed.add_field(name='Victories', value=f'{stats.total_victory}', inline=True)
@@ -82,7 +108,8 @@ class TrainerCardMixin(MixinMeta):
         ))
  
         message = await interaction.edit_origin(embed=embed, components=[btns])     
-        self.__cards[str(user.id)] = message.id
+        self.__cards[str(user.id)] = CardState(state.discordId, message.id, message.channel.id)
+
 
     async def __on_about_click(self, interaction: Interaction):
         user = interaction.user
@@ -91,12 +118,21 @@ class TrainerCardMixin(MixinMeta):
             await interaction.send('This is not for you.')
             return
 
+        state: CardState = self.__cards[str(user.id)]
+
+        # Check if author is trainer
+        authorIsTrainer = user.id == state.discordId
+        trainerUser: DiscordUser = user
+        if not authorIsTrainer:
+            ctx: Context = await self.bot.get_context(interaction.message)
+            trainerUser = await ctx.guild.fetch_member(int(state.discordId))
+
         #  # This will create the trainer if it doesn't exist
         trainer = TrainerClass(str(user.id))
         inventory = InventoryClass(trainer.discordId)
         keyitems = KeyItemsClass(trainer.discordId)
         
-        embed = self.__createAboutEmbed(user, trainer, inventory, keyitems)
+        embed = self.__createAboutEmbed(trainerUser, trainer, inventory, keyitems)
 
         btns = []
         btns.append(self.client.add_callback(
@@ -105,7 +141,7 @@ class TrainerCardMixin(MixinMeta):
         ))
  
         message = await interaction.edit_origin(embed=embed, components=[btns])     
-        self.__cards[str(user.id)] = message.id
+        self.__cards[str(user.id)] = CardState(state.discordId, message.id, message.channel.id)
 
 
     def __createAboutEmbed(self, user: discord.User, trainer: TrainerClass, inventory: InventoryClass, keyitems: KeyItemsClass):
@@ -144,7 +180,7 @@ class TrainerCardMixin(MixinMeta):
         if str(user.id) not in self.__cards.keys():
             return False
         else:
-            originalMessageId = self.__cards[str(user.id)]
-            if originalMessageId != message.id:
+            state: CardState = self.__cards[str(user.id)]
+            if state.messageId != message.id:
                 return False
         return True
