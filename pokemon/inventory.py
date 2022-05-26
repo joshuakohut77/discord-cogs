@@ -49,8 +49,8 @@ class InventoryMixin(MixinMeta):
         if str(user.id) not in self.__inventory.keys():
             return False
         else:
-            originalMessageId = self.__inventory[str(user.id)]
-            if originalMessageId != message.id:
+            state: InventoryState = self.__inventory[str(user.id)]
+            if state.messageId != message.id:
                 return False
         return True
 
