@@ -4,10 +4,8 @@ import sys
 import json
 import random
 from dbclass import db as dbconn
-# from inventoryclass import inventory as inv
+from inventoryclass import inventory as inv
 from loggerclass import logger as log
-# from uniqueencounters import uniqueEncounters as uEnc
-# from pokeclass import Pokemon as PokemonClass
 from models.trainer_battle import TrainerBattleModel
 
 # Class Logger
@@ -24,6 +22,21 @@ class battle:
         self.locationId = locationId
         self.enemyType = enemyType # can be "wild" or "gym"
     
+    def battleVictory(self, enemyTrainer: TrainerBattleModel):
+        """ handles enemy trainer victory resolution """
+        moneyReward = enemyTrainer.money
+        
+        # update enemy UUID tracker in db
+        enemy_uuid = enemyTrainer.enemy_uuid
+        self.__insertEnemyCompleted(enemy_uuid)
+
+        # update player reward
+        playerInventory = inv(self.discordId)
+        playerInventory.money += moneyReward
+        playerInventory.save()
+
+        return
+
     def getNextBattle(self):
         """ returns a TrainerBattleModel object to battle against """
         trainerModelList = self.getTrainerList()
