@@ -250,7 +250,8 @@ class PartyMixin(MixinMeta):
             await interaction.send('You cannot release your starter pokemon.')
             return
 
-        pokemon.release()
+        # pokemon.release()
+        trainer.releasePokemon(pokemon.trainerId)
 
         await interaction.channel.send(f'{user.display_name} released {getTrainerGivenPokemonName(pokemon)}')
         pokeList = trainer.getPokemon()

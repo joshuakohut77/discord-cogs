@@ -33,11 +33,18 @@ from services.trainerclass import trainer as TrainerClass
 # - [x][low] Clean up item names
 # - [x][low] User nickname everywhere where pokemonname would be
 # - [x][med] Update party and starter up to parity with pc
-# - [med] Trading with other users
+# - [x][med] Trading with other users
+# - [x][low] call other release method
+# - [low] fix fns where u pass in a user
+# - [low] dismiss/ephemeral messages
 # - [med] Pokedex
 # - [med] Test evolutions in discord
 # - [med] key item blockers
 # - [low] Flesh out the *debug module to help us test the game
+
+# things to test
+# - What happens if you release all your pokemon?
+# - What happens if you trade your active pokemon
 
 
 class CompositeClass(commands.CogMeta, ABCMeta):
