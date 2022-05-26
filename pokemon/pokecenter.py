@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 import discord
 from discord_components import (ButtonStyle, Button, Interaction, interaction)
+from discord_components.dpy_overrides import send
 from redbot.core.commands.context import Context
 
 if TYPE_CHECKING:
@@ -15,6 +16,7 @@ import constant
 from services.trainerclass import trainer as TrainerClass
 from services.storeclass import store as StoreClass
 from services.pokeclass import Pokemon as PokemonClass
+from services.encounterclass import encounter as EncounterClass
 
 from .abcd import MixinMeta
 from .functions import (createStatsEmbed, getTypeColor,
@@ -192,17 +194,42 @@ class PokecenterMixin(MixinMeta):
     async def __on_offer_trade(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.checkPokemonState(user, interaction.message):
+        if not self.checkTradeState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
         
-        pass
+        state = self.__tradeState[str(user.id)]
+
+        receiverPokemon = state.pokemonList[state.idx]
+
+        sender = TrainerClass(state.senderDiscordId)
+        senderPokemon = sender.getPokemonById(state.senderPokemonId)
+        
+        enc = EncounterClass(senderPokemon, receiverPokemon)
+        enc.trade()
+
+        await interaction.send('Trade complete')
+
+        embed, btns = self.__pokemonPcTradeCard(user, state.pokemonList, state.idx)
+
+        channel: discord.TextChannel = self.bot.get_channel(state.channelId)
+        message: discord.Message = await channel.fetch_message(state.messageId)
+
+        ctx: Context = await self.bot.get_context(interaction.message)
+        senderDiscord = await ctx.guild.fetch_member(int(state.senderDiscordId))
+
+        message: discord.Message = await message.edit(
+            content=f'{user.display_name} traded his {receiverPokemon.pokemonName} for {senderDiscord.display_name}\'s {senderPokemon.pokemonName}!',
+            embed=embed,
+            components=[]
+        )
+        del self.__tradeState[str(user.id)]
 
 
     async def __on_next_click(self, interaction: Interaction):
         user = interaction.user
 
-        if not self.checkPokemonState(user, interaction.message):
+        if not self.checkTradeState(user, interaction.message):
             await interaction.send('This is not for you.')
             return
 
@@ -215,7 +242,7 @@ class PokecenterMixin(MixinMeta):
         self.__tradeState[str(user.id)] = state
     
 
-    async def __on_prev_click(self, interaction: Interaction):
+    async def checkTradeState(self, interaction: Interaction):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
