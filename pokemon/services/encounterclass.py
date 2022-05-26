@@ -4,7 +4,6 @@ import sys
 import config
 import json
 import random
-from dbclass import db as dbconn
 from expclass import experiance as exp
 from inventoryclass import inventory as inv
 from leaderboardclass import leaderboard
@@ -223,7 +222,7 @@ class encounter:
 
         self.statuscode = 420
         self.message = resultString
-        return 'victory''
+        return 'victory'
 
     def __defeat(self):
         # pokemon1 lost, update currentHP to 0
