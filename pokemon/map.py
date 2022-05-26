@@ -1,5 +1,4 @@
 from __future__ import annotations
-from functools import _Descriptor
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 import discord
