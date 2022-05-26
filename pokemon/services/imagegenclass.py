@@ -20,8 +20,46 @@ class imagegen:
         self.baseUrl = "https://pokesprites.joshkohut.com/sprites/"
         self.fontPath = "./fonts/pokemon_generation_1.ttf"
 
+    def battle_trainer_victory(self, enemyTrainer: TrainerBattleModel, playerPartySize=1):
+        """ generate an image for the start of a wild pokemon battle  """
+        battleBackground = './sprites/battle/pokebattle_trainer_victory.png'
+        partypokeball = './sprites/battle/party_pokeball.png'
+        trainerSprite = './sprites/trainers/%s' %enemyTrainer.filename
+        enemyTrainerParty = len(enemyTrainer.pokemon)
+
+
+        # backgroundImg = Image.open(battleBackground)
+        # partypokeballImg = Image.open(partypokeball)
+        # textLine1 = "Wild %s" %(pokemon.pokemonName.upper())
+        # textLine2 = 'appeared!'
+
+        # pokemonSprite = self.__getImageFromURL(pokemon.frontSpriteURL)
+
+        #  # create font sizes
+        # font = ImageFont.truetype(self.fontPath, 35)
+
+        # draw = ImageDraw.Draw(backgroundImg)
+
+        # draw.text((40, 553), textLine1, (29, 17, 17), font=font)
+        # draw.text((40, 635), textLine2, (29, 17, 17), font=font)
+
+        # pokemonSprite = self.__removeBackground(pokemonSprite).resize((250,250))
+
+        # # add the sprites into the background image
+        # back_im = backgroundImg.copy()
+        # back_im.paste(pokemonSprite, (500, 0), pokemonSprite)
+
+
+        # if playerPartySize > 1:
+        #     for count in range(playerPartySize):
+        #         x = 464 + (34* count)
+        #         back_im.paste(partypokeballImg, (x, 396), partypokeballImg)
+
+
+        # return back_im
+        return
  
-    def battle_start_trainer(self, enemyTrainer: TrainerBattleModel, playerPartySize=1):
+    def battle_trainer_start(self, enemyTrainer: TrainerBattleModel, playerPartySize=1):
         """ generate an image for the start of a wild pokemon battle  """
         battleBackground = './sprites/battle/pokebattle_trainer_start.png'
         partypokeball = './sprites/battle/party_pokeball.png'
@@ -60,7 +98,7 @@ class imagegen:
         # return back_im
         return
  
-    def battle_start_wild(self, pokemon: PokemonClass, playerPartySize=1):
+    def battle_wild_start(self, pokemon: PokemonClass, playerPartySize=1):
         """ generate an image for the start of a wild pokemon battle  """
         battleBackground = './sprites/battle/pokebattle_wild_start.png'
         partypokeball = './sprites/battle/party_pokeball.png'
