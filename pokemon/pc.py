@@ -108,7 +108,7 @@ class PcMixin(MixinMeta):
         if not self.checkPokemonState(user, interaction.message):
             msg = await interaction.send('This is not for you.')
             await asyncio.sleep(2)
-            msg.delete()
+            await msg.delete()
             return
 
         state = self.getPokemonState(user)
