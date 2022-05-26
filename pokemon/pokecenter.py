@@ -138,6 +138,7 @@ class PokecenterMixin(MixinMeta):
                 components=btns
             )
             state.messageId = message.id
+            self.__tradeState[str(user.id)] = state
         else:
             await interaction.defer().send('You declined this trade.')
 
@@ -151,6 +152,7 @@ class PokecenterMixin(MixinMeta):
                 embed=embed,
                 components=btns
             )
+            del self.__tradeState[str(user.id)]
 
 
     def checkTradeState(self, user: discord.User, message: discord.Message):
@@ -209,6 +211,7 @@ class PokecenterMixin(MixinMeta):
         embed, btns = self.__pokemonPcTradeCard(user, state.pokemonList, state.idx)
         message = await interaction.edit_origin(embed=embed, components=btns)
         state.messageId = message.id
+        self.__tradeState[str(user.id)] = state
     
 
     async def __on_prev_click(self, interaction: Interaction):
@@ -224,6 +227,7 @@ class PokecenterMixin(MixinMeta):
         embed, btns = self.__pokemonPcTradeCard(user, state.pokemonList, state.idx)
         message = await interaction.edit_origin(embed=embed, components=btns)
         state.messageId = message.id
+        self.__tradeState[str(user.id)] = state
 
     
     def __pokemonPcTradeCard(self, user: discord.User, pokemonList: List[PokemonClass], idx: int):
