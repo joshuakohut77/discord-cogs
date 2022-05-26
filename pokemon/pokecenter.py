@@ -123,7 +123,8 @@ class PokecenterMixin(MixinMeta):
         
 
         if interaction.custom_id == 'accept':
-            # need to loop through pc (not party) available for trade
+            await interaction.defer().send('You declined this trade.')
+
             trainer = TrainerClass(str(user.id))
             pokemonList = trainer.getPokemon(False, True)
 
