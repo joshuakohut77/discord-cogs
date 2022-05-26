@@ -7,7 +7,6 @@ import constant
 
 import discord
 from discord import (Embed, Member)
-from discord import message
 from discord_components import (
     DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
 
@@ -15,12 +14,29 @@ if TYPE_CHECKING:
     from redbot.core.bot import Red
 
 from redbot.core import commands
+from redbot.core.commands.context import Context
 
 from services.trainerclass import trainer as TrainerClass
 from services.inventoryclass import inventory as InventoryClass
 from services.keyitemsclass import keyitems as KeyItemClass
 
 from .abcd import MixinMeta
+
+
+DiscordUser = Union[discord.Member,discord.User]
+
+
+
+class InventoryState:
+    discordId: str
+    messageId: int
+    channelId: int
+
+    def __init__(self, discordId: str, messageId: int, channelId: int) -> None:
+        self.discordId = discordId
+        self.messageId = messageId
+        self.channelId = channelId
+
 
 
 class InventoryMixin(MixinMeta):
@@ -48,8 +64,10 @@ class InventoryMixin(MixinMeta):
 
 
     @_trainer.command()
-    async def bag(self, ctx: commands.Context, user: discord.Member = None):
+    async def bag(self, ctx: commands.Context, user: DiscordUser = None):
         """Show trainer bag"""
+        author: DiscordUser = ctx.author
+
         if user is None:
             user = ctx.author
 
@@ -59,11 +77,11 @@ class InventoryMixin(MixinMeta):
 
         embed, btns = self.createItemsEmbed(user)
 
-        message = await ctx.send(
+        message: discord.Message = await ctx.send(
             embed=embed,
             components=[btns]
         )
-        self.__inventory[str(user.id)] = message.id
+        self.__inventory[str(author.id)] = InventoryState(user.id, message.id, message.channel.id)
 
 
     async def __on_hm_click(self, interaction: Interaction):
@@ -75,12 +93,22 @@ class InventoryMixin(MixinMeta):
 
         # name = uuid.uuid4()
         # file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/bag.png", filename=f"{name}.png")
+
+        state: InventoryState = self.__inventory[str(user.id)]
+
+        # Check if author is trainer
+        authorIsTrainer = user.id == state.discordId
+        trainerUser: DiscordUser = user
+        if not authorIsTrainer:
+            ctx: Context = await self.bot.get_context(interaction.message)
+            trainerUser = await ctx.guild.fetch_member(int(state.discordId))
+
         
         # Create the embed object
         embed = discord.Embed(title=f"Bag")
         embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/trainer_bag.png")
-        embed.set_author(name=f"{user.display_name}",
-                        icon_url=str(user.avatar_url))
+        embed.set_author(name=f"{trainerUser.display_name}",
+                        icon_url=str(trainerUser.avatar_url))
 
         keyitems = KeyItemClass(str(user.id))
 
@@ -108,7 +136,8 @@ class InventoryMixin(MixinMeta):
         ))
 
         message = await interaction.edit_origin(embed=embed, components=[btns])
-        self.__inventory[str(user.id)] = message.id
+
+        self.__inventory[str(user.id)] = InventoryState(state.discordId, message.id, message.channel.id)
 
 
     async def __on_items_click(self, interaction: Interaction):
@@ -118,14 +147,23 @@ class InventoryMixin(MixinMeta):
             await interaction.send('This is not for you.')
             return
         
-        
-        embed, btns = self.createItemsEmbed(user)
 
-        await interaction.edit_origin(
+        state: InventoryState = self.__inventory[str(user.id)]
+
+        # Check if author is trainer
+        authorIsTrainer = user.id == state.discordId
+        trainerUser: DiscordUser = user
+        if not authorIsTrainer:
+            ctx: Context = await self.bot.get_context(interaction.message)
+            trainerUser = await ctx.guild.fetch_member(int(state.discordId))
+        
+        embed, btns = self.createItemsEmbed(trainerUser)
+
+        message = await interaction.edit_origin(
             embed=embed,
             components=[btns]
         )
-        self.__inventory[str(user.id)] = message.id
+        self.__inventory[str(user.id)] = InventoryState(state.discordId, message.id, message.channel.id)
     
 
     async def __on_keyitems_click(self, interaction: Interaction):
@@ -140,11 +178,20 @@ class InventoryMixin(MixinMeta):
         # name = uuid.uuid4()
         # file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/bag.png", filename=f"{name}.png")
 
+        state: InventoryState = self.__inventory[str(user.id)]
+
+        # Check if author is trainer
+        authorIsTrainer = user.id == state.discordId
+        trainerUser: DiscordUser = user
+        if not authorIsTrainer:
+            ctx: Context = await self.bot.get_context(interaction.message)
+            trainerUser = await ctx.guild.fetch_member(int(state.discordId))
+
         # Create the embed object
         embed = discord.Embed(title=f"Bag")
         embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/trainer_bag.png")
-        embed.set_author(name=f"{user.display_name}",
-                        icon_url=str(user.avatar_url))
+        embed.set_author(name=f"{trainerUser.display_name}",
+                        icon_url=str(trainerUser.avatar_url))
 
         items = []
 
@@ -182,7 +229,7 @@ class InventoryMixin(MixinMeta):
         ))
 
         message = await interaction.edit_origin(embed=embed, components=[btns])
-        self.__inventory[str(user.id)] = message.id
+        self.__inventory[str(user.id)] = InventoryState(state.discordId, message.id, message.channel.id)
 
 
     def createItemsEmbed(self, user: User):
