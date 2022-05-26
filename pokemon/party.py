@@ -455,7 +455,7 @@ class PartyMixin(MixinMeta):
 
 
 
-    def __pokemonPcCard(self, user: discord.User, state: PokemonState, card: DisplayCard, authorIsTrainer: bool = False):
+    def __pokemonPcCard(self, user: discord.User, state: PokemonState, card: DisplayCard, authorIsTrainer: bool = True):
         pokeList = state.pokemon
         pokeLength = len(pokeList)
         i = state.idx
