@@ -242,7 +242,7 @@ class PokecenterMixin(MixinMeta):
         self.__tradeState[str(user.id)] = state
     
 
-    async def checkTradeState(self, interaction: Interaction):
+    async def __on_prev_click(self, interaction: Interaction):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
