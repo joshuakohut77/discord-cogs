@@ -24,6 +24,13 @@ class battle:
         self.locationId = locationId
         self.enemyType = enemyType # can be "wild" or "gym"
     
+    def getNextBattle(self):
+        """ returns a TrainerBattleModel object to battle against """
+        trainerModelList = self.getTrainerList()
+        if len(trainerModelList) > 0:
+            return trainerModelList[0]
+        else:
+            return None
 
     def getTrainerList(self):
         """ returns a list of TrainerBattleModel objects which have not been completed """
@@ -54,7 +61,7 @@ class battle:
                 trainerConfigList = loadedConfig[str(self.locationId)]
             else:
                 trainerConfigList = loadedConfig[str(self.locationId)]['trainers']
-                    
+            
             trainerModelList = self.__returnTrainerList(trainerConfigList)
 
             # check if trainer has previously beaten trainer and remove trainer from list. 
@@ -68,6 +75,8 @@ class battle:
             # delete and close connection
             del db
             return trainerModelList
+    
+
 
     def __insertEnemyCompleted(self, enemy_uuid):
         """ inserts and enemy_uuid into the database which indicase complete """
