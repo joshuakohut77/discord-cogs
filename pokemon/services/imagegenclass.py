@@ -23,9 +23,12 @@ class imagegen:
  
     def battle_start_trainer(self, enemyTrainer: TrainerBattleModel):
         """ generate an image for the start of a wild pokemon battle  """
-        battleBackground = './sprites/battle/pokebattle_start.png'
+        battleBackground = './sprites/battle/pokebattle_trainer_start.png'
         partypokeball = './sprites/battle/party_pokeball.png'
+        trainerSprite = './sprites/trainers/%s' %enemyTrainer.filename
+        enemyTrainerParty = len(enemyTrainer.pokemon)
 
+        
         # backgroundImg = Image.open(battleBackground)
         # partypokeballImg = Image.open(partypokeball)
         # textLine1 = "Wild %s" %(pokemon.pokemonName.upper())
@@ -58,7 +61,7 @@ class imagegen:
  
     def battle_start_wild(self, pokemon: PokemonClass, partySize=1):
         """ generate an image for the start of a wild pokemon battle  """
-        battleBackground = './sprites/battle/pokebattle_start.png'
+        battleBackground = './sprites/battle/pokebattle_wild_start.png'
         partypokeball = './sprites/battle/party_pokeball.png'
 
         backgroundImg = Image.open(battleBackground)
