@@ -179,6 +179,9 @@ class trainer:
             self.statuscode = 96
             self.message = "error occurred during inventory.save()"
             return
+
+        self.statuscode = 420
+        self.messagen = f"You gained ¥{releaseMoney}!"
         
         # leaderboard stats
         lb = leaderboard(self.discordId)

@@ -54,6 +54,8 @@ class StarterMixin(MixinMeta):
     @_trainer.command()
     async def active(self, ctx: commands.Context, user: discord.Member = None) -> None:
         """Show the currect active pokemon for the trainer."""
+        author = ctx.author
+
         if user is None:
             user = ctx.author
 
@@ -66,12 +68,14 @@ class StarterMixin(MixinMeta):
         embed, btns = self.__pokemonSingleCard(user, state, state.card)
 
         message: discord.Message = await ctx.send(embed=embed, components=btns)
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
+        self.setPokemonState(author, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
 
 
     @_trainer.command()
     async def starter(self, ctx: commands.Context, user: discord.Member = None) -> None:
         """Show the starter pokemon for the trainer."""
+        author = ctx.author
+
         if user is None:
             user = ctx.author
 
@@ -85,7 +89,7 @@ class StarterMixin(MixinMeta):
         embed, btns = self.__pokemonSingleCard(user, state, state.card)
 
         message: discord.Message = await ctx.send(embed=embed, components=btns)
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
+        self.setPokemonState(author, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
 
 
     async def __on_moves_click(self, interaction: Interaction):

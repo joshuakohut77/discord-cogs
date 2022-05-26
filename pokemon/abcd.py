@@ -26,6 +26,16 @@ class MixinMeta(ABC):
         self.client: DiscordComponents
 
 
+    async def sendToLoggingChannel(self, content: str, file: discord.File = None, embed: discord.Embed = None):
+        log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
+        temp_message: discord.Message = await log_channel.send(
+            content=content,
+            embed=embed,
+            file = file
+        )
+        return temp_message
+
+
     def setPokemonState(self, user: discord.User, state: PokemonState):
         self.__pokemonState[str(user.id)] = state
 

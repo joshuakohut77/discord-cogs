@@ -301,6 +301,12 @@ class PokemartMixin(MixinMeta):
         if store.statuscode == 69 or store.statuscode == 420:
             await ctx.send(store.message)
 
+            # Send to logging channel
+            await self.sendToLoggingChannel(store.message)
+        else:
+            # Send to logging channel
+            await self.sendToLoggingChannel(store.message)
+
         # await ctx.send(res)
         # await ctx.send(f'{user.display_name} bought {count} {item}')
 
@@ -320,4 +326,7 @@ class PokemartMixin(MixinMeta):
         store.sellItem(item, count)
 
         await ctx.send(store.message)
+
+        # Send to logging channel
+        await self.sendToLoggingChannel(store.message)
 
