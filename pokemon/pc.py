@@ -252,10 +252,13 @@ class PcMixin(MixinMeta):
             await interaction.send('You cannot release your starter pokemon.')
             return
 
-        # pokemon.release()
         trainer.releasePokemon(pokemon.trainerId)
 
-        await interaction.channel.send(f'{user.display_name} released {getTrainerGivenPokemonName(pokemon)}')
+        # Send to logging channel
+        await self.sendToLoggingChannel(f'{user.display_name} released {getTrainerGivenPokemonName(pokemon)}')
+
+        # Send to message channel
+        await interaction.channel.send(f'{user.display_name} released {getTrainerGivenPokemonName(pokemon)}. {trainer.message}', delete_after=5)
         pokeList = trainer.getPokemon()
         pokeLength = len(pokeList)
 

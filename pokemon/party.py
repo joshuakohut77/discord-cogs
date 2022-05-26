@@ -253,7 +253,11 @@ class PartyMixin(MixinMeta):
         # pokemon.release()
         trainer.releasePokemon(pokemon.trainerId)
 
-        await interaction.channel.send(f'{user.display_name} released {getTrainerGivenPokemonName(pokemon)}')
+        # Send to logging channel
+        await self.sendToLoggingChannel(f'{user.display_name} released {getTrainerGivenPokemonName(pokemon)}')
+
+        # Send to message channel
+        await interaction.channel.send(f'{user.display_name} released {getTrainerGivenPokemonName(pokemon)}. {trainer.message}', delete_after=5)
         pokeList = trainer.getPokemon()
         pokeLength = len(pokeList)
         self.setPokemonState(user, PokemonState(str(user.id), state.messageId, state.card, pokeList, state.active, state.idx))

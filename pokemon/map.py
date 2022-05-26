@@ -103,11 +103,12 @@ class MapMixin(MixinMeta):
 
         file, btns = self.__createMapCard(location)
 
-        log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
-        temp_message = await log_channel.send(
-            content=f'{user.display_name} is at {location.name}',
-            file = file
-        )
+        # log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
+        # temp_message = await log_channel.send(
+        #     content=f'{user.display_name} is at {location.name}',
+        #     file = file
+        # )
+        temp_message = await self.sendToLoggingChannel(f'{user.display_name} is at {location.name}', file)
         attachment: discord.Attachment = temp_message.attachments[0]
 
         name = locationDisplayNames[location.name]

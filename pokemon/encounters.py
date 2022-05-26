@@ -349,6 +349,7 @@ class EncountersMixin(MixinMeta):
             ))
 
         if len(btns) == 0:
+            # TODO: Achievement Unlocked: No Balls
             await interaction.send('You have no balls!')
             return
 
@@ -365,7 +366,6 @@ class EncountersMixin(MixinMeta):
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
         
         message = await interaction.edit_origin(
-            # content=f'{user.display_name} encountered a wild {state.pokemon.pokemonName.capitalize()}!',
             embed=embed,
             components=[btns, secondRow]
         )
@@ -445,11 +445,13 @@ class EncountersMixin(MixinMeta):
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
         
         await interaction.edit_origin(
-            # content=f'{trainer.message}',
             embed=embed,
             components=[]
         )
         del self.__useractions[str(user.id)]
+
+        # Send to logging channel
+        await self.sendToLoggingChannel(None, embed=embed)
     
 
     def __wildPokemonEncounter(self, user: discord.User, wildPokemon: PokemonClass, activePokemon: PokemonClass, descLog: str):
