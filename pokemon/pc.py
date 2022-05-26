@@ -105,7 +105,7 @@ class PcMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.', ephemeral=True)
+            await interaction.send('This is not for you.', delete_after=10)
             return
 
         state = self.getPokemonState(user)
