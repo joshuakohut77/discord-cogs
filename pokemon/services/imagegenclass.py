@@ -8,6 +8,9 @@ from pokeclass import Pokemon as PokemonClass
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
+from models.trainer_battle import TrainerBattleModel
+
+baseBattlePath = "./sprites/battle/"
 
 class imagegen:
     def __init__(self):
@@ -15,9 +18,44 @@ class imagegen:
         self.message = ""
 
         self.baseUrl = "https://pokesprites.joshkohut.com/sprites/"
-        self.basePath = "./sprites/battle/"
         self.fontPath = "./fonts/pokemon_generation_1.ttf"
 
+ 
+    def battle_start_trainer(self, enemyTrainer: TrainerBattleModel):
+        """ generate an image for the start of a wild pokemon battle  """
+        battleBackground = './sprites/battle/pokebattle_start.png'
+        partypokeball = './sprites/battle/party_pokeball.png'
+
+        # backgroundImg = Image.open(battleBackground)
+        # partypokeballImg = Image.open(partypokeball)
+        # textLine1 = "Wild %s" %(pokemon.pokemonName.upper())
+        # textLine2 = 'appeared!'
+
+        # pokemonSprite = self.__getImageFromURL(pokemon.frontSpriteURL)
+
+        #  # create font sizes
+        # font = ImageFont.truetype(self.fontPath, 35)
+
+        # draw = ImageDraw.Draw(backgroundImg)
+
+        # draw.text((40, 553), textLine1, (29, 17, 17), font=font)
+        # draw.text((40, 635), textLine2, (29, 17, 17), font=font)
+
+        # pokemonSprite = self.__removeBackground(pokemonSprite).resize((250,250))
+
+        # # add the sprites into the background image
+        # back_im = backgroundImg.copy()
+        # back_im.paste(pokemonSprite, (500, 0), pokemonSprite)
+
+        # if partySize > 1:
+        #     for count in range(partySize):
+        #         x = 464 + (34* count)
+        #         back_im.paste(partypokeballImg, (x, 396), partypokeballImg)
+
+
+        # return back_im
+        return
+ 
     def battle_start_wild(self, pokemon: PokemonClass, partySize=1):
         """ generate an image for the start of a wild pokemon battle  """
         battleBackground = './sprites/battle/pokebattle_start.png'
@@ -166,6 +204,7 @@ class imagegen:
     def __getImageFromDisk(self, filename):
         """ returns data of image from url """
         # TODO update to use discord.File()
-        file = self.basePath + filename + '.png'
+        
+        file = baseBattlePath + filename + '.png'
         img = Image.open(file)
         return img
