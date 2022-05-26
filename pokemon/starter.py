@@ -68,7 +68,9 @@ class StarterMixin(MixinMeta):
 
         state = PokemonState(str(user.id), None, DisplayCard.STATS, [pokemon], pokemon.trainerId, None)
 
-        embed, btns = self.__pokemonSingleCard(user, state, state.card)
+        authorIsTrainer = user.id == state.discordId
+
+        embed, btns = self.__pokemonSingleCard(user, state, state.card, authorIsTrainer)
 
         message: discord.Message = await ctx.send(embed=embed, components=btns)
         self.setPokemonState(author, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
@@ -89,7 +91,9 @@ class StarterMixin(MixinMeta):
 
         state = PokemonState(str(user.id), None, DisplayCard.STATS, [pokemon], active.trainerId, None)
 
-        embed, btns = self.__pokemonSingleCard(user, state, state.card)
+        authorIsTrainer = user.id == state.discordId
+
+        embed, btns = self.__pokemonSingleCard(user, state, state.card, authorIsTrainer)
 
         message: discord.Message = await ctx.send(embed=embed, components=btns)
         self.setPokemonState(author, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
