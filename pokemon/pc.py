@@ -121,7 +121,7 @@ class PcMixin(MixinMeta):
             message = await interaction.edit_origin(embed=embed, components=btns)
             self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         else:
-            authorIsTrainer = user.id == state.discordId
+            authorIsTrainer = str(user.id) == state.discordId
 
             trainerUser: DiscordUser = user
             if not authorIsTrainer:
@@ -149,7 +149,7 @@ class PcMixin(MixinMeta):
             message = await interaction.edit_origin(embed=embed, components=btns)
             self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         else:
-            authorIsTrainer = user.id == state.discordId
+            authorIsTrainer = str(user.id) == state.discordId
 
             trainerUser: DiscordUser = user
             if not authorIsTrainer:
