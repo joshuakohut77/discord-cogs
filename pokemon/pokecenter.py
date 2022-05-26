@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 
 import discord
-from discord_components import (ButtonStyle, Button, Interaction)
+from discord_components import (ButtonStyle, Button, Interaction, interaction)
 from redbot.core.commands.context import Context
 
 if TYPE_CHECKING:
@@ -29,6 +29,10 @@ class TradeState:
 
     messageId: int
     channelId: int
+
+    pokemonList: List[PokemonClass]
+    idx: int
+
 
     def __init__(self, messageId: int, channelId: int) -> None:
         self.messageId = messageId
@@ -64,6 +68,8 @@ class PokecenterMixin(MixinMeta):
         else:
             await ctx.send('Something went wrong')
 
+
+ 
 
     @_pokecenter.command()
     async def trade(self, ctx: commands.Context, trainerUser: Union[discord.Member,discord.User], pokemonId: str):
@@ -117,9 +123,23 @@ class PokecenterMixin(MixinMeta):
         
 
         if interaction.custom_id == 'accept':
-            pass
+            # need to loop through pc (not party) available for trade
+            trainer = TrainerClass(str(user.id))
+            pokemonList = trainer.getPokemon(False, True)
+
+            state.pokemonList = pokemonList
+            state.idx = 0
+
+            embed, btns = self.__pokemonPcTradeCard(user, pokemonList, 0)
+
+            message: discord.Message = await message.edit(
+                content=f'{user.display_name} is choosing a pokemon to offer {sender.display_name}.',
+                embed=embed,
+                components=btns
+            )
+            state.messageId = message.id
         else:
-            await interaction.send('You declined this trade.')
+            await interaction.defer().send('You declined this trade.')
 
             trader = TrainerClass(state.senderDiscordId)
             pokemon = trader.getPokemonById(state.senderPokemonId)
@@ -131,7 +151,6 @@ class PokecenterMixin(MixinMeta):
                 embed=embed,
                 components=btns
             )
-            pass
 
 
     def checkTradeState(self, user: discord.User, message: discord.Message):
@@ -166,3 +185,75 @@ class PokecenterMixin(MixinMeta):
 
         return embed, btns
 
+
+    async def __on_offer_trade(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.checkPokemonState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+        
+        pass
+
+
+    async def __on_next_click(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.checkPokemonState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+        state = self.__tradeState[str(user.id)]
+        state.idx = state.idx + 1
+
+        embed, btns = self.__pokemonPcTradeCard(user, state.pokemonList, state.idx)
+        message = await interaction.edit_origin(embed=embed, components=btns)
+        state.messageId = message.id
+    
+
+    async def __on_prev_click(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.checkPokemonState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+        state = self.__tradeState[str(user.id)]
+        state.idx = state.idx - 1
+
+        embed, btns = self.__pokemonPcTradeCard(user, state.pokemonList, state.idx)
+        message = await interaction.edit_origin(embed=embed, components=btns)
+        state.messageId = message.id
+
+    
+    def __pokemonPcTradeCard(self, user: discord.User, pokemonList: List[PokemonClass], idx: int):
+        pokemon = pokemonList[idx]
+
+        embed = createStatsEmbed(user, pokemon)
+
+        firstRowBtns = []
+        if idx > 0:
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'),
+                self.__on_prev_click
+            ))
+        if idx < len(pokemonList) - 1:
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
+                self.__on_next_click
+            ))
+
+        secondRowBtns = []
+        firstRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.green, label="Offer to trade", custom_id='offer'),
+            self.__on_offer_trade
+        ))
+
+
+        btns = []
+        if len(firstRowBtns) > 0:
+            btns.append(firstRowBtns)
+        if len(secondRowBtns) > 0:
+            btns.append(secondRowBtns)
+
+        return embed, btns
