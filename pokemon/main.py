@@ -38,6 +38,7 @@ from services.trainerclass import trainer as TrainerClass
 # - [low] fix fns where u pass in a user
 # - [low] dismiss/ephemeral messages
 # - [low] db tightening, trades probably need reworked
+# - [low] better use of logging channel
 # - [med] Pokedex
 # - [med] Test evolutions in discord
 # - [med] key item blockers
