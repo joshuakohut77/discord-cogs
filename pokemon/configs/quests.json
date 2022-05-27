@@ -1,7 +1,7 @@
 {
   "67": {
     "pre-requsites": [],
-    "quest": ["Cafe", "Rooftop Square", "Rocket Hideout"],
+    "quest": ["Cafe", "Rocket Hideout"],
     "blockers": [],
     "name": "celadon-city"
   },
@@ -292,6 +292,42 @@
     "quest": ["Speak to Captain"],
     "blockers": ["ss_ticket"],
     "name": "ss-anne"
+  },
+  "801": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "department-store"
+  },
+  "802": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "department-store-2F"
+  },
+  "803": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "department-store-3F"
+  },
+  "804": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "department-store-4F"
+  },
+  "805": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "department-store-5F"
+  },
+  "806": {
+    "pre-requsites": [],
+    "quest": ["Rooftop Square"],
+    "blockers": [],
+    "name": "department-store-rooftop"
   },
   "999": {
     "pre-requsites": [],
