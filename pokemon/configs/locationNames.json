@@ -48,5 +48,11 @@
     "fuchsia-city": 76,
     "saffron-city": 234,
     "viridian-city": 154,
+    "department-store": 801,
+    "department-store-2F": 802,
+    "department-store-3F": 803,
+    "department-store-4F": 804,
+    "department-store-5F": 805,
+    "department-store-rooftop": 806,
     "underground-path": 999
   }

@@ -538,6 +538,72 @@
       "pokecenter": false,
       "gym": false
     },
+    "801": {
+      "locationId": 801,
+      "name": "department-store",
+      "north": "department-store-2F",
+      "east": null,
+      "south": "celadon-city",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/department-store.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "802": {
+      "locationId": 802,
+      "name": "department-store-2F",
+      "north": "department-store-3F",
+      "east": null,
+      "south": "department-store",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/department-store-2F.png",
+      "pokecenter": true,
+      "gym": false
+    },
+    "803": {
+      "locationId": 803,
+      "name": "department-store-3F",
+      "north": "department-store-4F",
+      "east": null,
+      "south": "department-store-2F",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/department-store-3F.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "804": {
+      "locationId": 804,
+      "name": "department-store-4F",
+      "north": "department-store-5F",
+      "east": null,
+      "south": "department-store-3F",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/department-store-4F.png",
+      "pokecenter": true,
+      "gym": false
+    },
+    "805": {
+      "locationId": 805,
+      "name": "department-store-5F",
+      "north": "department-store-rooftop",
+      "east": null,
+      "south": "department-store-4F",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/department-store-5F.png",
+      "pokecenter": true,
+      "gym": false
+    },
+    "806": {
+      "locationId": 806,
+      "name": "department-store-rooftop",
+      "north": null,
+      "east": null,
+      "south": "department-store-5F",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/department-store-rooftop.png",
+      "pokecenter": true,
+      "gym": false
+    },
     "999": {
       "locationId": 999,
       "name": "underground-path",
