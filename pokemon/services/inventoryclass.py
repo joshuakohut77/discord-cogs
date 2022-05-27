@@ -35,6 +35,8 @@ class inventory:
         self.superrepel = None
         self.calcium = None
         self.carbos = None
+        self.iron = None
+        self.protein = None
         self.coincase = None
         self.direhit = None
         self.domefossil = None
@@ -80,6 +82,7 @@ class inventory:
                                 "max-repel"=%(maxrepel)s, "burn-heal"=%(burnheal)s, "paralyze-heal"=%(paralyzeheal)s, 
                                 "max-potion"=%(maxpotion)s, "antidote"=%(antidote)s, "super-repel"=%(superrepel)s,
                                 "calcium"=%(calcium)s, "carbos"=%(carbos)s, "coin-case"=%(coincase)s,
+                                "iron"=%(iron)s, "protein"=%(protein)s,
                                 "dire-hit"=%(direhit)s, "dome-fossil"=%(domefossil)s, "fresh-water"=%(freshwater)s,
                                 "helix-fossil"=%(helixfossil)s, "hp-up"=%(hpup)s, "lemonade"=%(lemonade)s, 
                                 "elixir"=%(elixir)s, "max-elixir"=%(maxelixir)s, "max-ether"=%(maxether)s, 
@@ -100,6 +103,7 @@ class inventory:
                             'iceheal': self.iceheal, 'maxrepel': self.maxrepel, 'burnheal': self.burnheal, 
                             'paralyzeheal': self.paralyzeheal, 'maxpotion': self.maxpotion, 'antidote': self.antidote, 
                             'superrepel': self.superrepel, 'calcium': self.calcium, 'carbos': self.carbos, 
+                            'iron': self.iron, 'protein': self.protein, 
                             'coincase': self.coincase, 'direhit': self.direhit, 'domefossil': self.domefossil, 
                             'freshwater': self.freshwater, 'helixfossil': self.helixfossil,
                             'hpup': self.hpup, 'lemonade': self.lemonade, 
@@ -138,7 +142,7 @@ class inventory:
                             "x-attack", "x-sp-atk", "x-sp-def", "x-speed", 
                             "fire-stone", "water-stone", 
                             "thunder-stone", "leaf-stone", "moon-stone",
-                            "link-cable", "game-shark"
+                            "iron", "protein", "link-cable", "game-shark",
                             FROM inventory WHERE "discord_id"=%(discordId)s'''
             result = db.querySingle(queryString, { 'discordId': self.discordId })
             if len(result) > 0:
@@ -193,9 +197,12 @@ class inventory:
                 self.thunderstone = result[48]
                 self.leafstone = result[49]
                 self.moonstone = result[50]
+                self.iron = result[51]
+                self.protein = result[52]
                 # Special Items
-                self.linkcable = result[51]
-                self.linkcable = result[52]
+                self.linkcable = result[53]
+                self.gameshark = result[54]
+
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
