@@ -20,91 +20,92 @@ class imagegen:
         self.baseUrl = "https://pokesprites.joshkohut.com/sprites/"
         self.fontPath = "./fonts/pokemon_generation_1.ttf"
 
-    def battle_trainer_victory(self, enemyTrainer: TrainerBattleModel, playerPartySize=1):
+    def battle_trainer_victory(self, enemyTrainer: TrainerBattleModel):
         """ generate an image for the start of a wild pokemon battle  """
-        battleBackground = './sprites/battle/pokebattle_trainer_victory.png'
-        partypokeball = './sprites/battle/party_pokeball.png'
+        battleBackground = './sprites/battle/pokebattle_trainer_start.png'
+        partypokeballFainted = './sprites/battle/party_pokeball_fainted.png'
         trainerSprite = './sprites/trainers/%s' %enemyTrainer.filename
         enemyTrainerParty = len(enemyTrainer.pokemon)
+        
+        backgroundImg = Image.open(battleBackground)
+        partypokeballFaintedImg = Image.open(partypokeballFainted)
+        trainerSpriteImg = Image.open(trainerSprite)
 
+         # create font sizes
+        font = ImageFont.truetype(self.fontPath, 35)
 
-        # backgroundImg = Image.open(battleBackground)
-        # partypokeballImg = Image.open(partypokeball)
-        # textLine1 = "Wild %s" %(pokemon.pokemonName.upper())
-        # textLine2 = 'appeared!'
+        draw = ImageDraw.Draw(backgroundImg)
 
-        # pokemonSprite = self.__getImageFromURL(pokemon.frontSpriteURL)
+        draw.text((40, 553), 'You defeated ' + enemyTrainer.name + '!', (29, 17, 17), font=font)
+        draw.text((40, 635), 'You earned ' + str(enemyTrainer.money), (29, 17, 17), font=font)
 
-        #  # create font sizes
-        # font = ImageFont.truetype(self.fontPath, 35)
+        trainerSpriteImg = self.__removeBackground(trainerSpriteImg).resize((250,250))
 
-        # draw = ImageDraw.Draw(backgroundImg)
+        # add the sprites into the background image
+        back_im = backgroundImg.copy()
+        back_im.paste(trainerSpriteImg, (500, 20), trainerSpriteImg)
 
-        # draw.text((40, 553), textLine1, (29, 17, 17), font=font)
-        # draw.text((40, 635), textLine2, (29, 17, 17), font=font)
-
-        # pokemonSprite = self.__removeBackground(pokemonSprite).resize((250,250))
-
-        # # add the sprites into the background image
-        # back_im = backgroundImg.copy()
-        # back_im.paste(pokemonSprite, (500, 0), pokemonSprite)
-
-
-        # if playerPartySize > 1:
-        #     for count in range(playerPartySize):
-        #         x = 464 + (34* count)
-        #         back_im.paste(partypokeballImg, (x, 396), partypokeballImg)
-
-
-        # return back_im
-        return
+        if enemyTrainerParty > 1:
+            for count in range(enemyTrainerParty):
+                x = 137 + (34* count)
+                back_im.paste(partypokeballFaintedImg, (x, 85), partypokeballFaintedImg)
+        
+        return back_im
  
-    def battle_trainer_start(self, enemyTrainer: TrainerBattleModel, playerPartySize=1):
+    def battle_trainer_start(self, enemyTrainer: TrainerBattleModel, playerPartySize=1, playerPartyFainted=0):
         """ generate an image for the start of a wild pokemon battle  """
         battleBackground = './sprites/battle/pokebattle_trainer_start.png'
         partypokeball = './sprites/battle/party_pokeball.png'
+        partypokeballFainted = './sprites/battle/party_pokeball_fainted.png'
         trainerSprite = './sprites/trainers/%s' %enemyTrainer.filename
         enemyTrainerParty = len(enemyTrainer.pokemon)
 
+        backgroundImg = Image.open(battleBackground)
+        partypokeballImg = Image.open(partypokeball)
+        partypokeballFaintedImg = Image.open(partypokeballFainted)
+        trainerSpriteImg = Image.open(trainerSprite)
 
-        # backgroundImg = Image.open(battleBackground)
-        # partypokeballImg = Image.open(partypokeball)
-        # textLine1 = "Wild %s" %(pokemon.pokemonName.upper())
-        # textLine2 = 'appeared!'
+         # create font sizes
+        font = ImageFont.truetype(self.fontPath, 35)
 
-        # pokemonSprite = self.__getImageFromURL(pokemon.frontSpriteURL)
+        draw = ImageDraw.Draw(backgroundImg)
 
-        #  # create font sizes
-        # font = ImageFont.truetype(self.fontPath, 35)
+        draw.text((40, 553), enemyTrainer.name + ' wants', (29, 17, 17), font=font)
+        draw.text((40, 635), 'to battle!', (29, 17, 17), font=font)
 
-        # draw = ImageDraw.Draw(backgroundImg)
+        trainerSpriteImg = self.__removeBackground(trainerSpriteImg).resize((250,250))
 
-        # draw.text((40, 553), textLine1, (29, 17, 17), font=font)
-        # draw.text((40, 635), textLine2, (29, 17, 17), font=font)
+        # add the sprites into the background image
+        back_im = backgroundImg.copy()
+        back_im.paste(trainerSpriteImg, (500, 20), trainerSpriteImg)
 
-        # pokemonSprite = self.__removeBackground(pokemonSprite).resize((250,250))
+        if enemyTrainerParty > 1:
+            for count in range(enemyTrainerParty):
+                x = 138 + (34* count)
+                back_im.paste(partypokeballImg, (x, 86), partypokeballImg)
 
-        # # add the sprites into the background image
-        # back_im = backgroundImg.copy()
-        # back_im.paste(pokemonSprite, (500, 0), pokemonSprite)
+        if playerPartySize > 1:
+            for count in range(playerPartySize):
+                x = 464 + (34* count)
+                back_im.paste(partypokeballImg, (x, 396), partypokeballImg)
+        
+        if playerPartyFainted > 0:
+            for count in range(playerPartyFainted):
+                x = 463 + (34* count)
+                back_im.paste(partypokeballFaintedImg, (x, 395), partypokeballFaintedImg)
 
-
-        # if playerPartySize > 1:
-        #     for count in range(playerPartySize):
-        #         x = 464 + (34* count)
-        #         back_im.paste(partypokeballImg, (x, 396), partypokeballImg)
-
-
-        # return back_im
-        return
+        return back_im
+        
  
-    def battle_wild_start(self, pokemon: PokemonClass, playerPartySize=1):
+    def battle_wild_start(self, pokemon: PokemonClass, playerPartySize=1, playerPartyFainted=0):
         """ generate an image for the start of a wild pokemon battle  """
         battleBackground = './sprites/battle/pokebattle_wild_start.png'
         partypokeball = './sprites/battle/party_pokeball.png'
+        partypokeballFainted = './sprites/battle/party_pokeball_fainted.png'
 
         backgroundImg = Image.open(battleBackground)
         partypokeballImg = Image.open(partypokeball)
+        partypokeballFaintedImg = Image.open(partypokeballFainted)
         textLine1 = "Wild %s" %(pokemon.pokemonName.upper())
         textLine2 = 'appeared!'
 
@@ -129,6 +130,10 @@ class imagegen:
                 x = 464 + (34* count)
                 back_im.paste(partypokeballImg, (x, 396), partypokeballImg)
 
+        if playerPartyFainted > 0:
+            for count in range(playerPartyFainted):
+                x = 463 + (34* count)
+                back_im.paste(partypokeballFaintedImg, (x, 395), partypokeballFaintedImg)
 
         return back_im
 
