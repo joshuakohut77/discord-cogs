@@ -128,6 +128,11 @@ class store:
                 inventory.antidote += quantity
             elif name == 'max-potion':
                 inventory.maxpotion += quantity
+            # Special Items
+            elif name == 'link-cable':
+                inventory.linkcable += quantity
+            elif name == 'game-shark':
+                inventory.gameshark += quantity
             
             inventory.save()
             

@@ -63,6 +63,9 @@ class inventory:
         self.thunderstone = None
         self.leafstone = None
         self.moonstone = None
+        # Special Items
+        self.linkcable = None
+        self.gameshark = None
         self.__loadInventory()
 
     def save(self):
@@ -86,7 +89,8 @@ class inventory:
                                 "x-defense"=%(xdefense)s, "x-sp-atk"=%(xspatk)s, "x-sp-def"=%(xspatk)s, 
                                 "x-speed"=%(xspeed)s, "fire-stone"=%(firestone)s, 
                                 "water-stone"=%(waterstone)s, "thunder-stone"=%(thunderstone)s, 
-                                "leaf-stone"=%(leafstone)s, "moon-stone"=%(moonstone)s
+                                "leaf-stone"=%(leafstone)s, "moon-stone"=%(moonstone)s,
+                                "link-cable"=%(linkcable)s, "game-shark"=%(gameshark)s
                                 WHERE "discord_id"=%(discordId)s'''
             values = { 'money': self.money, 'pokeball':self.pokeball,
                             'potion': self.potion, 'greatball': self.greatball, 'ultraball': self.ultraball,
@@ -106,7 +110,9 @@ class inventory:
                             'xattack': self.xattack, 'xdefense': self.xdefense, 'xspatk': self.xspatk, 
                             'xspdef': self.xspdef, 'xspeed': self.xspeed, 'firestone': self.firestone, 
                             'waterstone': self.waterstone, 'thunderstone': self.thunderstone, 
-                            'leafstone': self.leafstone, 'moonstone': self.moonstone, 'discordId': self.discordId }
+                            'leafstone': self.leafstone, 'moonstone': self.moonstone,
+                            "linkcable": self.linkcable, "gameshark": self.gameshark,
+                            'discordId': self.discordId }
             db.execute(updateString, values)
         except:
             self.statuscode = 96
@@ -131,7 +137,8 @@ class inventory:
                             "pp-up", "soda-pop", "town-map", "x-accuracy", "x-defense", 
                             "x-attack", "x-sp-atk", "x-sp-def", "x-speed", 
                             "fire-stone", "water-stone", 
-                            "thunder-stone", "leaf-stone", "moon-stone" 
+                            "thunder-stone", "leaf-stone", "moon-stone",
+                            "link-cable", "game-shark"
                             FROM inventory WHERE "discord_id"=%(discordId)s'''
             result = db.querySingle(queryString, { 'discordId': self.discordId })
             if len(result) > 0:
@@ -186,6 +193,9 @@ class inventory:
                 self.thunderstone = result[48]
                 self.leafstone = result[49]
                 self.moonstone = result[50]
+                # Special Items
+                self.linkcable = result[51]
+                self.linkcable = result[52]
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
