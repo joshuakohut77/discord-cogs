@@ -19,12 +19,14 @@ class imagegen:
 
         self.baseUrl = "https://pokesprites.joshkohut.com/sprites/"
         self.fontPath = "./fonts/pokemon_generation_1.ttf"
+        self.battlePath = './sprites/battle/'
+        self.trainersPath = './sprites/trainers/'
 
     def battle_trainer_victory(self, enemyTrainer: TrainerBattleModel):
         """ generate an image for the start of a wild pokemon battle  """
-        battleBackground = './sprites/battle/pokebattle_trainer_start.png'
-        partypokeballFainted = './sprites/battle/party_pokeball_fainted.png'
-        trainerSprite = './sprites/trainers/%s' %enemyTrainer.filename
+        battleBackground = self.battlePath + 'pokebattle_trainer_start.png'
+        partypokeballFainted = self.battlePath + '/party_pokeball_fainted.png'
+        trainerSprite = self.trainersPath + enemyTrainer.filename
         enemyTrainerParty = len(enemyTrainer.pokemon)
         
         backgroundImg = Image.open(battleBackground)
@@ -43,21 +45,21 @@ class imagegen:
 
         # add the sprites into the background image
         back_im = backgroundImg.copy()
-        back_im.paste(trainerSpriteImg, (500, 20), trainerSpriteImg)
+        back_im.paste(trainerSpriteImg, (500, 30), trainerSpriteImg)
 
         if enemyTrainerParty > 1:
             for count in range(enemyTrainerParty):
                 x = 137 + (34* count)
                 back_im.paste(partypokeballFaintedImg, (x, 85), partypokeballFaintedImg)
-        
+        # back_im.save('C:/Users/legend/Downloads/sample2.png')
         return back_im
  
     def battle_trainer_start(self, enemyTrainer: TrainerBattleModel, playerPartySize=1, playerPartyFainted=0):
         """ generate an image for the start of a wild pokemon battle  """
-        battleBackground = './sprites/battle/pokebattle_trainer_start.png'
-        partypokeball = './sprites/battle/party_pokeball.png'
-        partypokeballFainted = './sprites/battle/party_pokeball_fainted.png'
-        trainerSprite = './sprites/trainers/%s' %enemyTrainer.filename
+        battleBackground = self.battlePath + 'pokebattle_trainer_start.png'
+        partypokeball = self.battlePath + 'party_pokeball.png'
+        partypokeballFainted = self.battlePath + 'party_pokeball_fainted.png'
+        trainerSprite = self.trainersPath + enemyTrainer.filename
         enemyTrainerParty = len(enemyTrainer.pokemon)
 
         backgroundImg = Image.open(battleBackground)
@@ -77,7 +79,7 @@ class imagegen:
 
         # add the sprites into the background image
         back_im = backgroundImg.copy()
-        back_im.paste(trainerSpriteImg, (500, 20), trainerSpriteImg)
+        back_im.paste(trainerSpriteImg, (500, 30), trainerSpriteImg)
 
         if enemyTrainerParty > 1:
             for count in range(enemyTrainerParty):
@@ -99,9 +101,9 @@ class imagegen:
  
     def battle_wild_start(self, pokemon: PokemonClass, playerPartySize=1, playerPartyFainted=0):
         """ generate an image for the start of a wild pokemon battle  """
-        battleBackground = './sprites/battle/pokebattle_wild_start.png'
-        partypokeball = './sprites/battle/party_pokeball.png'
-        partypokeballFainted = './sprites/battle/party_pokeball_fainted.png'
+        battleBackground = self.battlePath + 'pokebattle_wild_start.png'
+        partypokeball = self.battlePath + 'party_pokeball.png'
+        partypokeballFainted = self.battlePath + 'party_pokeball_fainted.png'
 
         backgroundImg = Image.open(battleBackground)
         partypokeballImg = Image.open(partypokeball)
@@ -147,7 +149,7 @@ class imagegen:
         smallfont = ImageFont.truetype(self.fontPath, 20)
 
         imgActiveHealth, imgPokemonHealth = self.__getHealthSprite(active, pokemon)
-        battleBackground = './sprites/battle/pokebattle.png'
+        battleBackground = self.battlePath + 'pokebattle.png'
         activeSprite = self.__getImageFromURL(self.active.backSpriteURL)
         pokemonSprite = self.__getImageFromURL(self.pokemon.frontSpriteURL)
         
