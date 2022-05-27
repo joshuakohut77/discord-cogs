@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS public.inventory
 (
     discord_id character varying COLLATE pg_catalog."default" NOT NULL,
     money integer DEFAULT 0,
+    "link-cable" integer DEFAULT 0,
+    "game-shark" integer DEFAULT 0,
     "poke-ball" integer DEFAULT 0,
     "great-ball" integer DEFAULT 0,
     "ultra-ball" integer DEFAULT 0,

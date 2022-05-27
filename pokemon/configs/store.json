@@ -1,6 +1,10 @@
 {
     "68": [
       {
+        "item": "link-cable",
+        "price": 5000
+      },
+      {
         "item": "poke-ball",
         "price": 200
       },

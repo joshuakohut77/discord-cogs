@@ -235,6 +235,12 @@ itemDisplayNames = {
     "x-sp-def": {
         'name': 'X Sp. Defense',
         'desc': ''
+    },
+    # Special Items
+    "link-cable": {
+        "name": "Link Cable",
+        "desc": "A string exuding a mysterious energy that makes you feel a strange sense of connection. It’s loved by certain Pokémon.",
+        "emoji": constant.LINKCABLE
     }
 }
 
