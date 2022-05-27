@@ -100,7 +100,7 @@ class encounter:
                 self.statuscode = 420
                 retVal = {'result': 'defeat', 'activeMove': move1, 'activeDamage': damage1, 'enemyMove': move2, 'enemyDamage': damage2}
                 
-
+        
         return retVal
 
     def battle_auto(self):
