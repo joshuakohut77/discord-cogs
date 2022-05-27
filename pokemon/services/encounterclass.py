@@ -50,7 +50,7 @@ class encounter:
         lb.trades()
 
 
-    def fight(self):
+    def fight(self, battleType='auto', move=''):
         """ two pokemon fight and a outcome is decided """
         # two pokemon fight with an outcome calling victory or defeat
         # todo update with better fight outcome algorithm
@@ -59,12 +59,53 @@ class encounter:
             self.message = "Your active Pokemon has no HP left!"
             return
 
-        self.battle()
+        if battleType == 'auto':
+            retVal = self.battle_auto()
+        else:
+            retVal = self.battle_turn(move)
         self.statuscode = 420
-        return self.message
+        return retVal
 
-    def battle(self):
+    def battle_turn(self, move1):
+        retVal = {'result': None}
+        if move1 == '':
+            self.statuscode = 96
+            self.message = 'Invalid move sent for turn based battle'
+            return retVal
+        # get pokemons current fighting HP
+        battleHP1 = self.pokemon1.currentHP
+        battleHP2 = self.pokemon2.currentHP
+        # get pokemons list of moves
+        battleMoves2 = self.__removeNullMoves(self.pokemon2.getMoves())
+
+        pbMove = self.__loadMovesConfig(move1)
+        damage1 = self.__calculateDamageOfMove(pbMove)
+        battleHP2 -= damage1
+
+        if battleHP2 <=0:
+            self.pokemon1.currentHP = battleHP1
+            self.__victory()
+            self.statuscode = 420
+            retVal = {'result': 'victory', 'activeMove': move1, 'activeDamage': damage1}
+            
+        else:
+            randMoveSelector = random.randrange(1, len(battleMoves2)+1)
+            move2 = battleMoves2[randMoveSelector-1]
+            pbMove = self.__loadMovesConfig(move2)
+            damage2 = self.__calculateDamageOfMove(pbMove)
+            battleHP1 -= damage2
+            if battleHP1 <=0:
+                self.pokemon1.currentHP = battleHP1
+                self.__defeat()
+                self.statuscode = 420
+                retVal = {'result': 'defeat', 'activeMove': move1, 'activeDamage': damage1, 'enemyMove': move2, 'enemyDamage': damage2}
+                
+
+        return retVal
+
+    def battle_auto(self):
         """ this function simulates a live battle between two pokemon """
+        retVal = {'result': None}
         # get pokemons current fighting HP
         battleHP1 = self.pokemon1.currentHP        
         battleHP2 = self.pokemon2.currentHP
@@ -91,6 +132,7 @@ class encounter:
                 self.pokemon1.currentHP = battleHP1
                 self.__victory()
                 self.statuscode = 420
+                retVal = {'result': 'victory'}
                 break
             randMoveSelector = random.randrange(1, len(battleMoves2)+1)
             move2 = battleMoves2[randMoveSelector-1]
@@ -103,6 +145,7 @@ class encounter:
                 self.pokemon1.currentHP = battleHP1
                 self.__defeat()
                 self.statuscode = 420
+                retVal = {'result': 'defeat'}
                 break
             
             # max number of turns has occured. Break out of potential infinite loop
@@ -110,6 +153,8 @@ class encounter:
                 self.statuscode = 420
                 self.message = 'Failed to defeat enemy pokemon. The Pokemon ran away'
                 break
+        
+        return retVal
 
     def runAway(self):
         """ run away from battle """
