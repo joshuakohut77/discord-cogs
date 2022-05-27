@@ -6,8 +6,6 @@ CREATE TABLE IF NOT EXISTS public.inventory
 (
     discord_id character varying COLLATE pg_catalog."default" NOT NULL,
     money integer DEFAULT 0,
-    "link-cable" integer DEFAULT 0,
-    "game-shark" integer DEFAULT 0,
     "poke-ball" integer DEFAULT 0,
     "great-ball" integer DEFAULT 0,
     "ultra-ball" integer DEFAULT 0,
@@ -36,7 +34,7 @@ CREATE TABLE IF NOT EXISTS public.inventory
     "helix-fossil" integer DEFAULT 0,
     "hp-up" integer DEFAULT 0,
     lemonade integer DEFAULT 0,
-    elixer integer DEFAULT 0,
+    elixir integer DEFAULT 0,
     "max-elixir" integer DEFAULT 0,
     "max-ether" integer DEFAULT 0,
     ether integer DEFAULT 0,
@@ -58,6 +56,10 @@ CREATE TABLE IF NOT EXISTS public.inventory
     "moon-stone" integer DEFAULT 0,
     "x-attack" integer DEFAULT 0,
     "x-sp-def" integer DEFAULT 0,
+    "link-cable" integer DEFAULT 0,
+    "game-shark" integer DEFAULT 0,
+    iron integer DEFAULT 0,
+    protein integer DEFAULT 0,
     CONSTRAINT inventory_pkey PRIMARY KEY (discord_id)
 )
 
