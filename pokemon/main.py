@@ -38,17 +38,24 @@ from services.trainerclass import trainer as TrainerClass
 # - [x][low] fix fns where u pass in a user
 
 # - [low] better use of logging channel
-# - [med] db tightening, trades probably need reworked
+# - [med] db tightening
+# - [low] Flesh out the *debug module to help us test the game
+
+# - [low] Celadon City department store
+# - [med] Trades need a little reworked
+# - [med] Integrate Pokedex
+# - [med] Integrate Trainer / Gym battles
+
+# - [med] support evolution stones
+# - [med] support x-accuracy items, etc
 
 # - [low] dismiss/ephemeral messages
-# - [med] Pokedex
 # - [med] Test evolutions in discord
 # - [med] key item blockers
-# - [low] Flesh out the *debug module to help us test the game
 
 # things to test
 # - What happens if you release all your pokemon?
-# - What happens if you trade your active pokemon
+# - What happens if you trade your active pokemon?
 
 
 class CompositeClass(commands.CogMeta, ABCMeta):
