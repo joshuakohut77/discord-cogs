@@ -48,5 +48,6 @@
     "elixir": 3000,
     "max-elixir": 4500,
     "x-sp-atk": 1000,
-    "x-sp-def": 2000
+    "x-sp-def": 2000,
+    "link-cable": 5000
   }

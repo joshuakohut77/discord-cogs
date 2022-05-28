@@ -2,7 +2,7 @@
     "67": {
       "locationId": 67,
       "name": "celadon-city",
-      "north": null,
+      "north": "department-store",
       "east": "kanto-route-7",
       "south": null,
       "west": "kanto-route-16",
