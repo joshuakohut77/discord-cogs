@@ -390,6 +390,8 @@ class trainer:
                 method = 'gift'
                 pokemon = self.__getEncounter(method)
                 pokemon.save()
+                # Add to pokedex
+                pokedex(self.discordId, pokemon)
                 retMsg = 'You received %s!' %pokemon.pokemonName
                 self.statuscode = 420
                 self.message = retMsg
