@@ -42,6 +42,8 @@ class PokedexMixin(MixinMeta):
 
         pm = []
 
+        pokedex.sort(key=lambda x: x.pokemonId)
+
         for entry in pokedex:
             pm.append(f'#{str(entry.pokemonId).ljust(5)} {str(entry.pokemonName.capitalize()).ljust(12)} {entry.mostRecent}')
 
