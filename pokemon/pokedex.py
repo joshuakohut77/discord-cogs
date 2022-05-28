@@ -48,7 +48,7 @@ class PokedexMixin(MixinMeta):
             emoji = ''
             if entry.pokemonId == 69:
                 emoji = '<:bellsprout:979966310828113940>'
-            pm.append(f'{emoji} ```#{str(entry.pokemonId).ljust(5)} {str(entry.pokemonName.capitalize()).ljust(12)} {entry.mostRecent}```')
+            pm.append(f'{emoji} `#{str(entry.pokemonId).ljust(5)} {str(entry.pokemonName.capitalize()).ljust(12)} {entry.mostRecent}`')
             if entry.pokemonId == 69:
                 break
 
