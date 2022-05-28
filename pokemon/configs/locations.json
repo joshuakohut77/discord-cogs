@@ -2,7 +2,7 @@
     "67": {
       "locationId": 67,
       "name": "celadon-city",
-      "north": null,
+      "north": "department-store",
       "east": "kanto-route-7",
       "south": null,
       "west": "kanto-route-16",
@@ -62,6 +62,28 @@
       "south": null,
       "west": "kanto-route-3",
       "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/mt-moon.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "801": {
+      "locationId": 801,
+      "name": "mt-moon-BF1",
+      "north": null,
+      "east": "mt-moon-BF2",
+      "south": null,
+      "west": "mt-moon",
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/mt-moon-BF1.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "802": {
+      "locationId": 802,
+      "name": "mt-moon-BF2",
+      "north": null,
+      "east": "kanto-route-4",
+      "south": null,
+      "west": "mt-moon-BF1",
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/mt-moon-BF2.png",
       "pokecenter": false,
       "gym": false
     },
@@ -291,7 +313,7 @@
       "north": null,
       "east": "cerulean-city",
       "south": null,
-      "west": "mt-moon",
+      "west": "mt-moon-BF2",
       "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-4.png",
       "pokecenter": true,
       "gym": false
@@ -355,10 +377,54 @@
       "locationId": 136,
       "name": "seafoam-islands",
       "north": null,
-      "east": null,
+      "east": "seafoam-islands-BF1",
       "south": "kanto-sea-route-20",
       "west": null,
       "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/seafoam-islands.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "1361": {
+      "locationId": 1361,
+      "name": "seafoam-islands-BF1",
+      "north": null,
+      "east": "seafoam-islands",
+      "south": null,
+      "west": "seafoam-islands-BF2",
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/seafoam-islands-BF1.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "1362": {
+      "locationId": 1362,
+      "name": "seafoam-islands-BF2",
+      "north": null,
+      "east": "seafoam-islands-BF3",
+      "south": null,
+      "west": "seafoam-islands-BF1",
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/seafoam-islands-BF2.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "1363": {
+      "locationId": 1363,
+      "name": "seafoam-islands-BF3",
+      "north": null,
+      "east": "seafoam-islands-BF4",
+      "south": null,
+      "west": "seafoam-islands-BF2",
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/seafoam-islands-BF3.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "1364": {
+      "locationId": 1364,
+      "name": "seafoam-islands-BF4",
+      "north": null,
+      "east": null,
+      "south": null,
+      "west": "seafoam-islands-BF3",
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/seafoam-islands-BF4.png",
       "pokecenter": false,
       "gym": false
     },
@@ -453,7 +519,7 @@
     "160": {
       "locationId": 160,
       "name": "pokemon-tower",
-      "north": null,
+      "north": "pokemon-tower-2F",
       "east": null,
       "south": null,
       "west": "lavender-town",
@@ -461,14 +527,113 @@
       "pokecenter": false,
       "gym": false
     },
+    "1602": {
+      "locationId": 1602,
+      "name": "pokemon-tower-2F",
+      "north": "pokemon-tower-3F",
+      "east": null,
+      "south": "pokemon-tower",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-tower-2F.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "1603": {
+      "locationId": 1603,
+      "name": "pokemon-tower-3F",
+      "north": "pokemon-tower-4F",
+      "east": null,
+      "south": "pokemon-tower-2F",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-tower-3F.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "1604": {
+      "locationId": 1604,
+      "name": "pokemon-tower-4F",
+      "north": "pokemon-tower-5F",
+      "east": null,
+      "south": "pokemon-tower-3F",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-tower-4F.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "1605": {
+      "locationId": 1605,
+      "name": "pokemon-tower-5F",
+      "north": "pokemon-tower-6F",
+      "east": null,
+      "south": "pokemon-tower-4F",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-tower-5F.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "1606": {
+      "locationId": 1606,
+      "name": "pokemon-tower-6F",
+      "north": "pokemon-tower-5F",
+      "east": null,
+      "south": "pokemon-tower-7F",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-tower-6F.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "1607": {
+      "locationId": 1607,
+      "name": "pokemon-tower-7F",
+      "north": null,
+      "east": null,
+      "south": "pokemon-tower-6F",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-tower-7F.png",
+      "pokecenter": false,
+      "gym": false
+    },
     "161": {
       "locationId": 161,
       "name": "pokemon-mansion",
-      "north": null,
+      "north": "pokemon-mansion-2F",
       "east": "cinnabar-island",
       "south": null,
       "west": null,
       "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-mansion.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "1612": {
+      "locationId": 1612,
+      "name": "pokemon-mansion-2F",
+      "north": "pokemon-mansion-3F",
+      "east": null,
+      "south": "pokemon-mansion",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-mansion-2F.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "1613": {
+      "locationId": 1613,
+      "name": "pokemon-mansion-3F",
+      "north": "pokemon-mansion-BF1",
+      "east": null,
+      "south": "pokemon-mansion-2F",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-mansion-3F.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "1610": {
+      "locationId": 1610,
+      "name": "pokemon-mansion-BF1",
+      "north": null,
+      "east": null,
+      "south": "pokemon-mansion-3F",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-mansion-BF1.png",
       "pokecenter": false,
       "gym": false
     },
@@ -538,8 +703,8 @@
       "pokecenter": false,
       "gym": false
     },
-    "801": {
-      "locationId": 801,
+    "671": {
+      "locationId": 671,
       "name": "department-store",
       "north": "department-store-2F",
       "east": null,
@@ -549,8 +714,8 @@
       "pokecenter": false,
       "gym": false
     },
-    "802": {
-      "locationId": 802,
+    "672": {
+      "locationId": 672,
       "name": "department-store-2F",
       "north": "department-store-3F",
       "east": null,
@@ -560,8 +725,8 @@
       "pokecenter": true,
       "gym": false
     },
-    "803": {
-      "locationId": 803,
+    "673": {
+      "locationId": 673,
       "name": "department-store-3F",
       "north": "department-store-4F",
       "east": null,
@@ -571,8 +736,8 @@
       "pokecenter": false,
       "gym": false
     },
-    "804": {
-      "locationId": 804,
+    "674": {
+      "locationId": 674,
       "name": "department-store-4F",
       "north": "department-store-5F",
       "east": null,
@@ -582,8 +747,8 @@
       "pokecenter": true,
       "gym": false
     },
-    "805": {
-      "locationId": 805,
+    "675": {
+      "locationId": 675,
       "name": "department-store-5F",
       "north": "department-store-rooftop",
       "east": null,
@@ -593,8 +758,8 @@
       "pokecenter": true,
       "gym": false
     },
-    "806": {
-      "locationId": 806,
+    "676": {
+      "locationId": 676,
       "name": "department-store-rooftop",
       "north": null,
       "east": null,
