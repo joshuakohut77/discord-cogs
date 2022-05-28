@@ -293,37 +293,37 @@
     "blockers": ["ss_ticket"],
     "name": "ss-anne"
   },
-  "801": {
+  "671": {
     "pre-requsites": [],
     "quest": [],
     "blockers": [],
     "name": "department-store"
   },
-  "802": {
+  "672": {
     "pre-requsites": [],
     "quest": [],
     "blockers": [],
     "name": "department-store-2F"
   },
-  "803": {
+  "673": {
     "pre-requsites": [],
     "quest": [],
     "blockers": [],
     "name": "department-store-3F"
   },
-  "804": {
+  "674": {
     "pre-requsites": [],
     "quest": [],
     "blockers": [],
     "name": "department-store-4F"
   },
-  "805": {
+  "675": {
     "pre-requsites": [],
     "quest": [],
     "blockers": [],
     "name": "department-store-5F"
   },
-  "806": {
+  "676": {
     "pre-requsites": [],
     "quest": ["Rooftop Square"],
     "blockers": [],
