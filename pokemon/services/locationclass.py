@@ -84,8 +84,8 @@ class location:
             p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/quests.json')
             questsConfig = json.load(open(p, 'r'))
             quest = QuestModel(questsConfig[str(locationId)])
-            questObj = qObj(self.discordId)
             if quest.questName != []:
+                questObj = qObj(self.discordId)
                 if questObj.prerequsitesValid(quest.prerequsites):
                     for questMethod in quest.questName:
                         if not questObj.questComplete(questMethod):
