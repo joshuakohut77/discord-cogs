@@ -30,14 +30,11 @@ class PokedexMixin(MixinMeta):
 
 
     @__pokedex.command()
-    async def show(self, ctx: commands.Context, user: discord.Member) -> None:
+    async def show(self, ctx: commands.Context, user: discord.Member = None) -> None:
         author = ctx.author
 
         if user is None:
             user = author
-
-        def nextBtnClick():
-            return lambda x: x.custom_id == "next" or x.custom_id == 'previous'
 
         trainer = TrainerClass(str(user.id))
 
@@ -57,6 +54,8 @@ class PokedexMixin(MixinMeta):
 
         trainerDex = "\r\n".join(pm) if len(pm) > 0 else 'No Pokémon encountered yet.'
         embed.add_field(name='Pokémon', value=trainerDex, inline=False)
+
+        await ctx.send(embed=embed)
 
         
 
