@@ -3,7 +3,6 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 from abc import ABCMeta
 
 import discord
-from discord import (Embed, Member)
 from discord_components import (DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
 
 
@@ -24,6 +23,7 @@ from .map import MapMixin
 from .encounters import EncountersMixin
 from .debug import DebugMixin
 from .card import TrainerCardMixin
+from .pokedex import PokedexMixin
 
 from services.trainerclass import trainer as TrainerClass
 
@@ -63,7 +63,7 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class Pokemon(StarterMixin, PcMixin, PartyMixin, PokemartMixin, PokecenterMixin, InventoryMixin, MapMixin, TrainerCardMixin, EncountersMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
+class Pokemon(StarterMixin, PcMixin, PartyMixin, PokemartMixin, PokecenterMixin, InventoryMixin, MapMixin, TrainerCardMixin, EncountersMixin, PokedexMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):

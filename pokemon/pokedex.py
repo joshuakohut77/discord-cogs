@@ -18,7 +18,7 @@ from .abcd import MixinMeta
 
 
 
-class PokeDexMixin(MixinMeta):
+class PokedexMixin(MixinMeta):
     """Pokedex"""
 
 
