@@ -53,7 +53,7 @@ class PokedexMixin(MixinMeta):
                         icon_url=str(user.avatar_url))
 
         trainerDex = "\r\n".join(pm) if len(pm) > 0 else 'No Pokémon encountered yet.'
-        embed.add_field(name='Pokémon', value=trainerDex, inline=False)
+        embed.add_field(name='Pokémon', value=f"```{trainerDex}```", inline=False)
 
         await ctx.send(embed=embed)
 
