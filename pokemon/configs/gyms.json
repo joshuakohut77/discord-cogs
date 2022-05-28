@@ -10,6 +10,7 @@
     "keyitem": "rainbow_badge",
     "money": 2871,
     "enemy_uuid": "8bf6a3b8",
+    "requirements": [],
     "pokemon": [
       {
         "victreebell": 29
@@ -139,6 +140,7 @@
     "keyitem": "cascade_badge",
     "money": 2079,
     "enemy_uuid": "8bf6acb4",
+    "requirements": [],
     "pokemon": [
       {
         "staryu": 18
@@ -186,6 +188,7 @@
     "keyitem": "volcano_badge",
     "money": 4653,
     "enemy_uuid": "8bf6b0a6",
+    "requirements": [],
     "pokemon": [
       {
         "growlithe": 42
@@ -318,6 +321,7 @@
     "keyitem": "soul_badge",
     "money": 4257,
     "enemy_uuid": "8bf6b8bc",
+    "requirements": [],
     "pokemon": [
       {
         "koffing": 37
@@ -436,6 +440,7 @@
     "keyitem": "thunder_badge",
     "money": 2376,
     "enemy_uuid": "8bf6bfd8",
+    "requirements": [],
     "pokemon": [
       {
         "voltorb": 21
@@ -503,6 +508,7 @@
     "keyitem": "earth_badge",
     "money": 4950,
     "enemy_uuid": "8bf6c33e",
+    "requirements": ["badge_volcano"],
     "pokemon": [
       {
         "rhyhorn": 45
@@ -640,6 +646,7 @@
     "keyitem": "boulder_badge",
     "money": 1386,
     "enemy_uuid": "8bf6cbea",
+    "requirements": [],
     "pokemon": [
       {
         "geodude": 12
@@ -676,6 +683,7 @@
     "keyitem": "marsh_badge",
     "money": 4257,
     "enemy_uuid": "8bf6cf28",
+    "requirements": [],
     "pokemon": [
       {
         "kadabra": 38

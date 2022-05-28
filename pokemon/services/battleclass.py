@@ -5,6 +5,7 @@ import json
 import random
 from dbclass import db as dbconn
 from inventoryclass import inventory as inv
+from questclass import quests as qObj
 from loggerclass import logger as log
 from models.trainer_battle import TrainerBattleModel
 
@@ -73,12 +74,22 @@ class battle:
             if self.enemyType == 'wild':
                 trainerConfigList = loadedConfig[str(self.locationId)]
             else:
-                trainerConfigList = loadedConfig[str(self.locationId)]['trainers']
+                baseConfig = loadedConfig[str(self.locationId)]
+                requirements = baseConfig['requirements']
+                validRequirements = True
+                if requirements != []:
+                    questObj = qObj(self.discordId)
+                    if not questObj.prerequsitesValid(requirements):
+                        trainerConfigList = ['Missing Requirements']
+                        validRequirements = False
+                if validRequirements:
+                    trainerConfigList = baseConfig['trainers']
             
             trainerModelList = self.__returnTrainerList(trainerConfigList)
 
             # check if trainer has previously beaten trainer and remove trainer from list. 
             for trainer in trainerModelList:
+
                 if trainer.enemy_uuid in enemyUUIDs:
                     trainerModelList.remove(trainer)
         except:
@@ -131,7 +142,11 @@ class battle:
             self.statuscode = 96
             self.message = "empty trainer list"
             return
-        
+        elif trainerList == ['Missing Requirements']
+            self.statuscode = 420
+            self.message = "You cannot do that yet!"
+            return
+
         for trainer in trainerList:
             trainerModelList.append(TrainerBattleModel(trainer))
 
