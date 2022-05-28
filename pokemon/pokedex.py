@@ -43,7 +43,7 @@ class PokedexMixin(MixinMeta):
         pm = []
 
         for entry in pokedex:
-            pm.append(f'{entry.pokemonId} {entry.pokemonName} - {entry.mostRecent}')
+            pm.append(f'#{entry.pokemonId.ljust(5)} {entry.pokemonName.capitalize().ljust(12)} {entry.mostRecent}')
 
 
         # Create the embed object
