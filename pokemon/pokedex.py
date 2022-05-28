@@ -45,7 +45,11 @@ class PokedexMixin(MixinMeta):
         pokedex.sort(key=lambda x: x.pokemonId)
 
         for entry in pokedex:
-            pm.append(f'#{str(entry.pokemonId).ljust(5)} {str(entry.pokemonName.capitalize()).ljust(12)} {entry.mostRecent}')
+            emoji = ''
+            if entry.pokemonId == 69:
+                emoji = '<:bellsprout:979966310828113940>'
+            pm.append(f'{emoji} ```#{str(entry.pokemonId).ljust(5)} {str(entry.pokemonName.capitalize()).ljust(12)} {entry.mostRecent}```')
+            break
 
 
         # Create the embed object
@@ -55,7 +59,7 @@ class PokedexMixin(MixinMeta):
                         icon_url=str(user.avatar_url))
 
         trainerDex = "\r\n".join(pm) if len(pm) > 0 else 'No Pokémon encountered yet.'
-        embed.add_field(name='Pokémon', value=f"```{trainerDex}```", inline=False)
+        embed.add_field(name='Pokémon', value=f"{trainerDex}", inline=False)
 
         await ctx.send(embed=embed)
 

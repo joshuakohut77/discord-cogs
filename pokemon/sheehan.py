@@ -23,6 +23,7 @@ b = card.value == DisplayCard.STATS.value
 c = card.value == DisplayCard.MOVES.value
 
 trainer = TrainerClass('509767223938777108')
+dex = trainer.getPokedex()
 active = trainer.getActivePokemon()
 trainer.heal(active.trainerId, 'revive')
 # trainer.onlyone()
