@@ -31,9 +31,21 @@
   },
   "80": {
     "pre-requsites": [],
-    "quest": ["Super Nerd"],
+    "quest": [],
     "blockers": [],
     "name": "mt-moon"
+  },
+  "801": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "mt-moon-BF1"
+  },
+  "802": {
+    "pre-requsites": [],
+    "quest": ["Super Nerd"],
+    "blockers": [],
+    "name": "mt-moon-BF2"
   },
   "86": {
     "pre-requsites": ["oaks_parcel"],
@@ -46,6 +58,12 @@
     "quest": [],
     "blockers": [],
     "name": "rock-tunnel"
+  },
+  "871": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "rock-tunnel-BF1"
   },
   "88": {
     "pre-requsites": [],
@@ -120,8 +138,8 @@
     "name": "kanto-route-2"
   },
   "100": {
-    "pre-requsites": [],
-    "quest": [],
+    "pre-requsites": ["HM01"],
+    "quest": ["Oaks Aide"],
     "blockers": ["HM03"],
     "name": "kanto-sea-route-20"
   },
@@ -197,6 +215,30 @@
     "blockers": ["HM03", "HM04"],
     "name": "seafoam-islands"
   },
+  "1361": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "seafoam-islands-BF1"
+  },
+  "1362": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "seafoam-islands-BF2"
+  },
+  "1363": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "seafoam-islands-BF3"
+  },
+  "1364": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "seafoam-islands-BF4"
+  },
   "147": {
     "pre-requsites": [""],
     "quest": [],
@@ -240,22 +282,82 @@
     "name": "power-plant"
   },
   "159": {
-    "pre-requsites": ["HM01"],
-    "quest": ["Oaks Aide"],
+    "pre-requsites": [],
+    "quest": [],
     "blockers": [],
-    "name": "kanto-victory-road-2"
+    "name": "kanto-victory-road-2F"
+  },
+  "1593": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "kanto-victory-road-3F"
   },
   "160": {
     "pre-requsites": [],
-    "quest": ["Free Spirits"],
+    "quest": [],
     "blockers": ["silph_scope"],
     "name": "pokemon-tower"
+  },
+  "1602": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "pokemon-tower-2F"
+  },
+  "1603": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "pokemon-tower-3F"
+  },
+  "1604": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "pokemon-tower-4F"
+  },
+  "1605": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "pokemon-tower-5F"
+  },
+  "1606": {
+    "pre-requsites": [],
+    "quest": ["Free Spirits"],
+    "blockers": [],
+    "name": "pokemon-tower-6F"
+  },
+  "1607": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "pokemon-tower-7F"
   },
   "161": {
     "pre-requsites": [],
     "quest": [],
     "blockers": [],
     "name": "pokemon-mansion"
+  },
+  "1612": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "pokemon-mansion-2F"
+  },
+  "1613": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "pokemon-mansion-3F"
+  },
+  "1610": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "pokemon-mansion-BF1"
   },
   "162": {
     "pre-requsites": ["badge_soul"],
@@ -271,14 +373,14 @@
   },
   "232": {
     "pre-requsites": ["silph_scope"],
-    "quest": ["Pokemon Tower", "Mr Fuji"],
+    "quest": ["Mr Fuji"],
     "blockers": [],
     "name": "lavender-town"
   },
   "233": {
     "pre-requsites": [],
     "quest": ["The Pokemon League"],
-    "blockers": [],
+    "blockers": ["badge_earth"],
     "name": "indigo-plateau"
   },
   "234": {
