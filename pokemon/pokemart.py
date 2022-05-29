@@ -313,7 +313,7 @@ class PokemartMixin(MixinMeta):
     def __storePageEmbed(self, user: discord.Member, state: StoreState):
         # Create the embed object
         # file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/items/poke-ball.png", filename="poke-ball.png")
-        embed = discord.Embed(title=f"Poké Mart - {state.location.name}")
+        embed = discord.Embed(title=f"Poké Mart - {constant.LOCATION_DISPLAY_NAMES[state.location.name]}")
         embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/locations/poke_mart.png")
         # embed.set_author(name=f"{user.display_name}",
         #                  icon_url=str(user.avatar_url))
