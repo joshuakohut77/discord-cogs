@@ -305,6 +305,8 @@ class PokemartMixin(MixinMeta):
             embed=embed,
             components=btns
         )
+        state.messageId = message.id
+        state.channelId = message.channel.id
         self.__store[str(user.id)] = state
 
         await ctx.tick()
