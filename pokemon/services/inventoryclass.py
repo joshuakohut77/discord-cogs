@@ -142,7 +142,7 @@ class inventory:
                             "x-attack", "x-sp-atk", "x-sp-def", "x-speed", 
                             "fire-stone", "water-stone", 
                             "thunder-stone", "leaf-stone", "moon-stone",
-                            "iron", "protein", "link-cable", "game-shark",
+                            "iron", "protein", "link-cable", "game-shark"
                             FROM inventory WHERE "discord_id"=%(discordId)s'''
             result = db.querySingle(queryString, { 'discordId': self.discordId })
             if len(result) > 0:
