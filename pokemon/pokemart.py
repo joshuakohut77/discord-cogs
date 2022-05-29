@@ -188,6 +188,11 @@ itemDisplayNames = {
         'desc': 'A nutritious drink for Pokémon. It raises the base SPEED stat of one Pokémon.',
         'emoji': constant.CARBOS
     },
+    "calcium": {
+        'name': 'Calcium',
+        'desc': 'A nutritious drink for Pokémon. It raises the base SP. ATK stat of one Pokémon.',
+        'emoji': constant.CALCIUM
+    },
     "hp-up": {
         'name': 'HP Up',
         'desc': 'A nutritious drink for Pokémon. It raises the base HP of one Pokémon.',
