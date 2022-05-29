@@ -23,9 +23,11 @@ b = card.value == DisplayCard.STATS.value
 c = card.value == DisplayCard.MOVES.value
 
 trainer = TrainerClass('509767223938777108')
-dex = trainer.getPokedex()
-active = trainer.getActivePokemon()
-trainer.heal(active.trainerId, 'revive')
+location = trainer.getLocation()
+
+# dex = trainer.getPokedex()
+# active = trainer.getActivePokemon()
+# trainer.heal(active.trainerId, 'revive')
 # trainer.onlyone()
 # trainer.heal(82, 'potion')
 # trainer.gift()
@@ -45,7 +47,7 @@ trainer.heal(active.trainerId, 'revive')
 
 # inv = InventoryClass(trainer.discordId)
 
-# store = StoreClass(trainer.discordId, 154)
+store = StoreClass(trainer.discordId, location.locationId)
 # store.sellItem('ligma', 1)
 # store.buyItem('super-potion', 1)
 # pokemon = trainer.encounter('walk')

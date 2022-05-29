@@ -20,7 +20,7 @@ class StoreItem:
     def __init__(self, name: str, price: int, spriteUrl: str) -> None:
         self.name = name
         self.price = price
-        self.spriteUrl
+        self.spriteUrl = spriteUrl
 
 
 class store:
