@@ -47,7 +47,7 @@ location = trainer.getLocation()
 
 # inv = InventoryClass(trainer.discordId)
 
-store = StoreClass(trainer.discordId, location.locationId)
+# store = StoreClass(trainer.discordId, location.locationId)
 # store.sellItem('ligma', 1)
 # store.buyItem('super-potion', 1)
 # pokemon = trainer.encounter('walk')
