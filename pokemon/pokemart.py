@@ -276,7 +276,47 @@ itemDisplayNames = {
     "TM32": {
         'name': 'TM 32',
         'desc': '',
-        'emoji': ''
+        'emoji': constant.HM01
+    },
+    "TM02": {
+        'name': 'TM 02',
+        'desc': '',
+        'emoji': constant.HM01
+    },
+    "TM37": {
+        'name': 'TM 37',
+        'desc': '',
+        'emoji': constant.HM01
+    },
+    "TM05": {
+        'name': 'TM 05',
+        'desc': '',
+        'emoji': constant.HM01
+    },
+    "TM17": {
+        'name': 'TM 17',
+        'desc': '',
+        'emoji': constant.HM01
+    },
+    "TM33": {
+        'name': 'TM 33',
+        'desc': '',
+        'emoji': constant.HM01
+    },
+    "TM07": {
+        'name': 'TM 07',
+        'desc': '',
+        'emoji': constant.HM01
+    },
+    "TM01": {
+        'name': 'TM 01',
+        'desc': '',
+        'emoji': constant.HM01
+    },
+    "TM09": {
+        'name': 'TM 09',
+        'desc': '',
+        'emoji': constant.HM01
     },
     # Special Items
     "link-cable": {
@@ -387,7 +427,8 @@ class PokemartMixin(MixinMeta):
             ))
 
         btns = []
-        btns.append(firstRowBtns)
+        if len(firstRowBtns) > 0:
+            btns.append(firstRowBtns)
 
         return embed, btns
 
