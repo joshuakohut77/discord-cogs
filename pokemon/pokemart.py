@@ -3,6 +3,8 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 
 import discord
+from discord import embeds
+from discord import emoji
 from discord_components import (ButtonStyle, Button, Interaction)
 from models.location import LocationModel
 
@@ -119,40 +121,16 @@ itemDisplayNames = {
         'desc': 'An antidote for curing a poisoned Pokémon.',
         'emoji': constant.ANTIDOTE
     },
-    "calcium": {
-        'name': 'Calcium',
-        'desc': ''
-    },
-    "carbos": {
-        'name': 'Carbos',
-        'desc': ''
-    },
     "coin-case": {
         'name': 'Coin Case',
-        'desc': ''
-    },
-    "dire-hit": {
-        'name': 'Dire Hit',
         'desc': ''
     },
     "dome-fossil": {
         'name': 'Dome Fossil',
         'desc': ''
     },
-    "fresh-water": {
-        'name': 'Fresh Water',
-        'desc': ''
-    },
     "helix-fossil": {
         'name': 'Helix Fossil'
-    },
-    "hp-up": {
-        'name': 'HP Up',
-        'desc': ''
-    },
-    "lemonade": {
-        'name': 'Lemonade',
-        'desc': ''
     },
     "max-ether": {
         'name': 'Max Ether',
@@ -172,55 +150,114 @@ itemDisplayNames = {
     },
     "poke-doll": {
         'name': 'Poké Doll',
-        'desc': ''
-    },
-    "pp-up": {
-        'name': 'PP Up',
-        'desc': ''
-    },
-    "soda-pop": {
-        'name': 'Soda Pop',
-        'desc': ''
+        'desc': 'A doll that attracts the attention of a Pokémon. It guarantees escape from any battle with wild Pokémon.',
+        'emoji': constant.POKEDOLL
     },
     "town-map": {
         'name': 'Town Map',
         'desc': ''
     },
+    "fresh-water": {
+        'name': 'Fresh Water',
+        'desc': 'Water with a high mineral content. It restores the HP of one Pokémon by 50 points.',
+        'emoji': constant.FRESHWATER
+    },
+    "soda-pop": {
+        'name': 'Soda Pop',
+        'desc': 'A fizzy soda drink. It restores the HP of one Pokémon by 60 points.',
+        'emoji': constant.SODAPOP
+    },
+    "lemonade": {
+        'name': 'Lemonade',
+        'desc': 'A very sweet drink. It restores the HP of one Pokémon by 80 points.',
+        'emoji': constant.LEMONADE
+    },
+    # Stat Items
+    "iron": {
+        'name': 'Iron',
+        'desc': 'A nutritious drink for Pokémon. It raises the base DEFENSE stat of one Pokémon.',
+        'emoji': constant.IRON
+    },
+    "protein": {
+        'name': 'protein',
+        'desc': 'A nutritious drink for Pokémon. It raises the base Attack stat of one Pokémon.',
+        'emoji': constant.PROTEIN
+    },
+    "carbos": {
+        'name': 'Carbos',
+        'desc': 'A nutritious drink for Pokémon. It raises the base SPEED stat of one Pokémon.',
+        'emoji': constant.CARBOS
+    },
+    "hp-up": {
+        'name': 'HP Up',
+        'desc': 'A nutritious drink for Pokémon. It raises the base HP of one Pokémon.',
+        'emoji': constant.HPUP
+    },
     "x-accuracy": {
         'name': 'X Accuracy',
-        'desc': ''
+        'desc': 'Raises accuracy of attack moves during one battle.',
+        'emoji': constant.XACCURACY
     },
     "x-attack": {
         'name': 'X Attack',
-        'desc': ''
+        'desc': 'Raises the ATTACK stat of Pokémon in battle. Wears off if the Pokémon is withdrawn.',
+        'emoji': constant.XATTACK
     },
     "x-defense": {
         'name': 'X Defense',
-        'desc': ''
+        'desc': 'Raises the DEFENSE stat of Pokémon in battle. Wears off if the Pokémon is withdrawn.',
+        'emoji': constant.XDEFENSE
     },
     "x-speed": {
         'name': 'X Speed',
-        'desc': ''
+        'desc': 'Raises the SPEED stat of Pokémon in battle. Wears off if the Pokémon is withdrawn.',
+        'emoji': constant.XSPEED
     },
+    "x-sp-atk": {
+        'name': 'X Sp. Attack',
+        'desc': 'Raises the Sp.Atk stat of Pokémon in battle. Wears off if the Pokémon is withdrawn.',
+        'emoji': constant.XSPATTACK
+    },
+    "x-sp-def": {
+        'name': 'X Sp. Defense',
+        'desc': 'An item that raises the Sp. Def stat of a Pokémon in battle. It wears off if the Pokémon is withdrawn.',
+        'emoji': constant.XSPDEFENSE
+    },
+    "dire-hit": {
+        'name': 'Dire Hit',
+        'desc': 'Raises the critical-hit ratio of Pokémon in battle. Wears off if the Pokémon is withdrawn.',
+        'emoji': constant.DIREHIT
+    },
+    "pp-up": {
+        'name': 'PP Up',
+        'desc': 'Slightly raises the maximum PP of a selected move for one Pokémon.',
+        'emoji': constant.PPUP
+    },
+    # Evolution Stones
     "fire-stone": {
         'name': 'Fire Stone',
-        'desc': ''
+        'desc': 'A peculiar stone that makes certain species of Pokémon evolve. It is colored orange.',
+        'emoji': constant.FIRESTONE
     },
     "water-stone": {
         'name': 'Water Stone',
-        'desc': ''
+        'desc': 'A peculiar stone that makes certain species of Pokémon evolve. It is a clear, light blue.',
+        'emoji': constant.WATERSTONE
     },
     "thunder-stone": {
         'name': 'Thunder Stone',
-        'desc': ''
+        'desc': 'A peculiar stone that makes certain species of Pokémon evolve. It has a thunderbolt pattern.',
+        'emoji': constant.THUNDERSTONE
     },
     "leaf-stone": {
         'name': 'Leaf Stone',
-        'desc': ''
+        'desc': 'A peculiar stone that makes certain species of Pokémon evolve. It has a leaf pattern.',
+        'emoji': constant.LEAFSTONE
     },
     "moon-stone": {
         'name': 'Moon Stone',
-        'desc': ''
+        'desc': 'A peculiar stone that makes certain species of Pokémon evolve. It is as black as the night sky.',
+        'emoji': constant.MOONSTONE
     },
     "elixir": {
         'name': 'Elixir',
@@ -230,13 +267,11 @@ itemDisplayNames = {
         'name': 'Max Elixir',
         'desc': ''
     },
-    "x-sp-atk": {
-        'name': 'X Sp. Attack',
-        'desc': ''
-    },
-    "x-sp-def": {
-        'name': 'X Sp. Defense',
-        'desc': ''
+    # TMs
+    "TM32": {
+        'name': 'TM 32',
+        'desc': '',
+        'emoji': ''
     },
     # Special Items
     "link-cable": {
@@ -271,7 +306,6 @@ class PokemartMixin(MixinMeta):
 
     __store = {}
 
-
     @commands.group(name="pokemart", aliases=['mart'])
     @commands.guild_only()
     async def _pokemart(self, ctx: commands.Context) -> None:
@@ -281,10 +315,10 @@ class PokemartMixin(MixinMeta):
 
     @_pokemart.command()
     async def shop(self, ctx: commands.Context, user: discord.Member = None) -> None:
-        
+
         if user is None:
             user = ctx.author
-        
+
         trainer = TrainerClass(user.id)
         location = trainer.getLocation()
         store = StoreClass(str(user.id), location.locationId)
@@ -300,7 +334,6 @@ class PokemartMixin(MixinMeta):
 
         embed, btns = self.__storePageEmbed(user, state)
 
-
         message = await ctx.send(
             embed=embed,
             components=btns
@@ -311,12 +344,13 @@ class PokemartMixin(MixinMeta):
 
         await ctx.tick()
 
-
     def __storePageEmbed(self, user: discord.Member, state: StoreState):
         # Create the embed object
         # file = discord.File("data/cogs/CogManager/cogs/pokemon/sprites/items/poke-ball.png", filename="poke-ball.png")
-        embed = discord.Embed(title=f"Poké Mart - {constant.LOCATION_DISPLAY_NAMES[state.location.name]}")
-        embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/locations/poke_mart.png")
+        embed = discord.Embed(
+            title=f"Poké Mart - {constant.LOCATION_DISPLAY_NAMES[state.location.name]}")
+        embed.set_thumbnail(
+            url=f"https://pokesprites.joshkohut.com/sprites/locations/poke_mart.png")
         # embed.set_author(name=f"{user.display_name}",
         #                  icon_url=str(user.avatar_url))
 
@@ -330,14 +364,15 @@ class PokemartMixin(MixinMeta):
             description = itemDisplayNames[key]['desc']
             name = itemDisplayNames[key]['name']
 
-            embed.add_field(name=f"{emoji}  {name} — {price}", value=description, inline=False)
-
+            embed.add_field(name=f"{emoji}  {name} — {price}",
+                            value=description, inline=False)
 
         btns = []
 
         if state.idx > 0:
             btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'),
+                Button(style=ButtonStyle.gray,
+                       label='Previous', custom_id='previous'),
                 self.__on_prev_click
             ))
         if state.idx < len(state.storeList) - 1:
@@ -347,7 +382,6 @@ class PokemartMixin(MixinMeta):
             ))
 
         return embed, [btns]
-
 
     async def __on_next_click(self, interaction: Interaction):
         user = interaction.user
@@ -361,10 +395,9 @@ class PokemartMixin(MixinMeta):
 
         embed, btns = await self.__storePageEmbed(user, state)
         message = await interaction.edit_origin(embed=embed, components=btns)
-        
+
         state.messageId = message
-        self.__store[str(user.id)] = state     
-    
+        self.__store[str(user.id)] = state
 
     async def __on_prev_click(self, interaction: Interaction):
         user = interaction.user
@@ -378,10 +411,9 @@ class PokemartMixin(MixinMeta):
 
         embed, btns = await self.__storePageEmbed(user, state)
         message = await interaction.edit_origin(embed=embed, components=btns)
-        
-        state.messageId = message
-        self.__store[str(user.id)] = state              
 
+        state.messageId = message
+        self.__store[str(user.id)] = state
 
     def __checkStoreState(self, user: discord.User, message: discord.Message):
         state: StoreState
@@ -392,8 +424,6 @@ class PokemartMixin(MixinMeta):
             if state.messageId != message.id:
                 return False
         return True
-    
-
 
     @_pokemart.command()
     async def buy(self, ctx: commands.Context, item: str, count: int = 1) -> None:
@@ -423,7 +453,6 @@ class PokemartMixin(MixinMeta):
         # await ctx.send(res)
         # await ctx.send(f'{user.display_name} bought {count} {item}')
 
-
     @_pokemart.command()
     async def sell(self, ctx: commands.Context, item: str, count: int = 1) -> None:
         user = ctx.author
@@ -442,4 +471,3 @@ class PokemartMixin(MixinMeta):
 
         # Send to logging channel
         await self.sendToLoggingChannel(store.message)
-
