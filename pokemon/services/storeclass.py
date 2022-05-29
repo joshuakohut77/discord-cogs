@@ -6,12 +6,27 @@ from dbclass import db as dbconn
 from inventoryclass import inventory as inv
 from keyitemsclass import keyitems as kitems
 from loggerclass import logger as log
+from typing import List
 
 # Class Logger
 logger = log()
 
 
+class StoreItem:
+    name: str
+    price: int
+    spriteUrl: str
+
+    def __init__(self, name: str, price: int, spriteUrl: str) -> None:
+        self.name = name
+        self.price = price
+        self.spriteUrl
+
+
 class store:
+    # Public
+    storeList: List[List[StoreItem]]
+
     def __init__(self, discordId: str, locationId: int):
         self.statuscode = 69
         self.message = ''
@@ -24,7 +39,7 @@ class store:
 
     def __loadStore(self):
         """ loads a trainers store into the class object """
-        storeList = []
+        self.storeList = []
         try:
             p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/store.json')
             storeConfig = json.load(open(p, 'r'))
@@ -52,27 +67,33 @@ class store:
                         self.message = 'Hey there, take that parcel to Professor Oak please.'
                         return
 
+            # TODO: general pokemart pagination, [[], []]
+            # TODO: update db tables
             results = storeConfig[str(self.locationId)]
 
-            for row in results:
-                item = row['item']
-                price = row['price']
-                storeOption = {'item': item, 'price': price,
-                               'spriteUrl': self.__getSpriteUrl(item)}
-                storeList.append(storeOption)
-
             self.storeMap = {}
-            for item in storeList:
-                if item['item'] not in self.storeMap.keys():
-                    self.storeMap[item['item']] = {}
+            for pages in results:
+                page = []
 
-                if item['item'] in self.storeMap.keys():
-                    self.storeMap[item['item']]['price'] = item['price']
+                for row in pages:
+                    name = row['item']
+                    price = row['price']
+                    url = self.__getSpriteUrl(name)
+
+                    item = StoreItem(name, price, url)
+                    page.append(item)
+
+                    if item.name not in self.storeMap.keys():
+                        self.storeMap[item.name] = {}
+
+                    if item.name in self.storeMap.keys():
+                        self.storeMap[item.name]['price'] = item.price
+
+                self.storeList.append(page)
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
-        finally:
-            self.storeList = storeList
+        
 
     def buyItem(self, name, quantity):
         """ buy and item and update trainers inventory """

@@ -44,13 +44,15 @@ class PokedexMixin(MixinMeta):
 
         pokedex.sort(key=lambda x: x.pokemonId)
 
+        # TODO: paginate. single field values are limited to 1024 characters
+        # TODO: make sure things are getting added to the pokedex
         for entry in pokedex:
-            emoji = ''
-            if entry.pokemonId == 69:
-                emoji = '<:bellsprout2:979967988826521660>'
-            pm.append(f'{emoji} `#{str(entry.pokemonId).ljust(4)}{str(entry.pokemonName.capitalize()).ljust(11)}{entry.mostRecent}`')
-            if entry.pokemonId == 69:
-                break
+            # emoji = ''
+            # if entry.pokemonId == 69:
+            #     emoji = '<:bellsprout2:979967988826521660>'
+            pm.append(f'`#{str(entry.pokemonId).ljust(4)}{str(entry.pokemonName.capitalize()).ljust(11)}{entry.mostRecent}`')
+            # if entry.pokemonId == 69:
+            #     break
 
 
         # Create the embed object

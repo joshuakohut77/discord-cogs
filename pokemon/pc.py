@@ -159,10 +159,6 @@ class PcMixin(MixinMeta):
             embed, btns = self.__pokemonPcCard(trainerUser, state, state.card, authorIsTrainer)
             message = await interaction.edit_origin(embed=embed, components=btns)
             self.setPokemonState(user, PokemonState(state.discordId, message.id, state.card, state.pokemon, state.active, state.idx))
-        
-        # embed, btns = self.__pokemonPcCard(user, state, state.card)
-        # message = await interaction.edit_origin(embed=embed, components=btns)   
-        # self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
 
 
     async def __on_moves_click(self, interaction: Interaction):

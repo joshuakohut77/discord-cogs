@@ -41,7 +41,7 @@ from services.trainerclass import trainer as TrainerClass
 # - [med] db tightening
 # - [low] Flesh out the *debug module to help us test the game
 
-# - [low] Celadon City department store
+# - [low] Celadon City department store (special left/right handler)
 # - [med] Trades need a little reworked
 # - [med] Integrate Pokedex
 # - [med] Integrate Trainer / Gym battles
