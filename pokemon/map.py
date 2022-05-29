@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 from redbot.core import commands
 from redbot.core.commands.context import Context
 
+import constant
 from models.location import LocationModel
 from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
@@ -18,72 +19,6 @@ from .abcd import MixinMeta
 
 
 DiscordUser = Union[discord.Member,discord.User]
-
-
-locationDisplayNames = {
-    "digletts-cave": 'Digletts Cave',
-    "mt-moon": 'Mt. Moon',
-    "pallet-town": 'Pallet Town',
-    "rock-tunnel": 'Rock Tunnel',
-    "kanto-route-1": 'Route 1',
-    "kanto-route-11": 'Route 11',
-    "kanto-route-12": 'Route 12',
-    "kanto-route-13": 'Route 13',
-    "kanto-route-14": 'Route 14',
-    "kanto-route-15": 'Route 15',
-    "kanto-route-16": 'Route 16',
-    "kanto-route-17": 'Route 17',
-    "kanto-route-18": 'Route 18',
-    "kanto-sea-route-19": 'Sea Route 19',
-    "kanto-route-2": 'Route 2',
-    "kanto-sea-route-20": 'Sea Route 20',
-    "kanto-sea-route-21": 'Sea Route 21',
-    "kanto-route-22": 'Route 22',
-    "kanto-route-24": 'Route 24',
-    "kanto-route-25": 'Route 25',
-    "kanto-route-3": 'Route 3',
-    "kanto-route-5": 'Route 5',
-    "kanto-route-6": 'Route 6',
-    "kanto-route-7": 'Route 7',
-    "kanto-route-8": 'Route 8',
-    "kanto-route-9": 'Route 9',
-    "seafoam-islands": 'Seafoam Islands',
-    "cerulean-cave": 'Cerulean Cave',
-    "kanto-victory-road-1": 'Victory Road 1',
-    "viridian-forest": 'Viridian Forest',
-    "kanto-route-23": 'Route 23',
-    "power-plant": 'Power Plant',
-    "kanto-victory-road-2": 'Victory Road 2',
-    "pokemon-tower": 'Pokémon Tower',
-    "pokemon-tower-2F": 'Pokémon Tower 2F',
-    "pokemon-tower-3F": 'Pokémon Tower 3F',
-    "pokemon-tower-4F": 'Pokémon Tower 4F',
-    "pokemon-tower-5F": 'Pokémon Tower 5F',
-    "pokemon-tower-6F": 'Pokémon Tower 6F',
-    "pokemon-tower-7F": 'Pokémon Tower 7F',
-    "pokemon-mansion": 'Pokémon Mansion',
-    "kanto-safari-zone": 'Safari Zone',
-    "ss-anne": 'S.S. Anne',
-    "celadon-city": 'Celadon City',
-    "department-store": "Department Store",
-    "department-store-2F": "Department Store 2F",
-    "department-store-3F": "Department Store 3F",
-    "department-store-4F": "Department Store 4F",
-    "department-store-5F": "Department Store 5F",
-    "department-store-rooftop": "Department Store Rooftop",
-    "kanto-route-10": 'Route 10',
-    "kanto-route-4": 'Route 4',
-    "indigo-plateau": 'Indigo Plateau',
-    "vermilion-city": 'Vermilion City',
-    "pewter-city": 'Pewter City',
-    "lavender-town": 'Lavender Town',
-    "cerulean-city": 'Cerulean City',
-    "cinnabar-island": 'Cinnabar Island',
-    "fuchsia-city": 'Fuchsia City',
-    "saffron-city": 'Saffron City',
-    "viridian-city": 'Viridian City',
-    "underground-path": 'Underground Path'
-}
 
 
 class LocationState:
@@ -126,7 +61,7 @@ class MapMixin(MixinMeta):
         temp_message = await self.sendToLoggingChannel(f'{user.display_name} is at {location.name}', file)
         attachment: discord.Attachment = temp_message.attachments[0]
 
-        name = locationDisplayNames[location.name]
+        name = constant.LOCATION_DISPLAY_NAMES[location.name]
 
         desc = f'You are at {name}.' if authorIsTrainer else f'{user.display_name} is at {name}.'
 
@@ -153,7 +88,7 @@ class MapMixin(MixinMeta):
         sw = []
         if authorIsTrainer:
             if location.north is not None:
-                north = locationDisplayNames[location.north]
+                north = constant.LOCATION_DISPLAY_NAMES[location.north]
                 ne.append(self.client.add_callback(
                     Button(style=ButtonStyle.gray, emoji='⬆', label=f"{north}", disabled=False),
                     self.__on_north,
@@ -164,7 +99,7 @@ class MapMixin(MixinMeta):
                     self.__on_north,
                 ))
             if location.east is not None:
-                east = locationDisplayNames[location.east]
+                east = constant.LOCATION_DISPLAY_NAMES[location.east]
                 ne.append(self.client.add_callback(
                     Button(style=ButtonStyle.gray, emoji='➡', label=f"{east}", disabled=False),
                     self.__on_east,
@@ -175,7 +110,7 @@ class MapMixin(MixinMeta):
                     self.__on_east,
                 ))
             if location.south is not None:
-                south = locationDisplayNames[location.south]
+                south = constant.LOCATION_DISPLAY_NAMES[location.south]
                 sw.append(self.client.add_callback(
                     Button(style=ButtonStyle.gray, emoji='⬇', label=f"{south}", disabled=False),
                     self.__on_south,
@@ -186,7 +121,7 @@ class MapMixin(MixinMeta):
                     self.__on_south,
                 ))
             if location.west is not None:
-                west = locationDisplayNames[location.west]
+                west = constant.LOCATION_DISPLAY_NAMES[location.west]
                 sw.append(self.client.add_callback(
                     Button(style=ButtonStyle.gray, emoji='⬅', label=f"{west}", disabled=False),
                     self.__on_west,
@@ -240,7 +175,7 @@ class MapMixin(MixinMeta):
         )
         attachment: discord.Attachment = temp_message.attachments[0]
 
-        name = locationDisplayNames[direction.name]
+        name = constant.LOCATION_DISPLAY_NAMES[direction.name]
 
         embed = discord.Embed(title = f'{name}', description = f'You walked North to {name}.')
         embed.set_image(url = attachment.url)
@@ -290,7 +225,7 @@ class MapMixin(MixinMeta):
         )
         attachment: discord.Attachment = temp_message.attachments[0]
 
-        name = locationDisplayNames[direction.name]
+        name = constant.LOCATION_DISPLAY_NAMES[direction.name]
         
         embed = discord.Embed(title = f'{name}', description = f'You walked South to {name}.')
         embed.set_image(url = attachment.url)
@@ -341,7 +276,7 @@ class MapMixin(MixinMeta):
         )
         attachment: discord.Attachment = temp_message.attachments[0]
 
-        name = locationDisplayNames[direction.name]
+        name = constant.LOCATION_DISPLAY_NAMES[direction.name]
 
         embed = discord.Embed(title = f'{name}', description = f'You walked East to {name}.')
         embed.set_image(url = attachment.url)
@@ -391,7 +326,7 @@ class MapMixin(MixinMeta):
         )
         attachment: discord.Attachment = temp_message.attachments[0]
 
-        name = locationDisplayNames[direction.name]
+        name = constant.LOCATION_DISPLAY_NAMES[direction.name]
 
         embed = discord.Embed(title = f'{name}', description = f'You walked West to {name}.')
         embed.set_image(url = attachment.url)
