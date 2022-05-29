@@ -408,7 +408,11 @@
         "price": 550
       },
       {
-        "item": "x-special",
+        "item": "x-sp-attack",
+        "price": 350
+      },
+      {
+        "item": "x-sp-defense",
         "price": 350
       },
       {
