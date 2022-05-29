@@ -404,7 +404,7 @@ class PokemartMixin(MixinMeta):
         embed, btns = self.__storePageEmbed(user, state)
         message = await interaction.edit_origin(embed=embed, components=btns)
 
-        state.messageId = message
+        state.messageId = message.id
         self.__store[str(user.id)] = state
 
     async def __on_prev_click(self, interaction: Interaction):
@@ -420,7 +420,7 @@ class PokemartMixin(MixinMeta):
         embed, btns = self.__storePageEmbed(user, state)
         message = await interaction.edit_origin(embed=embed, components=btns)
 
-        state.messageId = message
+        state.messageId = message.id
         self.__store[str(user.id)] = state
 
     def __checkStoreState(self, user: discord.User, message: discord.Message):
