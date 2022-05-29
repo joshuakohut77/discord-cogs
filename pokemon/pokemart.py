@@ -275,47 +275,47 @@ itemDisplayNames = {
     # TMs
     "TM32": {
         'name': 'TM 32',
-        'desc': '',
+        'desc': 'Double Team',
         'emoji': constant.HM01
     },
     "TM02": {
         'name': 'TM 02',
-        'desc': '',
+        'desc': 'Razor Wind',
         'emoji': constant.HM01
     },
     "TM37": {
         'name': 'TM 37',
-        'desc': '',
+        'desc': 'Egg Bomb',
         'emoji': constant.HM01
     },
     "TM05": {
         'name': 'TM 05',
-        'desc': '',
+        'desc': 'Mega Kick',
         'emoji': constant.HM01
     },
     "TM17": {
         'name': 'TM 17',
-        'desc': '',
+        'desc': 'Submission',
         'emoji': constant.HM01
     },
     "TM33": {
         'name': 'TM 33',
-        'desc': '',
+        'desc': 'Reflect',
         'emoji': constant.HM01
     },
     "TM07": {
         'name': 'TM 07',
-        'desc': '',
+        'desc': 'Horn Drill',
         'emoji': constant.HM01
     },
     "TM01": {
         'name': 'TM 01',
-        'desc': '',
+        'desc': 'Mega Punch',
         'emoji': constant.HM01
     },
     "TM09": {
         'name': 'TM 09',
-        'desc': '',
+        'desc': 'Take Down',
         'emoji': constant.HM01
     },
     # Special Items
