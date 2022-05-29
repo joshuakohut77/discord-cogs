@@ -1,444 +1,462 @@
 {
   "68": [
-    {
-      "item": "link-cable",
-      "price": 5000
-    },
-    {
-      "item": "poke-ball",
-      "price": 200
-    },
-    {
-      "item": "potion",
-      "price": 300
-    },
-    {
-      "item": "super-potion",
-      "price": 700
-    },
-    {
-      "item": "antidote",
-      "price": 100
-    },
-    {
-      "item": "burn-heal",
-      "price": 250
-    },
-    {
-      "item": "paralyze-heal",
-      "price": 200
-    },
-    {
-      "item": "escape-rope",
-      "price": 550
-    },
-    {
-      "item": "awakening",
-      "price": 200
-    },
-    {
-      "item": "repel",
-      "price": 350
-    }
+    [
+      {
+        "item": "link-cable",
+        "price": 5000
+      },
+      {
+        "item": "poke-ball",
+        "price": 200
+      },
+      {
+        "item": "potion",
+        "price": 300
+      },
+      {
+        "item": "super-potion",
+        "price": 700
+      },
+      {
+        "item": "antidote",
+        "price": 100
+      },
+      {
+        "item": "burn-heal",
+        "price": 250
+      },
+      {
+        "item": "paralyze-heal",
+        "price": 200
+      },
+      {
+        "item": "escape-rope",
+        "price": 550
+      },
+      {
+        "item": "awakening",
+        "price": 200
+      },
+      {
+        "item": "repel",
+        "price": 350
+      }
+    ]
   ],
   "71": [
-    {
-      "item": "ultra-ball",
-      "price": 1200
-    },
-    {
-      "item": "great-ball",
-      "price": 600
-    },
-    {
-      "item": "max-repel",
-      "price": 700
-    },
-    {
-      "item": "hyper-potion",
-      "price": 1500
-    },
-    {
-      "item": "escape-rope",
-      "price": 550
-    },
-    {
-      "item": "full-heal",
-      "price": 600
-    },
-    {
-      "item": "revive",
-      "price": 1500
-    }
+    [
+      {
+        "item": "ultra-ball",
+        "price": 1200
+      },
+      {
+        "item": "great-ball",
+        "price": 600
+      },
+      {
+        "item": "max-repel",
+        "price": 700
+      },
+      {
+        "item": "hyper-potion",
+        "price": 1500
+      },
+      {
+        "item": "escape-rope",
+        "price": 550
+      },
+      {
+        "item": "full-heal",
+        "price": 600
+      },
+      {
+        "item": "revive",
+        "price": 1500
+      }
+    ]
   ],
   "76": [
-    {
-      "item": "ultra-ball",
-      "price": 1200
-    },
-    {
-      "item": "great-ball",
-      "price": 600
-    },
-    {
-      "item": "super-potion",
-      "price": 700
-    },
-    {
-      "item": "hyper-potion",
-      "price": 1500
-    },
-    {
-      "item": "full-heal",
-      "price": 600
-    },
-    {
-      "item": "revive",
-      "price": 1500
-    },
-    {
-      "item": "super-repel",
-      "price": 500
-    }
+    [
+      {
+        "item": "ultra-ball",
+        "price": 1200
+      },
+      {
+        "item": "great-ball",
+        "price": 600
+      },
+      {
+        "item": "super-potion",
+        "price": 700
+      },
+      {
+        "item": "hyper-potion",
+        "price": 1500
+      },
+      {
+        "item": "full-heal",
+        "price": 600
+      },
+      {
+        "item": "revive",
+        "price": 1500
+      },
+      {
+        "item": "super-repel",
+        "price": 500
+      }
+    ]
   ],
   "151": [
-    {
-      "item": "poke-ball",
-      "price": 200
-    },
-    {
-      "item": "super-potion",
-      "price": 700
-    },
-    {
-      "item": "paralyze-heal",
-      "price": 200
-    },
-    {
-      "item": "ice-heal",
-      "price": 250
-    },
-    {
-      "item": "awakening",
-      "price": 200
-    },
-    {
-      "item": "repel",
-      "price": 350
-    }
+    [
+      {
+        "item": "poke-ball",
+        "price": 200
+      },
+      {
+        "item": "super-potion",
+        "price": 700
+      },
+      {
+        "item": "paralyze-heal",
+        "price": 200
+      },
+      {
+        "item": "ice-heal",
+        "price": 250
+      },
+      {
+        "item": "awakening",
+        "price": 200
+      },
+      {
+        "item": "repel",
+        "price": 350
+      }
+    ]
   ],
   "154": [
-    {
-      "item": "poke-ball",
-      "price": 200
-    },
-    {
-      "item": "potion",
-      "price": 300
-    },
-    {
-      "item": "antidote",
-      "price": 100
-    },
-    {
-      "item": "burn-heal",
-      "price": 250
-    },
-    {
-      "item": "paralyze-heal",
-      "price": 200
-    }
+    [
+      {
+        "item": "poke-ball",
+        "price": 200
+      },
+      {
+        "item": "potion",
+        "price": 300
+      },
+      {
+        "item": "antidote",
+        "price": 100
+      },
+      {
+        "item": "burn-heal",
+        "price": 250
+      },
+      {
+        "item": "paralyze-heal",
+        "price": 200
+      }
+    ]
   ],
   "231": [
-    {
-      "item": "poke-ball",
-      "price": 200
-    },
-    {
-      "item": "potion",
-      "price": 300
-    },
-    {
-      "item": "antidote",
-      "price": 100
-    },
-    {
-      "item": "burn-heal",
-      "price": 250
-    },
-    {
-      "item": "paralyze-heal",
-      "price": 200
-    },
-    {
-      "item": "escape-rope",
-      "price": 550
-    },
-    {
-      "item": "awakening",
-      "price": 200
-    }
+    [
+      {
+        "item": "poke-ball",
+        "price": 200
+      },
+      {
+        "item": "potion",
+        "price": 300
+      },
+      {
+        "item": "antidote",
+        "price": 100
+      },
+      {
+        "item": "burn-heal",
+        "price": 250
+      },
+      {
+        "item": "paralyze-heal",
+        "price": 200
+      },
+      {
+        "item": "escape-rope",
+        "price": 550
+      },
+      {
+        "item": "awakening",
+        "price": 200
+      }
+    ]
   ],
   "232": [
-    {
-      "item": "great-ball",
-      "price": 600
-    },
-    {
-      "item": "super-potion",
-      "price": 700
-    },
-    {
-      "item": "revive",
-      "price": 1500
-    },
-    {
-      "item": "escape-rope",
-      "price": 550
-    },
-    {
-      "item": "super-repel",
-      "price": 500
-    },
-    {
-      "item": "antidote",
-      "price": 100
-    },
-    {
-      "item": "burn-heal",
-      "price": 250
-    },
-    {
-      "item": "ice-heal",
-      "price": 250
-    },
-    {
-      "item": "paralyze-heal",
-      "price": 200
-    }
+    [
+      {
+        "item": "great-ball",
+        "price": 600
+      },
+      {
+        "item": "super-potion",
+        "price": 700
+      },
+      {
+        "item": "revive",
+        "price": 1500
+      },
+      {
+        "item": "escape-rope",
+        "price": 550
+      },
+      {
+        "item": "super-repel",
+        "price": 500
+      },
+      {
+        "item": "antidote",
+        "price": 100
+      },
+      {
+        "item": "burn-heal",
+        "price": 250
+      },
+      {
+        "item": "ice-heal",
+        "price": 250
+      },
+      {
+        "item": "paralyze-heal",
+        "price": 200
+      }
+    ]
   ],
   "233": [
-    {
-      "item": "ultra-ball",
-      "price": 1200
-    },
-    {
-      "item": "great-ball",
-      "price": 600
-    },
-    {
-      "item": "full-restore",
-      "price": 3000
-    },
-    {
-      "item": "max-potion",
-      "price": 2500
-    },
-    {
-      "item": "full-heal",
-      "price": 600
-    },
-    {
-      "item": "revive",
-      "price": 1500
-    },
-    {
-      "item": "max-repel",
-      "price": 700
-    }
+    [
+      {
+        "item": "ultra-ball",
+        "price": 1200
+      },
+      {
+        "item": "great-ball",
+        "price": 600
+      },
+      {
+        "item": "full-restore",
+        "price": 3000
+      },
+      {
+        "item": "max-potion",
+        "price": 2500
+      },
+      {
+        "item": "full-heal",
+        "price": 600
+      },
+      {
+        "item": "revive",
+        "price": 1500
+      },
+      {
+        "item": "max-repel",
+        "price": 700
+      }
+    ]
   ],
   "234": [
-    {
-      "item": "great-ball",
-      "price": 600
-    },
-    {
-      "item": "hyper-potion",
-      "price": 1500
-    },
-    {
-      "item": "max-repel",
-      "price": 700
-    },
-    {
-      "item": "escape-rope",
-      "price": 550
-    },
-    {
-      "item": "full-heal",
-      "price": 600
-    },
-    {
-      "item": "revive",
-      "price": 1500
-    }
+    [
+      {
+        "item": "great-ball",
+        "price": 600
+      },
+      {
+        "item": "hyper-potion",
+        "price": 1500
+      },
+      {
+        "item": "max-repel",
+        "price": 700
+      },
+      {
+        "item": "escape-rope",
+        "price": 550
+      },
+      {
+        "item": "full-heal",
+        "price": 600
+      },
+      {
+        "item": "revive",
+        "price": 1500
+      }
+    ]
   ],
   "802": [
-    {
-      "Left Cashier": [
-        {
-          "item": "great-ball",
-          "price": 600
-        },
-        {
-          "item": "revive",
-          "price": 1500
-        },
-        {
-          "item": "antidote",
-          "price": 100
-        },
-        {
-          "item": "ice-heal",
-          "price": 250
-        },
-        {
-          "item": "paralyze-heal",
-          "price": 200
-        },
-        {
-          "item": "super-potion",
-          "price": 700
-        },
-        {
-          "item": "super-repel",
-          "price": 500
-        },
-        {
-          "item": "burn-heal",
-          "price": 250
-        },
-        {
-          "item": "awakening",
-          "price": 200
-        }
-      ],
-      "Rght Cashier": [
-        {
-          "item": "TM32",
-          "price": 1000
-        },
-        {
-          "item": "TM02",
-          "price": 2000
-        },
-        {
-          "item": "TM37",
-          "price": 2000
-        },
-        {
-          "item": "TM05",
-          "price": 3000
-        },
-        {
-          "item": "TM17",
-          "price": 3000
-        },
-        {
-          "item": "TM33",
-          "price": 1000
-        },
-        {
-          "item": "TM07",
-          "price": 2000
-        },
-        {
-          "item": "TM01",
-          "price": 3000
-        },
-        {
-          "item": "TM09",
-          "price": 3000
-        }
-      ]
-    }
+    [
+      {
+        "item": "great-ball",
+        "price": 600
+      },
+      {
+        "item": "revive",
+        "price": 1500
+      },
+      {
+        "item": "antidote",
+        "price": 100
+      },
+      {
+        "item": "ice-heal",
+        "price": 250
+      },
+      {
+        "item": "paralyze-heal",
+        "price": 200
+      },
+      {
+        "item": "super-potion",
+        "price": 700
+      },
+      {
+        "item": "super-repel",
+        "price": 500
+      },
+      {
+        "item": "burn-heal",
+        "price": 250
+      },
+      {
+        "item": "awakening",
+        "price": 200
+      }
+    ],
+    [
+      {
+        "item": "TM32",
+        "price": 1000
+      },
+      {
+        "item": "TM02",
+        "price": 2000
+      },
+      {
+        "item": "TM37",
+        "price": 2000
+      },
+      {
+        "item": "TM05",
+        "price": 3000
+      },
+      {
+        "item": "TM17",
+        "price": 3000
+      },
+      {
+        "item": "TM33",
+        "price": 1000
+      },
+      {
+        "item": "TM07",
+        "price": 2000
+      },
+      {
+        "item": "TM01",
+        "price": 3000
+      },
+      {
+        "item": "TM09",
+        "price": 3000
+      }
+    ]
   ],
   "804": [
-    {
-      "item": "poke-doll",
-      "price": 1000
-    },
-    {
-      "item": "thunder-stone",
-      "price": 2100
-    },
-    {
-      "item": "leaf-stone",
-      "price": 2100
-    },
-    {
-      "item": "fire-stone",
-      "price": 2100
-    },
-    {
-      "item": "water-stone",
-      "price": 2100
-    }
+    [
+      {
+        "item": "poke-doll",
+        "price": 1000
+      },
+      {
+        "item": "thunder-stone",
+        "price": 2100
+      },
+      {
+        "item": "leaf-stone",
+        "price": 2100
+      },
+      {
+        "item": "fire-stone",
+        "price": 2100
+      },
+      {
+        "item": "water-stone",
+        "price": 2100
+      }
+    ]
   ],
   "805": [
-    {
-      "Left Cashier": [
-        {
-          "item": "x-accuracy",
-          "price": 950
-        },
-        {
-          "item": "dire-hit",
-          "price": 650
-        },
-        {
-          "item": "x-defend",
-          "price": 550
-        },
-        {
-          "item": "x-special",
-          "price": 350
-        },
-        {
-          "item": "x-attack",
-          "price": 500
-        },
-        {
-          "item": "x-speed",
-          "price": 350
-        }
-      ],
-      "Rght Cashier": [
-        {
-          "item": "hp-up",
-          "price": 9800
-        },
-        {
-          "item": "iron",
-          "price": 9800
-        },
-        {
-          "item": "calcium",
-          "price": 9800
-        },
-        {
-          "item": "protein",
-          "price": 9800
-        },
-        {
-          "item": "carbos",
-          "price": 9800
-        }
-      ]
-    }
+    [
+      {
+        "item": "x-accuracy",
+        "price": 950
+      },
+      {
+        "item": "dire-hit",
+        "price": 650
+      },
+      {
+        "item": "x-defend",
+        "price": 550
+      },
+      {
+        "item": "x-special",
+        "price": 350
+      },
+      {
+        "item": "x-attack",
+        "price": 500
+      },
+      {
+        "item": "x-speed",
+        "price": 350
+      }
+    ],
+    [
+      {
+        "item": "hp-up",
+        "price": 9800
+      },
+      {
+        "item": "iron",
+        "price": 9800
+      },
+      {
+        "item": "calcium",
+        "price": 9800
+      },
+      {
+        "item": "protein",
+        "price": 9800
+      },
+      {
+        "item": "carbos",
+        "price": 9800
+      }
+    ]
   ],
   "806": [
-    {
-      "item": "fresh-water",
-      "price": 200
-    },
-    {
-      "item": "lemonade",
-      "price": 350
-    },
-    {
-      "item": "soda-pop",
-      "price": 300
-    }
+    [
+      {
+        "item": "fresh-water",
+        "price": 200
+      },
+      {
+        "item": "lemonade",
+        "price": 350
+      },
+      {
+        "item": "soda-pop",
+        "price": 300
+      }
+    ]
   ]
 }
