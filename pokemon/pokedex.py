@@ -17,6 +17,23 @@ from models.pokedex import PokedexModel
 from .abcd import MixinMeta
 
 
+class PokedexState:
+    dexList: List[List[str]]
+    idx: int
+
+    discordId: int
+    messageId: int
+    channelId: int
+
+
+    def __init__(self, discordId: int, messageId: int, channelId: int, dexList: List[List[str]], idx: int):
+        self.discordId = discordId
+        self.messageId = messageId
+        self.channelId = channelId
+
+        self.dexList = dexList
+        self.idx = idx
+
 
 class PokedexMixin(MixinMeta):
     """Pokedex"""
@@ -29,40 +46,44 @@ class PokedexMixin(MixinMeta):
         pass
 
 
-    @__pokedex.command()
-    async def show(self, ctx: commands.Context, user: discord.Member = None) -> None:
-        author = ctx.author
+#     @__pokedex.command()
+#     async def show(self, ctx: commands.Context, user: discord.Member = None) -> None:
+#         author = ctx.author
 
-        if user is None:
-            user = author
+#         if user is None:
+#             user = author
 
-        trainer = TrainerClass(str(user.id))
+#         trainer = TrainerClass(str(user.id))
 
-        pokedex: List[PokedexModel] = trainer.getPokedex()
+#         pokedex: List[PokedexModel] = trainer.getPokedex()
 
-        pm = []
+#         pokedex.sort(key=lambda x: x.pokemonId)
 
-        pokedex.sort(key=lambda x: x.pokemonId)
+#         # TODO: paginate. single field values are limited to 1024 characters
+#         # TODO: make sure things are getting added to the pokedex
+#         pm = []
+#         page = []
+#         pm.append(page)
+#         for i in len(pokedex):
+#             if i % 15:
+#                 page = []
+#                 pm.append(page)
+#             # emoji = ''
+#             # if entry.pokemonId == 69:
+#             #     emoji = '<:bellsprout2:979967988826521660>'
+#             entry = pokedex[i]
+#             page.append(f'`#{str(entry.pokemonId).ljust(4)}{str(entry.pokemonName.capitalize()).ljust(11)}{entry.mostRecent}`')
+#             # if entry.pokemonId == 69:
+#             #     break
 
-        # TODO: paginate. single field values are limited to 1024 characters
-        # TODO: make sure things are getting added to the pokedex
-        for entry in pokedex:
-            # emoji = ''
-            # if entry.pokemonId == 69:
-            #     emoji = '<:bellsprout2:979967988826521660>'
-            pm.append(f'`#{str(entry.pokemonId).ljust(4)}{str(entry.pokemonName.capitalize()).ljust(11)}{entry.mostRecent}`')
-            # if entry.pokemonId == 69:
-            #     break
+#         await ctx.send(embed=embed)
+# 1
+#     def __createDexEmbed(self, user: discord.User):
+#         # Create the embed object
+#         embed = discord.Embed(title=f"Pokédex")
+#         embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/pokedex.png")
+#         embed.set_author(name=f"{user.display_name}",
+#                         icon_url=str(user.avatar_url))
 
-
-        # Create the embed object
-        embed = discord.Embed(title=f"Pokédex")
-        embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/pokedex.png")
-        embed.set_author(name=f"{user.display_name}",
-                        icon_url=str(user.avatar_url))
-
-        trainerDex = "\r\n".join(pm) if len(pm) > 0 else 'No Pokémon encountered yet.'
-        embed.add_field(name='Pokémon', value=f"{trainerDex}", inline=False)
-
-        await ctx.send(embed=embed)
-
+#         trainerDex = "\r\n".join(pm) if len(pm) > 0 else 'No Pokémon encountered yet.'
+#         embed.add_field(name='Pokémon', value=f"{trainerDex}", inline=False)
