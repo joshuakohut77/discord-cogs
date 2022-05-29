@@ -335,8 +335,8 @@ class PokemartMixin(MixinMeta):
         embed, btns = self.__storePageEmbed(user, state)
 
         message = await ctx.send(
-            embed=embed,
-            components=btns
+            embed=embed
+            # components=btns
         )
         state.messageId = message.id
         state.channelId = message.channel.id
