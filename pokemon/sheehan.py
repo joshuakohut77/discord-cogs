@@ -25,6 +25,10 @@ c = card.value == DisplayCard.MOVES.value
 trainer = TrainerClass('509767223938777108')
 location = trainer.getLocation()
 
+dex = ['1', '2', '3', '4']
+for i in range(len(dex)):
+    print(i)
+
 # dex = trainer.getPokedex()
 # active = trainer.getActivePokemon()
 # trainer.heal(active.trainerId, 'revive')
@@ -57,7 +61,12 @@ location = trainer.getLocation()
 # # Location Area: 295 - Kanto Route 1 Area
 loc = LocationClass(trainer.discordId)
 methods = loc.getMethods()
-# direction = loc.getLocationByName('kanto-route-3')
+
+if len(methods) > 3:
+    firstRow = methods[:3]
+    secondRow = methods[3:]
+
+direction = loc.getLocationByName('kanto-route-3')
 
 
 # encounters = loc.getAreaEncounterDetails(295)
