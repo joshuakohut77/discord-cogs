@@ -71,5 +71,10 @@
     "department-store-4F": 674,
     "department-store-5F": 675,
     "department-store-rooftop": 676,
-    "underground-path": 999
+    "underground-path": 999,
+    "game-corner": 1880,
+    "rocket-hideout": 1881,
+    "rocket-hideout-B2F": 1882,
+    "rocket-hideout-B3F": 1883,
+    "rocket-hideout-B4F": 1884
   }
