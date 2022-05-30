@@ -38,6 +38,8 @@ class PokedexState:
 class PokedexMixin(MixinMeta):
     """Pokedex"""
 
+    __pokedexState = {}
+
 
     @commands.group(name="pokedex", aliases=['dex'])
     @commands.guild_only()
@@ -46,44 +48,118 @@ class PokedexMixin(MixinMeta):
         pass
 
 
-#     @__pokedex.command()
-#     async def show(self, ctx: commands.Context, user: discord.Member = None) -> None:
-#         author = ctx.author
+    @__pokedex.command()
+    async def show(self, ctx: commands.Context, user: discord.Member = None) -> None:
+        author = ctx.author
 
-#         if user is None:
-#             user = author
+        if user is None:
+            user = author
 
-#         trainer = TrainerClass(str(user.id))
+        trainer = TrainerClass(str(user.id))
 
-#         pokedex: List[PokedexModel] = trainer.getPokedex()
+        pokedex: List[PokedexModel] = trainer.getPokedex()
 
-#         pokedex.sort(key=lambda x: x.pokemonId)
+        pokedex.sort(key=lambda x: x.pokemonId)
 
-#         # TODO: paginate. single field values are limited to 1024 characters
-#         # TODO: make sure things are getting added to the pokedex
-#         pm = []
-#         page = []
-#         pm.append(page)
-#         for i in len(pokedex):
-#             if i % 15:
-#                 page = []
-#                 pm.append(page)
-#             # emoji = ''
-#             # if entry.pokemonId == 69:
-#             #     emoji = '<:bellsprout2:979967988826521660>'
-#             entry = pokedex[i]
-#             page.append(f'`#{str(entry.pokemonId).ljust(4)}{str(entry.pokemonName.capitalize()).ljust(11)}{entry.mostRecent}`')
-#             # if entry.pokemonId == 69:
-#             #     break
+        dexList = []
+        page = []
+        dexList.append(page)
+        for i in len(pokedex):
+            if i % 15:
+                page = []
+                dexList.append(page)
+            # emoji = ''
+            # if entry.pokemonId == 69:
+            #     emoji = '<:bellsprout2:979967988826521660>'
+            entry = pokedex[i]
+            page.append(f'`#{str(entry.pokemonId).ljust(4)}{str(entry.pokemonName.capitalize()).ljust(11)}{entry.mostRecent}`')
+            # if entry.pokemonId == 69:
+            #     break
 
-#         await ctx.send(embed=embed)
-# 1
-#     def __createDexEmbed(self, user: discord.User):
-#         # Create the embed object
-#         embed = discord.Embed(title=f"Pokédex")
-#         embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/pokedex.png")
-#         embed.set_author(name=f"{user.display_name}",
-#                         icon_url=str(user.avatar_url))
+        state = PokedexState(user.id, None, None, dexList, 0)
 
-#         trainerDex = "\r\n".join(pm) if len(pm) > 0 else 'No Pokémon encountered yet.'
-#         embed.add_field(name='Pokémon', value=f"{trainerDex}", inline=False)
+        embed, btns = self.__createDexEmbed(user, state)
+
+        message = await ctx.send(embed=embed, components=btns)
+        state.messageId = message.id
+        state.channelId = message.channel.id
+        self.__pokedexState[str(user.id)] = state
+
+
+    def __createDexEmbed(self, user: discord.User, state: PokedexState):
+        # Create the embed object
+        embed = discord.Embed(title=f"Pokédex")
+        embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/pokedex.png")
+        embed.set_author(name=f"{user.display_name}",
+                        icon_url=str(user.avatar_url))
+
+
+        page = state.dexList[state.idx]
+
+        trainerDex = "\r\n".join(page) if len(page) > 0 else 'No Pokémon encountered yet.'
+        embed.add_field(name='Pokémon', value=f"{trainerDex}", inline=False)
+
+        firstRowBtns = []
+
+        if state.idx > 0:
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.gray,
+                       label='Previous', custom_id='previous'),
+                self.__on_prev_click
+            ))
+        if state.idx < len(state.storeList) - 1:
+            firstRowBtns.append(self.client.add_callback(
+                Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
+                self.__on_next_click
+            ))
+
+        btns = []
+        if len(firstRowBtns) > 0:
+            btns.append(firstRowBtns)
+
+        return embed, btns
+
+
+    async def __on_next_click(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.__checkPokedexState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+        state: PokedexState = self.__pokedexState[str(user.id)]
+        state.idx = state.idx + 1
+
+        embed, btns = self.__pokedexState[str(user.id)]
+        message = await interaction.edit_origin(embed=embed, components=btns)
+
+        state.messageId = message.id
+        self.__pokedexState[str(user.id)] = state
+
+
+    async def __on_prev_click(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.__checkPokedexState(user, interaction.message):
+            await interaction.send('This is not for you.')
+            return
+
+        state: PokedexState = self.__pokedexState[str(user.id)]
+        state.idx = state.idx + 1
+
+        embed, btns = self.__pokedexState[str(user.id)]
+        message = await interaction.edit_origin(embed=embed, components=btns)
+
+        state.messageId = message.id
+        self.__pokedexState[str(user.id)] = state
+
+
+    def __checkPokedexState(self, user: discord.User, message: discord.Message):
+        state: PokedexState
+        if str(user.id) not in self.__pokedexState.keys():
+            return False
+        else:
+            state = self.__pokedexState[str(user.id)]
+            if state.messageId != message.id:
+                return False
+        return True
