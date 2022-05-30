@@ -13,7 +13,7 @@
   },
   "71": {
     "pre-requsites": [],
-    "quest": [""],
+    "quest": [],
     "blockers": ["HM03", "HM04"],
     "name": "cinnabar-island"
   },
