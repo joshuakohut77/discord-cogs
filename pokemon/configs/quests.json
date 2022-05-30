@@ -361,7 +361,25 @@
   },
   "162": {
     "pre-requsites": ["badge_soul"],
-    "quest": ["Lone House", "The Warden"],
+    "quest": [],
+    "blockers": [],
+    "name": "kanto-safari-zone"
+  },
+  "1621": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "kanto-safari-zone"
+  },
+  "1622": {
+    "pre-requsites": [],
+    "quest": ["The Warden"],
+    "blockers": [],
+    "name": "kanto-safari-zone"
+  },
+  "1623": {
+    "pre-requsites": ["badge_soul"],
+    "quest": ["Lone House"],
     "blockers": [],
     "name": "kanto-safari-zone"
   },
