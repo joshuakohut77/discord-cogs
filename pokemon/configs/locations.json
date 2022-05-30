@@ -744,7 +744,73 @@
       "south": "kanto-victory-road-3F",
       "west": null,
       "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/indigo-plateau.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "2331": {
+      "locationId": 2331,
+      "name": "indigo-plateau-center",
+      "north": null,
+      "east": null,
+      "south": "indigo-plateau",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/indigo-plateau-center.png",
       "pokecenter": true,
+      "gym": false
+    },
+    "2332": {
+      "locationId": 2332,
+      "name": "lorelei-room",
+      "north": "bruno-room",
+      "east": null,
+      "south": "indigo-plateau-center",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/lorelei-room.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "2333": {
+      "locationId": 2333,
+      "name": "bruno-room",
+      "north": "agatha-room",
+      "east": null,
+      "south": "lorelei-room",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/bruno-room.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "2334": {
+      "locationId": 2334,
+      "name": "agatha-room",
+      "north": "lance-room",
+      "east": null,
+      "south": "bruno-room",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/agatha-room.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "2335": {
+      "locationId": 2335,
+      "name": "lance-room",
+      "north": "champion-room",
+      "east": null,
+      "south": "agatha-room",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/lance-room.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "2336": {
+      "locationId": 2336,
+      "name": "champion-room",
+      "north": null,
+      "east": null,
+      "south": "lance-room",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/champion-room.png",
+      "pokecenter": false,
       "gym": false
     },
     "234": {
