@@ -596,9 +596,9 @@
     "1606": {
       "locationId": 1606,
       "name": "pokemon-tower-6F",
-      "north": "pokemon-tower-5F",
+      "north": "pokemon-tower-7F",
       "east": null,
-      "south": "pokemon-tower-7F",
+      "south": "pokemon-tower-5F",
       "west": null,
       "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-tower-6F.png",
       "pokecenter": false,
