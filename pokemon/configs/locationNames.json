@@ -51,7 +51,10 @@
     "pokemon-mansion-2F": 1612,
     "pokemon-mansion-3F": 1613,
     "pokemon-mansion-BF1": 1610,
-    "kanto-safari-zone": 162,
+    "safari-zone": 162,
+    "safari-zone-1": 1621,
+    "safari-zone-2": 1622,
+    "safari-zone-3": 1623,
     "ss-anne": 498,
     "celadon-city": 67,
     "kanto-route-10": 89,
@@ -71,5 +74,10 @@
     "department-store-4F": 674,
     "department-store-5F": 675,
     "department-store-rooftop": 676,
-    "underground-path": 999
+    "underground-path": 999,
+    "game-corner": 1880,
+    "rocket-hideout": 1881,
+    "rocket-hideout-B2F": 1882,
+    "rocket-hideout-B3F": 1883,
+    "rocket-hideout-B4F": 1884
   }
