@@ -273,7 +273,13 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [],
-    "name": "kanto-route-23"
+    "name": "kanto-route-23-S"
+  },
+  "1571": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "kanto-route-23-N"
   },
   "158": {
     "pre-requsites": [],
