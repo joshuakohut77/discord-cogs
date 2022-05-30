@@ -64,7 +64,7 @@ class PokedexMixin(MixinMeta):
         dexList = []
         page = []
         dexList.append(page)
-        for i in len(pokedex):
+        for i in range(len(pokedex)):
             if i % 15:
                 page = []
                 dexList.append(page)
