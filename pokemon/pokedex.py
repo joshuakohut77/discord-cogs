@@ -107,7 +107,7 @@ class PokedexMixin(MixinMeta):
                        label='Previous', custom_id='previous'),
                 self.__on_prev_click
             ))
-        if state.idx < len(state.storeList) - 1:
+        if state.idx < len(state.dexList) - 1:
             firstRowBtns.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
                 self.__on_next_click
