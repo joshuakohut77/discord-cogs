@@ -67,13 +67,9 @@ class PokedexMixin(MixinMeta):
             if (i % 15) == 0:
                 page = []
                 dexList.append(page)
-            # emoji = ''
-            # if entry.pokemonId == 69:
-            #     emoji = '<:bellsprout2:979967988826521660>'
+            
             entry = pokedex[i]
             page.append(f'`#{str(entry.pokemonId).ljust(4)}{str(entry.pokemonName.capitalize()).ljust(11)}{entry.mostRecent}`')
-            # if entry.pokemonId == 69:
-            #     break
 
         state = PokedexState(user.id, None, None, dexList, 0)
 

@@ -24,8 +24,7 @@ from .encounters import EncountersMixin
 from .debug import DebugMixin
 from .card import TrainerCardMixin
 from .pokedex import PokedexMixin
-
-from services.trainerclass import trainer as TrainerClass
+from .trade import TradeMixin
 
 
 # Things left to do
@@ -43,7 +42,7 @@ from services.trainerclass import trainer as TrainerClass
 
 # - [x][low] Celadon City department store (special left/right handler)
 # - [med] Trades need a little reworked
-# - [med] Integrate Pokedex
+# - [x][med] Integrate Pokedex
 # - [med] Integrate Trainer / Gym battles
 
 # - [med] support evolution stones
@@ -63,7 +62,7 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class Pokemon(StarterMixin, PcMixin, PartyMixin, PokemartMixin, PokecenterMixin, InventoryMixin, MapMixin, TrainerCardMixin, EncountersMixin, PokedexMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
+class Pokemon(StarterMixin, PcMixin, PartyMixin, PokemartMixin, PokecenterMixin, TradeMixin, InventoryMixin, MapMixin, TrainerCardMixin, EncountersMixin, PokedexMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):
