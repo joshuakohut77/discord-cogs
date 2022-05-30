@@ -409,9 +409,63 @@
   },
   "498": {
     "pre-requsites": [],
-    "quest": ["Speak to Captain"],
+    "quest": [],
     "blockers": ["ss_ticket"],
     "name": "ss-anne"
+  },
+  "4981": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "ss-anne-1F"
+  },
+  "4982": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "ss-anne-1F-rooms"
+  },
+  "4983": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "ss-anne-basement"
+  },
+  "4984": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "ss-anne-basement-rooms"
+  },
+  "4985": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "ss-anne-2F"
+  },
+  "4986": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "ss-anne-3F"
+  },
+  "4987": {
+    "pre-requsites": [],
+    "quest": ["Speak to Captain"],
+    "blockers": [],
+    "name": "captains-quarters"
+  },
+  "4988": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "ss-anne-2F-rooms"
+  },
+  "4989": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "ss-anne-deck"
   },
   "671": {
     "pre-requsites": [],
