@@ -62,6 +62,11 @@ class TradeMixin(MixinMeta):
             await ctx.send(f'{user.display_name}\'s trade failed.')
             return
 
+        # Don't allow trades of your current active starter pokemon
+        active = trader.getActivePokemon()
+        if active.trainerId == pokemon.trainerId:
+            await ctx.send(f'{user.mention} you cannot trade your active Pokemon. Change your active Pokemon or select a different Pokemon.')
+            return
 
         # await ctx.send('Other trainer has to accept your trade request')
 

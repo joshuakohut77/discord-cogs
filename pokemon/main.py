@@ -55,7 +55,7 @@ from .trade import TradeMixin
 # things to test
 # - What happens if you release all your pokemon?
 # - What happens if you trade your active pokemon?
-
+# - What happens if you trade your starter pokemon?
 
 class CompositeClass(commands.CogMeta, ABCMeta):
     __slots__: tuple = ()
