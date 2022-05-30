@@ -130,7 +130,7 @@ class PokedexMixin(MixinMeta):
         state: PokedexState = self.__pokedexState[str(user.id)]
         state.idx = state.idx + 1
 
-        embed, btns = self.__pokedexState[str(user.id)]
+        embed, btns = self.__createDexEmbed(user, state)
         message = await interaction.edit_origin(embed=embed, components=btns)
 
         state.messageId = message.id
@@ -147,7 +147,7 @@ class PokedexMixin(MixinMeta):
         state: PokedexState = self.__pokedexState[str(user.id)]
         state.idx = state.idx + 1
 
-        embed, btns = self.__pokedexState[str(user.id)]
+        embed, btns = self.__createDexEmbed(user, state)
         message = await interaction.edit_origin(embed=embed, components=btns)
 
         state.messageId = message.id
