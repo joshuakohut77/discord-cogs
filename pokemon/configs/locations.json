@@ -4,7 +4,7 @@
       "name": "celadon-city",
       "north": "department-store",
       "east": "kanto-route-7",
-      "south": null,
+      "south": "game-corner",
       "west": "kanto-route-16",
       "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/celadon-city.png",
       "pokecenter": true,
@@ -528,7 +528,7 @@
       "gym": false
     },
     "1593": {
-      "locationId": 159,
+      "locationId": 1593,
       "name": "kanto-victory-road-3F",
       "north": "kanto-route-23",
       "east": null,
@@ -801,5 +801,63 @@
       "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/underground-path.png",
       "pokecenter": false,
       "gym": false
+    },
+    "1880": {
+      "locationId": 1880,
+      "name": "game-corner",
+      "north": "rocket-hideout",
+      "east": null,
+      "south": "celadon-city",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/game-corner.png",
+      "pokecenter": false,
+      "gym": false
+    }
+    ,
+    "1881": {
+      "locationId": 1881,
+      "name": "rocket-hideout",
+      "north": "game-corner",
+      "east": null,
+      "south": "rocket-hideout-B2F",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/rocket-hideout.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "1882": {
+      "locationId": 1882,
+      "name": "rocket-hideout-B2F",
+      "north": "rocket-hideout",
+      "east": null,
+      "south": "rocket-hideout-B3F",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/rocket-hideout-B2F.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "1883": {
+      "locationId": 1883,
+      "name": "rocket-hideout-B3F",
+      "north": "rocket-hideout-B2F",
+      "east": null,
+      "south": "rocket-hideout-B4F",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/rocket-hideout-B3F.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "1884": {
+      "locationId": 1884,
+      "name": "rocket-hideout-B4F",
+      "north": "rocket-hideout-B3F",
+      "east": null,
+      "south": null,
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/rocket-hideout-B4F.png",
+      "pokecenter": false,
+      "gym": false
     }
   }
+
+  
