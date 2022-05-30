@@ -95,6 +95,7 @@ LOCATION_DISPLAY_NAMES = {
     "mt-moon": 'Mt. Moon',
     "pallet-town": 'Pallet Town',
     "rock-tunnel": 'Rock Tunnel',
+    "rock-tunnel-BF1": 'Rock Tunnel BF1',
     "kanto-route-1": 'Route 1',
     "kanto-route-11": 'Route 11',
     "kanto-route-12": 'Route 12',
@@ -155,5 +156,9 @@ LOCATION_DISPLAY_NAMES = {
     "fuchsia-city": 'Fuchsia City',
     "saffron-city": 'Saffron City',
     "viridian-city": 'Viridian City',
-    "underground-path": 'Underground Path'
+    "underground-path": 'Underground Path',
+    "safari-zone": 'Safari Zone',
+    "safari-zone-1": 'Safari Zone 1',
+    "safari-zone-2": 'Safari Zone 2',
+    "safari-zone-3": 'Safari Zone 3'
 }
