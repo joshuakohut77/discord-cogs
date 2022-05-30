@@ -65,7 +65,7 @@ class PokedexMixin(MixinMeta):
         page = []
         dexList.append(page)
         for i in range(len(pokedex)):
-            if i % 15:
+            if (i % 15) == 0:
                 page = []
                 dexList.append(page)
             # emoji = ''
@@ -145,7 +145,7 @@ class PokedexMixin(MixinMeta):
             return
 
         state: PokedexState = self.__pokedexState[str(user.id)]
-        state.idx = state.idx + 1
+        state.idx = state.idx - 1
 
         embed, btns = self.__createDexEmbed(user, state)
         message = await interaction.edit_origin(embed=embed, components=btns)
