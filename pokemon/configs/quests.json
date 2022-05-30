@@ -436,5 +436,35 @@
     "quest": [],
     "blockers": [],
     "name": "underground-path"
+  },
+  "1880": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "game-corner"
+  },
+  "1881": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "rocket-hideout"
+  },
+  "1882": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "rocket-hideout-B2F"
+  },
+  "1883": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "rocket-hideout-B3F"
+  },
+  "1884": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "rocket-hideout-B4F"
   }
 }
