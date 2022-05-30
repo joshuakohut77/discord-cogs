@@ -251,6 +251,18 @@
     "blockers": [],
     "name": "cerulean-cave"
   },
+  "1472": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "cerulean-cave2F"
+  },
+  "1471": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "cerulean-cave-B1F"
+  },
   "151": {
     "pre-requsites": [],
     "quest": ["Fishing Guru", "Pokemon Fan Club"],
