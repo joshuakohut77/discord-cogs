@@ -1,7 +1,7 @@
 {
   "67": {
     "pre-requsites": [],
-    "quest": ["Cafe", "Rocket Hideout"],
+    "quest": ["Cafe"],
     "blockers": [],
     "name": "celadon-city"
   },
@@ -246,7 +246,7 @@
     "name": "seafoam-islands-BF4"
   },
   "147": {
-    "pre-requsites": [""],
+    "pre-requsites": [],
     "quest": [],
     "blockers": [],
     "name": "cerulean-cave"
@@ -261,7 +261,7 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": ["badge_earth", "badge_volcano"],
-    "name": "kanto-victory-road-1"
+    "name": "kanto-victory-road"
   },
   "154": {
     "pre-requsites": [],
@@ -583,7 +583,7 @@
   },
   "1884": {
     "pre-requsites": [],
-    "quest": [],
+    "quest": ["Rocket Hideout"],
     "blockers": [],
     "name": "rocket-hideout-B4F"
   }
