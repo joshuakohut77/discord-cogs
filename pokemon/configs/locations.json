@@ -101,7 +101,7 @@
     "87": {
       "locationId": 87,
       "name": "rock-tunnel",
-      "north": "kanto-route-10",
+      "north": "kanto-route-10-N",
       "east": null,
       "south": "rock-tunnel-BF1",
       "west": null,
@@ -114,7 +114,7 @@
       "name": "rock-tunnel-BF1",
       "north": "rock-tunnel",
       "east": null,
-      "south": "lavender-town",
+      "south": "lkanto-route-10-S",
       "west": null,
       "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/rock-tunnel-BF1.png",
       "pokecenter": false,
@@ -133,13 +133,24 @@
     },
     "89": {
       "locationId": 89,
-      "name": "kanto-route-10",
+      "name": "kanto-route-10-N",
       "north": null,
       "east": "power-plant",
       "south": "rock-tunnel",
       "west": "kanto-route-9",
-      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-10.png",
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-10-N.png",
       "pokecenter": true,
+      "gym": false
+    },
+    "891": {
+      "locationId": 891,
+      "name": "kanto-route-10-S",
+      "north": "rock-tunnel-BF1",
+      "east": null,
+      "south": "lavender-town",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-10-S.png",
+      "pokecenter": false,
       "gym": false
     },
     "90": {
@@ -377,7 +388,7 @@
       "locationId": 134,
       "name": "kanto-route-9",
       "north": null,
-      "east": "kanto-route-10",
+      "east": "kanto-route-10-N",
       "south": null,
       "west": "cerulean-city",
       "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-9.png",
@@ -522,7 +533,7 @@
       "north": null,
       "east": null,
       "south": null,
-      "west": "kanto-route-10",
+      "west": "kanto-route-10-N",
       "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/power-plant.png",
       "pokecenter": false,
       "gym": false
@@ -728,7 +739,7 @@
     "232": {
       "locationId": 232,
       "name": "lavender-town",
-      "north": "kanto-route-10",
+      "north": "kanto-route-10-N",
       "east": "pokemon-tower",
       "south": "kanto-route-12",
       "west": "kanto-route-8",
