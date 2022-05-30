@@ -75,7 +75,13 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [],
-    "name": "kanto-route-10"
+    "name": "kanto-route-10-N"
+  },
+  "891": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "kanto-route-10-S"
   },
   "90": {
     "pre-requsites": [],
@@ -403,9 +409,45 @@
   },
   "233": {
     "pre-requsites": [],
-    "quest": ["The Pokemon League"],
+    "quest": [],
     "blockers": ["badge_earth"],
     "name": "indigo-plateau"
+  },
+  "2331": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "indigo-plateau-center"
+  },
+  "2332": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "lorelei-room"
+  },
+  "2333": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "bruno-room"
+  },
+  "2334": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "agatha-room"
+  },
+  "2335": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "lance-room"
+  },
+  "2336": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "chamption-room"
   },
   "234": {
     "pre-requsites": [],
