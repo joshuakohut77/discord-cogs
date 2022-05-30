@@ -46,7 +46,7 @@
     "76": {
       "locationId": 76,
       "name": "fuchsia-city",
-      "north": "kanto-safari-zone",
+      "north": "safari-zone",
       "east": "kanto-route-15",
       "south": "kanto-sea-route-19",
       "west": "kanto-route-18",
@@ -661,12 +661,45 @@
     },
     "162": {
       "locationId": 162,
-      "name": "kanto-safari-zone",
-      "north": null,
+      "name": "safari-zone",
+      "north": "safari-zone-1",
       "east": null,
       "south": "fuchsia-city",
       "west": null,
-      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-safari-zone.png",
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/safari-zone.png",
+      "pokecenter": false,
+      "gym": false
+    },    
+    "1621": {
+      "locationId": 1621,
+      "name": "safari-zone-1",
+      "north": "safari-zone-2",
+      "east": null,
+      "south": "safari-zone",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/safari-zone-1.png",
+      "pokecenter": false,
+      "gym": false
+    },    
+    "1622": {
+      "locationId": 1622,
+      "name": "safari-zone-2",
+      "north": "safari-zone-3",
+      "east": null,
+      "south": "safari-zone-1",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/safari-zone-2.png",
+      "pokecenter": false,
+      "gym": false
+    },    
+    "1623": {
+      "locationId": 1623,
+      "name": "safari-zone-3",
+      "north": null,
+      "east": null,
+      "south": "safari-zone-2",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/safari-zone-3.png",
       "pokecenter": false,
       "gym": false
     },
