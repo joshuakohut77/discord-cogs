@@ -142,7 +142,7 @@ class battle:
             self.statuscode = 96
             self.message = "empty trainer list"
             return
-        elif trainerList == ['Missing Requirements']
+        elif trainerList == ['Missing Requirements']:
             self.statuscode = 420
             self.message = "You cannot do that yet!"
             return
