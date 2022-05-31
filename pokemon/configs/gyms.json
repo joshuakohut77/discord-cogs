@@ -508,7 +508,9 @@
     "keyitem": "earth_badge",
     "money": 4950,
     "enemy_uuid": "8bf6c33e",
-    "requirements": ["badge_volcano"],
+    "requirements": [
+      "badge_volcano"
+    ],
     "pokemon": [
       {
         "rhyhorn": 45
