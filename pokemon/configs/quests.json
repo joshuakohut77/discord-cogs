@@ -91,9 +91,15 @@
   },
   "91": {
     "pre-requsites": [],
-    "quest": ["Fishing Brother"],
+    "quest": [],
     "blockers": ["badge_marsh"],
-    "name": "kanto-route-12"
+    "name": "kanto-route-12-N"
+  },
+  "911": {
+    "pre-requsites": [],
+    "quest": ["Fishing Brother"],
+    "blockers": ["badge_marsh", "pokeflute"],
+    "name": "kanto-route-12-S"
   },
   "92": {
     "pre-requsites": [],
@@ -138,16 +144,22 @@
     "name": "kanto-sea-route-19"
   },
   "99": {
-    "pre-requsites": [],
-    "quest": [],
+    "pre-requsites": ["HM01"],
+    "quest": ["Oaks Aide"],
     "blockers": ["oaks_parcel_delivered"],
     "name": "kanto-route-2"
   },
   "100": {
-    "pre-requsites": ["HM01"],
-    "quest": ["Oaks Aide"],
+    "pre-requsites": [],
+    "quest": [],
     "blockers": ["HM03"],
-    "name": "kanto-sea-route-20"
+    "name": "kanto-sea-route-20-E"
+  },
+  "1001": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": ["HM03"],
+    "name": "kanto-sea-route-20-W"
   },
   "101": {
     "pre-requsites": [],
