@@ -4904,6 +4904,106 @@
         "method": "walk"
       }
     ],
+     "1571": [
+      {
+        "name": "spearow",
+        "chance": 15,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "fearow",
+        "chance": 1,
+        "max_level": 43,
+        "min_level": 43,
+        "method": "walk"
+      },
+      {
+        "name": "ekans",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "arbok",
+        "chance": 5,
+        "max_level": 41,
+        "min_level": 41,
+        "method": "walk"
+      },
+      {
+        "name": "sandshrew",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "sandslash",
+        "chance": 5,
+        "max_level": 41,
+        "min_level": 41,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowbro",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "kingler",
+        "chance": 8,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "seadra",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "seaking",
+        "chance": 17,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "ditto",
+        "chance": 5,
+        "max_level": 43,
+        "min_level": 43,
+        "method": "walk"
+      }
+    ],
     "158": [
       {
         "name": "pikachu",
@@ -5139,7 +5239,826 @@
         "method": "walk"
       }
     ],
+    "1593": [
+      {
+        "name": "zubat",
+        "chance": 15,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 5,
+        "max_level": 41,
+        "min_level": 41,
+        "method": "walk"
+      },
+      {
+        "name": "machop",
+        "chance": 20,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "machoke",
+        "chance": 4,
+        "max_level": 42,
+        "min_level": 42,
+        "method": "walk"
+      },
+      {
+        "name": "geodude",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "graveler",
+        "chance": 5,
+        "max_level": 41,
+        "min_level": 41,
+        "method": "walk"
+      },
+      {
+        "name": "onix",
+        "chance": 10,
+        "max_level": 42,
+        "min_level": 42,
+        "method": "walk"
+      },
+      {
+        "name": "marowak",
+        "chance": 1,
+        "max_level": 43,
+        "min_level": 43,
+        "method": "walk"
+      },
+      {
+        "name": "zubat",
+        "chance": 15,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 5,
+        "max_level": 40,
+        "min_level": 40,
+        "method": "walk"
+      },
+      {
+        "name": "machop",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "machoke",
+        "chance": 5,
+        "max_level": 41,
+        "min_level": 41,
+        "method": "walk"
+      },
+      {
+        "name": "geodude",
+        "chance": 20,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "graveler",
+        "chance": 1,
+        "max_level": 43,
+        "min_level": 43,
+        "method": "walk"
+      },
+      {
+        "name": "onix",
+        "chance": 10,
+        "max_level": 42,
+        "min_level": 42,
+        "method": "walk"
+      },
+      {
+        "name": "marowak",
+        "chance": 4,
+        "max_level": 40,
+        "min_level": 40,
+        "method": "walk"
+      },
+      {
+        "name": "moltres",
+        "chance": 100,
+        "max_level": 50,
+        "min_level": 50,
+        "method": "only-one"
+      },
+      {
+        "name": "zubat",
+        "chance": 15,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 5,
+        "max_level": 41,
+        "min_level": 41,
+        "method": "walk"
+      },
+      {
+        "name": "venomoth",
+        "chance": 10,
+        "max_level": 40,
+        "min_level": 40,
+        "method": "walk"
+      },
+      {
+        "name": "machop",
+        "chance": 20,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "machoke",
+        "chance": 1,
+        "max_level": 45,
+        "min_level": 45,
+        "method": "walk"
+      },
+      {
+        "name": "geodude",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "graveler",
+        "chance": 5,
+        "max_level": 43,
+        "min_level": 43,
+        "method": "walk"
+      },
+      {
+        "name": "onix",
+        "chance": 10,
+        "max_level": 45,
+        "min_level": 45,
+        "method": "walk"
+      }
+    ],
     "160": [
+      {
+        "name": "gastly",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 1,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 1,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 10,
+        "max_level": 19,
+        "min_level": 19,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 10,
+        "max_level": 20,
+        "min_level": 20,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      }
+    ],
+    "1602": [
+      {
+        "name": "gastly",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 1,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 1,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 10,
+        "max_level": 19,
+        "min_level": 19,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 10,
+        "max_level": 20,
+        "min_level": 20,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      }
+    ],
+    "1603": [
+      {
+        "name": "gastly",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 1,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 1,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 10,
+        "max_level": 19,
+        "min_level": 19,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 10,
+        "max_level": 20,
+        "min_level": 20,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      }
+    ],
+    "1604": [
+      {
+        "name": "gastly",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 1,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 1,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 10,
+        "max_level": 19,
+        "min_level": 19,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 10,
+        "max_level": 20,
+        "min_level": 20,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      }
+    ],
+    "1605": [
+      {
+        "name": "gastly",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 1,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 1,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 10,
+        "max_level": 19,
+        "min_level": 19,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 10,
+        "max_level": 20,
+        "min_level": 20,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      }
+    ],
+    "1606": [
+      {
+        "name": "gastly",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 1,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 1,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 10,
+        "max_level": 19,
+        "min_level": 19,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 4,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "gastly",
+        "chance": 10,
+        "max_level": 20,
+        "min_level": 20,
+        "method": "walk"
+      },
+      {
+        "name": "haunter",
+        "chance": 1,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "cubone",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      }
+    ],
+    "1607": [
       {
         "name": "gastly",
         "chance": 5,
@@ -5458,7 +6377,2119 @@
         "method": "walk"
       }
     ],
+    "1612": [
+      {
+        "name": "vulpix",
+        "chance": 10,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 10,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "ponyta",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "grimer",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "muk",
+        "chance": 4,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "koffing",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "weezing",
+        "chance": 1,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "vulpix",
+        "chance": 20,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 20,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "ponyta",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "grimer",
+        "chance": 10,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "muk",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "koffing",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "weezing",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "vulpix",
+        "chance": 20,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 20,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "ponyta",
+        "chance": 4,
+        "max_level": 36,
+        "min_level": 36,
+        "method": "walk"
+      },
+      {
+        "name": "grimer",
+        "chance": 15,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "muk",
+        "chance": 5,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "koffing",
+        "chance": 5,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "weezing",
+        "chance": 1,
+        "max_level": 42,
+        "min_level": 42,
+        "method": "walk"
+      },
+      {
+        "name": "magmar",
+        "chance": 10,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "vulpix",
+        "chance": 15,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 15,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "ponyta",
+        "chance": 5,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "grimer",
+        "chance": 10,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "muk",
+        "chance": 10,
+        "max_level": 40,
+        "min_level": 40,
+        "method": "walk"
+      },
+      {
+        "name": "koffing",
+        "chance": 5,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "weezing",
+        "chance": 1,
+        "max_level": 42,
+        "min_level": 42,
+        "method": "walk"
+      },
+      {
+        "name": "magmar",
+        "chance": 4,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      }
+    ],
+    "1613": [
+      {
+        "name": "vulpix",
+        "chance": 10,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 10,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "ponyta",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "grimer",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "muk",
+        "chance": 4,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "koffing",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "weezing",
+        "chance": 1,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "vulpix",
+        "chance": 20,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 20,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "ponyta",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "grimer",
+        "chance": 10,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "muk",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "koffing",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "weezing",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "vulpix",
+        "chance": 20,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 20,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "ponyta",
+        "chance": 4,
+        "max_level": 36,
+        "min_level": 36,
+        "method": "walk"
+      },
+      {
+        "name": "grimer",
+        "chance": 15,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "muk",
+        "chance": 5,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "koffing",
+        "chance": 5,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "weezing",
+        "chance": 1,
+        "max_level": 42,
+        "min_level": 42,
+        "method": "walk"
+      },
+      {
+        "name": "magmar",
+        "chance": 10,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "vulpix",
+        "chance": 15,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 15,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "ponyta",
+        "chance": 5,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "grimer",
+        "chance": 10,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "muk",
+        "chance": 10,
+        "max_level": 40,
+        "min_level": 40,
+        "method": "walk"
+      },
+      {
+        "name": "koffing",
+        "chance": 5,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "weezing",
+        "chance": 1,
+        "max_level": 42,
+        "min_level": 42,
+        "method": "walk"
+      },
+      {
+        "name": "magmar",
+        "chance": 4,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      }
+    ],
+    "1610": [
+      {
+        "name": "vulpix",
+        "chance": 10,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 10,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "ponyta",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "grimer",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "muk",
+        "chance": 4,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "koffing",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "weezing",
+        "chance": 1,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "vulpix",
+        "chance": 20,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 20,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "ponyta",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "grimer",
+        "chance": 10,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "muk",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "koffing",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "weezing",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "vulpix",
+        "chance": 20,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 20,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "ponyta",
+        "chance": 4,
+        "max_level": 36,
+        "min_level": 36,
+        "method": "walk"
+      },
+      {
+        "name": "grimer",
+        "chance": 15,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "muk",
+        "chance": 5,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "koffing",
+        "chance": 5,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "weezing",
+        "chance": 1,
+        "max_level": 42,
+        "min_level": 42,
+        "method": "walk"
+      },
+      {
+        "name": "magmar",
+        "chance": 10,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "vulpix",
+        "chance": 15,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "growlithe",
+        "chance": 15,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "ponyta",
+        "chance": 5,
+        "max_level": 34,
+        "min_level": 34,
+        "method": "walk"
+      },
+      {
+        "name": "grimer",
+        "chance": 10,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "muk",
+        "chance": 10,
+        "max_level": 40,
+        "min_level": 40,
+        "method": "walk"
+      },
+      {
+        "name": "koffing",
+        "chance": 5,
+        "max_level": 35,
+        "min_level": 35,
+        "method": "walk"
+      },
+      {
+        "name": "weezing",
+        "chance": 1,
+        "max_level": 42,
+        "min_level": 42,
+        "method": "walk"
+      },
+      {
+        "name": "magmar",
+        "chance": 4,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      }
+    ],
     "162": [
+      {
+        "name": "nidoran-f",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "nidorina",
+        "chance": 10,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "nidorino",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "parasect",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "venonat",
+        "chance": 15,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "exeggcute",
+        "chance": 10,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "rhyhorn",
+        "chance": 20,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "chansey",
+        "chance": 1,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "scyther",
+        "chance": 4,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "pinsir",
+        "chance": 4,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "dratini",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "nidoran-f",
+        "chance": 20,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "nidorina",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "nidorino",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "paras",
+        "chance": 15,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "parasect",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "doduo",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "exeggcute",
+        "chance": 10,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "kangaskhan",
+        "chance": 4,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "scyther",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "pinsir",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "dratini",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "nidoran-f",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "nidorina",
+        "chance": 10,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "nidorino",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "paras",
+        "chance": 15,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "venomoth",
+        "chance": 5,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "exeggcute",
+        "chance": 10,
+        "max_level": 27,
+        "min_level": 27,
+        "method": "walk"
+      },
+      {
+        "name": "rhyhorn",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "chansey",
+        "chance": 4,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "tauros",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "dratini",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "nidoran-f",
+        "chance": 20,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "nidorina",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "nidorino",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "venonat",
+        "chance": 15,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "venomoth",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "doduo",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "exeggcute",
+        "chance": 10,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "kangaskhan",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "tauros",
+        "chance": 4,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "dratini",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      }
+    ],
+    "1621": [
+      {
+        "name": "nidoran-f",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "nidorina",
+        "chance": 10,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "nidorino",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "parasect",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "venonat",
+        "chance": 15,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "exeggcute",
+        "chance": 10,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "rhyhorn",
+        "chance": 20,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "chansey",
+        "chance": 1,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "scyther",
+        "chance": 4,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "pinsir",
+        "chance": 4,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "dratini",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "nidoran-f",
+        "chance": 20,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "nidorina",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "nidorino",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "paras",
+        "chance": 15,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "parasect",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "doduo",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "exeggcute",
+        "chance": 10,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "kangaskhan",
+        "chance": 4,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "scyther",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "pinsir",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "dratini",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "nidoran-f",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "nidorina",
+        "chance": 10,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "nidorino",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "paras",
+        "chance": 15,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "venomoth",
+        "chance": 5,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "exeggcute",
+        "chance": 10,
+        "max_level": 27,
+        "min_level": 27,
+        "method": "walk"
+      },
+      {
+        "name": "rhyhorn",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "chansey",
+        "chance": 4,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "tauros",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "dratini",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "nidoran-f",
+        "chance": 20,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "nidorina",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "nidorino",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "venonat",
+        "chance": 15,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "venomoth",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "doduo",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "exeggcute",
+        "chance": 10,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "kangaskhan",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "tauros",
+        "chance": 4,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "dratini",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      }
+    ],
+    "1622": [
+      {
+        "name": "nidoran-f",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "nidorina",
+        "chance": 10,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "nidorino",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "parasect",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "venonat",
+        "chance": 15,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "exeggcute",
+        "chance": 10,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "rhyhorn",
+        "chance": 20,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "chansey",
+        "chance": 1,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "scyther",
+        "chance": 4,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "pinsir",
+        "chance": 4,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "dratini",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "nidoran-f",
+        "chance": 20,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "nidorina",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 5,
+        "max_level": 24,
+        "min_level": 24,
+        "method": "walk"
+      },
+      {
+        "name": "nidorino",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "paras",
+        "chance": 15,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "parasect",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "doduo",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "exeggcute",
+        "chance": 10,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "kangaskhan",
+        "chance": 4,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "scyther",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "pinsir",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "dratini",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "nidoran-f",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "nidorina",
+        "chance": 10,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 20,
+        "max_level": 22,
+        "min_level": 22,
+        "method": "walk"
+      },
+      {
+        "name": "nidorino",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "paras",
+        "chance": 15,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "venomoth",
+        "chance": 5,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "exeggcute",
+        "chance": 10,
+        "max_level": 27,
+        "min_level": 27,
+        "method": "walk"
+      },
+      {
+        "name": "rhyhorn",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "chansey",
+        "chance": 4,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "tauros",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "dratini",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "nidoran-f",
+        "chance": 20,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "nidorina",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "nidoran-m",
+        "chance": 5,
+        "max_level": 25,
+        "min_level": 25,
+        "method": "walk"
+      },
+      {
+        "name": "nidorino",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "venonat",
+        "chance": 15,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "walk"
+      },
+      {
+        "name": "venomoth",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "doduo",
+        "chance": 20,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "exeggcute",
+        "chance": 10,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "kangaskhan",
+        "chance": 1,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "tauros",
+        "chance": 4,
+        "max_level": 26,
+        "min_level": 26,
+        "method": "walk"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "dratini",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      }
+    ],
+    "1623": [
       {
         "name": "nidoran-f",
         "chance": 20,
