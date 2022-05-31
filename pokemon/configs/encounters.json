@@ -2116,7 +2116,1942 @@
         "method": "only-one"
       }
     ],
+    "1361": [
+      {
+        "name": "zubat",
+        "chance": 10,
+        "max_level": 21,
+        "min_level": 21,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 5,
+        "max_level": 29,
+        "min_level": 29,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "golduck",
+        "chance": 1,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 1,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 4,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 10,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 10,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "staryu",
+        "chance": 4,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "dewgong",
+        "chance": 4,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "kingler",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "seadra",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "staryu",
+        "chance": 15,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 4,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "golduck",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 15,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 10,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "staryu",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 15,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 15,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "dewgong",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "kingler",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "seadra",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "staryu",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "golbat",
+        "chance": 1,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "golduck",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 5,
+        "max_level": 29,
+        "min_level": 29,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 15,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "staryu",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "articuno",
+        "chance": 100,
+        "max_level": 50,
+        "min_level": 50,
+        "method": "only-one"
+      }
+    ],
+    "1362": [
+      {
+        "name": "zubat",
+        "chance": 10,
+        "max_level": 21,
+        "min_level": 21,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 5,
+        "max_level": 29,
+        "min_level": 29,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "golduck",
+        "chance": 1,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 1,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 4,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 10,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 10,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "staryu",
+        "chance": 4,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "dewgong",
+        "chance": 4,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "kingler",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "seadra",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "staryu",
+        "chance": 15,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 4,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "golduck",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 15,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 10,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "staryu",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 15,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 15,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "dewgong",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "kingler",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "seadra",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "staryu",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "golbat",
+        "chance": 1,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "golduck",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 5,
+        "max_level": 29,
+        "min_level": 29,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 15,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "staryu",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "articuno",
+        "chance": 100,
+        "max_level": 50,
+        "min_level": 50,
+        "method": "only-one"
+      }
+    ],
+    "1363": [
+      {
+        "name": "zubat",
+        "chance": 10,
+        "max_level": 21,
+        "min_level": 21,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 5,
+        "max_level": 29,
+        "min_level": 29,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "golduck",
+        "chance": 1,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 1,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 4,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 10,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 10,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "staryu",
+        "chance": 4,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "dewgong",
+        "chance": 4,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "kingler",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "seadra",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "staryu",
+        "chance": 15,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 4,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "golduck",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 15,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 10,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "staryu",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 15,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 15,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "dewgong",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "kingler",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "seadra",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "staryu",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "golbat",
+        "chance": 1,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "golduck",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 5,
+        "max_level": 29,
+        "min_level": 29,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 15,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "staryu",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "articuno",
+        "chance": 100,
+        "max_level": 50,
+        "min_level": 50,
+        "method": "only-one"
+      }
+    ],
+    "1364": [
+      {
+        "name": "zubat",
+        "chance": 10,
+        "max_level": 21,
+        "min_level": 21,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 5,
+        "max_level": 29,
+        "min_level": 29,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "golduck",
+        "chance": 1,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 1,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 4,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 10,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 10,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "staryu",
+        "chance": 4,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "dewgong",
+        "chance": 4,
+        "max_level": 38,
+        "min_level": 38,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 20,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "kingler",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "seadra",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "staryu",
+        "chance": 15,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 4,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "golduck",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 10,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 15,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 10,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "krabby",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 5,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "walk"
+      },
+      {
+        "name": "staryu",
+        "chance": 5,
+        "max_level": 28,
+        "min_level": 28,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 15,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 15,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 10,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "dewgong",
+        "chance": 1,
+        "max_level": 37,
+        "min_level": 37,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "kingler",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "seadra",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "goldeen",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "staryu",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "golbat",
+        "chance": 1,
+        "max_level": 32,
+        "min_level": 32,
+        "method": "walk"
+      },
+      {
+        "name": "psyduck",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "golduck",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowpoke",
+        "chance": 5,
+        "max_level": 31,
+        "min_level": 31,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 4,
+        "max_level": 39,
+        "min_level": 39,
+        "method": "walk"
+      },
+      {
+        "name": "seel",
+        "chance": 5,
+        "max_level": 29,
+        "min_level": 29,
+        "method": "walk"
+      },
+      {
+        "name": "shellder",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 15,
+        "max_level": 33,
+        "min_level": 33,
+        "method": "walk"
+      },
+      {
+        "name": "horsea",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "staryu",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "articuno",
+        "chance": 100,
+        "max_level": 50,
+        "min_level": 50,
+        "method": "only-one"
+      }
+    ],
     "147": [
+      {
+        "name": "arbok",
+        "chance": 10,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "raichu",
+        "chance": 4,
+        "max_level": 53,
+        "min_level": 53,
+        "method": "walk"
+      },
+      {
+        "name": "sandslash",
+        "chance": 10,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 20,
+        "max_level": 46,
+        "min_level": 46,
+        "method": "walk"
+      },
+      {
+        "name": "parasect",
+        "chance": 5,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "venomoth",
+        "chance": 10,
+        "max_level": 49,
+        "min_level": 49,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "kadabra",
+        "chance": 5,
+        "max_level": 49,
+        "min_level": 49,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "magneton",
+        "chance": 15,
+        "max_level": 46,
+        "min_level": 46,
+        "method": "walk"
+      },
+      {
+        "name": "dodrio",
+        "chance": 10,
+        "max_level": 49,
+        "min_level": 49,
+        "method": "walk"
+      },
+      {
+        "name": "hypno",
+        "chance": 20,
+        "max_level": 46,
+        "min_level": 46,
+        "method": "walk"
+      },
+      {
+        "name": "kingler",
+        "chance": 8,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "seadra",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "seaking",
+        "chance": 17,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "ditto",
+        "chance": 1,
+        "max_level": 53,
+        "min_level": 53,
+        "method": "walk"
+      },
+      {
+        "name": "wigglytuff",
+        "chance": 5,
+        "max_level": 54,
+        "min_level": 54,
+        "method": "walk"
+      },
+      {
+        "name": "venomoth",
+        "chance": 20,
+        "max_level": 51,
+        "min_level": 51,
+        "method": "walk"
+      },
+      {
+        "name": "kadabra",
+        "chance": 15,
+        "max_level": 51,
+        "min_level": 51,
+        "method": "walk"
+      },
+      {
+        "name": "dodrio",
+        "chance": 20,
+        "max_level": 51,
+        "min_level": 51,
+        "method": "walk"
+      },
+      {
+        "name": "electrode",
+        "chance": 10,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "marowak",
+        "chance": 10,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "rhydon",
+        "chance": 10,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "chansey",
+        "chance": 5,
+        "max_level": 56,
+        "min_level": 56,
+        "method": "walk"
+      },
+      {
+        "name": "ditto",
+        "chance": 1,
+        "max_level": 60,
+        "min_level": 60,
+        "method": "walk"
+      },
+      {
+        "name": "arbok",
+        "chance": 5,
+        "max_level": 57,
+        "min_level": 57,
+        "method": "walk"
+      },
+      {
+        "name": "raichu",
+        "chance": 10,
+        "max_level": 64,
+        "min_level": 64,
+        "method": "walk"
+      },
+      {
+        "name": "sandslash",
+        "chance": 5,
+        "max_level": 57,
+        "min_level": 57,
+        "method": "walk"
+      },
+      {
+        "name": "parasect",
+        "chance": 10,
+        "max_level": 64,
+        "min_level": 64,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowbro",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "kingler",
+        "chance": 8,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "electrode",
+        "chance": 15,
+        "max_level": 55,
+        "min_level": 55,
+        "method": "walk"
+      },
+      {
+        "name": "marowak",
+        "chance": 20,
+        "max_level": 55,
+        "min_level": 55,
+        "method": "walk"
+      },
+      {
+        "name": "rhydon",
+        "chance": 20,
+        "max_level": 55,
+        "min_level": 55,
+        "method": "walk"
+      },
+      {
+        "name": "chansey",
+        "chance": 10,
+        "max_level": 64,
+        "min_level": 64,
+        "method": "walk"
+      },
+      {
+        "name": "seadra",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "seaking",
+        "chance": 17,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "ditto",
+        "chance": 1,
+        "max_level": 67,
+        "min_level": 67,
+        "method": "walk"
+      }
+    ],
+    "1471": [
       {
         "name": "arbok",
         "chance": 10,
@@ -2424,6 +4359,309 @@
         "max_level": 70,
         "min_level": 70,
         "method": "only-one"
+      }
+    ],
+    "1472": [
+      {
+        "name": "arbok",
+        "chance": 10,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "raichu",
+        "chance": 4,
+        "max_level": 53,
+        "min_level": 53,
+        "method": "walk"
+      },
+      {
+        "name": "sandslash",
+        "chance": 10,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "golbat",
+        "chance": 20,
+        "max_level": 46,
+        "min_level": 46,
+        "method": "walk"
+      },
+      {
+        "name": "parasect",
+        "chance": 5,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "venomoth",
+        "chance": 10,
+        "max_level": 49,
+        "min_level": 49,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "kadabra",
+        "chance": 5,
+        "max_level": 49,
+        "min_level": 49,
+        "method": "walk"
+      },
+      {
+        "name": "slowbro",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "magneton",
+        "chance": 15,
+        "max_level": 46,
+        "min_level": 46,
+        "method": "walk"
+      },
+      {
+        "name": "dodrio",
+        "chance": 10,
+        "max_level": 49,
+        "min_level": 49,
+        "method": "walk"
+      },
+      {
+        "name": "hypno",
+        "chance": 20,
+        "max_level": 46,
+        "min_level": 46,
+        "method": "walk"
+      },
+      {
+        "name": "kingler",
+        "chance": 8,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "seadra",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "seaking",
+        "chance": 17,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "ditto",
+        "chance": 1,
+        "max_level": 53,
+        "min_level": 53,
+        "method": "walk"
+      },
+      {
+        "name": "wigglytuff",
+        "chance": 5,
+        "max_level": 54,
+        "min_level": 54,
+        "method": "walk"
+      },
+      {
+        "name": "venomoth",
+        "chance": 20,
+        "max_level": 51,
+        "min_level": 51,
+        "method": "walk"
+      },
+      {
+        "name": "kadabra",
+        "chance": 15,
+        "max_level": 51,
+        "min_level": 51,
+        "method": "walk"
+      },
+      {
+        "name": "dodrio",
+        "chance": 20,
+        "max_level": 51,
+        "min_level": 51,
+        "method": "walk"
+      },
+      {
+        "name": "electrode",
+        "chance": 10,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "marowak",
+        "chance": 10,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "rhydon",
+        "chance": 10,
+        "max_level": 52,
+        "min_level": 52,
+        "method": "walk"
+      },
+      {
+        "name": "chansey",
+        "chance": 5,
+        "max_level": 56,
+        "min_level": 56,
+        "method": "walk"
+      },
+      {
+        "name": "ditto",
+        "chance": 1,
+        "max_level": 60,
+        "min_level": 60,
+        "method": "walk"
+      },
+      {
+        "name": "arbok",
+        "chance": 5,
+        "max_level": 57,
+        "min_level": 57,
+        "method": "walk"
+      },
+      {
+        "name": "raichu",
+        "chance": 10,
+        "max_level": 64,
+        "min_level": 64,
+        "method": "walk"
+      },
+      {
+        "name": "sandslash",
+        "chance": 5,
+        "max_level": 57,
+        "min_level": 57,
+        "method": "walk"
+      },
+      {
+        "name": "parasect",
+        "chance": 10,
+        "max_level": 64,
+        "min_level": 64,
+        "method": "walk"
+      },
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "slowbro",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "kingler",
+        "chance": 8,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "electrode",
+        "chance": 15,
+        "max_level": 55,
+        "min_level": 55,
+        "method": "walk"
+      },
+      {
+        "name": "marowak",
+        "chance": 20,
+        "max_level": 55,
+        "min_level": 55,
+        "method": "walk"
+      },
+      {
+        "name": "rhydon",
+        "chance": 20,
+        "max_level": 55,
+        "min_level": 55,
+        "method": "walk"
+      },
+      {
+        "name": "chansey",
+        "chance": 10,
+        "max_level": 64,
+        "min_level": 64,
+        "method": "walk"
+      },
+      {
+        "name": "seadra",
+        "chance": 25,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "seaking",
+        "chance": 17,
+        "max_level": 23,
+        "min_level": 23,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 100,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "old-rod"
+      },
+      {
+        "name": "ditto",
+        "chance": 1,
+        "max_level": 67,
+        "min_level": 67,
+        "method": "walk"
       }
     ],
     "151": [
