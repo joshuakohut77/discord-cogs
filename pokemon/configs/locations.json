@@ -166,12 +166,23 @@
     },
     "91": {
       "locationId": 91,
-      "name": "kanto-route-12",
+      "name": "kanto-route-12-N",
       "north": "lavender-town",
+      "east": null,
+      "south": "kanto-route-12-S",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-12-N.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "911": {
+      "locationId": 911,
+      "name": "kanto-route-12-S",
+      "north": "kanto-route-12-N",
       "east": null,
       "south": "kanto-route-13",
       "west": "kanto-route-11",
-      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-12.png",
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-12-S.png",
       "pokecenter": false,
       "gym": false
     },
@@ -265,12 +276,23 @@
     },
     "100": {
       "locationId": 100,
-      "name": "kanto-sea-route-20",
+      "name": "kanto-sea-route-20-E",
       "north": "seafoam-islands",
       "east": "kanto-sea-route-19",
       "south": null,
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-sea-route-20-E.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "1001": {
+      "locationId": 1001,
+      "name": "kanto-sea-route-20-W",
+      "north": "seafoam-islands",
+      "east": null,
+      "south": null,
       "west": "cinnabar-island",
-      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-sea-route-20.png",
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-sea-route-20-W.png",
       "pokecenter": false,
       "gym": false
     },

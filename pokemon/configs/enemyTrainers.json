@@ -1,0 +1,2220 @@
+{
+    "89": [
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 400,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pikachu": 20
+          },
+          {
+            "clefairy": 20
+          }
+        ]
+      },
+      {
+        "name": "PokéManiac",
+        "filename": "pokemaniac.png",
+        "money": 1500,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "rhyhorn": 30
+          },
+          {
+            "lickitung": 30
+          }
+        ]
+      }
+    ],
+    "91": [
+      {
+        "name": "Fisherman",
+        "filename": "fisherman.png",
+        "money": 770,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "goldeen": 22
+          },
+          {
+            "poliwag": 22
+          },
+          {
+            "goldeen": 22
+          }
+        ]
+      },
+      {
+        "name": "Fisherman",
+        "filename": "fisherman.png",
+        "money": 840,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "tentacool": 24
+          },
+          {
+            "goldeen": 24
+          }
+        ]
+      },
+      {
+        "name": "Fisherman",
+        "filename": "fisherman.png",
+        "money": 945,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "goldeen": 27
+          }
+        ]
+      },
+      {
+        "name": "Fisherman",
+        "filename": "fisherman.png",
+        "money": 735,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "poliwag": 21
+          },
+          {
+            "shellder": 21
+          },
+          {
+            "goldeen": 21
+          },
+          {
+            "horsea": 21
+          }
+        ]
+      }
+    ],
+    "92": [
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 560,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "goldeen": 28
+          },
+          {
+            "poliwag": 28
+          },
+          {
+            "horsea": 28
+          }
+        ]
+      },
+      {
+        "name": "Bird Keeper",
+        "filename": "birdkeeper.png",
+        "money": 725,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pidgey": 29
+          },
+          {
+            "pidgeotto": 29
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 480,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pidgey": 24
+          },
+          {
+            "meowth": 24
+          },
+          {
+            "rattata": 24
+          },
+          {
+            "pikachu": 24
+          },
+          {
+            "meowth": 24
+          }
+        ]
+      },
+      {
+        "name": "Beauty",
+        "filename": "beauty.png",
+        "money": 1890,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "rattata": 27
+          },
+          {
+            "pikachu": 27
+          },
+          {
+            "rattata": 27
+          }
+        ]
+      },
+      {
+        "name": "Beauty",
+        "filename": "beauty.png",
+        "money": 2030,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "clefairy": 29
+          },
+          {
+            "meowth": 29
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 600,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "poliwag": 30
+          },
+          {
+            "poliwag": 30
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 540,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pidgey": 27
+          },
+          {
+            "meowth": 27
+          },
+          {
+            "pidgey": 27
+          },
+          {
+            "Pidgeotto": 27
+          }
+        ]
+      },
+      {
+        "name": "Bird Keeper",
+        "filename": "birdkeeper.png",
+        "money": 625,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "spearow": 25
+          },
+          {
+            "pidgey": 25
+          },
+          {
+            "pidgey": 25
+          },
+          {
+            "spearow": 25
+          },
+          {
+            "spearow": 25
+          }
+        ]
+      },
+      {
+        "name": "Bird Keeper",
+        "filename": "birdkeeper.png",
+        "money": 650,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pidgey": 26
+          },
+          {
+            "pidgeotto": 26
+          },
+          {
+            "spearow": 26
+          },
+          {
+            "fearow": 26
+          }
+        ]
+      },
+      {
+        "name": "Biker",
+        "filename": "biker.png",
+        "money": 560,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "koffing": 28
+          },
+          {
+            "koffing": 28
+          },
+          {
+            "koffing": 28
+          }
+        ]
+      }
+    ],
+    "93": [
+      {
+        "name": "Bird Keeper",
+        "filename": "birdkeeper.png",
+        "money": 650,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pidgey": 26
+          },
+          {
+            "spearow": 26
+          },
+          {
+            "pidgey": 26
+          },
+          {
+            "fearow": 26
+          }
+        ]
+      },
+      {
+        "name": "Bird Keeper",
+        "filename": "birdkeeper.png",
+        "money": 700,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pidgey": 28
+          },
+          {
+            "doduo": 28
+          },
+          {
+            "pidgeotto": 28
+          }
+        ]
+      },
+      {
+        "name": "Bird Keeper",
+        "filename": "birdkeeper.png",
+        "money": 725,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pidgeotto": 29
+          },
+          {
+            "fearow": 29
+          }
+        ]
+      },
+      {
+        "name": "Bird Keeper",
+        "filename": "birdkeeper.png",
+        "money": 700,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "spearow": 28
+          },
+          {
+            "doduo": 28
+          },
+          {
+            "fearow": 28
+          }
+        ]
+      },
+      {
+        "name": "Biker",
+        "filename": "biker.png",
+        "money": 580,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "koffing": 29
+          },
+          {
+            "muk": 29
+          }
+        ]
+      },
+      {
+        "name": "Bird Keeper",
+        "filename": "birdkeeper.png",
+        "money": 825,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "farfetchd": 33
+          }
+        ]
+      },
+      {
+        "name": "Biker",
+        "filename": "biker.png",
+        "money": 580,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "koffing": 29
+          },
+          {
+            "grimer": 29
+          }
+        ]
+      },
+      {
+        "name": "Biker",
+        "filename": "biker.png",
+        "money": 560,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "grimer": 28
+          },
+          {
+            "grimer": 28
+          },
+          {
+            "koffing": 28
+          }
+        ]
+      },
+      {
+        "name": "Biker",
+        "filename": "biker.png",
+        "money": 520,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "koffing": 26
+          },
+          {
+            "koffing": 26
+          },
+          {
+            "grimer": 26
+          },
+          {
+            "koffing": 26
+          }
+        ]
+      },
+      {
+        "name": "Bird Keeper",
+        "filename": "birdkeeper.png",
+        "money": 725,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "spearow": 29
+          },
+          {
+            "fearow": 29
+          }
+        ]
+      }
+    ],
+    "94": [
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 660,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "clefairy": 33
+          }
+        ]
+      },
+      {
+        "name": "Beauty",
+        "filename": "beauty.png",
+        "money": 2030,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pidgeotto": 29
+          },
+          {
+            "wigglytuff": 29
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 580,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pikachu": 29
+          },
+          {
+            "raichu": 29
+          }
+        ]
+      },
+      {
+        "name": "Biker",
+        "filename": "biker.png",
+        "money": 500,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "koffing": 25
+          },
+          {
+            "koffing": 25
+          },
+          {
+            "weezing": 25
+          },
+          {
+            "koffing": 25
+          },
+          {
+            "grimer": 25
+          }
+        ]
+      },
+      {
+        "name": "Biker",
+        "filename": "biker.png",
+        "money": 560,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "koffing": 28
+          },
+          {
+            "grimer": 28
+          },
+          {
+            "weezing": 28
+          }
+        ]
+      },
+      {
+        "name": "Beauty",
+        "filename": "beauty.png",
+        "money": 2030,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "bulbasaur": 29
+          },
+          {
+            "ivysaur": 29
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 560,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "gloom": 28
+          },
+          {
+            "oddish": 28
+          },
+          {
+            "oddish": 28
+          }
+        ]
+      },
+      {
+        "name": "Bird Keeper",
+        "filename": "birdkeeper.png",
+        "money": 700,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "dodrio": 28
+          },
+          {
+            "doduo": 28
+          },
+          {
+            "doduo": 28
+          }
+        ]
+      },
+      {
+        "name": "Bird Keeper",
+        "filename": "birdkeeper.png",
+        "money": 650,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pidgeotto": 26
+          },
+          {
+            "farfetch'd": 26
+          },
+          {
+            "doduo": 26
+          },
+          {
+            "pidgey": 26
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 580,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "bellsprout": 29
+          },
+          {
+            "oddish": 29
+          },
+          {
+            "tangela": 29
+          }
+        ]
+      }
+    ],
+    "95": [
+      {
+        "name": "Biker",
+        "filename": "biker.png",
+        "money": 580,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "grimer": 29
+          },
+          {
+            "koffing": 29
+          }
+        ]
+      },
+      {
+        "name": "Cue Ball",
+        "filename": "cueball.png",
+        "money": 700,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "machop": 28
+          },
+          {
+            "mankey": 28
+          },
+          {
+            "machop": 28
+          }
+        ]
+      },
+      {
+        "name": "Cue Ball",
+        "filename": "cueball.png",
+        "money": 725,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "mankey": 29
+          },
+          {
+            "machop": 29
+          }
+        ]
+      },
+      {
+        "name": "Biker",
+        "filename": "biker.png",
+        "money": 660,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "weezing": 33
+          }
+        ]
+      },
+      {
+        "name": "Cue Ball",
+        "filename": "cueball.png",
+        "money": 825,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "machop": 33
+          }
+        ]
+      },
+      {
+        "name": "Biker",
+        "filename": "biker.png",
+        "money": 520,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "grimer": 26
+          },
+          {
+            "grimer": 26
+          },
+          {
+            "grimer": 26
+          },
+          {
+            "grimer": 26
+          }
+        ]
+      }
+    ],
+    "96": [
+      {
+        "name": "Cue Ball",
+        "filename": "cueball.png",
+        "money": 725,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "machop": 29
+          },
+          {
+            "machoke": 29
+          }
+        ]
+      },
+      {
+        "name": "Cue Ball",
+        "filename": "cueball.png",
+        "money": 725,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "mankey": 29
+          },
+          {
+            "primeape": 29
+          }
+        ]
+      },
+      {
+        "name": "Biker",
+        "filename": "biker.png",
+        "money": 560,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "weezing": 28
+          },
+          {
+            "koffing": 28
+          },
+          {
+            "weezing": 28
+          }
+        ]
+      },
+      {
+        "name": "Biker",
+        "filename": "biker.png",
+        "money": 660,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "muk": 33
+          }
+        ]
+      },
+      {
+        "name": "Biker",
+        "filename": "biker.png",
+        "money": 580,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "voltorb": 29
+          },
+          {
+            "voltorb": 29
+          }
+        ]
+      },
+      {
+        "name": "Cue Ball",
+        "filename": "cueball.png",
+        "money": 825,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "machoke": 33
+          }
+        ]
+      },
+      {
+        "name": "Cue Ball",
+        "filename": "cueball.png",
+        "money": 725,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "primeape": 29
+          },
+          {
+            "machoke": 29
+          }
+        ]
+      },
+      {
+        "name": "Cue Ball",
+        "filename": "cueball.png",
+        "money": 650,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "mankey": 26
+          },
+          {
+            "mankey": 26
+          },
+          {
+            "machoke": 26
+          },
+          {
+            "machop": 26
+          }
+        ]
+      },
+      {
+        "name": "Biker",
+        "filename": "biker.png",
+        "money": 580,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "weezing": 29
+          },
+          {
+            "muk": 29
+          }
+        ]
+      },
+      {
+        "name": "Biker",
+        "filename": "biker.png",
+        "money": 500,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "koffing": 25
+          },
+          {
+            "weezing": 25
+          },
+          {
+            "koffing": 25
+          },
+          {
+            "koffing": 25
+          },
+          {
+            "weezing": 25
+          }
+        ]
+      }
+    ],
+    "97": [
+      {
+        "name": "Bird Keeper",
+        "filename": "birdkeeper.png",
+        "money": 725,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "spearow": 29
+          },
+          {
+            "fearow": 29
+          }
+        ]
+      },
+      {
+        "name": "Bird Keeper",
+        "filename": "birdkeeper.png",
+        "money": 650,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "spearow": 26
+          },
+          {
+            "spearow": 26
+          },
+          {
+            "fearow": 26
+          },
+          {
+            "spearow": 26
+          }
+        ]
+      },
+      {
+        "name": "Bird Keeper",
+        "filename": "birdkeeper.png",
+        "money": 850,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "dodrio": 34
+          }
+        ]
+      }
+    ],
+    "98": [
+      {
+        "name": "Swimmer",
+        "filename": "swimmer.png",
+        "money": 150,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "tentacool": 30
+          },
+          {
+            "shellder": 30
+          }
+        ]
+      },
+      {
+        "name": "Swimmer",
+        "filename": "swimmer.png",
+        "money": 145,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "goldeen": 29
+          },
+          {
+            "horsea": 29
+          },
+          {
+            "staryu": 29
+          }
+        ]
+      },
+      {
+        "name": "Swimmer",
+        "filename": "swimmer.png",
+        "money": 150,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "horsea": 30
+          },
+          {
+            "horsea": 30
+          }
+        ]
+      },
+      {
+        "name": "Swimmer",
+        "filename": "swimmer.png",
+        "money": 150,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "poliwag": 30
+          },
+          {
+            "poliwhirl": 30
+          }
+        ]
+      },
+      {
+        "name": "Swimmer",
+        "filename": "swimmer.png",
+        "money": 135,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "horsea": 27
+          },
+          {
+            "tentacool": 27
+          },
+          {
+            "tentacool": 27
+          },
+          {
+            "goldeen": 27
+          }
+        ]
+      },
+      {
+        "name": "Swimmer",
+        "filename": "swimmer.png",
+        "money": 145,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "goldeen": 29
+          },
+          {
+            "shellder": 29
+          },
+          {
+            "seaking": 29
+          }
+        ]
+      },
+      {
+        "name": "Swimmer",
+        "filename": "swimmer.png",
+        "money": 135,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "tentacool": 27
+          },
+          {
+            "tentacool": 27
+          },
+          {
+            "staryu": 27
+          },
+          {
+            "horsea": 27
+          },
+          {
+            "tentacool": 27
+          }
+        ]
+      },
+      {
+        "name": "Beauty",
+        "filename": "beauty.png",
+        "money": 2100,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "goldeen": 30
+          },
+          {
+            "seaking": 30
+          }
+        ]
+      },
+      {
+        "name": "Beauty",
+        "filename": "beauty.png",
+        "money": 1890,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "poliwag": 27
+          },
+          {
+            "goldeen": 27
+          },
+          {
+            "seaking": 27
+          },
+          {
+            "goldeen": 27
+          },
+          {
+            "poliwag": 27
+          }
+        ]
+      },
+      {
+        "name": "Beauty",
+        "filename": "beauty.png",
+        "money": 2030,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "staryu": 29
+          },
+          {
+            "staryu": 29
+          },
+          {
+            "staryu": 29
+          }
+        ]
+      }
+    ],
+    "100": [
+      {
+        "name": "Swimmer",
+        "filename": "swimmer.png",
+        "money": 155,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "shellder": 31
+          },
+          {
+            "cloyster": 31
+          }
+        ]
+      },
+      {
+        "name": "Swimmer",
+        "filename": "swimmer.png",
+        "money": 140,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "horsea": 28
+          },
+          {
+            "horsea": 28
+          },
+          {
+            "seadra": 28
+          },
+          {
+            "horsea": 28
+          }
+        ]
+      },
+      {
+        "name": "Beauty",
+        "filename": "beauty.png",
+        "money": 2100,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "seadra": 30
+          },
+          {
+            "horsea": 30
+          },
+          {
+            "seadra": 30
+          }
+        ]
+      },
+      {
+        "name": "Beauty",
+        "filename": "beauty.png",
+        "money": 2450,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "seaking": 35
+          }
+        ]
+      }
+    ],
+    "101": [
+      {
+        "name": "Fisherman",
+        "filename": "fisherman.png",
+        "money": 945,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "magikarp": 27
+          },
+          {
+            "magikarp": 27
+          },
+          {
+            "magikarp": 27
+          },
+          {
+            "magikarp": 27
+          },
+          {
+            "magikarp": 27
+          },
+          {
+            "magikarp": 27
+          }
+        ]
+      },
+      {
+        "name": "Fisherman",
+        "filename": "fisherman.png",
+        "money": 980,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "seaking": 28
+          },
+          {
+            "goldeen": 28
+          },
+          {
+            "seaking": 28
+          },
+          {
+            "seaking": 28
+          }
+        ]
+      },
+      {
+        "name": "Swimmer",
+        "filename": "swimmer.png",
+        "money": 165,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "seadra": 33
+          },
+          {
+            "tentacruel": 33
+          }
+        ]
+      },
+      {
+        "name": "Cue Ball",
+        "filename": "cueball.png",
+        "money": 775,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "tentacool": 31
+          },
+          {
+            "tentacool": 31
+          },
+          {
+            "tentacruel": 31
+          }
+        ]
+      },
+      {
+        "name": "Fisherman",
+        "filename": "fisherman.png",
+        "money": 1085,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "shellder": 31
+          },
+          {
+            "cloyster": 31
+          }
+        ]
+      },
+      {
+        "name": "Fisherman",
+        "filename": "fisherman.png",
+        "money": 1155,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "seaking": 33
+          },
+          {
+            "goldeen": 33
+          }
+        ]
+      },
+      {
+        "name": "Swimmer",
+        "filename": "swimmer.png",
+        "money": 185,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "starmie": 37
+          }
+        ]
+      },
+      {
+        "name": "Swimmer",
+        "filename": "swimmer.png",
+        "money": 165,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "staryu": 33
+          },
+          {
+            "wartortle": 33
+          }
+        ]
+      },
+      {
+        "name": "Swimmer",
+        "filename": "swimmer.png",
+        "money": 160,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "poliwhirl": 32
+          },
+          {
+            "tentacool": 32
+          },
+          {
+            "seadra": 32
+          }
+        ]
+      }
+    ],
+    "103": [
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 280,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "rattata": 14
+          },
+          {
+            "ekans": 14
+          }
+        ]
+      },
+      {
+        "name": "Bug Catcher",
+        "filename": "bugcatcher.png",
+        "money": 140,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "caterpie": 14
+          },
+          {
+            "weedle": 14
+          }
+        ]
+      },
+      {
+        "name": "Lass",
+        "filename": "lass.png",
+        "money": 210,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pidgey": 14
+          },
+          {
+            "nidora-f": 14
+          }
+        ]
+      },
+      {
+        "name": "Youngster",
+        "filename": "youngster.png",
+        "money": 210,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "rattata": 14
+          },
+          {
+            "ekans": 14
+          },
+          {
+            "zubat": 14
+          }
+        ]
+      },
+      {
+        "name": "Lass",
+        "filename": "lass.png",
+        "money": 240,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pidgey": 16
+          },
+          {
+            "nidora-f": 16
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 360,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "mankey": 18
+          }
+        ]
+      },
+      {
+        "name": "Rocket",
+        "filename": "rocket.png",
+        "money": 450,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "ekans": 15
+          },
+          {
+            "zubat": 15
+          }
+        ]
+      }
+    ],
+    "104": [
+      {
+        "name": "Hiker",
+        "filename": "hiker.png",
+        "money": 525,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "machop": 15
+          },
+          {
+            "geodude": 15
+          }
+        ]
+      },
+      {
+        "name": "Hiker",
+        "filename": "hiker.png",
+        "money": 595,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "onix": 17
+          }
+        ]
+      },
+      {
+        "name": "Youngster",
+        "filename": "youngster.png",
+        "money": 225,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "rattata": 15
+          },
+          {
+            "spearow": 15
+          }
+        ]
+      },
+      {
+        "name": "Youngster",
+        "filename": "youngster.png",
+        "money": 255,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "slowpoke": 17
+          }
+        ]
+      },
+      {
+        "name": "Lass",
+        "filename": "lass.png",
+        "money": 225,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "nidoran-m": 15
+          },
+          {
+            "nidora-f": 15
+          }
+        ]
+      },
+      {
+        "name": "Hiker",
+        "filename": "hiker.png",
+        "money": 455,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "geodude": 13
+          },
+          {
+            "geodude": 13
+          },
+          {
+            "machop": 13
+          },
+          {
+            "geodude": 13
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 280,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "rattata": 14
+          },
+          {
+            "ekans": 14
+          }
+        ]
+      },
+      {
+        "name": "Youngster",
+        "filename": "youngster.png",
+        "money": 210,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "ekans": 14
+          },
+          {
+            "sandshrew": 14
+          }
+        ]
+      },
+      {
+        "name": "Lass",
+        "filename": "lass.png",
+        "money": 195,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "oddish": 13
+          },
+          {
+            "pidgey": 13
+          },
+          {
+            "oddish": 13
+          }
+        ]
+      }
+    ],
+    "109": [
+      {
+        "name": "Lass",
+        "filename": "lass.png",
+        "money": 135,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pidgey": 9
+          },
+          {
+            "pidgey": 9
+          }
+        ]
+      },
+      {
+        "name": "Bug Catcher",
+        "filename": "bugcatcher.png",
+        "money": 100,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "caterpie": 10
+          },
+          {
+            "weedle": 10
+          },
+          {
+            "caterpie": 10
+          }
+        ]
+      },
+      {
+        "name": "Youngster",
+        "filename": "youngster.png",
+        "money": 165,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "rattata": 11
+          },
+          {
+            "ekans": 11
+          }
+        ]
+      },
+      {
+        "name": "Bug Catcher",
+        "filename": "bugcatcher.png",
+        "money": 90,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "weedle": 9
+          },
+          {
+            "kakuna": 9
+          },
+          {
+            "caterpie": 9
+          },
+          {
+            "metapod": 9
+          }
+        ]
+      },
+      {
+        "name": "Youngster",
+        "filename": "youngster.png",
+        "money": 210,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "spearow": 14
+          }
+        ]
+      },
+      {
+        "name": "Lass",
+        "filename": "lass.png",
+        "money": 150,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "rattata": 10
+          },
+          {
+            "nidoran-m": 10
+          }
+        ]
+      },
+      {
+        "name": "Bug Catcher",
+        "filename": "bugcatcher.png",
+        "money": 110,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "caterpie": 11
+          },
+          {
+            "metapod": 11
+          }
+        ]
+      },
+      {
+        "name": "Lass",
+        "filename": "lass.png",
+        "money": 210,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "jigglypuff": 14
+          }
+        ]
+      }
+    ],
+    "120": [
+      {
+        "name": "Lass",
+        "filename": "lass.png",
+        "money": 465,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "paras": 31
+          },
+          {
+            "paras": 31
+          },
+          {
+            "parasect": 31
+          }
+        ]
+      }
+    ],
+    "131": [
+      {
+        "name": "Bug Catcher",
+        "filename": "bugcatcher.png",
+        "money": 160,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "weedle": 16
+          },
+          {
+            "caterpie": 16
+          },
+          {
+            "weedle": 16
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 400,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "squirtle": 20
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 320,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "rattata": 16
+          },
+          {
+            "pikachu": 16
+          }
+        ]
+      },
+      {
+        "name": "Bug Catcher",
+        "filename": "bugcatcher.png",
+        "money": 200,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "butterfree": 20
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 320,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pidgey": 16
+          },
+          {
+            "pidgey": 16
+          },
+          {
+            "pidgey": 16
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 320,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "spearow": 16
+          },
+          {
+            "raticate": 16
+          }
+        ]
+      }
+    ],
+    "133": [
+      {
+        "name": "Lass",
+        "filename": "lass.png",
+        "money": 330,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "clefairy": 22
+          },
+          {
+            "clefairy": 22
+          }
+        ]
+      },
+      {
+        "name": "Gambler",
+        "filename": "gambler.png",
+        "money": 1680,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "growlithe": 24
+          },
+          {
+            "vulpix": 24
+          }
+        ]
+      },
+      {
+        "name": "Super Nerd ",
+        "filename": "supernerd .png",
+        "money": 550,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "grimer": 22
+          },
+          {
+            "muk": 22
+          },
+          {
+            "grimer": 22
+          }
+        ]
+      },
+      {
+        "name": "Lass",
+        "filename": "lass.png",
+        "money": 345,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "nidoran-f": 23
+          },
+          {
+            "nidorina": 23
+          }
+        ]
+      },
+      {
+        "name": "Super Nerd",
+        "filename": "supernerd.png",
+        "money": 650,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "koffing": 26
+          }
+        ]
+      },
+      {
+        "name": "Lass",
+        "filename": "lass.png",
+        "money": 360,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "meowth": 24
+          },
+          {
+            "meowth": 24
+          },
+          {
+            "meowth": 24
+          }
+        ]
+      },
+      {
+        "name": "Lass",
+        "filename": "lass.png",
+        "money": 285,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pidgey": 19
+          },
+          {
+            "rattata": 19
+          },
+          {
+            "nidoran-m": 19
+          },
+          {
+            "meowth": 19
+          },
+          {
+            "pikachu": 19
+          }
+        ]
+      },
+      {
+        "name": "Gambler",
+        "filename": "gambler.png",
+        "money": 1540,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "poliwag": 22
+          },
+          {
+            "poliwag": 22
+          },
+          {
+            "poliwhirl": 22
+          }
+        ]
+      },
+      {
+        "name": "Super Nerd",
+        "filename": "supernerd.png",
+        "money": 500,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "voltorb": 20
+          },
+          {
+            "koffing": 20
+          },
+          {
+            "voltorb": 20
+          },
+          {
+            "magnemite": 20
+          }
+        ]
+      }
+    ],
+    "134": [
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 360,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "oddish": 18
+          },
+          {
+            "bellsprout": 18
+          },
+          {
+            "oddish": 18
+          },
+          {
+            "bellsprout": 18
+          }
+        ]
+      },
+      {
+        "name": "Hiker",
+        "filename": "hiker.png",
+        "money": 700,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "machop": 20
+          },
+          {
+            "onix": 20
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 420,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "growlithe": 21
+          },
+          {
+            "charmander": 21
+          }
+        ]
+      },
+      {
+        "name": "Bug Catcher",
+        "filename": "bugcatcher.png",
+        "money": 190,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "beedrill": 19
+          },
+          {
+            "beedrill": 19
+          }
+        ]
+      },
+      {
+        "name": "Hiker",
+        "filename": "hiker.png",
+        "money": 735,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "geodude": 21
+          },
+          {
+            "onix": 21
+          }
+        ]
+      },
+      {
+        "name": "Bug Catcher",
+        "filename": "bugcatcher.png",
+        "money": 200,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "caterpie": 20
+          },
+          {
+            "weedle": 20
+          },
+          {
+            "venonat": 20
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 380,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "rattata": 19
+          },
+          {
+            "diglett": 19
+          },
+          {
+            "ekans": 19
+          },
+          {
+            "sandshrew": 19
+          }
+        ]
+      },
+      {
+        "name": "Hiker",
+        "filename": "hiker.png",
+        "money": 700,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "geodude": 20
+          },
+          {
+            "machop": 20
+          },
+          {
+            "geodude": 20
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 460,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "meowth": 23
+          }
+        ]
+      }
+    ],
+    "891": [
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 420,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "pidgey": 21
+          },
+          {
+            "pidgeotto": 21
+          }
+        ]
+      },
+      {
+        "name": "Hiker",
+        "filename": "hiker.png",
+        "money": 735,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "geodude": 21
+          },
+          {
+            "onix": 21
+          }
+        ]
+      },
+      {
+        "name": "Hiker",
+        "filename": "hiker.png",
+        "money": 665,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "onix": 19
+          },
+          {
+            "graveler": 19
+          }
+        ]
+      },
+      {
+        "name": "PokéManiac",
+        "filename": "pokemaniac.png",
+        "money": 1000,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "cubone": 20
+          },
+          {
+            "slowpoke": 20
+          }
+        ]
+      }
+    ],
+    "911": [
+      {
+        "name": "Rocker",
+        "filename": "rocker.png",
+        "money": 725,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "voltorb": 29
+          },
+          {
+            "electrode": 29
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 840,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "nidoran-m": 29
+          },
+          {
+            "nidorino": 29
+          }
+        ]
+      },
+      {
+        "name": "Fisherman",
+        "filename": "fisherman.png",
+        "money": 840,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "magikarp": 24
+          },
+          {
+            "magikarp": 24
+          }
+        ]
+      }
+    ],
+    "1001": [
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 600,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "tentacool": 30
+          },
+          {
+            "horsea": 30
+          },
+          {
+            "seel": 30
+          }
+        ]
+      },
+      {
+        "name": "Swimmer",
+        "filename": "swimmer.png",
+        "money": 175,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "staryu": 35
+          }
+        ]
+      },
+      {
+        "name": "Bird Keeper",
+        "filename": "birdkeeper.png",
+        "money": 750,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "fearow": 30
+          },
+          {
+            "fearow": 30
+          },
+          {
+            "pidgeotto": 30
+          }
+        ]
+      },
+      {
+        "name": "Beauty",
+        "filename": "beauty.png",
+        "money": 2100,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "shellder": 30
+          },
+          {
+            "shellder": 30
+          },
+          {
+            "cloyster": 30
+          }
+        ]
+      },
+      {
+        "name": "Jr. Trainer",
+        "filename": "jrtrainer.png",
+        "money": 620,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "goldeen": 31
+          },
+          {
+            "seaking": 31
+          }
+        ]
+      },
+      {
+        "name": "Beauty",
+        "filename": "beauty.png",
+        "money": 2170,
+        "enemy_uuid": "",
+        "pokemon": [
+          {
+            "poliwag": 31
+          },
+          {
+            "seaking": 31
+          }
+        ]
+      }
+    ]
+  }
