@@ -408,7 +408,6 @@ class quests:
                     You received the Town Map!""")
         self.inventory.save()
 
-
     def professorOak(self):
         self.keyitems.oaks_parcel_delivered = True
         self.keyitems.oaks_parcel = False
