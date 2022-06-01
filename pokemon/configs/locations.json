@@ -117,7 +117,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-10-N.png",
     "pokecenter": true,
     "gym": false,
-    "displayName": ""
+    "displayName": "Route 10 North"
   },
   "90": {
     "locationId": 90,
@@ -141,7 +141,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-12-N.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Route 12 North"
   },
   "92": {
     "locationId": 92,
@@ -249,7 +249,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-sea-route-20-E.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Sea Route 20 East"
   },
   "101": {
     "locationId": 101,
@@ -429,7 +429,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-victory-road.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Victory Road"
   },
   "154": {
     "locationId": 154,
@@ -465,7 +465,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-23-S.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Route 23 South"
   },
   "158": {
     "locationId": 158,
@@ -489,7 +489,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-victory-road-2F.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Victory Road 2F"
   },
   "160": {
     "locationId": 160,
@@ -669,7 +669,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/mt-moon-BF1.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Mt. Moon BF1"
   },
   "802": {
     "locationId": 802,
@@ -681,7 +681,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/mt-moon-BF2.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Mt. Moon BF2"
   },
   "861": {
     "locationId": 861,
@@ -693,7 +693,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/professor-oak-lab.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Oak's Lab"
   },
   "871": {
     "locationId": 871,
@@ -717,7 +717,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-10-S.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Route 10 South"
   },
   "911": {
     "locationId": 911,
@@ -729,7 +729,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-12-S.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Route 12 South"
   },
   "999": {
     "locationId": 999,
@@ -753,7 +753,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-sea-route-20-W.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Sea Route 20 West"
   },
   "1361": {
     "locationId": 1361,
@@ -765,7 +765,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/seafoam-islands-BF1.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Seafoam Islands BF1"
   },
   "1362": {
     "locationId": 1362,
@@ -777,7 +777,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/seafoam-islands-BF2.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Seafoam Islands BF2"
   },
   "1363": {
     "locationId": 1363,
@@ -789,7 +789,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/seafoam-islands-BF3.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Seafoam Islands BF3"
   },
   "1364": {
     "locationId": 1364,
@@ -801,7 +801,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/seafoam-islands-BF4.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Seafoam Islands BF4"
   },
   "1471": {
     "locationId": 1471,
@@ -813,7 +813,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/cerulean-cave-B1F.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Cerulean Cave BF1"
   },
   "1472": {
     "locationId": 1472,
@@ -825,7 +825,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/cerulean-cave-2F.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Cerulean Cave 2F"
   },
   "1571": {
     "locationId": 1571,
@@ -837,7 +837,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-23-N.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Route 23 North"
   },
   "1593": {
     "locationId": 1593,
@@ -849,7 +849,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-victory-road-3F.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Victory Road 3F"
   },
   "1602": {
     "locationId": 1602,
@@ -1005,7 +1005,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/game-corner.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Game Corner"
   },
   "1881": {
     "locationId": 1881,
@@ -1017,7 +1017,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/rocket-hideout.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Rocket Hideout"
   },
   "1882": {
     "locationId": 1882,
@@ -1029,7 +1029,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/rocket-hideout-B2F.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Rocket Hideout BF2"
   },
   "1883": {
     "locationId": 1883,
@@ -1041,7 +1041,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/rocket-hideout-B3F.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Rocket Hideout BF3"
   },
   "1884": {
     "locationId": 1884,
@@ -1053,7 +1053,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/rocket-hideout-B4F.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Rocket Hideout BF4"
   },
   "2331": {
     "locationId": 2331,
@@ -1065,7 +1065,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/indigo-plateau-center.png",
     "pokecenter": true,
     "gym": false,
-    "displayName": ""
+    "displayName": "Indigo Plateau Center"
   },
   "2332": {
     "locationId": 2332,
@@ -1077,7 +1077,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/lorelei-room.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Lorelei's Room"
   },
   "2333": {
     "locationId": 2333,
@@ -1089,7 +1089,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/bruno-room.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Bruno's Room"
   },
   "2334": {
     "locationId": 2334,
@@ -1101,7 +1101,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/agatha-room.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Agatha's Room"
   },
   "2335": {
     "locationId": 2335,
@@ -1113,7 +1113,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/lance-room.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Lance's Room"
   },
   "2336": {
     "locationId": 2336,
@@ -1125,7 +1125,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/champion-room.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Champion Room"
   },
   "4981": {
     "locationId": 4981,
@@ -1137,7 +1137,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-1F.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "S.S. Anne 1F"
   },
   "4982": {
     "locationId": 4982,
@@ -1149,7 +1149,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-1F-rooms.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "S.S. Anne Rooms"
   },
   "4983": {
     "locationId": 4983,
@@ -1161,7 +1161,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-basement.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "S.S. Anne Basement"
   },
   "4984": {
     "locationId": 4984,
@@ -1173,7 +1173,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-basement-rooms.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "S.S. Anne Rooms"
   },
   "4985": {
     "locationId": 4985,
@@ -1185,7 +1185,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-basement-2F.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "S.S. Anne 2F"
   },
   "4986": {
     "locationId": 4986,
@@ -1197,7 +1197,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-basement-3F.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "S.S. Anne 3F"
   },
   "4987": {
     "locationId": 4987,
@@ -1209,7 +1209,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/captains-quarters.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "Captains Quarters"
   },
   "4988": {
     "locationId": 4988,
@@ -1221,7 +1221,7 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-2F-rooms.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "S.S. Anne Rooms"
   },
   "4989": {
     "locationId": 4989,
@@ -1233,6 +1233,6 @@
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-deck.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": ""
+    "displayName": "S.S. Anne Deck"
   }
 }
