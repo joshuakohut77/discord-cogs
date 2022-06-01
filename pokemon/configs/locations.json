@@ -91,10 +91,21 @@
       "locationId": 86,
       "name": "pallet-town",
       "north": "kanto-route-1",
-      "east": null,
+      "east": "professor-oak-lab",
       "south": "kanto-sea-route-21",
       "west": null,
       "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pallet-town.png",
+      "pokecenter": false,
+      "gym": false
+    },
+    "861": {
+      "locationId": 861,
+      "name": "professor-oak-lab",
+      "north": null,
+      "east": null,
+      "south": "pallet-town",
+      "west": null,
+      "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/professor-oak-lab.png",
       "pokecenter": false,
       "gym": false
     },
