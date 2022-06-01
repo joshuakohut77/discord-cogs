@@ -399,6 +399,15 @@ class quests:
 
         return
     
+    def garysSister(self):
+        self.inventory.townmap = True
+        self.message = dedent("""\
+                    You decided to have one last quickie with Gary's sister
+                    before departing. She handed you her number on the back of
+                    a peice of paper.
+                    You received the Town Map!""")
+        self.inventory.save()
+
 
     def professorOak(self):
         self.keyitems.oaks_parcel_delivered = True
