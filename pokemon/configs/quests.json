@@ -47,9 +47,15 @@
     "blockers": [],
     "name": "mt-moon-BF2"
   },
-  "86": {
+  "861": {
     "pre-requsites": ["oaks_parcel"],
     "quest": ["Professor Oak"],
+    "blockers": [],
+    "name": "professor-oak-lab"
+  },
+  "86": {
+    "pre-requsites": [],
+    "quest": ["Garys Sister"],
     "blockers": [],
     "name": "pallet-town"
   },
