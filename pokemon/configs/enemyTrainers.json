@@ -2,7 +2,7 @@
     "89": [
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 400,
         "enemy_uuid": "8bf6d6da",
         "pokemon": [
@@ -16,7 +16,7 @@
       },
       {
         "name": "PokéManiac",
-        "filename": "pokemaniac.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/pokemaniac.png",
         "money": 1500,
         "enemy_uuid": "8bf6d7b6",
         "pokemon": [
@@ -32,7 +32,7 @@
     "91": [
       {
         "name": "Fisherman",
-        "filename": "fisherman.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/fisherman.png",
         "money": 770,
         "enemy_uuid": "8bf6d892",
         "pokemon": [
@@ -49,7 +49,7 @@
       },
       {
         "name": "Fisherman",
-        "filename": "fisherman.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/fisherman.png",
         "money": 840,
         "enemy_uuid": "8bf6d964",
         "pokemon": [
@@ -63,7 +63,7 @@
       },
       {
         "name": "Fisherman",
-        "filename": "fisherman.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/fisherman.png",
         "money": 945,
         "enemy_uuid": "8bf6da54",
         "pokemon": [
@@ -74,7 +74,7 @@
       },
       {
         "name": "Fisherman",
-        "filename": "fisherman.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/fisherman.png",
         "money": 735,
         "enemy_uuid": "8bf6dc2a",
         "pokemon": [
@@ -96,7 +96,7 @@
     "92": [
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 560,
         "enemy_uuid": "8bf6dd06",
         "pokemon": [
@@ -113,7 +113,7 @@
       },
       {
         "name": "Bird Keeper",
-        "filename": "birdkeeper.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/birdkeeper.png",
         "money": 725,
         "enemy_uuid": "8bf6ddec",
         "pokemon": [
@@ -127,7 +127,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 480,
         "enemy_uuid": "8bf6ded2",
         "pokemon": [
@@ -150,7 +150,7 @@
       },
       {
         "name": "Beauty",
-        "filename": "beauty.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/beauty.png",
         "money": 1890,
         "enemy_uuid": "8bf6dfae",
         "pokemon": [
@@ -167,7 +167,7 @@
       },
       {
         "name": "Beauty",
-        "filename": "beauty.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/beauty.png",
         "money": 2030,
         "enemy_uuid": "8bf6e094",
         "pokemon": [
@@ -181,7 +181,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 600,
         "enemy_uuid": "8bf6e170",
         "pokemon": [
@@ -195,7 +195,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 540,
         "enemy_uuid": "8bf6e242",
         "pokemon": [
@@ -215,7 +215,7 @@
       },
       {
         "name": "Bird Keeper",
-        "filename": "birdkeeper.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/birdkeeper.png",
         "money": 625,
         "enemy_uuid": "8bf6e454",
         "pokemon": [
@@ -238,7 +238,7 @@
       },
       {
         "name": "Bird Keeper",
-        "filename": "birdkeeper.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/birdkeeper.png",
         "money": 650,
         "enemy_uuid": "8bf6e530",
         "pokemon": [
@@ -258,7 +258,7 @@
       },
       {
         "name": "Biker",
-        "filename": "biker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/biker.png",
         "money": 560,
         "enemy_uuid": "8bf6e60c",
         "pokemon": [
@@ -277,7 +277,7 @@
     "93": [
       {
         "name": "Bird Keeper",
-        "filename": "birdkeeper.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/birdkeeper.png",
         "money": 650,
         "enemy_uuid": "8bf6e6f2",
         "pokemon": [
@@ -297,7 +297,7 @@
       },
       {
         "name": "Bird Keeper",
-        "filename": "birdkeeper.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/birdkeeper.png",
         "money": 700,
         "enemy_uuid": "8bf6e7c4",
         "pokemon": [
@@ -314,7 +314,7 @@
       },
       {
         "name": "Bird Keeper",
-        "filename": "birdkeeper.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/birdkeeper.png",
         "money": 725,
         "enemy_uuid": "8bf6e8a0",
         "pokemon": [
@@ -328,7 +328,7 @@
       },
       {
         "name": "Bird Keeper",
-        "filename": "birdkeeper.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/birdkeeper.png",
         "money": 700,
         "enemy_uuid": "8bf6e972",
         "pokemon": [
@@ -345,7 +345,7 @@
       },
       {
         "name": "Biker",
-        "filename": "biker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/biker.png",
         "money": 580,
         "enemy_uuid": "8bf6ebc0",
         "pokemon": [
@@ -359,7 +359,7 @@
       },
       {
         "name": "Bird Keeper",
-        "filename": "birdkeeper.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/birdkeeper.png",
         "money": 825,
         "enemy_uuid": "8bf6ec9c",
         "pokemon": [
@@ -370,7 +370,7 @@
       },
       {
         "name": "Biker",
-        "filename": "biker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/biker.png",
         "money": 580,
         "enemy_uuid": "8bf6ed78",
         "pokemon": [
@@ -384,7 +384,7 @@
       },
       {
         "name": "Biker",
-        "filename": "biker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/biker.png",
         "money": 560,
         "enemy_uuid": "8bf6ee5e",
         "pokemon": [
@@ -401,7 +401,7 @@
       },
       {
         "name": "Biker",
-        "filename": "biker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/biker.png",
         "money": 520,
         "enemy_uuid": "8bf6ef3a",
         "pokemon": [
@@ -421,7 +421,7 @@
       },
       {
         "name": "Bird Keeper",
-        "filename": "birdkeeper.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/birdkeeper.png",
         "money": 725,
         "enemy_uuid": "8bf6f016",
         "pokemon": [
@@ -437,7 +437,7 @@
     "94": [
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 660,
         "enemy_uuid": "8bf6f0f2",
         "pokemon": [
@@ -448,7 +448,7 @@
       },
       {
         "name": "Beauty",
-        "filename": "beauty.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/beauty.png",
         "money": 2030,
         "enemy_uuid": "8bf6f1ce",
         "pokemon": [
@@ -462,7 +462,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 580,
         "enemy_uuid": "8bf6f3a4",
         "pokemon": [
@@ -476,7 +476,7 @@
       },
       {
         "name": "Biker",
-        "filename": "biker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/biker.png",
         "money": 500,
         "enemy_uuid": "8bf6f480",
         "pokemon": [
@@ -499,7 +499,7 @@
       },
       {
         "name": "Biker",
-        "filename": "biker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/biker.png",
         "money": 560,
         "enemy_uuid": "8bf6f552",
         "pokemon": [
@@ -516,7 +516,7 @@
       },
       {
         "name": "Beauty",
-        "filename": "beauty.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/beauty.png",
         "money": 2030,
         "enemy_uuid": "8bf6f638",
         "pokemon": [
@@ -530,7 +530,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 560,
         "enemy_uuid": "8bf6f70a",
         "pokemon": [
@@ -547,7 +547,7 @@
       },
       {
         "name": "Bird Keeper",
-        "filename": "birdkeeper.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/birdkeeper.png",
         "money": 700,
         "enemy_uuid": "8bf6f7f0",
         "pokemon": [
@@ -564,7 +564,7 @@
       },
       {
         "name": "Bird Keeper",
-        "filename": "birdkeeper.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/birdkeeper.png",
         "money": 650,
         "enemy_uuid": "8bf6f8c2",
         "pokemon": [
@@ -584,7 +584,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 580,
         "enemy_uuid": "8bf6fb2e",
         "pokemon": [
@@ -603,7 +603,7 @@
     "95": [
       {
         "name": "Biker",
-        "filename": "biker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/biker.png",
         "money": 580,
         "enemy_uuid": "8bf6fc0a",
         "pokemon": [
@@ -617,7 +617,7 @@
       },
       {
         "name": "Cue Ball",
-        "filename": "cueball.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/cueball.png",
         "money": 700,
         "enemy_uuid": "8bf6fce6",
         "pokemon": [
@@ -634,7 +634,7 @@
       },
       {
         "name": "Cue Ball",
-        "filename": "cueball.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/cueball.png",
         "money": 725,
         "enemy_uuid": "8bf6fdb8",
         "pokemon": [
@@ -648,7 +648,7 @@
       },
       {
         "name": "Biker",
-        "filename": "biker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/biker.png",
         "money": 660,
         "enemy_uuid": "8bf6fe8a",
         "pokemon": [
@@ -659,7 +659,7 @@
       },
       {
         "name": "Cue Ball",
-        "filename": "cueball.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/cueball.png",
         "money": 825,
         "enemy_uuid": "8bf6ff66",
         "pokemon": [
@@ -670,7 +670,7 @@
       },
       {
         "name": "Biker",
-        "filename": "biker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/biker.png",
         "money": 520,
         "enemy_uuid": "8bf7002e",
         "pokemon": [
@@ -692,7 +692,7 @@
     "96": [
       {
         "name": "Cue Ball",
-        "filename": "cueball.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/cueball.png",
         "money": 725,
         "enemy_uuid": "8bf7010a",
         "pokemon": [
@@ -706,7 +706,7 @@
       },
       {
         "name": "Cue Ball",
-        "filename": "cueball.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/cueball.png",
         "money": 725,
         "enemy_uuid": "8bf70312",
         "pokemon": [
@@ -720,7 +720,7 @@
       },
       {
         "name": "Biker",
-        "filename": "biker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/biker.png",
         "money": 560,
         "enemy_uuid": "8bf703ee",
         "pokemon": [
@@ -737,7 +737,7 @@
       },
       {
         "name": "Biker",
-        "filename": "biker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/biker.png",
         "money": 660,
         "enemy_uuid": "8bf704ca",
         "pokemon": [
@@ -748,7 +748,7 @@
       },
       {
         "name": "Biker",
-        "filename": "biker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/biker.png",
         "money": 580,
         "enemy_uuid": "8bf7059c",
         "pokemon": [
@@ -762,7 +762,7 @@
       },
       {
         "name": "Cue Ball",
-        "filename": "cueball.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/cueball.png",
         "money": 825,
         "enemy_uuid": "8bf7066e",
         "pokemon": [
@@ -773,7 +773,7 @@
       },
       {
         "name": "Cue Ball",
-        "filename": "cueball.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/cueball.png",
         "money": 725,
         "enemy_uuid": "8bf70740",
         "pokemon": [
@@ -787,7 +787,7 @@
       },
       {
         "name": "Cue Ball",
-        "filename": "cueball.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/cueball.png",
         "money": 650,
         "enemy_uuid": "8bf7081c",
         "pokemon": [
@@ -807,7 +807,7 @@
       },
       {
         "name": "Biker",
-        "filename": "biker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/biker.png",
         "money": 580,
         "enemy_uuid": "8bf70970",
         "pokemon": [
@@ -821,7 +821,7 @@
       },
       {
         "name": "Biker",
-        "filename": "biker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/biker.png",
         "money": 500,
         "enemy_uuid": "8bf70a42",
         "pokemon": [
@@ -846,7 +846,7 @@
     "97": [
       {
         "name": "Bird Keeper",
-        "filename": "birdkeeper.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/birdkeeper.png",
         "money": 725,
         "enemy_uuid": "8bf70b1e",
         "pokemon": [
@@ -860,7 +860,7 @@
       },
       {
         "name": "Bird Keeper",
-        "filename": "birdkeeper.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/birdkeeper.png",
         "money": 650,
         "enemy_uuid": "8bf70cb8",
         "pokemon": [
@@ -880,7 +880,7 @@
       },
       {
         "name": "Bird Keeper",
-        "filename": "birdkeeper.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/birdkeeper.png",
         "money": 850,
         "enemy_uuid": "8bf70d8a",
         "pokemon": [
@@ -893,7 +893,7 @@
     "98": [
       {
         "name": "Swimmer",
-        "filename": "swimmer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/swimmer.png",
         "money": 150,
         "enemy_uuid": "8bf70e5c",
         "pokemon": [
@@ -907,7 +907,7 @@
       },
       {
         "name": "Swimmer",
-        "filename": "swimmer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/swimmer.png",
         "money": 145,
         "enemy_uuid": "8bf70f2e",
         "pokemon": [
@@ -924,7 +924,7 @@
       },
       {
         "name": "Swimmer",
-        "filename": "swimmer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/swimmer.png",
         "money": 150,
         "enemy_uuid": "8bf7117c",
         "pokemon": [
@@ -938,7 +938,7 @@
       },
       {
         "name": "Swimmer",
-        "filename": "swimmer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/swimmer.png",
         "money": 150,
         "enemy_uuid": "8bf712ee",
         "pokemon": [
@@ -952,7 +952,7 @@
       },
       {
         "name": "Swimmer",
-        "filename": "swimmer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/swimmer.png",
         "money": 135,
         "enemy_uuid": "8bf71424",
         "pokemon": [
@@ -972,7 +972,7 @@
       },
       {
         "name": "Swimmer",
-        "filename": "swimmer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/swimmer.png",
         "money": 145,
         "enemy_uuid": "8bf71622",
         "pokemon": [
@@ -989,7 +989,7 @@
       },
       {
         "name": "Swimmer",
-        "filename": "swimmer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/swimmer.png",
         "money": 135,
         "enemy_uuid": "8bf71762",
         "pokemon": [
@@ -1012,7 +1012,7 @@
       },
       {
         "name": "Beauty",
-        "filename": "beauty.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/beauty.png",
         "money": 2100,
         "enemy_uuid": "8bf71af0",
         "pokemon": [
@@ -1026,7 +1026,7 @@
       },
       {
         "name": "Beauty",
-        "filename": "beauty.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/beauty.png",
         "money": 1890,
         "enemy_uuid": "8bf71c26",
         "pokemon": [
@@ -1049,7 +1049,7 @@
       },
       {
         "name": "Beauty",
-        "filename": "beauty.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/beauty.png",
         "money": 2030,
         "enemy_uuid": "8bf71d02",
         "pokemon": [
@@ -1068,7 +1068,7 @@
     "100": [
       {
         "name": "Swimmer",
-        "filename": "swimmer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/swimmer.png",
         "money": 155,
         "enemy_uuid": "8bf71e4c",
         "pokemon": [
@@ -1082,7 +1082,7 @@
       },
       {
         "name": "Swimmer",
-        "filename": "swimmer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/swimmer.png",
         "money": 140,
         "enemy_uuid": "8bf71f1e",
         "pokemon": [
@@ -1102,7 +1102,7 @@
       },
       {
         "name": "Beauty",
-        "filename": "beauty.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/beauty.png",
         "money": 2100,
         "enemy_uuid": "8bf71fe6",
         "pokemon": [
@@ -1119,7 +1119,7 @@
       },
       {
         "name": "Beauty",
-        "filename": "beauty.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/beauty.png",
         "money": 2450,
         "enemy_uuid": "8bf72144",
         "pokemon": [
@@ -1132,7 +1132,7 @@
     "101": [
       {
         "name": "Fisherman",
-        "filename": "fisherman.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/fisherman.png",
         "money": 945,
         "enemy_uuid": "8bf7220c",
         "pokemon": [
@@ -1158,7 +1158,7 @@
       },
       {
         "name": "Fisherman",
-        "filename": "fisherman.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/fisherman.png",
         "money": 980,
         "enemy_uuid": "8bf72388",
         "pokemon": [
@@ -1178,7 +1178,7 @@
       },
       {
         "name": "Swimmer",
-        "filename": "swimmer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/swimmer.png",
         "money": 165,
         "enemy_uuid": "8bf7245a",
         "pokemon": [
@@ -1192,7 +1192,7 @@
       },
       {
         "name": "Cue Ball",
-        "filename": "cueball.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/cueball.png",
         "money": 775,
         "enemy_uuid": "8bf7252c",
         "pokemon": [
@@ -1209,7 +1209,7 @@
       },
       {
         "name": "Fisherman",
-        "filename": "fisherman.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/fisherman.png",
         "money": 1085,
         "enemy_uuid": "8bf726da",
         "pokemon": [
@@ -1223,7 +1223,7 @@
       },
       {
         "name": "Fisherman",
-        "filename": "fisherman.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/fisherman.png",
         "money": 1155,
         "enemy_uuid": "8bf727ac",
         "pokemon": [
@@ -1237,7 +1237,7 @@
       },
       {
         "name": "Swimmer",
-        "filename": "swimmer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/swimmer.png",
         "money": 185,
         "enemy_uuid": "8bf7287e",
         "pokemon": [
@@ -1248,7 +1248,7 @@
       },
       {
         "name": "Swimmer",
-        "filename": "swimmer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/swimmer.png",
         "money": 165,
         "enemy_uuid": "8bf72950",
         "pokemon": [
@@ -1262,7 +1262,7 @@
       },
       {
         "name": "Swimmer",
-        "filename": "swimmer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/swimmer.png",
         "money": 160,
         "enemy_uuid": "8bf72a22",
         "pokemon": [
@@ -1281,7 +1281,7 @@
     "103": [
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 280,
         "enemy_uuid": "8bf72b80",
         "pokemon": [
@@ -1295,7 +1295,7 @@
       },
       {
         "name": "Bug Catcher",
-        "filename": "bugcatcher.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/bugcatcher.png",
         "money": 140,
         "enemy_uuid": "8bf72c52",
         "pokemon": [
@@ -1309,7 +1309,7 @@
       },
       {
         "name": "Lass",
-        "filename": "lass.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/lass.png",
         "money": 210,
         "enemy_uuid": "8bf72df6",
         "pokemon": [
@@ -1323,7 +1323,7 @@
       },
       {
         "name": "Youngster",
-        "filename": "youngster.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/youngster.png",
         "money": 210,
         "enemy_uuid": "8bf72ed2",
         "pokemon": [
@@ -1340,7 +1340,7 @@
       },
       {
         "name": "Lass",
-        "filename": "lass.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/lass.png",
         "money": 240,
         "enemy_uuid": "8bf72fa4",
         "pokemon": [
@@ -1354,7 +1354,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 360,
         "enemy_uuid": "8bf7312a",
         "pokemon": [
@@ -1365,7 +1365,7 @@
       },
       {
         "name": "Rocket",
-        "filename": "rocket.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/rocket.png",
         "money": 450,
         "enemy_uuid": "8bf731fc",
         "pokemon": [
@@ -1381,7 +1381,7 @@
     "104": [
       {
         "name": "Hiker",
-        "filename": "hiker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/hiker.png",
         "money": 525,
         "enemy_uuid": "8bf732ce",
         "pokemon": [
@@ -1395,7 +1395,7 @@
       },
       {
         "name": "Hiker",
-        "filename": "hiker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/hiker.png",
         "money": 595,
         "enemy_uuid": "8bf733aa",
         "pokemon": [
@@ -1406,7 +1406,7 @@
       },
       {
         "name": "Youngster",
-        "filename": "youngster.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/youngster.png",
         "money": 225,
         "enemy_uuid": "8bf73ae4",
         "pokemon": [
@@ -1420,7 +1420,7 @@
       },
       {
         "name": "Youngster",
-        "filename": "youngster.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/youngster.png",
         "money": 255,
         "enemy_uuid": "8bf73c06",
         "pokemon": [
@@ -1431,7 +1431,7 @@
       },
       {
         "name": "Lass",
-        "filename": "lass.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/lass.png",
         "money": 225,
         "enemy_uuid": "8bf73ce2",
         "pokemon": [
@@ -1445,7 +1445,7 @@
       },
       {
         "name": "Hiker",
-        "filename": "hiker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/hiker.png",
         "money": 455,
         "enemy_uuid": "8bf73daa",
         "pokemon": [
@@ -1465,7 +1465,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 280,
         "enemy_uuid": "8bf73f4e",
         "pokemon": [
@@ -1479,7 +1479,7 @@
       },
       {
         "name": "Youngster",
-        "filename": "youngster.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/youngster.png",
         "money": 210,
         "enemy_uuid": "8bf74016",
         "pokemon": [
@@ -1493,7 +1493,7 @@
       },
       {
         "name": "Lass",
-        "filename": "lass.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/lass.png",
         "money": 195,
         "enemy_uuid": "8bf740e8",
         "pokemon": [
@@ -1512,7 +1512,7 @@
     "109": [
       {
         "name": "Lass",
-        "filename": "lass.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/lass.png",
         "money": 135,
         "enemy_uuid": "8bf741b0",
         "pokemon": [
@@ -1526,7 +1526,7 @@
       },
       {
         "name": "Bug Catcher",
-        "filename": "bugcatcher.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/bugcatcher.png",
         "money": 100,
         "enemy_uuid": "8bf7434a",
         "pokemon": [
@@ -1543,7 +1543,7 @@
       },
       {
         "name": "Youngster",
-        "filename": "youngster.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/youngster.png",
         "money": 165,
         "enemy_uuid": "8bf7441c",
         "pokemon": [
@@ -1557,7 +1557,7 @@
       },
       {
         "name": "Bug Catcher",
-        "filename": "bugcatcher.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/bugcatcher.png",
         "money": 90,
         "enemy_uuid": "8bf744ee",
         "pokemon": [
@@ -1577,7 +1577,7 @@
       },
       {
         "name": "Youngster",
-        "filename": "youngster.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/youngster.png",
         "money": 210,
         "enemy_uuid": "8bf745c0",
         "pokemon": [
@@ -1588,7 +1588,7 @@
       },
       {
         "name": "Lass",
-        "filename": "lass.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/lass.png",
         "money": 150,
         "enemy_uuid": "8bf74750",
         "pokemon": [
@@ -1602,7 +1602,7 @@
       },
       {
         "name": "Bug Catcher",
-        "filename": "bugcatcher.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/bugcatcher.png",
         "money": 110,
         "enemy_uuid": "8bf7491c",
         "pokemon": [
@@ -1616,7 +1616,7 @@
       },
       {
         "name": "Lass",
-        "filename": "lass.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/lass.png",
         "money": 210,
         "enemy_uuid": "8bf749ee",
         "pokemon": [
@@ -1629,7 +1629,7 @@
     "120": [
       {
         "name": "Lass",
-        "filename": "lass.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/lass.png",
         "money": 465,
         "enemy_uuid": "8bf74aca",
         "pokemon": [
@@ -1648,7 +1648,7 @@
     "131": [
       {
         "name": "Bug Catcher",
-        "filename": "bugcatcher.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/bugcatcher.png",
         "money": 160,
         "enemy_uuid": "8bf74b92",
         "pokemon": [
@@ -1665,7 +1665,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 400,
         "enemy_uuid": "8bf74cfa",
         "pokemon": [
@@ -1676,7 +1676,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 320,
         "enemy_uuid": "8bf74de0",
         "pokemon": [
@@ -1690,7 +1690,7 @@
       },
       {
         "name": "Bug Catcher",
-        "filename": "bugcatcher.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/bugcatcher.png",
         "money": 200,
         "enemy_uuid": "8bf74eda",
         "pokemon": [
@@ -1701,7 +1701,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 320,
         "enemy_uuid": "8bf74fd4",
         "pokemon": [
@@ -1718,7 +1718,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 320,
         "enemy_uuid": "8bf7518c",
         "pokemon": [
@@ -1734,7 +1734,7 @@
     "133": [
       {
         "name": "Lass",
-        "filename": "lass.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/lass.png",
         "money": 330,
         "enemy_uuid": "8bf75290",
         "pokemon": [
@@ -1748,7 +1748,7 @@
       },
       {
         "name": "Gambler",
-        "filename": "gambler.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/gambler.png",
         "money": 1680,
         "enemy_uuid": "8bf7538a",
         "pokemon": [
@@ -1762,7 +1762,7 @@
       },
       {
         "name": "Super Nerd ",
-        "filename": "supernerd .png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/supernerd .png",
         "money": 550,
         "enemy_uuid": "8bf75538",
         "pokemon": [
@@ -1779,7 +1779,7 @@
       },
       {
         "name": "Lass",
-        "filename": "lass.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/lass.png",
         "money": 345,
         "enemy_uuid": "8bf7563c",
         "pokemon": [
@@ -1793,7 +1793,7 @@
       },
       {
         "name": "Super Nerd",
-        "filename": "supernerd.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/supernerd.png",
         "money": 650,
         "enemy_uuid": "8bf75740",
         "pokemon": [
@@ -1804,7 +1804,7 @@
       },
       {
         "name": "Lass",
-        "filename": "lass.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/lass.png",
         "money": 360,
         "enemy_uuid": "8bf75830",
         "pokemon": [
@@ -1821,7 +1821,7 @@
       },
       {
         "name": "Lass",
-        "filename": "lass.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/lass.png",
         "money": 285,
         "enemy_uuid": "8bf759d4",
         "pokemon": [
@@ -1844,7 +1844,7 @@
       },
       {
         "name": "Gambler",
-        "filename": "gambler.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/gambler.png",
         "money": 1540,
         "enemy_uuid": "8bf75ae2",
         "pokemon": [
@@ -1861,7 +1861,7 @@
       },
       {
         "name": "Super Nerd",
-        "filename": "supernerd.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/supernerd.png",
         "money": 500,
         "enemy_uuid": "8bf75be6",
         "pokemon": [
@@ -1883,7 +1883,7 @@
     "134": [
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 360,
         "enemy_uuid": "8bf75dc6",
         "pokemon": [
@@ -1903,7 +1903,7 @@
       },
       {
         "name": "Hiker",
-        "filename": "hiker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/hiker.png",
         "money": 700,
         "enemy_uuid": "8bf75ed4",
         "pokemon": [
@@ -1917,7 +1917,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 420,
         "enemy_uuid": "8bf75fce",
         "pokemon": [
@@ -1931,7 +1931,7 @@
       },
       {
         "name": "Bug Catcher",
-        "filename": "bugcatcher.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/bugcatcher.png",
         "money": 190,
         "enemy_uuid": "8bf760c8",
         "pokemon": [
@@ -1945,7 +1945,7 @@
       },
       {
         "name": "Hiker",
-        "filename": "hiker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/hiker.png",
         "money": 735,
         "enemy_uuid": "8bf76262",
         "pokemon": [
@@ -1959,7 +1959,7 @@
       },
       {
         "name": "Bug Catcher",
-        "filename": "bugcatcher.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/bugcatcher.png",
         "money": 200,
         "enemy_uuid": "8bf7635c",
         "pokemon": [
@@ -1976,7 +1976,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 380,
         "enemy_uuid": "8bf7644c",
         "pokemon": [
@@ -1996,7 +1996,7 @@
       },
       {
         "name": "Hiker",
-        "filename": "hiker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/hiker.png",
         "money": 700,
         "enemy_uuid": "8bf765c8",
         "pokemon": [
@@ -2013,7 +2013,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 460,
         "enemy_uuid": "8bf766cc",
         "pokemon": [
@@ -2026,7 +2026,7 @@
     "891": [
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 420,
         "enemy_uuid": "8bf7685c",
         "pokemon": [
@@ -2040,7 +2040,7 @@
       },
       {
         "name": "Hiker",
-        "filename": "hiker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/hiker.png",
         "money": 735,
         "enemy_uuid": "8bf76956",
         "pokemon": [
@@ -2054,7 +2054,7 @@
       },
       {
         "name": "Hiker",
-        "filename": "hiker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/hiker.png",
         "money": 665,
         "enemy_uuid": "8bf76a50",
         "pokemon": [
@@ -2068,7 +2068,7 @@
       },
       {
         "name": "PokéManiac",
-        "filename": "pokemaniac.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/pokemaniac.png",
         "money": 1000,
         "enemy_uuid": "8bf76bb8",
         "pokemon": [
@@ -2084,7 +2084,7 @@
     "911": [
       {
         "name": "Rocker",
-        "filename": "rocker.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/rocker.png",
         "money": 725,
         "enemy_uuid": "8bf76cb2",
         "pokemon": [
@@ -2098,7 +2098,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 840,
         "enemy_uuid": "8bf76db6",
         "pokemon": [
@@ -2112,7 +2112,7 @@
       },
       {
         "name": "Fisherman",
-        "filename": "fisherman.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/fisherman.png",
         "money": 840,
         "enemy_uuid": "8bf76eb0",
         "pokemon": [
@@ -2128,7 +2128,7 @@
     "1001": [
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 600,
         "enemy_uuid": "8bf77090",
         "pokemon": [
@@ -2145,7 +2145,7 @@
       },
       {
         "name": "Swimmer",
-        "filename": "swimmer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/swimmer.png",
         "money": 175,
         "enemy_uuid": "8bf7719e",
         "pokemon": [
@@ -2156,7 +2156,7 @@
       },
       {
         "name": "Bird Keeper",
-        "filename": "birdkeeper.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/birdkeeper.png",
         "money": 750,
         "enemy_uuid": "8bf7728e",
         "pokemon": [
@@ -2173,7 +2173,7 @@
       },
       {
         "name": "Beauty",
-        "filename": "beauty.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/beauty.png",
         "money": 2100,
         "enemy_uuid": "8bf77392",
         "pokemon": [
@@ -2190,7 +2190,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "filename": "jrtrainer.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
         "money": 620,
         "enemy_uuid": "8bf7755e",
         "pokemon": [
@@ -2204,7 +2204,7 @@
       },
       {
         "name": "Beauty",
-        "filename": "beauty.png",
+        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/beauty.png",
         "money": 2170,
         "enemy_uuid": "8bf77662",
         "pokemon": [
