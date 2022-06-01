@@ -5,6 +5,7 @@ import json
 import random
 from dbclass import db as dbconn
 from inventoryclass import inventory as inv
+from keyitemsclass import keyitems as kitems
 from questclass import quests as qObj
 from loggerclass import logger as log
 from models.trainer_battle import TrainerBattleModel
@@ -35,8 +36,12 @@ class battle:
         playerInventory = inv(self.discordId)
         playerInventory.money += moneyReward
         playerInventory.save()
-
         return
+
+    def getRemainingTrainerCount(self):
+        """ returns a count of remaining trainers in the area """
+        trainerModelList = self.getTrainerList()
+        return len(trainerModelList)
 
     def getNextBattle(self):
         """ returns a TrainerBattleModel object to battle against """
@@ -45,6 +50,17 @@ class battle:
             return trainerModelList[0]
         else:
             return None
+
+    def getGymLeader(self):
+        """ returns a TrainerBattleModel of a gym leader """
+        remainingTrainers = self.getRemainingTrainerCount()
+        if remainingTrainers > 0:
+            self.statuscode = 420
+            self.message = "You must defeat all Gym Trainers before battling the Gym Leader."
+            return
+        
+        
+        return
 
     def getTrainerList(self):
         """ returns a list of TrainerBattleModel objects which have not been completed """
@@ -89,7 +105,6 @@ class battle:
 
             # check if trainer has previously beaten trainer and remove trainer from list. 
             for trainer in trainerModelList:
-
                 if trainer.enemy_uuid in enemyUUIDs:
                     trainerModelList.remove(trainer)
         except:
