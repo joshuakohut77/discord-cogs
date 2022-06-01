@@ -58,7 +58,7 @@ class battle:
                 enemyUUIDs.append(row[0])
             
             if self.enemyType == 'wild':
-                configPath = './configs/trainerBattles.json'
+                configPath = './configs/enemyTrainers.json'
             elif self.enemyType == 'gym':
                 configPath = './configs/gyms.json'
             else:
