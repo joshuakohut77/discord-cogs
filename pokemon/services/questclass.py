@@ -258,7 +258,10 @@ class quests:
     def questComplete(self, questName):
         """ checks if trainer has item from quest """
         
-        if questName == 'Professor Oak':
+        if questName == 'Garys Sister':
+            if self.inventory.townmap == 1:
+                return True
+        elif questName == 'Professor Oak':
             if self.keyitems.oaks_parcel_delivered:
                 return True
         elif questName == 'Super Nerd':
@@ -321,6 +324,7 @@ class quests:
 
     # List of quests 
     """
+    Garys Sister - Get Town map
     Professor Oak - deliver parcel
     Super Nerd - Get Helix Fossil item
     Fishing Guru - get old-rod item
@@ -353,7 +357,9 @@ class quests:
         # all quests return a message
         self.statuscode = 420
         
-        if questName == 'Professor Oak':
+        if questName == "Garys Sister":
+            return self.garysSister()
+        elif questName == 'Professor Oak':
             return self.professorOak()
         elif questName == 'Super Nerd':
             return self.superNerd()
@@ -396,11 +402,10 @@ class quests:
         elif questName == 'Mysterious Cave':
             return self.mysteriousCave()
 
-
         return
     
     def garysSister(self):
-        self.inventory.townmap = True
+        self.inventory.townmap = 1
         self.message = dedent("""\
                     You decided to have one last quickie with Gary's sister
                     before departing. She handed you her number on the back of
