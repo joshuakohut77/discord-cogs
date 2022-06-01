@@ -12,3 +12,4 @@ class LocationModel:
         self.spritePath = results['spritePath']
         self.pokecenter = results['pokecenter']
         self.gym = results['gym']
+        self.displayName = results['displayName']
