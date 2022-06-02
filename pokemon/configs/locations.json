@@ -579,7 +579,7 @@
     "locationId": 498,
     "name": "ss-anne",
     "north": "vermilion-city",
-    "east": null,
+    "east": "ss-anne-truck",
     "south": "ss-anne-1F",
     "west": null,
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne.png",
