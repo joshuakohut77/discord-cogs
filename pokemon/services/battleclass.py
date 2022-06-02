@@ -8,7 +8,8 @@ from inventoryclass import inventory as inv
 from keyitemsclass import keyitems as kitems
 from questclass import quests as qObj
 from loggerclass import logger as log
-from models.trainer_battle import TrainerBattleModel
+from models.trainerBattle import TrainerBattleModel
+from models.gymLeader import GymLeaderModel
 
 # Class Logger
 logger = log()
@@ -58,11 +59,18 @@ class battle:
             self.statuscode = 420
             self.message = "You must defeat all Gym Trainers before battling the Gym Leader."
             return
-        
-        
-        return
+        trainerList = self.getTrainerList(gymLeader=True)
+        if trainerList != []:
+            gymLeaderObj = trainerList[0]
+            enemy_uuid = gymLeaderObj.enemy_uuid
+            if self.__checkEnemyCompleted(enemy_uuid):
+                self.statuscode = 420
+                self.message = "You have already completed this Gym Leader."
+                return
 
-    def getTrainerList(self):
+        return gymLeaderObj
+
+    def getTrainerList(self, gymLeader=False):
         """ returns a list of TrainerBattleModel objects which have not been completed """
         trainerModelList = []
         try:
@@ -99,14 +107,22 @@ class battle:
                         trainerConfigList = ['Missing Requirements']
                         validRequirements = False
                 if validRequirements:
-                    trainerConfigList = baseConfig['trainers']
+                    if gymLeader:
+                        trainerConfigList = baseConfig['leader']
+                    else:
+                        trainerConfigList = baseConfig['trainers']
             
-            trainerModelList = self.__returnTrainerList(trainerConfigList)
+            if gymLeader:
+                trainerModelList.append(GymLeaderModel(trainerConfigList))
+            else:
+                trainerModelList = self.__returnTrainerList(trainerConfigList)
 
-            # check if trainer has previously beaten trainer and remove trainer from list. 
-            for trainer in trainerModelList:
-                if trainer.enemy_uuid in enemyUUIDs:
-                    trainerModelList.remove(trainer)
+                # check if trainer has previously beaten trainer and remove trainer from list. 
+                for trainer in trainerModelList:
+                    if trainer.enemy_uuid in enemyUUIDs:
+                        trainerModelList.remove(trainer)
+            
+
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
@@ -147,7 +163,6 @@ class battle:
             # delete and close connection
             del db
             return enemyCompleted
-
 
     def __returnTrainerList(self, trainerList):
         """ returns a model list of trainers from config file """
