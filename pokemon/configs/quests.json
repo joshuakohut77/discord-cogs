@@ -616,5 +616,11 @@
     "quest": ["Rocket Hideout"],
     "blockers": [],
     "name": "rocket-hideout-B4F"
+  },
+  "10001": {
+    "pre-requsites": ["HM03"],
+    "quest": ["Check Truck"],
+    "blockers": [],
+    "name": "ss-anne-truck"
   }
 }

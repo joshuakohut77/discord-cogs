@@ -6,6 +6,7 @@ from keyitemsclass import keyitems as kitems
 from inventoryclass import inventory as inv
 from pokeclass import Pokemon as pokeClass
 from loggerclass import logger as log
+from uniqueencounters import uniqueEncounters as uEnc
 import models.quest as QuestModel
 from textwrap import dedent
 
@@ -321,6 +322,12 @@ class quests:
             return False 
         elif questName == 'Mysterious Cave':
             return False
+        
+        # easter eggs
+        elif questName == 'Check Truck':
+            uniqueEncounters = uEnc(self.discordId)
+            if uniqueEncounters.mew:
+                return True
 
     # List of quests 
     """
@@ -347,6 +354,9 @@ class quests:
     SS Anne - get ss_ticket item
     The Pokemon League - battle the elite 4
     Mysterious Cave - move to location 147
+
+    # easter eggs
+    Check Truck - receive Mew pokemon per old rumor
     """
     def questHandler(self, questName):
         """ verifies the trainers prerequsites are met """
@@ -401,6 +411,10 @@ class quests:
             return self.thePokemonLeague()
         elif questName == 'Mysterious Cave':
             return self.mysteriousCave()
+        
+        # easter eggs
+        elif questName == 'Check Truck':
+            return self.checkTruck()
 
         return
     
@@ -645,7 +659,15 @@ class quests:
         # self.message = """You notice some fatty out for a walk. You enter inside the mysterious cave to avoid him."""
         # return
 
-
+    def checkTruck(self):
+        pokemon = pokeClass(self.discordId, 'mew')
+        pokemon.create(25)
+        pokemon.save()
+        self.message = dedent("""\
+                        You find an abandoned truck. Using your massive penis, you pushed
+                        it out of the way. Underneath you discover a pokeball."
+                        You received Mew!""")
+        return
 
 
 
