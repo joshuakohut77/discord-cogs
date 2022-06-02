@@ -39,12 +39,47 @@ class battle:
         playerInventory.save()
         return
 
+    def gymLeaderVictory(self, gymLeader: GymLeaderModel):
+        """ handles gym leader victory resolution """
+        moneyReward = gymLeader.money
+        keyItem = gymLeader.keyitem
+        
+        # update enemy UUID tracker in db
+        enemy_uuid = gymLeader.enemy_uuid
+        self.__insertEnemyCompleted(enemy_uuid)
+
+        # update player reward
+        playerInventory = inv(self.discordId)
+        playerInventory.money += moneyReward
+        playerInventory.save()
+
+        playerKeyItems = kitems(self.discordId)
+        if keyItem == "boulder_badge":
+            playerKeyItems.badge_boulder = True
+        elif keyItem == "rainbow_badge":
+            playerKeyItems.badge_rainbow = True
+        elif keyItem == "cascade_badge":
+            playerKeyItems.badge_cascade = True
+        elif keyItem == "volcano_badge":
+            playerKeyItems.badge_volcano = True
+        elif keyItem == "soul_badge":
+            playerKeyItems.badge_soul = True
+        elif keyItem == "thunder_badge":
+            playerKeyItems.badge_thunder = True
+        elif keyItem == "earth_badge":
+            playerKeyItems.badge_earth = True
+        elif keyItem == "marsh_badge":
+            playerKeyItems.badge_marsh = True
+        playerKeyItems.save()
+
+
+
     def getRemainingTrainerCount(self):
         """ returns a count of remaining trainers in the area """
         trainerModelList = self.getTrainerList()
         return len(trainerModelList)
 
-    def getNextBattle(self):
+    def getNextTrainer(self):
         """ returns a TrainerBattleModel object to battle against """
         trainerModelList = self.getTrainerList()
         if len(trainerModelList) > 0:
@@ -54,12 +89,14 @@ class battle:
 
     def getGymLeader(self):
         """ returns a TrainerBattleModel of a gym leader """
+        gymLeaderObj = None
         remainingTrainers = self.getRemainingTrainerCount()
         if remainingTrainers > 0:
             self.statuscode = 420
             self.message = "You must defeat all Gym Trainers before battling the Gym Leader."
             return
         trainerList = self.getTrainerList(gymLeader=True)
+        print(trainerList)
         if trainerList != []:
             gymLeaderObj = trainerList[0]
             enemy_uuid = gymLeaderObj.enemy_uuid
@@ -99,7 +136,7 @@ class battle:
                 trainerConfigList = loadedConfig[str(self.locationId)]
             else:
                 baseConfig = loadedConfig[str(self.locationId)]
-                requirements = baseConfig['requirements']
+                requirements = baseConfig['leader']['requirements']
                 validRequirements = True
                 if requirements != []:
                     questObj = qObj(self.discordId)
@@ -151,7 +188,7 @@ class battle:
         enemyCompleted = False
         try:
             db = dbconn()
-            queryString = 'SELECT 1 FROM trainer_battles WHERE enemy_uuid = %(enemy_uuid)s AND locationId = %(locationId)s AND discord_id = %(discordId)s'
+            queryString = 'SELECT 1 FROM trainer_battles WHERE enemy_uuid = %(enemy_uuid)s AND "locationId" = %(locationId)s AND discord_id = %(discordId)s'
 
             result = db.querySingle(queryString, { 'enemy_uuid': enemy_uuid, 'locationId': self.locationId, 'discordId': self.discordId })
             if result:
