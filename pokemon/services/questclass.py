@@ -663,6 +663,9 @@ class quests:
         pokemon = pokeClass(self.discordId, 'mew')
         pokemon.create(25)
         pokemon.save()
+        uniqueEncounters = uEnc(self.discordId)
+        uniqueEncounters.mew = True
+        uniqueEncounters.save()
         self.message = dedent("""\
                         You find an abandoned truck. Using your massive penis, you pushed
                         it out of the way. Underneath you discover a pokeball."
