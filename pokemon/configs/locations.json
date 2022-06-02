@@ -582,10 +582,22 @@
     "east": null,
     "south": "ss-anne-1F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-1F.png",
+    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "S.S. Anne"
+  },
+  "10001": {
+    "locationId": 10001,
+    "name": "ss-anne-truck",
+    "north": "vermilion-city",
+    "east": null,
+    "south": "ss-anne-1F",
+    "west": null,
+    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne.png",
+    "pokecenter": false,
+    "gym": false,
+    "displayName": "--"
   },
   "671": {
     "locationId": 671,
