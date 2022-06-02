@@ -10,5 +10,6 @@ class GymLeaderModel:
         self.gymName = results['gym-name']
         self.money = results['money']
         self.badge = results['badge']
+        self.keyitem = results['keyitem']
         self.enemy_uuid = results['enemy_uuid']
         self.pokemon = results['pokemon'] # this is a list of pokemon json in the format of { "pokemon": level }

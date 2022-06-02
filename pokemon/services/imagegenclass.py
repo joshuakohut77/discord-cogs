@@ -8,7 +8,7 @@ from pokeclass import Pokemon as PokemonClass
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
-from models.trainer_battle import TrainerBattleModel
+from models.trainerBattle import TrainerBattleModel
 
 baseBattlePath = "./sprites/battle/"
 
