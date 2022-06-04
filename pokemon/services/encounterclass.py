@@ -49,6 +49,8 @@ class encounter:
         lb = leaderboard(self.pokemon1.discordId)
         lb.trades()
 
+        # 4 pokemon evolve when traded Alakazam, Machamp, Graveler, Gengar
+
 
     def fight(self, battleType='auto', move=''):
         """ two pokemon fight and a outcome is decided """
