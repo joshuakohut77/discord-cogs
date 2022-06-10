@@ -40,35 +40,16 @@ class encounter:
         retVal2 = ""
         
         # 4 pokemon evolve when traded Alakazam, Machamp, Golem, Gengar
-        tradedEvoList = ['kadabra', 'machoke', 'graveler', 'haunter']
-        if self.pokemon1.pokemonName in tradedEvoList:
-            if self.pokemon1.pokemonName == 'kadabra':
-                newPokemon1 = 'alakazam'
-            elif self.pokemon1.pokemonName == 'machoke':
-                newPokemon1 = 'machamp'
-            elif self.pokemon1.pokemonName == 'graveler':
-                newPokemon1 = 'golem'
-            elif self.pokemon1.pokemonName == 'haunter':
-                newPokemon1 = 'gengar'
-            evolvedPokemon1 = PokemonClass(newPokemon1)
-            evolvedPokemon1.create(self.pokemon1.currentLevel)
+        evolvedPokemon = self.checkTradeEvolution(self.pokemon1)
+        if evolvedPokemon is not None:
             self.pokemon1.release()
-            self.pokemon1 = evolvedPokemon1
+            self.pokemon1 = evolvedPokemon
             retVal1 = "Your pokemon evolved, "
 
-        if self.pokemon2.pokemonName in tradedEvoList:
-            if self.pokemon2.pokemonName == 'kadabra':
-                newPokemon2 = 'alakazam'
-            elif self.pokemon2.pokemonName == 'machoke':
-                newPokemon2 = 'machamp'
-            elif self.pokemon2.pokemonName == 'graveler':
-                newPokemon2 = 'golem'
-            elif self.pokemon2.pokemonName == 'haunter':
-                newPokemon2 = 'gengar'            
-            evolvedPokemon2 = PokemonClass(newPokemon2)
-            evolvedPokemon2.create(self.pokemon2.currentLevel)
+        evolvedPokemon = self.checkTradeEvolution(self.pokemon2)
+        if evolvedPokemon is not None:
             self.pokemon2.release()
-            self.pokemon2 = evolvedPokemon2
+            self.pokemon2 = evolvedPokemon
             retVal2 = "Your pokemon evolved, "
         
         retVal1 += "You received %s" %self.pokemon1.pokemonName
@@ -87,6 +68,24 @@ class encounter:
         lb.trades()  
 
         return retVal1, retVal2
+
+    def checkTradeEvolution(self, pokemon):
+        """ checks if a pokemon evolves during a trade and returns new pokemon if it does"""
+        tradedEvoList = ['kadabra', 'machoke', 'graveler', 'haunter']        
+        evolvedPokemon = None
+        if pokemon.pokemonName in tradedEvoList:
+            if pokemon.pokemonName == 'kadabra':
+                newPokemon = 'alakazam'
+            elif pokemon.pokemonName == 'machoke':
+                newPokemon = 'machamp'
+            elif pokemon.pokemonName == 'graveler':
+                newPokemon = 'golem'
+            elif pokemon.pokemonName == 'haunter':
+                newPokemon = 'gengar'
+            evolvedPokemon = PokemonClass(newPokemon)
+            evolvedPokemon.create(pokemon.currentLevel)
+
+        return evolvedPokemon
 
     def fight(self, battleType='auto', move=''):
         """ two pokemon fight and a outcome is decided """
