@@ -438,20 +438,33 @@ class trainer:
         finally:
             return pokemon
 
-    def heal(self, pokeTrainerId, item):
+    def useItem(self, pokeTrainerId, item):
+        """ tries to use an item and calls the respective helper function """
+        
+        # TODO Update to see if them item is a "use on pokemon" type of item rather than just "use"
+        if pokeTrainerId is not None:
+            pokemon = pokeClass(self.discordId)
+            pokemon.load(pokeTrainerId)
+            if pokemon.statuscode == 96:
+                self.statuscode = 96
+                self.message = "error occured during pokemon load()"
+                return
+        
+            if item in ['potion', 'super-potion', 'hyper-potion', 'max-potion', 'revive', 'full-restore']:
+                return self.heal(pokemon, item)
+            elif item in ['moon-stone', 'leaf-stone', 'fire-stone', 'water-stone', 'thunder-stone']:
+                return self.evolveItem(pokemon, item)
+            else:
+                self.statuscode = 420
+                self.message = "Use of that item is not supported yet"
+        
+        else:
+            self.statuscode = 420
+            self.message = "Use of that item is not supported yet"
+
+    def heal(self, pokemon, item):
         """ uses a potion to heal a pokemon """
         # this function is only designed to work with potion, super-potion, hyper-potion, max-potion
-        if 'potion' not in item and 'revive' not in item:
-            self.statuscode = 420
-            self.message = 'You cannot use that item like that'
-            return
-
-        pokemon = pokeClass(self.discordId)
-        pokemon.load(pokeTrainerId)
-        if pokemon.statuscode == 96:
-            self.statuscode = 96
-            self.message = "error occured during pokemon load()"
-            return
 
         # only use revive on fainted pokemon
         if item == 'revive' and pokemon.currentHP > 0:
@@ -486,6 +499,11 @@ class trainer:
                 invalidQty = True
             else:
                 inventory.revive -= 1
+        elif item == 'full-restore':
+            if inventory.fullrestore <= 0:
+                invalidQty = True
+            else:
+                inventory.fullrestore -= 1
         
         if invalidQty:
             self.statuscode = 420
@@ -496,7 +514,7 @@ class trainer:
 
         if inventory.statuscode == 96:
             self.statuscode = 96
-            self.message = "error occurred during inventory.save()"
+            self.message = "error occurred during inventory updates"
             return
         else:
             inventory.save()
@@ -523,6 +541,98 @@ class trainer:
         self.message = "Your pokemon have been healed back to full health!"
         return
     
+    def evolveItem(self, pokemon, item):
+        """ handles use of the *-stone tiems for evolving pokemon"""
+
+        inventory = inv(self.discordId)
+        invalidQty = False
+        if item == 'water-stone':
+            if inventory.waterstone <= 0:
+                invalidQty = True
+            else:
+                inventory.waterstone -= 1
+        elif item == 'fire-stone':
+            if inventory.firestone <= 0:
+                invalidQty = True
+            else:
+                inventory.firestone -= 1
+        elif item == 'thunder-stone':
+            if inventory.thunderstone <= 0:
+                invalidQty = True
+            else:
+                inventory.thunderstone -= 1
+        elif item == 'moon-stone':
+            if inventory.moonstone <= 0:
+                invalidQty = True
+            else:
+                inventory.moonstone -= 1
+        elif item == 'leaf-stone':
+            if inventory.leafstone <= 0:
+                invalidQty = True
+            else:
+                inventory.leafstone -= 1
+        else:
+            self.statuscode = 96
+            self.message = 'Invalid item passed to evolveItem method (%s)' %item
+            return 
+
+        newPokemon = ''
+        if item == 'water-stone' and pokemon.pokemonName in ['poliwhirl', 'shellder', 'staryu', 'eevee']:
+            if pokemon.pokemonName == 'poliwhirl':
+                newPokemon = 'poliwrath'
+            elif pokemon.pokemonName == 'shellder':
+                newPokemon = 'cloyster'
+            elif pokemon.pokemonName == 'staryu':
+                newPokemon = 'starmie'
+            elif pokemon.pokemonName == 'eevee':
+                newPokemon = 'vaporeon'
+        elif item == 'fire-stone' and pokemon.pokemonName in ['vulpix', 'eevee', 'growlithe']:
+            if pokemon.pokemonName == 'vulpix':
+                newPokemon = 'ninetales'
+            elif pokemon.pokemonName == 'eevee':
+                newPokemon = 'flareon'
+            elif pokemon.pokemonName == 'growlithe':
+                newPokemon = 'arcanine'
+        elif item == 'thunder-stone' and pokemon.pokemonName in ['pikachu', 'eevee']:
+            if pokemon.pokemonName == 'pikachu':
+                newPokemon = 'raichu'
+            elif pokemon.pokemonName == 'eevee':
+                newPokemon = 'jolteon'
+        elif item == 'moon-stone' and pokemon.pokemonName in ['nidorina', 'nidorino', 'clefairy', 'jigglypuff']:
+            if pokemon.pokemonName == 'nidorina':
+                newPokemon = 'nidoqueen'
+            elif pokemon.pokemonName == 'nidorino':
+                newPokemon = 'nidoking'
+            elif pokemon.pokemonName == 'clefairy':
+                newPokemon = 'clefable'
+            elif pokemon.pokemonName == 'jigglypuff':
+                newPokemon = 'wifflytuff'
+        elif item == 'leaf-stone' and pokemon.pokemonName in ['gloom', 'weepinbell', 'exeggcute']:
+            if pokemon.pokemonName == 'gloom':
+                newPokemon = 'vileplume'
+            elif pokemon.pokemonName == 'weepinbell':
+                newPokemon = 'victreebell'
+            elif pokemon.pokemonName == 'exeggcute':
+                newPokemon = 'exeggutor'
+        else:
+            self.statuscode = 420
+            self.message = 'You cannot use %s on that pokemon' %item
+            return
+
+        # check if pokemon evolved
+        if newPokemon != '' and not invalidQty:
+            evolvedPokemon = pokeClass(newPokemon)
+            evolvedPokemon.create(pokemon.currentLevel)
+            evolvedPokemon.discordId = self.discordId
+            pokemon.release()
+            evolvedPokemon.save()
+        
+        self.message = "Someting's happening... Your pokemon evolved into %s!" %pokemon.pokemonName
+
+        # save new inventory
+        inventory.save()
+        return 
+
     def getLocation(self):
         try:
             db = dbconn()
@@ -742,10 +852,12 @@ class trainer:
 
     def __healPokemon(self, pokemon: pokeClass, item: str):
         """ heals a pokemons currentHP """
-        # this function is only designed to work with potion, super-potion, hyper-potion, max-potion        
+        # this function is only designed to work with healing items
+        # update to remove status ailments later      
         statsDict = pokemon.getPokeStats()
         maxHP = statsDict['hp']
         currentHP = pokemon.currentHP
+        newHP = currentHP
         if item == 'revive':
             if currentHP > 0:
                 self.statuscode = 420
@@ -768,6 +880,9 @@ class trainer:
             newHP = currentHP + 200
         elif item == 'max-potion':
             newHP = maxHP
+        elif item == 'full-restore':
+            newHP = maxHP
+            # TODO update to remove status effects
         
         if newHP > maxHP:
             newHP = maxHP
