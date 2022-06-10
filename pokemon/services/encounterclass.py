@@ -36,21 +36,57 @@ class encounter:
         """ trades pokemon between two trainers """
         discordId1 = self.pokemon1.discordId
         discordId2 = self.pokemon2.discordId
+        retVal1 = ""
+        retVal2 = ""
         
+        # 4 pokemon evolve when traded Alakazam, Machamp, Golem, Gengar
+        tradedEvoList = ['kadabra', 'machoke', 'graveler', 'haunter']
+        if self.pokemon1.pokemonName in tradedEvoList:
+            if self.pokemon1.pokemonName == 'kadabra':
+                newPokemon1 = 'alakazam'
+            elif self.pokemon1.pokemonName == 'machoke':
+                newPokemon1 = 'machamp'
+            elif self.pokemon1.pokemonName == 'graveler':
+                newPokemon1 = 'golem'
+            elif self.pokemon1.pokemonName == 'haunter':
+                newPokemon1 = 'gengar'
+            evolvedPokemon1 = PokemonClass(newPokemon1)
+            evolvedPokemon1.create(self.pokemon1.currentLevel)
+            self.pokemon1.release()
+            self.pokemon1 = evolvedPokemon1
+            retVal1 = "Your pokemon evolved, "
+
+        if self.pokemon2.pokemonName in tradedEvoList:
+            if self.pokemon2.pokemonName == 'kadabra':
+                newPokemon2 = 'alakazam'
+            elif self.pokemon2.pokemonName == 'machoke':
+                newPokemon2 = 'machamp'
+            elif self.pokemon2.pokemonName == 'graveler':
+                newPokemon2 = 'golem'
+            elif self.pokemon2.pokemonName == 'haunter':
+                newPokemon2 = 'gengar'            
+            evolvedPokemon2 = PokemonClass(newPokemon2)
+            evolvedPokemon2.create(self.pokemon2.currentLevel)
+            self.pokemon2.release()
+            self.pokemon2 = evolvedPokemon2
+            retVal2 = "Your pokemon evolved, "
+        
+        retVal1 += "You received %s" %self.pokemon1.pokemonName
+        retVal2 += "You received %s" %self.pokemon2.pokemonName
+
         self.pokemon1.discordId = discordId2
         self.pokemon2.discordId = discordId1
         self.pokemon1.traded = True
         self.pokemon2.traded = True
-        
+
         self.pokemon1.save()
         self.pokemon2.save()
 
         # leaderboard stats
         lb = leaderboard(self.pokemon1.discordId)
-        lb.trades()
+        lb.trades()  
 
-        # 4 pokemon evolve when traded Alakazam, Machamp, Graveler, Gengar
-
+        return retVal1, retVal2
 
     def fight(self, battleType='auto', move=''):
         """ two pokemon fight and a outcome is decided """
