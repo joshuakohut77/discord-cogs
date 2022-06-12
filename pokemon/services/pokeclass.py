@@ -227,6 +227,12 @@ class Pokemon:
              logger.error(excInfo=sys.exc_info())
         finally:
             return statsDict
+    
+    def getPartySprite(self):
+        """ reutrns a path to a pokemon party sprite"""
+        p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/pokemon.json')
+        pokemonConfig = json.load(open(p, 'r'))
+        return pokemonConfig[self.pokemonName['partySprite']]
 
     def getMoves(self, moveDict=None):
         """ returns a list of the pokemon's current moves """
