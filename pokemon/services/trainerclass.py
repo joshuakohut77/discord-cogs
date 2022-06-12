@@ -2,7 +2,7 @@
 import os
 import sys
 from typing import final
-import config
+# import config
 import json
 import random
 from dbclass import db as dbconn
@@ -294,6 +294,27 @@ class trainer:
             del db
             return self.message
     
+
+    def loadPartyView(self):
+        """ returns a list of pokemon data that are in the trainers party for a pillow party view"""
+        pokeList = self.getPokemon(party=True)
+        partyList = []
+        for pokemon in pokeList:
+            partyDict = {}
+            trainerId = pokemon.trainerId
+            pokemon.load(trainerId)
+            statsDict = pokemon.getPokeStats()
+            maxHP = statsDict['hp']
+            partyDict['PokemonName'] = pokemon.pokemonName
+            partyDict['NickName'] = pokemon.nickName
+            partyDict['CurrentLevel'] = pokemon.currentLevel
+            partyDict['CurrentHP'] = pokemon.currentHP
+            partyDict['MaxHP'] = maxHP
+            partyDict['PartySprite'] = pokemon.getPartySprite()
+            partyList.append(partyDict)
+
+        return partyList
+
     def fight(self, pokemon2):
         """ creates a fight encounter """
         pokemon1 = self.getActivePokemon()
