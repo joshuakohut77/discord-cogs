@@ -63,7 +63,7 @@
     "locationId": 80,
     "name": "mt-moon",
     "north": null,
-    "east": "kanto-route-4",
+    "east": "mt-moon-BF1",
     "south": null,
     "west": "kanto-route-3",
     "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/mt-moon.png",
