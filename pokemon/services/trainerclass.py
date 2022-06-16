@@ -384,7 +384,7 @@ class trainer:
         try:
             location = self.getLocation()
             locationId = location.locationId
-            if locationId in [67, 86, 120,234]:
+            if locationId in [67, 86, 120, 234, 2347]:
                 giftCompleted = False
                 uEncObj = uEnc(str(self.discordId))
                 if locationId == 67:
@@ -396,10 +396,10 @@ class trainer:
                 elif locationId == 120:
                     if uEncObj.magikarp:
                         giftCompleted = True
-                elif locationId == 234:
+                elif locationId == 2347:
                     if uEncObj.lapras:
                         giftCompleted = True
-                if locationId == 234:
+                elif locationId == 234:
                     if uEncObj.hitmonchan or uEncObj.hitmonlee:
                         giftCompleted = True
                 
