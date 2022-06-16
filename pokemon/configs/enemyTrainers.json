@@ -4,7 +4,7 @@
       "name": "Lass",
       "filename": "lass.png",
       "money": 210,
-      "enemy_uuid": "",
+      "enemy_uuid": "456201ee",
       "pokemon": [
         {
           "clefairy": 14
@@ -15,7 +15,7 @@
       "name": "Bug Catcher",
       "filename": "bugcatcher.png",
       "money": 110,
-      "enemy_uuid": "",
+      "enemy_uuid": "88a2b498",
       "pokemon": [
         {
           "weedle": 11
@@ -29,7 +29,7 @@
       "name": "Super Nerd",
       "filename": "supernerd.png",
       "money": 275,
-      "enemy_uuid": "",
+      "enemy_uuid": "a70e3e75",
       "pokemon": [
         {
           "magnemite": 11
@@ -43,7 +43,7 @@
       "name": "Bug Catcher",
       "filename": "bugcatcher.png",
       "money": 100,
-      "enemy_uuid": "",
+      "enemy_uuid": "82c8c35b",
       "pokemon": [
         {
           "caterpie": 10
@@ -60,7 +60,7 @@
       "name": "Lass",
       "filename": "lass.png",
       "money": 165,
-      "enemy_uuid": "",
+      "enemy_uuid": "5c424fcd",
       "pokemon": [
         {
           "oddish": 11
@@ -74,7 +74,7 @@
       "name": "Youngster",
       "filename": "youngster.png",
       "money": 150,
-      "enemy_uuid": "",
+      "enemy_uuid": "9185d1a6",
       "pokemon": [
         {
           "rattata": 10
@@ -91,7 +91,7 @@
       "name": "Hiker",
       "filename": "hiker.png",
       "money": 350,
-      "enemy_uuid": "",
+      "enemy_uuid": "e693b6d5",
       "pokemon": [
         {
           "geodude": 10
@@ -110,7 +110,7 @@
       "name": "PokéManiac",
       "filename": "pokemaniac.png",
       "money": 1150,
-      "enemy_uuid": "",
+      "enemy_uuid": "5ebd1842",
       "pokemon": [
         {
           "cubone": 23
@@ -124,7 +124,7 @@
       "name": "PokéManiac",
       "filename": "pokemaniac.png",
       "money": 1250,
-      "enemy_uuid": "",
+      "enemy_uuid": "bf228872",
       "pokemon": [
         {
           "slowpoke": 25
@@ -135,7 +135,7 @@
       "name": "Jr. Trainer",
       "filename": "jrtrainer.png",
       "money": 440,
-      "enemy_uuid": "",
+      "enemy_uuid": "9047cb29",
       "pokemon": [
         {
           "oddish": 22
@@ -149,7 +149,7 @@
       "name": "PokéManiac",
       "filename": "pokemaniac.png",
       "money": 1100,
-      "enemy_uuid": "",
+      "enemy_uuid": "63e74891",
       "pokemon": [
         {
           "charmander": 22
@@ -163,7 +163,7 @@
       "name": "Hiker",
       "filename": "hiker.png",
       "money": 875,
-      "enemy_uuid": "",
+      "enemy_uuid": "fa7adb41",
       "pokemon": [
         {
           "geodude": 25
@@ -174,7 +174,7 @@
       "name": "Hiker",
       "filename": "hiker.png",
       "money": 700,
-      "enemy_uuid": "",
+      "enemy_uuid": "3c9ca462",
       "pokemon": [
         {
           "machop": 20
@@ -188,7 +188,7 @@
       "name": "Hiker",
       "filename": "hiker.png",
       "money": 665,
-      "enemy_uuid": "",
+      "enemy_uuid": "74ff3621",
       "pokemon": [
         {
           "geodude": 19
@@ -208,7 +208,7 @@
       "name": "Hiker",
       "filename": "hiker.png",
       "money": 700,
-      "enemy_uuid": "",
+      "enemy_uuid": "31e3c84d",
       "pokemon": [
         {
           "onix": 20
@@ -2251,7 +2251,7 @@
       "name": "Cooltrainer",
       "filename": "cooltrainer.png",
       "money": 1540,
-      "enemy_uuid": "",
+      "enemy_uuid": "ce6e02fe",
       "pokemon": [
         {
           "persian": 44
@@ -2265,7 +2265,7 @@
       "name": "Cooltrainer",
       "filename": "cooltrainer.png",
       "money": 1470,
-      "enemy_uuid": "",
+      "enemy_uuid": "73f0123b",
       "pokemon": [
         {
           "ivysaur": 42
@@ -2287,7 +2287,7 @@
       "name": "Blackbelt",
       "filename": "blackbelt.png",
       "money": 1075,
-      "enemy_uuid": "",
+      "enemy_uuid": "83d13ce6",
       "pokemon": [
         {
           "machoke": 43
@@ -2304,7 +2304,7 @@
       "name": "Juggler",
       "filename": "juggler.png",
       "money": 1435,
-      "enemy_uuid": "",
+      "enemy_uuid": "f302d964",
       "pokemon": [
         {
           "drowzee": 41
@@ -2324,7 +2324,7 @@
       "name": "Tamer",
       "filename": "tamer.png",
       "money": 1760,
-      "enemy_uuid": "",
+      "enemy_uuid": "1f8817b7",
       "pokemon": [
         {
           "persian": 44
@@ -2338,7 +2338,7 @@
       "name": "Juggler",
       "filename": "juggler.png",
       "money": 1680,
-      "enemy_uuid": "",
+      "enemy_uuid": "30e5989f",
       "pokemon": [
         {
           "mr-mime": 48
@@ -2349,7 +2349,7 @@
       "name": "PokéManiac",
       "filename": "pokemaniac.png",
       "money": 2000,
-      "enemy_uuid": "",
+      "enemy_uuid": "67cd1c63",
       "pokemon": [
         {
           "charmeleon": 40
@@ -2368,7 +2368,7 @@
       "name": "Burglar",
       "filename": "burglar.png",
       "money": 3060,
-      "enemy_uuid": "",
+      "enemy_uuid": "7ca8f107",
       "pokemon": [
         {
           "charmander": 34
@@ -2384,7 +2384,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 330,
-      "enemy_uuid": "",
+      "enemy_uuid": "4d2d602c",
       "pokemon": [
         {
           "sandshrew": 11
@@ -2401,7 +2401,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 360,
-      "enemy_uuid": "",
+      "enemy_uuid": "825b928f",
       "pokemon": [
         {
           "zubat": 12
@@ -2415,7 +2415,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 480,
-      "enemy_uuid": "",
+      "enemy_uuid": "e8919671",
       "pokemon": [
         {
           "raticate": 16
@@ -2426,7 +2426,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 390,
-      "enemy_uuid": "",
+      "enemy_uuid": "b01f7221",
       "pokemon": [
         {
           "rattata": 13
@@ -2440,7 +2440,7 @@
       "name": "Super Nerd",
       "filename": "supernerd.png",
       "money": 300,
-      "enemy_uuid": "",
+      "enemy_uuid": "76911218",
       "pokemon": [
         {
           "grimer": 12
@@ -2459,7 +2459,7 @@
       "name": "Hiker",
       "filename": "hiker.png",
       "money": 735,
-      "enemy_uuid": "",
+      "enemy_uuid": "3bdf731a",
       "pokemon": [
         {
           "geodude": 21
@@ -2473,7 +2473,7 @@
       "name": "Jr. Trainer",
       "filename": "jrtrainer.png",
       "money": 420,
-      "enemy_uuid": "",
+      "enemy_uuid": "adfe628c",
       "pokemon": [
         {
           "jigglypuff": 21
@@ -2490,7 +2490,7 @@
       "name": "Hiker",
       "filename": "hiker.png",
       "money": 735,
-      "enemy_uuid": "",
+      "enemy_uuid": "b8530944",
       "pokemon": [
         {
           "geodude": 21
@@ -2507,7 +2507,7 @@
       "name": "PokéManiac",
       "filename": "pokemaniac.png",
       "money": 1000,
-      "enemy_uuid": "",
+      "enemy_uuid": "3adef382",
       "pokemon": [
         {
           "slowpoke": 20
@@ -2524,7 +2524,7 @@
       "name": "Jr. Trainer",
       "filename": "jrtrainer.png",
       "money": 440,
-      "enemy_uuid": "",
+      "enemy_uuid": "0cb268ba",
       "pokemon": [
         {
           "bellsprout": 22
@@ -2538,7 +2538,7 @@
       "name": "Jr. Trainer",
       "filename": "jrtrainer.png",
       "money": 380,
-      "enemy_uuid": "",
+      "enemy_uuid": "b28c9227",
       "pokemon": [
         {
           "pidgey": 19
@@ -2558,7 +2558,7 @@
       "name": "Jr. Trainer",
       "filename": "jrtrainer.png",
       "money": 400,
-      "enemy_uuid": "",
+      "enemy_uuid": "b918d3cd",
       "pokemon": [
         {
           "meowth": 20
@@ -2771,7 +2771,7 @@
       "name": "Cooltrainer",
       "filename": "cooltrainer.png",
       "money": 1505,
-      "enemy_uuid": "",
+      "enemy_uuid": "3f4717d4",
       "pokemon": [
         {
           "exeggutor": 43
@@ -2788,7 +2788,7 @@
       "name": "Cooltrainer",
       "filename": "cooltrainer.png",
       "money": 1505,
-      "enemy_uuid": "",
+      "enemy_uuid": "3ad8ad3e",
       "pokemon": [
         {
           "parasect": 43
@@ -2805,7 +2805,7 @@
       "name": "Cooltrainer",
       "filename": "cooltrainer.png",
       "money": 1505,
-      "enemy_uuid": "",
+      "enemy_uuid": "ac8a6a8a",
       "pokemon": [
         {
           "kingler": 43
@@ -2822,7 +2822,7 @@
       "name": "Cooltrainer",
       "filename": "cooltrainer.png",
       "money": 1505,
-      "enemy_uuid": "",
+      "enemy_uuid": "4d659282",
       "pokemon": [
         {
           "bellsprout": 43
@@ -2841,7 +2841,7 @@
       "name": "Channeler",
       "filename": "channeler.png",
       "money": 690,
-      "enemy_uuid": "",
+      "enemy_uuid": "121033ff",
       "pokemon": [
         {
           "gastly": 23
@@ -2852,7 +2852,7 @@
       "name": "Channeler",
       "filename": "channeler.png",
       "money": 660,
-      "enemy_uuid": "",
+      "enemy_uuid": "27c9e5b4",
       "pokemon": [
         {
           "gastly": 22
@@ -2863,7 +2863,7 @@
       "name": "Channeler",
       "filename": "channeler.png",
       "money": 720,
-      "enemy_uuid": "",
+      "enemy_uuid": "4cf4d78f",
       "pokemon": [
         {
           "gastly": 24
@@ -2876,7 +2876,7 @@
       "name": "Channeler",
       "filename": "channeler.png",
       "money": 690,
-      "enemy_uuid": "",
+      "enemy_uuid": "351a417c",
       "pokemon": [
         {
           "gastly": 23
@@ -2890,7 +2890,7 @@
       "name": "Channeler",
       "filename": "channeler.png",
       "money": 660,
-      "enemy_uuid": "",
+      "enemy_uuid": "c863c78a",
       "pokemon": [
         {
           "gastly": 22
@@ -2901,7 +2901,7 @@
       "name": "Channeler",
       "filename": "channeler.png",
       "money": 720,
-      "enemy_uuid": "",
+      "enemy_uuid": "8fa07fce",
       "pokemon": [
         {
           "gastly": 24
@@ -2914,7 +2914,7 @@
       "name": "Channeler",
       "filename": "channeler.png",
       "money": 660,
-      "enemy_uuid": "",
+      "enemy_uuid": "e0ed494d",
       "pokemon": [
         {
           "gastly": 22
@@ -2925,7 +2925,7 @@
       "name": "Channeler",
       "filename": "channeler.png",
       "money": 690,
-      "enemy_uuid": "",
+      "enemy_uuid": "ad1beb29",
       "pokemon": [
         {
           "haunter": 23
@@ -2936,7 +2936,7 @@
       "name": "Channeler",
       "filename": "channeler.png",
       "money": 720,
-      "enemy_uuid": "",
+      "enemy_uuid": "2dd07c0b",
       "pokemon": [
         {
           "gastly": 24
@@ -2947,7 +2947,7 @@
       "name": "Channeler",
       "filename": "channeler.png",
       "money": 660,
-      "enemy_uuid": "",
+      "enemy_uuid": "88f30dcc",
       "pokemon": [
         {
           "haunter": 22
@@ -2960,7 +2960,7 @@
       "name": "Channeler",
       "filename": "channeler.png",
       "money": 660,
-      "enemy_uuid": "",
+      "enemy_uuid": "893f11cf",
       "pokemon": [
         {
           "gastly": 22
@@ -2977,7 +2977,7 @@
       "name": "Channeler",
       "filename": "channeler.png",
       "money": 720,
-      "enemy_uuid": "",
+      "enemy_uuid": "aec4e406",
       "pokemon": [
         {
           "gastly": 24
@@ -2988,7 +2988,7 @@
       "name": "Channeler",
       "filename": "channeler.png",
       "money": 720,
-      "enemy_uuid": "",
+      "enemy_uuid": "4a27be61",
       "pokemon": [
         {
           "gastly": 24
@@ -3001,7 +3001,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 750,
-      "enemy_uuid": "",
+      "enemy_uuid": "68dff53d",
       "pokemon": [
         {
           "zubat": 25
@@ -3018,7 +3018,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 780,
-      "enemy_uuid": "",
+      "enemy_uuid": "bc6b7f07",
       "pokemon": [
         {
           "koffing": 26
@@ -3032,7 +3032,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 690,
-      "enemy_uuid": "",
+      "enemy_uuid": "e1f1df78",
       "pokemon": [
         {
           "zubat": 23
@@ -3054,7 +3054,7 @@
       "name": "Burglar",
       "filename": "burglar.png",
       "money": 3060,
-      "enemy_uuid": "",
+      "enemy_uuid": "c38cad96",
       "pokemon": [
         {
           "growlithe": 34
@@ -3068,7 +3068,7 @@
       "name": "Scientist",
       "filename": "scientist.png",
       "money": 1700,
-      "enemy_uuid": "",
+      "enemy_uuid": "2a84dbfb",
       "pokemon": [
         {
           "magnemite": 34
@@ -3084,7 +3084,7 @@
       "name": "Burglar",
       "filename": "burglar.png",
       "money": 3420,
-      "enemy_uuid": "",
+      "enemy_uuid": "6fb120f2",
       "pokemon": [
         {
           "ninetales": 38
@@ -3097,7 +3097,7 @@
       "name": "Scientist",
       "filename": "scientist.png",
       "money": 1450,
-      "enemy_uuid": "",
+      "enemy_uuid": "db53a165",
       "pokemon": [
         {
           "electrode": 29
@@ -3111,7 +3111,7 @@
       "name": "Burglar",
       "filename": "burglar.png",
       "money": 3060,
-      "enemy_uuid": "",
+      "enemy_uuid": "6a700a36",
       "pokemon": [
         {
           "growlithe": 34
@@ -3127,7 +3127,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 630,
-      "enemy_uuid": "",
+      "enemy_uuid": "9f351174",
       "pokemon": [
         {
           "drowzee": 21
@@ -3141,7 +3141,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 630,
-      "enemy_uuid": "",
+      "enemy_uuid": "f275a863",
       "pokemon": [
         {
           "raticate": 21
@@ -3155,7 +3155,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 600,
-      "enemy_uuid": "",
+      "enemy_uuid": "9b407701",
       "pokemon": [
         {
           "grimer": 20
@@ -3172,7 +3172,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 570,
-      "enemy_uuid": "",
+      "enemy_uuid": "937a1211",
       "pokemon": [
         {
           "rattata": 19
@@ -3192,7 +3192,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 660,
-      "enemy_uuid": "",
+      "enemy_uuid": "92d598f3",
       "pokemon": [
         {
           "grimer": 22
@@ -3208,7 +3208,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 510,
-      "enemy_uuid": "",
+      "enemy_uuid": "1ccbec9d",
       "pokemon": [
         {
           "zubat": 17
@@ -3233,7 +3233,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 630,
-      "enemy_uuid": "",
+      "enemy_uuid": "e6b63540",
       "pokemon": [
         {
           "machop": 21
@@ -3247,7 +3247,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 600,
-      "enemy_uuid": "",
+      "enemy_uuid": "f79d13ca",
       "pokemon": [
         {
           "rattata": 20
@@ -3266,7 +3266,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 630,
-      "enemy_uuid": "",
+      "enemy_uuid": "5cb1fe99",
       "pokemon": [
         {
           "koffing": 21
@@ -3280,7 +3280,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 690,
-      "enemy_uuid": "",
+      "enemy_uuid": "b1496bd9",
       "pokemon": [
         {
           "sandshrew": 23
@@ -3297,7 +3297,7 @@
       "name": "Rocket",
       "filename": "rocket.png",
       "money": 690,
-      "enemy_uuid": "",
+      "enemy_uuid": "ced51252",
       "pokemon": [
         {
           "ekans": 23
@@ -3314,7 +3314,7 @@
       "name": "Giovanni",
       "filename": "giovanni.png",
       "money": 2871,
-      "enemy_uuid": "",
+      "enemy_uuid": "393a0d5c",
       "pokemon": [
         {
           "onix": 25
@@ -3333,7 +3333,7 @@
       "name": "Gentleman",
       "filename": "gentleman.png",
       "money": 1260,
-      "enemy_uuid": "",
+      "enemy_uuid": "640957ad",
       "pokemon": [
         {
           "growlithe": 18
@@ -3347,7 +3347,7 @@
       "name": "Gentleman",
       "filename": "gentleman.png",
       "money": 1330,
-      "enemy_uuid": "",
+      "enemy_uuid": "d85e1bc6",
       "pokemon": [
         {
           "nidoran-m": 19
@@ -3361,7 +3361,7 @@
       "name": "Lass",
       "filename": "lass.png",
       "money": 270,
-      "enemy_uuid": "",
+      "enemy_uuid": "06338257",
       "pokemon": [
         {
           "pidgey": 18
@@ -3375,7 +3375,7 @@
       "name": "Youngster",
       "filename": "youngster.png",
       "money": 315,
-      "enemy_uuid": "",
+      "enemy_uuid": "72fc7945",
       "pokemon": [
         {
           "nidoran-m": 21
@@ -3388,7 +3388,7 @@
       "name": "Sailor",
       "filename": "sailor.png",
       "money": 630,
-      "enemy_uuid": "",
+      "enemy_uuid": "2c048a8e",
       "pokemon": [
         {
           "shellder": 21
@@ -3398,7 +3398,7 @@
     {
       "name": "sailor",
       "money": 510,
-      "enemy_uuid": "",
+      "enemy_uuid": "21066c7a",
       "pokemon": [
         {
           "horsea": 17
@@ -3414,7 +3414,7 @@
     {
       "name": "sailor",
       "money": 510,
-      "enemy_uuid": "",
+      "enemy_uuid": "fef7b31b",
       "pokemon": [
         {
           "horsea": 17
@@ -3430,7 +3430,7 @@
     {
       "name": "sailor",
       "money": 540,
-      "enemy_uuid": "",
+      "enemy_uuid": "49e3125d",
       "pokemon": [
         {
           "tentacool": 18
@@ -3443,7 +3443,7 @@
     {
       "name": "fisherman",
       "money": 595,
-      "enemy_uuid": "",
+      "enemy_uuid": "8b4a4c0f",
       "pokemon": [
         {
           "tentacool": 17
@@ -3459,7 +3459,7 @@
     {
       "name": "sailor",
       "money": 600,
-      "enemy_uuid": "",
+      "enemy_uuid": "c128d777",
       "pokemon": [
         {
           "machop": 20
@@ -3472,7 +3472,7 @@
       "name": "Fisherman",
       "filename": "fisherman.png",
       "money": 595,
-      "enemy_uuid": "",
+      "enemy_uuid": "84d7f2b6",
       "pokemon": [
         {
           "goldeen": 17
@@ -3489,7 +3489,7 @@
       "name": "Gentleman",
       "filename": "gentleman.png",
       "money": 1610,
-      "enemy_uuid": "",
+      "enemy_uuid": "16ba7bfe",
       "pokemon": [
         {
           "pikachu": 23
@@ -3500,7 +3500,7 @@
       "name": "Gentleman",
       "filename": "gentleman.png",
       "money": 1190,
-      "enemy_uuid": "",
+      "enemy_uuid": "5695a1b7",
       "pokemon": [
         {
           "growlithe": 17
@@ -3514,7 +3514,7 @@
       "name": "Lass",
       "filename": "lass.png",
       "money": 270,
-      "enemy_uuid": "",
+      "enemy_uuid": "82646950",
       "pokemon": [
         {
           "rattata": 18
@@ -3530,7 +3530,7 @@
       "name": "Sailor",
       "filename": "sailor.png",
       "money": 510,
-      "enemy_uuid": "",
+      "enemy_uuid": "71ae2f4c",
       "pokemon": [
         {
           "machop": 17
@@ -3544,7 +3544,7 @@
       "name": "Sailor",
       "filename": "sailor.png",
       "money": 540,
-      "enemy_uuid": "",
+      "enemy_uuid": "b45cfc52",
       "pokemon": [
         {
           "machop": 18
