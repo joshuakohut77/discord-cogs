@@ -129,10 +129,11 @@ class trainer:
                     self.statuscode = 96
 
                 starterId = pokemon.trainerId
+                starterName = pokemon.pokemonName
                 
                 # set as starter
-                updateString = 'UPDATE trainer SET "starterId"=%(starterId)s, "activePokemon"=%(starterId)s WHERE "discord_id"=%(discordId)s'
-                db.execute(updateString, { 'starterId': starterId, 'discordId': self.discordId })
+                updateString = 'UPDATE trainer SET "starterName"=%(starterName)s, "starterId"=%(starterId)s, "activePokemon"=%(starterId)s WHERE "discord_id"=%(discordId)s'
+                db.execute(updateString, { 'starterName': starterName, 'starterId': starterId, 'discordId': self.discordId })
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())

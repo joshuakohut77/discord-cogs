@@ -82,6 +82,32 @@ class Pokemon:
             self.message = 'pokeclass#create level must be greater than 0 and less than or equal to 100'
         
         try:
+            # this section is for Gary/Blue to dynamically change the pokemon based on the trainers starter pokemon
+            if self.pokedexId == 'dynamic-1' or self.pokedexId == 'dynamic-2' or self.pokedexId == 'dynamic-3':
+                # pokemon needs changed to fit the trainers playthru
+                starterName = self.__getStarterName()
+                if starterName == 'squirtle':
+                    if self.pokedexId == 'dynamic-1':
+                        self.pokedexId = 'bulbasaur'
+                    elif self.pokedexId == 'dynamic-2':
+                        self.pokedexId = 'ivysaur'
+                    elif self.pokedexId == 'dynamic-3':
+                        self.pokedexId = 'venusaur'
+                elif starterName == 'charmander':
+                    if self.pokedexId == 'dynamic-1':
+                        self.pokedexId = 'squirtle'
+                    elif self.pokedexId == 'dynamic-2':
+                        self.pokedexId = 'wartortle'
+                    elif self.pokedexId == 'dynamic-3':
+                        self.pokedexId = 'blastoise'
+                elif starterName == 'bulbasaur' or starterName == 'rattata': # rattata is for trolling purposes 
+                    if self.pokedexId == 'dynamic-1':
+                        self.pokedexId = 'charmander'
+                    elif self.pokedexId == 'dynamic-2':
+                        self.pokedexId = 'charmeleon'
+                    elif self.pokedexId == 'dynamic-3':
+                        self.pokedexId = 'charizard'
+
             # this is the pokemon json object from the config file
             pokemon = self.__loadPokemonConfig()
 
@@ -620,3 +646,19 @@ class Pokemon:
         # this is the evolution json object from the config file
         evolutionList = evolutionConfig[str(key)]
         return evolutionList
+    
+    def __getStarterName(self):
+        """ returns the name of the starter pokemon for the current trainer"""
+        starterName = ''
+        try:
+            db = dbconn()
+            queryString = 'SELECT "starterName" FROM trainer WHERE "discord_id" = %(discordId)s'
+            result = db.querySingle(queryString, { 'discordId': str(self.discordId) })
+            starterName = result[0]
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            # delete object and close connection
+            del db
+            return starterName
