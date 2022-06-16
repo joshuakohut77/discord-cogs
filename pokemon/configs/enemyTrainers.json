@@ -1501,7 +1501,43 @@
       ]
     }
   ],
+  "102": [
+    {
+      "name": "Blue",
+      "filename": "blue.png",
+      "money": 0,
+      "enemy_uuid": "df47ab08",
+      "pokemon": [
+        {
+          "pidgey": 9
+        },
+        {
+          "dynamic-1": 8
+        }
+      ]
+    }
+  ],
   "103": [
+    {
+      "name": "Blue",
+      "filename": "blue.png",
+      "money": 0,
+      "enemy_uuid": "83c60d0c",
+      "pokemon": [
+        {
+          "pidgeotto": 18
+        },
+        {
+          "rattata": 15
+        },
+        {
+          "abra": 15
+        },
+        {
+          "dynamic-1": 17
+        }
+      ]
+    },
     {
       "name": "Jr. Trainer",
       "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
@@ -2836,6 +2872,31 @@
       ]
     }
   ],
+  "1602": [
+    {
+      "name": "Blue",
+      "filename": "blue.png",
+      "money": 1625,
+      "enemy_uuid": "0dd1243b",
+      "pokemon": [
+        {
+          "pidgeotto": 25
+        },
+        {
+          "gyarados": 23
+        },
+        {
+          "growlithe": 22
+        },
+        {
+          "kadabra": 20
+        },
+        {
+          "dynamic-2": 25
+        }
+      ]
+    }
+  ],
   "1603": [
     {
       "name": "Channeler",
@@ -3551,6 +3612,41 @@
         },
         {
           "shellder": 18
+        }
+      ]
+    }
+  ],
+  "4987": [
+    {
+      "name": "Blue",
+      "filename": "blue.png",
+      "money": 1300,
+      "enemy_uuid": "3a07d2da",
+      "pokemon": [
+        {
+          "pidgeotto": 19
+        },
+        {
+          "raticate": 16
+        },
+        {
+          "kadabra": 18
+        },
+        {
+          "dynamic-2": 20
+        }
+      ]
+    }
+  ],
+  "861": [
+    {
+      "name": "Blue",
+      "filename": "blue.png",
+      "money": 0,
+      "enemy_uuid": "1622718f",
+      "pokemon": [
+        {
+          "dynamic-1": 5
         }
       ]
     }
