@@ -308,7 +308,7 @@
   "157": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": [],
+    "blockers": ["badge_earth"],
     "name": "kanto-route-23-S"
   },
   "1571": {
@@ -616,6 +616,72 @@
     "quest": ["Rocket Hideout"],
     "blockers": [],
     "name": "rocket-hideout-B4F"
+  },
+  "2341": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "silph-co"
+  },
+  "2342": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "silph-co-2F"
+  },
+  "2343": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "silph-co-3F"
+  },
+  "2344": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "silph-co-4F"
+  },
+  "2345": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "silph-co-5F"
+  },
+  "2346": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "silph-co-6F"
+  },
+  "2347": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "silph-co-7F"
+  },
+  "2348": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "silph-co-8F"
+  },
+  "2349": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "silph-co-9F"
+  },
+  "23410": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "silph-co-10F"
+  },
+  "23411": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "silph-co-11F"
   },
   "10001": {
     "pre-requsites": ["HM03"],
