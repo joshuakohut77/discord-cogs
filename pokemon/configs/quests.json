@@ -1,20 +1,31 @@
 {
   "67": {
     "pre-requsites": [],
-    "quest": ["Cafe"],
+    "quest": [
+      "Cafe"
+    ],
     "blockers": [],
     "name": "celadon-city"
   },
   "68": {
-    "pre-requsites": ["bike_voucher", "HM01"],
-    "quest": ["Bike Voucher", "SS Anne"],
+    "pre-requsites": [
+      "bike_voucher",
+      "HM01"
+    ],
+    "quest": [
+      "Bike Voucher",
+      "SS Anne"
+    ],
     "blockers": [],
     "name": "cerulean-city"
   },
   "71": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": ["HM03", "HM04"],
+    "blockers": [
+      "HM03",
+      "HM04"
+    ],
     "name": "cinnabar-island"
   },
   "73": {
@@ -24,9 +35,17 @@
     "name": "digletts-cave"
   },
   "76": {
-    "pre-requsites": ["gold_teeth"],
-    "quest": ["Fishing Dude", "Return Teeth"],
-    "blockers": ["bicycle", "badge_marsh"],
+    "pre-requsites": [
+      "gold_teeth"
+    ],
+    "quest": [
+      "Fishing Dude",
+      "Return Teeth"
+    ],
+    "blockers": [
+      "bicycle",
+      "badge_marsh"
+    ],
     "name": "fuchsia-city"
   },
   "80": {
@@ -35,27 +54,11 @@
     "blockers": [],
     "name": "mt-moon"
   },
-  "801": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "mt-moon-BF1"
-  },
-  "802": {
-    "pre-requsites": [],
-    "quest": ["Super Nerd"],
-    "blockers": [],
-    "name": "mt-moon-BF2"
-  },
-  "861": {
-    "pre-requsites": ["oaks_parcel"],
-    "quest": ["Professor Oak"],
-    "blockers": [],
-    "name": "professor-oak-lab"
-  },
   "86": {
     "pre-requsites": [],
-    "quest": ["Garys Sister"],
+    "quest": [
+      "Garys Sister"
+    ],
     "blockers": [],
     "name": "pallet-town"
   },
@@ -64,12 +67,6 @@
     "quest": [],
     "blockers": [],
     "name": "rock-tunnel"
-  },
-  "871": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "rock-tunnel-BF1"
   },
   "88": {
     "pre-requsites": [],
@@ -83,12 +80,6 @@
     "blockers": [],
     "name": "kanto-route-10-N"
   },
-  "891": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "kanto-route-10-S"
-  },
   "90": {
     "pre-requsites": [],
     "quest": [],
@@ -98,14 +89,10 @@
   "91": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": ["badge_marsh"],
+    "blockers": [
+      "badge_marsh"
+    ],
     "name": "kanto-route-12-N"
-  },
-  "911": {
-    "pre-requsites": [],
-    "quest": ["Fishing Brother"],
-    "blockers": ["badge_marsh", "pokeflute"],
-    "name": "kanto-route-12-S"
   },
   "92": {
     "pre-requsites": [],
@@ -127,14 +114,21 @@
   },
   "95": {
     "pre-requsites": [],
-    "quest": ["Secret Resort"],
-    "blockers": ["HM01", "bicycle"],
+    "quest": [
+      "Secret Resort"
+    ],
+    "blockers": [
+      "HM01",
+      "bicycle"
+    ],
     "name": "kanto-route-16"
   },
   "96": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": ["bicycle"],
+    "blockers": [
+      "bicycle"
+    ],
     "name": "kanto-route-17"
   },
   "97": {
@@ -146,42 +140,54 @@
   "98": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": ["HM03"],
+    "blockers": [
+      "HM03"
+    ],
     "name": "kanto-sea-route-19"
   },
   "99": {
-    "pre-requsites": ["HM01"],
-    "quest": ["Oaks Aide"],
-    "blockers": ["oaks_parcel_delivered"],
+    "pre-requsites": [
+      "HM01"
+    ],
+    "quest": [
+      "Oaks Aide"
+    ],
+    "blockers": [
+      "oaks_parcel_delivered"
+    ],
     "name": "kanto-route-2"
   },
   "100": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": ["HM03"],
+    "blockers": [
+      "HM03"
+    ],
     "name": "kanto-sea-route-20-E"
-  },
-  "1001": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": ["HM03"],
-    "name": "kanto-sea-route-20-W"
   },
   "101": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": ["HM03"],
+    "blockers": [
+      "HM03"
+    ],
     "name": "kanto-sea-route-21"
   },
   "102": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": ["oaks_parcel_delivered"],
+    "blockers": [
+      "oaks_parcel_delivered"
+    ],
     "name": "kanto-route-22"
   },
   "103": {
-    "pre-requsites": ["elite_four"],
-    "quest": ["Mysterious Cave"],
+    "pre-requsites": [
+      "elite_four"
+    ],
+    "quest": [
+      "Mysterious Cave"
+    ],
     "blockers": [],
     "name": "kanto-route-24"
   },
@@ -194,7 +200,9 @@
   "109": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": ["badge_boulder"],
+    "blockers": [
+      "badge_boulder"
+    ],
     "name": "kanto-route-3"
   },
   "120": {
@@ -206,7 +214,9 @@
   "130": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": ["badge_cascade"],
+    "blockers": [
+      "badge_cascade"
+    ],
     "name": "kanto-route-5"
   },
   "131": {
@@ -230,14 +240,244 @@
   "134": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": ["badge_thunder"],
+    "blockers": [
+      "badge_thunder"
+    ],
     "name": "kanto-route-9"
   },
   "136": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": ["HM03", "HM04"],
+    "blockers": [
+      "HM03",
+      "HM04"
+    ],
     "name": "seafoam-islands"
+  },
+  "147": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "cerulean-cave"
+  },
+  "151": {
+    "pre-requsites": [],
+    "quest": [
+      "Fishing Guru",
+      "Pokemon Fan Club"
+    ],
+    "blockers": [],
+    "name": "vermilion-city"
+  },
+  "152": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [
+      "badge_earth",
+      "badge_volcano"
+    ],
+    "name": "kanto-victory-road"
+  },
+  "154": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "viridian-city"
+  },
+  "155": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "viridian-forest"
+  },
+  "157": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [
+      "badge_earth"
+    ],
+    "name": "kanto-route-23-S"
+  },
+  "158": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [
+      "HM03"
+    ],
+    "name": "power-plant"
+  },
+  "159": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "kanto-victory-road-2F"
+  },
+  "160": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [
+      "silph_scope"
+    ],
+    "name": "pokemon-tower"
+  },
+  "161": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "pokemon-mansion"
+  },
+  "162": {
+    "pre-requsites": [
+      "badge_soul"
+    ],
+    "quest": [],
+    "blockers": [],
+    "name": "kanto-safari-zone"
+  },
+  "231": {
+    "pre-requsites": [
+      "HM01"
+    ],
+    "quest": [
+      "Museum of Science"
+    ],
+    "blockers": [],
+    "name": "pewter-city"
+  },
+  "232": {
+    "pre-requsites": [
+      "silph_scope"
+    ],
+    "quest": [
+      "Mr Fuji"
+    ],
+    "blockers": [],
+    "name": "lavender-town"
+  },
+  "233": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [
+      "badge_earth"
+    ],
+    "name": "indigo-plateau"
+  },
+  "234": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [
+      "badge_rainbow",
+      "silph_scope",
+      "pokeflute"
+    ],
+    "name": "saffron-city"
+  },
+  "498": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [
+      "ss_ticket"
+    ],
+    "name": "ss-anne"
+  },
+  "671": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "department-store"
+  },
+  "672": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "department-store-2F"
+  },
+  "673": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "department-store-3F"
+  },
+  "674": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "department-store-4F"
+  },
+  "675": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "department-store-5F"
+  },
+  "676": {
+    "pre-requsites": [],
+    "quest": [
+      "Rooftop Square"
+    ],
+    "blockers": [],
+    "name": "department-store-rooftop"
+  },
+  "801": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "mt-moon-BF1"
+  },
+  "802": {
+    "pre-requsites": [],
+    "quest": [
+      "Super Nerd"
+    ],
+    "blockers": [],
+    "name": "mt-moon-BF2"
+  },
+  "861": {
+    "pre-requsites": [
+      "oaks_parcel"
+    ],
+    "quest": [
+      "Professor Oak"
+    ],
+    "blockers": [],
+    "name": "professor-oak-lab"
+  },
+  "871": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "rock-tunnel-BF1"
+  },
+  "891": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "kanto-route-10-S"
+  },
+  "911": {
+    "pre-requsites": [],
+    "quest": [
+      "Fishing Brother"
+    ],
+    "blockers": [
+      "badge_marsh",
+      "pokeflute"
+    ],
+    "name": "kanto-route-12-S"
+  },
+  "999": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "underground-path"
+  },
+  "1001": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [
+      "HM03"
+    ],
+    "name": "kanto-sea-route-20-W"
   },
   "1361": {
     "pre-requsites": [],
@@ -263,11 +503,11 @@
     "blockers": [],
     "name": "seafoam-islands-BF4"
   },
-  "147": {
+  "1471": {
     "pre-requsites": [],
     "quest": [],
     "blockers": [],
-    "name": "cerulean-cave"
+    "name": "cerulean-cave-B1F"
   },
   "1472": {
     "pre-requsites": [],
@@ -275,71 +515,17 @@
     "blockers": [],
     "name": "cerulean-cave2F"
   },
-  "1471": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "cerulean-cave-B1F"
-  },
-  "151": {
-    "pre-requsites": [],
-    "quest": ["Fishing Guru", "Pokemon Fan Club"],
-    "blockers": [],
-    "name": "vermilion-city"
-  },
-  "152": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": ["badge_earth", "badge_volcano"],
-    "name": "kanto-victory-road"
-  },
-  "154": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "viridian-city"
-  },
-  "155": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "viridian-forest"
-  },
-  "157": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": ["badge_earth"],
-    "name": "kanto-route-23-S"
-  },
   "1571": {
     "pre-requsites": [],
     "quest": [],
     "blockers": [],
     "name": "kanto-route-23-N"
   },
-  "158": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": ["HM03"],
-    "name": "power-plant"
-  },
-  "159": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "kanto-victory-road-2F"
-  },
   "1593": {
     "pre-requsites": [],
     "quest": [],
     "blockers": [],
     "name": "kanto-victory-road-3F"
-  },
-  "160": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": ["silph_scope"],
-    "name": "pokemon-tower"
   },
   "1602": {
     "pre-requsites": [],
@@ -367,7 +553,9 @@
   },
   "1606": {
     "pre-requsites": [],
-    "quest": ["Free Spirits"],
+    "quest": [
+      "Free Spirits"
+    ],
     "blockers": [],
     "name": "pokemon-tower-6F"
   },
@@ -377,11 +565,11 @@
     "blockers": [],
     "name": "pokemon-tower-7F"
   },
-  "161": {
+  "1610": {
     "pre-requsites": [],
     "quest": [],
     "blockers": [],
-    "name": "pokemon-mansion"
+    "name": "pokemon-mansion-BF1"
   },
   "1612": {
     "pre-requsites": [],
@@ -395,18 +583,6 @@
     "blockers": [],
     "name": "pokemon-mansion-3F"
   },
-  "1610": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "pokemon-mansion-BF1"
-  },
-  "162": {
-    "pre-requsites": ["badge_soul"],
-    "quest": [],
-    "blockers": [],
-    "name": "kanto-safari-zone"
-  },
   "1621": {
     "pre-requsites": [],
     "quest": [],
@@ -415,33 +591,53 @@
   },
   "1622": {
     "pre-requsites": [],
-    "quest": ["The Warden"],
+    "quest": [
+      "The Warden"
+    ],
     "blockers": [],
     "name": "kanto-safari-zone"
   },
   "1623": {
-    "pre-requsites": ["badge_soul"],
-    "quest": ["Lone House"],
+    "pre-requsites": [
+      "badge_soul"
+    ],
+    "quest": [
+      "Lone House"
+    ],
     "blockers": [],
     "name": "kanto-safari-zone"
   },
-  "231": {
-    "pre-requsites": ["HM01"],
-    "quest": ["Museum of Science"],
-    "blockers": [],
-    "name": "pewter-city"
-  },
-  "232": {
-    "pre-requsites": ["silph_scope"],
-    "quest": ["Mr Fuji"],
-    "blockers": [],
-    "name": "lavender-town"
-  },
-  "233": {
+  "1880": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": ["badge_earth"],
-    "name": "indigo-plateau"
+    "blockers": [],
+    "name": "game-corner"
+  },
+  "1881": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "rocket-hideout"
+  },
+  "1882": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "rocket-hideout-B2F"
+  },
+  "1883": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "rocket-hideout-B3F"
+  },
+  "1884": {
+    "pre-requsites": [],
+    "quest": [
+      "Rocket Hideout"
+    ],
+    "blockers": [],
+    "name": "rocket-hideout-B4F"
   },
   "2331": {
     "pre-requsites": [],
@@ -478,144 +674,6 @@
     "quest": [],
     "blockers": [],
     "name": "chamption-room"
-  },
-  "234": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": ["badge_rainbow", "silph_scope", "pokeflute"],
-    "name": "saffron-city"
-  },
-  "498": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": ["ss_ticket"],
-    "name": "ss-anne"
-  },
-  "4981": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "ss-anne-1F"
-  },
-  "4982": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "ss-anne-1F-rooms"
-  },
-  "4983": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "ss-anne-basement"
-  },
-  "4984": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "ss-anne-basement-rooms"
-  },
-  "4985": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "ss-anne-2F"
-  },
-  "4986": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "ss-anne-3F"
-  },
-  "4987": {
-    "pre-requsites": [],
-    "quest": ["Speak to Captain"],
-    "blockers": [],
-    "name": "captains-quarters"
-  },
-  "4988": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "ss-anne-2F-rooms"
-  },
-  "4989": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "ss-anne-deck"
-  },
-  "671": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "department-store"
-  },
-  "672": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "department-store-2F"
-  },
-  "673": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "department-store-3F"
-  },
-  "674": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "department-store-4F"
-  },
-  "675": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "department-store-5F"
-  },
-  "676": {
-    "pre-requsites": [],
-    "quest": ["Rooftop Square"],
-    "blockers": [],
-    "name": "department-store-rooftop"
-  },
-  "999": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "underground-path"
-  },
-  "1880": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "game-corner"
-  },
-  "1881": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "rocket-hideout"
-  },
-  "1882": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "rocket-hideout-B2F"
-  },
-  "1883": {
-    "pre-requsites": [],
-    "quest": [],
-    "blockers": [],
-    "name": "rocket-hideout-B3F"
-  },
-  "1884": {
-    "pre-requsites": [],
-    "quest": ["Rocket Hideout"],
-    "blockers": [],
-    "name": "rocket-hideout-B4F"
   },
   "2341": {
     "pre-requsites": [],
@@ -671,6 +729,72 @@
     "blockers": [],
     "name": "silph-co-9F"
   },
+  "4981": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "ss-anne-1F"
+  },
+  "4982": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "ss-anne-1F-rooms"
+  },
+  "4983": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "ss-anne-basement"
+  },
+  "4984": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "ss-anne-basement-rooms"
+  },
+  "4985": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "ss-anne-2F"
+  },
+  "4986": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "ss-anne-3F"
+  },
+  "4987": {
+    "pre-requsites": [],
+    "quest": [
+      "Speak to Captain"
+    ],
+    "blockers": [],
+    "name": "captains-quarters"
+  },
+  "4988": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "ss-anne-2F-rooms"
+  },
+  "4989": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "ss-anne-deck"
+  },
+  "10001": {
+    "pre-requsites": [
+      "HM03"
+    ],
+    "quest": [
+      "Check Truck"
+    ],
+    "blockers": [],
+    "name": "ss-anne-truck"
+  },
   "23410": {
     "pre-requsites": [],
     "quest": [],
@@ -682,11 +806,5 @@
     "quest": [],
     "blockers": [],
     "name": "silph-co-11F"
-  },
-  "10001": {
-    "pre-requsites": ["HM03"],
-    "quest": ["Check Truck"],
-    "blockers": [],
-    "name": "ss-anne-truck"
   }
 }
