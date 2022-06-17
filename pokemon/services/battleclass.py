@@ -172,6 +172,9 @@ class battle:
 
     def __insertEnemyCompleted(self, enemy_uuid):
         """ inserts and enemy_uuid into the database which indicase complete """
+        # do not lock out if trainer is elite-4 to allow multiple battles
+        if enemy_uuid == "elite-4":
+            return
         try:
             db = dbconn()
             insertString = 'INSERT INTO trainer_battles (discord_id, "locationId", enemy_uuid) VALUES(%(discordId)s, %(locationId)s, %(enemy_uuid)s)'
