@@ -1505,8 +1505,8 @@
     {
       "name": "Blue",
       "filename": "blue.png",
-      "money": 0,
-      "enemy_uuid": "df47ab08",
+      "money": 280,
+      "enemy_uuid": "5c772560",
       "pokemon": [
         {
           "pidgey": 9
@@ -1521,8 +1521,8 @@
     {
       "name": "Blue",
       "filename": "blue.png",
-      "money": 0,
-      "enemy_uuid": "83c60d0c",
+      "money": 595,
+      "enemy_uuid": "fb123420",
       "pokemon": [
         {
           "pidgeotto": 18
@@ -3642,11 +3642,167 @@
     {
       "name": "Blue",
       "filename": "blue.png",
-      "money": 0,
+      "money": 175,
       "enemy_uuid": "1622718f",
       "pokemon": [
         {
           "dynamic-1": 5
+        }
+      ]
+    }
+  ],
+  "2332": [
+    {
+      "name": "Lorelei",
+      "filename": "lorelei.png",
+      "money": 10400,
+      "enemy_uuid": "elite-4",
+      "pokemon": [
+        {
+          "dewgong": 54
+        },
+        {
+          "cloyster": 53
+        },
+        {
+          "slowbro": 54
+        },
+        {
+          "jynx": 56
+        },
+        {
+          "lapras": 56
+        }
+      ]
+    }
+  ],
+  "2333": [
+    {
+      "name": "Bruno",
+      "filename": "bruno.png",
+      "money": 10600,
+      "enemy_uuid": "elite-4",
+      "pokemon": [
+        {
+          "onix": 53
+        },
+        {
+          "hitmonchan": 55
+        },
+        {
+          "hitmonlee": 55
+        },
+        {
+          "onix": 56
+        },
+        {
+          "machamp": 58
+        }
+      ]
+    }
+  ],
+  "2334": [
+    {
+      "name": "Agatha",
+      "filename": "agatha.png",
+      "money": 10800,
+      "enemy_uuid": "elite-4",
+      "pokemon": [
+        {
+          "gengar": 56
+        },
+        {
+          "golbat": 56
+        },
+        {
+          "haunter": 55
+        },
+        {
+          "arbok": 58
+        },
+        {
+          "gengar": 60
+        }
+      ]
+    }
+  ],
+  "2335": [
+    {
+      "name": "Lance",
+      "filename": "lance.png",
+      "money": 11000,
+      "enemy_uuid": "elite-4",
+      "pokemon": [
+        {
+          "gyarados": 58
+        },
+        {
+          "dragonair": 56
+        },
+        {
+          "dragonair": 56
+        },
+        {
+          "aerodactyl": 60
+        },
+        {
+          "dragonite": 62
+        }
+      ]
+    }
+  ],
+  "2336": [
+    {
+      "name": "Blue",
+      "filename": "blue.png",
+      "money": 12500,
+      "enemy_uuid": "elite-4",
+      "pokemon": [
+        {
+          "pidgeot": 61
+        },
+        {
+          "alakazam": 59
+        },
+        {
+          "rhydon": 61
+        },
+        {
+          "arcanine": 63
+        },
+        {
+          "gyarados": 61
+        },
+        {
+          "dynamic-3": 65
+        }
+      ]
+    }
+  ],
+  "157": [
+    {
+      "name": "Blue",
+      "filename": "blue.png",
+      "money": 3445,
+      "enemy_uuid": "01abb928",
+      "pokemon": [
+        {
+          "pidgeot": 47
+        },
+        {
+          "alakazam": 50
+        },
+        {
+          "rhyhorn": 45
+        },
+        {
+          "arcanine": 47
+        },
+        {
+          "gyarados": 45
+        },
+        {
+          "dynamic-3": 53
         }
       ]
     }
