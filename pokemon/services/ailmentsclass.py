@@ -99,5 +99,13 @@ class ailment:
 
 
 
-
+    """
+    Burn (BRN) - Inflicts 1/16 of max HP every turn and halves damage dealth by a Pokemon's physical moves. Damage is dealt after the move is complete but negated if enemy faints
+    Freeze (FRZ) - Pokemon is unable to move. Pokemon is thawed if hit by fire-type move. Pokemon will never natrually thaw in Gen1
+    Paralysis (PAR) - Reduces the Speed stat and causes it to have a 25% chance it's unable to use a move. 
+    Poison (PSN) - Inflicts 1/16 of max HP every turn. Damage is dealt after the move is complete but negated if enemy faints. Pokemon will lose 1HP for every 4 steps taken outside of battle
+    Sleep (SLP) - unable to use moves. Lasts 1 to 7 turns randomly. 
+    Trap - Bind/Bound this lasts 2-5 turns. 37.5% will last 2 turns, 37.5% change will last 3 turns 12.5% chance will last 4 turns. 12.5% chance will last 5 turns (calculate damage from move)
+    Confusion - 50% chance to hurt itself. Damage determined as if attacked by a 40-power typeless physical attack (without possibility of critical hit) Lasts 2-5 turns
+    """
 
