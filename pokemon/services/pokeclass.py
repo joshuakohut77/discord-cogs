@@ -13,6 +13,7 @@ from leaderboardclass import leaderboard
 from loggerclass import logger as log
 from pokebase.interface import APIResource
 from statclass import PokeStats
+from ailmentsclass import ailment
 from time import time
 
 # Global Config Variables
@@ -57,6 +58,7 @@ class Pokemon:
         self.move_4 = None
         self.currentHP = None
         self.uniqueEncounter = False
+        self.ailments = ailment(None)
 
     def load(self, pokemonId=None):
         """ populates the object with stats from pokeapi """
@@ -372,9 +374,9 @@ class Pokemon:
         db = dbconn()
         queryString = '''
         SELECT
-            "id",
+            pokemon."id",
             "discord_id",
-            "pokemonId",
+            pokemon."pokemonId",
             "pokemonName", 
             "growthRate",
             "currentLevel",
@@ -389,8 +391,19 @@ class Pokemon:
             "type_1", "type_2",
             "nickName",
             "currentHP",
-            "party"
-            FROM pokemon WHERE "id" = %(pokemonId)s'''
+            "party",
+            ailments."mostRecent",
+            ailments."sleep",
+            ailments."poison",
+            ailments."burn",
+            ailments."freeze",
+            ailments."paralysis",
+            ailments."trap",
+            ailments."confusion",
+            ailments."disable"
+            FROM pokemon
+            LEFT JOIN ailments ON pokemon."id" = ailments."pokemonId"
+            WHERE "id" = %(pokemonId)s'''
         result = db.querySingle(queryString, {'pokemonId': int(pokemonId)})
 
         if result:
@@ -429,7 +442,22 @@ class Pokemon:
             self.nickName = result[32]
             self.currentHP = result[33]
             self.party = result[34]
-        
+
+            self.ailments = ailment(self.trainerId)
+            # below is populating the ailments from the pokemon load class.
+            # this saves a db call from having to call the load method from the ailments class
+            # only populate if the mostRecent result is not Null
+            if result[35] is not None:
+                self.ailments.mostRecent = result[35]
+                self.ailments.sleep = result[36]
+                self.ailments.poison = result[37]
+                self.ailments.burn = result[38]
+                self.ailments.freeze = result[39]
+                self.ailments.paralysis = result[40]
+                self.ailments.trap = result[41]
+                self.ailments.confusion = result[42]
+                self.ailments.disable = result[43]
+
         # delete and close connection
         del db
 
