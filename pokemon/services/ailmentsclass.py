@@ -55,6 +55,10 @@ class ailment:
         
     def save(self):
         """ saves an ailment object to the database"""
+        if self.pokemonId is None:
+            self.statuscode = 96
+            self.message = "pokemonId has a Null value"
+            return
         try:
             # check if a recordExists meaning it has a database entry already
             db = dbconn()
