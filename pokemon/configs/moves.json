@@ -580,7 +580,7 @@
       "power": 0,
       "moveType": "grass",
       "damage_class": "status",
-      "ailment": "leech-seed",
+      "ailment": "",
       "ailment_chance": 0
   },
   "growth": {
@@ -1284,7 +1284,7 @@
       "power": 80,
       "moveType": "normal",
       "damage_class": "special",
-      "ailment": "unknown",
+      "ailment": "",
       "ailment_chance": 20
   },
   "super-fang": {
