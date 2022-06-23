@@ -17,7 +17,10 @@ class ailment:
         self.poison = False
         self.burn = False
         self.freeze = False
-        self.paralyze = False
+        self.paralysis = False
+        self.trap = False
+        self.confusion = False
+        self.disable = False
         self.mostRecent = datetime.now()
         self.recordExists = False
     
@@ -27,7 +30,8 @@ class ailment:
         try:
             db = dbconn()
             queryString = '''SELECT "mostRecent", sleep, 
-                            poison, burn, "freeze", paralyze
+                            poison, burn, "freeze", paralysis,
+                            "trap", "confusion", "disable"
 	                        FROM ailments WHERE "pokemonId"=%(pokemonId)s'''
             result = db.querySingle(queryString, { 'pokemonId': self.pokemonId })
             if len(result) > 0:
@@ -36,7 +40,10 @@ class ailment:
                 self.poison = result[2]
                 self.burn = result[3]
                 self.freeze = result[4]
-                self.paralyze = result[5]
+                self.paralysis = result[5]
+                self.trap = result[6]
+                self.confusion = result[7]
+                self.disable = result[8]
                 self.recordExists = True
         except:
             self.statuscode = 96
@@ -54,7 +61,9 @@ class ailment:
             query = None
             if self.recordExists:
                 # updateQuery or deleteQuery depending on the object status
-                if not self.sleep and not self.poison and not self.burn and not self.freeze and not self.paralyze:
+                if not self.sleep and not self.poison \
+                    and not self.burn and not self.freeze and not self.paralysis \
+                    and not self.trap and not self.confusion and not self.disable:
                     # delete row from database
                     query = 'DELETE FROM ailments WHERE "pokemonId"=%(pokemonId)s'
                     values =  { "pokemonId": self.pokemonId }
@@ -62,17 +71,23 @@ class ailment:
                     # update row in database
                     query = '''UPDATE ailments SET "mostRecent"=%(mostRecent)s, 
                                 sleep=%(sleep)s, poison=%(poison)s, 
-                                burn=%(burn)s, "freeze"=%(freeze)s, paralyze=%(paralyze)s 
+                                burn=%(burn)s, "freeze"=%(freeze)s, paralysis=%(paralysis)s,
+                                "trap"=%(trap)s, "confusion"=%(confusion)s, "disable"=%(disable)s 
                                 WHERE "pokemonId"=%(pokemonId)s'''
                     values = { "mostRecent":self.mostRecent, "sleep":self.sleep, "poison":self.poison, 
-                                "burn":self.burn, "freeze":self.freeze, "paralyze":self.paralyze, 
+                                "burn":self.burn, "freeze":self.freeze, "paralysis":self.paralysis, 
+                                "trap":self.trap, "confusion":self.confusion, "disable":self.disable, 
                                 "pokemonId":self.pokemonId}
             else:
-                query = '''INSERT INTO ailments ("mostRecent", sleep, poison, burn, "freeze", paralyze)
-                            VALUES(%(mostRecent)s, %(sleep)s, %(poison)s, %(burn)s, %(freeze)s, %(paralyze)s)
+                query = '''INSERT INTO ailments ("mostRecent", sleep, poison, 
+                            burn, "freeze", paralysis, "trap", "confusion", "disable")
+                            VALUES(%(mostRecent)s, %(sleep)s, %(poison)s, 
+                            %(burn)s, %(freeze)s, %(paralysis)s,
+                            %(trap)s, %(confusion)s, %(disable)s)
                             WHERE "pokemonId"=%(pokemonId)s'''
                 values = { "mostRecent":self.mostRecent, "sleep":self.sleep, "poison":self.poison, 
-                            "burn":self.burn, "freeze":self.freeze, "paralyze":self.paralyze, 
+                            "burn":self.burn, "freeze":self.freeze, "paralysis":self.paralysis, 
+                            "trap":self.trap, "confusion":self.confusion, "disable":self.disable, 
                             "pokemonId":self.pokemonId}
             db.execute(query, values)
         except:
