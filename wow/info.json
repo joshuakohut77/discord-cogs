@@ -1,0 +1,10 @@
+{
+    "author" : ["BiCuriousGeorge#8804", "BigBLuePopsicle#9027"],
+    "install_msg" : "",
+    "name" : "wow",
+    "short" : "Owen Wilson saying Wow",
+    "description" : "This cog integrates with the Owen Wilson wow database",
+    "tags" : ["fun"],
+    "requirements" : [],
+    "hidden" : false
+}
