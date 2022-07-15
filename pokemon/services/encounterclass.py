@@ -11,6 +11,7 @@ from loggerclass import logger as log
 from uniqueencounters import uniqueEncounters as uEnc
 from pokedexclass import pokedex
 from pokeclass import Pokemon as PokemonClass
+from ailmentsclass import ailment 
 
 # Global Config Variables
 MAX_BATTLE_TURNS = 50
@@ -30,6 +31,9 @@ class encounter:
 
         self.pokemon1 = pokemon1
         self.pokemon2 = pokemon2
+        self.ailment1 = ailment(pokemon1.trainerId)
+        self.ailment2 = ailment(pokemon2.trainerId)
+        self.ailment1.load()
         pokedex(self.pokemon1.discordId, pokemon2)
 
     def trade(self):
