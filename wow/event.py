@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     import discord
 
 from redbot.core import commands
+import wow
 
 class EventMixin(MixinMeta):
     __slots__: tuple = ()
@@ -17,6 +18,6 @@ class EventMixin(MixinMeta):
 		
         msg: str = message.content.lower()
         if "wow" in msg:
-            newMsg = msg.replace("preview.redd.it", "i.redd.it").split("?")
+            newMsg = wow.getWow
             await message.reply(newMsg[0])
 		

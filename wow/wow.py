@@ -1,4 +1,5 @@
 import requests
+import json
 
 """
 Utilizes the Wow api as found here: https://owen-wilson-wow-api.herokuapp.com/
@@ -31,11 +32,25 @@ Example api response for a random "wow" request
 class Wow(): 
 
     # will return the full api response. Needs parse in a separate function to return only desired link
-    async def getRandomWow():
+    def getRandomWow():
         url = "https://owen-wilson-wow-api.herokuapp.com/wows/random"
         headers = {"Accept": "application/json"}
         response = requests.get(url, headers=headers)
-        return(response.text)
+        jsonResponse = json.loads(response.text)[0]
+        return(jsonResponse)
 
-    async def getWowVideo():
-        response = Wow.getRandomWow()
+    def getWowVideo():
+        # Call the function to get the JSON response, then return the video link for the highest quality URL
+        jsonResponse = Wow.getRandomWow()
+        highestQuality = list(jsonResponse['video'].keys())[0]
+        videoLink = jsonResponse['video'][highestQuality]
+        return videoLink
+
+    def getWow():
+        url = "https://owen-wilson-wow-api.herokuapp.com/wows/random"
+        headers = {"Accept": "application/json"}
+        response = requests.get(url, headers=headers)
+        jsonResponse = json.loads(response.text)[0]
+        highestQuality = list(jsonResponse['video'].keys())[0]
+        videoLink = jsonResponse['video'][highestQuality]
+        return videoLink
