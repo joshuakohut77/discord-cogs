@@ -7,4 +7,4 @@ if TYPE_CHECKING:
 from .main import wow
 
 def setup(bot: Red):
-    bot.add_cog(redditGifFix(bot))
+    bot.add_cog(wow(bot))
