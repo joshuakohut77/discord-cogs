@@ -32,21 +32,21 @@ Example api response for a random "wow" request
 class Wow(): 
 
     # will return the full api response. Needs parse in a separate function to return only desired link
-    def getRandomWow():
+    def getRandomWow(self):
         url = "https://owen-wilson-wow-api.herokuapp.com/wows/random"
         headers = {"Accept": "application/json"}
         response = requests.get(url, headers=headers)
         jsonResponse = json.loads(response.text)[0]
         return(jsonResponse)
 
-    def getWowVideo():
+    def getWowVideo(self):
         # Call the function to get the JSON response, then return the video link for the highest quality URL
         jsonResponse = Wow.getRandomWow()
         highestQuality = list(jsonResponse['video'].keys())[0]
         videoLink = jsonResponse['video'][highestQuality]
         return videoLink
 
-    def getWow():
+    def getWow(self):
         url = "https://owen-wilson-wow-api.herokuapp.com/wows/random"
         headers = {"Accept": "application/json"}
         response = requests.get(url, headers=headers)
