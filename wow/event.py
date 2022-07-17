@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     import discord
 
 from redbot.core import commands
-# from wow import Wow
+from wow import Wow
 import re
 
 class EventMixin(MixinMeta):
