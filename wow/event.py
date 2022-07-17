@@ -7,6 +7,7 @@ if TYPE_CHECKING:
 
 from redbot.core import commands
 import wow
+import re
 
 class EventMixin(MixinMeta):
     __slots__: tuple = ()
@@ -17,7 +18,7 @@ class EventMixin(MixinMeta):
             return
 		
         msg: str = message.content.lower()
-        if "wow" in msg:
+        if re.search("w+o+w+", msg):
             newMsg = wow.getWow
             await message.reply(newMsg[0])
 		
