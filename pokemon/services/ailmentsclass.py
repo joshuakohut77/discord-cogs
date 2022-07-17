@@ -104,7 +104,7 @@ class ailment:
 
 
     """
-    Burn (BRN) - Inflicts 1/16 of max HP every turn and halves damage dealth by a Pokemon's physical moves. Damage is dealt after the move is complete but negated if enemy faints
+    Burn (BRN) - Inflicts 1/16 of max HP every turn and halves damage dealt by a Pokemon's physical moves. Damage is dealt after the move is complete but negated if enemy faints
     Freeze (FRZ) - Pokemon is unable to move. Pokemon is thawed if hit by fire-type move. Pokemon will never natrually thaw in Gen1
     Paralysis (PAR) - Reduces the Speed stat and causes it to have a 25% chance it's unable to use a move. 
     Poison (PSN) - Inflicts 1/16 of max HP every turn. Damage is dealt after the move is complete but negated if enemy faints. Pokemon will lose 1HP for every 4 steps taken outside of battle
