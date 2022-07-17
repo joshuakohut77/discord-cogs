@@ -21,5 +21,5 @@ class EventMixin(MixinMeta):
         if re.search("w+o+w+", msg):
             owenWilson = Wow()
             newMsg = owenWilson.getWow()
-            await message.reply(newMsg[0])
+            await message.reply(newMsg)
 		
