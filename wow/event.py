@@ -19,6 +19,6 @@ class EventMixin(MixinMeta):
 		
         msg: str = message.content.lower()
         if re.search("w+o+w+", msg):
-            newMsg = wow.getWow
+            newMsg = wow.getWow()
             await message.reply(newMsg[0])
 		
