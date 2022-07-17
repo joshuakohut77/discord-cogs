@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     import discord
 
 from redbot.core import commands
-import wow
+import wow as owenwilson
 import re
 
 class EventMixin(MixinMeta):
@@ -19,6 +19,7 @@ class EventMixin(MixinMeta):
 		
         msg: str = message.content.lower()
         if re.search("w+o+w+", msg):
+            wow = owenwilson()
             newMsg = wow.getWow()
             await message.reply(newMsg[0])
 		
