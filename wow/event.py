@@ -29,7 +29,7 @@ class EventMixin(MixinMeta):
             embed = discord.Embed()
             r = requests.get(videoLink)
             with open('/tempfiles/wowclip.mp4', 'wb') as out_file:
-            shutil.copyfileobj(response.raw, out_file)
+                shutil.copyfileobj(response.raw, out_file)
             file = discord.File('/tempfiles/wowclip.mp4')
             embed.set_image(url="attachment://%s" %videoLink)
             await ctx.send(embed=embed, file=file)
