@@ -52,5 +52,21 @@ class Wow():
         response = requests.get(url, headers=headers)
         jsonResponse = json.loads(response.text)[0]
         highestQuality = list(jsonResponse['video'].keys())[0]
+        headerCard = "```"
+        headerCard += "\n"
+        headerCard += "Movie: "
+        headerCard += jsonResponse['movie'].keys()
+        headerCard += "\n"
+        headerCard += "Year: "
+        headerCard += jsonResponse['year'].keys()
+        headerCard += "\n"
+        headerCard += "Character: "
+        headerCard += jsonResponse['character'].keys()
+        headerCard += "\n"
+        headerCard += "Full Line: "
+        headerCard += jsonResponse['full_line'].keys()
+        headerCard += "\n"
+        headerCard += "```"
+        headerCard += "\n"
         videoLink = jsonResponse['video'][highestQuality]
-        return videoLink
+        return headerCard + videoLink
