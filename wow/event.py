@@ -28,6 +28,6 @@ class EventMixin(MixinMeta):
             
 
 
-            await message.reply(embed=embed, file=file)
+            await message.reply(embed=embed)
 
             # await message.reply(newMsg, file=file)
