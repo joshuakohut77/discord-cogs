@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from discord import embeds
 import discord
+import requests
 from .abc import MixinMeta
 
 if TYPE_CHECKING:
