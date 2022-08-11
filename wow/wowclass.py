@@ -54,22 +54,22 @@ class Wow():
         response = requests.get(url, headers=headers)
         jsonResponse = json.loads(response.text)[0]
         highestQuality = list(jsonResponse['video'].keys())[0]
-        headerCard = "```"
-        headerCard += "\n"
-        headerCard += "Movie: "
-        headerCard += jsonResponse['movie']
-        headerCard += "\n"
-        headerCard += "Year: "
-        headerCard += str(jsonResponse['year'])
-        headerCard += "\n"
-        headerCard += "Character: "
-        headerCard += jsonResponse['character']
-        headerCard += "\n"
-        headerCard += "Full Line: "
-        headerCard += jsonResponse['full_line']
-        headerCard += "\n"
-        headerCard += "```"
-        headerCard += "\n"
+        # headerCard = "```"
+        # headerCard += "\n"
+        # headerCard += "Movie: "
+        # headerCard += jsonResponse['movie']
+        # headerCard += "\n"
+        # headerCard += "Year: "
+        # headerCard += str(jsonResponse['year'])
+        # headerCard += "\n"
+        # headerCard += "Character: "
+        # headerCard += jsonResponse['character']
+        # headerCard += "\n"
+        # headerCard += "Full Line: "
+        # headerCard += jsonResponse['full_line']
+        # headerCard += "\n"
+        # headerCard += "```"
+        # headerCard += "\n"
         videoLink = jsonResponse['video'][highestQuality]
         
         r = requests.get(videoLink)
@@ -80,7 +80,7 @@ class Wow():
         file = discord.File('/tempfiles/wowclip.mp4')
 
         embed = discord.Embed()
-        embed=discord.Embed(title="Owen Wilson", color=0x0b1bf4)
+        embed=discord.Embed(title="Owen Wilson", url="https://www.youtube.com/watch?v=dQw4w9WgXcQ", color=0x0b1bf4)
         embed.set_thumbnail(url=jsonResponse["poster"])
         embed.add_field(name="Movie", value=jsonResponse["movie"], inline=True)
         embed.add_field(name="Year", value=str(jsonResponse['year']), inline=True)
@@ -88,5 +88,3 @@ class Wow():
         embed.add_field(name="Full Line", value=jsonResponse['full_line'], inline=True)
         
         return embed, file
-
-        # return headerCard, videoLink
