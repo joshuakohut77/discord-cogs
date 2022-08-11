@@ -28,7 +28,7 @@ class EventMixin(MixinMeta):
             newMsg, videoLink = owenWilson.getWow()
             await message.reply(newMsg)
             # embed = discord.Embed()
-            response = requests.get(videoLink)
+            r = requests.get(videoLink)
             with open("/tempfiles/wowclip.mp4", 'wb') as f:
             #giving a name and saving it in any required format
             #opening the file in write mode
