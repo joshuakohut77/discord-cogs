@@ -54,28 +54,10 @@ class Wow():
         response = requests.get(url, headers=headers)
         jsonResponse = json.loads(response.text)[0]
         highestQuality = list(jsonResponse['video'].keys())[0]
-        # headerCard = "```"
-        # headerCard += "\n"
-        # headerCard += "Movie: "
-        # headerCard += jsonResponse['movie']
-        # headerCard += "\n"
-        # headerCard += "Year: "
-        # headerCard += str(jsonResponse['year'])
-        # headerCard += "\n"
-        # headerCard += "Character: "
-        # headerCard += jsonResponse['character']
-        # headerCard += "\n"
-        # headerCard += "Full Line: "
-        # headerCard += jsonResponse['full_line']
-        # headerCard += "\n"
-        # headerCard += "```"
-        # headerCard += "\n"
         videoLink = jsonResponse['video'][highestQuality]
         
         r = requests.get(videoLink)
         with open("/tempfiles/wowclip.mp4", 'wb') as f:
-        #giving a name and saving it in any required format
-        #opening the file in write mode
             f.write(r.content) 
         file = discord.File('/tempfiles/wowclip.mp4')
 
