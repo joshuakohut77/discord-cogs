@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+from discord import embeds
 from .abc import MixinMeta
 
 if TYPE_CHECKING:
@@ -20,6 +21,11 @@ class EventMixin(MixinMeta):
         msg: str = message.content.lower()
         if re.search("w+o+w+", msg):
             owenWilson = Wow()
-            newMsg = owenWilson.getWow()
+            newMsg, videoLink = owenWilson.getWow()
             await message.reply(newMsg)
+            embed = discord.Embed()
+            file = discord.File(videoLink)
+            embed.set_image(url="attachment://%s" %videoLink)
+            await ctx.send(embed=embed, file=file)
+
 		
