@@ -68,5 +68,5 @@ class Wow():
         embed.add_field(name="Year", value=str(jsonResponse['year']), inline=True)
         embed.add_field(name="Character", value=jsonResponse['character'], inline=True)
         embed.add_field(name="Full Line", value=jsonResponse['full_line'], inline=True)
-        
+        embed.add_field(name="Wow in Movie", value=str(jsonResponse['current_wow_in_movie']) + "/" + str(jsonResponse['total_wows_in_movie']), inline=True)
         return embed, file
