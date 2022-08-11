@@ -4,7 +4,7 @@ from discord import embeds
 import discord
 # import requests
 # import shutil
-import urllib.request
+import urllib2
 from .abc import MixinMeta
 
 if TYPE_CHECKING:
@@ -29,10 +29,11 @@ class EventMixin(MixinMeta):
             await message.reply(newMsg)
             # embed = discord.Embed()
             # response = requests.get(videoLink)
-            urllib.request.urlretrieve(videoLink, '/tempfiles/video_name.mp4') 
-            # await message.reply(response)
-            # with open('/tempfiles/wowclip.mp4', 'wb') as out_file:
-            #     shutil.copyfileobj(response.raw, out_file)
+            file_name = '/tempfiles/wowclip.mp4' 
+            rsp = urllib2.urlopen(videoLink)
+            with open(file_name,'wb') as f:
+                f.write(rsp.read())
+
             file = discord.File('/tempfiles/wowclip.mp4')
             # embed.set_image(url="https://imgur.com/gallery/lxig9RX")
             await message.reply(file=file)
