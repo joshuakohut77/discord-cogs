@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from discord import embeds
 import discord
-import urllib.request
 from .abc import MixinMeta
 
 if TYPE_CHECKING:
@@ -26,9 +25,8 @@ class EventMixin(MixinMeta):
             newMsg, videoLink = owenWilson.getWow()
             await message.reply(newMsg)
             embed = discord.Embed()
-            name = "wowClip.mp4"
-            dlFile = urllib.request.urlretrieve(videoLink, name)
-            file = discord.File(dlFile)
+            r = requests.get(videoLink)
+            file = discord.File(r)
             embed.set_image(url="attachment://%s" %videoLink)
             await ctx.send(embed=embed, file=file)
 
