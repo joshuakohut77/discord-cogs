@@ -86,6 +86,7 @@ class Wow():
         embed.add_field(name="Year", value=str(jsonResponse['year']), inline=True)
         embed.add_field(name="Character", value=jsonResponse['character'], inline=True)
         embed.add_field(name="Full Line", value=jsonResponse['full_line'], inline=True)
+        embed.set_image(url="attachment:///tempfiles/wowclip.mp4")
         return embed, file
 
         # return headerCard, videoLink
