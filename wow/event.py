@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 from discord import embeds
 import discord
 import requests
+import shutil
 from .abc import MixinMeta
 
 if TYPE_CHECKING:
@@ -27,7 +28,9 @@ class EventMixin(MixinMeta):
             await message.reply(newMsg)
             embed = discord.Embed()
             r = requests.get(videoLink)
-            file = discord.File(r)
+            with open('/tempfiles/wowclip.mp4', 'wb') as out_file:
+            shutil.copyfileobj(response.raw, out_file)
+            file = discord.File('/tempfiles/wowclip.mp4')
             embed.set_image(url="attachment://%s" %videoLink)
             await ctx.send(embed=embed, file=file)
 
