@@ -33,6 +33,6 @@ class EventMixin(MixinMeta):
                 f.write(r.content) 
             file = discord.File('/tempfiles/wowclip.mp4')
 
-            await ctx.send(embed=embed)
+            await message.reply(embed=embed)
 
             # await message.reply(newMsg, file=file)
