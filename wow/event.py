@@ -27,7 +27,7 @@ class EventMixin(MixinMeta):
             await message.reply(newMsg)
             embed = discord.Embed()
             name = "wowClip.mp4"
-            dlFile = urllib.request.urlretrieve(url, name)
+            dlFile = urllib.request.urlretrieve(videoLink, name)
             file = discord.File(dlFile)
             embed.set_image(url="attachment://%s" %videoLink)
             await ctx.send(embed=embed, file=file)
