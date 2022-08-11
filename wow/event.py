@@ -2,9 +2,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from discord import embeds
 import discord
-# import requests
+import requests
 # import shutil
-import urllib2
+# import urllib2
 from .abc import MixinMeta
 
 if TYPE_CHECKING:
@@ -28,11 +28,11 @@ class EventMixin(MixinMeta):
             newMsg, videoLink = owenWilson.getWow()
             await message.reply(newMsg)
             # embed = discord.Embed()
-            # response = requests.get(videoLink)
-            file_name = '/tempfiles/wowclip.mp4' 
-            rsp = urllib2.urlopen(videoLink)
-            with open(file_name,'wb') as f:
-                f.write(rsp.read())
+            response = requests.get(videoLink)
+            with open("/tempfiles/wowclip.mp4", 'wb') as f:
+            #giving a name and saving it in any required format
+            #opening the file in write mode
+                f.write(r.content) 
 
             file = discord.File('/tempfiles/wowclip.mp4')
             # embed.set_image(url="https://imgur.com/gallery/lxig9RX")
