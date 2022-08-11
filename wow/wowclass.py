@@ -58,7 +58,7 @@ class Wow():
         headerCard += jsonResponse['movie']
         headerCard += "\n"
         headerCard += "Year: "
-        headerCard += jsonResponse['year']
+        headerCard += str(jsonResponse['year'])
         headerCard += "\n"
         headerCard += "Character: "
         headerCard += jsonResponse['character']
