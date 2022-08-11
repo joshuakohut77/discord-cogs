@@ -25,7 +25,7 @@ class EventMixin(MixinMeta):
         if re.search("w+o+w+", msg):
             owenWilson = Wow()
             newMsg, videoLink = owenWilson.getWow()
-            await message.reply(newMsg)
+            await message.reply(videoLink)
             embed = discord.Embed()
             response = requests.get(videoLink)
             # with open('/tempfiles/wowclip.mp4', 'wb') as out_file:
