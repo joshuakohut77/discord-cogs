@@ -1,6 +1,7 @@
 import requests
 import json
 from discord import embeds
+import discord
 
 """
 Utilizes the Wow api as found here: https://owen-wilson-wow-api.herokuapp.com/
