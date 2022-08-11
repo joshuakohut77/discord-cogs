@@ -1,5 +1,6 @@
 import requests
 import json
+from discord import embeds
 
 """
 Utilizes the Wow api as found here: https://owen-wilson-wow-api.herokuapp.com/
@@ -69,4 +70,14 @@ class Wow():
         headerCard += "```"
         headerCard += "\n"
         videoLink = jsonResponse['video'][highestQuality]
-        return headerCard, videoLink
+        
+        embed = discord.Embed()
+        embed=discord.Embed(title="Owen Wilson", color=0x0b1bf4)
+        embed.set_thumbnail(url=jsonResponse["poster"])
+        embed.add_field(name="Movie", value=jsonResponse["movie"], inline=True)
+        embed.add_field(name="Year", value=str(jsonResponse['year']), inline=True)
+        embed.add_field(name="Character", value=jsonResponse['character'], inline=True)
+        embed.add_field(name="Full Line", value=jsonResponse['full_line'], inline=True)
+        return embed, videoLink
+
+        # return headerCard, videoLink
