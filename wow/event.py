@@ -24,10 +24,7 @@ class EventMixin(MixinMeta):
         if re.search("w+o+w+", msg):
             owenWilson = Wow()
             embed, file = owenWilson.getWow()
-            
-            
 
-
-            await message.reply(embed=embed)
+            await message.reply(file=file, embed=embed)
 
             # await message.reply(newMsg, file=file)
