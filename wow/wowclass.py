@@ -62,7 +62,7 @@ class Wow():
         file = discord.File('/tempfiles/wowclip.mp4')
 
         embed = discord.Embed()
-        embed=discord.Embed(title="Owen Wilson", url="https://www.youtube.com/watch?v=dQw4w9WgXcQ", color=0x0b1bf4)
+        embed=discord.Embed(title="Owen Wilson", url="https://www.tomorrowtides.com/owen-wilson-movies.html", color=0x0b1bf4)
         embed.set_thumbnail(url=jsonResponse["poster"])
         embed.add_field(name="Movie", value=jsonResponse["movie"], inline=True)
         embed.add_field(name="Year", value=str(jsonResponse['year']), inline=True)
