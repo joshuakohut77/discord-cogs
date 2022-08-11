@@ -69,4 +69,4 @@ class Wow():
         headerCard += "```"
         headerCard += "\n"
         videoLink = jsonResponse['video'][highestQuality]
-        return headerCard + videoLink
+        return headerCard, videoLink
