@@ -21,6 +21,19 @@
           "image": "https://pokesprites.joshkohut.com/vermintide/convocation-of-decay-grimoire1-2.png"
         }
       ]
+    },
+    {
+      "name": "Tome 2",
+      "data": [
+        {
+          "text": "In the Garrison Sewers, go to the left here:",
+          "image": "https://pokesprites.joshkohut.com/vermintide/convocation-of-decay-tome2-1.png"
+        },
+        {
+          "text": "The second Tome is in a crate near the wooden wall.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/convocation-of-decay-tome2-2.png"
+        }
+      ]
     }
   ]
 }
