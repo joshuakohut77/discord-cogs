@@ -13,8 +13,8 @@ from .event import EventMixin
 # class CompositeClass(commands.CogMeta, ABCMeta):
 #     __slots__: tuple = ()
 #     pass
-
-class v2Books(EventMixin, commands.Cog):
+# class v2Books(EventMixin, commands.Cog):
+class v2Books(commands.Cog):
     """Warhammer Books."""
 
     def __init__(self, bot: Red):
