@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from redbot.core import commands
 
 class EventMixin(MixinMeta):
-    __slots__: tuple = ()
+    # __slots__: tuple = ()
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
