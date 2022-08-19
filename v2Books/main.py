@@ -23,6 +23,10 @@ class v2Books(commands.Cog):
 
     @commands.group()
     
+   async def v2Books(self, ctx: commands.Context) -> None:
+        """Gets the admin commands for react emojis cog."""
+        pass
+
     @v2Books.command()
     async def books(self, ctx: commands.Context, map: str) -> None:
         """Change the reacting frequency for the current channel."""
