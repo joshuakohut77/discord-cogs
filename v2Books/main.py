@@ -20,11 +20,12 @@ class v2Books(commands.Cog):
     def __init__(self, bot: Red):
         self.bot: Red = bot
         self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
-    
+
     @commands.group()
     
-    async def v2Books(self, ctx: commands.Context) -> None:
+    async def v2Books(self, ctx: commands.Context, map: str) -> None:
         """Gets the admin commands for react emojis cog."""
+        await ctx.send("Received map %s" %map)
         pass
 
     @v2Books.command()
