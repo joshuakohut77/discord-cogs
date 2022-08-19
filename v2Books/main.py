@@ -20,7 +20,7 @@ class v2Books(commands.Cog):
     def __init__(self, bot: Red):
         self.bot: Red = bot
         self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
-
+    
     @commands.group()
     async def v2(self, ctx: commands.Context) -> None:
         # """Gets the admin commands for react emojis cog."""
