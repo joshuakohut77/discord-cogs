@@ -27,18 +27,18 @@ class v2Books(commands.Cog):
         await ctx.send("Received map %s" %map)
         return
     
-    @v2Books.command()
-    async def books(self, ctx: commands.Context, map: str) -> None:
-        """Change the reacting frequency for the current channel."""
-        # if frequency <= 0:
-        await ctx.send("Received your books command!")
-        return
+    # @v2Books.command()
+    # async def books(self, ctx: commands.Context, map: str) -> None:
+    #     """Change the reacting frequency for the current channel."""
+    #     # if frequency <= 0:
+    #     await ctx.send("Received your books command!")
+    #     return
 
-        # await self.config.channel(ctx.channel).set_raw("frequency", value=frequency)
-        # await ctx.tick()
+    #     # await self.config.channel(ctx.channel).set_raw("frequency", value=frequency)
+    #     # await ctx.tick()
 
-    @v2Books.group()
-    async def v2Book(self, ctx: commands.Context) -> None:
-        """Add / Remove a website from the checking list."""
-        await ctx.send("Received your v2Book command!")
-        return
+    # @v2Books.group()
+    # async def v2Book(self, ctx: commands.Context) -> None:
+    #     """Add / Remove a website from the checking list."""
+    #     await ctx.send("Received your v2Book command!")
+    #     return
