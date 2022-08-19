@@ -25,14 +25,14 @@ class v2Books(commands.Cog):
     async def v2Books(self, ctx: commands.Context, map: str) -> None:
         # """Gets the admin commands for react emojis cog."""
         await ctx.send("Received map %s" %map)
-        return
+        pass
     
-    @v2Books.command()
-    async def books(self, ctx: commands.Context, map: str) -> None:
-        """Change the reacting frequency for the current channel."""
-        # if frequency <= 0:
-        await ctx.send("Received your books command!")
-        return
+    # @v2Books.command()
+    # async def books(self, ctx: commands.Context, map: str) -> None:
+    #     """Change the reacting frequency for the current channel."""
+    #     # if frequency <= 0:
+    #     await ctx.send("Received your books command!")
+    #     return
 
         # await self.config.channel(ctx.channel).set_raw("frequency", value=frequency)
         # await ctx.tick()
