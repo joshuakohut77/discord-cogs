@@ -21,9 +21,9 @@ class v2Books(commands.Cog):
         self.bot: Red = bot
         self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
 
-    @commands.group()
+    # @commands.group()
     async def v2Books(self, ctx: commands.Context, map: str) -> None:
-        """Gets the admin commands for react emojis cog."""
+        # """Gets the admin commands for react emojis cog."""
         await ctx.send("Received map %s" %map)
         return
     
@@ -34,8 +34,8 @@ class v2Books(commands.Cog):
     #     await ctx.send("Received your books command!")
     #     return
 
-    #     # await self.config.channel(ctx.channel).set_raw("frequency", value=frequency)
-    #     # await ctx.tick()
+        # await self.config.channel(ctx.channel).set_raw("frequency", value=frequency)
+        # await ctx.tick()
 
     # @v2Books.group()
     # async def v2Book(self, ctx: commands.Context) -> None:
