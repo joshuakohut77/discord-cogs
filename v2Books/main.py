@@ -21,14 +21,14 @@ class CompositeClass(commands.CogMeta, MixinMeta):
 # bot = discord.Bot()
 
 class v2Books(discord.ui.View):
-        # client: DiscordComponents
-        def __init__(self, bot: Red):
-            # self.client: DiscordComponents   
-            self.client = DiscordComponents(bot) 
-            self.bot: Red = bot
-            self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
+    # client: DiscordComponents
+    def __init__(self, bot: Red):
+        # self.client: DiscordComponents   
+        self.client = DiscordComponents(bot) 
+        self.bot: Red = bot
+        self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
     
-        @discord.ui.select( # the decorator that lets you specify the properties of the select menu
+    @discord.ui.select( # the decorator that lets you specify the properties of the select menu
         placeholder = "Choose a Flavor!", # the placeholder text that will be displayed if nothing is selected
         min_values = 1, # the minimum number of values that must be selected by the users
         max_values = 1, # the maximum number of values that can be selected by the users
