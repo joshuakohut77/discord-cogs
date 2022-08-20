@@ -70,7 +70,7 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
         # await ctx.tick()
     # async def __on_use_item(self, ctx: commands.Context):
     async def __on_use_item(self, ctx):
-        await ctx.send("button call")
+        await ctx.send("clicked button")
         return
 
     # @v2Books.group()
