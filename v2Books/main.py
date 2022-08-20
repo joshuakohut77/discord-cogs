@@ -36,7 +36,7 @@ class v2Books(commands.Cog):
         firstRowBtns.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray,
                        label='Previous', custom_id='previous'),
-                self.__on_prev_click
+                await ctx.send("button clicked")
             ))
         embed = discord.Embed()
         embed=discord.Embed(title="Owen Wilson", url="https://www.tomorrowtides.com/owen-wilson-movies.html", color=0x0b1bf4)
