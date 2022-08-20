@@ -20,11 +20,12 @@ from redbot.core import Config, commands
 # class v2Books(EventMixin, commands.Cog):
 class v2Books(commands.Cog):
     """Warhammer Books."""
-
+    self.client: DiscordComponents
+    
     def __init__(self, bot: Red):
         self.bot: Red = bot
         self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
-        self.client: DiscordComponents
+        
         # DiscordComponents(bot, change_discord_methods=True)
 
 
