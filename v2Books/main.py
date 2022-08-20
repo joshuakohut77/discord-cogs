@@ -41,10 +41,10 @@ class v2Books(commands.Cog):
         embed = discord.Embed()
         embed=discord.Embed(title="Owen Wilson", url="https://www.tomorrowtides.com/owen-wilson-movies.html", color=0x0b1bf4)
         embed.add_field(name="Movie", value='Test Movie', inline=True)
-
-        message = await Interaction.edit_origin(embed=embed, components=firstRowBtns)
-        
         await ctx.send("Received your books command! %s" %map)
+        message = await interaction.edit_origin(embed=embed, components=firstRowBtns)
+        
+        # await ctx.send("Received your books command! %s" %map)
         await ctx.send("message = %s" %message)
         return
 
