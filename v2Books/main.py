@@ -3,8 +3,8 @@ from typing import Any, Dict, List, TYPE_CHECKING
 from abc import ABCMeta
 from discord import embeds
 
-from discord_components import Select, SelectOption, Button,ButtonStyle
-from discord_components.client import DiscordComponents as dcomp
+from discord_components import Select, SelectOption, Button,ButtonStyle, DiscordComponents
+# from discord_components.client import DiscordComponents
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -20,9 +20,9 @@ from redbot.core import Config, commands
 # class v2Books(EventMixin, commands.Cog):
 class v2Books(commands.Cog):
     """Warhammer Books."""
-    
+    client: DiscordComponents
     def __init__(self, bot: Red):
-        self.client: DiscordComponents    
+        # self.client: DiscordComponents    
         self.bot: Red = bot
         self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
         
@@ -46,7 +46,7 @@ class v2Books(commands.Cog):
 
 
         firstRowBtns = []
-        firstRowBtns.append(dcomp.client.add_callback(
+        firstRowBtns.append(client.add_callback(
             Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
             await ctx.send("Received map" )
         ))
