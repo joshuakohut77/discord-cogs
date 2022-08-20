@@ -29,10 +29,10 @@ class v2Books(commands.Cog):
         pass
     
     @v2.command()
-    async def books(self, ctx: commands.Context, interaction: Interaction) -> None:
+    async def books(self, ctx: commands.Context) -> None:
         """Takes a map name and returns books."""
         # if frequency <= 0:
-        const lib = require('lib')({token: process.env.STDLIB_SECRET_TOKEN});
+        lib = require('lib')({token: process.env.STDLIB_SECRET_TOKEN});
 
         await lib.discord.channels['@0.3.0'].messages.create({
         "channel_id": `${context.params.event.channel_id}`,
@@ -72,7 +72,7 @@ class v2Books(commands.Cog):
             }
         ]
         });
-        
+
         await ctx.send("Received your books command! %s" %map)
         # message = await interaction.edit_origin(embed=embed, components=firstRowBtns)
         # await ctx.send("message = %s" %message)
