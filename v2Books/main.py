@@ -41,6 +41,24 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
 
 
     @__v2.command()
+    async def sm(self, ctx):
+        await ctx.send(
+        '>>> Text',
+        components = [
+        Select(
+            placeholder = 'SelectMenu',
+            options = [
+                SelectOption(label="SelectMenu1", value="value1"),
+                SelectOption(label="SelectMenu2", value="value2"),
+                SelectOption(label="SelectMenu3", value="value3"),
+                SelectOption(label = "SelectMenu4", value = "value4"),
+                SelectOption(label="SelectMenu5", value="value5"),
+                SelectOption(label="SelectMenu6", value="value6"),
+                SelectOption(label = "SelectMenu7", value = "value7"),
+                SelectOption(label = "SelectMenu8", value = "value8")
+                ])])
+
+    @__v2.command()
     async def button(self, ctx: commands.Context):
         
         embed = discord.Embed()
@@ -49,7 +67,7 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
 
 
         firstRowBtns = []
-        firstRowBtns.append(self.client.callback(
+        firstRowBtns.append(self.client.add_callback(
             Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
             self.__on_use_item
         ))
