@@ -26,28 +26,35 @@ class v2Books(commands.Cog):
         self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
         # DiscordComponents(bot, change_discord_methods=True)
 
-    bot = commands.Bot(command_prefix='.')
 
+    @commands.group(name="v2", aliases=['dex'])
     @commands.group()
-    async def v2(self, ctx: commands.Context) -> None:
+    async def __v2(self, ctx: commands.Context) -> None:
         # """Gets the admin commands for react emojis cog."""
         # await ctx.send("Received map %s" %map)
         pass
 
-    @v2.command()
+
+    @__v2.command()
     async def button(self, ctx):
-        embed = discord.Embed(title='Test',description='Test text')
+        
+        embed = discord.Embed()
+        embed=discord.Embed(title="Owen Wilson", url="https://www.tomorrowtides.com/owen-wilson-movies.html", color=0x0b1bf4)
+        embed.add_field(name="Movie", value='test movie', inline=True)
 
-        await ctx.send(embed=embed, components=[Button(label='Test', custom_id="test-id", style=ButtonStyle.red)])
-        interaction = await self.bot.wait_for("button_click", check=lambda inter: inter.custom_id == "test-id")
-
-    @bot.event
-    async def on_button_click(self, interaction):
-        # await interaction.respond(type=6)
-        await interaction.author.send("Click")
+        firstRowBtns = []
+        firstRowBtns.append(self.client.add_callback(
+            Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
+            await ctx.send("Received map" )
+        ))
+        
+        btns = []
+        if len(firstRowBtns) > 0:
+            btns.append(firstRowBtns)
+        message = await ctx.send(embed=embed, components=btns)
     
 
-    @v2.command()
+    @__v2.command()
     async def books(self, ctx: commands.Context) -> None:
         """Takes a map name and returns books."""
      
