@@ -68,9 +68,11 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
 
         # await self.config.channel(ctx.channel).set_raw("frequency", value=frequency)
         # await ctx.tick()
-    async def __on_use_item(self, ctx: commands.Context):
+    # async def __on_use_item(self, ctx: commands.Context):
+    async def __on_use_item(self, ctx):
         await ctx.send("button call")
         return
+
     # @v2Books.group()
     # async def v2Book(self, ctx: commands.Context) -> None:
     #     """Add / Remove a website from the checking list."""
