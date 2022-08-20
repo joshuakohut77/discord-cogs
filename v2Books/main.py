@@ -22,6 +22,7 @@ class CompositeClass(commands.CogMeta, MixinMeta):
 class v2Books(commands.Cog, metaclass=CompositeClass):
 # class v2Books(commands.Cog):
     """Warhammer Books."""
+    red = None
     # client: DiscordComponents
     def __init__(self, bot: Red):
         # self.client: DiscordComponents   
