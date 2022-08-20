@@ -22,8 +22,8 @@ class v2Books(commands.Cog):
     """Warhammer Books."""
     
     def __init__(self, bot: Red):
-        self.bot: Red = bot
         self.client: DiscordComponents    
+        self.bot: Red = bot
         self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
         
         # DiscordComponents(bot, change_discord_methods=True)
