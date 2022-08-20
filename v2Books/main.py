@@ -3,8 +3,8 @@ from typing import Any, Dict, List, TYPE_CHECKING
 from abc import ABCMeta
 from discord import embeds
 
-from discord_components import Select, SelectOption, Button,ButtonStyle, DiscordComponents
-# from discord_components.client import DiscordComponents
+from discord_components import Select, SelectOption, Button,ButtonStyle
+from discord_components.client import DiscordComponents
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
