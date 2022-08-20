@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from redbot.core.bot import Red
 
 import discord
-from redbot.core import Config, commands, bot
+from redbot.core import Config, commands
 
 # from .event import EventMixin
 
@@ -29,6 +29,7 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
         self.bot: Red = bot
         self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
         # bot = commands.Bot(command_prefix='.')
+        red = self.bot
         # DiscordComponents(bot, change_discord_methods=True)
 
 
@@ -58,7 +59,7 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
                 SelectOption(label = "SelectMenu8", value = "value8")
                 ])])
 
-    @bot.event
+    @red.event
     async def on_select_option(self, interaction):
         # if interaction.message.id == 891587821368905728: #Message id(not obligatory)
         #     await interaction.respond(type=6)
