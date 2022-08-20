@@ -26,6 +26,8 @@ class v2Books(commands.Cog):
         self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
         # DiscordComponents(bot, change_discord_methods=True)
 
+    bot = commands.Bot(command_prefix='.')
+
     @commands.group()
     async def v2(self, ctx: commands.Context) -> None:
         # """Gets the admin commands for react emojis cog."""
