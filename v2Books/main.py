@@ -3,8 +3,6 @@ from typing import Any, Dict, List, TYPE_CHECKING
 from abc import ABCMeta
 from discord import embeds
 
-from discord_slash.utils.manage_components import create_button, create_actionrow
-from discord_slash.model import ButtonStyle
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
