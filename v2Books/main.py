@@ -46,7 +46,7 @@ class v2Books(commands.Cog):
 
 
         firstRowBtns = []
-        firstRowBtns.append(client.add_callback(
+        firstRowBtns.append(self.client.add_callback(
             Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
             await ctx.send("Received map" )
         ))
