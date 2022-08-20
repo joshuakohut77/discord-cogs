@@ -22,7 +22,6 @@ class CompositeClass(commands.CogMeta, MixinMeta):
 class v2Books(commands.Cog, metaclass=CompositeClass):
 # class v2Books(commands.Cog):
     """Warhammer Books."""
-    red = None
     # client: DiscordComponents
     def __init__(self, bot: Red):
         # self.client: DiscordComponents   
@@ -30,7 +29,6 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
         self.bot: Red = bot
         self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
         # bot = commands.Bot(command_prefix='.')
-        red = self.bot
         # DiscordComponents(bot, change_discord_methods=True)
 
 
@@ -60,7 +58,7 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
                 SelectOption(label = "SelectMenu8", value = "value8")
                 ])])
 
-    @red.event
+    @commands.Bot.event
     async def on_select_option(self, interaction):
         # if interaction.message.id == 891587821368905728: #Message id(not obligatory)
         #     await interaction.respond(type=6)
