@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 import discord
 from redbot.core import Config, commands
 
-from .event import EventMixin
+# from .event import EventMixin
 
 # class CompositeClass(commands.CogMeta, ABCMeta):
 #     __slots__: tuple = ()
