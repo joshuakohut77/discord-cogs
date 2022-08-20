@@ -23,7 +23,8 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
     """Warhammer Books."""
     # client: DiscordComponents
     def __init__(self, bot: Red):
-        # self.client: DiscordComponents    
+        # self.client: DiscordComponents   
+        self.client = DiscordComponents(bot) 
         self.bot: Red = bot
         self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
         
@@ -49,7 +50,7 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
         firstRowBtns = []
         firstRowBtns.append(self.client.add_callback(
             Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
-            await ctx.send("Received map" )
+            self.__on_use_item
         ))
         
         btns = []
@@ -67,7 +68,9 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
 
         # await self.config.channel(ctx.channel).set_raw("frequency", value=frequency)
         # await ctx.tick()
-
+    async def __on_use_item(self, ctx: commands.Context):
+        await ctx.send("button call")
+        return
     # @v2Books.group()
     # async def v2Book(self, ctx: commands.Context) -> None:
     #     """Add / Remove a website from the checking list."""
