@@ -28,7 +28,7 @@ class v2Books(commands.Cog):
 
 
     @commands.group(name="v2", aliases=['dex'])
-    @commands.group()
+    # @commands.group()
     async def __v2(self, ctx: commands.Context) -> None:
         # """Gets the admin commands for react emojis cog."""
         # await ctx.send("Received map %s" %map)
@@ -36,7 +36,7 @@ class v2Books(commands.Cog):
 
 
     @__v2.command()
-    async def button(self, ctx):
+    async def button(self, ctx: commands.Context):
         
         embed = discord.Embed()
         embed=discord.Embed(title="Owen Wilson", url="https://www.tomorrowtides.com/owen-wilson-movies.html", color=0x0b1bf4)
