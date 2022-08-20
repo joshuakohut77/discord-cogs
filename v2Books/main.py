@@ -32,15 +32,47 @@ class v2Books(commands.Cog):
     async def books(self, ctx: commands.Context, interaction: Interaction) -> None:
         """Takes a map name and returns books."""
         # if frequency <= 0:
-        firstRowBtns = []
-        firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray,
-                       label='Previous', custom_id='previous'),
-                await ctx.send("button clicked")
-            ))
-        embed = discord.Embed()
-        embed=discord.Embed(title="Owen Wilson", url="https://www.tomorrowtides.com/owen-wilson-movies.html", color=0x0b1bf4)
-        embed.add_field(name="Movie", value='Test Movie', inline=True)
+        const lib = require('lib')({token: process.env.STDLIB_SECRET_TOKEN});
+
+        await lib.discord.channels['@0.3.0'].messages.create({
+        "channel_id": `${context.params.event.channel_id}`,
+        "content": `Warhammer Vermintide 2 - Books`,
+        "tts": false,
+        "components": [
+            {
+            "type": 1,
+            "components": [
+                {
+                "custom_id": `row_0_select_0`,
+                "options": [
+                    {
+                    "label": `location 1`,
+                    "description": `location 1 description`,
+                    "default": true
+                    },
+                    {
+                    "label": `location 2`,
+                    "description": `location 2 description`,
+                    "default": false
+                    }
+                ],
+                "min_values": 1,
+                "max_values": 1,
+                "type": 3
+                }
+            ]
+            }
+        ],
+        "embeds": [
+            {
+            "type": "rich",
+            "title": `Tomes and Grims`,
+            "description": `Get data on grims and tomes`,
+            "color": 0x00FFFF
+            }
+        ]
+        });
+        
         await ctx.send("Received your books command! %s" %map)
         # message = await interaction.edit_origin(embed=embed, components=firstRowBtns)
         # await ctx.send("message = %s" %message)
