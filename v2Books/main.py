@@ -45,6 +45,7 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
         await ctx.send(
         '>>> Text',
         components = [
+        self.client.add_callback(
         Select(
             placeholder = 'SelectMenu',
             options = [
@@ -56,16 +57,18 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
                 SelectOption(label="SelectMenu6", value="value6"),
                 SelectOption(label = "SelectMenu7", value = "value7"),
                 SelectOption(label = "SelectMenu8", value = "value8")
-                ])])
+                ])
+            ), self.__on_use_item
+            ])
 
-    @commands.Bot.event
-    async def on_select_option(self, interaction):
-        # if interaction.message.id == 891587821368905728: #Message id(not obligatory)
-        #     await interaction.respond(type=6)
-        if interaction.values[0] == "value1":
-            await interaction.author.send("Menu 1")
-        elif interaction.values[0] == "value2":
-            await interaction.author.send("Menu 2")
+    # @commands.Bot.event
+    # async def on_select_option(self, interaction):
+    #     # if interaction.message.id == 891587821368905728: #Message id(not obligatory)
+    #     #     await interaction.respond(type=6)
+    #     if interaction.values[0] == "value1":
+    #         await interaction.author.send("Menu 1")
+    #     elif interaction.values[0] == "value2":
+    #         await interaction.author.send("Menu 2")
 
     @__v2.command()
     async def button(self, ctx: commands.Context):
