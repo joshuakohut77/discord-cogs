@@ -44,12 +44,6 @@ class v2Books(commands.Cog):
     async def on_button_click(self, interaction):
         await interaction.respond(type=6)
         await interaction.author.send("Click")
-
-    @commands.group()
-    async def v2(self, ctx: commands.Context) -> None:
-        # """Gets the admin commands for react emojis cog."""
-        # await ctx.send("Received map %s" %map)
-        pass
     
     @v2.command()
     async def books(self, ctx: commands.Context) -> None:
