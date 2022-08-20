@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Any, Dict, List, TYPE_CHECKING
-from abc import MixinMeta
+from .abc import MixinMeta
 from discord import embeds
 
 from discord_components import Select, SelectOption, Button,ButtonStyle
