@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Any, Dict, List, TYPE_CHECKING
 from abc import ABCMeta
 from discord import embeds
-from discord_components import (DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
+from discord_components import DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
@@ -30,7 +30,7 @@ class v2Books(commands.Cog):
         pass
     
     @v2.command()
-    async def books(self, ctx: commands.Context) -> None:
+    async def books(self, ctx: commands.Context, Interaction: Interaction) -> None:
         """Takes a map name and returns books."""
         await ctx.send(type=Interaction.ChannelMessageWithSource, content="Message Here", components=[Button(style=ButtonStyle.URL, label="Example Invite Button", url="https://google.com"), Button(style=ButtonStyle.blue, label="Default Button", custom_id="button")])
         
