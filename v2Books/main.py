@@ -26,6 +26,12 @@ class v2Books(commands.Cog):
         self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
         # DiscordComponents(bot, change_discord_methods=True)
 
+    @commands.group()
+    async def v2(self, ctx: commands.Context) -> None:
+        # """Gets the admin commands for react emojis cog."""
+        # await ctx.send("Received map %s" %map)
+        pass
+
     @v2.command()
     async def button(self, ctx):
         embed = discord.Embed(title='Test',description='Test text')
