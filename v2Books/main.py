@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Any, Dict, List, TYPE_CHECKING
-from abc import ABCMeta
+from abc import MixinMeta
 from discord import embeds
 
 from discord_components import Select, SelectOption, Button,ButtonStyle
@@ -17,10 +17,11 @@ from redbot.core import Config, commands
 # class CompositeClass(commands.CogMeta, ABCMeta):
 #     __slots__: tuple = ()
 #     pass
-# class v2Books(EventMixin, commands.Cog):
-class v2Books(commands.Cog):
+
+class v2Books(MixinMeta, commands.Cog):
+# class v2Books(commands.Cog):
     """Warhammer Books."""
-    client: DiscordComponents
+    # client: DiscordComponents
     def __init__(self, bot: Red):
         # self.client: DiscordComponents    
         self.bot: Red = bot
