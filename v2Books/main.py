@@ -39,13 +39,12 @@ class v2Books(commands.Cog):
         embed = discord.Embed(title='Test',description='Test text')
 
         await ctx.send(embed=embed, components=[Button(label='Test', custom_id="test-id", style=ButtonStyle.red)])
-        interaction = await self.bot.wait_for(
-        "button_click", check=lambda inter: inter.custom_id == "test-id")
+        interaction = await self.bot.wait_for("button_click", check=lambda inter: inter.custom_id == "test-id")
 
-    @bot.event
-    async def button_click(self, interaction):
-        await interaction.respond(type=6)
-        await interaction.author.send("Click")
+        @bot.event
+        async def button_click(self, interaction):
+            await interaction.respond(type=6)
+            await interaction.author.send("Click")
     
 
     @v2.command()
