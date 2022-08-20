@@ -29,7 +29,7 @@ class v2Books(commands.Cog):
         pass
     
     @v2.command()
-    async def books(self, ctx: commands.Context, map: str, interaction: Interaction) -> None:
+    async def books(self, ctx: commands.Context, interaction: Interaction) -> None:
         """Takes a map name and returns books."""
         # if frequency <= 0:
         firstRowBtns = []
