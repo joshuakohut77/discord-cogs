@@ -14,11 +14,11 @@ from redbot.core import Config, commands
 
 # from .event import EventMixin
 
-# class CompositeClass(commands.CogMeta, ABCMeta):
-#     __slots__: tuple = ()
-#     pass
+class CompositeClass(commands.CogMeta, MixinMeta):
+    __slots__: tuple = ()
+    pass
 
-class v2Books(MixinMeta, commands.Cog):
+class v2Books(commands.Cog, metaclass=CompositeClass):
 # class v2Books(commands.Cog):
     """Warhammer Books."""
     # client: DiscordComponents
