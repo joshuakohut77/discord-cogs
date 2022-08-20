@@ -4,7 +4,7 @@ from abc import ABCMeta
 from discord import embeds
 
 from discord_components import Select, SelectOption, Button,ButtonStyle
-from discord_components.client import DiscordComponents
+from discord_components.client import DiscordComponents as dcomp
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -46,7 +46,7 @@ class v2Books(commands.Cog):
 
 
         firstRowBtns = []
-        firstRowBtns.append(self.client.add_callback(
+        firstRowBtns.append(dcomp.client.add_callback(
             Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
             await ctx.send("Received map" )
         ))
