@@ -42,7 +42,7 @@ class v2Books(commands.Cog):
         interaction = await self.bot.wait_for(
         "button_click", check=lambda inter: inter.custom_id == "test-id")
 
-    @Red.event
+    @bot.event
     async def on_button_click(self, interaction):
         await interaction.respond(type=6)
         await interaction.author.send("Click")
