@@ -26,15 +26,15 @@ class v2Books(commands.Cog):
         self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
         # DiscordComponents(bot, change_discord_methods=True)
 
-    @Red.command()
+    @bot.command()
     async def button(self, ctx):
         embed = discord.Embed(title='Test',description='Test text')
 
         await ctx.send(embed=embed, components=[Button(label='Test', custom_id="test-id", style=ButtonStyle.red)])
-        interaction = await Red.wait_for(
+        interaction = await bot.wait_for(
         "button_click", check=lambda inter: inter.custom_id == "test-id")
 
-    @Red.event
+    @bot.event
     async def on_button_click(self, interaction):
         await interaction.respond(type=6)
         await interaction.author.send("Click")
