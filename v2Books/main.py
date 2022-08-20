@@ -69,8 +69,8 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
         # await self.config.channel(ctx.channel).set_raw("frequency", value=frequency)
         # await ctx.tick()
     # async def __on_use_item(self, ctx: commands.Context):
-    async def __on_use_item(self, ctx):
-        await ctx.send("clicked button")
+    async def __on_use_item(self, message: discord.Message):
+        await message.send("clicked button")
         return
 
     # @v2Books.group()
