@@ -49,7 +49,7 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
 
 
         firstRowBtns = []
-        firstRowBtns.append(self.client.add_callback(
+        firstRowBtns.append(self.client.callback(
             Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
             self.__on_use_item
         ))
