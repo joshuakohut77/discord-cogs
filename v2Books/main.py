@@ -28,7 +28,7 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
         self.client = DiscordComponents(bot) 
         self.bot: Red = bot
         self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
-        
+        # bot = commands.Bot(command_prefix='.')
         # DiscordComponents(bot, change_discord_methods=True)
 
 
@@ -58,14 +58,14 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
                 SelectOption(label = "SelectMenu8", value = "value8")
                 ])])
 
-    @__v2.command.event
+    @Red.event
     async def on_select_option(self, interaction):
-        if interaction.message.id == 891587821368905728: #Message id(not obligatory)
-            await interaction.respond(type=6)
-            if interaction.values[0] == "value1":
-                await interaction.author.send("Menu 1")
-            elif interaction.values[0] == "value2":
-                await interaction.author.send("Menu 2")
+        # if interaction.message.id == 891587821368905728: #Message id(not obligatory)
+        #     await interaction.respond(type=6)
+        if interaction.values[0] == "value1":
+            await interaction.author.send("Menu 1")
+        elif interaction.values[0] == "value2":
+            await interaction.author.send("Menu 2")
 
     @__v2.command()
     async def button(self, ctx: commands.Context):
