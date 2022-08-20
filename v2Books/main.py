@@ -44,6 +44,7 @@ class v2Books(commands.Cog):
         embed=discord.Embed(title="Owen Wilson", url="https://www.tomorrowtides.com/owen-wilson-movies.html", color=0x0b1bf4)
         embed.add_field(name="Movie", value='test movie', inline=True)
 
+
         firstRowBtns = []
         firstRowBtns.append(self.client.add_callback(
             Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
