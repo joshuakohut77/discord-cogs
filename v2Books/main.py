@@ -3,6 +3,8 @@ from typing import Any, Dict, List, TYPE_CHECKING
 from abc import ABCMeta
 from discord import embeds
 
+from discord_components import DiscordComponents, Select, SelectOption, Button,ButtonStyle
+
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -24,6 +26,19 @@ class v2Books(commands.Cog):
         self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
         # DiscordComponents(bot, change_discord_methods=True)
 
+    @Red.command()
+    async def button(self, ctx):
+        embed = discord.Embed(title='Test',description='Test text')
+
+        await ctx.send(embed=embed, components=[Button(label='Test', custom_id="test-id", style=ButtonStyle.red)])
+        interaction = await Red.wait_for(
+        "button_click", check=lambda inter: inter.custom_id == "test-id")
+
+    @Red.event
+    async def on_button_click(self, interaction):
+        await interaction.respond(type=6)
+        await interaction.author.send("Click")
+
     @commands.group()
     async def v2(self, ctx: commands.Context) -> None:
         # """Gets the admin commands for react emojis cog."""
@@ -33,27 +48,8 @@ class v2Books(commands.Cog):
     @v2.command()
     async def books(self, ctx: commands.Context) -> None:
         """Takes a map name and returns books."""
-        buttons = [
-                    create_button(
-                        style=ButtonStyle.green,
-                        label="A Green Button"
-                    ),
-                ]
-
-        action_row = create_actionrow(*buttons)
-
-
-        HelpEmbed = discord.Embed()
-        HelpEmbed=discord.Embed(title="Owen Wilson", url="https://www.tomorrowtides.com/owen-wilson-movies.html", color=0x0b1bf4)
-        HelpEmbed.add_field(name="Movie", value='test movie', inline=True)
- 
-
-        await ctx.channel.send(embed=HelpEmbed, components=[action_row])
-        # message = await interaction.edit_origin(embed=embed, components=firstRowBtns)
-        
-
-        
-        # await ctx.send("message = %s" %message)
+     
+        await ctx.send("message = it kinda worked?")
         return
 
         # await self.config.channel(ctx.channel).set_raw("frequency", value=frequency)
