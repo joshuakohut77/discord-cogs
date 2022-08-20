@@ -3,6 +3,9 @@ from typing import Any, Dict, List, TYPE_CHECKING
 from abc import ABCMeta
 from discord import embeds
 
+from discord_slash.utils.manage_components import create_button, create_actionrow
+from discord_slash.model import ButtonStyle
+
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
@@ -32,11 +35,22 @@ class v2Books(commands.Cog):
     @v2.command()
     async def books(self, ctx: commands.Context) -> None:
         """Takes a map name and returns books."""
-        from discord_components import DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction
-        await ctx.send(type=Interaction.ChannelMessageWithSource, content="Message Here", components=[Button(style=ButtonStyle.URL, label="Example Invite Button", url="https://google.com"), Button(style=ButtonStyle.blue, label="Default Button", custom_id="button")])
-        
-                
-        
+        buttons = [
+                    create_button(
+                        style=ButtonStyle.green,
+                        label="A Green Button"
+                    ),
+                ]
+
+        action_row = create_actionrow(*buttons)
+
+
+        HelpEmbed = discord.Embed()
+        HelpEmbed=discord.Embed(title="Owen Wilson", url="https://www.tomorrowtides.com/owen-wilson-movies.html", color=0x0b1bf4)
+        HelpEmbed.add_field(name="Movie", value='test movie', inline=True)
+ 
+
+        await ctx.channel.send(embed=HelpEmbed, components=[action_row])
         # message = await interaction.edit_origin(embed=embed, components=firstRowBtns)
         
 
