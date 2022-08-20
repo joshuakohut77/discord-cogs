@@ -26,7 +26,7 @@ class v2Books(commands.Cog):
         self.config: Config = Config.get_conf(self, identifier=2091831, force_registration=True)
         # DiscordComponents(bot, change_discord_methods=True)
 
-    # bot = commands.Bot(command_prefix='.')
+    bot = commands.Bot(command_prefix='.')
 
     @commands.group()
     async def v2(self, ctx: commands.Context) -> None:
@@ -42,8 +42,8 @@ class v2Books(commands.Cog):
         interaction = await self.bot.wait_for(
         "button_click", check=lambda inter: inter.custom_id == "test-id")
 
-    @v2.event
-    async def on_button_click(self, interaction):
+    @bot.event
+    async def button_click(self, interaction):
         await interaction.respond(type=6)
         await interaction.author.send("Click")
     
