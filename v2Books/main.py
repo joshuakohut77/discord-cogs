@@ -81,7 +81,7 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
         firstRowBtns = []
         firstRowBtns.append(self.client.add_callback(
             Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
-            self.__on_use_item
+            self.on_use_item
         ))
         
         btns = []
@@ -99,7 +99,7 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
         # await self.config.channel(ctx.channel).set_raw("frequency", value=frequency)
         # await ctx.tick()
     
-    async def __on_use_item(self, ctx: commands.Context):
+    async def on_use_item(self, ctx: commands.Context):
     # async def __on_use_item(self, interaction: discord.Interaction):
         # await message.send("clicked button")
         # await interaction.send_message(f'Your favourite colour i')
