@@ -103,12 +103,12 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
     # async def __on_use_item(self, interaction: discord.Interaction):
         # await message.send("clicked button")
         # await interaction.send_message(f'Your favourite colour i')
-        await ctx.send("Received your v2Book command!")
-        # self.__send_books(ctx)
+        # await ctx.send("Received your v2Book command!")
+        self.__send_books(ctx)
         return
 
     async def __send_books(self, ctx):
-        await ctx.send("map: %")
+        await ctx.send("map: ")
         return
     # @v2Books.group()
     # async def v2Book(self, ctx: commands.Context) -> None:
