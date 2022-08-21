@@ -58,7 +58,7 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
                 SelectOption(label = "SelectMenu7", value = "value7"),
                 SelectOption(label = "SelectMenu8", value = "value8")
                 ])
-            , self.on_use_item)
+            , self.__on_use_item)
             ])
 
     # @commands.Bot.event
@@ -81,7 +81,7 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
         firstRowBtns = []
         firstRowBtns.append(self.client.add_callback(
             Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
-            self.on_use_item
+            self.__on_use_item
         ))
         
         btns = []
@@ -99,13 +99,17 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
         # await self.config.channel(ctx.channel).set_raw("frequency", value=frequency)
         # await ctx.tick()
     
-    async def on_use_item(self, ctx: commands.Context):
+    async def __on_use_item(self, ctx: commands.Context):
     # async def __on_use_item(self, interaction: discord.Interaction):
         # await message.send("clicked button")
         # await interaction.send_message(f'Your favourite colour i')
-        await ctx.send("Received your v2Book command!")
+        # await ctx.send("Received your v2Book command!")
+        self.__send_books(map="test map")
         return
 
+    async def __send_books(self, ctx: commands.Context, map: str):
+        await ctx.send("map: %s" %map)
+        return
     # @v2Books.group()
     # async def v2Book(self, ctx: commands.Context) -> None:
     #     """Add / Remove a website from the checking list."""
