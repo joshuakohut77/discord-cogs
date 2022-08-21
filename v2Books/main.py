@@ -104,7 +104,7 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
         # await message.send("clicked button")
         # await interaction.send_message(f'Your favourite colour i')
         # await ctx.send("Received your v2Book command!")
-        self.__send_books(ctx)
+        self.__send_books
         return
 
     async def __send_books(self, ctx):
