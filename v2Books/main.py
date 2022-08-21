@@ -107,7 +107,7 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
         self.__send_books(map="test map")
         return
 
-    async def __send_books(self, ctx: commands.Context, map: str):
+    async def __send_books(self, map: str, ctx: commands.Context):
         await ctx.send("map: %s" %map)
         return
     # @v2Books.group()
