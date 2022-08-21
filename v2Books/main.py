@@ -58,7 +58,7 @@ class v2Books(commands.Cog, metaclass=CompositeClass):
                 SelectOption(label = "SelectMenu7", value = "value7"),
                 SelectOption(label = "SelectMenu8", value = "value8")
                 ])
-            , self.__on_use_item)
+            , self.on_use_item)
             ])
 
     # @commands.Bot.event
