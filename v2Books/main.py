@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 import discord
 
-from discord import ActionRow, Button
+from discord import Button, ActionRow
 from redbot.core import Config, commands
 
 from .selectmenu import Select
