@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Optional
-
+import os
+import sys
 import json
 
 from discord import ActionRow, SelectMenu, SelectOption
