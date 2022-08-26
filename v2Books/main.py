@@ -61,7 +61,11 @@ class v2Books(commands.Cog):
 
         selected_menu: str = channel[str(i.message.id)]["selected_menu"]
         selected_book: str = channel[str(i.message.id)]["selected_book"]
-        page: int = 0
+        
+        try:	
+            page: int = channel[str(i.message.id)]["page"]	
+        except KeyError:	
+            page: int = 0
         
         book_index: int = [i for (i, d,) in enumerate(self.booksdata[selected_menu]) if d["name"] == selected_book][0]
 
