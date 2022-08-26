@@ -58,16 +58,13 @@ class v2Books(commands.Cog):
         async with self.config.channel(i.message.channel)() as channel:
             if button.custom_id not in ("but-prev", "but-next",):
                 channel[str(i.message.id)]["selected_book"] = button.custom_id.split("-", 1)[1]
+                channel[str(i.message.id)]["page"] = 0
 
         selected_menu: str = channel[str(i.message.id)]["selected_menu"]
         selected_book: str = channel[str(i.message.id)]["selected_book"]
         
-        try:	
-            page: int = channel[str(i.message.id)]["page"]	
-        except KeyError:	
-            page: int = 0
-        
         book_index: int = [i for (i, d,) in enumerate(self.booksdata[selected_menu]) if d["name"] == selected_book][0]
+        page: int = channel[str(i.message.id)]["page"]
 
         if len(self.booksdata[selected_menu][book_index]["data"]) > 1:
             previous_next: ActionRow = ActionRow(*[Button(label="\U00002B05", custom_id="but-prev"), Button(label="\U000027A1", custom_id="but-next")])
