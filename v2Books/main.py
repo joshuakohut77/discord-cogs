@@ -85,8 +85,8 @@ class v2Books(commands.Cog):
 
             components.append(previous_next)
 
+        embed.add_field(name='Book', value=self.booksdata[selected_menu][book_index]['name'])
         embed.description = self.booksdata[selected_menu][book_index]["data"][page]["text"]
-        embed.add_field(name='Book', value=self.booksdata[selected_menu][book_index])
         embed.set_image(url=self.booksdata[selected_menu][book_index]["data"][page]["image"])
 
         async with self.config.channel(i.message.channel)() as channel:
@@ -97,7 +97,7 @@ class v2Books(commands.Cog):
     @commands.command()
     async def v2(self, ctx: commands.Context) -> None:
         embed: discord.Embed = discord.Embed()
-        embed.description = "Please select a book first"
+        embed.description = "Please select a map first"
 
         msg: discord.Message = await ctx.send(embed=embed, components=self.select)
         
