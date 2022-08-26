@@ -86,7 +86,7 @@ class v2Books(commands.Cog):
             components.append(previous_next)
 
         embed.description = self.booksdata[selected_menu][book_index]["data"][page]["text"]
-        embed.title = self.booksdata[selected_menu][book_index]
+        embed.add_field(name='Book', value=self.booksdata[selected_menu][book_index])
         embed.set_image(url=self.booksdata[selected_menu][book_index]["data"][page]["image"])
 
         async with self.config.channel(i.message.channel)() as channel:
