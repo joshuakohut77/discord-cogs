@@ -13,7 +13,7 @@ class Select(ActionRow):
 
     @classmethod
     def create(cls) -> ActionR:
-        p = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'books.json.json')
+        p = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'books.json')
         data = json.load(open(p, 'r'))
         # with open("books.json", "r") as data:
         #     data = json.load(data)
