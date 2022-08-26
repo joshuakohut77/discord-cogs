@@ -85,7 +85,8 @@ class v2Books(commands.Cog):
 
             components.append(previous_next)
 
-        embed.add_field(name='Book', value=self.booksdata[selected_menu][book_index]['name'])
+        embed.set_field_at(0, name='Book', value=self.booksdata[selected_menu][book_index]['name'])
+        # embed.add_field(name='Book', value=self.booksdata[selected_menu][book_index]['name'])
         embed.description = self.booksdata[selected_menu][book_index]["data"][page]["text"]
         embed.set_image(url=self.booksdata[selected_menu][book_index]["data"][page]["image"])
 
