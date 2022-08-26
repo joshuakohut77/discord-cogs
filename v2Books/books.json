@@ -10,15 +10,15 @@
       ]
     },
     {
-      "name": "Grimoire 1",
+      "name": "Grim 1",
       "data": [
         {
           "text": "In the North Maintenance Shaft, open the left Door on the bottom floor. In order to do this you will need to press the \"wrong\" brick (one which symbol that doesn't correspond to the marking on the upstairs door needed to progress) BEFORE opening all three doors on the upper level. A simple tactic is to keep pressing the left brick until the correct one opens.",
-          "image": "https://pokesprites.joshkohut.com/vermintide/convocation-of-decay-grimoire1-1.png"
+          "image": "https://pokesprites.joshkohut.com/vermintide/convocation-of-decay-grim1-1.png"
         },
         {
           "text": "Walk through the door into the sewers until you find a room to your right. There is a \"Suspicious Brick\" behind a bookshelf which can be reached by climbing the fallen bookshelf, activate it to lower another door just outside this room.",
-          "image": "https://pokesprites.joshkohut.com/vermintide/convocation-of-decay-grimoire1-2.png"
+          "image": "https://pokesprites.joshkohut.com/vermintide/convocation-of-decay-grim1-2.png"
         }
       ]
     },
@@ -32,6 +32,228 @@
         {
           "text": "The second Tome is in a crate near the wooden wall.",
           "image": "https://pokesprites.joshkohut.com/vermintide/convocation-of-decay-tome2-2.png"
+        }
+      ]
+    },
+    {
+      "name": "Grim 2",
+      "data": [
+        {
+          "text": "Once you drop down into the Old City Cesspit, you will need to pick up a set of Keys. There are three possible locations for the keys to spawn. The first is by a corpse near a pillar on the right side (when looking towards the exit)",
+          "image": "https://pokesprites.joshkohut.com/vermintide/convocation-of-decay-grim2-1.png"
+        },
+        {
+          "text": "the second possible location is in a crate in the far back.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/convocation-of-decay-grim2-2.png"
+        },
+        {
+          "text": "The third possible location is by a corpse near a pillar on the left side (when looking towards the exit).",
+          "image": "https://pokesprites.joshkohut.com/vermintide/convocation-of-decay-grim2-3.png"
+        },
+        {
+          "text": "Immediately following the Old City Cesspit is a room with two beams running across the room. Head to the back corner of the room and jump up the rock formation (center of screenshot) or the cart plus rock pile to the right of the room.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/convocation-of-decay-grim2-4.png"
+        },
+        {
+          "text": "From the top of either rock formation, make your way onto the stone beam. Follow the beam to the other side of the room and it will lead you through some corridors.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/convocation-of-decay-grim2-5.png"
+        },
+        {
+          "text": "At the end of the corridors, a chained up Chest contains the second Grimoire. The hole in the floor will lead you back into the Old City Cesspit.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/convocation-of-decay-grim2-6.png"
+        }
+      ]
+    },
+    {
+      "name": "Tome 3",
+      "data": [
+        {
+          "text": "The third Tome is in Carlomant's Memorium, on a sarcophagus behind the shrine seen in the center of the first screenshot.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/convocation-of-decay-tome3-1.png"
+        }
+      ]
+    }
+  ],
+  "Righteous Stand": [
+    {
+      "name": "Tome 1",
+      "data": [
+        {
+          "text": "When coming up the curving stone ramp in the Woodcutter's Guild, before taking the drop to the Arena event, turn left. There you will find a cart loaded with some barrels and crates. The first Tome is in one of the crates on top.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/righteous-stand-tome1-1.png"
+        }
+      ]
+    },
+    {
+      "name": "Grim 1",
+      "data": [
+        {
+          "text": "After taking the elevator from the arena to the Kreigsheim Barracks, head right and follow the wall until you see a broken bed on your left. The first Grimoire is in a box on top of the stack of crates standing against the wall. You must drop in from a hole next to the Explosive Barrel (in front of the door to the next area) upstairs, or fall through the hole facing forward and slightly left to land on a crate, then jump onto another crate pile next to a pillar, then jump to the little stair of crates that is flush with the wall.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/righteous-stand-grim1-1.png"
+        }
+      ]
+    },
+    {
+      "name": "Tome 2",
+      "data": [
+        {
+          "text": "After the Southern Axe Bite Garrison, in the next room, climb the stairs to the second floor to proceed. Go to the back corner of the top floor and drop down to find the second Tome in a crate.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/righteous-stand-tome2-1.png"
+        }
+      ]
+    },
+    {
+      "name": "Grim 2",
+      "data": [
+        {
+          "text": "Just before the Northern Axe Bite Garrison foothold, there is another two story gatehouse which you enter from the second floor. Head out the Door on the other side and turn right to find three protruding beams just above the main gate. Jump across (you can also use the gate doors) and make a tricky jump onto the ledge of a boarded-up window.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/righteous-stand-grim2-1.png"
+        },
+        {
+          "text": "Entering the bastion through the window, hit the Lever on the other side of the room to lower the ladder outside the window next to the lever.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/righteous-stand-grim2-2.png"
+        },
+        {
+          "text": "Jump onto the ladder and climb to the top of the scaffolding where you will find the second Grimoire in a crate.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/righteous-stand-grim2-3.png"
+        }
+      ]
+    },
+    {
+      "name": "Tome 3",
+      "data": [
+        {
+          "text": "In the meadow of the Heldenhammer Terrace, just before going up the stairs to the temple entrance, look in the left corner to find some shrubbery between two trees. There is a hidden path behind the shrubbery that will lead you to the third Tome.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/righteous-stand-tome3-1.png"
+        }
+      ]
+    }
+  ],
+  "Hunger in the Dark": [
+    {
+      "name": "Tome 1",
+      "data": [
+        {
+          "text": "In The Backfill, when you see the wooden wall (leading towards the Cart), there is a tunnel just to the left.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/hunger-in-the-dark-tome1-1.png"
+        },
+        {
+          "text": "Enter the tunnel and turn left, then right. The first Tome is at the end of the tunnel by a pool of water.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/hunger-in-the-dark-tome1-2.png"
+        }
+      ]
+    },
+    {
+      "name": "Grim 1",
+      "data": [
+        {
+          "text": "In order to get the first Grimoire, you will need an Explosive Barrel. In the mineshafts before the Grimoire two barrels can be found at different locations. Alternatively, when you escorted the cart to the first stop, there were four barrels, but you only needed to put three into the cart. You can bring the fourth one with you for the same task.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/hunger-in-the-dark-grim1-1.png"
+        },
+        {
+          "text": "After the cart gets away from you and the tunnel collapses, you will end up at a T-section. Either take the left or right side, as they both end up at the same intersection at the other side of the collapsed tunnel. Here one of the additional explosive barrels can be found.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/hunger-in-the-dark-grim1-2.png"
+        },
+        {
+          "text": "Continue along the path and take a right. When you're near the wooden wall at the end of the right path, you will see a prompt to place the barrel against the wall (only if you are holding it).",
+          "image": "https://pokesprites.joshkohut.com/vermintide/hunger-in-the-dark-grim1-3.png"
+        },
+        {
+          "text": "After blowing up the wooden wall, walk through the tunnel and climb up the ladder to your left. Collect the Grimoire lying by a marked crate.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/hunger-in-the-dark-grim1-4.png"
+        }
+      ]
+    },
+    {
+      "name": "Grim 2",
+      "data": [
+        {
+          "text": "Once the cart barrels through some doors and then over the cliff to the right, you will turn left and enter Charnel Hollow. There is a small hole in the wall to the right of this cave (check screenshot). You will need to jump up a little and crouch to get through.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/hunger-in-the-dark-grim2-1.png"
+        },
+        {
+          "text": "Head up the ladder. At the top of the ladder, look to the right. Jump up the rocks to get over to the ledge.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/hunger-in-the-dark-grim2-1.png"
+        },
+        {
+          "text": "When you see a lit Ammo Box, scan the right wall for a small hole hiding the second Grimoire. The hole faces toward the ammo box, it might be easier to find it coming back the way you came after reaching it. To get back to the cave you can jump from some ledges near the ammo box.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/hunger-in-the-dark-grim2-1.png"
+        }
+      ]
+    },
+    {
+      "name": "Tome 3",
+      "data": [
+        {
+          "text": "In The Old Troll Grounds there is a raised rock formation in the middle of the room. Jump onto the stalagmites next to the torch, then across a gap to the third Tome.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/hunger-in-the-dark-tome3-1.png"
+        }
+      ]
+    }
+  ],
+  "Halescourge": [
+    {
+      "name": "Tome 1",
+      "data": [
+        {
+          "text": "When coming down into Von Mackensen Strasse, head down to the left before exiting through the double doors.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/halescourge-tome1-1.png"
+        },
+        {
+          "text": "Before passing through the double doors, head left. Behind a crate there is a hole in the wall that you can crawl through to reach the first Tome.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/halescourge-tome1-2.png"
+        }
+      ]
+    },
+    {
+      "name": "Tome 2",
+      "data": [
+        {
+          "text": "In the Merchant District, you will need to cross a bridge to the right after you drop down a small building. Instead, keep to the left.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/halescourge-tome2-1.png"
+        },
+        {
+          "text": "Keep left here to walk around the stone wall to the other side.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/halescourge-tome2-2.png"
+        },
+        {
+          "text": "At the end of the path is a ladder down to a boat containing the second Tome.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/halescourge-tome2-3.png"
+        }
+      ]
+    },
+    {
+      "name": "Grim 1",
+      "data": [
+        {
+          "text": "When the buildings start to slide down the cliff. Look down to find a mostly intact building at the bottom (center-bottom of screenshot).",
+          "image": "https://pokesprites.joshkohut.com/vermintide/halescourge-grim1-1.png"
+        },
+        {
+          "text": "Drop down to the far side of this building and turn around. The first Grimoire is on a bookshelf just inside.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/halescourge-grim1-2.png"
+        }
+      ]
+    },
+    {
+      "name": "Tome 3",
+      "data": [
+        {
+          "text": "After you cross past the landsliding buildings, before heading left, you will see this tower. Head inside and up the ladder, the third Tome is on a shelf on the second floor.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/halescourge-tome3-1.png"
+        }
+      ]
+    },
+    {
+      "name": "Grim 2",
+      "data": [
+        {
+          "text": "In the entryway to Stoltzhammer Weg, there is a building on the left with a raised ladder. Shoot the Buboe at the top of the ladder to release it. (Be careful not to step in the goo that drops down.)",
+          "image": "https://pokesprites.joshkohut.com/vermintide/halescourge-grim2-1.png"
+        },
+        {
+          "text": "The second Grimoire sits on the balcony at the top of the ladder.",
+          "image": "https://pokesprites.joshkohut.com/vermintide/halescourge-grim2-2.png"
         }
       ]
     }
