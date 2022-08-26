@@ -93,7 +93,7 @@ class v2Books(commands.Cog):
         await i.message.edit(embed=embed, components=components)
     
     @commands.command()
-    async def test(self, ctx: commands.Context) -> None:
+    async def v2(self, ctx: commands.Context) -> None:
         embed: discord.Embed = discord.Embed()
         embed.description = "Please select a book first"
 
