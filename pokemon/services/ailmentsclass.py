@@ -180,14 +180,14 @@ class ailment:
             pokemon.currentHP = round(pokemon.currentHP - statsDict['hp']*(1/16))
             return pokemon, False
         elif self.freeze: # TODO update this to make things able to Thaw from fire attacks
-            return pokemon, False
+            return pokemon, True
         elif self.paralysis:
             if random.randrange(1, 4+1) == 1:
+                print('%s is no longer paralyzed and cannot attack' % str(pokemon.pokemonName))
                 return pokemon, True
             else:
                 return pokemon, False
         elif self.trap: # damage calculated from move
-            print('INSIDE TRAP HERE: %s turns' %str(self.turnCounter))
             if self.turnCounter >= 5:
                 self.trap = False
                 self.turnCounter = 0
@@ -200,6 +200,7 @@ class ailment:
                 if random.randrange(1, 3+1) == 1:
                     self.trap = False
                     self.turnCounter = 0
+                    print('%s is no longer trapped' % str(pokemon.pokemonName))
                     return pokemon, False
                 else:
                     self.turnCounter = self.turnCounter + 1
