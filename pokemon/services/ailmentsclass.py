@@ -1,5 +1,6 @@
 # ailments class
 import sys
+import random
 from dbclass import db as dbconn
 from loggerclass import logger as log
 from datetime import datetime
@@ -101,6 +102,37 @@ class ailment:
             # delete and close connection
             del db
 
+
+    def rollAilmentChance(self, move):
+        """ checks the ailment chance and rolls to determine if effected """
+        chance = move['ailment_chance']
+        randomChance = random.randrange(1, 100+1)
+
+        if randomChance > 100 - chance:
+            return True
+        else:
+            return False
+        
+    def setAilment(self, ailment):
+        """ sets a pokemons ailment """
+        if ailment == 'sleep':
+            self.sleep = True
+        elif ailment == 'poison':
+            self.poison = True
+        elif ailment == 'burn':
+            self.burn = True
+        elif ailment == 'freeze':
+            self.freeze = True
+        elif ailment == 'paralysis':
+            self.paralysis = True
+        elif ailment == 'trap':
+            self.trap = True
+        elif ailment == 'confusion':
+            self.confusion = True
+        elif ailment == 'disable':
+            self.disable = True
+        self.mostRecent = datetime.now()
+        
 
 
     """
