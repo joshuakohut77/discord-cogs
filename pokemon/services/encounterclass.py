@@ -498,7 +498,8 @@ class encounter:
             self.statuscode = 96
             self.message = "error occured during processBattleOutcome"
             return
-        
+        self.ailment1.resetAilments()
+        self.ailment1.save()
         # leaderboard stats
         lb = leaderboard(self.pokemon1.discordId)
         lb.defeat()
