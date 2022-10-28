@@ -36,17 +36,18 @@ class ailment:
                             "trap", "confusion", "disable"
 	                        FROM ailments WHERE "pokemonId"=%(pokemonId)s'''
             result = db.querySingle(queryString, { 'pokemonId': self.pokemonId })
-            if len(result) > 0:
-                self.mostRecent = result[0]
-                self.sleep = result[1]
-                self.poison = result[2]
-                self.burn = result[3]
-                self.freeze = result[4]
-                self.paralysis = result[5]
-                self.trap = result[6]
-                self.confusion = result[7]
-                self.disable = result[8]
-                self.recordExists = True
+            if result is not None:
+                if len(result) > 0:
+                    self.mostRecent = result[0]
+                    self.sleep = result[1]
+                    self.poison = result[2]
+                    self.burn = result[3]
+                    self.freeze = result[4]
+                    self.paralysis = result[5]
+                    self.trap = result[6]
+                    self.confusion = result[7]
+                    self.disable = result[8]
+                    self.recordExists = True
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
@@ -107,14 +108,19 @@ class ailment:
     def rollAilmentChance(self, move):
         """ checks the ailment chance and rolls to determine if effected """
         chance = move['ailment_chance']
+        print(move)
+        if chance == 0:
+            return False
+        
         randomChance = random.randrange(1, 100+1)
-
+        print('rolling ailment chance')
         if randomChance > 100 - chance:
             return True
         else:
             return False
         
     def setAilment(self, ailment):
+        print('Setting Ailment %s' %ailment)
         """ sets a pokemons ailment """
         if ailment == 'sleep':
             self.resetAilments()
@@ -161,58 +167,65 @@ class ailment:
             if self.turnCounter >= 7 or random.randrange(1, 7+1) == 1:
                 self.sleep = False
                 self.turnCounter = 0
-                return pokemon, True
+                return pokemon, False
             else:
                 self.turnCounter = self.turnCounter + 1
-                return pokemon, False
+                return pokemon, True
         elif self.poison:
-            pokemon.currentHP = round(pokemon.currentHP - pokemon.hp*(1/16))
-            return pokemon, True
+            statsDict = pokemon.getPokeStats()
+            pokemon.currentHP = round(pokemon.currentHP - statsDict['hp']*(1/16))
+            return pokemon, False
         elif self.burn:
-            pokemon.currentHP = round(pokemon.currentHP - pokemon.hp*(1/16))
-            return pokemon, True
+            statsDict = pokemon.getPokeStats()
+            pokemon.currentHP = round(pokemon.currentHP - statsDict['hp']*(1/16))
+            return pokemon, False
         elif self.freeze: # TODO update this to make things able to Thaw from fire attacks
             return pokemon, False
         elif self.paralysis:
             if random.randrange(1, 4+1) == 1:
-                return pokemon, False
+                return pokemon, True
             else:
-                return pokemon, True
+                return pokemon, False
         elif self.trap: # damage calculated from move
+            print('INSIDE TRAP HERE: %s turns' %str(self.turnCounter))
             if self.turnCounter >= 5:
+                self.trap = False
                 self.turnCounter = 0
-                return pokemon, True
+                print('%s is no longer trapped' % str(pokemon.pokemonName))
+                return pokemon, False
             elif self.turnCounter >= 0 and self.turnCounter <= 2:
                 self.turnCounter = self.turnCounter + 1
-                return pokemon, False
+                return pokemon, True
             elif self.turnCounter > 2:
                 if random.randrange(1, 3+1) == 1:
                     self.trap = False
                     self.turnCounter = 0
-                    return pokemon, True
+                    return pokemon, False
                 else:
                     self.turnCounter = self.turnCounter + 1
-                    return pokemon, False
+                    return pokemon, True
             else:
                 self.turnCounter = self.turnCounter + 1
-                return pokemon, False
+                return pokemon, True
         elif self.confusion: # damage calculated from normal power 40 damage attack (typeless)
             if self.turnCounter >= 5:
                 self.turnCounter = 0
-                return pokemon, True
+                self.confusion = False
+                return pokemon, False
             elif self.turnCounter >= 0 and self.turnCounter <= 2:
                 self.turnCounter = self.turnCounter + 1
-                return pokemon, False
+                return pokemon, True
             elif self.turnCounter > 2:
                 if random.randrange(1, 3+1) == 1:
                     self.confusion = False
+                    self.confusion = False
                     self.turnCounter = 0
-                    return pokemon, True
+                    return pokemon, False
                 else:
                     self.turnCounter = self.turnCounter + 1
-                    return pokemon, False
+                    return pokemon, True
         else:
-            return pokemon, True
+            return pokemon, False
 
 
     """
