@@ -415,6 +415,8 @@ class encounter:
             uEncObj.moltres = True
         elif name == 'mewtwo':
             uEncObj.mewtwo = True
+        elif name == 'snorlax':
+            uEncObj.snorlax = True                
         # elif name == 'magikarp':
         #     uEncObj.magikarp = True
         # elif name == 'charmander':
@@ -431,9 +433,7 @@ class encounter:
         #     uEncObj.hitmonlee = True                                                                                    
         # elif name == 'eevee':
         #     uEncObj.eevee = True
-        elif name == 'snorlax':
-            uEncObj.snorlax = True      
-
+        
         uEncObj.save()      
 
     def __loadMovesConfig(self, move):
