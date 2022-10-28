@@ -120,35 +120,115 @@ class encounter:
         # get pokemons list of moves
         battleMoves2 = self.__removeNullMoves(self.pokemon2.getMoves())
 
+        # get and calculate the damage of the move from pokemon 1
         pbMove = self.__loadMovesConfig(move1)
         damage1 = self.__calculateDamageOfMove(pbMove)
-        isAilment2 = self.ailment2.rollAilmentChance(pbMove)
-        if isAilment2:
-            self.ailment2.setAilment(pbMove['ailment'])
-        battleHP2 -= damage1
+        
+        modifiedPokemon1, attackViability = self.ailment1.calculateAilmentDamage(self.pokemon1)
+        
+        # check if pokemon can attack or not from any ailments
+        if attackViability:
+            # use ailment2 here because this is calcualted for opposing pokemon
+            isAilment2 = self.ailment2.rollAilmentChance(pbMove)
+            if isAilment2:
+                self.ailment2.setAilment(pbMove['ailment'])
+            battleHP2 -= damage1
+        else:
+            # some ailment is preventing attack
+            enemyMove = ''
+            if self.ailment1.trap:
+                enemyMove = 'Bind Trap'
+                pbMove = self.__loadMovesConfig('bind') # bind move somewhat correctly calculates damage in this case
+                trapDamage = self.__calculateDamageOfMove(pbMove)
+                battleHP1 -= trapDamage
+            elif self.ailment1.confusion:
+                # pokemon is confused
+                enemyMove = 'Self Confusion'
+                # 50% chance to damage self in confusion
+                if random.randrange(1, 1+1) == 1:
+                    pbMove = self.__loadMovesConfig('tackle') # tackle move correctly calculates damage in this case
+                    confusionDamage = self.__calculateDamageOfMove(pbMove)
+                    battleHP1 -= confusionDamage
+                    # pokemon damaged itself in confusion return value
 
+            elif self.ailment1.sleep:
+                # pokemon is still asleep
+                retVal = {}
+            if battleHP1 <= 0:
+                self.__defeat()
+                self.statuscode = 420
+                retVal = {'result': 'defeat', 'activeMove': move1, 'activeDamage': damage1, 'enemyMove': enemyMove, 'enemyDamage': 0}
+                return retVal
+            
         if battleHP2 <=0:
             self.pokemon1.currentHP = battleHP1
             self.__victory()
             self.statuscode = 420
             retVal = {'result': 'victory', 'activeMove': move1, 'activeDamage': damage1}
+    
+        elif battleHP2 > 0:
+            # these ailments calculate damage after an attack is completed but negated if enemy dies
+            if self.ailment1.burn or self.ailment1.poison:
+                self.pokemon1.currentHP = modifiedPokemon1.currentHP
+                battleHP1 = modifiedPokemon1.currentHP
+                if battleHP1 <= 0:
+                    self.__defeat()
+                    self.statuscode = 420
+                    retVal = {'result': 'defeat', 'activeMove': move1, 'activeDamage': damage1, 'enemyMove': move2, 'enemyDamage': damage2}
+                    return retVal
             
-        else:
             randMoveSelector = random.randrange(1, len(battleMoves2)+1)
             move2 = battleMoves2[randMoveSelector-1]
             pbMove = self.__loadMovesConfig(move2)
             damage2 = self.__calculateDamageOfMove(pbMove)
-            isAilment1 = self.ailment1.rollAilmentChance(pbMove)
-            if isAilment1:
-                self.ailment1.setAilment(pbMove['ailment'])
-            battleHP1 -= damage2
+            
+            modifiedPokemon2, attackViability = self.ailment2.calculateAilmentDamage(self.pokemon2)
+
+            # check if pokemon can attack or not from any ailments
+            if attackViability:
+                # use ailment1 here because this is calcualted for opposing pokemon
+                isAilment1 = self.ailment1.rollAilmentChance(pbMove)
+                if isAilment1:
+                    self.ailment1.setAilment(pbMove['ailment'])
+                battleHP1 -= damage2
+            
+            else:
+                # some ailment is preventing attack
+                enemyMove = ''
+                if self.ailment2.trap:
+                    enemyMove = 'Bind Trap'
+                    pbMove = self.__loadMovesConfig('bind') # bind move somewhat correctly calculates damage in this case
+                    trapDamage = self.__calculateDamageOfMove(pbMove)
+                    battleHP2 -= trapDamage
+                elif self.ailment2.confusion:
+                    enemyMove = 'Self Confusion'
+                    if random.randrange(1, 1+1) == 1:
+                        pbMove = self.__loadMovesConfig('tackle') # tackle move correctly calculates damage in this case
+                        confusionDamage = self.__calculateDamageOfMove(pbMove)
+                        battleHP2 -= confusionDamage
+                        # pokemon damaged itself in confusion return value
+                if battleHP2 <= 0:
+                    self.__victory()
+                    self.statuscode = 420
+                    retVal = {'result': 'victory', 'activeMove': move1, 'activeDamage': damage1, 'enemyMove': enemyMove, 'enemyDamage': 0}
+                    return retVal
+
             if battleHP1 <=0:
-                self.pokemon1.currentHP = battleHP1
+                self.pokemon2.currentHP = battleHP2
                 self.__defeat()
                 self.statuscode = 420
                 retVal = {'result': 'defeat', 'activeMove': move1, 'activeDamage': damage1, 'enemyMove': move2, 'enemyDamage': damage2}
-                
-        
+            
+            elif battleHP1 > 0:
+                # these ailments calculate damage after an attack is completed but negated if enemy dies
+                if self.ailment2.burn or self.ailment2.poison:
+                    self.pokemon2.currentHP = modifiedPokemon2.currentHP
+                    battleHP2 = modifiedPokemon2.currentHP
+                    if battleHP2 <= 0:
+                        self.__victory()
+                        self.statuscode = 420
+                        retVal = {'result': 'victory', 'activeMove': move1, 'activeDamage': damage1, 'enemyMove': move2, 'enemyDamage': damage2}
+                        return retVal
         return retVal
 
     def battle_auto(self):
