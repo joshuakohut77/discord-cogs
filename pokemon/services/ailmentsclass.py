@@ -22,6 +22,7 @@ class ailment:
         self.trap = False
         self.confusion = False
         self.disable = False
+        self.turnCounter = 0
         self.mostRecent = datetime.now()
         self.recordExists = False
     
@@ -132,7 +133,13 @@ class ailment:
         elif ailment == 'disable':
             self.disable = True
         self.mostRecent = datetime.now()
+    
+
+    def calculateAilmentDamage(self, pokemon):
+        """ calculates ailment damage for pokemon and sets pokemons HP """
         
+
+        return
 
 
     """
