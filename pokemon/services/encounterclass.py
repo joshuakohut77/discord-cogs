@@ -460,6 +460,7 @@ class encounter:
         # pokemon1 had victory, calculate gained exp and update current exp
         # calculate money earned, reduced HP points
         self.updateUniqueEncounters()
+        self.ailment1.save()
         expObj = exp(self.pokemon2)
         expGained = expObj.getExpGained()
         evGained = expObj.getEffortValue()
