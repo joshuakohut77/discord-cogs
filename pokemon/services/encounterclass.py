@@ -141,6 +141,7 @@ class encounter:
                 pbMove = self.__loadMovesConfig('bind') # bind move somewhat correctly calculates damage in this case
                 trapDamage = self.__calculateDamageOfMove(pbMove)
                 battleHP1 -= trapDamage
+                # pokemon is trapped and cannot move
             elif self.ailment1.confusion:
                 # pokemon is confused
                 enemyMove = 'Self Confusion'
@@ -200,6 +201,7 @@ class encounter:
                     pbMove = self.__loadMovesConfig('bind') # bind move somewhat correctly calculates damage in this case
                     trapDamage = self.__calculateDamageOfMove(pbMove)
                     battleHP2 -= trapDamage
+                    # pokemon is trapped and cannot move
                 elif self.ailment2.confusion:
                     enemyMove = 'Self Confusion'
                     if random.randrange(1, 1+1) == 1:
@@ -253,28 +255,116 @@ class encounter:
             elif power is None:
                 statusMovesCount += 1
             damage = self.__calculateDamageOfMove(pbMove)
-            battleHP2 -= damage
-            print('%s used %s' %(self.pokemon1.pokemonName, battleMoves1[randMoveSelector-1]))
-            print('%s did %s damage' %(self.pokemon1.pokemonName, str(damage)))
+
+            modifiedPokemon1, attackViability = self.ailment1.calculateAilmentDamage(self.pokemon1)
+            if attackViability:
+                battleHP2 -= damage
+                print('%s used %s' %(self.pokemon1.pokemonName, battleMoves1[randMoveSelector-1]))
+                print('%s did %s damage' %(self.pokemon1.pokemonName, str(damage)))
+                if battleHP2 <=0:
+                    self.pokemon1.currentHP = battleHP1
+                    self.__victory()
+                    self.statuscode = 420
+                    retVal = {'result': 'victory'}
+                    break
+            else:
+                # some ailment is preventing attack
+                enemyMove = ''
+                if self.ailment1.trap:
+                    enemyMove = 'Bind Trap'
+                    pbMove = self.__loadMovesConfig('bind') # bind move somewhat correctly calculates damage in this case
+                    trapDamage = self.__calculateDamageOfMove(pbMove)
+                    battleHP1 -= trapDamage
+                    # pokemon is trapped and cannot move
+                elif self.ailment1.confusion:
+                    # pokemon is confused
+                    enemyMove = 'Self Confusion'
+                    # 50% chance to damage self in confusion
+                    if random.randrange(1, 1+1) == 1:
+                        pbMove = self.__loadMovesConfig('tackle') # tackle move correctly calculates damage in this case
+                        confusionDamage = self.__calculateDamageOfMove(pbMove)
+                        battleHP1 -= confusionDamage
+                        # pokemon damaged itself in confusion return value
+                elif self.ailment1.sleep:
+                    # pokemon is still asleep
+                    retVal = {}
+                if battleHP1 <= 0:
+                    self.__defeat()
+                    self.statuscode = 420
+                    retVal = {'result': 'defeat', 'activeMove': move1, 'activeDamage': damage, 'enemyMove': enemyMove, 'enemyDamage': 0}
+                    return retVal
+            
             if battleHP2 <=0:
                 self.pokemon1.currentHP = battleHP1
                 self.__victory()
                 self.statuscode = 420
-                retVal = {'result': 'victory'}
-                break
+                retVal = {'result': 'victory', 'activeMove': move1, 'activeDamage': damage}
+                return retVal
+        
+            elif battleHP2 > 0:
+                # these ailments calculate damage after an attack is completed but negated if enemy dies
+                if self.ailment1.burn or self.ailment1.poison:
+                    self.pokemon1.currentHP = modifiedPokemon1.currentHP
+                    battleHP1 = modifiedPokemon1.currentHP
+                    if battleHP1 <= 0:
+                        self.__defeat()
+                        self.statuscode = 420
+                        retVal = {'result': 'defeat', 'activeMove': move1, 'activeDamage': damage, 'enemyMove': move2, 'enemyDamage': 0}
+                        return retVal
+
             randMoveSelector = random.randrange(1, len(battleMoves2)+1)
             move2 = battleMoves2[randMoveSelector-1]
             pbMove = self.__loadMovesConfig(move2)
             damage = self.__calculateDamageOfMove(pbMove)
-            battleHP1 -= damage
-            print('%s used %s' %(self.pokemon2.pokemonName, battleMoves2[randMoveSelector-1]))
-            print('%s did %s damage' %(self.pokemon2.pokemonName, str(damage)))
+
+            modifiedPokemon2, attackViability = self.ailment2.calculateAilmentDamage(self.pokemon2)
+            if attackViability:
+                isAilment2 = self.ailment2.rollAilmentChance(pbMove)
+                if isAilment2:
+                    self.ailment2.setAilment(pbMove['ailment'])
+                battleHP1 -= damage
+                print('%s used %s' %(self.pokemon2.pokemonName, battleMoves2[randMoveSelector-1]))
+                print('%s did %s damage' %(self.pokemon2.pokemonName, str(damage)))
+            
+            else:
+                # some ailment is preventing attack
+                enemyMove = ''
+                if self.ailment2.trap:
+                    enemyMove = 'Bind Trap'
+                    pbMove = self.__loadMovesConfig('bind') # bind move somewhat correctly calculates damage in this case
+                    trapDamage = self.__calculateDamageOfMove(pbMove)
+                    battleHP2 -= trapDamage
+                    # pokemon is trapped and cannot move
+                elif self.ailment2.confusion:
+                    enemyMove = 'Self Confusion'
+                    if random.randrange(1, 1+1) == 1:
+                        pbMove = self.__loadMovesConfig('tackle') # tackle move correctly calculates damage in this case
+                        confusionDamage = self.__calculateDamageOfMove(pbMove)
+                        battleHP2 -= confusionDamage
+                        # pokemon damaged itself in confusion return value
+                if battleHP2 <= 0:
+                    self.__victory()
+                    self.statuscode = 420
+                    retVal = {'result': 'victory', 'activeMove': move1, 'activeDamage': damage, 'enemyMove': enemyMove, 'enemyDamage': 0}
+                    return retVal
+
             if battleHP1 <=0:
                 self.pokemon1.currentHP = battleHP1
                 self.__defeat()
                 self.statuscode = 420
                 retVal = {'result': 'defeat'}
                 break
+                
+            elif battleHP1 > 0:
+                # these ailments calculate damage after an attack is completed but negated if enemy dies
+                if self.ailment2.burn or self.ailment2.poison:
+                    self.pokemon2.currentHP = modifiedPokemon2.currentHP
+                    battleHP2 = modifiedPokemon2.currentHP
+                    if battleHP2 <= 0:
+                        self.__victory()
+                        self.statuscode = 420
+                        retVal = {'result': 'victory', 'activeMove': move1, 'activeDamage': damage, 'enemyMove': move2, 'enemyDamage': 0}
+                        return retVal
             
             # max number of turns has occured. Break out of potential infinite loop
             if x == MAX_BATTLE_TURNS - 1:
