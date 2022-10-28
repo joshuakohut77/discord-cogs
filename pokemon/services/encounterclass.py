@@ -4,6 +4,7 @@ import sys
 import config
 import json
 import random
+from datetime import datetime
 from expclass import experiance as exp
 from inventoryclass import inventory as inv
 from leaderboardclass import leaderboard
@@ -121,6 +122,9 @@ class encounter:
 
         pbMove = self.__loadMovesConfig(move1)
         damage1 = self.__calculateDamageOfMove(pbMove)
+        isAilment2 = self.ailment2.rollAilmentChance(pbMove)
+        if isAilment2:
+            self.ailment2.setAilment(pbMove['ailment'])
         battleHP2 -= damage1
 
         if battleHP2 <=0:
@@ -134,6 +138,9 @@ class encounter:
             move2 = battleMoves2[randMoveSelector-1]
             pbMove = self.__loadMovesConfig(move2)
             damage2 = self.__calculateDamageOfMove(pbMove)
+            isAilment1 = self.ailment1.rollAilmentChance(pbMove)
+            if isAilment1:
+                self.ailment1.setAilment(pbMove['ailment'])
             battleHP1 -= damage2
             if battleHP1 <=0:
                 self.pokemon1.currentHP = battleHP1
@@ -433,7 +440,7 @@ class encounter:
         #     uEncObj.hitmonlee = True                                                                                    
         # elif name == 'eevee':
         #     uEncObj.eevee = True
-        
+
         uEncObj.save()      
 
     def __loadMovesConfig(self, move):
@@ -442,6 +449,7 @@ class encounter:
         p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/moves.json')
         movesConfig = json.load(open(p, 'r'))
         
-        # this is the evolution json object from the config file
+        # this is the pokemon move json object from the config file
         moveJson = movesConfig[move]
         return moveJson
+    
