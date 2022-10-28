@@ -117,37 +117,110 @@ class ailment:
     def setAilment(self, ailment):
         """ sets a pokemons ailment """
         if ailment == 'sleep':
+            self.resetAilments()
             self.sleep = True
         elif ailment == 'poison':
+            self.resetAilments()
             self.poison = True
         elif ailment == 'burn':
+            self.resetAilments()
             self.burn = True
         elif ailment == 'freeze':
+            self.resetAilments()
             self.freeze = True
         elif ailment == 'paralysis':
+            self.resetAilments()
             self.paralysis = True
         elif ailment == 'trap':
+            self.resetAilments()
             self.trap = True
         elif ailment == 'confusion':
+            self.resetAilments()
             self.confusion = True
         elif ailment == 'disable':
+            self.resetAilments()
             self.disable = True
         self.mostRecent = datetime.now()
     
+    def resetAilments(self):
+        """ sets all ailment status to False """
+        self.sleep = False
+        self.poison = False
+        self.burn = False
+        self.freeze = False
+        self.paralysis = False
+        self.trap = False
+        self.confusion = False
+        self.disable = False
 
     def calculateAilmentDamage(self, pokemon):
         """ calculates ailment damage for pokemon and sets pokemons HP """
-        
-
-        return
+        # This method returns two values, second the pokemon object and a boolean if they can do their move or not because of the ailment
+        # eg: if the pokemon is asleep, they cannot use a move and therefore will return False as a second return value
+        if self.sleep:
+            if self.turnCounter >= 7 or random.randrange(1, 7+1) == 1:
+                self.sleep = False
+                self.turnCounter = 0
+                return pokemon, True
+            else:
+                self.turnCounter = self.turnCounter + 1
+                return pokemon, False
+        elif self.poison:
+            pokemon.currentHP = round(pokemon.currentHP - pokemon.hp*(1/16))
+            return pokemon, True
+        elif self.burn:
+            pokemon.currentHP = round(pokemon.currentHP - pokemon.hp*(1/16))
+            return pokemon, True
+        elif self.freeze: # TODO update this to make things able to Thaw from fire attacks
+            return pokemon, False
+        elif self.paralysis:
+            if random.randrange(1, 4+1) == 1:
+                return pokemon, False
+            else:
+                return pokemon, True
+        elif self.trap: # damage calculated from move
+            if self.turnCounter >= 5:
+                self.turnCounter = 0
+                return pokemon, True
+            elif self.turnCounter >= 0 and self.turnCounter <= 2:
+                self.turnCounter = self.turnCounter + 1
+                return pokemon, False
+            elif self.turnCounter > 2:
+                if random.randrange(1, 3+1) == 1:
+                    self.trap = False
+                    self.turnCounter = 0
+                    return pokemon, True
+                else:
+                    self.turnCounter = self.turnCounter + 1
+                    return pokemon, False
+            else:
+                self.turnCounter = self.turnCounter + 1
+                return pokemon, False
+        elif self.confusion: # damage calculated from normal power 40 damage attack (typeless)
+            if self.turnCounter >= 5:
+                self.turnCounter = 0
+                return pokemon, True
+            elif self.turnCounter >= 0 and self.turnCounter <= 2:
+                self.turnCounter = self.turnCounter + 1
+                return pokemon, False
+            elif self.turnCounter > 2:
+                if random.randrange(1, 3+1) == 1:
+                    self.confusion = False
+                    self.turnCounter = 0
+                    return pokemon, True
+                else:
+                    self.turnCounter = self.turnCounter + 1
+                    return pokemon, False
+        else:
+            return pokemon, True
 
 
     """
+    Sleep (SLP) - unable to use moves. Lasts 1 to 7 turns randomly. 
+    Poison (PSN) - Inflicts 1/16 of max HP every turn. Damage is dealt after the move is complete but negated if enemy faints. Pokemon will lose 1HP for every 4 steps taken outside of battle
     Burn (BRN) - Inflicts 1/16 of max HP every turn and halves damage dealt by a Pokemon's physical moves. Damage is dealt after the move is complete but negated if enemy faints
     Freeze (FRZ) - Pokemon is unable to move. Pokemon is thawed if hit by fire-type move. Pokemon will never natrually thaw in Gen1
-    Paralysis (PAR) - Reduces the Speed stat and causes it to have a 25% chance it's unable to use a move. 
-    Poison (PSN) - Inflicts 1/16 of max HP every turn. Damage is dealt after the move is complete but negated if enemy faints. Pokemon will lose 1HP for every 4 steps taken outside of battle
-    Sleep (SLP) - unable to use moves. Lasts 1 to 7 turns randomly. 
+    Paralysis (PAR) - Reduces the Speed stat and causes it to have a 25% chance it's unable to use a move.     
     Trap - Bind/Bound this lasts 2-5 turns. 37.5% will last 2 turns, 37.5% change will last 3 turns 12.5% chance will last 4 turns. 12.5% chance will last 5 turns (calculate damage from move)
     Confusion - 50% chance to hurt itself. Damage determined as if attacked by a 40-power typeless physical attack (without possibility of critical hit) Lasts 2-5 turns
     """
