@@ -5,10 +5,12 @@ import discord
 from redbot.core import commands
 from discord import embeds
 from .abc import MixinMeta
-from .coinModifier import CoinModifier
+from coin_manager import CoinManager
+from message_formatter import MessageFormatter
 
 if TYPE_CHECKING:
     import discord
+
 
 class EventMixin(MixinMeta):
     __slots__: tuple = ()
@@ -17,15 +19,16 @@ class EventMixin(MixinMeta):
     async def on_message(self, message: discord.Message) -> None:
         if message.author.bot:
             return
-		
+
         msg: str = message.content.lower()
-        if re.search("@.*\+\+", msg):
-            pointAdder = CoinModifier()
-            embed, file = pointAdder.addCoin()
-            await message.reply(file=file, embed=embed)
+        if re.search("@.{2,32}?[+]{2}", msg):
+            message_formatter = MessageFormatter()
+            point_adder = CoinManager()
+            targeted_user = message_formatter.extract_targeted_user(msg, "PlusPlus")
+            point_adder.process_plus_plus(targeted_user)
 
-        if re.search("@.*\-\-", msg):
-            pointSubtractor = CoinModifier()
-            embed, file = pointSubtractor.subtractCoin()
-            await message.reply(file=file, embed=embed)
-
+        if re.search("@.{2,32}?-{2}", msg):
+            message_formatter = MessageFormatter()
+            coin_modifier = CoinManager()
+            targeted_user = message_formatter.extract_targeted_user(msg, "MinusMinus")
+            coin_modifier.process_minus_minus(targeted_user)
