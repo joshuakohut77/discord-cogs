@@ -14,8 +14,9 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     __slots__: tuple = ()
     pass
 
-class chodeCoin(EventMixin, commands.Cog, metaclass=CompositeClass):
+class ChodeCoin(EventMixin, commands.Cog, metaclass=CompositeClass):
     """chodecoin"""
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot: Red = bot
