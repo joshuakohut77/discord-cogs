@@ -15,6 +15,10 @@ if TYPE_CHECKING:
 class EventMixin(MixinMeta):
     __slots__: tuple = ()
 
+    def __init__(self, message_formatter=MessageFormatter(), coin_manager=CoinManager()):
+        self.message_formatter = message_formatter
+        self.coin_manager = coin_manager
+
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
         if message.author.bot:
@@ -22,13 +26,9 @@ class EventMixin(MixinMeta):
 
         msg: str = message.content.lower()
         if re.search("@.{2,32}?[+]{2}", msg):
-            message_formatter = MessageFormatter()
-            point_adder = CoinManager()
-            targeted_user = message_formatter.extract_targeted_user(msg, "PlusPlus")
-            point_adder.process_plus_plus(targeted_user)
+            targeted_user = self.message_formatter.extract_targeted_user(msg, "PlusPlus")
+            self.coin_manager.process_plus_plus(targeted_user)
 
         if re.search("@.{2,32}?-{2}", msg):
-            message_formatter = MessageFormatter()
-            coin_modifier = CoinManager()
-            targeted_user = message_formatter.extract_targeted_user(msg, "MinusMinus")
-            coin_modifier.process_minus_minus(targeted_user)
+            targeted_user = self.message_formatter.extract_targeted_user(msg, "MinusMinus")
+            self.coin_manager.process_minus_minus(targeted_user)
