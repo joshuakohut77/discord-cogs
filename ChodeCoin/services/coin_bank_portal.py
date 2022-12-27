@@ -5,6 +5,7 @@ import json
 from discord import embeds
 from ..helpers.date_helper import DateHelper
 
+
 class CoinBankPortal:
     def __init__(self, date_helper=DateHelper()):
         self.date_helper = date_helper
