@@ -5,8 +5,8 @@ import discord
 from redbot.core import commands
 from discord import embeds
 from .abc import MixinMeta
-from coin_manager import CoinManager
-from message_formatter import MessageFormatter
+from ..utilities.coin_manager import CoinManager
+from ..utilities.message_formatter import MessageFormatter
 
 if TYPE_CHECKING:
     import discord

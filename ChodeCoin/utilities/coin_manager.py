@@ -3,7 +3,7 @@ import discord
 import json
 from discord import embeds
 from user_manager import UserManager
-from services.coin_bank_portal import CoinBankPortal
+from ..services.coin_bank_portal import CoinBankPortal
 
 
 class CoinManager:
@@ -17,7 +17,7 @@ class CoinManager:
         if user_exists:
             self.coin_bank_portal.change_coin_count(target_user, 1)
         else:
-            self.user_manager.create_user(target_user)
+            self.user_manager.create_new_user(target_user)
             self.coin_bank_portal.change_coin_count(target_user, 1)
 
     def process_minus_minus(self, target_user):
@@ -26,5 +26,5 @@ class CoinManager:
         if user_exists:
             self.coin_bank_portal.change_coin_count(target_user, -1)
         else:
-            self.user_manager.create_user(target_user)
+            self.user_manager.create_new_user(target_user)
             self.coin_bank_portal.change_coin_count(target_user, -1)

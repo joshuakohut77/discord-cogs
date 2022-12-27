@@ -9,9 +9,11 @@ from redbot.core import commands
 
 from ChodeCoin.core.event import EventMixin
 
+
 class CompositeClass(commands.CogMeta, ABCMeta):
     __slots__: tuple = ()
     pass
+
 
 class ChodeCoin(EventMixin, commands.Cog, metaclass=CompositeClass):
     """chodecoin"""
