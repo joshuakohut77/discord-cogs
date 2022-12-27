@@ -1,14 +1,13 @@
 from __future__ import annotations
-from typing import Any, Dict, List, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from abc import ABCMeta
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
-import discord
-from redbot.core import Config, commands
+from redbot.core import commands
 
-from .event import EventMixin
+from ChodeCoin.core.event import EventMixin
 
 class CompositeClass(commands.CogMeta, ABCMeta):
     __slots__: tuple = ()
