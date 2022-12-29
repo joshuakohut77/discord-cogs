@@ -4,9 +4,9 @@ from typing import TYPE_CHECKING
 import discord
 from redbot.core import commands
 from discord import embeds
-from .abc import MixinMeta
+from ChodeCoin.core.abc import MixinMeta
 from ..utilities.coin_manager import CoinManager
-from ..utilities.message_formatter import MessageFormatter
+from ..utilities.message_manager import MessageFormatter
 
 if TYPE_CHECKING:
     import discord
@@ -15,7 +15,8 @@ if TYPE_CHECKING:
 class EventMixin(MixinMeta):
     __slots__: tuple = ()
 
-    def __init__(self, message_formatter=MessageFormatter(), coin_manager=CoinManager()):
+    def __init__(self, message_formatter=MessageFormatter(), coin_manager=CoinManager(), *args):
+        super().__init__(*args)
         self.message_formatter = message_formatter
         self.coin_manager = coin_manager
 
@@ -25,10 +26,5 @@ class EventMixin(MixinMeta):
             return
 
         msg: str = message.content.lower()
-        if re.search("@.{2,32}?[+]{2}", msg):
-            targeted_user = self.message_formatter.extract_targeted_user(msg, "PlusPlus")
-            self.coin_manager.process_plus_plus(targeted_user)
 
-        if re.search("@.{2,32}?-{2}", msg):
-            targeted_user = self.message_formatter.extract_targeted_user(msg, "MinusMinus")
-            self.coin_manager.process_minus_minus(targeted_user)
+        self.message_formatter.process_message(msg)
