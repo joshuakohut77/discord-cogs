@@ -1,9 +1,6 @@
 from __future__ import annotations
-import re
 from typing import TYPE_CHECKING
-import discord
 from redbot.core import commands
-from discord import embeds
 from ChodeCoin.core.abc import MixinMeta
 from ..utilities.coin_manager import CoinManager
 from ..utilities.message_manager import MessageFormatter

@@ -6,7 +6,7 @@ from ChodeCoin.services.coin_bank_portal import CoinBankPortal
 
 
 class TestCoinManager(unittest.TestCase):
-    def Given_process_plus_plus_When_targetuser_exists_Then_calls_change_coin_count_with_value_of_one(self) -> None:
+    def Given_process_plus_plus_When_target_user_exists_Then_calls_change_coin_count_with_value_of_one(self) -> None:
         target_user = "UserThatExists"
         mock_usermanager = Mock(UserManager)
         mock_usermanager.user_exists = True
