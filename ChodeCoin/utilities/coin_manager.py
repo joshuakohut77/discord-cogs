@@ -1,7 +1,3 @@
-import json
-import discord
-import json
-from discord import embeds
 from user_manager import UserManager
 from ..services.coin_bank_portal import CoinBankPortal
 

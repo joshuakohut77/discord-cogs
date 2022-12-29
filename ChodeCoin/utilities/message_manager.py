@@ -1,9 +1,4 @@
-import json
 import re
-import discord
-import json
-from discord import embeds
-
 from ChodeCoin.utilities.coin_manager import CoinManager
 
 
