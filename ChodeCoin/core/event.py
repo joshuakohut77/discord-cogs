@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from redbot.core import commands
-from ChodeCoin.core.abc import MixinMeta
+from ChodeCoin.core.abcd import MixinMeta
 from ..utilities.coin_manager import CoinManager
 from ..utilities.message_manager import MessageFormatter
 
