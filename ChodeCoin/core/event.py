@@ -22,7 +22,7 @@ class EventMixin(MixinMeta):
         if message.author.bot:
             return
 
-        msg: str = message.content.lower().__str__()
+        msg: str = message.content.lower()
         result, reply = self.message_manager.process_message(msg)
         if result:
             await message.reply(reply)
