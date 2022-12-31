@@ -29,9 +29,9 @@ class CoinBankPortal:
     def user_exists(self, target_user):
         with open(self.db_path, "r") as file:
             bank_records = json.load(file)
-            for user in bank_records:
-                for record in bank_records[user]:
-                    if target_user in bank_records[user][record].keys():
+            for records in bank_records:
+                for record in bank_records[records]:
+                    if target_user in bank_records[records][record].keys():
                         return True
                     else:
                         return False
