@@ -23,7 +23,6 @@ class CoinBankPortal:
         with open(self.db_path, "r+") as file:
             bank = json.load(file)
             bank["bank_records"].append(new_user)
-            file.seek(0)
             json.dump(bank, file, indent=4)
 
     def user_exists(self, target_user):
