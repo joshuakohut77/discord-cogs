@@ -44,17 +44,15 @@ class MessageManager:
         if process == "Text":
             formatted_user = targeted_user[1:len(str(targeted_user))].strip()
             formatted_user = formatted_user[:len(formatted_user)-1].strip()
-            formatted_user = formatted_user[:len(formatted_user)-1].strip()
+            formatted_user = formatted_user[:len(formatted_user)-2].strip()
         elif process == "Eggplant":
-            if targeted_user[0] == "@":
-                formatted_user = targeted_user[1:len(str(targeted_user)) - 2].strip()
-            else:
-                formatted_user = targeted_user[:len(str(targeted_user)) - 2].strip()
+            formatted_user = targeted_user[1:len(str(targeted_user))].strip()
+            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
+            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
         elif process == "No":
-            if targeted_user[0] == "@":
-                formatted_user = targeted_user[1:len(str(targeted_user)) - 2].strip()
-            else:
-                formatted_user = targeted_user[:len(str(targeted_user)) - 2].strip()
+            formatted_user = targeted_user[1:len(str(targeted_user))].strip()
+            formatted_user = formatted_user[:len(formatted_user) - 25].strip()
+            formatted_user = formatted_user[:len(formatted_user) - 25].strip()
         else:
             raise NameError("Process not defined")
 
