@@ -18,13 +18,14 @@ class CoinBankPortal:
                     bank_record["coin_count"] = new_coin_balance
                     break
         with open(self.db_path, "wt") as file:
-            json.dump(bank, file)
+            json.dump(bank, file, indent=4)
 
     def create_new_user(self, target_user):
         new_user = {"name": target_user, "coin_count": 0, "last_modified": self.date_helper.current_timestamp_string()}
         with open(self.db_path, "r+") as file:
             bank = json.load(file)
             bank["bank_records"].append(new_user)
+        with open(self.db_path, "wt") as file:
             json.dump(bank, file, indent=4)
 
     def user_exists(self, target_user):
