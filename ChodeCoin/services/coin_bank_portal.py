@@ -12,8 +12,8 @@ class CoinBankPortal:
         with open(self.db_path, "r+") as file:
             bank = json.load(file)
             for bank_record in bank["bank_records"]:
-                if target_user in bank_record.keys():
-                    current_coin_balance = bank_record["coin_count"]
+                if bank_record["name"] == target_user:
+                    current_coin_balance = bank_record["coin_count"].__int__()
                     new_coin_balance = current_coin_balance + amount
                     bank_record["coin_count"] = new_coin_balance
                     break
@@ -31,4 +31,4 @@ class CoinBankPortal:
     def user_exists(self, target_user):
         with open(self.db_path, "r") as file:
             bank = json.load(file)
-            return any(bank_record["name"]==target_user for bank_record in bank["bank_records"])
+            return any(bank_record["name"] == target_user for bank_record in bank["bank_records"])
