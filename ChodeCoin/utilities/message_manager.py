@@ -47,9 +47,9 @@ class MessageManager:
 
     def extract_targeted_user(self, targeted_user, process):
         if process == "Text":
-            formatted_user = targeted_user[:len(str(targeted_user)) - 1].strip()
+            formatted_user = targeted_user[1:-1].strip()
         elif process == "Eggplant":
-            formatted_user = targeted_user[:len(str(targeted_user)) - 1].strip()
+            formatted_user = targeted_user[1:-1].strip()
         elif process == "No":
             formatted_user = targeted_user[:len(str(targeted_user)) - 1].strip()
         else:
