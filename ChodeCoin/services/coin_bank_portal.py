@@ -31,6 +31,7 @@ class CoinBankPortal:
             bank_records = json.load(file)
             for records in bank_records:
                 for record in bank_records[records]:
+                    print(record)
                     if target_user in bank_records[records][record].keys():
                         return True
                     else:
