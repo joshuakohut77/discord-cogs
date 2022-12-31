@@ -42,14 +42,11 @@ class MessageManager:
 
     def extract_targeted_user(self, targeted_user, process):
         if process == "Text":
-            preformat = re.search(r"@.{2,32}?[+-]", targeted_user)
-            formatted_user = preformat.group(1)[:len(str(targeted_user)) - 1].strip()
+            formatted_user = targeted_user[:len(str(targeted_user)) - 1].strip()
         elif process == "Eggplant":
-            preformat = re.search(r"@.{2,32}?:", targeted_user)
-            formatted_user = preformat.group(1)[:len(str(targeted_user)) - 1].strip()
+            formatted_user = targeted_user[:len(str(targeted_user)) - 1].strip()
         elif process == "No":
-            preformat = re.search(r"@.{2,32}?:", targeted_user)
-            formatted_user = preformat.group(1)[:len(str(targeted_user)) - 1].strip()
+            formatted_user = targeted_user[:len(str(targeted_user)) - 1].strip()
         else:
             raise NameError("Process not defined")
 
