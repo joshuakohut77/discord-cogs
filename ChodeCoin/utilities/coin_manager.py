@@ -1,4 +1,4 @@
-from user_manager import UserManager
+from .user_manager import UserManager
 from ..services.coin_bank_portal import CoinBankPortal
 
 
