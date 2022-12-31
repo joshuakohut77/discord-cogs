@@ -71,7 +71,7 @@ class MessageManager:
             return False, message
 
     def find_eggplant_eggplant(self, message):
-        search_result = re.search(r"@.{2,32}?((:eggplant:)\s*){2}", message)
+        search_result = re.search(r"((@.{2,32}?)|(<\d{18,20}>\s{1,3}?))((🍆)\s*){2}", message)
         if search_result:
             targeted_user = search_result.group(0)
             formatted_user = self.extract_targeted_user(targeted_user, "Text")
