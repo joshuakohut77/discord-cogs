@@ -11,7 +11,7 @@ class MessageManager:
 
         is_plus_plus, targeted_user = self.find_plus_plus(message)
         if is_plus_plus:
-            return True, self.extract_targeted_user(message, "text")
+            return True, self.extract_targeted_user(message, "Text")
 
         is_plus_plus, targeted_user = self.find_plus_plus(message)
         if is_plus_plus:
