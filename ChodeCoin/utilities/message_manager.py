@@ -42,10 +42,9 @@ class MessageManager:
 
     def extract_targeted_user(self, targeted_user, process):
         if process == "Text":
-            if targeted_user[0] == "@":
-                formatted_user = targeted_user[1:len(str(targeted_user)) - 2].strip()
-            else:
-                formatted_user = targeted_user[:len(str(targeted_user)) - 3].strip()
+            formatted_user = targeted_user[1:len(str(targeted_user))].strip()
+            formatted_user = formatted_user[:len(formatted_user)-1].strip()
+            formatted_user = formatted_user[:len(formatted_user)-1].strip()
         elif process == "Eggplant":
             if targeted_user[0] == "@":
                 formatted_user = targeted_user[1:len(str(targeted_user)) - 2].strip()
