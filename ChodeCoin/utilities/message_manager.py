@@ -55,7 +55,7 @@ class MessageManager:
     def find_plus_plus(self, message):
         search_result = re.search(r"@.{2,32}?[+]{2}", message)
         if search_result:
-            targeted_user = search_result.group(1)
+            targeted_user = search_result.group(0)
             formatted_user = self.extract_targeted_user(targeted_user, "Text")
             return True, formatted_user
         else:
@@ -64,7 +64,7 @@ class MessageManager:
     def find_minus_minus(self, message):
         search_result = re.search(r"@.{2,32}?-{2}", message)
         if search_result:
-            targeted_user = search_result.group(1)
+            targeted_user = search_result.group(0)
             formatted_user = self.extract_targeted_user(targeted_user, "Text")
             return True, formatted_user
         else:
@@ -73,7 +73,7 @@ class MessageManager:
     def find_eggplant_eggplant(self, message):
         search_result = re.search(r"@.{2,32}?((:eggplant:)\s*){2}", message)
         if search_result:
-            targeted_user = search_result.group(1)
+            targeted_user = search_result.group(0)
             formatted_user = self.extract_targeted_user(targeted_user, "Text")
             return True, formatted_user
         else:
@@ -82,7 +82,7 @@ class MessageManager:
     def find_no_no(self, message):
         search_result = re.search(r"@.{2,32}?((:No:)\s*){2}", message)
         if search_result:
-            targeted_user = search_result.group(1)
+            targeted_user = search_result.group(0)
             formatted_user = self.extract_targeted_user(targeted_user, "Text")
             return True, formatted_user
         else:
