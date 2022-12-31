@@ -48,7 +48,7 @@ class MessageManager:
             discord_id_check = re.search(r"\d{18,20}>", formatted_user)
             if discord_id_check:
                 discord_user = discord_id_check.group(0)
-                formatted_user = discord_user[:len(formatted_user)-1]
+                formatted_user = f"@{discord_user[:len(formatted_user)-1]}"
         elif process == "Eggplant":
             formatted_user = targeted_user[1:len(str(targeted_user))].strip()
             formatted_user = formatted_user[:len(formatted_user) - 1].strip()
@@ -56,7 +56,7 @@ class MessageManager:
             discord_id_check = re.search(r"\d{18,20}>", formatted_user)
             if discord_id_check:
                 discord_user = discord_id_check.group(0)
-                formatted_user = discord_user[:len(formatted_user) - 1]
+                formatted_user = f"@{discord_user[:len(formatted_user) - 1]}"
         elif process == "No":
             formatted_user = targeted_user[1:len(str(targeted_user))].strip()
             formatted_user = formatted_user[:len(formatted_user) - 25].strip()
