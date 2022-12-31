@@ -12,25 +12,29 @@ class MessageManager:
         if is_plus_plus:
             self.coin_manager.process_plus_plus(targeted_user)
             return_message = self.generate_reply(targeted_user, "plus_plus")
-            return return_message
+            return True, return_message
 
         is_eggplant_eggplant, targeted_user = self.find_eggplant_eggplant(message)
         if is_eggplant_eggplant:
             self.coin_manager.process_plus_plus(targeted_user)
             return_message = self.generate_reply(targeted_user, "plus_plus")
-            return return_message
+            return True, return_message
 
         is_minus_minus, targeted_user = self.find_minus_minus(message)
         if is_minus_minus:
             self.coin_manager.process_minus_minus(targeted_user)
             return_message = self.generate_reply(targeted_user, "minus_minus")
-            return return_message
+            return True, return_message
 
         is_no_no, targeted_user = self.find_no_no(message)
         if is_no_no:
             self.coin_manager.process_minus_minus(targeted_user)
             return_message = self.generate_reply(targeted_user, "minus_minus")
-            return return_message
+            return True, return_message
+
+        return False, ""
+
+
 
     def generate_reply(self, targeted_user, process):
         if process == "plus_plus":
