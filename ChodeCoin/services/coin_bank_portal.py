@@ -32,7 +32,7 @@ class CoinBankPortal:
         with open(self.db_path, "r") as file:
             bank = json.load(file)
             for bank_record in bank["bank_records"]:
-                if target_user in bank_record["name"]:
+                if bank_record["name"] == target_user:
                     return True
                 else:
                     return False
