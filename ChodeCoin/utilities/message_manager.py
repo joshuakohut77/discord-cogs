@@ -44,15 +44,27 @@ class MessageManager:
         if process == "Text":
             formatted_user = targeted_user[1:len(str(targeted_user))].strip()
             formatted_user = formatted_user[:len(formatted_user)-1].strip()
-            formatted_user = formatted_user[:len(formatted_user)-2].strip()
+            formatted_user = formatted_user[:len(formatted_user)-1].strip()
+            discord_id_check = re.search(r"\d{18,20}>", formatted_user)
+            if discord_id_check:
+                discord_user = discord_id_check.group(0)
+                formatted_user = discord_user[:len(formatted_user)-1]
         elif process == "Eggplant":
             formatted_user = targeted_user[1:len(str(targeted_user))].strip()
             formatted_user = formatted_user[:len(formatted_user) - 1].strip()
             formatted_user = formatted_user[:len(formatted_user) - 1].strip()
+            discord_id_check = re.search(r"\d{18,20}>", formatted_user)
+            if discord_id_check:
+                discord_user = discord_id_check.group(0)
+                formatted_user = discord_user[:len(formatted_user) - 1]
         elif process == "No":
             formatted_user = targeted_user[1:len(str(targeted_user))].strip()
             formatted_user = formatted_user[:len(formatted_user) - 25].strip()
             formatted_user = formatted_user[:len(formatted_user) - 25].strip()
+            discord_id_check = re.search(r"\d{18,20}>", formatted_user)
+            if discord_id_check:
+                discord_user = discord_id_check.group(0)
+                formatted_user = discord_user[:len(formatted_user) - 1]
         else:
             raise NameError("Process not defined")
 
@@ -80,7 +92,7 @@ class MessageManager:
         search_result = re.search(r"((@.{2,32}?)|(<\d{18,20}>\s{1,3}?))((🍆)\s*){2}", message)
         if search_result:
             targeted_user = search_result.group(0)
-            formatted_user = self.extract_targeted_user(targeted_user, "Text")
+            formatted_user = self.extract_targeted_user(targeted_user, "Eggplant")
             return True, formatted_user
         else:
             return False, message
@@ -89,7 +101,7 @@ class MessageManager:
         search_result = re.search(r"((@.{2,32}?)|(<\d{18,20}>\s{1,3}?))((<:no:1058833719399567460>)\s*){2}", message)
         if search_result:
             targeted_user = search_result.group(0)
-            formatted_user = self.extract_targeted_user(targeted_user, "Text")
+            formatted_user = self.extract_targeted_user(targeted_user, "No")
             return True, formatted_user
         else:
             return False, message
