@@ -2,7 +2,7 @@ import re
 from ChodeCoin.utilities.coin_manager import CoinManager
 
 
-class MessageFormatter:
+class MessageManager:
 
     def __init__(self, coin_manager=CoinManager()):
         self.coin_manager = coin_manager
@@ -11,22 +11,32 @@ class MessageFormatter:
         is_plus_plus, targeted_user = self.find_plus_plus(message)
         if is_plus_plus:
             self.coin_manager.process_plus_plus(targeted_user)
-            return
+            return_message = self.generate_reply(targeted_user, "plus_plus")
+            return return_message
 
         is_eggplant_eggplant, targeted_user = self.find_eggplant_eggplant(message)
         if is_eggplant_eggplant:
             self.coin_manager.process_plus_plus(targeted_user)
-            return
+            return_message = self.generate_reply(targeted_user, "plus_plus")
+            return return_message
 
         is_minus_minus, targeted_user = self.find_minus_minus(message)
         if is_minus_minus:
             self.coin_manager.process_minus_minus(targeted_user)
-            return
+            return_message = self.generate_reply(targeted_user, "minus_minus")
+            return return_message
 
         is_no_no, targeted_user = self.find_no_no(message)
         if is_no_no:
             self.coin_manager.process_minus_minus(targeted_user)
-            return
+            return_message = self.generate_reply(targeted_user, "minus_minus")
+            return return_message
+
+    def generate_reply(self, targeted_user, process):
+        if process == "plus_plus":
+            return f"Gave {targeted_user} a ChodeCoin!"
+        elif process == "minus_minus":
+            return f"{targeted_user} lost a ChodeCoin!"
 
     def extract_targeted_user(self, targeted_user, process):
         if process == "Text":
@@ -78,4 +88,3 @@ class MessageFormatter:
             return True, formatted_user
         else:
             return False, message
-

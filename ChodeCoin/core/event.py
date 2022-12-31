@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from redbot.core import commands
 from ChodeCoin.core.abcd import MixinMeta
 from ..utilities.coin_manager import CoinManager
-from ..utilities.message_manager import MessageFormatter
+from ..utilities.message_manager import MessageManager
 
 if TYPE_CHECKING:
     import discord
@@ -12,9 +12,9 @@ if TYPE_CHECKING:
 class EventMixin(MixinMeta):
     __slots__: tuple = ()
 
-    def __init__(self, message_formatter=MessageFormatter(), coin_manager=CoinManager(), *args):
+    def __init__(self, message_manager=MessageManager(), coin_manager=CoinManager(), *args):
         super().__init__(*args)
-        self.message_formatter = message_formatter
+        self.message_manager = message_manager
         self.coin_manager = coin_manager
 
     @commands.Cog.listener()
@@ -24,4 +24,6 @@ class EventMixin(MixinMeta):
 
         msg: str = message.content.lower()
 
-        self.message_formatter.process_message(msg)
+        result = self.message_manager.process_message(msg)
+
+        await message.reply(result)
