@@ -8,6 +8,11 @@ class MessageManager:
         self.coin_manager = coin_manager
 
     def process_message(self, message):
+
+        is_plus_plus, targeted_user = self.find_plus_plus(message)
+        if is_plus_plus:
+            return True, self.extract_targeted_user(message, "text")
+
         is_plus_plus, targeted_user = self.find_plus_plus(message)
         if is_plus_plus:
             self.coin_manager.process_plus_plus(targeted_user)
