@@ -42,18 +42,27 @@ class MessageManager:
 
     def extract_targeted_user(self, targeted_user, process):
         if process == "Text":
-            formatted_user = targeted_user[1:len(str(targeted_user)) - 2].strip()
+            if targeted_user[1] == "@":
+                formatted_user = targeted_user[1:len(str(targeted_user)) - 2].strip()
+            else:
+                formatted_user = targeted_user[:len(str(targeted_user)) - 2].strip()
         elif process == "Eggplant":
-            formatted_user = targeted_user[1:len(str(targeted_user)) - 2].strip()
+            if targeted_user[1] == "@":
+                formatted_user = targeted_user[1:len(str(targeted_user)) - 2].strip()
+            else:
+                formatted_user = targeted_user[:len(str(targeted_user)) - 2].strip()
         elif process == "No":
-            formatted_user = targeted_user[:len(str(targeted_user)) - 2].strip()
+            if targeted_user[1] == "@":
+                formatted_user = targeted_user[1:len(str(targeted_user)) - 2].strip()
+            else:
+                formatted_user = targeted_user[:len(str(targeted_user)) - 2].strip()
         else:
             raise NameError("Process not defined")
 
         return formatted_user
 
     def find_plus_plus(self, message):
-        search_result = re.search(r"@.{2,32}?[+]{2}", message)
+        search_result = re.search(r"((@.{2,32}?)|(<\d{18,20}>\s{1,3}?))[+]{2}", message)
         if search_result:
             targeted_user = search_result.group(0)
             formatted_user = self.extract_targeted_user(targeted_user, "Text")
@@ -62,7 +71,7 @@ class MessageManager:
             return False, message
 
     def find_minus_minus(self, message):
-        search_result = re.search(r"@.{2,32}?-{2}", message)
+        search_result = re.search(r"((@.{2,32}?)|(<\d{18,20}>\s{1,3}?))-{2}", message)
         if search_result:
             targeted_user = search_result.group(0)
             formatted_user = self.extract_targeted_user(targeted_user, "Text")
@@ -80,7 +89,7 @@ class MessageManager:
             return False, message
 
     def find_no_no(self, message):
-        search_result = re.search(r"@.{2,32}?((:No:)\s*){2}", message)
+        search_result = re.search(r"((@.{2,32}?)|(<\d{18,20}>\s{1,3}?))((<:no:1058833719399567460>)\s*){2}", message)
         if search_result:
             targeted_user = search_result.group(0)
             formatted_user = self.extract_targeted_user(targeted_user, "Text")

@@ -26,4 +26,3 @@ class EventMixin(MixinMeta):
         result, reply = self.message_manager.process_message(msg)
         if result:
             await message.reply(reply)
-            await message.reply(msg)
