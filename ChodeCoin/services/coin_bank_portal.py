@@ -9,14 +9,14 @@ class CoinBankPortal:
         self.db_path = f"{Path(__file__).parents[1]}/db/coin_bank.json"
     def change_coin_count(self, target_user, amount):
         with open(self.db_path, "r+") as file:
-            bank_records = json.load(file)
-            for user in bank_records:
-                if user["name"] == target_user:
-                    current_coin_balance = user["coin_count"]
+            bank = json.load(file)
+            for bank_record in bank["bank_records"]:
+                if target_user in bank_record.keys():
+                    current_coin_balance = bank_record["coin_count"]
                     new_coin_balance = current_coin_balance + amount
-                    user["coin_count"] = new_coin_balance
+                    bank_record["coin_count"] = new_coin_balance
                     break
-            json.dump(bank_records, file)
+            json.dump(bank, file)
 
     def create_new_user(self, target_user):
         new_user = {"name": target_user, "coin_count": 0, "last_modified": self.date_helper.current_timestamp_string()}
