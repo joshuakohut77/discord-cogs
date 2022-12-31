@@ -1,14 +1,5 @@
 {
     "bank_records": [
-        {
-            "name": "Cacti Twig#2672"
-            ,"coin_count": 69
-            ,"last_modified": "2022-12-24 22:35:52.542712"
-        }
-        ,{
-            "name": "BiCuriousGeorge#8804"
-            ,"coin_count": -420
-            ,"last_modified": "2022-12-23 22:35:52.542712"
-        }
+
     ]
 }
