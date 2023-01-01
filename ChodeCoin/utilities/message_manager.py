@@ -1,11 +1,13 @@
 import re
 from ChodeCoin.utilities.coin_manager import CoinManager
+from ChodeCoin.utilities.info_manager import InfoManager
 
 
 class MessageManager:
 
-    def __init__(self, coin_manager=CoinManager()):
+    def __init__(self, coin_manager=CoinManager(), info_manager=InfoManager()):
         self.coin_manager = coin_manager
+        self.info_manager = info_manager
 
     def process_message(self, message):
         is_plus_plus, targeted_user = self.find_plus_plus(message)
@@ -37,7 +39,7 @@ class MessageManager:
     def generate_reply(self, targeted_user, process, amount):
         if amount == 1:
             amount = "a"
-        current_balance = self.coin_manager.get_current_balance(targeted_user)
+        current_balance = self.info_manager.get_current_balance(targeted_user)
         if process == "plus_plus":
             return f"Gave {targeted_user} {amount} ChodeCoin! {targeted_user} now has {current_balance} in the bank."
         elif process == "minus_minus":

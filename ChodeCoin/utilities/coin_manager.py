@@ -24,11 +24,3 @@ class CoinManager:
         else:
             self.user_manager.create_new_user(target_user)
             self.coin_bank_portal.change_coin_count(target_user, -1)
-
-    def get_current_balance(self, target_user):
-        user_exists = self.user_manager.user_exists(target_user)
-
-        if user_exists:
-            return self.coin_bank_portal.get_current_balance(target_user)
-        else:
-            return "User Does Not Exist"
