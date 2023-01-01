@@ -11,34 +11,37 @@ class MessageManager:
         is_plus_plus, targeted_user = self.find_plus_plus(message)
         if is_plus_plus:
             self.coin_manager.process_plus_plus(targeted_user)
-            return_message = self.generate_reply(targeted_user, "plus_plus")
+            return_message = self.generate_reply(targeted_user, "plus_plus", 1)
             return True, return_message
 
         is_eggplant_eggplant, targeted_user = self.find_eggplant_eggplant(message)
         if is_eggplant_eggplant:
             self.coin_manager.process_plus_plus(targeted_user)
-            return_message = self.generate_reply(targeted_user, "plus_plus")
+            return_message = self.generate_reply(targeted_user, "plus_plus", 1)
             return True, return_message
 
         is_minus_minus, targeted_user = self.find_minus_minus(message)
         if is_minus_minus:
             self.coin_manager.process_minus_minus(targeted_user)
-            return_message = self.generate_reply(targeted_user, "minus_minus")
+            return_message = self.generate_reply(targeted_user, "minus_minus", 1)
             return True, return_message
 
         is_no_no, targeted_user = self.find_no_no(message)
         if is_no_no:
             self.coin_manager.process_minus_minus(targeted_user)
-            return_message = self.generate_reply(targeted_user, "minus_minus")
+            return_message = self.generate_reply(targeted_user, "minus_minus", 1)
             return True, return_message
 
         return False, ""
 
-    def generate_reply(self, targeted_user, process):
+    def generate_reply(self, targeted_user, process, amount):
+        if amount == 1:
+            amount = "a"
+        current_balance = self.coin_manager.get_current_balance(targeted_user)
         if process == "plus_plus":
-            return f"Gave {targeted_user} a ChodeCoin!"
+            return f"Gave {targeted_user} {amount} ChodeCoin! They now have {current_balance} ChodeCoin."
         elif process == "minus_minus":
-            return f"{targeted_user} lost a ChodeCoin!"
+            return f"{targeted_user} lost {amount} ChodeCoin! They now have {current_balance} ChodeCoin."
 
     def extract_targeted_user(self, targeted_user, process):
         if process == "Text":
