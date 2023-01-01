@@ -32,3 +32,15 @@ class CoinBankPortal:
         with open(self.db_path, "r") as file:
             bank = json.load(file)
             return any(bank_record["name"] == target_user for bank_record in bank["bank_records"])
+
+    def get_current_balance(self, target_user):
+        if self.user_exists(target_user):
+            with open(self.db_path, "r") as file:
+                bank = json.load(file)
+                current_balance = ""
+                for bank_record in bank["bank_records"]:
+                    if bank_record["name"] == target_user:
+                        current_balance = bank_record["coin_count"]
+            return current_balance.__str__()
+        else:
+            return "User Does Not Exist"
