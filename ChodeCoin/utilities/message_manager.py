@@ -39,9 +39,9 @@ class MessageManager:
             amount = "a"
         current_balance = self.coin_manager.get_current_balance(targeted_user)
         if process == "plus_plus":
-            return f"Gave {targeted_user} {amount} ChodeCoin! They now have {current_balance} ChodeCoin."
+            return f"Gave {targeted_user} {amount} ChodeCoin! {targeted_user} now has {current_balance} in the bank."
         elif process == "minus_minus":
-            return f"{targeted_user} lost {amount} ChodeCoin! They now have {current_balance} ChodeCoin."
+            return f"{targeted_user} lost {amount} ChodeCoin! {targeted_user} now has {current_balance} in the bank."
 
     def extract_targeted_user(self, targeted_user, process):
         if process == "Text":
