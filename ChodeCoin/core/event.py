@@ -25,6 +25,6 @@ class EventMixin(MixinMeta):
             return
 
         msg: str = message.content
-        result, reply = self.work_flow.process_message(msg)
-        if result:
+        reply = self.work_flow.process_message(msg)
+        if reply is not None:
             await message.reply(reply)
