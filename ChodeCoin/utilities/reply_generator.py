@@ -1,11 +1,22 @@
+import discord
+from ChodeCoin.helpers.array_helper import translate_user_info_to_array
 from ChodeCoin.utilities.info_manager import InfoManager
+
+
+def generate_leaderboard_reply(user_array: []):
+    names = translate_user_info_to_array(user_array, "Name")
+    values = translate_user_info_to_array(user_array, "Coin_Count")
+    embed = discord.Embed(title="ChodeCoin Leaderboard", color=0x0b1bf4)
+    embed.add_field(name="Name", value=names, inline=False)
+    embed.add_field(name="ChodeCoin", value=values, inline=False)
+    return embed
 
 
 class ReplyGenerator:
     def __init__(self, info_manager=InfoManager()):
         self.info_manager = info_manager
 
-    def generate_reply(self, targeted_user, process, amount):
+    def generate_chodecoin_ping_reply(self, targeted_user, process, amount):
         if amount == 1:
             amount = "a"
         current_balance = self.info_manager.get_current_balance(targeted_user)

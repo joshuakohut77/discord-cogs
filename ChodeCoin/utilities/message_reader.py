@@ -3,6 +3,15 @@ from ChodeCoin.utilities.coin_manager import CoinManager
 from ChodeCoin.utilities.info_manager import InfoManager
 
 
+def is_leaderboard_command(message: str):
+    standardized_message = message.lower()
+    command_search = re.search(r"^!leaderboard", standardized_message)
+    if command_search:
+        return True
+    else:
+        return False
+
+
 class MessageReader:
 
     def __init__(self, coin_manager=CoinManager(), info_manager=InfoManager()):
