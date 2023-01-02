@@ -22,8 +22,7 @@ class WorkFlow:
                 reply = self.chodecoin_ping_workflow.process_chodecoin_ping(message)
             return reply
         elif process == "leaderboard_workflow":
-            return "Workflow hit"
-            # return self.leaderboard_workflow.process_leaderboard_request()
+            return self.leaderboard_workflow.process_leaderboard_request()
         else:
             return None
 
