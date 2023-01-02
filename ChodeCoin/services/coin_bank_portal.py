@@ -1,11 +1,15 @@
 import json
+from ChodeCoin.objects.user import User
 from pathlib import Path
+
+from ..helpers.array_helper import ArrayHelper
 from ..helpers.date_helper import DateHelper
 
 
 class CoinBankPortal:
-    def __init__(self, date_helper=DateHelper()):
+    def __init__(self, date_helper=DateHelper(), array_helper=ArrayHelper()):
         self.date_helper = date_helper
+        self.array_helper = array_helper
         self.db_path = f"{Path(__file__).parents[1]}/db/coin_bank.json"
 
     def change_coin_count(self, target_user, amount):
@@ -44,3 +48,11 @@ class CoinBankPortal:
             return current_balance.__str__()
         else:
             return "User Does Not Exist"
+
+    def get_wealthiest_users(self, return_count):
+        with open(self.db_path, "r") as file:
+            bank = json.load(file)
+            user_list = []
+            for bank_record in bank["bank_records"]:
+                self.array_helper.add_if_valid(user_list, User(bank_record["name"], bank_record["coin_count"]), return_count)
+        return user_list
