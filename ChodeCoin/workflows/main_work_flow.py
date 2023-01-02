@@ -25,8 +25,8 @@ class WorkFlow:
         else:
             return None
 
-    def validate_input(self, author, message):
-        reply = self.guard.against_self_plusplus(author, message)
+    def validate_input(self, message, author):
+        reply = self.guard.against_self_plusplus(message, author)
         if reply is not None:
             return reply
         else:
