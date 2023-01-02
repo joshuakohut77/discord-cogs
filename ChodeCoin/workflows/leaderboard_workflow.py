@@ -22,5 +22,5 @@ class LeaderboardWorkflow:
         self.info_manager = info_manager
 
     def process_leaderboard_request(self):
-        names, values = self.info_manager.get_wealthiest_users(10)
-        return generate_leaderboard_reply()
+        users = self.info_manager.get_wealthiest_users(10)
+        return generate_leaderboard_reply(users)
