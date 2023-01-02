@@ -12,7 +12,7 @@ class WorkFlow:
 
         if process == "chodecoin_ping":
             reply = self.validate_input(message, author)
-            if reply is not None:
+            if reply is None:
                 reply = self.chodecoin_ping_workflow.process_chodecoin_ping(message)
             return reply
         else:
