@@ -6,7 +6,8 @@ class Guard:
         self.message_reader = message_reader
 
     def against_self_plusplus(self, message_author, message):
-        targeted_user = self.message_reader.extract_targeted_user(message, "Text")
+        msg: str = message.content
+        targeted_user = self.message_reader.extract_targeted_user(str, "Text")
         if message_author == targeted_user:
             return "You silly goose you can't updoot yourself o_O"
         else:
