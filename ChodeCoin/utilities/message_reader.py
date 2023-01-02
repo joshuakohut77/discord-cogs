@@ -3,7 +3,7 @@ from ChodeCoin.utilities.coin_manager import CoinManager
 from ChodeCoin.utilities.info_manager import InfoManager
 
 
-class MessageManager:
+class MessageReader:
 
     def __init__(self, coin_manager=CoinManager(), info_manager=InfoManager()):
         self.coin_manager = coin_manager

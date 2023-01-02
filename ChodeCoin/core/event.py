@@ -4,7 +4,7 @@ from redbot.core import commands
 from ChodeCoin.core.abcd import MixinMeta
 from ..utilities.coin_manager import CoinManager
 from ..utilities.message_reader import MessageManager
-from ..workflows.work_flow import WorkFlow
+from ..workflows.main_work_flow import WorkFlow
 
 if TYPE_CHECKING:
     import discord
