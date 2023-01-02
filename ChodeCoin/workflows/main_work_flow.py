@@ -1,5 +1,5 @@
 from ChodeCoin.utilities.guard import Guard
-from ChodeCoin.workflows.chodecoin_ping import ChodeCoinPingWorkflow
+from ChodeCoin.workflows.chodecoin_ping_workflow import ChodeCoinPingWorkflow
 
 
 class WorkFlow:
