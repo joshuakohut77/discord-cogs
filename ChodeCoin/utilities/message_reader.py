@@ -86,7 +86,7 @@ class MessageManager:
             return None
 
     def find_no_no(self, message):
-        search_result = re.search(r"((@.{2,32}?)|(<\d{18,20}>\s{1,3}?))((<:no:1058833719399567460>)\s*){2}", message)
+        search_result = re.search(r"((@.{2,32}?)|(<\d{18,20}>\s{1,3}?))((<:No:1058833719399567460>)\s*){2}", message)
         if search_result:
             targeted_user = search_result.group(0)
             formatted_user = self.extract_targeted_user(targeted_user, "No")
