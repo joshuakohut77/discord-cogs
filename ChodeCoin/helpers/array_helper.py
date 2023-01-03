@@ -1,12 +1,14 @@
 from ChodeCoin.objects.user import User
 
 
-def translate_user_info_to_array(user_array: []):
-    name_array = []
-    value_array = []
+def translate_user_info_to_display_strings(user_array: []):
+    name_array = ""
+    value_array = ""
     for user in user_array:
-        name_array.insert(len(name_array), user.name.__str__())
-        value_array.insert(len(value_array), user.coin_count.__str__())
+        name_array = name_array + str(user.name) + "\n"
+        value_array = value_array + str(user.coin_count) + "\n"
+    name_array = name_array[:len(name_array)-2]
+    value_array = value_array[:len(value_array)-2]
     return name_array, value_array
 
 
