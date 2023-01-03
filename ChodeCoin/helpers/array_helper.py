@@ -24,7 +24,7 @@ class ArrayHelper:
         return self.insert_into_array_if_wealthy_enough(user_array, user_to_validate, return_count)
 
     def insert_into_array_if_wealthy_enough(self, user_array: [], user_to_add: User, return_count):
-        user_array.add(user_to_add)
+        user_array.insert(user_to_add)
         if len(user_array) > return_count:
             user_array = self.sort_array(user_array)
             user_array = user_array[:-1]
