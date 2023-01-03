@@ -9,7 +9,7 @@ def generate_leaderboard_reply(user_array: []):
     embed = discord.Embed(title="ChodeCoin Leaderboard", color=0x0b1bf4)
     embed.add_field(name="Name", value=names, inline=False)
     embed.add_field(name="ChodeCoin", value=values, inline=False)
-    return embed
+    return "", embed
 
 
 class ReplyGenerator:
