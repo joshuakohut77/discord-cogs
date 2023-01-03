@@ -3,10 +3,11 @@ from ChodeCoin.utilities.info_manager import InfoManager
 
 
 def generate_leaderboard_reply(user_array: []):
+    fml = "0"
     embed = discord.Embed()
     embed = discord.Embed(title="ChodeCoin Leaderboard", color=0x0b1bf4)
     embed.add_field(name="Name", value="", inline=True)
-    embed.add_field(name="ChodeCoin", value=str(len(user_array).__str__()), inline=True)
+    embed.add_field(name="ChodeCoin", value=str(fml), inline=True)
     return "", embed
 
 
