@@ -7,7 +7,7 @@ def generate_leaderboard_reply(user_array: []):
     names, coin_counts = translate_user_info_to_display_strings(user_array)
     embed = discord.Embed()
     embed = discord.Embed(title="ChodeCoin Leaderboard", color=0x0b1bf4)
-    embed.add_field(name="   Name", value=str(names), inline=True)
+    embed.add_field(name="Name", value=str(names), inline=True)
     embed.add_field(name="ChodeCoin", value=str(coin_counts), inline=True)
     return "", embed
 

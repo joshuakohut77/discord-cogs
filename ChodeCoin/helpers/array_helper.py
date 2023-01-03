@@ -8,7 +8,7 @@ def translate_user_info_to_display_strings(user_array: []):
     if len(user_array) > 0:
         for user in user_array:
             name_string = f"{name_string} {counter}.) {user.name} \n"
-            coin_count_string = f"{coin_count_string} {     user.coin_count} \n"
+            coin_count_string = f"{coin_count_string} {user.coin_count} \n"
             counter += 1
         name_string = name_string[:len(name_string)-2]
         coin_count_string = coin_count_string[:len(coin_count_string)-2]
