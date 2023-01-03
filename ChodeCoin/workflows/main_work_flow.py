@@ -20,11 +20,11 @@ class WorkFlow:
             reply = self.validate_input(message, author)
             if reply is None:
                 reply = self.chodecoin_ping_workflow.process_chodecoin_ping(message)
-            return reply
+            return reply, None
         elif process == "leaderboard_workflow":
             return self.leaderboard_workflow.process_leaderboard_request()
         else:
-            return None
+            return None, None
 
     def identify_request(self, message):
         if self.chodecoin_ping_workflow.is_chodecoin_ping(message):
