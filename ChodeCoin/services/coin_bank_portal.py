@@ -53,7 +53,7 @@ class CoinBankPortal:
         with open(self.db_path, "r") as file:
             bank = json.load(file)
             user_list = []
-            if len(bank["bank_records"]) > 0:
+            if bank["bank_records"].size > 0:
                 for bank_record in bank["bank_records"]:
                     self.array_helper.add_if_valid(user_list, User(bank_record["name"], bank_record["coin_count"]), return_count)
                 return user_list
