@@ -4,11 +4,15 @@ from ChodeCoin.objects.user import User
 def translate_user_info_to_display_strings(user_array: []):
     name_array = ""
     value_array = ""
-    for user in user_array:
-        name_array = name_array + str(user.name) + "\n"
-        value_array = value_array + str(user.coin_count) + "\n"
-    name_array = name_array[:len(name_array)-2]
-    value_array = value_array[:len(value_array)-2]
+    if len(user_array) > 0:
+        for user in user_array:
+            name_array = name_array + str(user.name) + "\n"
+            value_array = value_array + str(user.coin_count) + "\n"
+        name_array = name_array[:len(name_array)-2]
+        value_array = value_array[:len(value_array)-2]
+    else:
+        name_array = "No users yet!"
+        value_array = "Type \"!ChodeCoin help\" to learn more <3"
     return name_array, value_array
 
 
