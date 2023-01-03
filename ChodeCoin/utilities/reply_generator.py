@@ -1,14 +1,14 @@
 import discord
-from ChodeCoin.objects.user import User
+from ChodeCoin.helpers.array_helper import translate_user_info_to_array
 from ChodeCoin.utilities.info_manager import InfoManager
 
 
 def generate_leaderboard_reply(user_array: []):
+    names, values = translate_user_info_to_array(user_array)
+    embed = discord.Embed()
     embed = discord.Embed(title="ChodeCoin Leaderboard", color=0x0b1bf4)
-    embed.add_field(name="", value="Name", inline=True)
-    embed.add_field(name="", value="ChodeCoin", inline=True)
-    # for user in user_array:
-        # embed.add_field(name=user.name, value=user.coin_count)
+    embed.add_field(name="Name", value=names, inline=True)
+    embed.add_field(name="ChodeCoin", value=values, inline=True)
     return "", embed
 
 

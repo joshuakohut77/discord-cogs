@@ -1,15 +1,13 @@
 from ChodeCoin.objects.user import User
 
 
-def translate_user_info_to_array(user_array: [], value):
-    new_array = []
-    if value == "Name":
-        for user in user_array:
-            new_array.insert(len(new_array), user.name.__str__())
-    elif value == "Coin_Count":
-        for user in user_array:
-            new_array.insert(len(new_array), user.coin_count.__str__())
-    return new_array
+def translate_user_info_to_array(user_array: []):
+    name_array = []
+    value_array = []
+    for user in user_array:
+        name_array.insert(len(name_array), user.name.__str__())
+        value_array.insert(len(value_array), user.coin_count.__str__())
+    return name_array, value_array
 
 
 class ArrayHelper:
