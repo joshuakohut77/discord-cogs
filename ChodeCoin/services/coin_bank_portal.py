@@ -54,5 +54,5 @@ class CoinBankPortal:
             bank = json.load(file)
             user_list = []
             for bank_record in bank["bank_records"]:
-                self.array_helper.add_if_valid(user_list, User(bank_record["name"], bank_record["coin_count"]), return_count)
+                user_list = self.array_helper.add_if_in_wealthiest_group(user_list, User(bank_record["name"], bank_record["coin_count"]), return_count)
             return user_list
