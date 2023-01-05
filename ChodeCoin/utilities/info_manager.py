@@ -18,3 +18,6 @@ class InfoManager:
     def get_wealthiest_users(self, count):
         wealthiest_list = self.coin_bank_portal.get_wealthiest_users(count)
         return wealthiest_list
+
+    def get_targeted_coin_count(self, targeted_user):
+        return self.coin_bank_portal.get_targeted_coin_count(targeted_user)
