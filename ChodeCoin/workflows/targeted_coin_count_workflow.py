@@ -18,7 +18,7 @@ class TargetedCoinCountWorkflow:
 
     def process_targeted_coin_count_request(self, message, message_author):
         targeted_user_name = self.message_reader.find_targeted_coin_count_user(message)
-        if targeted_user_name is not None:
-            targeted_user = message_author
+        if targeted_user_name is None:
+            targeted_user_name = message_author
         targeted_user_coin_count = self.info_manager.get_current_balance(targeted_user_name)
         return generate_targeted_coin_count_reply(targeted_user_name, targeted_user_coin_count)
