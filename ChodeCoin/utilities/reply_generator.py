@@ -12,6 +12,10 @@ def generate_leaderboard_reply(user_array: []):
     return "", embed
 
 
+def generate_targeted_coin_count_reply(user_name, user_coin_count):
+    return f"{user_name} has {user_coin_count} ChodeCoin in the bank"
+
+
 class ReplyGenerator:
     def __init__(self, info_manager=InfoManager()):
         self.info_manager = info_manager
