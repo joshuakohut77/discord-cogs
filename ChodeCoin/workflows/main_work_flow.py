@@ -30,7 +30,7 @@ class WorkFlow:
             return self.leaderboard_workflow.process_leaderboard_request()
 
         elif process == RequestFor.targeted_coin_count:
-            return self.targeted_coin_count_workflow.process_targeted_coin_count_request(message)
+            return self.targeted_coin_count_workflow.process_targeted_coin_count_request(message, author)
 
         else:
             return None, None
