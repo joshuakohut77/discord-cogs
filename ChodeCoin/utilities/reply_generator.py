@@ -16,7 +16,7 @@ def generate_targeted_coin_count_reply(user_name, user_coin_count):
     if user_coin_count is not None:
         return f"{user_name} has {user_coin_count} ChodeCoin in the bank", None
     else:
-        return f"{user_name} isn't set up in the bank and therefore has zero ChodeCoin"
+        return f"{user_name} isn't set up in the bank and therefore has zero ChodeCoin", None
 
 
 class ReplyGenerator:
