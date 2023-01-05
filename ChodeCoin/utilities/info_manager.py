@@ -13,7 +13,7 @@ class InfoManager:
         if user_exists:
             return self.coin_bank_portal.get_current_balance(target_user)
         else:
-            return "User Does Not Exist"
+            return None
 
     def get_wealthiest_users(self, count):
         wealthiest_list = self.coin_bank_portal.get_wealthiest_users(count)

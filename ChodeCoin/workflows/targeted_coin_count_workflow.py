@@ -21,4 +21,7 @@ class TargetedCoinCountWorkflow:
         if targeted_user_name is None:
             targeted_user_name = message_author
         targeted_user_coin_count = self.info_manager.get_current_balance(targeted_user_name)
-        return generate_targeted_coin_count_reply(targeted_user_name, targeted_user_coin_count)
+        if targeted_user_coin_count is not None:
+            return generate_targeted_coin_count_reply(targeted_user_name, targeted_user_coin_count)
+        else:
+            return generate_targeted_coin_count_reply(None, None)
