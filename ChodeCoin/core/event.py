@@ -21,7 +21,7 @@ class EventMixin(MixinMeta):
             return
 
         msg: str = message.content
-        author = message.author
+        author = message.author.id
 
         reply, embed = self.work_flow.process_message(msg, author)
         if reply is not None:

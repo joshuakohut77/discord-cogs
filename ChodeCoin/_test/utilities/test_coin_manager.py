@@ -15,4 +15,3 @@ class TestCoinManager(unittest.TestCase):
 
         self.assertTrue(mock_coinbankportal.mockSetExpecation("change_coin_count", mock_coinbankportal.change_coin_count, 0, 2))
         self.assertTrue(mock_usermanager.mockSetExpectation("create_new_user", mock_usermanager.create_new_user, 0, 0))
-
