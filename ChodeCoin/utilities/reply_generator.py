@@ -13,7 +13,10 @@ def generate_leaderboard_reply(user_array: []):
 
 
 def generate_targeted_coin_count_reply(user_name, user_coin_count):
-    return f"{user_name} has {user_coin_count} ChodeCoin in the bank", None
+    if user_coin_count is not None:
+        return f"{user_name} has {user_coin_count} ChodeCoin in the bank", None
+    else:
+        return f"{user_name} isn't set up in the bank and therefore has zero ChodeCoin"
 
 
 class ReplyGenerator:
@@ -24,7 +27,8 @@ class ReplyGenerator:
         if amount == 1:
             amount = "a"
         current_balance = self.info_manager.get_current_balance(targeted_user)
-        if process == "plus_plus":
-            return f"Gave {targeted_user} {amount} ChodeCoin! {targeted_user} now has {current_balance} in the bank."
-        elif process == "minus_minus":
-            return f"{targeted_user} lost {amount} ChodeCoin! {targeted_user} now has {current_balance} in the bank."
+        if targeted_user is not None:
+            if process == "plus_plus":
+                return f"Gave {targeted_user} {amount} ChodeCoin! {targeted_user} now has {current_balance} in the bank."
+            elif process == "minus_minus":
+                return f"{targeted_user} lost {amount} ChodeCoin! {targeted_user} now has {current_balance} in the bank."
