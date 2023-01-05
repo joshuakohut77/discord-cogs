@@ -13,7 +13,7 @@ def generate_leaderboard_reply(user_array: []):
 
 
 def generate_targeted_coin_count_reply(user_name, user_coin_count):
-    return f"{user_name} has {user_coin_count} ChodeCoin in the bank"
+    return f"{user_name} has {user_coin_count} ChodeCoin in the bank", None
 
 
 class ReplyGenerator:
