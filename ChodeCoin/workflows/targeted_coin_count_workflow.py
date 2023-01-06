@@ -23,4 +23,4 @@ class TargetedCoinCountWorkflow:
         if targeted_user_coin_count is not None:
             return generate_targeted_coin_count_reply(targeted_user_name, targeted_user_coin_count)
         else:
-            return generate_targeted_coin_count_reply(None, None)
+            return generate_targeted_coin_count_reply(targeted_user_name, None)
