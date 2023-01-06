@@ -50,7 +50,7 @@ class MessageReader:
     def find_targeted_coin_count_user(self, message):
         command_search_result = ""
 
-        command_search_user = re.search(r"^.{10,13}(@.{2,32})", message)
+        command_search_user = re.search(r"^.{10,13}(.{2,32})", message)
 
         if command_search_user:
             command_search_result = command_search_user.group(0)
