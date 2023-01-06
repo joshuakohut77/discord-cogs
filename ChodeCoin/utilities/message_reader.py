@@ -54,6 +54,7 @@ class MessageReader:
         command_search_user = re.search(r"^!coincount", standardized_message)
         if command_search_user:
             command_search_result = command_search_user.group(0)
+            return command_search_result #debug line
         un_formatted_user = command_search_result[10:len(str(command_search_result))].strip()
         if len(un_formatted_user) < 1:
             return None
