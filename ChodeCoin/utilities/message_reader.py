@@ -51,7 +51,7 @@ class MessageReader:
         formatted_user = ""
         command_search_result = ""
         standardized_message = message.lower()
-        command_search_user = re.search(r"^!coincount", standardized_message)
+        command_search_user = re.search(r"^!coincount\s{0,3}(@.{2,32})", standardized_message)
         if command_search_user:
             command_search_result = command_search_user.group(0)
             return command_search_result #debug line
