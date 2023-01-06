@@ -48,26 +48,27 @@ class MessageReader:
         return False
 
     def find_targeted_coin_count_user(self, message):
-        formatted_user = ""
         command_search_result = ""
-        standardized_message = message.lower()
-        command_search_user = re.search(r"^!coincount\s{0,3}(@.{2,32})", standardized_message)
+
+        command_search_user = re.search(r"^.{10,13}(@.{2,32})", message)
+
         if command_search_user:
             command_search_result = command_search_user.group(0)
-            return command_search_result #debug line
+
         un_formatted_user = command_search_result[10:len(str(command_search_result))].strip()
+
         if len(un_formatted_user) < 1:
             return None
-        if len(un_formatted_user) < 32:
-            user_name_check = re.search(r"\d{18,20}", un_formatted_user)
-            if user_name_check:
-                user_discord_id = user_name_check.group(0)
-                formatted_user = f"<@{user_discord_id}>"
-                return formatted_user
-            return un_formatted_user
-        else:
-            formatted_user = un_formatted_user[:32].strip()
+
+        user_name_check = re.search(r"\d{18,20}", un_formatted_user)
+
+        if user_name_check:
+            user_discord_id = user_name_check.group(0)
+            formatted_user = f"<@{user_discord_id}>"
             return formatted_user
+
+        else:
+            return un_formatted_user
 
     def format_targeted_user(self, targeted_user, process):
         if process == CommandType.text:
