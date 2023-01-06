@@ -47,7 +47,7 @@ class MessageReader:
 
         return False
 
-    def find_targeted_coin_count_user(self, message):
+    def find_targeted_coin_count_user(self, message, message_author):
         command_search_result = ""
 
         command_search_user = re.search(r"^.{10,13}(.{2,32})", message)
@@ -58,7 +58,7 @@ class MessageReader:
         un_formatted_user = command_search_result[10:len(str(command_search_result))].strip()
 
         if len(un_formatted_user) < 1:
-            return None
+            return f"<@{message_author}>"
 
         user_name_check = re.search(r"\d{18,20}", un_formatted_user)
 

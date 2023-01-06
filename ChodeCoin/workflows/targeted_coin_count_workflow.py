@@ -17,7 +17,7 @@ class TargetedCoinCountWorkflow:
         self.message_reader = message_reader
 
     def process_targeted_coin_count_request(self, message, message_author):
-        targeted_user_name = self.message_reader.find_targeted_coin_count_user(message)
+        targeted_user_name = self.message_reader.find_targeted_coin_count_user(message, message_author)
         if targeted_user_name is None:
             targeted_user_name = message_author
         return targeted_user_name, None
