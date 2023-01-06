@@ -20,4 +20,4 @@ class InfoManager:
         return wealthiest_list
 
     def get_targeted_coin_count(self, targeted_user):
-        return self.coin_bank_portal.get_targeted_coin_count(targeted_user)
+        return self.coin_bank_portal.get_current_balance(targeted_user)
