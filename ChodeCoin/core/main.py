@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from abc import ABCMeta
+from ChodeCoinBackend.ChodeCoinBackend.workflows.main_work_flow import WorkFlow
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -15,7 +16,7 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class ChodeCoin(EventMixin, commands.Cog, metaclass=CompositeClass):
+class ChodeCoin(EventMixin, commands.Cog, metaclass=CompositeClass, WorkFlow):
     """chodecoin"""
 
     def __init__(self, bot: Red):
