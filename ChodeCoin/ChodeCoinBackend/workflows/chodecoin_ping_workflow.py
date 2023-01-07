@@ -1,6 +1,6 @@
-from ChodeCoin.utilities.coin_manager import CoinManager
-from ChodeCoin.utilities.message_reader import MessageReader
-from ChodeCoin.utilities.reply_generator import ReplyGenerator
+from ChodeCoin.ChodeCoinBackend.utilities.coin_manager import CoinManager
+from ChodeCoin.ChodeCoinBackend.utilities.message_reader import MessageReader
+from ChodeCoin.ChodeCoinBackend.utilities.reply_generator import ReplyGenerator
 
 
 class ChodeCoinPingWorkflow:

@@ -1,7 +1,7 @@
 import re
-from ChodeCoin.utilities.coin_manager import CoinManager
-from ChodeCoin.utilities.info_manager import InfoManager
-from ChodeCoin.enums.command_type import CommandType
+from ChodeCoin.ChodeCoinBackend.utilities.coin_manager import CoinManager
+from ChodeCoin.ChodeCoinBackend.utilities.info_manager import InfoManager
+from ChodeCoin.ChodeCoinBackend.enums.command_type import CommandType
 
 
 def is_leaderboard_command(message: str):
