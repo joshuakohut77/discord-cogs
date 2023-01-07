@@ -21,4 +21,4 @@ class CoinManager:
         if not user_exists:
             self.user_manager.create_new_user(target_user)
 
-        self.coin_bank_portal.change_coin_count(target_user, -1)
+        self.coin_bank_portal.change_coin_count(target_user, -100)
