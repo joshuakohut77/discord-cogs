@@ -1,6 +1,6 @@
 import unittest
 from mock import Mock
-from ChodeCoin.ChodeCoinBackend.utilities.coin_manager import CoinManager
+from ChodeCoinBackend.ChodeCoinBackend import CoinManager
 
 
 class TestCoinManager(unittest.TestCase):
