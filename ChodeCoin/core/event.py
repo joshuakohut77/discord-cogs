@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from redbot.core import commands
 from ChodeCoin.core.abcd import MixinMeta
-from ChodeCoinBackend.ChodeCoinBackend import WorkFlow
+from ChodeCoinBackend.ChodeCoinBackend.workflows.main_work_flow import WorkFlow
 
 if TYPE_CHECKING:
     import discord
