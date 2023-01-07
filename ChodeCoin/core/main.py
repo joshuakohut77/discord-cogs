@@ -11,7 +11,7 @@ from redbot.core import commands
 from ChodeCoin.core.event import EventMixin
 
 
-class CompositeClass(commands.CogMeta, ABCMeta):
+class CompositeClass(commands.CogMeta, ABCMeta, WorkFlow):
     __slots__: tuple = ()
     pass
 
