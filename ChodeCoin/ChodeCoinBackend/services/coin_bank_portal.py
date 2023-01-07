@@ -1,5 +1,5 @@
 import json
-from ChodeCoin.objects.user import User
+from ChodeCoin.ChodeCoinBackend.objects.user import User
 from pathlib import Path
 
 from ..helpers.array_helper import ArrayHelper

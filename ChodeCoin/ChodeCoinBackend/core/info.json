@@ -1,0 +1,10 @@
+{
+	"author": ["Cacti Twig#2672"],
+	"install_msg": "",
+	"name": "ChodeCoinBackend",
+	"short": "Backend for the amazing and valuable ChodeCoin",
+	"description": "This cog allows users to create and use ChodeCoin",
+	"tags": ["currency"],
+	"requirements": [],
+	"hidden": false
+}

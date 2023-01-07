@@ -1,10 +1,10 @@
 import unittest
 from mock import Mock
-from ChodeCoin.utilities.coin_manager import CoinManager
+from ChodeCoin.ChodeCoinBackend.utilities.coin_manager import CoinManager
 
 
 class TestCoinManager(unittest.TestCase):
-    def Given_process_plus_plus_When_target_user_exists_Then_calls_change_coin_count_with_value_of_one(self) -> None:
+    def test_Given_process_plus_plus_When_target_user_exists_Then_calls_change_coin_count_with_value_of_one(self) -> None:
         target_user = "UserThatExists"
         mock_usermanager = Mock()
         mock_usermanager.user_exists.return_value = True
