@@ -1,6 +1,6 @@
 import discord
-from ChodeCoin.ChodeCoinBackend.helpers.array_helper import translate_user_info_to_display_strings
-from ChodeCoin.ChodeCoinBackend.utilities.info_manager import InfoManager
+from ChodeCoinBackend.ChodeCoinBackend.helpers.array_helper import translate_user_info_to_display_strings
+from ChodeCoinBackend.ChodeCoinBackend.utilities.info_manager import InfoManager
 
 
 def generate_leaderboard_reply(user_array: []):
