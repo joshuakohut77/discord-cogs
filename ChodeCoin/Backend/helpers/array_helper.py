@@ -1,4 +1,4 @@
-from ChodeCoin.ChodeCoinBackend.objects.user import User
+from ChodeCoin.Backend.objects.user import User
 
 
 def translate_user_info_to_display_strings(user_array: []):

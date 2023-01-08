@@ -1,6 +1,6 @@
-from ChodeCoin.ChodeCoinBackend.utilities.info_manager import InfoManager
-from ChodeCoin.ChodeCoinBackend.utilities.message_reader import MessageReader, is_targeted_coin_count_command
-from ChodeCoin.ChodeCoinBackend.utilities.reply_generator import generate_targeted_coin_count_reply
+from ChodeCoin.Backend.utilities.info_manager import InfoManager
+from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_targeted_coin_count_command
+from ChodeCoin.Backend.utilities.reply_generator import generate_targeted_coin_count_reply
 
 
 def is_targeted_coin_count_request(message):

@@ -1,5 +1,5 @@
-from ChodeCoin.ChodeCoinBackend.services.coin_bank_portal import CoinBankPortal
-from ChodeCoin.ChodeCoinBackend.utilities.user_manager import UserManager
+from ChodeCoin.Backend.services.coin_bank_portal import CoinBankPortal
+from ChodeCoin.Backend.utilities.user_manager import UserManager
 
 
 class InfoManager:
