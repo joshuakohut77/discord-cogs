@@ -1,7 +1,7 @@
 import json
-from ChodeCoin.ChodeCoinBackend.objects.user import User
-from ChodeCoin.ChodeCoinBackend.helpers.array_helper import ArrayHelper
-from ChodeCoin.ChodeCoinBackend.helpers.date_helper import DateHelper
+from ChodeCoin.Backend.objects.user import User
+from ChodeCoin.Backend.helpers.array_helper import ArrayHelper
+from ChodeCoin.Backend.helpers.date_helper import DateHelper
 from pathlib import Path
 
 
