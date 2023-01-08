@@ -1,6 +1,6 @@
-from ChodeCoin.ChodeCoinBackend.utilities.message_reader import is_leaderboard_command
-from ChodeCoin.ChodeCoinBackend.utilities.reply_generator import generate_leaderboard_reply
-from ChodeCoin.ChodeCoinBackend.utilities.info_manager import InfoManager
+from ChodeCoin.Backend.utilities.message_reader import is_leaderboard_command
+from ChodeCoin.Backend.utilities.reply_generator import generate_leaderboard_reply
+from ChodeCoin.Backend.utilities.info_manager import InfoManager
 
 
 def is_leaderboard_workflow(message):
