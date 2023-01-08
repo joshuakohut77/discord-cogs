@@ -1,4 +1,4 @@
-from ChodeCoinBackend.ChodeCoinBackend.services.coin_bank_portal import CoinBankPortal
+from ChodeCoin.ChodeCoinBackend.services.coin_bank_portal import CoinBankPortal
 
 
 class UserManager:

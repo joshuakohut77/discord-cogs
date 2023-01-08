@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from redbot.core import commands
 from ChodeCoin.core.abcd import MixinMeta
-from wow.wowclass import Wow
+from ChodeCoin.ChodeCoinBackend.workflows.main_work_flow import WorkFlow
 
 if TYPE_CHECKING:
     import discord
@@ -23,10 +23,6 @@ class EventMixin(MixinMeta):
         msg: str = message.content
         author = message.author.id
 
-        # reply, embed = self.work_flow.process_message(msg, author)
-        # if reply is not None:
-            # await message.reply(reply, embed=embed)
-
-        owen_wilson = Wow()
-        embed, file = owen_wilson.getWow()
-        await message.reply(file=file, embed=embed)
+        reply, embed = self.work_flow.process_message(msg, author)
+        if reply is not None:
+            await message.reply(reply, embed=embed)

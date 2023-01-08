@@ -1,8 +1,8 @@
-from ChodeCoinBackend.ChodeCoinBackend.utilities.guard import Guard
-from ChodeCoinBackend.ChodeCoinBackend.workflows.chodecoin_ping_workflow import ChodeCoinPingWorkflow
-from ChodeCoinBackend.ChodeCoinBackend.workflows.leaderboard_workflow import LeaderboardWorkflow, is_leaderboard_workflow
-from ChodeCoinBackend.ChodeCoinBackend.workflows.targeted_coin_count_workflow import TargetedCoinCountWorkflow, is_targeted_coin_count_request
-from ChodeCoinBackend.ChodeCoinBackend.enums.request_for import RequestFor
+from ChodeCoin.ChodeCoinBackend.utilities.guard import Guard
+from ChodeCoin.ChodeCoinBackend.workflows.chodecoin_ping_workflow import ChodeCoinPingWorkflow
+from ChodeCoin.ChodeCoinBackend.workflows.leaderboard_workflow import LeaderboardWorkflow, is_leaderboard_workflow
+from ChodeCoin.ChodeCoinBackend.workflows.targeted_coin_count_workflow import TargetedCoinCountWorkflow, is_targeted_coin_count_request
+from ChodeCoin.ChodeCoinBackend.enums.request_for import RequestFor
 
 
 class WorkFlow:
