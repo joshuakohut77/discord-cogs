@@ -1,5 +1,5 @@
-from ChodeCoinBackend.ChodeCoinBackend.utilities.user_manager import UserManager
-from ChodeCoinBackend.ChodeCoinBackend.services.coin_bank_portal import CoinBankPortal
+from ChodeCoin.ChodeCoinBackend.utilities.user_manager import UserManager
+from ChodeCoin.ChodeCoinBackend.services.coin_bank_portal import CoinBankPortal
 
 
 class CoinManager:
@@ -21,4 +21,4 @@ class CoinManager:
         if not user_exists:
             self.user_manager.create_new_user(target_user)
 
-        self.coin_bank_portal.change_coin_count(target_user, -100)
+        self.coin_bank_portal.change_coin_count(target_user, -1)

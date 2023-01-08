@@ -1,5 +1,5 @@
-from ChodeCoinBackend.ChodeCoinBackend.enums.command_type import CommandType
-from ChodeCoinBackend.ChodeCoinBackend.utilities.message_reader import MessageReader
+from ChodeCoin.ChodeCoinBackend.enums.command_type import CommandType
+from ChodeCoin.ChodeCoinBackend.utilities.message_reader import MessageReader
 
 
 class Guard:
