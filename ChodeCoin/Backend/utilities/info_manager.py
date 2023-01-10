@@ -19,7 +19,7 @@ class InfoManager:
             return None
 
     def get_wealthiest_users(self, count):
-        bank_records = self.coin_bank_portal.get_all_users(count)
+        bank_records = self.coin_bank_portal.get_all_users()
         wealthiest_list = []
         for bank_record in bank_records:
             wealthiest_list = self.array_helper.add_if_in_wealthiest_group(wealthiest_list, User(bank_record["name"], bank_record["coin_count"]), count)
