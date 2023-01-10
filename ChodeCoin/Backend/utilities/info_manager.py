@@ -19,11 +19,14 @@ class InfoManager:
             return None
 
     def get_wealthiest_users(self, count):
-        bank_records = self.coin_bank_portal.get_all_users()
-        wealthiest_list = []
-        for bank_record in bank_records:
-            wealthiest_list = self.array_helper.add_if_in_wealthiest_group(wealthiest_list, User(bank_record["name"], bank_record["coin_count"]), count)
-        return wealthiest_list
+        if count > 0:
+            bank_records = self.coin_bank_portal.get_all_users()
+            wealthiest_list = []
+            for bank_record in bank_records:
+                wealthiest_list = self.array_helper.add_if_in_wealthiest_group(wealthiest_list, User(bank_record["name"], bank_record["coin_count"]), count)
+            return wealthiest_list
+        else:
+            raise ValueError("Must provide a value greater than 0")
 
     def get_targeted_coin_count(self, targeted_user):
         return self.coin_bank_portal.get_current_balance(targeted_user)
