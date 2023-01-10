@@ -48,10 +48,15 @@ class CoinBankPortal:
         else:
             return "User Does Not Exist"
 
-    def get_wealthiest_users(self, return_count):
+    # def get_wealthiest_users(self, return_count):
+    #     with open(self.db_path, "r") as file:
+    #         bank = json.load(file)
+    #         user_list = []
+    #         for bank_record in bank["bank_records"]:
+    #             user_list = self.array_helper.add_if_in_wealthiest_group(user_list, User(bank_record["name"], bank_record["coin_count"]), return_count)
+    #         return user_list
+
+    def get_all_users(self):
         with open(self.db_path, "r") as file:
             bank = json.load(file)
-            user_list = []
-            for bank_record in bank["bank_records"]:
-                user_list = self.array_helper.add_if_in_wealthiest_group(user_list, User(bank_record["name"], bank_record["coin_count"]), return_count)
-            return user_list
+            return bank["bank_records"]
