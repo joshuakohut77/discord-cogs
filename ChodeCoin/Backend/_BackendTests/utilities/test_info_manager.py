@@ -2,7 +2,7 @@ import unittest
 
 import mock
 from mock import Mock
-from parameterized import parameterized, param
+from parameterized import parameterized
 from ChodeCoin.Backend.utilities.info_manager import InfoManager
 
 
@@ -97,3 +97,19 @@ class TestInfoManager(unittest.TestCase):
 
         # Assert
         mock_arrayhelper.add_if_in_wealthiest_group.assert_called_once_with(mock.ANY, mock.ANY, count)
+
+    def test_GIVEN_get_targeted_coin_count_WHEN_called_THEN_calls_get_current_balance_with_provided_user(self) -> None:
+        # Arrange
+        targeted_user = "user"
+        mock_usermanager = Mock()
+        mock_usermanager.user_exists.return_value = True
+        mock_coinbankportal = Mock()
+        mock_coinbankportal.get_all_users.return_value = generate_mock_db_result()
+        mock_arrayhelper = Mock()
+        info_manager = InfoManager(mock_usermanager, mock_coinbankportal, mock_arrayhelper)
+
+        # Act
+        info_manager.get_targeted_coin_count(targeted_user)
+
+        # Assert
+        mock_coinbankportal.get_current_balance.assert_called_once_with(targeted_user)

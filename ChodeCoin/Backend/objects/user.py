@@ -8,7 +8,13 @@ class User(object):
         self.coin_count = coin_count
         self.last_modified = last_modified
 
+    def __eq__(self, other):
+        if not isinstance(other, User):
+            return NotImplemented
+        return self.name == other.name and self.coin_count == other.coin_count
+
 
 def new_user(name, coin_count):
     user = User(name, coin_count, "")
     return user
+
