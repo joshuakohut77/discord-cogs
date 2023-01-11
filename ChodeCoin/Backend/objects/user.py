@@ -1,3 +1,7 @@
+def convert_user_to_json(user):
+    return {"name": user.name, "coin_count": user.coin_count, "last_modified": user.last_modified}
+
+
 class User(object):
     name = ""
     coin_count = 0
@@ -17,4 +21,5 @@ class User(object):
 def new_user(name, coin_count):
     user = User(name, coin_count, "")
     return user
+
 
