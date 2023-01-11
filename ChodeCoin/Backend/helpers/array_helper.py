@@ -20,16 +20,11 @@ def translate_user_info_to_display_strings(user_array: []):
 
 class ArrayHelper:
 
-    def add_if_in_wealthiest_group(self, user_array, user_to_validate: User, return_count):
-        return self.insert_into_array_if_wealthy_enough(user_array, user_to_validate, return_count)
-
-    def insert_into_array_if_wealthy_enough(self, user_array: [User], user_to_add: User, return_count):
+    def add_if_in_wealthiest_group(self, user_array: [User], user_to_add: User, return_count):
         user_array.insert(0, user_to_add)
-        if len(user_array) > return_count:
-            user_array = self.sort_array(user_array)
+        user_array = self.sort_array(user_array)
+        while len(user_array) > return_count:
             user_array = user_array[:-1]
-        else:
-            user_array = self.sort_array(user_array)
         return user_array
 
     def get_coin_count(self, user: User):
