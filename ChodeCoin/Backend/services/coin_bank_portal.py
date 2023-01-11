@@ -1,5 +1,5 @@
 import json
-from ChodeCoin.Backend.objects.user import User
+from ChodeCoin.Backend.objects.user import User, convert_user_to_json
 from ChodeCoin.Backend.helpers.array_helper import ArrayHelper
 from ChodeCoin.Backend.helpers.date_helper import DateHelper
 from pathlib import Path
@@ -24,10 +24,11 @@ class CoinBankPortal:
             json.dump(bank, file, indent=4)
 
     def create_new_user(self, target_user):
-        new_user = {"name": target_user, "coin_count": 0, "last_modified": self.date_helper.current_timestamp_string()}
+        user_to_add = User(target_user, 0, self.date_helper.current_timestamp_string())
+        new_user_entry = convert_user_to_json(user_to_add)
         with open(self.db_path, "r+") as file:
             bank = json.load(file)
-            bank["bank_records"].append(new_user)
+            bank["bank_records"].append(new_user_entry)
         with open(self.db_path, "wt") as file:
             json.dump(bank, file, indent=4)
 
