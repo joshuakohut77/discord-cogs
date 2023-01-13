@@ -57,8 +57,8 @@ class TestMessageReader(unittest.TestCase):
         # Assert
         self.assertFalse(result)
 
-    @parameterized.expand([("@aq++",), ("@abcdefghijklmnopqrstuvwxyzabcdef++",), ])
-    def test_GIVEN_is_chodecoin_ping_WHEN_string_is_valid_lowercase_non_discord_user_plus_plus_THEN_returns_true(self, message) -> None:
+    @parameterized.expand([("@q++",), ("@abcdefghijklmnopqrstuvwxyzabcdef++",), ])
+    def test_GIVEN_is_chodecoin_ping_WHEN_plus_plus_string_is_lowercase_between_one_and_thirty_two_characters_THEN_returns_true(self, message) -> None:
         # Arrange
         message_reader = MessageReader()
 
@@ -68,7 +68,7 @@ class TestMessageReader(unittest.TestCase):
         # Assert
         self.assertTrue(result)
 
-    @parameterized.expand([("@aQ++",), ("@AbcdefGhijklmnoPQRstuvwxyzabCDEf++",), ])
+    @parameterized.expand([("@Q++",), ("@AbcdefGhijklmnoPQRstuvwxyzabCDEf++",), ])
     def test_GIVEN_is_chodecoin_ping_WHEN_string_is_valid_mixed_case_non_discord_user_plus_plus_THEN_returns_true(self, message) -> None:
         # Arrange
         message_reader = MessageReader()
@@ -78,3 +78,59 @@ class TestMessageReader(unittest.TestCase):
 
         # Assert
         self.assertTrue(result)
+
+    @parameterized.expand([("@<500047678378344449>++",), ("@<1019075447532826726>++",), ("@<10190754475328267269>++",), ])
+    def test_GIVEN_is_chodecoin_ping_WHEN_string_is_valid_discord_user_plus_plus_THEN_returns_true(self, message) -> None:
+        # Arrange
+        message_reader = MessageReader()
+
+        # Act
+        result = message_reader.is_chodecoin_ping(message)
+
+        # Assert
+        self.assertTrue(result)
+
+    @parameterized.expand([("@<500047678378344449>++ gibberish",), ("@first++ then @second--",), ])
+    def test_GIVEN_is_chodecoin_ping_WHEN_string_is_any_valid_user_plus_plus_with_text_after_THEN_returns_true(self, message) -> None:
+        # Arrange
+        message_reader = MessageReader()
+
+        # Act
+        result = message_reader.is_chodecoin_ping(message)
+
+        # Assert
+        self.assertTrue(result)
+
+    @parameterized.expand([("@<500047678378344449>++ gibberish",), ("@first++ then @second--",), ])
+    def test_GIVEN_is_chodecoin_ping_WHEN_string_is_any_valid_user_plus_plus_with_text_after_THEN_returns_true(self,
+                                                                                                               message) -> None:
+        # Arrange
+        message_reader = MessageReader()
+
+        # Act
+        result = message_reader.is_chodecoin_ping(message)
+
+        # Assert
+        self.assertTrue(result)
+
+    def test_GIVEN_is_chodecoin_ping_WHEN_plus_plus_user_has_fewer_than_one_character_THEN_returns_false(self) -> None:
+        # Arrange
+        message = "@++"
+        message_reader = MessageReader()
+
+        # Act
+        result = message_reader.is_chodecoin_ping(message)
+
+        # Assert
+        self.assertFalse(result)
+
+    def test_GIVEN_is_chodecoin_ping_WHEN_plus_plus_user_has_more_than_thirty_two_characters_THEN_returns_false(self) -> None:
+        # Arrange
+        message = "@abcdefghijklmnopqrstuvwxyzabcdefg++"
+        message_reader = MessageReader()
+
+        # Act
+        result = message_reader.is_chodecoin_ping(message)
+
+        # Assert
+        self.assertFalse(result)
