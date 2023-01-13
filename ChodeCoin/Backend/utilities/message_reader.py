@@ -101,7 +101,7 @@ class MessageReader:
         return formatted_user
 
     def find_plus_plus(self, message):
-        search_result = re.search(r"((@.{2,32}?)|(<\d{18,20}>\s{1,3}?))[+]{2}", message)
+        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))[+]{2}", message)
         if search_result:
             targeted_user = search_result.group(0)
             formatted_user = self.format_targeted_user(targeted_user, CommandType.text)
@@ -110,7 +110,7 @@ class MessageReader:
             return None
 
     def find_minus_minus(self, message):
-        search_result = re.search(r"((@.{2,32}?)|(<\d{18,20}>\s{1,3}?))-{2}", message)
+        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))-{2}", message)
         if search_result:
             targeted_user = search_result.group(0)
             formatted_user = self.format_targeted_user(targeted_user, CommandType.text)
@@ -119,7 +119,7 @@ class MessageReader:
             return None
 
     def find_emoji_plus_plus(self, message):
-        search_result = re.search(r"((@.{2,32}?)|(<\d{18,20}>\s{1,3}?))((🍆)\s*){2}", message)
+        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))((🍆)\s*){2}", message)
         if search_result:
             targeted_user = search_result.group(0)
             formatted_user = self.format_targeted_user(targeted_user, CommandType.emoji_plus_plus)
@@ -128,7 +128,7 @@ class MessageReader:
             return None
 
     def find_emoji_minus_minus(self, message):
-        search_result = re.search(r"((@.{2,32}?)|(<\d{18,20}>\s{1,3}?))((<:No:1058833719399567460>)\s*){2}", message)
+        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))((<:No:1058833719399567460>)\s*){2}", message)
         if search_result:
             targeted_user = search_result.group(0)
             formatted_user = self.format_targeted_user(targeted_user, CommandType.emoji_minus_minus)
