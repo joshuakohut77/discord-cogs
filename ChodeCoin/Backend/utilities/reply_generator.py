@@ -32,3 +32,7 @@ class ReplyGenerator:
                 return f"Gave {targeted_user} {amount} ChodeCoin! {targeted_user} now has {current_balance} in the bank."
             elif process == "minus_minus":
                 return f"{targeted_user} lost {amount} ChodeCoin! {targeted_user} now has {current_balance} in the bank."
+
+
+def generate_dank_hof_reply(target_user):
+    return f"Because of the dankness of your dank af post, by the power invested in me I hereby bestow upon {target_user} ten ChodeCoin! Dilly Dilly"

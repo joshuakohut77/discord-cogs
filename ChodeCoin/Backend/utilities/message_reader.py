@@ -22,6 +22,38 @@ def is_targeted_coin_count_command(message: str):
         return False
 
 
+def is_dank_hof_command(message):
+    search_result = re.search(r"^!dankhof", message)
+    if search_result:
+        return True
+    else:
+        return False
+
+
+def find_targeted_dank_hof_user(message):
+    dank_user = ""
+
+    dank_user_result = re.search(r"^.{7,10}(.{1,32})", message)
+
+    if dank_user_result:
+        dank_user = dank_user_result.group(0)
+
+    un_formatted_user = dank_user[7:len(str(dank_user))].strip()
+
+    if len(un_formatted_user) < 1:
+        return None
+
+    user_name_check = re.search(r"\d{18,20}", un_formatted_user)
+
+    if user_name_check:
+        user_discord_id = user_name_check.group(0)
+        formatted_user = f"<@{user_discord_id}>"
+        return formatted_user
+
+    else:
+        return un_formatted_user
+
+
 class MessageReader:
 
     def __init__(self, coin_manager=CoinManager(), info_manager=InfoManager()):
@@ -29,19 +61,19 @@ class MessageReader:
         self.info_manager = info_manager
 
     def is_chodecoin_ping(self, message):
-        is_plus_plus = self.find_plus_plus(message)
+        is_plus_plus = self.__find_plus_plus(message)
         if is_plus_plus:
             return True
 
-        is_emoji_plus_plus = self.find_emoji_plus_plus(message)
+        is_emoji_plus_plus = self.__find_emoji_plus_plus(message)
         if is_emoji_plus_plus:
             return True
 
-        is_minus_minus = self.find_minus_minus(message)
+        is_minus_minus = self.__find_minus_minus(message)
         if is_minus_minus:
             return True
 
-        is_emoji_minus_minus = self.find_emoji_minus_minus(message)
+        is_emoji_minus_minus = self.__find_emoji_minus_minus(message)
         if is_emoji_minus_minus:
             return True
 
@@ -50,7 +82,7 @@ class MessageReader:
     def find_targeted_coin_count_user(self, message, message_author):
         command_search_result = ""
 
-        command_search_user = re.search(r"^.{10,13}(.{2,32})", message)
+        command_search_user = re.search(r"^.{10,13}(.{1,32})", message)
 
         if command_search_user:
             command_search_result = command_search_user.group(0)
@@ -100,7 +132,7 @@ class MessageReader:
 
         return formatted_user
 
-    def find_plus_plus(self, message):
+    def __find_plus_plus(self, message):
         search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))[+]{2}", message)
         if search_result:
             targeted_user = search_result.group(0)
@@ -109,7 +141,7 @@ class MessageReader:
         else:
             return None
 
-    def find_minus_minus(self, message):
+    def __find_minus_minus(self, message):
         search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))-{2}", message)
         if search_result:
             targeted_user = search_result.group(0)
@@ -118,7 +150,7 @@ class MessageReader:
         else:
             return None
 
-    def find_emoji_plus_plus(self, message):
+    def __find_emoji_plus_plus(self, message):
         search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))((🍆)\s*){2}", message)
         if search_result:
             targeted_user = search_result.group(0)
@@ -127,7 +159,7 @@ class MessageReader:
         else:
             return None
 
-    def find_emoji_minus_minus(self, message):
+    def __find_emoji_minus_minus(self, message):
         search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))((<:No:1058833719399567460>)\s*){2}", message)
         if search_result:
             targeted_user = search_result.group(0)
