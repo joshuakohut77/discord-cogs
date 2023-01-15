@@ -18,25 +18,25 @@ class ChodeCoinPingWorkflow:
         return self.message_reader.is_chodecoin_ping(message)
 
     def process_chodecoin_ping_request(self, message):
-        targeted_user = self.message_reader.find_plus_plus(message)
+        targeted_user = self.message_reader.__find_plus_plus(message)
         if targeted_user is not None:
             self.coin_manager.process_plus_plus(targeted_user)
             return_message = self.reply_generator.generate_chodecoin_ping_reply(targeted_user, "plus_plus", 1)
             return return_message
 
-        targeted_user = self.message_reader.find_emoji_plus_plus(message)
+        targeted_user = self.message_reader.__find_emoji_plus_plus(message)
         if targeted_user is not None:
             self.coin_manager.process_plus_plus(targeted_user)
             return_message = self.reply_generator.generate_chodecoin_ping_reply(targeted_user, "plus_plus", 1)
             return return_message
 
-        targeted_user = self.message_reader.find_minus_minus(message)
+        targeted_user = self.message_reader.__find_minus_minus(message)
         if targeted_user is not None:
             self.coin_manager.process_minus_minus(targeted_user)
             return_message = self.reply_generator.generate_chodecoin_ping_reply(targeted_user, "minus_minus", 1)
             return return_message
 
-        targeted_user = self.message_reader.find_emoji_minus_minus(message)
+        targeted_user = self.message_reader.__find_emoji_minus_minus(message)
         if targeted_user is not None:
             self.coin_manager.process_minus_minus(targeted_user)
             return_message = self.reply_generator.generate_chodecoin_ping_reply(targeted_user, "minus_minus", 1)

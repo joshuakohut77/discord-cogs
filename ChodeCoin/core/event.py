@@ -17,9 +17,6 @@ class EventMixin(MixinMeta):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
-        if message.author.bot:
-            return
-
         msg: str = message.content
         author = message.author.id
 

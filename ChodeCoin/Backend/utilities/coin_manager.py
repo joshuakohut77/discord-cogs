@@ -22,3 +22,11 @@ class CoinManager:
             self.user_manager.create_new_user(target_user)
 
         self.coin_bank_portal.change_coin_count(target_user, -1)
+
+    def process_dank_hof_entry(self, target_user):
+        user_exists = self.user_manager.user_exists(target_user)
+
+        if not user_exists:
+            self.user_manager.create_new_user(target_user)
+
+        self.coin_bank_portal.change_coin_count(target_user, 10)
