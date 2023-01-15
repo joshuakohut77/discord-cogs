@@ -1,7 +1,8 @@
 import unittest
 from mock import Mock
 from parameterized import parameterized
-from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_leaderboard_command, is_targeted_coin_count_command
+from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_leaderboard_command, \
+    is_targeted_coin_count_command, find_targeted_dank_hof_user, is_dank_hof_command
 
 
 class TestMessageReader(unittest.TestCase):
@@ -131,6 +132,32 @@ class TestMessageReader(unittest.TestCase):
 
         # Act
         result = message_reader.is_chodecoin_ping(message)
+
+        # Assert
+        self.assertFalse(result)
+
+    def test_GIVEN_is_dank_hof_command_WHEN_string_contains_dank_hof_command_only_THEN_returns_true(self) -> None:
+        # Arrange
+        message = "!dankhof"
+
+        # Act
+        result = is_dank_hof_command(message)
+
+        # Assert
+        self.assertTrue(result)
+
+    @parameterized.expand([("!dankhof ",), ("!dankhof gibberish",), ("!dankhof two words",), ("!dankhof !dankhof",), ("!dankhofgibberish",), ("!dankhof!dankhof",), ])
+    def test_GIVEN_is_dank_hof_command_WHEN_string_contains_dank_hof_command_then_other_text_THEN_returns_true(self, message) -> None:
+        # Arrange Act
+        result = is_dank_hof_command(message)
+
+        # Assert
+        self.assertTrue(result)
+
+    @parameterized.expand([(" !dankhof ",), ("gibberish !dankhof",), ("A!dankhof",), ("1!dankhof",), ])
+    def test_GIVEN_is_dank_hof_command_WHEN_string_does_not_start_with_dank_hof_command_THEN_returns_false(self, message) -> None:
+        # Arrange Act
+        result = is_dank_hof_command(message)
 
         # Assert
         self.assertFalse(result)
