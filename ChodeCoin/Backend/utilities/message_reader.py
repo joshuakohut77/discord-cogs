@@ -33,12 +33,12 @@ def is_dank_hof_command(message):
 def find_targeted_dank_hof_user(message):
     dank_user = ""
 
-    dank_user_result = re.search(r"^.{7,10}(.{1,32})", message)
+    dank_user_result = re.search(r"^.{8,11}(.{1,32})", message)
 
     if dank_user_result:
         dank_user = dank_user_result.group(0)
 
-    un_formatted_user = dank_user[7:len(str(dank_user))].strip()
+    un_formatted_user = dank_user[8:len(str(dank_user))].strip()
 
     if len(un_formatted_user) < 1:
         return None
