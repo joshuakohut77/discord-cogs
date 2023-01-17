@@ -25,9 +25,8 @@ class DankHofWorkflow:
 
     def process_dank_hof_request(self, message, author):
         if self.user_manager.is_admin_user(author):
-            return "Your admin status isn't the problem dumbass", None
-            # target_user = find_targeted_dank_hof_user(message)
-            # self.coin_manager.process_dank_hof_entry(target_user)
-            # response = generate_dank_hof_reply(target_user)
-            # return generate_dank_hof_reply(response), None
+            target_user = find_targeted_dank_hof_user(message)
+            self.coin_manager.process_dank_hof_entry(target_user)
+            response = generate_dank_hof_reply(target_user)
+            return generate_dank_hof_reply(response), None
 
