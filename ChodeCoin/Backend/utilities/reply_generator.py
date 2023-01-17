@@ -19,6 +19,10 @@ def generate_targeted_coin_count_reply(user_name, user_coin_count):
         return f"{user_name} isn't set up in the bank and therefore has zero ChodeCoin", None
 
 
+def generate_dank_hof_reply(target_user):
+    return f"Because of the dankness of your dank af post, by the power invested in me I hereby bestow upon {target_user} ten ChodeCoin! Dilly Dilly"
+
+
 class ReplyGenerator:
     def __init__(self, info_manager=InfoManager()):
         self.info_manager = info_manager
@@ -32,7 +36,3 @@ class ReplyGenerator:
                 return f"Gave {targeted_user} {amount} ChodeCoin! {targeted_user} now has {current_balance} in the bank."
             elif process == "minus_minus":
                 return f"{targeted_user} lost {amount} ChodeCoin! {targeted_user} now has {current_balance} in the bank."
-
-
-def generate_dank_hof_reply(target_user):
-    return f"Because of the dankness of your dank af post, by the power invested in me I hereby bestow upon {target_user} ten ChodeCoin! Dilly Dilly"

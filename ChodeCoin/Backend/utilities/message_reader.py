@@ -37,21 +37,18 @@ def find_targeted_dank_hof_user(message):
 
     if dank_user_result:
         dank_user = dank_user_result.group(0)
-
-    un_formatted_user = dank_user[8:len(str(dank_user))].strip()
-
-    if len(un_formatted_user) < 1:
-        return None
-
-    user_name_check = re.search(r"\d{18,20}", un_formatted_user)
-
-    if user_name_check:
-        user_discord_id = user_name_check.group(0)
-        formatted_user = f"<@{user_discord_id}>"
-        return formatted_user
-
+        un_formatted_user = dank_user[8:len(str(dank_user))].strip()
+        if len(un_formatted_user) < 1:
+            return None
+        user_name_check = re.search(r"\d{18,20}", un_formatted_user)
+        if user_name_check:
+            user_discord_id = user_name_check.group(0)
+            formatted_user = f"<@{user_discord_id}>"
+            return formatted_user
+        else:
+            return un_formatted_user
     else:
-        return un_formatted_user
+        return None
 
 
 class MessageReader:
