@@ -28,5 +28,5 @@ class DankHofWorkflow:
             target_user = find_targeted_dank_hof_user(message)
             self.coin_manager.process_dank_hof_entry(target_user)
             response = generate_dank_hof_reply(target_user)
-            return generate_dank_hof_reply(response), None
+            return response, None
 
