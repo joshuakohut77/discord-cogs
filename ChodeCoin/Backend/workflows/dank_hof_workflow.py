@@ -29,3 +29,5 @@ class DankHofWorkflow:
             self.coin_manager.process_dank_hof_entry(target_user)
             response = generate_dank_hof_reply(target_user)
             return response
+        else:
+            return "You don't have permission to bestow Dank Hall of Fame honors. Please reach out to the server admin if you believe you should have such access."
