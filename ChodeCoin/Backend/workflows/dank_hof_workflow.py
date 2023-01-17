@@ -24,10 +24,8 @@ class DankHofWorkflow:
         self.coin_manager = coin_manager
 
     def process_dank_hof_request(self, message, author):
-        # if self.user_manager.is_admin_user(author):
-        target_user = find_targeted_dank_hof_user(message)
-        self.coin_manager.process_dank_hof_entry(target_user)
-        response = generate_dank_hof_reply(target_user)
-        # return response, None
-
-        return f"{author} --- {response}", None
+        if self.user_manager.is_admin_user(f"<@{author}>"):
+            target_user = find_targeted_dank_hof_user(message)
+            self.coin_manager.process_dank_hof_entry(target_user)
+            response = generate_dank_hof_reply(target_user)
+            return response, None
