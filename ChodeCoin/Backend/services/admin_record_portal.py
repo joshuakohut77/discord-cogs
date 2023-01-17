@@ -35,4 +35,4 @@ class AdminRecordPortal:
                         admin_permission = admin_record["permission_level"]
             return admin_permission.__str__()
         else:
-            return 4
+            return 1
