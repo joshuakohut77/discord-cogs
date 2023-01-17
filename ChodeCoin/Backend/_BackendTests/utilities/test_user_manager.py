@@ -10,7 +10,7 @@ class TestUserManager(unittest.TestCase):
         target_user = "AdminUser"
         mock_coinbankportal = Mock()
         mock_adminrecordportal = Mock()
-        mock_adminrecordportal.get_admin_permission.return_value = 1
+        mock_adminrecordportal.get_admin_permission.return_value = "1"
         user_manager = UserManager(mock_coinbankportal, mock_adminrecordportal)
 
         # Act
