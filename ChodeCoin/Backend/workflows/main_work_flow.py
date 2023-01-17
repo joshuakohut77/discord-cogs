@@ -37,8 +37,7 @@ class WorkFlow:
             return self.targeted_coin_count_workflow.process_targeted_coin_count_request(message, author)
 
         elif process == RequestFor.dank_hof:
-            # return self.dank_hof_workflow.process_dank_hof_request(message, author)
-            return "Josh Sucks", None
+            return self.dank_hof_workflow.process_dank_hof_request(message, author)
 
         else:
             return None, None
