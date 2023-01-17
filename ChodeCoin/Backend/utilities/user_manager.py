@@ -15,4 +15,5 @@ class UserManager:
         self.coin_bank_portal.create_new_user(target_user)
 
     def is_admin_user(self, target_user):
-        return self.admin_record_portal.get_admin_permission(target_user) == 1
+        return self.admin_record_portal.admin_exists(target_user)
+        # return self.admin_record_portal.get_admin_permission(target_user) == 1
