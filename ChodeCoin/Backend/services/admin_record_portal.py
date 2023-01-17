@@ -29,10 +29,10 @@ class AdminRecordPortal:
         if self.admin_exists(admin_name):
             with open(self.db_path, "r") as file:
                 record_book = json.load(file)
-                admin_permission = ""
+                admin_permission = "4"
                 for admin_record in record_book["admin_records"]:
                     if admin_record["name"] == admin_name:
                         admin_permission = admin_record["permission_level"]
             return admin_permission.__str__()
         else:
-            return 1
+            return 4
