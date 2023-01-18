@@ -19,6 +19,10 @@ def generate_targeted_coin_count_reply(user_name, user_coin_count):
         return f"{user_name} isn't set up in the bank and therefore has zero ChodeCoin", None
 
 
+def generate_admin_reply(target_user):
+    return f"Updated permission for {target_user}!"
+
+
 def generate_dank_hof_reply(target_user):
     return f"Because of the dankness of your dank af post, by the power invested in me I hereby bestow upon {target_user} ten ChodeCoin! Dilly Dilly"
 

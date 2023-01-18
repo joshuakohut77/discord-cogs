@@ -6,3 +6,4 @@ class RequestFor(Enum):
     leaderboard = 2
     targeted_coin_count = 3
     dank_hof = 4
+    admin = 5

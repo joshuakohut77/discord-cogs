@@ -2,6 +2,7 @@ import re
 from ChodeCoin.Backend.utilities.coin_manager import CoinManager
 from ChodeCoin.Backend.utilities.info_manager import InfoManager
 from ChodeCoin.Backend.enums.command_type import CommandType
+from ChodeCoin.Backend.helpers.string_helper import convert_to_discord_user
 
 
 def is_leaderboard_command(message: str):
@@ -30,6 +31,14 @@ def is_dank_hof_command(message):
         return False
 
 
+def is_admin_command(message):
+    search_result = re.search(r"^!setpermission", message)
+    if search_result:
+        return True
+    else:
+        return False
+
+
 def find_targeted_dank_hof_user(message):
     dank_user = ""
 
@@ -49,6 +58,22 @@ def find_targeted_dank_hof_user(message):
             return un_formatted_user
     else:
         return None
+
+
+def find_targeted_admin_data(message):
+    target_user = ""
+    new_admin_level = ""
+    command_result = re.search(r"^!setpermission\s{1,3}\d{18,20}\s{1,3}(owner|admin|viewer|none)$", message)
+    if command_result:
+        result = command_result.group(0)
+        name_and_level = result[14:len(str(result))].strip()
+        expanded_string = name_and_level.replace(" ", "   ")
+        un_formatted_user = expanded_string[:20].strip()
+        target_user = convert_to_discord_user(un_formatted_user)
+        new_admin_level = expanded_string[-6:len(str(expanded_string))].strip()
+        return target_user, new_admin_level
+    else:
+        return None, None
 
 
 class MessageReader:

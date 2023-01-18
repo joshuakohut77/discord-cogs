@@ -1,8 +1,8 @@
 from ChodeCoin.Backend.utilities.guard import Guard
+from ChodeCoin.Backend.workflows.admin_workflow import AdminWorkflow, is_admin_workflow
 from ChodeCoin.Backend.workflows.chodecoin_ping_workflow import ChodeCoinPingWorkflow
 from ChodeCoin.Backend.workflows.leaderboard_workflow import LeaderboardWorkflow, is_leaderboard_workflow
-from ChodeCoin.Backend.workflows.targeted_coin_count_workflow import TargetedCoinCountWorkflow, \
-    is_targeted_coin_count_request
+from ChodeCoin.Backend.workflows.targeted_coin_count_workflow import TargetedCoinCountWorkflow, is_targeted_coin_count_request
 from ChodeCoin.Backend.workflows.dank_hof_workflow import DankHofWorkflow, is_dank_hof_workflow
 from ChodeCoin.Backend.enums.request_for import RequestFor
 
@@ -14,11 +14,13 @@ class WorkFlow:
             leaderboard_workflow=LeaderboardWorkflow(),
             targeted_coin_count_workflow=TargetedCoinCountWorkflow(),
             dank_hof_workflow=DankHofWorkflow(),
+            admin_workflow=AdminWorkflow(),
             guard=Guard()):
         self.chodecoin_ping_workflow = chodecoin_ping_workflow
         self.leaderboard_workflow = leaderboard_workflow
         self.targeted_coin_count_workflow = targeted_coin_count_workflow
         self.dank_hof_workflow = dank_hof_workflow
+        self.admin_workflow = admin_workflow
         self.guard = guard
 
     def process_message(self, message, author):
@@ -39,6 +41,9 @@ class WorkFlow:
         elif process == RequestFor.dank_hof:
             return self.dank_hof_workflow.process_dank_hof_request(message, author), None
 
+        elif process == RequestFor.admin:
+            return self.admin_workflow.process_admin_request(message, author), None
+
         else:
             return None, None
 
@@ -51,6 +56,8 @@ class WorkFlow:
             return RequestFor.targeted_coin_count
         elif is_dank_hof_workflow(message):
             return RequestFor.dank_hof
+        elif is_admin_workflow(message):
+            return RequestFor.admin
         else:
             return None
 
