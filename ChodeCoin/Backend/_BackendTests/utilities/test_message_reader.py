@@ -1,8 +1,7 @@
 from mock import Mock
 import pytest
 from parameterized import parameterized
-from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_leaderboard_command, \
-    is_targeted_coin_count_command, find_targeted_dank_hof_user, is_dank_hof_command
+from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_leaderboard_command, is_targeted_coin_count_command, find_targeted_dank_hof_user, is_dank_hof_command, find_targeted_admin_data
 
 
 class TestMessageReader:
@@ -205,3 +204,35 @@ class TestMessageReader:
 
         # Assert
         assert expected == actual
+
+    @pytest.mark.parametrize("message, formatted_user", [("!setpermission 500047678378344449 admin", "<@500047678378344449>"), ("!setpermission 1019075447532826726 admin", "<@1019075447532826726>"), ("!setpermission 10190754475328267269 admin", "<@10190754475328267269>")])
+    def test_GIVEN_find_targeted_admin_data_WHEN_valid_admin_request_is_provided_THEN_returns_formatted_user(self, message, formatted_user) -> None:
+        # Arrange Act
+        target_user, new_admin_level = find_targeted_admin_data(message)
+
+        # Assert
+        assert target_user.__contains__(formatted_user) is True
+
+    @pytest.mark.parametrize("message, permission", [("!setpermission 500047678378344449 admin", "admin"), ("!setpermission 1019075447532826726 owner", "owner"), ("!setpermission 10190754475328267269 viewer", "viewer"), ("!setpermission 10190754475328267269 none", "none")])
+    def test_GIVEN_find_targeted_admin_data_WHEN_valid_admin_request_is_provided_THEN_returns_provided_permission(self, message, permission) -> None:
+        # Arrange Act
+        target_user, new_admin_level = find_targeted_admin_data(message)
+
+        # Assert
+        assert new_admin_level == permission
+
+    @pytest.mark.parametrize("message", [(" !setpermission 500047678378344449 admin"), ("!setpermission 1019075447532826726"), ("!setpermission viewer"), ("!setpermission"), ("!setpermission asdf admin"), ("!setpermission 1019075447532826726 admin owner")])
+    def test_GIVEN_find_targeted_admin_data_WHEN_invalid_request_is_provided_THEN_returns_none_for_target_user(self, message) -> None:
+        # Arrange Act
+        target_user, new_admin_level = find_targeted_admin_data(message)
+
+        # Assert
+        assert target_user is None
+
+    @pytest.mark.parametrize("message", [(" !setpermission 500047678378344449 admin"), ("!setpermission 1019075447532826726"), ("!setpermission viewer"), ("!setpermission"), ("!setpermission asdf admin"), ("!setpermission 1019075447532826726 admin owner")])
+    def test_GIVEN_find_targeted_admin_data_WHEN_invalid_request_is_provided_THEN_returns_none_for_new_admin_level(self, message) -> None:
+        # Arrange Act
+        target_user, new_admin_level = find_targeted_admin_data(message)
+
+        # Assert
+        assert new_admin_level is None
