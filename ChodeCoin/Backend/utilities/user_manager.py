@@ -1,3 +1,4 @@
+from ChodeCoin.Backend.enums.permission_level import PermissionLevel
 from ChodeCoin.Backend.services.admin_record_portal import AdminRecordPortal
 from ChodeCoin.Backend.services.coin_bank_portal import CoinBankPortal
 
@@ -18,6 +19,7 @@ class UserManager:
         return self.admin_record_portal.get_admin_permission(target_user) == "1"
 
     def set_admin_level(self, target_user, admin_level):
+        new_permission = PermissionLevel(admin_level)
         if self.admin_record_portal.admin_exists(target_user):
             return self.admin_record_portal.set_admin_level(target_user, admin_level)
         else:
