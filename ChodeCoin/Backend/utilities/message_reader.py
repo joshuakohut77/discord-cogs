@@ -66,11 +66,9 @@ def find_targeted_admin_data(message):
     command_result = re.search(r"^!setpermission\s{1,3}\d{18,20}\s{1,3}(owner|admin|viewer|none)$", message)
     if command_result:
         result = command_result.group(0)
-        name_and_level = result[14:len(str(result))].strip()
-        expanded_string = name_and_level.replace(" ", "   ")
-        un_formatted_user = expanded_string[:20].strip()
-        target_user = convert_to_discord_user(un_formatted_user)
-        new_admin_level = expanded_string[-6:len(str(expanded_string))].strip()
+        segments = re.split(r"\s{1,3}", result)
+        target_user = convert_to_discord_user(segments[1])
+        new_admin_level = segments[2]
         return target_user, new_admin_level
     else:
         return None, None
