@@ -19,8 +19,12 @@ def generate_targeted_coin_count_reply(user_name, user_coin_count):
         return f"{user_name} isn't set up in the bank and therefore has zero ChodeCoin", None
 
 
-def generate_admin_reply(target_user):
+def generate_admin_updated_reply(target_user):
     return f"Updated permission for {target_user}!"
+
+
+def generate_admin_no_permission_reply():
+    return "You don't have permission to manage users. Please reach out to the server admin if you believe you should have such access."
 
 
 def generate_dank_hof_reply(target_user):

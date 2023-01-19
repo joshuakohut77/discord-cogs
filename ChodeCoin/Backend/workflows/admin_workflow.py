@@ -1,5 +1,5 @@
 from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_admin_command, find_targeted_admin_data
-from ChodeCoin.Backend.utilities.reply_generator import generate_admin_reply
+from ChodeCoin.Backend.utilities.reply_generator import generate_admin_updated_reply, generate_admin_no_permission_reply
 from ChodeCoin.Backend.utilities.info_manager import InfoManager
 from ChodeCoin.Backend.utilities.user_manager import UserManager
 from ChodeCoin.Backend.helpers.string_helper import convert_to_discord_user
@@ -22,8 +22,11 @@ class AdminWorkflow:
 
     def process_admin_request(self, message, author):
         target_user, new_admin_level = find_targeted_admin_data(message)
-        if self.user_manager.is_admin_user(convert_to_discord_user(author)):
-            self.user_manager.set_admin_level(target_user, new_admin_level)
-            return generate_admin_reply(target_user)
+        if target_user and new_admin_level is not None:
+            if self.user_manager.is_admin_user(convert_to_discord_user(author)):
+                self.user_manager.set_admin_level(target_user, new_admin_level)
+                return generate_admin_updated_reply(target_user)
+            else:
+                return generate_admin_no_permission_reply()
         else:
-            return "You don't have permission to manage users. Please reach out to the server admin if you believe you should have such access."
+            return "Command format incorrect."
