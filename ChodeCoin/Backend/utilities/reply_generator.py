@@ -27,6 +27,10 @@ def generate_admin_no_permission_reply():
     return "You don't have permission to manage users. Please reach out to the server admin if you believe you should have such access."
 
 
+def generate_command_error_reply():
+    return "Either you or I did something wrong with that command, double check the syntax and/or bother Mark about it."
+
+
 def generate_dank_hof_reply(target_user):
     return f"Because of the dankness of your dank af post, by the power invested in me I hereby bestow upon {target_user} ten ChodeCoin! Dilly Dilly"
 
