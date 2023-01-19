@@ -63,7 +63,7 @@ def find_targeted_dank_hof_user(message):
 def find_targeted_admin_data(message):
     target_user = ""
     new_admin_level = ""
-    command_result = re.search(r"^!setpermission\s{1,3}\d{18,20}\s{1,3}(owner|admin|viewer|none)$", message)
+    command_result = re.search(r"^!setpermission\s{1,3}(\d{18,20}|<@\d{18,20}>)\s{1,3}(owner|admin|viewer|none)$", message)
     if command_result:
         result = command_result.group(0)
         segments = re.split(r"\s{1,3}", result)

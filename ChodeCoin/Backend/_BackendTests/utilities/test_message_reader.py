@@ -206,7 +206,15 @@ class TestMessageReader:
         assert expected == actual
 
     @pytest.mark.parametrize("message, formatted_user", [("!setpermission 500047678378344449 admin", "<@500047678378344449>"), ("!setpermission 1019075447532826726 admin", "<@1019075447532826726>"), ("!setpermission 10190754475328267269 admin", "<@10190754475328267269>")])
-    def test_GIVEN_find_targeted_admin_data_WHEN_valid_admin_request_is_provided_THEN_returns_formatted_user(self, message, formatted_user) -> None:
+    def test_GIVEN_find_targeted_admin_data_WHEN_valid_un_formatted_admin_request_is_provided_THEN_returns_formatted_user(self, message, formatted_user) -> None:
+        # Arrange Act
+        target_user, new_admin_level = find_targeted_admin_data(message)
+
+        # Assert
+        assert target_user.__contains__(formatted_user) is True
+
+    @pytest.mark.parametrize("message, formatted_user", [("!setpermission <@500047678378344449> admin", "<@500047678378344449>"), ("!setpermission <@1019075447532826726> admin", "<@1019075447532826726>"), ("!setpermission <@10190754475328267269> admin", "<@10190754475328267269>")])
+    def test_GIVEN_find_targeted_admin_data_WHEN_valid_un_formatted_admin_request_is_provided_THEN_returns_formatted_user(self, message, formatted_user) -> None:
         # Arrange Act
         target_user, new_admin_level = find_targeted_admin_data(message)
 
