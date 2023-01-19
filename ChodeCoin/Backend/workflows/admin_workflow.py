@@ -22,6 +22,7 @@ class AdminWorkflow:
 
     def process_admin_request(self, message, author):
         target_user, new_admin_level = find_targeted_admin_data(message)
+        return f"{target_user}, {new_admin_level}"
         if target_user is not None and new_admin_level is not None:
             if self.user_manager.is_admin_user(convert_to_discord_user(author)):
                 self.user_manager.set_admin_level(target_user, new_admin_level)
