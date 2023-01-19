@@ -1,5 +1,8 @@
 def convert_to_discord_user(discord_user: str):
-    return f"<@{discord_user}>"
+    if discord_user[:2] != "<@":
+        return f"<@{discord_user}>"
+    else:
+        return discord_user
 
 
 class StringHelper:
