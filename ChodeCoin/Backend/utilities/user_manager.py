@@ -19,7 +19,7 @@ class UserManager:
         return self.admin_record_portal.get_admin_permission(target_user) == "1"
 
     def set_admin_level(self, target_user, admin_level):
-        new_permission = PermissionLevel(admin_level)
+        new_permission = PermissionLevel[admin_level]
         if self.admin_record_portal.admin_exists(target_user):
             return self.admin_record_portal.set_admin_level(target_user, admin_level)
         else:
