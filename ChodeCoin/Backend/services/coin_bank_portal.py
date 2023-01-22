@@ -59,7 +59,7 @@ class CoinBankPortal:
             bank = json.load(file)
             for i in range(len(bank)):
                 if bank[i]["name"] == target_user:
-                    bank.pop(i)
+                    del bank[i]
                     break
         with open(self.db_path, "wt") as file:
             json.dump(bank, file, indent=4)
