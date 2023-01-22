@@ -1,3 +1,5 @@
+import re
+
 from ChodeCoin.Backend.enums.permission_level import PermissionLevel
 from ChodeCoin.Backend.services.admin_record_portal import AdminRecordPortal
 from ChodeCoin.Backend.services.coin_bank_portal import CoinBankPortal
