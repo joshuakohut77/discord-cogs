@@ -57,14 +57,11 @@ class CoinBankPortal:
             return bank["bank_records"]
 
     def delete_user(self, target_user):
+        new_bank = {"bank_records": []}
         with open(self.db_path, "r") as file:
             bank = json.load(file)
-            for i in range(len(bank["bank_records"])):
-                if bank[i]['name'] == target_user:
-                    del bank[i]
-                    break
-            # for bank_record in bank["bank_records"]:
-            #     if bank_record["name"] == target_user:
-            #         del bank[bank_record["name"]]
+            for bank_record in bank["bank_records"]:
+                if bank_record["name"] != target_user:
+                    new_bank["bank_records"].append(bank_record)
         with open(self.db_path, "wt") as file:
-            json.dump(bank, file, indent=4)
+            json.dump(new_bank, file, indent=4)
