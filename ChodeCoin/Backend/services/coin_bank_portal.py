@@ -60,3 +60,5 @@ class CoinBankPortal:
             for bank_record in bank["bank_records"]:
                 if bank_record["name"] == target_user:
                     bank.pop(bank_record)
+        with open(self.db_path, "wt") as file:
+            json.dump(bank, file, indent=4)
