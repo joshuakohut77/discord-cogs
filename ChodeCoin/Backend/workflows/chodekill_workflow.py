@@ -21,7 +21,7 @@ class ChodeKillWorkflow:
         self.message_reader = message_reader
 
     def process_chodekill_request(self, message, author):
-        if self.user_manager.is_admin_user(author):
+        if self.user_manager.is_admin_user(convert_to_discord_user(author)):
             key = find_chodekill_data(message)
             if key is None:
                 return generate_command_error_reply()
