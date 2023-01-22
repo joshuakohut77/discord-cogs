@@ -60,7 +60,7 @@ class CoinBankPortal:
         with open(self.db_path, "r") as file:
             bank = json.load(file, object_pairs_hook=OrderedDict)
             for i in range(len(bank)):
-                if bank[i]["name"] == target_user:
+                if bank[i]["bank_records"]["name"] == target_user:
                     del bank[i]
                     break
         with open(self.db_path, "wt") as file:
