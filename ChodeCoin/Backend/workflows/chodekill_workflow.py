@@ -6,7 +6,7 @@ from ChodeCoin.Backend.helpers.string_helper import convert_to_discord_user
 
 
 def is_chodekill_workflow(message):
-    return is_admin_command(message)
+    return is_chodekill_command(message)
 
 
 class ChodeKillWorkflow:
