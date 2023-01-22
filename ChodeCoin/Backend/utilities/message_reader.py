@@ -63,15 +63,25 @@ def find_targeted_dank_hof_user(message):
 def find_targeted_admin_data(message):
     target_user = ""
     new_admin_level = ""
-    command_result = re.search(r"^!setpermission\s{1,3}(\d{18,20}|<@\d{18,20}>)\s{1,3}(owner|admin|viewer|none)$", message)
+    command_result = re.search(r"^![Ss][Ee][Tt][Pp][Ee][Rr][Mm][Ii][Ss][Ss][Ii][Oo][Nn]\s{1,3}(\d{18,20}|<@\d{18,20}>)\s{1,3}([Oo][Ww][Nn][Ee][Rr]|[Aa][Dd][Mm][Ii][Nn]|[Vv][Ii][Ee][Ww][Ee][Rr]|[Nn][Oo][Nn][Ee])$", message)
     if command_result:
         result = command_result.group(0)
         segments = re.split(r"\s{1,3}", result)
         target_user = convert_to_discord_user(segments[1])
-        new_admin_level = segments[2]
+        new_admin_level = segments[2].lower()
         return target_user, new_admin_level
     else:
         return None, None
+
+
+def find_chodekill_data(message):
+    command_result = re.search(r"^![Cc][Hh][Oo][Dd][Ee][Kk][Ii][Ll][Ll]\s{1,3}(--all|--[Pp][Rr][Uu][Nn][Ee]|.{1,32})$", message)
+    if command_result:
+        result = command_result.group(0)
+        key = result[10:len(str(result))].strip()
+        return key
+    else:
+        return None
 
 
 class MessageReader:

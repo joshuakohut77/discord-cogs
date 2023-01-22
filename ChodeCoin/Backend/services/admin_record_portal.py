@@ -1,18 +1,18 @@
 import json
 from ChodeCoin.Backend.objects.admin import Admin, convert_admin_to_json
 from ChodeCoin.Backend.helpers.array_helper import ArrayHelper
-from ChodeCoin.Backend.helpers.date_helper import DateHelper
+from ChodeCoin.Backend.helpers.timestamp_helper import TimestampHelper
 from pathlib import Path
 
 
 class AdminRecordPortal:
-    def __init__(self, date_helper=DateHelper(), array_helper=ArrayHelper()):
-        self.date_helper = date_helper
+    def __init__(self, timestamp_helper=TimestampHelper(), array_helper=ArrayHelper()):
+        self.timestamp_helper = timestamp_helper
         self.array_helper = array_helper
         self.db_path = f"{Path(__file__).parents[1]}/db/admin_users.json"
 
     def create_new_admin(self, admin_name, admin_permission):
-        admin_to_add = Admin(admin_name, admin_permission, self.date_helper.current_timestamp_string())
+        admin_to_add = Admin(admin_name, admin_permission, self.timestamp_helper.current_timestamp_string())
         new_admin_entry = convert_admin_to_json(admin_to_add)
         with open(self.db_path, "r+") as file:
             record_book = json.load(file)
