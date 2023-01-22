@@ -1,13 +1,13 @@
 import json
 from ChodeCoin.Backend.objects.user import User, convert_user_to_json
 from ChodeCoin.Backend.helpers.array_helper import ArrayHelper
-from ChodeCoin.Backend.helpers.date_helper import DateHelper
+from ChodeCoin.Backend.helpers.timestamp_helper import TimestampHelper
 from pathlib import Path
 
 
 class CoinBankPortal:
-    def __init__(self, date_helper=DateHelper(), array_helper=ArrayHelper()):
-        self.date_helper = date_helper
+    def __init__(self, timestamp_helper=TimestampHelper(), array_helper=ArrayHelper()):
+        self.timestamp_helper = timestamp_helper
         self.array_helper = array_helper
         self.db_path = f"{Path(__file__).parents[1]}/db/coin_bank.json"
 
@@ -24,7 +24,7 @@ class CoinBankPortal:
             json.dump(bank, file, indent=4)
 
     def create_new_user(self, target_user):
-        user_to_add = User(target_user, 0, self.date_helper.current_timestamp_string())
+        user_to_add = User(target_user, 0, self.timestamp_helper.current_timestamp_string())
         new_user_entry = convert_user_to_json(user_to_add)
         with open(self.db_path, "r+") as file:
             bank = json.load(file)
@@ -53,3 +53,10 @@ class CoinBankPortal:
         with open(self.db_path, "r") as file:
             bank = json.load(file)
             return bank["bank_records"]
+
+    def delete_user(self, target_user):
+        with open(self.db_path, "r") as file:
+            bank = json.load(file)
+            for bank_record in bank["bank_records"]:
+                if bank_record["name"] == target_user:
+                    bank.pop(bank_record)

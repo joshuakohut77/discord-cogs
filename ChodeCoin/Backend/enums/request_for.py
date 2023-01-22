@@ -7,3 +7,4 @@ class RequestFor(Enum):
     targeted_coin_count = 3
     dank_hof = 4
     admin = 5
+    chodekill = 6

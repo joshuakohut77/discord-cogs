@@ -1,7 +1,7 @@
 from mock import Mock
 import pytest
 from parameterized import parameterized
-from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_leaderboard_command, is_targeted_coin_count_command, find_targeted_dank_hof_user, is_dank_hof_command, find_targeted_admin_data
+from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_leaderboard_command, is_targeted_coin_count_command, find_targeted_dank_hof_user, is_dank_hof_command, find_targeted_admin_data, find_chodekill_data
 
 
 class TestMessageReader:
@@ -244,3 +244,47 @@ class TestMessageReader:
 
         # Assert
         assert new_admin_level is None
+
+    def test_GIVEN_find_chodekill_data_WHEN_valid_all_request_is_provided_THEN_returns_all_keyword(self):
+        # Arrange
+        message = "!chodekill --all"
+        expected = "--all"
+
+        # Act
+        actual = find_chodekill_data(message)
+
+        # Assert
+        assert expected == actual
+
+    def test_GIVEN_find_chodekill_data_WHEN_valid_prune_request_is_provided_THEN_returns_prune_keyword(self):
+        # Arrange
+        message = "!chodekill --prune"
+        expected = "--prune"
+
+        # Act
+        actual = find_chodekill_data(message)
+
+        # Assert
+        assert expected == actual
+
+    @pytest.mark.parametrize("message, user_name", [("!chodekill Q", "Q"), ("!chodekill <@500047678378344449>", "<@500047678378344449>"), ("!chodekill AbcdefGhijklmnoPQRstuvwxyzabCDEf", "AbcdefGhijklmnoPQRstuvwxyzabCDEf")])
+    def test_GIVEN_find_chodekill_data_WHEN_valid_assassination_request_is_provided_THEN_returns_user_name(self, message, user_name):
+        # Arrange
+        expected = user_name
+
+        # Act
+        actual = find_chodekill_data(message)
+
+        # Assert
+        assert expected == actual
+
+    @pytest.mark.parametrize("message", [" !chodekill Q", "!chodekill", "!chodekill AbcdsdfsshhjjedefGhijklmnoPQRstuvwxyzabCDEf"])
+    def test_GIVEN_find_chodekill_data_WHEN_message_is_not_a_command_THEN_returns_none(self, message):
+        # Arrange
+        expected = None
+
+        # Act
+        actual = find_chodekill_data(message)
+
+        # Assert
+        assert expected == actual

@@ -35,6 +35,18 @@ def generate_dank_hof_reply(target_user):
     return f"Because of the dankness of your dank af post, by the power invested in me I hereby bestow upon {target_user} ten ChodeCoin! Dilly Dilly"
 
 
+def generate_chodekill_all_reply():
+    return "It as been done. All bank accounts have been deleted."
+
+
+def generate_chodekill_prune_reply():
+    return "Anyone without activity within the last 6 months are now deleted."
+
+
+def generate_chodekill_assassinate_reply(target_user):
+    return f"{target_user} has been assassinated, and is no longer registered in the bank."
+
+
 class ReplyGenerator:
     def __init__(self, info_manager=InfoManager()):
         self.info_manager = info_manager
