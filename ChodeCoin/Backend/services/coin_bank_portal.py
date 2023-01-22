@@ -58,10 +58,9 @@ class CoinBankPortal:
 
     def delete_user(self, target_user):
         with open(self.db_path, "r") as file:
-            bank = json.load(file, object_pairs_hook=OrderedDict)
-            for i in range(len(bank)):
-                if bank[i]["bank_records"]["name"] == target_user:
-                    del bank[i]
-                    break
+            bank = json.load(file)
+            for bank_record in bank["bank_records"]:
+                if bank_record["name"] == target_user:
+                    del bank[bank_record]
         with open(self.db_path, "wt") as file:
             json.dump(bank, file, indent=4)
