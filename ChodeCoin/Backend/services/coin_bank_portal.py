@@ -1,4 +1,6 @@
 import json
+from collections import OrderedDict
+
 from ChodeCoin.Backend.objects.user import User, convert_user_to_json
 from ChodeCoin.Backend.helpers.array_helper import ArrayHelper
 from ChodeCoin.Backend.helpers.timestamp_helper import TimestampHelper
@@ -51,7 +53,7 @@ class CoinBankPortal:
 
     def get_all_users(self):
         with open(self.db_path, "r") as file:
-            bank = json.load(file)
+            bank = json.load(file, object_hook=OrderedDict)
             return bank["bank_records"]
 
     def delete_user(self, target_user):
