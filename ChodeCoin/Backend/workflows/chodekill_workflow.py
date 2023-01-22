@@ -1,4 +1,4 @@
-from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_admin_command, find_targeted_admin_data, find_chodekill_data
+from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_admin_command, find_targeted_admin_data, find_chodekill_data, is_chodekill_command
 from ChodeCoin.Backend.utilities.reply_generator import generate_admin_updated_reply, generate_admin_no_permission_reply, generate_command_error_reply, generate_chodekill_all_reply, generate_chodekill_prune_reply, generate_chodekill_assassinate_reply
 from ChodeCoin.Backend.utilities.info_manager import InfoManager
 from ChodeCoin.Backend.utilities.user_manager import UserManager
