@@ -74,6 +74,14 @@ def find_targeted_admin_data(message):
         return None, None
 
 
+def is_chodekill_command(message):
+    search_result = re.search(r"^!chodekill", message)
+    if search_result:
+        return True
+    else:
+        return False
+
+
 def find_chodekill_data(message):
     command_result = re.search(r"^![Cc][Hh][Oo][Dd][Ee][Kk][Ii][Ll][Ll]\s{1,3}(--all|--[Pp][Rr][Uu][Nn][Ee]|.{1,32})$", message)
     if command_result:
