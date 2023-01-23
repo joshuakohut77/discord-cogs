@@ -26,7 +26,7 @@ def translate_command_array_to_display_strings(command_descriptions: []):
     if len(command_descriptions) > 0:
         for command in command_descriptions:
             name_string = f"{name_string} {counter}.) {command.name} \n"
-            description_string = f"{description_string} {command.description} \n"
+            description_string = f"{description_string} {counter}.) {command.description} \n"
             counter += 1
         name_string = name_string[:len(name_string) - 2]
         description_string = description_string[:len(description_string) - 2]
