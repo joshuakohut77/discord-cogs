@@ -1,3 +1,4 @@
+from ChodeCoin.Backend.objects.command import Command
 from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_admin_command, find_targeted_admin_data, find_chodekill_data, is_chodekill_command
 from ChodeCoin.Backend.utilities.reply_generator import generate_admin_updated_reply, generate_admin_no_permission_reply, generate_command_error_reply, generate_chodekill_all_reply, generate_chodekill_prune_reply, generate_chodekill_assassinate_reply
 from ChodeCoin.Backend.utilities.info_manager import InfoManager
@@ -7,6 +8,10 @@ from ChodeCoin.Backend.helpers.string_helper import convert_to_discord_user
 
 def is_chodekill_workflow(message):
     return is_chodekill_command(message)
+
+
+def get_chodekill_description():
+    return Command("!chodekill [user|--prune|--all]", "Deletes the user specified. | Prunes users who haven't been updated for the last 6 months | Deletes all users")
 
 
 class ChodeKillWorkflow:

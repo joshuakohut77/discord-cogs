@@ -1,6 +1,7 @@
 from ChodeCoin.Backend.utilities.guard import Guard
 from ChodeCoin.Backend.workflows.admin_workflow import AdminWorkflow, is_admin_workflow
 from ChodeCoin.Backend.workflows.chodecoin_ping_workflow import ChodeCoinPingWorkflow
+from ChodeCoin.Backend.workflows.help_workflow import is_help_workflow, HelpWorkflow
 from ChodeCoin.Backend.workflows.leaderboard_workflow import LeaderboardWorkflow, is_leaderboard_workflow
 from ChodeCoin.Backend.workflows.targeted_coin_count_workflow import TargetedCoinCountWorkflow, is_targeted_coin_count_request
 from ChodeCoin.Backend.workflows.dank_hof_workflow import DankHofWorkflow, is_dank_hof_workflow
@@ -17,6 +18,7 @@ class WorkFlow:
             dank_hof_workflow=DankHofWorkflow(),
             admin_workflow=AdminWorkflow(),
             chodekill_workflow=ChodeKillWorkflow(),
+            help_workflow=HelpWorkflow(),
             guard=Guard()):
         self.chodecoin_ping_workflow = chodecoin_ping_workflow
         self.leaderboard_workflow = leaderboard_workflow
@@ -24,6 +26,7 @@ class WorkFlow:
         self.dank_hof_workflow = dank_hof_workflow
         self.admin_workflow = admin_workflow
         self.chodekill_workflow = chodekill_workflow
+        self.help_workflow = help_workflow
         self.guard = guard
 
     def process_message(self, message, author):
@@ -50,6 +53,9 @@ class WorkFlow:
         elif process == RequestFor.chodekill:
             return self.chodekill_workflow.process_chodekill_request(message, author), None
 
+        elif process == RequestFor.help:
+            return self.help_workflow.process_help_request()
+
         else:
             return None, None
 
@@ -66,6 +72,8 @@ class WorkFlow:
             return RequestFor.admin
         elif is_chodekill_workflow(message):
             return RequestFor.chodekill
+        elif is_help_workflow(message):
+            return RequestFor.help
         else:
             return None
 

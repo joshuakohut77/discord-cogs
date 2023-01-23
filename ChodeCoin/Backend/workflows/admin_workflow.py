@@ -3,10 +3,15 @@ from ChodeCoin.Backend.utilities.reply_generator import generate_admin_updated_r
 from ChodeCoin.Backend.utilities.info_manager import InfoManager
 from ChodeCoin.Backend.utilities.user_manager import UserManager
 from ChodeCoin.Backend.helpers.string_helper import convert_to_discord_user
+from ChodeCoin.Backend.objects.command import Command
 
 
 def is_admin_workflow(message):
     return is_admin_command(message)
+
+
+def get_admin_description():
+    return Command("!setpermission [@User] [owner|admin|viewer|none]", "Sets permission")
 
 
 class AdminWorkflow:

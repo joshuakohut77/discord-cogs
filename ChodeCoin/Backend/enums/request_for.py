@@ -8,3 +8,4 @@ class RequestFor(Enum):
     dank_hof = 4
     admin = 5
     chodekill = 6
+    help = 7

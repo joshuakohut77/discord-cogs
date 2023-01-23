@@ -1,3 +1,4 @@
+from ChodeCoin.Backend.objects.command import Command
 from ChodeCoin.Backend.objects.user import User
 
 
@@ -16,6 +17,20 @@ def translate_user_info_to_display_strings(user_array: []):
         name_string = "No users yet!"
         coin_count_string = "Type \"!ChodeCoin help\" to learn more <3"
     return name_string, coin_count_string
+
+
+def translate_command_array_to_display_strings(command_descriptions: []):
+    name_string = ""
+    description_string = ""
+    counter = 1
+    if len(command_descriptions) > 0:
+        for command in command_descriptions:
+            name_string = f"{name_string} {counter}.) {command.name} \n"
+            description_string = f"{description_string} {command.description} \n"
+            counter += 1
+        name_string = name_string[:len(name_string) - 2]
+        description_string = description_string[:len(description_string) - 2]
+    return name_string, description_string
 
 
 class ArrayHelper:
