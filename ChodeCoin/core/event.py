@@ -19,7 +19,9 @@ class EventMixin(MixinMeta):
     async def on_message(self, message: discord.Message) -> None:
         msg: str = message.content
         author = message.author.id
+        channel = message.channel
+        embed = message.embeds
 
-        reply, embed = self.work_flow.process_message(msg, author)
+        reply, embed = self.work_flow.process_message(msg, author, channel, embed)
         if reply is not None:
             await message.reply(reply, embed=embed)
