@@ -6,8 +6,8 @@ from ChodeCoin.Backend.utilities.coin_manager import CoinManager
 from ChodeCoin.Backend.utilities.user_manager import UserManager
 
 
-def is_dank_hof_workflow(message):
-    return is_dank_hof_command(message)
+def is_dank_hof_workflow(channel):
+    return is_dank_hof_command(channel)
 
 
 class DankHofWorkflow:

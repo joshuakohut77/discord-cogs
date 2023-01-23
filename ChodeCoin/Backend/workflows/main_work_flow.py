@@ -29,8 +29,8 @@ class WorkFlow:
         self.help_workflow = help_workflow
         self.guard = guard
 
-    def process_message(self, message, author):
-        process = self.identify_request(message)
+    def process_message(self, message, author, channel, embed):
+        process = self.identify_request(message, channel, embed)
 
         if process == RequestFor.chodecoin_ping:
             reply = self.validate_input(message, author)
@@ -59,14 +59,14 @@ class WorkFlow:
         else:
             return None, None
 
-    def identify_request(self, message):
+    def identify_request(self, message, channel, embed):
         if self.chodecoin_ping_workflow.is_chodecoin_ping(message):
             return RequestFor.chodecoin_ping
         elif is_leaderboard_workflow(message):
             return RequestFor.leaderboard
         elif is_targeted_coin_count_request(message):
             return RequestFor.targeted_coin_count
-        elif is_dank_hof_workflow(message):
+        elif is_dank_hof_workflow(channel):
             return RequestFor.dank_hof
         elif is_admin_workflow(message):
             return RequestFor.admin

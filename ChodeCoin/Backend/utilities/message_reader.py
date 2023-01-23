@@ -23,9 +23,8 @@ def is_targeted_coin_count_command(message: str):
         return False
 
 
-def is_dank_hof_command(message):
-    search_result = re.search(r"^!dankhof", message)
-    if search_result:
+def is_dank_hof_command(channel):
+    if channel == "🥇│dank-hall-of-fame":
         return True
     else:
         return False
