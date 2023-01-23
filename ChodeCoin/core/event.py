@@ -23,6 +23,5 @@ class EventMixin(MixinMeta):
         embed = message.embeds
 
         reply, embed = self.work_flow.process_message(msg, author, channel, embed)
-        await message.reply(channel.__str__())
         if reply is not None:
             await message.reply(reply, embed=embed)
