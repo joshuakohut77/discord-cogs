@@ -82,6 +82,15 @@ def is_chodekill_command(message):
         return False
 
 
+def is_help_command(message):
+    identifying_string = message.lower()
+    search_result = re.search(r"^!chodecoin\s{1,3}help", identifying_string)
+    if search_result:
+        return True
+    else:
+        return False
+
+
 def find_chodekill_data(message):
     command_result = re.search(r"^![Cc][Hh][Oo][Dd][Ee][Kk][Ii][Ll][Ll]\s{1,3}(--all|--[Pp][Rr][Uu][Nn][Ee]|.{1,32})$", message)
     if command_result:

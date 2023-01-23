@@ -1,5 +1,5 @@
 import discord
-from ChodeCoin.Backend.helpers.array_helper import translate_user_info_to_display_strings
+from ChodeCoin.Backend.helpers.array_helper import translate_user_info_to_display_strings, translate_command_array_to_display_strings
 from ChodeCoin.Backend.utilities.info_manager import InfoManager
 
 
@@ -9,6 +9,15 @@ def generate_leaderboard_reply(user_array: []):
     embed = discord.Embed(title="ChodeCoin Leaderboard", color=0x0b1bf4)
     embed.add_field(name="Name", value=str(names), inline=True)
     embed.add_field(name="ChodeCoin", value=str(coin_counts), inline=True)
+    return "", embed
+
+
+def generate_help_reply(command_descriptions: []):
+    commands, descriptions = translate_command_array_to_display_strings(command_descriptions)
+    embed = discord.Embed()
+    embed = discord.Embed(title="ChodeCoin Commands", color=0x0b1bf4)
+    embed.add_field(name="Command", value=str(commands), inline=True)
+    embed.add_field(name="Description", value=str(descriptions), inline=True)
     return "", embed
 
 

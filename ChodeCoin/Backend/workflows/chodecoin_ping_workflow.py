@@ -1,6 +1,11 @@
+from ChodeCoin.Backend.objects.command import Command
 from ChodeCoin.Backend.utilities.coin_manager import CoinManager
 from ChodeCoin.Backend.utilities.message_reader import MessageReader
 from ChodeCoin.Backend.utilities.reply_generator import ReplyGenerator
+
+
+def get_chodecoin_ping_description():
+    return Command("@[username] [++|--]", "Gives or takes away one ChodeCoin from the user specified.")
 
 
 class ChodeCoinPingWorkflow:
