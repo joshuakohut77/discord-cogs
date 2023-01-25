@@ -59,14 +59,14 @@ class WorkFlow:
         else:
             return None, None
 
-    def identify_request(self, message, channel, embed):
+    def identify_request(self, message):
         if self.chodecoin_ping_workflow.is_chodecoin_ping(message):
             return RequestFor.chodecoin_ping
         elif is_leaderboard_workflow(message):
             return RequestFor.leaderboard
         elif is_targeted_coin_count_request(message):
             return RequestFor.targeted_coin_count
-        elif is_dank_hof_workflow(channel):
+        elif is_dank_hof_workflow(message):
             return RequestFor.dank_hof
         elif is_admin_workflow(message):
             return RequestFor.admin
