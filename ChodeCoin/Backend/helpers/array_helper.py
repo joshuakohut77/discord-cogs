@@ -1,4 +1,3 @@
-from ChodeCoin.Backend.objects.command import Command
 from ChodeCoin.Backend.objects.user import User
 
 
