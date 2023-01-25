@@ -1,8 +1,9 @@
 import unittest
 from ChodeCoin.Backend.objects.user import User
+from ChodeCoin.Backend.objects.command import Command
 from parameterized import parameterized
 
-from ChodeCoin.Backend.helpers.array_helper import ArrayHelper, translate_user_info_to_display_strings
+from ChodeCoin.Backend.helpers.array_helper import ArrayHelper, translate_user_info_to_display_strings, translate_command_array_to_display_strings
 
 
 def generate_mock_user_array():
@@ -12,6 +13,15 @@ def generate_mock_user_array():
         User("Third User Name", 33),
         User("Fourth User Name", -44),
         User("Fifth User Name", 34),
+    ]
+
+def generate_mock_command_array():
+    return [
+        Command("Command One", "Command One Description"),
+        Command("Command Two", "Command Two Description"),
+        Command("Command Three", "Command Three Description"),
+        Command("Command Four", "Command Four Description"),
+        Command("Command Five", "Command Five Description"),
     ]
 
 
@@ -147,3 +157,71 @@ class TestArrayHelper(unittest.TestCase):
 
         # Assert
         self.assertEqual(expected_user_array, actual_user_array)
+
+    def test_GIVEN_translate_command_array_to_display_strings_WHEN_provided_empty_array_THEN_returns_empty_name_string(self) -> None:
+        # Arrange
+        command_descriptions = []
+
+        # Act
+        name_string, description_string = translate_command_array_to_display_strings(command_descriptions)
+
+        # Assert
+        assert name_string == ""
+
+    def test_GIVEN_translate_command_array_to_display_strings_WHEN_provided_empty_array_THEN_returns_empty_description_string(self) -> None:
+        # Arrange
+        command_descriptions = []
+
+        # Act
+        name_string, description_string = translate_command_array_to_display_strings(command_descriptions)
+
+        # Assert
+        assert name_string == ""
+
+    def test_GIVEN_translate_command_array_to_display_strings_WHEN_command_array_has_length_of_one_THEN_returns_numbered_name_string(self) -> None:
+        # Arrange
+        full_command_array = generate_mock_command_array()
+        command_array = []
+        command_array.insert(0, full_command_array[0])
+        expected_name_string = " 1.) Command One"
+
+        # Act
+        actual_name_string, actual_description_string = translate_command_array_to_display_strings(command_array)
+
+        # Assert
+        self.assertEqual(expected_name_string, actual_name_string)
+
+    def test_GIVEN_translate_command_array_to_display_strings_WHEN_command_array_has_length_of_more_than_one_THEN_returns_numbered_name_string(self) -> None:
+        # Arrange
+        command_array = generate_mock_command_array()
+        expected_name_string = " 1.) Command One \n 2.) Command Two \n 3.) Command Three \n 4.) Command Four \n 5.) Command Five"
+
+        # Act
+        actual_name_string, actual_description_string = translate_command_array_to_display_strings(command_array)
+
+        # Assert
+        self.assertEqual(expected_name_string, actual_name_string)
+
+    def test_GIVEN_translate_command_array_to_display_strings_WHEN_command_array_has_length_of_one_THEN_returns_command_description(self) -> None:
+        # Arrange
+        full_command_array = generate_mock_command_array()
+        command_array = []
+        command_array.insert(0, full_command_array[0])
+        expected_description_string = " 1.) Command One Description"
+
+        # Act
+        actual_name_string, actual_description_string = translate_command_array_to_display_strings(command_array)
+
+        # Assert
+        self.assertEqual(expected_description_string, actual_description_string)
+
+    def test_GIVEN_translate_command_array_to_display_strings_WHEN_user_array_has_length_of_more_than_one_THEN_returns_all_commands_description_string(self) -> None:
+        # Arrange
+        command_array = generate_mock_command_array()
+        expected_description_string = " 1.) Command One Description \n 2.) Command Two Description \n 3.) Command Three Description \n 4.) Command Four Description \n 5.) Command Five Description"
+
+        # Act
+        actual_name_string, actual_description_string = translate_command_array_to_display_strings(command_array)
+
+        # Assert
+        self.assertEqual(expected_description_string, actual_description_string)
