@@ -18,8 +18,8 @@ class Admin(object):
         return self.name == other.name and self.permission_level == other.permission_level
 
 
-def new_user(name, permission_level):
-    user = Admin(name, permission_level)
-    return user
+def new_admin(name, permission_level):
+    admin = Admin(name, permission_level)
+    return admin
 
 
