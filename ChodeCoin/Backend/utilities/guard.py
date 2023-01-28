@@ -10,4 +10,4 @@ class Guard:
         if message_author == target_user:
             return "You silly goose you can't updoot yourself o_O"
         else:
-            return None
+            return target_user

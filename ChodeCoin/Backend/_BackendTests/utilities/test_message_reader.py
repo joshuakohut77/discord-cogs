@@ -288,3 +288,15 @@ class TestMessageReader:
 
         # Assert
         assert expected == actual
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_discord_user_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "@<@500047678378344449>++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert expected == actual
