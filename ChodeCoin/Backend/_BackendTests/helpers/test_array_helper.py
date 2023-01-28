@@ -173,7 +173,7 @@ class TestArrayHelper(unittest.TestCase):
         full_command_array = generate_mock_command_array()
         command_array = []
         command_array.insert(0, full_command_array[0])
-        expected_command_string = " 1.) Command One <-----> Command One Description"
+        expected_command_string = " 1.) Command One \n        Command One Description"
 
         # Act
         actual_command_string = translate_command_array_to_display_strings(command_array)
@@ -184,7 +184,7 @@ class TestArrayHelper(unittest.TestCase):
     def test_GIVEN_translate_command_array_to_display_strings_WHEN_user_array_has_length_of_more_than_one_THEN_returns_all_command_strings(self) -> None:
         # Arrange
         command_array = generate_mock_command_array()
-        expected_command_string = " 1.) Command One <-----> Command One Description \n \n 2.) Command Two <-----> Command Two Description \n \n 3.) Command Three <-----> Command Three Description \n \n 4.) Command Four <-----> Command Four Description \n \n 5.) Command Five <-----> Command Five Description"
+        expected_command_string = " 1.) Command One \n        Command One Description \n \n 2.) Command Two \n        Command Two Description \n \n 3.) Command Three \n        Command Three Description \n \n 4.) Command Four \n        Command Four Description \n \n 5.) Command Five \n        Command Five Description"
 
         # Act
         actual_command_string = translate_command_array_to_display_strings(command_array)
