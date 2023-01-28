@@ -8,10 +8,8 @@ class Guard:
         self.message_reader = message_reader
 
     # Doesn't work at the moment due to the way message.author differs from the ping'd user's ID
-    def against_self_plus_plus(self, message, message_author):
-        text_targeted_user = convert_to_discord_user(self.message_reader.format_targeted_user(message, CommandType.text))
-        emoji_targeted_user = convert_to_discord_user(self.message_reader.format_targeted_user(message, CommandType.emoji_plus_plus))
-        if message_author == text_targeted_user or message_author == emoji_targeted_user:
+    def against_self_plus_plus(self, target_user, message_author):
+        if message_author == target_user:
             return "You silly goose you can't updoot yourself o_O"
         else:
-            return text_targeted_user
+            return None
