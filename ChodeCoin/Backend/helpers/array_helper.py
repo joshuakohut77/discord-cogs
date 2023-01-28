@@ -23,7 +23,7 @@ def translate_command_array_to_display_strings(command_descriptions: []):
     counter = 1
     if len(command_descriptions) > 0:
         for command in command_descriptions:
-            command_string = f"{command_string} {counter}.) {command.name} \n &nbsp &nbsp ∟ {command.description} \n \n"
+            command_string = f"{command_string} {counter}.) {command.name} \n ∟ {command.description} \n \n"
             counter += 1
         command_string = command_string[:len(command_string) - 4]
     return command_string
