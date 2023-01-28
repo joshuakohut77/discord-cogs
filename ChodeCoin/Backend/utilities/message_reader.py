@@ -151,7 +151,7 @@ class MessageReader:
         return search_result
 
     def extract_plus_plus_target(self, message):
-        search_result = re.search(r"^((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))[+]{2}", message)
+        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))[+]{2}", message)
         if search_result:
             targeted_user = search_result.group(0)
             formatted_user = targeted_user[1:len(str(targeted_user))].strip()
