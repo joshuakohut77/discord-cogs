@@ -161,11 +161,11 @@ class MessageReader:
             return formatted_user
 
     def is_minus_minus_command(self, message):
-        search_result = re.search(r"^((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))-{2}", message)
+        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))-{2}", message)
         return search_result
 
     def extract_minus_minus_target(self, message):
-        search_result = re.search(r"^((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))-{2}", message)
+        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))-{2}", message)
         if search_result:
             targeted_user = search_result.group(0)
             formatted_user = targeted_user[1:len(str(targeted_user))].strip()
