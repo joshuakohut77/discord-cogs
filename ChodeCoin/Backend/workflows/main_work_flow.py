@@ -33,9 +33,7 @@ class WorkFlow:
         process = self.identify_request(message)
 
         if process == RequestFor.chodecoin_ping:
-            reply = self.validate_input(message, author)
-            if reply is None:
-                reply = self.chodecoin_ping_workflow.process_chodecoin_ping_request(message)
+            reply = self.chodecoin_ping_workflow.process_chodecoin_ping_request(message, author)
             return reply, None
 
         elif process == RequestFor.leaderboard:
@@ -74,12 +72,5 @@ class WorkFlow:
             return RequestFor.chodekill
         elif is_help_workflow(message):
             return RequestFor.help
-        else:
-            return None
-
-    def validate_input(self, message, author):
-        reply = self.guard.against_self_plusplus(message, author)
-        if reply is not None:
-            return reply
         else:
             return None

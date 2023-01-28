@@ -1,4 +1,6 @@
 import discord
+
+from ChodeCoin.Backend.enums.command_type import CommandType
 from ChodeCoin.Backend.helpers.array_helper import translate_user_info_to_display_strings, translate_command_array_to_display_strings
 from ChodeCoin.Backend.utilities.info_manager import InfoManager
 
@@ -59,12 +61,15 @@ class ReplyGenerator:
     def __init__(self, info_manager=InfoManager()):
         self.info_manager = info_manager
 
-    def generate_chodecoin_ping_reply(self, targeted_user, process, amount):
-        if amount == 1:
-            amount = "a"
+    def generate_chodecoin_ping_reply(self, targeted_user, amount):
         current_balance = self.info_manager.get_current_balance(targeted_user)
         if targeted_user is not None:
-            if process == "plus_plus":
+            if amount > 0:
+                if amount == 1:
+                    amount = "a"
                 return f"Gave {targeted_user} {amount} ChodeCoin! {targeted_user} now has {current_balance} in the bank."
-            elif process == "minus_minus":
+            elif amount < 0:
+                if amount == -1:
+                    amount = "a"
                 return f"{targeted_user} lost {amount} ChodeCoin! {targeted_user} now has {current_balance} in the bank."
+        return None
