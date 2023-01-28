@@ -85,7 +85,8 @@ def is_chodekill_command(message):
 def is_help_command(message):
     identifying_string = message.lower()
     search_result = re.search(r"^!chodecoin\s{1,3}help", identifying_string)
-    if search_result:
+    alternate_search_result = re.search(r"^!chodecoin$", identifying_string)
+    if search_result or alternate_search_result:
         return True
     else:
         return False
