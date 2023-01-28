@@ -109,20 +109,16 @@ class MessageReader:
         self.info_manager = info_manager
 
     def is_chodecoin_ping(self, message):
-        is_plus_plus = self.find_plus_plus(message)
-        if is_plus_plus:
+        if self.is_plus_plus_command(message):
             return True
 
-        is_emoji_plus_plus = self.find_emoji_plus_plus(message)
-        if is_emoji_plus_plus:
+        if self.is_minus_minus_command(message):
             return True
 
-        is_minus_minus = self.find_minus_minus(message)
-        if is_minus_minus:
+        if self.is_emoji_plus_plus_command(message):
             return True
 
-        is_emoji_minus_minus = self.find_emoji_minus_minus(message)
-        if is_emoji_minus_minus:
+        if self.is_emoji_minus_minus_command(message):
             return True
 
         return False
@@ -150,59 +146,58 @@ class MessageReader:
         else:
             return un_formatted_user
 
-    def format_targeted_user(self, targeted_user, process):
-        if process == CommandType.text:
-            formatted_user = targeted_user[1:len(str(targeted_user))].strip()
-            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
-            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
-            formatted_user = convert_to_discord_user(formatted_user)
-        elif process == CommandType.emoji_plus_plus:
-            formatted_user = targeted_user[1:len(str(targeted_user))].strip()
-            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
-            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
-            formatted_user = convert_to_discord_user(formatted_user)
-        elif process == CommandType.emoji_minus_minus:
-            formatted_user = targeted_user[1:len(str(targeted_user))].strip()
-            formatted_user = formatted_user[:len(formatted_user) - 25].strip()
-            formatted_user = formatted_user[:len(formatted_user) - 25].strip()
-            formatted_user = convert_to_discord_user(formatted_user)
-        else:
-            raise NameError("Process not defined")
+    def is_plus_plus_command(self, message):
+        search_result = re.search(r"^((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))[+]{2}", message)
+        return search_result
 
-        return formatted_user
-
-    def find_plus_plus(self, message):
-        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))[+]{2}", message)
+    def extract_plus_plus_target(self, message):
+        search_result = re.search(r"^((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))[+]{2}", message)
         if search_result:
             targeted_user = search_result.group(0)
-            formatted_user = self.format_targeted_user(targeted_user, CommandType.text)
+            formatted_user = targeted_user[1:len(str(targeted_user))].strip()
+            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
+            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
+            formatted_user = convert_to_discord_user(formatted_user)
             return formatted_user
-        else:
-            return None
 
-    def find_minus_minus(self, message):
-        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))-{2}", message)
+    def is_minus_minus_command(self, message):
+        search_result = re.search(r"^((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))-{2}", message)
+        return search_result
+
+    def extract_minus_minus_target(self, message):
+        search_result = re.search(r"^((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))-{2}", message)
         if search_result:
             targeted_user = search_result.group(0)
-            formatted_user = self.format_targeted_user(targeted_user, CommandType.text)
+            formatted_user = targeted_user[1:len(str(targeted_user))].strip()
+            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
+            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
+            formatted_user = convert_to_discord_user(formatted_user)
             return formatted_user
-        else:
-            return None
 
-    def find_emoji_plus_plus(self, message):
+    def is_emoji_plus_plus_command(self, message):
+        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))((🍆)\s*){2}", message)
+        return search_result
+
+    def extract_emoji_plus_plus_target(self, message):
         search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))((🍆)\s*){2}", message)
         if search_result:
             targeted_user = search_result.group(0)
-            formatted_user = self.format_targeted_user(targeted_user, CommandType.emoji_plus_plus)
+            formatted_user = targeted_user[1:len(str(targeted_user))].strip()
+            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
+            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
+            formatted_user = convert_to_discord_user(formatted_user)
             return formatted_user
-        else:
-            return None
 
-    def find_emoji_minus_minus(self, message):
+    def is_emoji_minus_minus_command(self, message):
+        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))((<:No:1058833719399567460>)\s*){2}", message)
+        return search_result
+
+    def extract_emoji_minus_minus_target(self, message):
         search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))((<:No:1058833719399567460>)\s*){2}", message)
         if search_result:
             targeted_user = search_result.group(0)
-            formatted_user = self.format_targeted_user(targeted_user, CommandType.emoji_minus_minus)
+            formatted_user = targeted_user[1:len(str(targeted_user))].strip()
+            formatted_user = formatted_user[:len(formatted_user) - 25].strip()
+            formatted_user = formatted_user[:len(formatted_user) - 25].strip()
+            formatted_user = convert_to_discord_user(formatted_user)
             return formatted_user
-        else:
-            return None
