@@ -29,10 +29,8 @@ class ChodeCoinPingWorkflow:
     def process_chodecoin_ping_request(self, message, author):
         if self.message_reader.is_plus_plus_command(message):
             targeted_user = self.message_reader.extract_plus_plus_target(message)
-            return_message = self.guard.against_self_plus_plus(targeted_user, author)
-            if return_message is None:
-                self.coin_manager.process_plus_plus(targeted_user)
-                return_message = self.reply_generator.generate_chodecoin_ping_reply(targeted_user, 1)
+            self.coin_manager.process_plus_plus(targeted_user)
+            return_message = self.reply_generator.generate_chodecoin_ping_reply(targeted_user, 1)
             return return_message
 
         if self.message_reader.is_emoji_plus_plus_command(message):
