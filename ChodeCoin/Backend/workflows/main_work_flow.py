@@ -29,8 +29,8 @@ class WorkFlow:
         self.help_workflow = help_workflow
         self.guard = guard
 
-    def process_message(self, message, author, channel, embed):
-        process = self.identify_request(message, channel, embed)
+    def process_message(self, message, author):
+        process = self.identify_request(message)
 
         if process == RequestFor.chodecoin_ping:
             reply = self.validate_input(message, author)
