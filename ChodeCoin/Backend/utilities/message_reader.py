@@ -147,7 +147,7 @@ class MessageReader:
             return un_formatted_user
 
     def is_plus_plus_command(self, message):
-        search_result = re.search(r"^((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))[+]{2}", message)
+        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))[+]{2}", message)
         return search_result
 
     def extract_plus_plus_target(self, message):
