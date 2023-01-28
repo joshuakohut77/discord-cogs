@@ -19,17 +19,14 @@ def translate_user_info_to_display_strings(user_array: []):
 
 
 def translate_command_array_to_display_strings(command_descriptions: []):
-    name_string = ""
-    description_string = ""
+    command_string = ""
     counter = 1
     if len(command_descriptions) > 0:
         for command in command_descriptions:
-            name_string = f"{name_string} {counter}.) {command.name} \n"
-            description_string = f"{description_string} {counter}.) {command.description} \n"
+            command_string = f"{command_string} {counter}.) {command.name} <-----> {command.description} \n"
             counter += 1
-        name_string = name_string[:len(name_string) - 2]
-        description_string = description_string[:len(description_string) - 2]
-    return name_string, description_string
+        command_string = command_string[:len(command_string) - 2]
+    return command_string
 
 
 class ArrayHelper:
