@@ -151,14 +151,19 @@ class MessageReader:
         return search_result
 
     def extract_plus_plus_target(self, message):
-        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))[+]{2}", message)
-        if search_result:
-            targeted_user = search_result.group(0)
+        custom_user_search = re.search(r"^@.{1,32}?\s{0,3}?[+]{2}", message)
+        if custom_user_search:
+            targeted_user = custom_user_search.group(0)
             formatted_user = targeted_user[1:len(str(targeted_user))].strip()
             formatted_user = formatted_user[:len(formatted_user) - 1].strip()
             formatted_user = formatted_user[:len(formatted_user) - 1].strip()
-            formatted_user = convert_to_discord_user(formatted_user)
             return formatted_user
+        discord_user_search = re.search(r"^<@\d{18,20}>\s{0,3}?[+]{2}", message)
+        if discord_user_search:
+            targeted_discord_user = discord_user_search.group(0)
+            formatted_discord_user = targeted_discord_user[:len(targeted_discord_user) - 1].strip()
+            formatted_discord_user = formatted_discord_user[:len(formatted_discord_user) - 1].strip()
+            return formatted_discord_user
 
     def is_minus_minus_command(self, message):
         search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))-{2}", message)
