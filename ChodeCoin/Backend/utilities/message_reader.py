@@ -42,7 +42,7 @@ def is_admin_command(message):
 def find_targeted_dank_hof_user(message):
     dank_user = ""
 
-    dank_user_result = re.search(r"^.{8,11}(.{1,32})", message)
+    dank_user_result = re.search(r"^.{8,11}(.{1,34})", message)
 
     if dank_user_result:
         dank_user = dank_user_result.group(0)
