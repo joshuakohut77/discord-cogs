@@ -288,8 +288,312 @@ class TestMessageReader:
 
         # Assert
         assert expected == actual
+        
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_discord_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_discord_user_with_text_after_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>++ additional text afterward"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_discord_user_with_three_spaces_after_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>   ++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_discord_user_with_four_spaces_after_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>    ++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_discord_user_with_space_between_pluses_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>+ +"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_discord_user_with_17_digits_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "<@50004767837834444>++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_discord_user_with_21_digits_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449512>++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_discord_user_as_custom_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@<@500047678378344449>++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_discord_user_with_space_in_front_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = " <@500047678378344449>++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_discord_user_then_another_discord_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>++ <@611158789489455550>++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_numbers_that_emulate_discord_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@500047678378344449++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_custom_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@q++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_custom_user_with_text_after_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@asdf++ additional text afterward"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_custom_user_with_three_spaces_after_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@asdf   ++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_custom_user_with_four_spaces_after_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "@asdf    ++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_custom_user_with_space_between_pluses_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "@asdf+ +"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_custom_user_with_33_digits_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "@asdfasdfasdfasdfasdfasdfasdfasdfa++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_custom_user_with_0_digits_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "@++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_custom_user_with_space_in_front_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = " @asdf++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_plus_plus_command_WHEN_provided_custom_user_then_another_custom_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@asdf++ @hjkl++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
 
     def test_GIVEN_extract_plus_plus_target_WHEN_provided_discord_user_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449>++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_discord_user_with_text_after_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449>++ additional text afterward"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_discord_user_with_three_spaces_after_user_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449>   ++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_discord_user_with_four_spaces_after_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "<@500047678378344449>    ++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_discord_user_with_space_between_pluses_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "<@500047678378344449>+ +"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_discord_user_with_17_digits_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "<@50004767837834444>++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_discord_user_with_21_digits_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "<@500047678378344449512>++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_discord_user_as_custom_user_THEN_returns_formatted_discord_user(self) -> None:
         # Arrange
         expected = "<@500047678378344449>"
         test_message = "@<@500047678378344449>++"
@@ -299,11 +603,35 @@ class TestMessageReader:
         actual = message_reader.extract_plus_plus_target(test_message)
 
         # Assert
-        assert expected == actual
+        assert actual == expected
 
-    def test_GIVEN_extract_plus_plus_target_WHEN_provided_different_discord_user_THEN_returns_formatted_discord_user(self) -> None:
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_discord_user_with_space_in_front_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = " <@500047678378344449>++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_discord_user_then_another_discord_user_THEN_returns_first_formatted_discord_user(self) -> None:
         # Arrange
         expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449>++ <@611158789489455550>++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_numbers_that_emulate_discord_user_THEN_returns_non_discord_user(self) -> None:
+        # Arrange
+        expected = "500047678378344449"
         test_message = "@500047678378344449++"
         message_reader = MessageReader()
 
@@ -311,4 +639,1494 @@ class TestMessageReader:
         actual = message_reader.extract_plus_plus_target(test_message)
 
         # Assert
-        assert expected == actual
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_custom_user_THEN_returns_custom_user(self) -> None:
+        # Arrange
+        expected = "q"
+        test_message = "@q++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_custom_user_with_text_after_THEN_returns_cusotm_user(self) -> None:
+        # Arrange
+        expected = "asdf"
+        test_message = "@asdf++ additional text afterward"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_custom_user_with_three_spaces_after_user_THEN_returns_custom_user(self) -> None:
+        # Arrange
+        expected = "asdf"
+        test_message = "@asdf   ++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_custom_user_with_four_spaces_after_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "@asdf    ++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_custom_user_with_space_between_pluses_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "@asdf+ +"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_custom_user_with_33_digits_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "@asdfasdfasdfasdfasdfasdfasdfasdfa++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_custom_user_with_0_digits_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "@++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_custom_user_with_space_in_front_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = " @asdf++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_plus_plus_target_WHEN_provided_custom_user_then_another_custom_user_THEN_returns_first_custom_user(self) -> None:
+        # Arrange
+        expected = "asdf"
+        test_message = "@asdf++ @hjkl++"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+        
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_discord_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_discord_user_with_text_after_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>-- additional text afterward"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_discord_user_with_three_spaces_after_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>   --"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_discord_user_with_four_spaces_after_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>    --"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_discord_user_with_space_between_pluses_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>- -"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_discord_user_with_17_digits_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "<@50004767837834444>--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_discord_user_with_21_digits_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449512>--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_discord_user_as_custom_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@<@500047678378344449>--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_discord_user_with_space_in_front_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = " <@500047678378344449>--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_discord_user_then_another_discord_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>-- <@611158789489455550>--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_numbers_that_emulate_discord_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@500047678378344449--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_custom_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@q--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_custom_user_with_text_after_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@asdf-- additional text afterward"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_custom_user_with_three_spaces_after_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@asdf   --"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_custom_user_with_four_spaces_after_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "@asdf    --"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_custom_user_with_space_between_pluses_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "@asdf- -"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_custom_user_with_33_digits_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "@asdfasdfasdfasdfasdfasdfasdfasdfa--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_custom_user_with_0_digits_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "@--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_custom_user_with_space_in_front_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = " @asdf--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_minus_minus_command_WHEN_provided_custom_user_then_another_custom_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@asdf-- @hjkl--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_discord_user_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449>--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_discord_user_with_text_after_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449>-- additional text afterward"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_discord_user_with_three_spaces_after_user_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449>   --"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_discord_user_with_four_spaces_after_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "<@500047678378344449>    --"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_discord_user_with_space_between_pluses_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "<@500047678378344449>- -"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_discord_user_with_17_digits_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "<@50004767837834444>--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_discord_user_with_21_digits_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "<@500047678378344449512>--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_discord_user_as_custom_user_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "@<@500047678378344449>--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_discord_user_with_space_in_front_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = " <@500047678378344449>--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_discord_user_then_another_discord_user_THEN_returns_first_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449>-- <@611158789489455550>--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_numbers_that_emulate_discord_user_THEN_returns_non_discord_user(self) -> None:
+        # Arrange
+        expected = "500047678378344449"
+        test_message = "@500047678378344449--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_custom_user_THEN_returns_custom_user(self) -> None:
+        # Arrange
+        expected = "q"
+        test_message = "@q--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_custom_user_with_text_after_THEN_returns_cusotm_user(self) -> None:
+        # Arrange
+        expected = "asdf"
+        test_message = "@asdf-- additional text afterward"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_custom_user_with_three_spaces_after_user_THEN_returns_custom_user(self) -> None:
+        # Arrange
+        expected = "asdf"
+        test_message = "@asdf   --"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_custom_user_with_four_spaces_after_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "@asdf    --"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_custom_user_with_space_between_pluses_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "@asdf- -"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_custom_user_with_33_digits_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "@asdfasdfasdfasdfasdfasdfasdfasdfa--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_custom_user_with_0_digits_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "@--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_custom_user_with_space_in_front_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = " @asdf--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_minus_minus_target_WHEN_provided_custom_user_then_another_custom_user_THEN_returns_first_custom_user(self) -> None:
+        # Arrange
+        expected = "asdf"
+        test_message = "@asdf-- @hjkl--"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_discord_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_discord_user_with_text_after_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>\U0001f346\U0001f346 additional text afterward"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_discord_user_with_three_spaces_after_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>   \U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_discord_user_with_four_spaces_after_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>    \U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_discord_user_with_space_between_pluses_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>\U0001f346 \U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_discord_user_with_17_digits_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "<@50004767837834444>\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_discord_user_with_21_digits_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449512>\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_discord_user_as_custom_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@<@500047678378344449>\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_discord_user_with_space_in_front_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = " <@500047678378344449>\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_discord_user_then_another_discord_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>\U0001f346\U0001f346 <@611158789489455550>\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_numbers_that_emulate_discord_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@500047678378344449\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_custom_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@q\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_custom_user_with_text_after_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@asdf\U0001f346\U0001f346 additional text afterward"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_custom_user_with_three_spaces_after_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@asdf   \U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_custom_user_with_four_spaces_after_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "@asdf    \U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_custom_user_with_space_between_pluses_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@asdf\U0001f346 \U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_custom_user_with_33_digits_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "@asdfasdfasdfasdfasdfasdfasdfasdfa\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_custom_user_with_0_digits_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "@\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_custom_user_with_space_in_front_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = " @asdf\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_emoji_plus_plus_command_WHEN_provided_custom_user_then_another_custom_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@asdf\U0001f346\U0001f346 @hjkl\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_plus_plus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_discord_user_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449>\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_discord_user_with_text_after_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449>\U0001f346\U0001f346 additional text afterward"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_discord_user_with_three_spaces_after_user_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449>   \U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_discord_user_with_four_spaces_after_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "<@500047678378344449>    \U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_discord_user_with_space_between_pluses_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449>\U0001f346 \U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_discord_user_with_17_digits_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "<@50004767837834444>\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_discord_user_with_21_digits_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "<@500047678378344449512>\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_discord_user_as_custom_user_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "@<@500047678378344449>\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_discord_user_with_space_in_front_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = " <@500047678378344449>\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_discord_user_then_another_discord_user_THEN_returns_first_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449>\U0001f346\U0001f346 <@611158789489455550>\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_numbers_that_emulate_discord_user_THEN_returns_non_discord_user(self) -> None:
+        # Arrange
+        expected = "500047678378344449"
+        test_message = "@500047678378344449\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_custom_user_THEN_returns_custom_user(self) -> None:
+        # Arrange
+        expected = "q"
+        test_message = "@q\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_custom_user_with_text_after_THEN_returns_cusotm_user(self) -> None:
+        # Arrange
+        expected = "asdf"
+        test_message = "@asdf\U0001f346\U0001f346 additional text afterward"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_custom_user_with_three_spaces_after_user_THEN_returns_custom_user(self) -> None:
+        # Arrange
+        expected = "asdf"
+        test_message = "@asdf   \U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_custom_user_with_four_spaces_after_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "@asdf    \U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_custom_user_with_space_between_pluses_THEN_returns_user(self) -> None:
+        # Arrange
+        expected = "asdf"
+        test_message = "@asdf\U0001f346 \U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_custom_user_with_33_digits_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "@asdfasdfasdfasdfasdfasdfasdfasdfa\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_custom_user_with_0_digits_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "@\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_custom_user_with_space_in_front_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = " @asdf\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_plus_plus_target_WHEN_provided_custom_user_then_another_custom_user_THEN_returns_first_custom_user(self) -> None:
+        # Arrange
+        expected = "asdf"
+        test_message = "@asdf\U0001f346\U0001f346 @hjkl\U0001f346\U0001f346"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_plus_plus_target(test_message)
+
+        # Assert
+        assert actual == expected
+        
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_discord_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449><:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_discord_user_with_text_after_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449><:No:1058833719399567460><:No:1058833719399567460> additional text afterward"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_discord_user_with_three_spaces_after_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>   <:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_discord_user_with_four_spaces_after_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449>    <:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_discord_user_with_space_between_pluses_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449><:No:1058833719399567460> <:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_discord_user_with_17_digits_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "<@50004767837834444><:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_discord_user_with_21_digits_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449512><:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_discord_user_as_custom_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@<@500047678378344449><:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_discord_user_with_space_in_front_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = " <@500047678378344449><:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_discord_user_then_another_discord_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "<@500047678378344449><:No:1058833719399567460><:No:1058833719399567460> <@611158789489455550><:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_numbers_that_emulate_discord_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@500047678378344449<:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_custom_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@q<:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_custom_user_with_text_after_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@asdf<:No:1058833719399567460><:No:1058833719399567460> additional text afterward"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_custom_user_with_three_spaces_after_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@asdf   <:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_custom_user_with_four_spaces_after_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "@asdf    <:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_custom_user_with_space_between_pluses_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@asdf<:No:1058833719399567460> <:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_custom_user_with_33_digits_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "@asdfasdfasdfasdfasdfasdfasdfasdfa<:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_custom_user_with_0_digits_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = "@<:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_custom_user_with_space_in_front_THEN_returns_false(self) -> None:
+        # Arrange
+        test_message = " @asdf<:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is False
+
+    def test_GIVEN_is_emoji_minus_minus_command_WHEN_provided_custom_user_then_another_custom_user_THEN_returns_true(self) -> None:
+        # Arrange
+        test_message = "@asdf<:No:1058833719399567460><:No:1058833719399567460> @hjkl<:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.is_emoji_minus_minus_command(test_message)
+
+        # Assert
+        assert actual is True
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_discord_user_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449><:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_discord_user_with_text_after_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449><:No:1058833719399567460><:No:1058833719399567460> additional text afterward"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_discord_user_with_three_spaces_after_user_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449>   <:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_discord_user_with_four_spaces_after_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "<@500047678378344449>    <:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_discord_user_with_space_between_pluses_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449><:No:1058833719399567460> <:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_discord_user_with_17_digits_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "<@50004767837834444><:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_discord_user_with_21_digits_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "<@500047678378344449512><:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_discord_user_as_custom_user_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "@<@500047678378344449><:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_discord_user_with_space_in_front_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = " <@500047678378344449><:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_discord_user_then_another_discord_user_THEN_returns_first_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "<@500047678378344449>"
+        test_message = "<@500047678378344449><:No:1058833719399567460><:No:1058833719399567460> <@611158789489455550><:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_numbers_that_emulate_discord_user_THEN_returns_non_discord_user(self) -> None:
+        # Arrange
+        expected = "500047678378344449"
+        test_message = "@500047678378344449<:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_custom_user_THEN_returns_custom_user(self) -> None:
+        # Arrange
+        expected = "q"
+        test_message = "@q<:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_custom_user_with_text_after_THEN_returns_cusotm_user(self) -> None:
+        # Arrange
+        expected = "asdf"
+        test_message = "@asdf<:No:1058833719399567460><:No:1058833719399567460> additional text afterward"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_custom_user_with_three_spaces_after_user_THEN_returns_custom_user(self) -> None:
+        # Arrange
+        expected = "asdf"
+        test_message = "@asdf   <:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_custom_user_with_four_spaces_after_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "@asdf    <:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_custom_user_with_space_between_pluses_THEN_returns_formatted_discord_user(self) -> None:
+        # Arrange
+        expected = "asdf"
+        test_message = "@asdf<:No:1058833719399567460> <:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_custom_user_with_33_digits_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "@asdfasdfasdfasdfasdfasdfasdfasdfa<:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_custom_user_with_0_digits_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = "@<:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_custom_user_with_space_in_front_THEN_returns_none(self) -> None:
+        # Arrange
+        expected = None
+        test_message = " @asdf<:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+
+    def test_GIVEN_extract_emoji_minus_minus_target_WHEN_provided_custom_user_then_another_custom_user_THEN_returns_first_custom_user(self) -> None:
+        # Arrange
+        expected = "asdf"
+        test_message = "@asdf<:No:1058833719399567460><:No:1058833719399567460> @hjkl<:No:1058833719399567460><:No:1058833719399567460>"
+        message_reader = MessageReader()
+
+        # Act
+        actual = message_reader.extract_emoji_minus_minus_target(test_message)
+
+        # Assert
+        assert actual == expected
+        
+    
