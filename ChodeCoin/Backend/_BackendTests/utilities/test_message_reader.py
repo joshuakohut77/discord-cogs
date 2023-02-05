@@ -1,4 +1,3 @@
-from mock import Mock
 import pytest
 from parameterized import parameterized
 from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_leaderboard_command, is_targeted_coin_count_command, find_targeted_dank_hof_user, is_dank_hof_command, find_targeted_admin_data, find_chodekill_data
@@ -79,7 +78,7 @@ class TestMessageReader:
         # Assert
         assert result is True
 
-    @parameterized.expand([("@<500047678378344449>++",), ("@<1019075447532826726>++",), ("@<10190754475328267269>++",), ])
+    @parameterized.expand([("<@500047678378344449>++",), ("<@1019075447532826726>++",), ("<@10190754475328267269>++",), ])
     def test_GIVEN_is_chodecoin_ping_WHEN_string_is_valid_discord_user_plus_plus_THEN_returns_true(self, message) -> None:
         # Arrange
         message_reader = MessageReader()
@@ -90,7 +89,7 @@ class TestMessageReader:
         # Assert
         assert result is True
 
-    @parameterized.expand([("@<500047678378344449>++ gibberish",), ("@first++ then @second--",), ])
+    @parameterized.expand([("<@500047678378344449>++ gibberish",), ("@first++ then @second--",), ])
     def test_GIVEN_is_chodecoin_ping_WHEN_string_is_any_valid_user_plus_plus_with_text_after_THEN_returns_true(self, message) -> None:
         # Arrange
         message_reader = MessageReader()
@@ -101,7 +100,7 @@ class TestMessageReader:
         # Assert
         assert result is True
 
-    @parameterized.expand([("@<500047678378344449>++ gibberish",), ("@first++ then @second--",), ])
+    @parameterized.expand([("<@500047678378344449>++ gibberish",), ("@first++ then @second--",), ])
     def test_GIVEN_is_chodecoin_ping_WHEN_string_is_any_valid_user_plus_plus_with_text_after_THEN_returns_true(self,
                                                                                                                message) -> None:
         # Arrange
@@ -2128,5 +2127,3 @@ class TestMessageReader:
 
         # Assert
         assert actual == expected
-        
-    
