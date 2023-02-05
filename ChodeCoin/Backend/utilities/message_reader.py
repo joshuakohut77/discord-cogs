@@ -147,62 +147,77 @@ class MessageReader:
             return un_formatted_user
 
     def is_plus_plus_command(self, message):
-        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))[+]{2}", message)
-        return search_result
+        return bool(re.search(r"(^@\S{1,32}?\s{0,3}?[+]{2})|(^<@\d{18,20}>\s{0,3}?[+]{2})", message))
 
     def extract_plus_plus_target(self, message):
-        custom_user_search = re.search(r"^@.{1,32}?\s{0,3}?[+]{2}", message)
+        custom_user_search = re.search(r"^@\S{1,32}?\s{0,3}?[+]{2}", message)
         if custom_user_search:
-            targeted_user = custom_user_search.group(0)
-            formatted_user = targeted_user[1:len(str(targeted_user))].strip()
-            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
-            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
-            return formatted_user
+            targeted_custom_user = custom_user_search.group(0)
+            formatted_custom_user = targeted_custom_user[1:len(str(targeted_custom_user))].strip()
+            formatted_custom_user = formatted_custom_user[:len(formatted_custom_user) - 1].strip()
+            formatted_custom_user = formatted_custom_user[:len(formatted_custom_user) - 1].strip()
+            return formatted_custom_user
         discord_user_search = re.search(r"^<@\d{18,20}>\s{0,3}?[+]{2}", message)
         if discord_user_search:
             targeted_discord_user = discord_user_search.group(0)
             formatted_discord_user = targeted_discord_user[:len(targeted_discord_user) - 1].strip()
             formatted_discord_user = formatted_discord_user[:len(formatted_discord_user) - 1].strip()
             return formatted_discord_user
+        return None
 
     def is_minus_minus_command(self, message):
-        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))-{2}", message)
-        return search_result
+        return bool(re.search(r"(^@\S{1,32}?\s{0,3}?-{2})|(^<@\d{18,20}>\s{0,3}?-{2})", message))
 
     def extract_minus_minus_target(self, message):
-        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))-{2}", message)
-        if search_result:
-            targeted_user = search_result.group(0)
-            formatted_user = targeted_user[1:len(str(targeted_user))].strip()
-            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
-            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
-            formatted_user = convert_to_discord_user(formatted_user)
-            return formatted_user
+        custom_user_search = re.search(r"^@\S{1,32}?\s{0,3}?-{2}", message)
+        if custom_user_search:
+            targeted_custom_user = custom_user_search.group(0)
+            formatted_custom_user = targeted_custom_user[1:len(str(targeted_custom_user))].strip()
+            formatted_custom_user = formatted_custom_user[:len(formatted_custom_user) - 1].strip()
+            formatted_custom_user = formatted_custom_user[:len(formatted_custom_user) - 1].strip()
+            return formatted_custom_user
+        discord_user_search = re.search(r"^<@\d{18,20}>\s{0,3}?-{2}", message)
+        if discord_user_search:
+            targeted_discord_user = discord_user_search.group(0)
+            formatted_discord_user = targeted_discord_user[:len(targeted_discord_user) - 1].strip()
+            formatted_discord_user = formatted_discord_user[:len(formatted_discord_user) - 1].strip()
+            return formatted_discord_user
+        return None
 
     def is_emoji_plus_plus_command(self, message):
-        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))((🍆)\s*){2}", message)
-        return search_result
+        return bool(re.search(r"(^@\S{1,32}?\s{0,3}?(🍆\s*){2})|(^<@\d{18,20}>\s{0,3}?(🍆\s*){2})", message))
 
     def extract_emoji_plus_plus_target(self, message):
-        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))((🍆)\s*){2}", message)
-        if search_result:
-            targeted_user = search_result.group(0)
-            formatted_user = targeted_user[1:len(str(targeted_user))].strip()
-            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
-            formatted_user = formatted_user[:len(formatted_user) - 1].strip()
-            formatted_user = convert_to_discord_user(formatted_user)
-            return formatted_user
+        custom_user_search = re.search(r"^@\S{1,32}?\s{0,3}?(\U0001f346\s*){2}", message)
+        if custom_user_search:
+            targeted_custom_user = custom_user_search.group(0).strip()
+            formatted_custom_user = targeted_custom_user[1:len(str(targeted_custom_user))].strip()
+            formatted_custom_user = formatted_custom_user[:len(formatted_custom_user) - 1].strip()
+            formatted_custom_user = formatted_custom_user[:len(formatted_custom_user) - 1].strip()
+            return formatted_custom_user
+        discord_user_search = re.search(r"^<@\d{18,20}>\s{0,3}?(\U0001f346\s*){2}", message)
+        if discord_user_search:
+            targeted_discord_user = discord_user_search.group(0).strip()
+            formatted_discord_user = targeted_discord_user[:len(targeted_discord_user) - 1].strip()
+            formatted_discord_user = formatted_discord_user[:len(formatted_discord_user) - 1].strip()
+            return formatted_discord_user
+        return None
 
     def is_emoji_minus_minus_command(self, message):
-        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))((<:No:1058833719399567460>)\s*){2}", message)
-        return search_result
+        return bool(re.search(r"(^@\S{1,32}?\s{0,3}?((<:No:1058833719399567460>)\s*){2})|(^<@\d{18,20}>\s{0,3}?((<:No:1058833719399567460>)\s*){2})", message))
 
     def extract_emoji_minus_minus_target(self, message):
-        search_result = re.search(r"((@.{1,32}?)|(<\d{18,20}>\s{1,3}?))((<:No:1058833719399567460>)\s*){2}", message)
-        if search_result:
-            targeted_user = search_result.group(0)
-            formatted_user = targeted_user[1:len(str(targeted_user))].strip()
-            formatted_user = formatted_user[:len(formatted_user) - 25].strip()
-            formatted_user = formatted_user[:len(formatted_user) - 25].strip()
-            formatted_user = convert_to_discord_user(formatted_user)
-            return formatted_user
+        custom_user_search = re.search(r"^@\S{1,32}?\s{0,3}?((<:No:1058833719399567460>)\s*){2}", message)
+        if custom_user_search:
+            targeted_custom_user = custom_user_search.group(0).strip()
+            formatted_custom_user = targeted_custom_user[1:len(str(targeted_custom_user))].strip()
+            formatted_custom_user = formatted_custom_user[:len(formatted_custom_user) - 25].strip()
+            formatted_custom_user = formatted_custom_user[:len(formatted_custom_user) - 25].strip()
+            return formatted_custom_user
+        discord_user_search = re.search(r"^<@\d{18,20}>\s{0,3}?((<:No:1058833719399567460>)\s*){2}", message)
+        if discord_user_search:
+            targeted_discord_user = discord_user_search.group(0).strip()
+            formatted_discord_user = targeted_discord_user[:len(targeted_discord_user) - 25].strip()
+            formatted_discord_user = formatted_discord_user[:len(formatted_discord_user) - 25].strip()
+            return formatted_discord_user
+        return None
