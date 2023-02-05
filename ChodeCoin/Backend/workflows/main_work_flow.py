@@ -1,5 +1,5 @@
 from ChodeCoin.Backend.utilities.guard import Guard
-from ChodeCoin.Backend.workflows.admin_workflow import AdminWorkflow, is_admin_workflow
+from ChodeCoin.Backend.workflows.permission_workflow import PermissionWorkflow, is_permission_workflow
 from ChodeCoin.Backend.workflows.chodecoin_ping_workflow import ChodeCoinPingWorkflow
 from ChodeCoin.Backend.workflows.help_workflow import is_help_workflow, HelpWorkflow
 from ChodeCoin.Backend.workflows.leaderboard_workflow import LeaderboardWorkflow, is_leaderboard_workflow
@@ -16,7 +16,7 @@ class WorkFlow:
             leaderboard_workflow=LeaderboardWorkflow(),
             targeted_coin_count_workflow=TargetedCoinCountWorkflow(),
             dank_hof_workflow=DankHofWorkflow(),
-            admin_workflow=AdminWorkflow(),
+            admin_workflow=PermissionWorkflow(),
             chodekill_workflow=ChodeKillWorkflow(),
             help_workflow=HelpWorkflow(),
             guard=Guard()):
@@ -42,11 +42,11 @@ class WorkFlow:
         elif process == RequestFor.targeted_coin_count:
             return self.targeted_coin_count_workflow.process_targeted_coin_count_request(message, author)
 
-        # elif process == RequestFor.dank_hof:
-        #     return self.dank_hof_workflow.process_dank_hof_request(message, author), None
+        elif process == RequestFor.dank_hof:
+            return self.dank_hof_workflow.process_dank_hof_request(message, author), None
 
-        elif process == RequestFor.admin:
-            return self.admin_workflow.process_admin_request(message, author), None
+        elif process == RequestFor.permission:
+            return self.admin_workflow.process_permission_request(message, author), None
 
         elif process == RequestFor.chodekill:
             return self.chodekill_workflow.process_chodekill_request(message, author), None
@@ -66,8 +66,8 @@ class WorkFlow:
             return RequestFor.targeted_coin_count
         elif is_dank_hof_workflow(message):
             return RequestFor.dank_hof
-        elif is_admin_workflow(message):
-            return RequestFor.admin
+        elif is_permission_workflow(message):
+            return RequestFor.permission
         elif is_chodekill_workflow(message):
             return RequestFor.chodekill
         elif is_help_workflow(message):

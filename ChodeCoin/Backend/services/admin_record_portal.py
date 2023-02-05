@@ -37,12 +37,12 @@ class AdminRecordPortal:
         else:
             return 4
 
-    def set_admin_level(self, target_user, new_admin_level):
+    def set_permission_level(self, target_user, new_permission_level):
         with open(self.db_path, "r+") as file:
             record_book = json.load(file)
             for admin_record in record_book["admin_records"]:
                 if admin_record["name"] == target_user:
-                    admin_record["permission_level"] = new_admin_level
+                    admin_record["permission_level"] = new_permission_level
                     break
         with open(self.db_path, "wt") as file:
             json.dump(record_book, file, indent=4)
