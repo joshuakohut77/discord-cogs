@@ -1,3 +1,4 @@
+from ChodeCoin.Backend.helpers.string_helper import convert_to_discord_user
 from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_dank_hof_command, find_targeted_dank_hof_user
 from ChodeCoin.Backend.utilities.reply_generator import generate_dank_hof_reply
 from ChodeCoin.Backend.utilities.info_manager import InfoManager
@@ -24,7 +25,7 @@ class DankHofWorkflow:
         self.coin_manager = coin_manager
 
     def process_dank_hof_request(self, message, author):
-        if self.user_manager.is_admin_user(f"<@{author}>"):
+        if self.user_manager.is_admin_user(convert_to_discord_user(author)):
             target_user = find_targeted_dank_hof_user(message)
             self.coin_manager.process_dank_hof_entry(target_user)
             response = generate_dank_hof_reply(target_user)

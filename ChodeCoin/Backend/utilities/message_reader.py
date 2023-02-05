@@ -60,16 +60,16 @@ def find_targeted_dank_hof_user(message):
         return None
 
 
-def find_targeted_admin_data(message):
+def find_targeted_permission_data(message):
     target_user = ""
-    new_admin_level = ""
+    new_permission_level = ""
     command_result = re.search(r"^![Ss][Ee][Tt][Pp][Ee][Rr][Mm][Ii][Ss][Ss][Ii][Oo][Nn]\s{1,3}(\d{18,20}|<@\d{18,20}>)\s{1,3}([Oo][Ww][Nn][Ee][Rr]|[Aa][Dd][Mm][Ii][Nn]|[Vv][Ii][Ee][Ww][Ee][Rr]|[Nn][Oo][Nn][Ee])$", message)
     if command_result:
         result = command_result.group(0)
         segments = re.split(r"\s{1,3}", result)
         target_user = convert_to_discord_user(segments[1])
-        new_admin_level = segments[2].lower()
-        return target_user, new_admin_level
+        new_permission_level = segments[2].lower()
+        return target_user, new_permission_level
     else:
         return None, None
 
