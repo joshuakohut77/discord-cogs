@@ -1,8 +1,6 @@
-import unittest
-
+import pytest
 import mock
 from mock import Mock
-from parameterized import parameterized
 from ChodeCoin.Backend.utilities.info_manager import InfoManager
 
 
@@ -10,7 +8,7 @@ def generate_mock_db_result():
     return [{"name": "Mock Name", "coin_count": 143, "last_modified": "2023-01-10 02:01:22.608934"}]
 
 
-class TestInfoManager(unittest.TestCase):
+class TestInfoManager:
 
     def test_GIVEN_get_current_balance_WHEN_user_does_not_exist_THEN_does_not_make_db_call(self) -> None:
         # Arrange
@@ -41,7 +39,7 @@ class TestInfoManager(unittest.TestCase):
         actual_result = info_manager.get_current_balance(target_user)
 
         # Assert
-        self.assertEqual(expected_result, actual_result)
+        assert actual_result == expected_result
 
     def test_GIVEN_get_current_balance_WHEN_user_exists_THEN_makes_db_call_with_user(self) -> None:
         # Arrange
@@ -58,7 +56,7 @@ class TestInfoManager(unittest.TestCase):
         # Assert
         mock_coinbankportal.get_current_balance.assert_called_once_with(target_user)
 
-    @parameterized.expand([(-1,), (-15,), (-109,), (-1337,), ])
+    @pytest.mark.parametrize("count", [-1, -15, -109, -1337])
     def test_GIVEN_get_wealthiest_users_WHEN_count_is_negative_THEN_raises_value_error(self, count) -> None:
         # Arrange
         mock_usermanager = Mock()
@@ -68,7 +66,8 @@ class TestInfoManager(unittest.TestCase):
         info_manager = InfoManager(mock_usermanager, mock_coinbankportal, mock_arrayhelper)
 
         # Act Assert
-        self.assertRaises(ValueError, info_manager.get_wealthiest_users, count)
+        with pytest.raises(ValueError) as result:
+            info_manager.get_wealthiest_users(count)
 
     def test_GIVEN_get_wealthiest_users_WHEN_count_is_zero_THEN_raises_value_error(self) -> None:
         # Arrange
@@ -80,9 +79,10 @@ class TestInfoManager(unittest.TestCase):
         info_manager = InfoManager(mock_usermanager, mock_coinbankportal, mock_arrayhelper)
 
         # Act Assert
-        self.assertRaises(ValueError, info_manager.get_wealthiest_users, count)
+        with pytest.raises(ValueError) as result:
+            info_manager.get_wealthiest_users(count)
 
-    @parameterized.expand([(1,), (15,), (109,), (1337,), ])
+    @pytest.mark.parametrize("count", [1, 15, 109, 1337, ])
     def test_GIVEN_get_wealthiest_users_WHEN_count_is_positive_THEN_calls_add_if_in_wealthiest_group_with_count(self, count) -> None:
         # Arrange
         mock_usermanager = Mock()
