@@ -1,8 +1,6 @@
-import unittest
+import pytest
 from ChodeCoin.Backend.objects.user import User
 from ChodeCoin.Backend.objects.command import Command
-from parameterized import parameterized
-
 from ChodeCoin.Backend.helpers.array_helper import ArrayHelper, translate_user_info_to_display_strings, translate_command_array_to_display_strings
 
 
@@ -25,7 +23,7 @@ def generate_mock_command_array():
     ]
 
 
-class TestArrayHelper(unittest.TestCase):
+class TestArrayHelper:
     def test_GIVEN_translate_user_info_to_display_strings_WHEN_user_array_has_length_of_zero_THEN_returns_no_users_yet_notification(self) -> None:
         # Arrange
         user_array = []
@@ -35,7 +33,7 @@ class TestArrayHelper(unittest.TestCase):
         actual_name_string, actual_coin_count_string = translate_user_info_to_display_strings(user_array)
 
         # Assert
-        self.assertEqual(expected_name_string, actual_name_string)
+        assert actual_name_string == expected_name_string
 
     def test_GIVEN_translate_user_info_to_display_strings_WHEN_user_array_has_length_of_zero_THEN_returns_info_for_learning_more(self) -> None:
         # Arrange
@@ -46,7 +44,7 @@ class TestArrayHelper(unittest.TestCase):
         actual_name_string, actual_coin_count_string = translate_user_info_to_display_strings(user_array)
 
         # Assert
-        self.assertEqual(expected_coin_count_string, actual_coin_count_string)
+        assert expected_coin_count_string == actual_coin_count_string
 
     def test_GIVEN_translate_user_info_to_display_strings_WHEN_user_array_has_length_of_one_THEN_returns_numbered_name_string(self) -> None:
         # Arrange
@@ -59,7 +57,7 @@ class TestArrayHelper(unittest.TestCase):
         actual_name_string, actual_coin_count_string = translate_user_info_to_display_strings(user_array)
 
         # Assert
-        self.assertEqual(expected_name_string, actual_name_string)
+        assert actual_name_string == expected_name_string
 
     def test_GIVEN_translate_user_info_to_display_strings_WHEN_user_array_has_length_of_more_than_one_THEN_returns_numbered_name_string(self) -> None:
         # Arrange
@@ -70,7 +68,7 @@ class TestArrayHelper(unittest.TestCase):
         actual_name_string, actual_coin_count_string = translate_user_info_to_display_strings(user_array)
 
         # Assert
-        self.assertEqual(expected_name_string, actual_name_string)
+        assert actual_name_string == expected_name_string
 
     def test_GIVEN_translate_user_info_to_display_strings_WHEN_user_array_has_length_of_one_THEN_returns_users_coin_count(self) -> None:
         # Arrange
@@ -83,7 +81,7 @@ class TestArrayHelper(unittest.TestCase):
         actual_name_string, actual_coin_count_string = translate_user_info_to_display_strings(user_array)
 
         # Assert
-        self.assertEqual(expected_coin_count_string, actual_coin_count_string)
+        assert actual_coin_count_string == expected_coin_count_string
 
     def test_GIVEN_translate_user_info_to_display_strings_WHEN_user_array_has_length_of_more_than_one_THEN_returns_all_users_coin_count_string(self) -> None:
         # Arrange
@@ -94,9 +92,9 @@ class TestArrayHelper(unittest.TestCase):
         actual_name_string, actual_coin_count_string = translate_user_info_to_display_strings(user_array)
 
         # Assert
-        self.assertEqual(expected_coin_count_string, actual_coin_count_string)
+        assert actual_coin_count_string == expected_coin_count_string
 
-    @parameterized.expand([(6,), (15,), (26,), (1337,), ])
+    @pytest.mark.parametrize("count", [6, 15, 26, 1337])
     def test_GIVEN_add_if_in_wealthiest_group_WHEN_supplied_user_with_array_length_less_than_count_THEN_adds_and_sorts_all_users(self, count) -> None:
         # Arrange
         user_array = generate_mock_user_array()
@@ -115,7 +113,7 @@ class TestArrayHelper(unittest.TestCase):
         actual_user_array = array_helper.add_if_in_wealthiest_group(user_array, user_to_add, count)
 
         # Assert
-        self.assertEqual(expected_user_array, actual_user_array)
+        assert actual_user_array == expected_user_array
 
     def test_GIVEN_add_if_in_wealthiest_group_WHEN_supplied_user_with_array_length_equal_to_count_THEN_adds_and_sorts_all_users_except_lowest(self) -> None:
         # Arrange
@@ -135,9 +133,9 @@ class TestArrayHelper(unittest.TestCase):
         actual_user_array = array_helper.add_if_in_wealthiest_group(user_array, user_to_add, count)
 
         # Assert
-        self.assertEqual(expected_user_array, actual_user_array)
+        assert actual_user_array == expected_user_array
 
-    @parameterized.expand([(1,), (4,), ])
+    @pytest.mark.parametrize("count", [1, 4])
     def test_GIVEN_add_if_in_wealthiest_group_WHEN_supplied_user_with_array_length_greater_than_count_THEN_adds_and_sorts_all_users(
             self, count) -> None:
         # Arrange
@@ -156,7 +154,7 @@ class TestArrayHelper(unittest.TestCase):
         actual_user_array = array_helper.add_if_in_wealthiest_group(user_array, user_to_add, count)
 
         # Assert
-        self.assertEqual(expected_user_array, actual_user_array)
+        assert actual_user_array == expected_user_array
 
     def test_GIVEN_translate_command_array_to_display_strings_WHEN_provided_empty_array_THEN_returns_empty_command_string(self) -> None:
         # Arrange
@@ -179,7 +177,7 @@ class TestArrayHelper(unittest.TestCase):
         actual_command_string = translate_command_array_to_display_strings(command_array)
 
         # Assert
-        self.assertEqual(expected_command_string, actual_command_string)
+        assert actual_command_string == expected_command_string
 
     def test_GIVEN_translate_command_array_to_display_strings_WHEN_user_array_has_length_of_more_than_one_THEN_returns_all_command_strings(self) -> None:
         # Arrange
@@ -190,4 +188,4 @@ class TestArrayHelper(unittest.TestCase):
         actual_command_string = translate_command_array_to_display_strings(command_array)
 
         # Assert
-        self.assertEqual(expected_command_string, actual_command_string)
+        assert actual_command_string == expected_command_string
