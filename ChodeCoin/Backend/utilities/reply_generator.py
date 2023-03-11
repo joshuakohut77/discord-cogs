@@ -57,6 +57,10 @@ def generate_chodekill_assassinate_reply(target_user):
     return f"{target_user} has been assassinated, and is no longer registered in the bank."
 
 
+def generate_coin_count_updated_reply(target_user, new_value):
+    return f"{target_user} now has {new_value} ChodeCoin."
+
+
 class ReplyGenerator:
     def __init__(self, info_manager=InfoManager()):
         self.info_manager = info_manager

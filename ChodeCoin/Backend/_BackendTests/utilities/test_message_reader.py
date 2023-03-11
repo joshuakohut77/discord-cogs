@@ -1,5 +1,7 @@
 import pytest
-from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_leaderboard_command, is_targeted_coin_count_command, find_targeted_dank_hof_user, is_dank_hof_command, find_targeted_permission_data, find_chodekill_data
+from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_leaderboard_command, \
+    is_targeted_coin_count_command, find_targeted_dank_hof_user, is_dank_hof_command, find_targeted_permission_data, \
+    find_chodekill_data, is_set_info_command, find_set_info_data
 
 
 class TestMessageReader:
@@ -241,6 +243,46 @@ class TestMessageReader:
 
         # Assert
         assert new_admin_level is None
+
+    @pytest.mark.parametrize("message, formatted_user", [("!setinfo 500047678378344449 coincount 12", "<@500047678378344449>"), ("!setinfo 1019075447532826726 coincount 12", "<@1019075447532826726>"), ("!setinfo 10190754475328267269 coincount 12", "<@10190754475328267269>")])
+    def test_GIVEN_find_set_info_data_WHEN_valid_un_formatted_set_info_coincount_request_is_provided_THEN_returns_formatted_user(self, message, formatted_user) -> None:
+        # Arrange Act
+        target_user, new_value = find_set_info_data(message)
+
+        # Assert
+        assert target_user.__contains__(formatted_user) is True
+
+    @pytest.mark.parametrize("message, formatted_user", [("!setinfo <@500047678378344449> coincount 12", "<@500047678378344449>"), ("!setinfo <@1019075447532826726> coincount 12", "<@1019075447532826726>"), ("!setinfo <@10190754475328267269> coincount 12", "<@10190754475328267269>")])
+    def test_GIVEN_find_set_info_data_WHEN_valid_un_formatted_set_info_coincount_request_is_provided_THEN_returns_formatted_user(self, message, formatted_user) -> None:
+        # Arrange Act
+        target_user, new_value = find_set_info_data(message)
+
+        # Assert
+        assert target_user.__contains__(formatted_user) is True
+
+    @pytest.mark.parametrize("message, provided_new_value", [("!setinfo 500047678378344449 coincount 12", "12"), ("!setinfo 1019075447532826726 coincount 12", "12")])
+    def test_GIVEN_find_set_info_data_WHEN_valid_set_info_coincount_request_is_provided_THEN_returns_provided_coin_count(self, message, provided_new_value) -> None:
+        # Arrange Act
+        target_user, new_value = find_set_info_data(message)
+
+        # Assert
+        assert new_value == provided_new_value
+
+    @pytest.mark.parametrize("message", [(" !setinfo 500047678378344449 12"), ("!setinfo 1019075447532826726"), ("!setinfo 12"), ("!setinfo")])
+    def test_GIVEN_find_set_info_data_WHEN_invalid_request_is_provided_THEN_returns_none_for_target_user(self, message) -> None:
+        # Arrange Act
+        target_user, new_value = find_set_info_data(message)
+
+        # Assert
+        assert target_user is None
+
+    @pytest.mark.parametrize("message", [(" !setinfo 500047678378344449 12"), ("!setinfo 1019075447532826726"), ("!setinfo 12"), ("!setinfo")])
+    def test_GIVEN_find_set_info_data_WHEN_invalid_request_is_provided_THEN_returns_none_for_new_value(self, message) -> None:
+        # Arrange Act
+        target_user, new_value = find_set_info_data(message)
+
+        # Assert
+        assert new_value is None
 
     def test_GIVEN_find_chodekill_data_WHEN_valid_all_request_is_provided_THEN_returns_all_keyword(self):
         # Arrange
@@ -2125,3 +2167,29 @@ class TestMessageReader:
 
         # Assert
         assert actual == expected
+        
+    def test_GIVEN_is_set_info_command_WHEN_string_contains_set_info_command_only_THEN_returns_true(self) -> None:
+        # Arrange
+        message = "!setinfo"
+
+        # Act
+        result = is_set_info_command(message)
+
+        # Assert
+        assert result is True
+
+    @pytest.mark.parametrize("message", [("!setinfo "), ("!setinfo gibberish"), ("!setinfo two words"), ("!setinfo !setinfo"), ("!setinfogibberish"), ("!setinfo!setinfo")])
+    def test_GIVEN_is_set_info_command_WHEN_string_contains_set_info_command_then_other_text_THEN_returns_true(self, message) -> None:
+        # Arrange Act
+        result = is_set_info_command(message)
+
+        # Assert
+        assert result is True
+
+    @pytest.mark.parametrize("message", [(" !setinfo "), ("gibberish !setinfo"), ("A!setinfo"), ("1!setinfo")])
+    def test_GIVEN_is_set_info_command_WHEN_string_does_not_start_with_set_info_command_THEN_returns_false(self, message) -> None:
+        # Arrange Act
+        result = is_set_info_command(message)
+
+        # Assert
+        assert result is False

@@ -25,6 +25,16 @@ class CoinBankPortal:
         with open(self.db_path, "wt") as file:
             json.dump(bank, file, indent=4)
 
+    def set_coin_count(self, target_user, new_value):
+        with open(self.db_path, "r+") as file:
+            bank = json.load(file)
+            for bank_record in bank["bank_records"]:
+                if bank_record["name"] == target_user:
+                    bank_record["coin_count"] = new_value
+                    break
+        with open(self.db_path, "wt") as file:
+            json.dump(bank, file, indent=4)
+
     def create_new_user(self, target_user):
         user_to_add = User(target_user, 0, self.timestamp_helper.current_timestamp_string())
         new_user_entry = convert_user_to_json(user_to_add)
