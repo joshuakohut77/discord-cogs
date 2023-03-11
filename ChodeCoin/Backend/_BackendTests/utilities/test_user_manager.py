@@ -33,3 +33,63 @@ class TestUserManager:
 
         # Assert
         assert result is False
+
+    def test_GIVEN_set_coin_count_WHEN_user_exists_THEN_updates_coin_count_with_provided_value(self) -> None:
+        # Arrange
+        new_value = 12
+        target_user = "UserThatExists"
+        mock_coinbankportal = Mock()
+        mock_coinbankportal.user_exists.return_value = True
+        mock_adminrecordportal = Mock()
+        user_manager = UserManager(mock_coinbankportal, mock_adminrecordportal)
+
+        # Act
+        user_manager.set_coin_count(target_user, new_value)
+
+        # Assert
+        mock_coinbankportal.set_coin_count.assert_called_once_with(target_user, new_value)
+
+    def test_GIVEN_set_coin_count_WHEN_user_exists_THEN_does_not_create_new_user(self) -> None:
+        # Arrange
+        new_value = 12
+        target_user = "UserThatExists"
+        mock_coinbankportal = Mock()
+        mock_coinbankportal.user_exists.return_value = True
+        mock_adminrecordportal = Mock()
+        user_manager = UserManager(mock_coinbankportal, mock_adminrecordportal)
+
+        # Act
+        user_manager.set_coin_count(target_user, new_value)
+
+        # Assert
+        mock_coinbankportal.create_new_user.assert_not_called()
+
+    def test_GIVEN_set_coin_count_WHEN_user_does_not_exist_THEN_updates_coin_count_with_provided_value(self) -> None:
+        # Arrange
+        new_value = 12
+        target_user = "UserThatExists"
+        mock_coinbankportal = Mock()
+        mock_coinbankportal.user_exists.return_value = False
+        mock_adminrecordportal = Mock()
+        user_manager = UserManager(mock_coinbankportal, mock_adminrecordportal)
+
+        # Act
+        user_manager.set_coin_count(target_user, new_value)
+
+        # Assert
+        mock_coinbankportal.set_coin_count.assert_called_once_with(target_user, new_value)
+
+    def test_GIVEN_set_coin_count_WHEN_user_does_not_exist_THEN_creates_a_new_user(self) -> None:
+        # Arrange
+        new_value = 12
+        target_user = "UserThatExists"
+        mock_coinbankportal = Mock()
+        mock_coinbankportal.user_exists.return_value = False
+        mock_adminrecordportal = Mock()
+        user_manager = UserManager(mock_coinbankportal, mock_adminrecordportal)
+
+        # Act
+        user_manager.set_coin_count(target_user, new_value)
+
+        # Assert
+        mock_coinbankportal.create_new_user.assert_called_once_with(target_user)

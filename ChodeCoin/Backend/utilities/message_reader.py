@@ -74,6 +74,20 @@ def find_targeted_permission_data(message):
         return None, None
 
 
+def find_set_info_data(message):
+    target_user = ""
+    new_value = ""
+    command_result = re.search(r"^![Ss][Ee][Tt][Ii][Nn][Ff][Oo]\s{1,3}(\d{18,20}|<@\d{18,20}>)\s{1,3}([Cc][Oo][Ii][Nn][Cc][Oo][Uu][Nn][Tt])\s{1,3}\d{1,7}$", message)
+    if command_result:
+        result = command_result.group(0)
+        segments = re.split(r"\s{1,3}", result)
+        target_user = convert_to_discord_user(segments[1])
+        new_value = segments[3].lower()
+        return target_user, new_value
+    else:
+        return None, None
+
+
 def is_chodekill_command(message):
     search_result = re.search(r"^!chodekill", message)
     if search_result:
@@ -101,6 +115,12 @@ def find_chodekill_data(message):
     else:
         return None
 
+def is_set_info_command(message):
+    search_result = re.search(r"^!setinfo", message)
+    if search_result:
+        return True
+    else:
+        return False
 
 class MessageReader:
 

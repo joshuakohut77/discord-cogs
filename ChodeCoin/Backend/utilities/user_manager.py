@@ -1,9 +1,8 @@
-import re
-
 from ChodeCoin.Backend.enums.permission_level import PermissionLevel
 from ChodeCoin.Backend.services.admin_record_portal import AdminRecordPortal
 from ChodeCoin.Backend.services.coin_bank_portal import CoinBankPortal
 from ChodeCoin.Backend.helpers.date_helper import DateHelper
+from ChodeCoin.Backend.objects.user import User
 
 
 class UserManager:
@@ -28,6 +27,13 @@ class UserManager:
             return self.admin_record_portal.set_permission_level(target_user, new_permission.value)
         else:
             return self.admin_record_portal.create_new_admin(target_user, new_permission.value)
+
+    def set_coin_count(self, target_user, new_value):
+        if self.coin_bank_portal.user_exists(target_user):
+            return self.coin_bank_portal.set_coin_count(target_user, new_value)
+        else:
+            self.coin_bank_portal.create_new_user(target_user)
+            return self.coin_bank_portal.set_coin_count(target_user, new_value)
 
     def delete_all_users(self):
         bank_records = self.coin_bank_portal.get_all_users()
