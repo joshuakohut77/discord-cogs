@@ -9,3 +9,4 @@ class RequestFor(Enum):
     permission = 5
     chodekill = 6
     help = 7
+    set_info = 8
