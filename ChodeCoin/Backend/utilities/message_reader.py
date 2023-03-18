@@ -77,7 +77,7 @@ def find_targeted_permission_data(message):
 def find_set_info_data(message):
     target_user = ""
     new_value = ""
-    command_result = re.search(r"^![Ss][Ee][Tt][Ii][Nn][Ff][Oo]\s{1,3}(\d{18,20}|<@\d{18,20}>)\s{1,3}([Cc][Oo][Ii][Nn][Cc][Oo][Uu][Nn][Tt])\s{1,3}\d{1,7}$", message)
+    command_result = re.search(r"^![Ss][Ee][Tt][Ii][Nn][Ff][Oo]\s{1,3}(\d{18,20}|<@\d{18,20}>|.{1,34})\s{1,3}([Cc][Oo][Ii][Nn][Cc][Oo][Uu][Nn][Tt])\s{1,3}(-?\d{1,7})$", message)
     if command_result:
         result = command_result.group(0)
         segments = re.split(r"\s{1,3}", result)
