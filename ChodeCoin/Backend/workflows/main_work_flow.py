@@ -3,6 +3,7 @@ from ChodeCoin.Backend.workflows.permission_workflow import PermissionWorkflow, 
 from ChodeCoin.Backend.workflows.chodecoin_ping_workflow import ChodeCoinPingWorkflow
 from ChodeCoin.Backend.workflows.help_workflow import is_help_workflow, HelpWorkflow
 from ChodeCoin.Backend.workflows.leaderboard_workflow import LeaderboardWorkflow, is_leaderboard_workflow
+from ChodeCoin.Backend.workflows.set_info_workflow import SetInfoWorkflow, is_set_info_workflow
 from ChodeCoin.Backend.workflows.targeted_coin_count_workflow import TargetedCoinCountWorkflow, is_targeted_coin_count_request
 from ChodeCoin.Backend.workflows.dank_hof_workflow import DankHofWorkflow, is_dank_hof_workflow
 from ChodeCoin.Backend.workflows.chodekill_workflow import ChodeKillWorkflow, is_chodekill_workflow
@@ -19,6 +20,7 @@ class WorkFlow:
             admin_workflow=PermissionWorkflow(),
             chodekill_workflow=ChodeKillWorkflow(),
             help_workflow=HelpWorkflow(),
+            set_info_workflow=SetInfoWorkflow(),
             guard=Guard()):
         self.chodecoin_ping_workflow = chodecoin_ping_workflow
         self.leaderboard_workflow = leaderboard_workflow
@@ -27,6 +29,7 @@ class WorkFlow:
         self.admin_workflow = admin_workflow
         self.chodekill_workflow = chodekill_workflow
         self.help_workflow = help_workflow
+        self.set_info_workflow = set_info_workflow
         self.guard = guard
 
     def process_message(self, message, author):
@@ -52,7 +55,10 @@ class WorkFlow:
             return self.chodekill_workflow.process_chodekill_request(message, author), None
 
         elif process == RequestFor.help:
-            return self.help_workflow.process_help_request()
+            return self.help_workflow.process_help_request(), None
+
+        elif process == RequestFor.set_info:
+            return self.set_info_workflow.process_set_info_request(message, author), None
 
         else:
             return None, None
@@ -72,5 +78,7 @@ class WorkFlow:
             return RequestFor.chodekill
         elif is_help_workflow(message):
             return RequestFor.help
+        elif is_set_info_workflow(message):
+            return RequestFor.set_info
         else:
             return None
