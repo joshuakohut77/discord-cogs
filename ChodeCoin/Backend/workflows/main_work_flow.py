@@ -64,7 +64,7 @@ class WorkFlow:
             return self.set_info_workflow.process_set_info_request(message, author), None, None
 
         elif process == RequestFor.export_coin_bank:
-            return None, None, self.export_coin_bank_workflow.process_export_coin_bank_request(author)
+            return self.export_coin_bank_workflow.process_export_coin_bank_request(author)
 
         else:
             return None, None, None

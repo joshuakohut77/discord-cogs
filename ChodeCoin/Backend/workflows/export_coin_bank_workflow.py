@@ -24,6 +24,6 @@ class ExportCoinBankWorkflow:
 
     def process_export_coin_bank_request(self, author):
         if self.user_manager.is_admin_user(convert_to_discord_user(author)):
-            return self.reply_generator.generate_export_coin_bank_reply()
+            return None, None, self.reply_generator.generate_export_coin_bank_reply()
         else:
-            return self.reply_generator.generate_permission_no_permission_reply()
+            return self.reply_generator.generate_permission_no_permission_reply(), None, None
