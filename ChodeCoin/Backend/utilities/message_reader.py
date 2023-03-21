@@ -241,3 +241,6 @@ class MessageReader:
             formatted_discord_user = formatted_discord_user[:len(formatted_discord_user) - 25].strip()
             return formatted_discord_user
         return None
+
+    def is_export_coin_bank_command(self, message):
+        return bool(re.search(r"^!export coinbank$", message.lower()))

@@ -77,3 +77,10 @@ class ReplyGenerator:
                     amount = "a"
                 return f"{targeted_user} lost {amount} ChodeCoin! {targeted_user} now has {current_balance} in the bank."
         return None
+
+    def generate_export_coin_bank_reply(self):
+        embed = discord.File("ChodeCoin.Backend.db", "coin_bank.json")
+        return "", embed
+
+    def generate_permission_no_permission_reply(self):
+        return "You don't have permission to manage users. Please reach out to the server admin if you believe you should have such access."

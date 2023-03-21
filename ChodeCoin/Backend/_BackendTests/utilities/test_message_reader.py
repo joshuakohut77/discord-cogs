@@ -1,4 +1,5 @@
 import pytest
+from mock import Mock
 from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_leaderboard_command, \
     is_targeted_coin_count_command, find_targeted_dank_hof_user, is_dank_hof_command, find_targeted_permission_data, \
     find_chodekill_data, is_set_info_command, find_set_info_data
@@ -2190,6 +2191,61 @@ class TestMessageReader:
     def test_GIVEN_is_set_info_command_WHEN_string_does_not_start_with_set_info_command_THEN_returns_false(self, message) -> None:
         # Arrange Act
         result = is_set_info_command(message)
+
+        # Assert
+        assert result is False
+
+    def test_GIVEN_is_export_coin_bank_command_WHEN_string_is_lowercase_export_coin_bank_command_THEN_returns_true(self) -> None:
+        # Arrange
+        message_reader = MessageReader()
+        message = "!export coinbank"
+
+        # Act
+        result = message_reader.is_export_coin_bank_command(message)
+
+        # Assert
+        assert result is True
+
+    def test_GIVEN_is_export_coin_bank_command_WHEN_string_is_uppercase_export_coin_bank_command_THEN_returns_true(self) -> None:
+        # Arrange
+        message_reader = MessageReader()
+        message = "!EXPORT COINBANK"
+
+        # Act
+        result = message_reader.is_export_coin_bank_command(message)
+
+        # Assert
+        assert result is True
+
+    @pytest.mark.parametrize("message", [("!Export Coinbank"), ("!ExPoRt CoInBaNk"), ("!export Coinbank")])
+    def test_GIVEN_is_export_coin_bank_command_WHEN_string_is_mixed_case_export_coin_bank_command_THEN_returns_true(self, message) -> None:
+        # Arrange
+        message_reader = MessageReader()
+
+        # Act
+        result = message_reader.is_export_coin_bank_command(message)
+
+        # Assert
+        assert result is True
+
+    @pytest.mark.parametrize("message", [(" !export coinbank"), ("gibberish !export coinbank"), ("A!export coinbank"), ("1!export coinbank")])
+    def test_GIVEN_is_export_coin_bank_command_WHEN_string_does_not_start_with_export_coin_bank_command_THEN_returns_false(self, message) -> None:
+        # Arrange
+        message_reader = MessageReader()
+
+        # Act
+        result = message_reader.is_export_coin_bank_command(message)
+
+        # Assert
+        assert result is False
+
+    @pytest.mark.parametrize("message", [("!export coinbank "), ("!export coinbank gibberish"), ("!export coinbankA"), ("!export coinbank1"), ("!export coinbank!")])
+    def test_GIVEN_is_export_coin_bank_command_WHEN_string_is_export_coin_bank_command_then_text_THEN_returns_false(self, message) -> None:
+        # Arrange
+        message_reader = MessageReader()
+
+        # Act
+        result = message_reader.is_export_coin_bank_command(message)
 
         # Assert
         assert result is False
