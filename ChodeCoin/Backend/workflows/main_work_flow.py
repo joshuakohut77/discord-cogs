@@ -40,34 +40,34 @@ class WorkFlow:
 
         if process == RequestFor.chodecoin_ping:
             reply = self.chodecoin_ping_workflow.process_chodecoin_ping_request(message, author)
-            return reply, None
+            return reply, None, None
 
         elif process == RequestFor.leaderboard:
-            return self.leaderboard_workflow.process_leaderboard_request()
+            return self.leaderboard_workflow.process_leaderboard_request(), None
 
         elif process == RequestFor.targeted_coin_count:
-            return self.targeted_coin_count_workflow.process_targeted_coin_count_request(message, author)
+            return self.targeted_coin_count_workflow.process_targeted_coin_count_request(message, author), None
 
         elif process == RequestFor.dank_hof:
-            return self.dank_hof_workflow.process_dank_hof_request(message, author), None
+            return self.dank_hof_workflow.process_dank_hof_request(message, author), None, None
 
         elif process == RequestFor.permission:
-            return self.admin_workflow.process_permission_request(message, author), None
+            return self.admin_workflow.process_permission_request(message, author), None, None
 
         elif process == RequestFor.chodekill:
-            return self.chodekill_workflow.process_chodekill_request(message, author), None
+            return self.chodekill_workflow.process_chodekill_request(message, author), None, None
 
         elif process == RequestFor.help:
-            return self.help_workflow.process_help_request(), None
+            return self.help_workflow.process_help_request(), None, None
 
         elif process == RequestFor.set_info:
-            return self.set_info_workflow.process_set_info_request(message, author), None
+            return self.set_info_workflow.process_set_info_request(message, author), None, None
 
         elif process == RequestFor.export_coin_bank:
-            return self.export_coin_bank_workflow.process_export_coin_bank_request(author)
+            return None, None, self.export_coin_bank_workflow.process_export_coin_bank_request(author)
 
         else:
-            return None, None
+            return None, None, None
 
     def identify_request(self, message):
         if self.chodecoin_ping_workflow.is_chodecoin_ping(message):

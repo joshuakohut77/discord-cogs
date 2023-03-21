@@ -78,5 +78,4 @@ class CoinBankPortal:
 
     def export_coin_bank(self):
         with open(self.db_path, "r") as file:
-            bank = json.load(file)
-            return bank["bank_records"]
+            return file
