@@ -79,7 +79,7 @@ class ReplyGenerator:
         return None
 
     def generate_export_coin_bank_reply(self):
-        embed = discord.File("ChodeCoin/Backend/db/coin_bank.json", filename="coin_bank.json")
+        embed = discord.File("ChodeCoin/Backend/db", filename="coin_bank.json")
         return "", embed
 
     def generate_permission_no_permission_reply(self):
