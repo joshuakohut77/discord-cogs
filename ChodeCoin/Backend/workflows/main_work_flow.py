@@ -7,6 +7,7 @@ from ChodeCoin.Backend.workflows.set_info_workflow import SetInfoWorkflow, is_se
 from ChodeCoin.Backend.workflows.targeted_coin_count_workflow import TargetedCoinCountWorkflow, is_targeted_coin_count_request
 from ChodeCoin.Backend.workflows.dank_hof_workflow import DankHofWorkflow, is_dank_hof_workflow
 from ChodeCoin.Backend.workflows.chodekill_workflow import ChodeKillWorkflow, is_chodekill_workflow
+from ChodeCoin.Backend.workflows.export_coin_bank_workflow import ExportCoinBankWorkflow
 from ChodeCoin.Backend.enums.request_for import RequestFor
 
 
@@ -21,6 +22,7 @@ class WorkFlow:
             chodekill_workflow=ChodeKillWorkflow(),
             help_workflow=HelpWorkflow(),
             set_info_workflow=SetInfoWorkflow(),
+            export_coin_bank_workflow=ExportCoinBankWorkflow(),
             guard=Guard()):
         self.chodecoin_ping_workflow = chodecoin_ping_workflow
         self.leaderboard_workflow = leaderboard_workflow
@@ -30,6 +32,7 @@ class WorkFlow:
         self.chodekill_workflow = chodekill_workflow
         self.help_workflow = help_workflow
         self.set_info_workflow = set_info_workflow
+        self.export_coin_bank_workflow = export_coin_bank_workflow
         self.guard = guard
 
     def process_message(self, message, author):
@@ -60,6 +63,9 @@ class WorkFlow:
         elif process == RequestFor.set_info:
             return self.set_info_workflow.process_set_info_request(message, author), None
 
+        elif process == RequestFor.export_coin_bank:
+            return self.export_coin_bank_workflow.process_export_coin_bank_request(author)
+
         else:
             return None, None
 
@@ -80,5 +86,7 @@ class WorkFlow:
             return RequestFor.help
         elif is_set_info_workflow(message):
             return RequestFor.set_info
+        elif self.export_coin_bank_workflow.is_export_coin_bank_workflow(message):
+            return RequestFor.export_coin_bank
         else:
             return None

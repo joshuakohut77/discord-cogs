@@ -10,3 +10,4 @@ class RequestFor(Enum):
     chodekill = 6
     help = 7
     set_info = 8
+    export_coin_bank = 9
