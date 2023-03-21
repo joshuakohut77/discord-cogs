@@ -1,6 +1,9 @@
 import json
 from collections import OrderedDict
 
+import discord
+import os
+
 from ChodeCoin.Backend.objects.user import User, convert_user_to_json
 from ChodeCoin.Backend.helpers.array_helper import ArrayHelper
 from ChodeCoin.Backend.helpers.timestamp_helper import TimestampHelper
@@ -77,5 +80,4 @@ class CoinBankPortal:
             json.dump(new_bank, file, indent=4)
 
     def export_coin_bank(self):
-        with open(self.db_path, "r") as file:
-            return file
+        return discord.File(self.db_path)
