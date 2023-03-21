@@ -21,5 +21,5 @@ class EventMixin(MixinMeta):
         author = message.author.id
 
         reply, embed, file = self.work_flow.process_message(msg, author)
-        if reply is not None:
+        if reply is not None or file is not None:
             await message.reply(reply, embed=embed, file=file)
