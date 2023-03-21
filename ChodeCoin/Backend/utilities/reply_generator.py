@@ -81,8 +81,7 @@ class ReplyGenerator:
         return None
 
     def generate_export_coin_bank_reply(self):
-        embed = self.coin_bank_portal.export_coin_bank()
-        return "", embed
+        return self.coin_bank_portal.export_coin_bank()
 
     def generate_permission_no_permission_reply(self):
         return "You don't have permission to manage users. Please reach out to the server admin if you believe you should have such access."
