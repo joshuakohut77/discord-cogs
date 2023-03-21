@@ -2,6 +2,7 @@ import discord
 
 from ChodeCoin.Backend.enums.command_type import CommandType
 from ChodeCoin.Backend.helpers.array_helper import translate_user_info_to_display_strings, translate_command_array_to_display_strings
+from ChodeCoin.Backend.services.coin_bank_portal import CoinBankPortal
 from ChodeCoin.Backend.utilities.info_manager import InfoManager
 
 
@@ -62,8 +63,9 @@ def generate_coin_count_updated_reply(target_user, new_value):
 
 
 class ReplyGenerator:
-    def __init__(self, info_manager=InfoManager()):
+    def __init__(self, info_manager=InfoManager(), coin_bank_portal=CoinBankPortal(),):
         self.info_manager = info_manager
+        self.coin_bank_portal = coin_bank_portal
 
     def generate_chodecoin_ping_reply(self, targeted_user, amount):
         current_balance = self.info_manager.get_current_balance(targeted_user)
@@ -79,7 +81,7 @@ class ReplyGenerator:
         return None
 
     def generate_export_coin_bank_reply(self):
-        embed = discord.File("../db", filename="coin_bank.json")
+        embed = self.coin_bank_portal.export_coin_bank()
         return "", embed
 
     def generate_permission_no_permission_reply(self):
