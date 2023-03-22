@@ -81,4 +81,4 @@ class CoinBankPortal:
         return discord.File(self.db_path)
 
     def import_coin_bank(self, new_coin_bank):
-        shutil.copyfile(self.db_path, new_coin_bank)
+        shutil.copyfile(self.db_path, new_coin_bank.url)
