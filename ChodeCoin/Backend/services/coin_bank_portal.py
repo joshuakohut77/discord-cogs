@@ -83,5 +83,6 @@ class CoinBankPortal:
         return discord.File(self.db_path)
 
     def import_coin_bank(self, new_coin_bank):
-        with urlopen(new_coin_bank.url) as replacement_data:
-            shutil.copyfile(self.db_path, replacement_data)
+        shutil.move(new_coin_bank.url, self.db_path)
+        # with urlopen(new_coin_bank.url) as replacement_data:
+        #     shutil.copyfile(self.db_path, replacement_data)
