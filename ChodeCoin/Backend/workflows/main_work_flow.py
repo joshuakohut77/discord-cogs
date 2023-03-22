@@ -1,4 +1,5 @@
 from ChodeCoin.Backend.utilities.guard import Guard
+from ChodeCoin.Backend.workflows.import_coin_bank_workflow import ImportCoinBankWorkflow
 from ChodeCoin.Backend.workflows.permission_workflow import PermissionWorkflow, is_permission_workflow
 from ChodeCoin.Backend.workflows.chodecoin_ping_workflow import ChodeCoinPingWorkflow
 from ChodeCoin.Backend.workflows.help_workflow import is_help_workflow, HelpWorkflow
@@ -23,6 +24,7 @@ class WorkFlow:
             help_workflow=HelpWorkflow(),
             set_info_workflow=SetInfoWorkflow(),
             export_coin_bank_workflow=ExportCoinBankWorkflow(),
+            import_coin_bank_workflow=ImportCoinBankWorkflow(),
             guard=Guard()):
         self.chodecoin_ping_workflow = chodecoin_ping_workflow
         self.leaderboard_workflow = leaderboard_workflow
@@ -33,9 +35,10 @@ class WorkFlow:
         self.help_workflow = help_workflow
         self.set_info_workflow = set_info_workflow
         self.export_coin_bank_workflow = export_coin_bank_workflow
+        self.import_coin_bank_workflow = import_coin_bank_workflow
         self.guard = guard
 
-    def process_message(self, message, author):
+    def process_message(self, message, author, attachments):
         process = self.identify_request(message)
 
         if process == RequestFor.chodecoin_ping:
@@ -46,7 +49,7 @@ class WorkFlow:
             return self.leaderboard_workflow.process_leaderboard_request(), None
 
         elif process == RequestFor.targeted_coin_count:
-            return self.targeted_coin_count_workflow.process_targeted_coin_count_request(message, author), None
+            return self.targeted_coin_count_workflow.process_targeted_coin_count_request(message, author), None, None
 
         elif process == RequestFor.dank_hof:
             return self.dank_hof_workflow.process_dank_hof_request(message, author), None, None
@@ -65,6 +68,9 @@ class WorkFlow:
 
         elif process == RequestFor.export_coin_bank:
             return self.export_coin_bank_workflow.process_export_coin_bank_request(author)
+
+        elif process == RequestFor.import_coin_bank:
+            return self.import_coin_bank_workflow.process_import_coin_bank_request(attachments), None, None
 
         else:
             return None, None, None
@@ -88,5 +94,7 @@ class WorkFlow:
             return RequestFor.set_info
         elif self.export_coin_bank_workflow.is_export_coin_bank_workflow(message):
             return RequestFor.export_coin_bank
+        elif self.import_coin_bank_workflow.is_import_coin_bank_workflow(message):
+            return RequestFor.import_coin_bank
         else:
             return None

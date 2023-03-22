@@ -25,9 +25,9 @@ def generate_help_reply(command_descriptions: []):
 
 def generate_targeted_coin_count_reply(user_name, user_coin_count):
     if user_coin_count is not None:
-        return f"{user_name} has {user_coin_count} ChodeCoin in the bank", None
+        return f"{user_name} has {user_coin_count} ChodeCoin in the bank"
     else:
-        return f"{user_name} isn't set up in the bank and therefore has zero ChodeCoin", None
+        return f"{user_name} isn't set up in the bank and therefore has zero ChodeCoin"
 
 
 def generate_permission_updated_reply(target_user):
@@ -83,5 +83,8 @@ class ReplyGenerator:
     def generate_export_coin_bank_reply(self):
         return self.coin_bank_portal.export_coin_bank()
 
-    def generate_permission_no_permission_reply(self):
-        return "You don't have permission to manage users. Please reach out to the server admin if you believe you should have such access."
+    def generate_import_coin_bank_reply(self):
+        return "Updated the coin bank!"
+
+    def generate_no_permission_reply(self):
+        return "You don't have permission to do that. Please reach out to the server admin if you believe you should have such access."
