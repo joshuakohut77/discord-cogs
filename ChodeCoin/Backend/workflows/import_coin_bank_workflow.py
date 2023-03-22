@@ -27,7 +27,7 @@ class ImportCoinBankWorkflow:
 
     def process_import_coin_bank_request(self, author, attachments):
         if self.user_manager.is_admin_user(convert_to_discord_user(author)):
-            self.coin_manager.import_coin_bank(attachments[0])
+            self.coin_manager.import_coin_bank(next(iter(attachments), None))
             return self.reply_generator.generate_import_coin_bank_reply()
         else:
             return self.reply_generator.generate_no_permission_reply()
