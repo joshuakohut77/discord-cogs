@@ -4,6 +4,8 @@ from urllib.request import urlopen
 import discord
 import shutil
 
+import requests as requests
+
 from ChodeCoin.Backend.objects.user import User, convert_user_to_json
 from ChodeCoin.Backend.helpers.array_helper import ArrayHelper
 from ChodeCoin.Backend.helpers.timestamp_helper import TimestampHelper
@@ -83,6 +85,8 @@ class CoinBankPortal:
         return discord.File(self.db_path)
 
     def import_coin_bank(self, new_coin_bank):
-        shutil.move(new_coin_bank.url, self.db_path)
-        # with urlopen(new_coin_bank.url) as replacement_data:
-        #     shutil.copyfile(self.db_path, replacement_data)
+        headers = {"Accept": "application/json"}
+        response = requests.get(new_coin_bank.url, headers=headers)
+        jsonResponse = json.loads(response.text)[0]
+        with open(self.db_path, "wt") as file:
+            json.dump(jsonResponse, file, indent=4)
