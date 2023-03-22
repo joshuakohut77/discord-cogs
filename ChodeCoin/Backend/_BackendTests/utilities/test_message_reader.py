@@ -2249,3 +2249,58 @@ class TestMessageReader:
 
         # Assert
         assert result is False
+        
+    def test_GIVEN_is_import_coin_bank_command_WHEN_string_is_lowercase_import_coin_bank_command_THEN_returns_true(self) -> None:
+        # Arrange
+        message_reader = MessageReader()
+        message = "!import coinbank"
+
+        # Act
+        result = message_reader.is_import_coin_bank_command(message)
+
+        # Assert
+        assert result is True
+
+    def test_GIVEN_is_import_coin_bank_command_WHEN_string_is_uppercase_import_coin_bank_command_THEN_returns_true(self) -> None:
+        # Arrange
+        message_reader = MessageReader()
+        message = "!IMPORT COINBANK"
+
+        # Act
+        result = message_reader.is_import_coin_bank_command(message)
+
+        # Assert
+        assert result is True
+
+    @pytest.mark.parametrize("message", [("!Import Coinbank"), ("!ImPoRt CoInBaNk"), ("!import Coinbank")])
+    def test_GIVEN_is_import_coin_bank_command_WHEN_string_is_mixed_case_import_coin_bank_command_THEN_returns_true(self, message) -> None:
+        # Arrange
+        message_reader = MessageReader()
+
+        # Act
+        result = message_reader.is_import_coin_bank_command(message)
+
+        # Assert
+        assert result is True
+
+    @pytest.mark.parametrize("message", [(" !import coinbank"), ("gibberish !import coinbank"), ("A!import coinbank"), ("1!import coinbank")])
+    def test_GIVEN_is_import_coin_bank_command_WHEN_string_does_not_start_with_import_coin_bank_command_THEN_returns_false(self, message) -> None:
+        # Arrange
+        message_reader = MessageReader()
+
+        # Act
+        result = message_reader.is_import_coin_bank_command(message)
+
+        # Assert
+        assert result is False
+
+    @pytest.mark.parametrize("message", [("!import coinbank "), ("!import coinbank gibberish"), ("!import coinbankA"), ("!import coinbank1"), ("!import coinbank!")])
+    def test_GIVEN_is_import_coin_bank_command_WHEN_string_is_import_coin_bank_command_then_text_THEN_returns_false(self, message) -> None:
+        # Arrange
+        message_reader = MessageReader()
+
+        # Act
+        result = message_reader.is_import_coin_bank_command(message)
+
+        # Assert
+        assert result is False

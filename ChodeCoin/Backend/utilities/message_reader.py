@@ -244,3 +244,6 @@ class MessageReader:
 
     def is_export_coin_bank_command(self, message):
         return bool(re.search(r"^!export coinbank$", message.lower()))
+
+    def is_import_coin_bank_command(self, message):
+        return bool(re.search(r"^!import coinbank$", message.lower()))

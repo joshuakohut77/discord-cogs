@@ -81,3 +81,11 @@ class CoinBankPortal:
 
     def export_coin_bank(self):
         return discord.File(self.db_path)
+
+    def import_coin_bank(self, new_coin_bank):
+        new_bank = {"bank_records": []}
+        with open(self.db_path, "r") as file:
+            for bank_record in new_coin_bank["bank_records"]:
+                new_bank["bank_records"].append(bank_record)
+        with open(self.db_path, "wt") as file:
+            json.dump(new_bank, file, indent=4)

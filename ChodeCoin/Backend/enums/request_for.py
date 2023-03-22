@@ -11,3 +11,4 @@ class RequestFor(Enum):
     help = 7
     set_info = 8
     export_coin_bank = 9
+    import_coin_bank = 10

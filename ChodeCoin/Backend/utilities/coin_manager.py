@@ -30,3 +30,6 @@ class CoinManager:
             self.user_manager.create_new_user(target_user)
 
         self.coin_bank_portal.change_coin_count(target_user, 10)
+
+    def import_coin_bank(self, attachment):
+        self.coin_bank_portal.import_coin_bank(attachment)
