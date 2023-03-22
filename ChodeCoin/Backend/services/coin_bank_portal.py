@@ -84,8 +84,10 @@ class CoinBankPortal:
 
     def import_coin_bank(self, new_coin_bank):
         new_bank = {"bank_records": []}
-        with open(self.db_path, "r") as file:
-            for bank_record in new_coin_bank["bank_records"]:
-                new_bank["bank_records"].append(bank_record)
-        with open(self.db_path, "wt") as file:
-            json.dump(new_bank, file, indent=4)
+        with open(new_coin_bank, "r") as new_coin_bank_data:
+            imported_bank = json.load(new_coin_bank_data)
+            with open(self.db_path, "r") as file:
+                for bank_record in imported_bank["bank_records"]:
+                    new_bank["bank_records"].append(bank_record)
+            with open(self.db_path, "wt") as file:
+                json.dump(new_bank, file, indent=4)
