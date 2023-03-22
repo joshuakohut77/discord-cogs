@@ -70,7 +70,7 @@ class WorkFlow:
             return self.export_coin_bank_workflow.process_export_coin_bank_request(author)
 
         elif process == RequestFor.import_coin_bank:
-            return self.import_coin_bank_workflow.process_import_coin_bank_request(attachments), None, None
+            return self.import_coin_bank_workflow.process_import_coin_bank_request(author, attachments), None, None
 
         else:
             return None, None, None
