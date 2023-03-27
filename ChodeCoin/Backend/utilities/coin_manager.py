@@ -31,5 +31,5 @@ class CoinManager:
 
         self.coin_bank_portal.change_coin_count(target_user, 10)
 
-    def import_coin_bank(self, attachment):
-        self.coin_bank_portal.import_coin_bank(attachment)
+    async def import_coin_bank(self, attachment):
+        await self.coin_bank_portal.import_coin_bank(attachment)
