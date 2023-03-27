@@ -81,9 +81,7 @@ class CoinBankPortal:
         return discord.File(self.db_path)
 
     def import_coin_bank(self, new_coin_bank):
-        print(new_coin_bank)
-        print(new_coin_bank.to_file())
-        new_coin_bank_file = new_coin_bank.to_file()
+        new_coin_bank_file = await new_coin_bank.to_file()
         with open(new_coin_bank_file, "r") as attached_file:
             new_bank = json.load(attached_file)
             with open(self.db_path, "wt") as file:
