@@ -20,7 +20,7 @@ class ImportCoinBankWorkflow:
         self.coin_manager = coin_manager
 
     def get_import_coin_bank_description(self):
-        return Command("!import coinbank {attach json file}", "Imports (and overrides!) the previous Coin Bank with the attached json file. Cannot be undone.")
+        return Command("!import coinbank {attach json file}", "Imports (and overrides!) the previous Coin Bank with the attached json file. Cannot be undone.", True)
 
     def is_import_coin_bank_workflow(self, message):
         return self.message_reader.is_import_coin_bank_command(message)

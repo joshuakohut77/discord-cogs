@@ -11,7 +11,7 @@ def is_permission_workflow(message):
 
 
 def get_permission_description():
-    return Command("!setpermission [@User] [owner|admin|viewer|none]", "Sets permission")
+    return Command("!setpermission [@User] [owner|admin|viewer|none]", "Sets permission", True)
 
 
 class PermissionWorkflow:

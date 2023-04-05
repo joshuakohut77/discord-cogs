@@ -11,7 +11,7 @@ def is_set_info_workflow(message):
 
 
 def get_set_info_description():
-    return Command("!setinfo [@User] coincount [new value]", "Sets provided user's coin count to the provided value.")
+    return Command("!setinfo [@User] coincount [new value]", "Sets provided user's coin count to the provided value.", True)
 
 
 class SetInfoWorkflow:
