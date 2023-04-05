@@ -31,7 +31,8 @@ class HelpWorkflow:
         self.dankhof_workflow = dankhof_workflow
 
     def process_help_request(self, author):
-        has_admin_permission = self.user_manager.is_admin_user(convert_to_discord_user(author))
+        # has_admin_permission = self.user_manager.is_admin_user(convert_to_discord_user(author))
+        has_admin_permission = False
         command_descriptions = [
             get_permission_description(),
             get_leaderboard_description(),
