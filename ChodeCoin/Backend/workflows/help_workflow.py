@@ -38,6 +38,7 @@ class HelpWorkflow:
             get_targeted_coin_count_description(),
             get_chodecoin_ping_description(),
             get_set_info_description(),
+            get_chodekill_description(),
             self.export_coin_bank_workflow.get_export_coin_bank_description(),
             self.import_coin_bank_workflow.get_import_coin_bank_description(),
             self.dankhof_workflow.get_dankhof_description(),
