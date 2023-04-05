@@ -61,7 +61,7 @@ class WorkFlow:
             return self.chodekill_workflow.process_chodekill_request(message, author), None, None
 
         elif process == RequestFor.help:
-            return self.help_workflow.process_help_request(author), None, None
+            return "", self.help_workflow.process_help_request(author), None
 
         elif process == RequestFor.set_info:
             return self.set_info_workflow.process_set_info_request(message, author), None, None
