@@ -20,7 +20,7 @@ def generate_help_reply(command_descriptions: []):
     embed = discord.Embed()
     embed = discord.Embed(title="ChodeCoin Commands", color=0x0b1bf4)
     embed.add_field(name="Command", value=str(commands))
-    return "", embed
+    return embed
 
 
 def generate_targeted_coin_count_reply(user_name, user_coin_count):
