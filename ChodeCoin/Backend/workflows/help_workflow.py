@@ -45,8 +45,10 @@ class HelpWorkflow:
         ]
 
         if has_admin_permission is False:
+            non_admin_command_descriptions = []
             for description in command_descriptions:
-                if description.is_admin_command is True:
-                    command_descriptions.remove(description)
+                if description.is_admin_command is False:
+                    non_admin_command_descriptions += description
+            command_descriptions = non_admin_command_descriptions
 
         return generate_help_reply(command_descriptions)
