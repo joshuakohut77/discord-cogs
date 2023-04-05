@@ -1,6 +1,6 @@
 import json
 import discord
-import requests
+import asyncio
 
 from ChodeCoin.Backend.objects.user import User, convert_user_to_json
 from ChodeCoin.Backend.helpers.array_helper import ArrayHelper
@@ -82,7 +82,4 @@ class CoinBankPortal:
 
     async def import_coin_bank(self, new_coin_bank):
         new_coin_bank_file = await new_coin_bank.to_file()
-        with open(new_coin_bank_file, "r") as attached_file:
-            new_bank = json.load(attached_file)
-            with open(self.db_path, "wt") as file:
-                json.dump(new_bank, file, indent=4)
+        new_coin_bank_file.save(self.db_path)
