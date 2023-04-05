@@ -7,7 +7,7 @@ class TestCommand:
         expected = "Name"
 
         # Act
-        result = new_command("Name", "Description")
+        result = new_command("Name", "Description", True)
 
         # Assert
         assert result.name == expected
@@ -17,7 +17,7 @@ class TestCommand:
         expected = "Description"
 
         # Act
-        result = new_command("Name", "Description")
+        result = new_command("Name", "Description", False)
 
         # Assert
         assert result.description == expected
@@ -69,7 +69,7 @@ class TestCommand:
     def test_GIVEN_convert_command_to_json_WHEN_provided_admin_THEN_returns_correct_json_object(self) -> None:
         # Arrange
         test_command = Command("Test", "Description")
-        expected = {"name": "Test", "description": "Description"}
+        expected = {"name": "Test", "description": "Description", "is_admin_command": False}
 
         # Act
         actual = convert_command_to_json(test_command)
