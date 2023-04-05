@@ -1,5 +1,8 @@
+from ChodeCoin.Backend.helpers.string_helper import convert_to_discord_user
 from ChodeCoin.Backend.utilities.message_reader import is_help_command
 from ChodeCoin.Backend.utilities.reply_generator import generate_help_reply
+from ChodeCoin.Backend.utilities.user_manager import UserManager
+from ChodeCoin.Backend.workflows.dank_hof_workflow import DankHofWorkflow
 from ChodeCoin.Backend.workflows.export_coin_bank_workflow import ExportCoinBankWorkflow
 from ChodeCoin.Backend.workflows.import_coin_bank_workflow import ImportCoinBankWorkflow
 from ChodeCoin.Backend.workflows.permission_workflow import get_permission_description
@@ -19,19 +22,30 @@ class HelpWorkflow:
             self,
             export_coin_bank_workflow=ExportCoinBankWorkflow(),
             import_coin_bank_workflow=ImportCoinBankWorkflow(),
+            user_manager=UserManager(),
+            dankhof_workflow=DankHofWorkflow(),
     ):
         self.export_coin_bank_workflow = export_coin_bank_workflow
         self.import_coin_bank_workflow = import_coin_bank_workflow
+        self.user_manager = user_manager
+        self.dankhof_workflow = dankhof_workflow
 
-    def process_help_request(self):
+    def process_help_request(self, author):
+        has_admin_permission = self.user_manager.is_admin_user(convert_to_discord_user(author))
         command_descriptions = [
             get_permission_description(),
-            get_chodekill_description(),
             get_leaderboard_description(),
             get_targeted_coin_count_description(),
             get_chodecoin_ping_description(),
             get_set_info_description(),
             self.export_coin_bank_workflow.get_export_coin_bank_description(),
             self.import_coin_bank_workflow.get_import_coin_bank_description(),
+            self.dankhof_workflow.get_dankhof_description(),
         ]
+
+        if has_admin_permission is False:
+            for description in command_descriptions:
+                if description.is_admin_command is True:
+                    command_descriptions.pop(description)
+
         return generate_help_reply(command_descriptions)

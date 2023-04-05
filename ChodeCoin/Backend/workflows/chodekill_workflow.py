@@ -11,7 +11,7 @@ def is_chodekill_workflow(message):
 
 
 def get_chodekill_description():
-    return Command("!chodekill [user|--prune|--all]", "Deletes the user specified. | Prunes users who haven't been updated for the last 6 months | Deletes all users")
+    return Command("!chodekill [user|--prune|--all]", "Deletes the user specified. | Prunes users who haven't been updated for the last 6 months | Deletes all users", True)
 
 
 class ChodeKillWorkflow:

@@ -1,4 +1,5 @@
 from ChodeCoin.Backend.helpers.string_helper import convert_to_discord_user
+from ChodeCoin.Backend.objects.command import Command
 from ChodeCoin.Backend.utilities.message_reader import MessageReader, is_dank_hof_command, find_targeted_dank_hof_user
 from ChodeCoin.Backend.utilities.reply_generator import generate_dank_hof_reply
 from ChodeCoin.Backend.utilities.info_manager import InfoManager
@@ -23,6 +24,9 @@ class DankHofWorkflow:
         self.user_manager = user_manager
         self.message_reader = message_reader
         self.coin_manager = coin_manager
+
+    def get_dankhof_description(self):
+        return Command("!dankhof [user]", "Bestows Dank Hall Of Fame honors upon target user.", True)
 
     def process_dank_hof_request(self, message, author):
         if self.user_manager.is_admin_user(convert_to_discord_user(author)):
