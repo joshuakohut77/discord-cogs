@@ -46,7 +46,7 @@ class WorkFlow:
             return reply, None, None
 
         elif process == RequestFor.leaderboard:
-            return None, self.leaderboard_workflow.process_leaderboard_request(), None
+            return None, self.leaderboard_workflow.process_leaderboard_request(), None, None
 
         elif process == RequestFor.targeted_coin_count:
             return self.targeted_coin_count_workflow.process_targeted_coin_count_request(message, author), None, None
