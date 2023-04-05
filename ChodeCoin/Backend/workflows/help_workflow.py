@@ -48,7 +48,7 @@ class HelpWorkflow:
             non_admin_command_descriptions = []
             for description in command_descriptions:
                 if description.is_admin_command is False:
-                    non_admin_command_descriptions += description
+                    non_admin_command_descriptions.append(description)
             command_descriptions = non_admin_command_descriptions
 
         return generate_help_reply(command_descriptions)
