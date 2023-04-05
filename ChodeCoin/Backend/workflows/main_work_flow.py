@@ -38,7 +38,7 @@ class WorkFlow:
         self.import_coin_bank_workflow = import_coin_bank_workflow
         self.guard = guard
 
-    def process_message(self, message, author, attachments):
+    async def process_message(self, message, author, attachments):
         process = self.identify_request(message)
 
         if process == RequestFor.chodecoin_ping:
@@ -70,7 +70,7 @@ class WorkFlow:
             return self.export_coin_bank_workflow.process_export_coin_bank_request(author)
 
         elif process == RequestFor.import_coin_bank:
-            return self.import_coin_bank_workflow.process_import_coin_bank_request(author, attachments), None, None
+            return await self.import_coin_bank_workflow.process_import_coin_bank_request(author, attachments), None, None
 
         else:
             return None, None, None
