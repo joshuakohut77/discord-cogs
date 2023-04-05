@@ -17,7 +17,7 @@ class ExportCoinBankWorkflow:
         self.reply_generator = reply_generator
 
     def get_export_coin_bank_description(self):
-        return Command("!export coinbank", "Exports the entire coinbank as a json file.")
+        return Command("!export coinbank", "Exports the entire coinbank as a json file.", True)
 
     def is_export_coin_bank_workflow(self, message):
         return self.message_reader.is_export_coin_bank_command(message)
