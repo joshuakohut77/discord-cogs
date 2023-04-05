@@ -44,11 +44,10 @@ class HelpWorkflow:
             self.dankhof_workflow.get_dankhof_description(),
         ]
 
+        all_descriptions = command_descriptions[:]
         if has_admin_permission is False:
-            non_admin_command_descriptions = []
-            for description in command_descriptions:
-                if description.is_admin_command is False:
-                    non_admin_command_descriptions.append(description)
-            command_descriptions = non_admin_command_descriptions
+            for description in all_descriptions:
+                if description.is_admin_command is True:
+                    command_descriptions.remove(description)
 
         return generate_help_reply(command_descriptions)
