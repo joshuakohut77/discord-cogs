@@ -6,5 +6,5 @@ if TYPE_CHECKING:
 
 from .main import owenWilson as wow
 
-def setup(bot: Red):
-    bot.add_cog(wow(bot))
+async def setup(bot: Red):
+    await bot.add_cog(wow(bot))
