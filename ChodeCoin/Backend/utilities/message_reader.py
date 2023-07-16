@@ -167,17 +167,17 @@ class MessageReader:
             return un_formatted_user
 
     def is_plus_plus_command(self, message):
-        return bool(re.search(r"(^@\S{1,32}?\s{0,3}?[+]{2})|(^<@\d{18,20}>\s{0,3}?[+]{2})", message))
+        return bool(re.search(r"(@\S{1,32}?\s{0,3}?[+]{2})|(^<@\d{18,20}>\s{0,3}?[+]{2})", message))
 
     def extract_plus_plus_target(self, message):
-        custom_user_search = re.search(r"^@\S{1,32}?\s{0,3}?[+]{2}", message)
+        custom_user_search = re.search(r"@\S{1,32}?\s{0,3}?[+]{2}", message)
         if custom_user_search:
             targeted_custom_user = custom_user_search.group(0)
             formatted_custom_user = targeted_custom_user[1:len(str(targeted_custom_user))].strip()
             formatted_custom_user = formatted_custom_user[:len(formatted_custom_user) - 1].strip()
             formatted_custom_user = formatted_custom_user[:len(formatted_custom_user) - 1].strip()
             return formatted_custom_user
-        discord_user_search = re.search(r"^<@\d{18,20}>\s{0,3}?[+]{2}", message)
+        discord_user_search = re.search(r"<@\d{18,20}>\s{0,3}?[+]{2}", message)
         if discord_user_search:
             targeted_discord_user = discord_user_search.group(0)
             formatted_discord_user = targeted_discord_user[:len(targeted_discord_user) - 1].strip()
