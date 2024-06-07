@@ -36,7 +36,7 @@ class EventMixin(MixinMeta):
                 embed = discord.Embed()
                 formattedDescription = ""
                 for dupe in duplicateList:
-                    formattedDescription += dupe["username"] + ' on: ' + str(dupe["timestamp"].strftime('%y/%m/%d %H:%M'))
+                    formattedDescription += dupe["username"] + ' on: ' + str(dupe["timestamp"].strftime('%y/%m/%d %H:%M')) + '\n'
                 embed=discord.Embed(title="Duplicate Message!", description=formattedDescription, color=0x0b1bf4)  
 
                 await message.reply(embed=embed)
