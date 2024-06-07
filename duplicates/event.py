@@ -29,7 +29,7 @@ class EventMixin(MixinMeta):
 
         if not Duplicates.has_extension(msg):
             msgHash = Duplicates.hash_string(msg)
-            Duplicates.insert_message(msgHash, username)
+            
 
             duplicateList = Duplicates.select_duplicates(msgHash)
             if len(duplicateList) > 0:
@@ -40,5 +40,7 @@ class EventMixin(MixinMeta):
                 embed=discord.Embed(title="Duplicate Message!", description=formattedDescription, color=0x0b1bf4)  
 
                 await message.reply(embed=embed)
+            
+            Duplicates.insert_message(msgHash, username)
                 
 
