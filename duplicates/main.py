@@ -20,3 +20,19 @@ class Duplicates(EventMixin, commands.Cog, metaclass=CompositeClass):
     def __init__(self, bot: Red):
         self.bot: Red = bot
 
+
+    @commands.group()
+    @commands.guild_only()
+    async def duplicates(self, ctx: commands.Context) -> None:
+        """Gets the admin commands for react emojis cog."""
+        pass
+    
+    @duplicates.command()
+    async def size(self, ctx: commands.Context) -> None:
+        await ctx.send("This is the message size")
+        return
+
+    @duplicates.command()
+    async def count(self, ctx: commands.Context) -> None:
+        await ctx.send("This is the message count")
+        return
