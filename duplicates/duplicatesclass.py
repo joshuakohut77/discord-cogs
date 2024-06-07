@@ -80,6 +80,6 @@ class Duplicates():
                 SELECT * 
                     FROM duplicate_message 
                         WHERE "MessageHash" = 'e8d3572ceef0e6b188ba8e84205e5a248afe4c5374cba769d392f9ba99021cd1';'''
-        result = db.querySingle(queryString)
-
-        return result[0][4]
+        result = db.queryAll(queryString)
+            
+        return result[4]
