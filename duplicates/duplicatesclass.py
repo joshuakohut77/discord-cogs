@@ -29,7 +29,7 @@ class Duplicates():
         
         db = dbconn()
         
-        queryString = """INSERT INTO public."duplicateMessage"("MessageHash", "Username") VALUES (%(msgHash)s, %(username)s)""" 
+        queryString = """INSERT INTO "duplicate_message"("MessageHash", "Username") VALUES (%(msgHash)s, %(username)s)""" 
         values = {'msgHash': msgHash, 'username': str(username) }
         db.execute(queryString, values)
         return
@@ -40,7 +40,7 @@ class Duplicates():
         
         queryString = '''
         SELECT * 
-            FROM public."duplicateMessage"
+            FROM public."duplicate_message"
             WHERE "MessageHash" = %(msgHash)s'''
         result = db.queryAll(queryString, {'msgHash': msgHash})
         
