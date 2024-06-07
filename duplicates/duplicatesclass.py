@@ -31,8 +31,8 @@ class Duplicates():
         queryString = """
             INSERT INTO
                 duplicateMessage("MessageHash", "Username")
-                VALUES (%(msgHash)s, %(username)s)
-        """
-        values = {'msgHash': msgHash, 'username': username}
-        db.execute(queryString, values)
+                VALUES (%s, %s)
+        """ %(msgHash, username)
+        # values = {'msgHash': msgHash, 'username': username}
+        db.execute(queryString)
         return
