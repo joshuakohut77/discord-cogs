@@ -21,10 +21,20 @@ class EventMixin(MixinMeta):
             return
 		
         msg: str = message.content.lower()
+
+        if len(msg.split() < 5):
+            return
+
         username = message.author
 
         if not Duplicates.has_extension(msg):
             msgHash = Duplicates.hash_string(msg)
             Duplicates.insert_message(msgHash, username)
 
+            duplicateList = Duplicates.select_duplicates(msgHash)
+            if len(duplicateList) > 0:
+
+
+                message.reply('embed=embed')
+                
 
