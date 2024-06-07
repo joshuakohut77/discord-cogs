@@ -33,3 +33,22 @@ class Duplicates():
         values = {'msgHash': msgHash, 'username': str(username) }
         db.execute(queryString, values)
         return
+
+    def select_duplicates(msgHash):
+        
+        db = dbconn()
+        
+        queryString = '''
+        SELECT * 
+            FROM public."duplicateMessage"
+            WHERE "MessageHas" = %(msgHash)s'''
+        result = db.queryAll(queryString, {'msgHash': msgHash})
+        
+        duplicateList = []
+        
+        for row in result:
+            username = row[2]
+            timestamp = row[3]
+            duplicateList.append({'username': username, 'timestamp': timestamp})
+        
+        return duplicateList
