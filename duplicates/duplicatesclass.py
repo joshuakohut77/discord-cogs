@@ -33,6 +33,6 @@ class Duplicates():
                 duplicateMessage("MessageHash", "Username")
                 VALUES (%s, %s)
         """ 
-        values = (msgHash, username)
+        values = {msgHash, username}
         db.execute(queryString, values)
         return
