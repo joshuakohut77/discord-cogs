@@ -22,7 +22,7 @@ class EventMixin(MixinMeta):
 		
         msg: str = message.content.lower()
 
-        if len(msg.split()) < 5:
+        if len(msg.split()) < 5 or msg[0] == '.':
             return
 
         username = message.author
