@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from discord import embeds
 import discord
+import pytz
 
 from .abc import MixinMeta
 
@@ -33,10 +34,11 @@ class EventMixin(MixinMeta):
 
             duplicateList = Duplicates.select_duplicates(msgHash)
             if len(duplicateList) > 0:
+                eastern = pytz.timezone('US/Eastern')
                 embed = discord.Embed()
                 formattedDescription = ""
                 for dupe in duplicateList:
-                    formattedDescription += dupe["username"] + ' on: ' + str(dupe["timestamp"].strftime('%m/%d/%y %H:%M')) + '\n'
+                    formattedDescription += dupe["username"] + ' on: ' + str(dupe["timestamp"].astimezone(eastern).strftime('%m/%d/%y %H:%M %Z')) + '\n'
                 embed=discord.Embed(title="Duplicate Message!", description=formattedDescription, color=0x0b1bf4)  
 
                 await message.reply(embed=embed)
