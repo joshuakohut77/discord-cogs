@@ -36,6 +36,6 @@ class EventMixin(MixinMeta):
                 embed = discord.Embed()
                 embed=discord.Embed(title="Duplicate Message!", description="Ur not unique.", color=0x0b1bf4)  
 
-                message.reply(embed=embed)
+                await message.reply(embed=embed)
                 
 
