@@ -82,4 +82,4 @@ class Duplicates():
                         WHERE "MessageHash" = 'e8d3572ceef0e6b188ba8e84205e5a248afe4c5374cba769d392f9ba99021cd1';'''
         result = db.queryAll(queryString)
             
-        return result[4]
+        return result[4][0]
