@@ -41,7 +41,7 @@ class Duplicates():
         queryString = '''
         SELECT * 
             FROM public."duplicateMessage"
-            WHERE "MessageHas" = %(msgHash)s'''
+            WHERE "MessageHash" = %(msgHash)s'''
         result = db.queryAll(queryString, {'msgHash': msgHash})
         
         duplicateList = []
