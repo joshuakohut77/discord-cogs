@@ -28,7 +28,7 @@ class Duplicates():
     def insert_message(msgHash, username):
         
         db = dbconn()
-        queryString = 'INSERT INTO public."duplicateMessage"("MessageHash", "Username") VALUES (' + str('sdklfs') + ', ' + str(username) + ')'
+        queryString = 'INSERT INTO public."duplicateMessage"("MessageHash", "Username") VALUES ("sdklfs", ' + str(username) + ')'
         values = (msgHash, username)
         db.execute(queryString)
         return
