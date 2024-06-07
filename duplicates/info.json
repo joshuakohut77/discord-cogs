@@ -1,0 +1,10 @@
+{
+    "author" : ["BiCuriousGeorge#8804"],
+    "install_msg" : "",
+    "name" : "Duplicates",
+    "short" : "Checks if message is a duplicate",
+    "description" : "",
+    "tags" : ["fun"],
+    "requirements" : [],
+    "hidden" : false
+}
