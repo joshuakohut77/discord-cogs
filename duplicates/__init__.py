@@ -7,4 +7,4 @@ if TYPE_CHECKING:
 from .main import Alphabetical
 
 async def setup(bot: Red):
-    await bot.add_cog(Alphabetical(bot))
+    await bot.add_cog(Duplicates(bot))
