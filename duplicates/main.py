@@ -43,5 +43,5 @@ class Duplicates(EventMixin, commands.Cog, metaclass=CompositeClass):
     @duplicates.command()
     async def time(self, ctx: commands.Context) -> None:
         time = DupeCls.get_query_time()
-        await ctx.send("Query Time: %s" %(str(time)))
+        await ctx.send("%s" %(str(time)))
         return
