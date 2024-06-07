@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Any, Dict, List, TYPE_CHECKING
 from abc import ABCMeta
+from duplicatesclass import Duplicates as DupeCls
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -29,10 +30,12 @@ class Duplicates(EventMixin, commands.Cog, metaclass=CompositeClass):
     
     @duplicates.command()
     async def size(self, ctx: commands.Context) -> None:
-        await ctx.send("This is the message size")
+        size = DupeCls.get_table_size()
+        await ctx.send("Table Size: %s" %(str(size)))
         return
 
     @duplicates.command()
     async def count(self, ctx: commands.Context) -> None:
-        await ctx.send("This is the message count")
+        count = DupeCls.get_message_count()
+        await ctx.send("Message Count: %s" %(str(count)))
         return

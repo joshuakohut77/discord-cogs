@@ -52,3 +52,22 @@ class Duplicates():
             duplicateList.append({'username': username, 'timestamp': timestamp})
         
         return duplicateList
+
+    def get_table_size():
+        db = dbconn()
+        queryString = '''
+            SELECT pg_size_pretty(
+                pg_total_relation_size('duplicate_message')) 
+                    AS total_size;'''
+        result = db.querySingle(queryString)
+
+        return result[0]
+    
+    def get_message_count():
+        db = dbconn()
+        queryString = '''
+            SELECT COUNT(*) 
+                FROM duplicate_message;'''
+        result = db.querySingle(queryString)
+
+        return result[0]
