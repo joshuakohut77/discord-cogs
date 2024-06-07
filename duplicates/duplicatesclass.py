@@ -32,7 +32,7 @@ class Duplicates():
             INSERT INTO
                 duplicateMessage("MessageHash", "Username")
                 VALUES (%s, %s)
-        """ %(msgHash, username)
+        """ %(str(msgHash), str(username))
         # values = {'msgHash': msgHash, 'username': username}
         db.execute(queryString)
         return
