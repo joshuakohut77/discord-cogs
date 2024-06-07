@@ -1,7 +1,7 @@
 from discord import embeds
 import discord
 import hashlib
-from dbclass import db as dbconn
+from .dbclass import db as dbconn
 
 """
 Saves and checks to see if a message is a duplicate and will respond with when those exact messages have been sent and by whom. 
@@ -24,7 +24,7 @@ class Duplicates():
         hex_hash = sha256.hexdigest()
         
         return hex_hash
-    
+
     def insert_message(msgHash, username):
         
         db = dbconn()
