@@ -34,7 +34,10 @@ class EventMixin(MixinMeta):
             duplicateList = Duplicates.select_duplicates(msgHash)
             if len(duplicateList) > 0:
                 embed = discord.Embed()
-                embed=discord.Embed(title="Duplicate Message!", description="Ur not unique.", color=0x0b1bf4)  
+                formattedDescription = ""
+                for dupe in duplicateList:
+                    formattedDescription += dupe["username"] + ' on: ' + dupe["timestamp"]
+                embed=discord.Embed(title="Duplicate Message!", description=formattedDescription, color=0x0b1bf4)  
 
                 await message.reply(embed=embed)
                 
