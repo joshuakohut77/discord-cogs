@@ -28,7 +28,7 @@ class Duplicates():
     def insert_message(msgHash, username):
         
         db = dbconn()
-        queryString = 'INSERT INTO duplicateMessage("MessageHash", "Username") VALUES (' + msgHash + ', ' + username + ')'
+        queryString = 'INSERT INTO duplicateMessage("MessageHash", "Username") VALUES (' + str(msgHash) + ', ' + str(username) + ')'
         values = (msgHash, username)
         db.execute(queryString)
         return
