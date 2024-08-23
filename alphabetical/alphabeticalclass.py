@@ -17,19 +17,17 @@ class Alphabetical():
         # Compare the list of first letters with its sorted version
         return first_letters == sorted(first_letters)
 
+    def is_alphabetical(word):
+        """Check if the letters in the word are in alphabetical order."""
+        return all(word[i] <= word[i+1] for i in range(len(word) - 1))
+
     def check_sentence(sentence):
-        """Check if all words in the sentence are in alphabetical order, 
-        and if letters in each word are in alphabetical order."""
-        
+        """Check if all words in the sentence are in alphabetical order."""
         # Normalize the sentence: remove special characters and convert to lowercase
         normalized_sentence = re.sub(r'[^a-zA-Z\s]', '', sentence).lower()
         
         # Split the sentence into words
         words = normalized_sentence.split()
         
-        # Check each word if it is in alphabetical order
-        for word in words:
-            if not all(word[i] <= word[i+1] for i in range(len(word) - 1)):
-                return False
-        
-        return True
+        # Check if each word is in alphabetical order
+        return all(is_alphabetical(word) for word in words)
