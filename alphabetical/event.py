@@ -22,9 +22,10 @@ class EventMixin(MixinMeta):
 		
         msg: str = message.content.lower()
         if Alphabetical.are_words_alphabetical_order(msg):
+            if Alphabetical.check_sentence(msg):
 
-            embed = discord.Embed()
-            embed=discord.Embed(title="Alphabet Soup!", description="All your words are in alphabetical order.", color=0x0b1bf4)            
+                embed = discord.Embed()
+                embed=discord.Embed(title="Alphabet Soup!", description="All your words are in alphabetical order.", color=0x0b1bf4)            
 
-            await message.reply(embed=embed)
+                await message.reply(embed=embed)
 
