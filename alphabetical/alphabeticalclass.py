@@ -9,7 +9,8 @@ class Alphabetical():
 
     def are_words_alphabetical_order(sentence):
         # Split the sentence into words
-        words = sentence.split()
+        normalized_sentence = re.sub(r'[^a-zA-Z\s]', '', sentence).lower()
+        words = normalized_sentence.split()
         if len(words) < 5:
             return False
         # Get the first letter of each word, converted to lowercase for case insensitivity
