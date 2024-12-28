@@ -7,13 +7,13 @@ import random
 from datetime import datetime
 
 from services.expclass import experiance as exp
-from inventoryclass import inventory as inv
-from leaderboardclass import leaderboard
-from loggerclass import logger as log
-from uniqueencounters import uniqueEncounters as uEnc
-from pokedexclass import pokedex
-from pokeclass import Pokemon as PokemonClass
-from ailmentsclass import ailment 
+from services.inventoryclass import inventory as inv
+from services.leaderboardclass import leaderboard
+from services.loggerclass import logger as log
+from services.uniqueencounters import uniqueEncounters as uEnc
+from services.pokedexclass import pokedex
+from services.pokeclass import Pokemon as PokemonClass
+from services.ailmentsclass import ailment 
 
 # Global Config Variables
 MAX_BATTLE_TURNS = 50
