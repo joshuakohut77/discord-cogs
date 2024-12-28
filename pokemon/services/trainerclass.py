@@ -6,7 +6,7 @@ from typing import final
 import json
 import random
 from dbclass import db as dbconn
-from encounterclass import encounter
+from services.encounterclass import encounter
 from inventoryclass import inventory as inv
 from keyitemsclass import keyitems as kitems
 from leaderboardclass import leaderboard
