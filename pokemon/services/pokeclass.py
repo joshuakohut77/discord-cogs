@@ -372,6 +372,38 @@ class Pokemon:
     def __loadPokemonFromDB(self, pokemonId):
         """ loads and creates a pokemon object from the database """
         db = dbconn()
+        # queryString = '''
+        # SELECT
+        #     pokemon."id",
+        #     "discord_id",
+        #     pokemon."pokemonId",
+        #     "pokemonName", 
+        #     "growthRate",
+        #     "currentLevel",
+        #     "currentExp",
+        #     traded,
+        #     base_hp, base_attack, base_defense, base_speed,
+        #     base_special_attack, base_special_defense, 
+        #     "IV_hp", "IV_attack", "IV_defense", "IV_speed", "IV_special_attack", 
+        #     "IV_special_defense", "EV_hp", "EV_attack", "EV_defense", "EV_speed", 
+        #     "EV_special_attack", "EV_special_defense",
+        #     "move_1", "move_2", "move_3", "move_4",
+        #     "type_1", "type_2",
+        #     "nickName",
+        #     "currentHP",
+        #     "party",
+        #     ailments."mostRecent",
+        #     ailments."sleep",
+        #     ailments."poison",
+        #     ailments."burn",
+        #     ailments."freeze",
+        #     ailments."paralysis",
+        #     ailments."trap",
+        #     ailments."confusion",
+        #     ailments."disable"
+        #     FROM pokemon
+        #     LEFT JOIN ailments ON pokemon."id" = ailments."pokemonId"
+        #     WHERE "id" = %(pokemonId)s'''
         queryString = '''
         SELECT
             pokemon."id",
@@ -391,19 +423,9 @@ class Pokemon:
             "type_1", "type_2",
             "nickName",
             "currentHP",
-            "party",
-            ailments."mostRecent",
-            ailments."sleep",
-            ailments."poison",
-            ailments."burn",
-            ailments."freeze",
-            ailments."paralysis",
-            ailments."trap",
-            ailments."confusion",
-            ailments."disable"
+            "party"
             FROM pokemon
-            LEFT JOIN ailments ON pokemon."id" = ailments."pokemonId"
-            WHERE "id" = %(pokemonId)s'''
+            WHERE "id" = %(pokemonId)s'''        
         result = db.querySingle(queryString, {'pokemonId': int(pokemonId)})
 
         if result:
