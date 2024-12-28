@@ -8,7 +8,7 @@ import config
 import math
 import json
 import random
-from dbclass import db as dbconn
+from services.dbclass import db as dbconn
 from services.leaderboardclass import leaderboard
 from services.loggerclass import logger as log
 # from pokebase.interface import APIResource
