@@ -801,6 +801,7 @@ class trainer:
             db.rollback()
             logger.error(excInfo=sys.exc_info())
         finally:
+            
             # delete and close connection
             del db   
     
