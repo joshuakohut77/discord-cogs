@@ -4,7 +4,7 @@ import os
 import discord
 import requests
 from io import BytesIO
-from pokeclass import Pokemon as PokemonClass
+from services.pokeclass import Pokemon as PokemonClass
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw

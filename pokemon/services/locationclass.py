@@ -4,10 +4,10 @@ import sys
 import config
 import json
 import random
-from keyitemsclass import keyitems as kitems
-from loggerclass import logger as log
-from dbclass import db as dbconn
-from questclass import quests as qObj
+from services.keyitemsclass import keyitems as kitems
+from services.loggerclass import logger as log
+from services.dbclass import db as dbconn
+from services.questclass import quests as qObj
 from models.location import LocationModel
 from models.quest import QuestModel
 from models.actionmodel import ActionType, ActionModel
