@@ -11,7 +11,7 @@ import random
 from dbclass import db as dbconn
 from leaderboardclass import leaderboard
 from loggerclass import logger as log
-# from pokebase.interface import APIResource
+from pokebase.interface import APIResource
 from statclass import PokeStats
 from ailmentsclass import ailment
 from time import time
