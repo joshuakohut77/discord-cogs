@@ -1,8 +1,8 @@
 # ailments class
 import sys
 import random
-from dbclass import db as dbconn
-from loggerclass import logger as log
+from services.dbclass import db as dbconn
+from services.loggerclass import logger as log
 from datetime import datetime
 
 # Class Logger

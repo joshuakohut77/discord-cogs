@@ -3,11 +3,11 @@ import os
 import sys
 import json
 import random
-from dbclass import db as dbconn
-from inventoryclass import inventory as inv
-from keyitemsclass import keyitems as kitems
-from questclass import quests as qObj
-from loggerclass import logger as log
+from services.dbclass import db as dbconn
+from services.inventoryclass import inventory as inv
+from services.keyitemsclass import keyitems as kitems
+from services.questclass import quests as qObj
+from services.loggerclass import logger as log
 from models.trainerBattle import TrainerBattleModel
 from models.gymLeader import GymLeaderModel
 

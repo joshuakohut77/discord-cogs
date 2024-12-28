@@ -2,11 +2,11 @@
 import sys
 import random
 from typing import List
-from keyitemsclass import keyitems as kitems
-from inventoryclass import inventory as inv
-from pokeclass import Pokemon as pokeClass
-from loggerclass import logger as log
-from uniqueencounters import uniqueEncounters as uEnc
+from services.keyitemsclass import keyitems as kitems
+from services.inventoryclass import inventory as inv
+from services.pokeclass import Pokemon as pokeClass
+from services.loggerclass import logger as log
+from services.uniqueencounters import uniqueEncounters as uEnc
 import models.quest as QuestModel
 from textwrap import dedent
 
