@@ -2,7 +2,9 @@ from __future__ import annotations
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 import discord
-from discord_components import (ButtonStyle, Button, Interaction)
+# from discord_components import (ButtonStyle, Button, Interaction)
+from discord import ui, ButtonStyle, Button, Interaction
+
 from redbot.core.commands.context import Context
 
 

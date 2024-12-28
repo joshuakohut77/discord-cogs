@@ -5,7 +5,9 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 import discord
 from discord import embeds
 from discord import emoji
-from discord_components import (ButtonStyle, Button, Interaction)
+# from discord_components import (ButtonStyle, Button, Interaction)
+from discord import ui, ButtonStyle, Button, Interaction
+
 from models.location import LocationModel
 
 if TYPE_CHECKING:
