@@ -8,7 +8,7 @@ from discord import (Embed, Member)
 from discord import message
 # from discord_components import (
 #     DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction, component)
-from discord import ui, ButtonStyle, Button, Interaction, component
+from discord import ui, ButtonStyle, Button, Interaction
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
