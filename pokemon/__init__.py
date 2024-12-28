@@ -25,5 +25,5 @@ for p in sys.path:
 
 from .main import Pokemon
 
-def setup(bot: Red):
-    bot.add_cog(Pokemon(bot))
+async def setup(bot: Red):
+    await bot.add_cog(Pokemon(bot))
