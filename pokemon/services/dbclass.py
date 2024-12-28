@@ -34,13 +34,12 @@ class db:
         #     port=(params and params.port) or 25060)
 
         self.conn = pg.connect(
-            host=(
-                params and params.host) or "postgresql.joshkohut.com",
-            dbname=(params and params.dbname) or "pokemon_db",
-            user=(params and params.user) or "redbot",
+            host="postgresql.joshkohut.com",
+            dbname="pokemon_db",
+            user="redbot",
             # todo remove password from source control
-            password=(params and params.password) or "bfFLG9tUYPpW7272vzhX52",
-            port=(params and params.port) or 5432)
+            password="bfFLG9tUYPpW7272vzhX52",
+            port=5432)
 
     def __del__(self):
         self.conn.close()
