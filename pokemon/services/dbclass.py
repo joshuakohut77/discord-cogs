@@ -2,6 +2,9 @@
 
 import psycopg as pg
 
+
+
+
 # The python equivalent of dotnets IDisposable pattern is their Context Managers
 # https://book.pythontips.com/en/latest/context_managers.html
 #

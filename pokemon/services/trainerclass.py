@@ -801,9 +801,8 @@ class trainer:
             db.rollback()
             logger.error(excInfo=sys.exc_info())
         finally:
-            if db is not None:
-                # delete and close connection
-                del db   
+            # delete and close connection
+            del db   
     
     def __getEncounter(self, method):
         """ gets a random encounter in the current area using the selected method """
