@@ -5,7 +5,7 @@ import config
 import json
 import random
 from datetime import datetime
-from expclass import experiance as exp
+from .expclass import experiance as exp
 from inventoryclass import inventory as inv
 from leaderboardclass import leaderboard
 from loggerclass import logger as log
