@@ -67,7 +67,7 @@ class Pokemon(StarterMixin, PcMixin, PartyMixin, PokemartMixin, PokecenterMixin,
 
     def __init__(self, bot: Red):
         super().__init__()
-        self.client = DiscordComponents(bot)
+        # self.client = DiscordComponents(bot)
         self.bot: Red = bot
         self.config: Config = Config.get_conf(
             self, identifier=4206980085, force_registration=True)

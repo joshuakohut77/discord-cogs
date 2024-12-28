@@ -12,7 +12,9 @@ from redbot.core import commands
 from abc import ABC, abstractmethod
 
 import discord
-from discord_components.client import DiscordComponents
+# from discord_components.client import DiscordComponents
+from discord.ui import View
+
 from models.state import PokemonState
 
 
@@ -23,7 +25,7 @@ class MixinMeta(ABC):
     def __init__(self, *args):
         self.bot: Red
         self.config: Config
-        self.client: DiscordComponents
+        # self.client: DiscordComponents
 
 
     async def sendToLoggingChannel(self, content: str, file: discord.File = None, embed: discord.Embed = None):
