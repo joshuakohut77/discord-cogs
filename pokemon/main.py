@@ -4,7 +4,7 @@ from abc import ABCMeta
 
 import discord
 # from discord_components import (DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
-from discord import ui, ButtonStyle, ComponentsBot, Button, Interaction
+from discord import ui, ButtonStyle, Button, Interaction
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
