@@ -9,11 +9,11 @@ import math
 import json
 import random
 from dbclass import db as dbconn
-from services.leaderboardclass import leaderboard
-from services.loggerclass import logger as log
+from leaderboardclass import leaderboard
+from loggerclass import logger as log
 # from pokebase.interface import APIResource
-from services.statclass import PokeStats
-from services.ailmentsclass import ailment
+from statclass import PokeStats
+from ailmentsclass import ailment
 from time import time
 
 # Global Config Variables

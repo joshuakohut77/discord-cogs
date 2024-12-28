@@ -1,7 +1,7 @@
 # keyitems class
 import sys
-from services.dbclass import db as dbconn
-from services.loggerclass import logger as log
+from dbclass import db as dbconn
+from loggerclass import logger as log
 
 # Class Logger
 logger = log()
