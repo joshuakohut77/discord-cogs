@@ -438,7 +438,7 @@ class PokemartMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkStoreState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state: StoreState = self.__store[str(user.id)]
@@ -454,7 +454,7 @@ class PokemartMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkStoreState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state: StoreState = self.__store[str(user.id)]

@@ -78,7 +78,7 @@ class PcMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.getPokemonState(user)
@@ -88,11 +88,11 @@ class PcMixin(MixinMeta):
         trainer.setActivePokemon(pokemon.trainerId)
 
         if trainer.statuscode == 420:
-            await interaction.send(trainer.message)
+            await interaction.response.send_message(trainer.message)
             return
 
         if trainer.statuscode == 96:
-            await interaction.send('Something went wrong. Active pokemon not set.')
+            await interaction.response.send_message('Something went wrong. Active pokemon not set.')
             return
 
         await interaction.channel.send(f'{user.display_name} set their active pokemon to {getTrainerGivenPokemonName(pokemon)}.')
@@ -109,7 +109,7 @@ class PcMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            msg = await interaction.send('This is not for you.', ephemeral=False)
+            msg = await interaction.response.send_message('This is not for you.', ephemeral=False)
             await asyncio.sleep(2)
             await msg.delete()
             return
@@ -139,7 +139,7 @@ class PcMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.getPokemonState(user)
@@ -167,7 +167,7 @@ class PcMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.getPokemonState(user)
@@ -183,7 +183,7 @@ class PcMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.getPokemonState(user)
@@ -199,7 +199,7 @@ class PcMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
         
         state = self.getPokemonState(user)
@@ -213,11 +213,11 @@ class PcMixin(MixinMeta):
         trainer.withdraw(pokemon.trainerId)
 
         if trainer.statuscode == 420:
-            await interaction.send(trainer.message)
+            await interaction.response.send_message(trainer.message)
             return
         
         if trainer.statuscode == 69:
-            await interaction.send(f'{getTrainerGivenPokemonName(pokemon)} is now in your party.')
+            await interaction.response.send_message(f'{getTrainerGivenPokemonName(pokemon)} is now in your party.')
             return
 
 
@@ -225,7 +225,7 @@ class PcMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.getPokemonState(user)
@@ -242,7 +242,7 @@ class PcMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
         
         state = self.getPokemonState(user)
@@ -255,14 +255,14 @@ class PcMixin(MixinMeta):
         pokemon: PokemonClass = pokeList[i]
 
         if pokemon.trainerId == activeId:
-            await interaction.send('You cannot release your active pokemon.')
+            await interaction.response.send_message('You cannot release your active pokemon.')
             return
 
         trainer = TrainerClass(str(user.id))
         starter = trainer.getStarterPokemon()
 
         if pokemon.trainerId == starter.trainerId:
-            await interaction.send('You cannot release your starter pokemon.')
+            await interaction.response.send_message('You cannot release your starter pokemon.')
             return
 
         trainer.releasePokemon(pokemon.trainerId)
@@ -292,7 +292,7 @@ class PcMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.getPokemonState(user)
@@ -309,7 +309,7 @@ class PcMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
         
         state = self.getPokemonState(user)
@@ -338,14 +338,14 @@ class PcMixin(MixinMeta):
     
             await interaction.channel.send(f'{user.display_name}, {trainer.message}')
         else:
-            await interaction.send('Could not use the item.')
+            await interaction.response.send_message('Could not use the item.')
 
 
     async def __on_items_click(self, interaction: Interaction):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.getPokemonState(user)
@@ -621,7 +621,7 @@ class PcMixin(MixinMeta):
                 
     #             # Users who are not the author cannot click other users buttons
     #             if interaction.user.id != author.id:
-    #                 await interaction.send('This is not for you.')
+    #                 await interaction.response.send_message('This is not for you.')
     #                 continue
 
     #             if interaction.custom_id == 'next':
@@ -630,13 +630,13 @@ class PcMixin(MixinMeta):
     #                 i = i - 1
     #             if interaction.custom_id == 'active':
     #                 res = trainer.setActivePokemon(pokemon.trainerId)
-    #                 await interaction.send(content=f'{res}')
+    #                 await interaction.response.send_message(content=f'{res}')
     #                 break
     #             if interaction.custom_id == 'stats':
-    #                 await interaction.send('Not implemented')
+    #                 await interaction.response.send_message('Not implemented')
     #                 break
     #             if interaction.custom_id == 'pokedex':
-    #                 await interaction.send('Not implemented')
+    #                 await interaction.response.send_message('Not implemented')
     #                 break
     #         except asyncio.TimeoutError:
     #             break

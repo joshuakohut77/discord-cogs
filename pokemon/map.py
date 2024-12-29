@@ -147,25 +147,25 @@ class MapMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkMapState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.__locations[str(user.id)]
         north = state.location.north
 
         if north is None:
-            await interaction.send('You can not travel North from here.')
+            await interaction.response.send_message('You can not travel North from here.')
             return
 
         loc = LocationClass()
         direction = loc.getLocationByName(north)
         if loc.statuscode == 96:
-            await interaction.send(loc.message)
+            await interaction.response.send_message(loc.message)
             return
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        # await interaction.send(f'You walked North to {north}.')
+        # await interaction.response.send_message(f'You walked North to {north}.')
 
         file, btns = self.__createMapCard(direction)
 
@@ -197,25 +197,25 @@ class MapMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkMapState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.__locations[str(user.id)]
         south = state.location.south
 
         if south is None:
-            await interaction.send('You can not travel South from here.')
+            await interaction.response.send_message('You can not travel South from here.')
             return
 
         loc = LocationClass()
         direction = loc.getLocationByName(south)
         if loc.statuscode == 96:
-            await interaction.send(loc.message)
+            await interaction.response.send_message(loc.message)
             return
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        # await interaction.send(f'You walked South to {south}.')
+        # await interaction.response.send_message(f'You walked South to {south}.')
 
         file, btns = self.__createMapCard(direction)
 
@@ -248,25 +248,25 @@ class MapMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkMapState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.__locations[str(user.id)]
         east = state.location.east
 
         if east is None:
-            await interaction.send('You can not travel East from here.')
+            await interaction.response.send_message('You can not travel East from here.')
             return
 
         loc = LocationClass()
         direction = loc.getLocationByName(east)
         if loc.statuscode == 96:
-            await interaction.send(loc.message)
+            await interaction.response.send_message(loc.message)
             return
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        # await interaction.send(f'You walked East to {east}.')
+        # await interaction.response.send_message(f'You walked East to {east}.')
 
         file, btns = self.__createMapCard(direction)
 
@@ -298,25 +298,25 @@ class MapMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkMapState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.__locations[str(user.id)]
         west = state.location.west
 
         if west is None:
-            await interaction.send('You can not travel West from here.')
+            await interaction.response.send_message('You can not travel West from here.')
             return
 
         loc = LocationClass()
         direction = loc.getLocationByName(west)
         if loc.statuscode == 96:
-            await interaction.send(loc.message)
+            await interaction.response.send_message(loc.message)
             return
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        # await interaction.send(f'You walked West to {west}.')
+        # await interaction.response.send_message(f'You walked West to {west}.')
 
         file, btns = self.__createMapCard(direction)
 

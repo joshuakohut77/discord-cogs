@@ -76,7 +76,7 @@ class TrainerCardMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkCardState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state: CardState = self.__cards[str(user.id)]
@@ -116,7 +116,7 @@ class TrainerCardMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkCardState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state: CardState = self.__cards[str(user.id)]

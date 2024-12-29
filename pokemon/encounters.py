@@ -104,7 +104,7 @@ class EncountersMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         location = LocationClass(str(user.id))
@@ -195,13 +195,13 @@ class EncountersMixin(MixinMeta):
                     await interaction.channel.send(trainer.message)
                 else:
                     await interaction.channel.send('No pokemon encountered.')
-                # await interaction.send('No pokemon encountered.')
+                # await interaction.response.send_message('No pokemon encountered.')
                 return
 
         # active = trainer.getActivePokemon()
         active = state.activePokemon
         
-        # await interaction.send(f'You encountered a wild {pokemon.pokemonName}!')
+        # await interaction.response.send_message(f'You encountered a wild {pokemon.pokemonName}!')
         desc = f'''
 {user.display_name} encountered a wild {wildPokemon.pokemonName.capitalize()}!
 {user.display_name} sent out {getTrainerGivenPokemonName(active)}.
@@ -236,7 +236,7 @@ class EncountersMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         await interaction.respond(type=5, content="Battling...")
@@ -253,7 +253,7 @@ class EncountersMixin(MixinMeta):
         trainer.fight(state.wildPokemon)
 
         if trainer.statuscode == 96:
-            await interaction.send(trainer.message)
+            await interaction.response.send_message(trainer.message)
             return
 
         channel: discord.TextChannel = self.bot.get_channel(state.channelId)
@@ -267,7 +267,7 @@ class EncountersMixin(MixinMeta):
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, active, desc)
 
-        await interaction.send(trainer.message)
+        await interaction.response.send_message(trainer.message)
         # await interaction.channel.send(
         await message.edit(
             content=f'{trainer.message}',
@@ -281,7 +281,7 @@ class EncountersMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.__useractions[str(user.id)]
@@ -289,7 +289,7 @@ class EncountersMixin(MixinMeta):
         trainer.runAway(state.wildPokemon)
 
         if trainer.statuscode == 96:
-            interaction.send(trainer.message)
+            interaction.response.send_message(trainer.message)
             return
 
         desc = state.descLog
@@ -312,7 +312,7 @@ class EncountersMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
 
@@ -350,7 +350,7 @@ class EncountersMixin(MixinMeta):
 
         if len(btns) == 0:
             # TODO: Achievement Unlocked: No Balls
-            await interaction.send('You have no balls!')
+            await interaction.response.send_message('You have no balls!')
             return
 
         secondRow = []
@@ -377,7 +377,7 @@ class EncountersMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         # active = trainer.getActivePokemon()
@@ -385,7 +385,7 @@ class EncountersMixin(MixinMeta):
         wildPokemon = state.wildPokemon
         active = state.activePokemon
         
-        # await interaction.send(f'You encountered a wild {pokemon.pokemonName}!')
+        # await interaction.response.send_message(f'You encountered a wild {pokemon.pokemonName}!')
         desc = f'''
 {user.display_name} encountered a wild {wildPokemon.pokemonName.capitalize()}!
 {user.display_name} sent out {getTrainerGivenPokemonName(active)}.
@@ -420,7 +420,7 @@ class EncountersMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
 

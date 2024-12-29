@@ -108,7 +108,7 @@ class StarterMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.getPokemonState(user)
@@ -136,7 +136,7 @@ class StarterMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.getPokemonState(user)
@@ -186,7 +186,7 @@ class StarterMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.getPokemonState(user)
@@ -204,7 +204,7 @@ class StarterMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.getPokemonState(user)
@@ -221,7 +221,7 @@ class StarterMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
         
         state = self.getPokemonState(user)
@@ -250,14 +250,14 @@ class StarterMixin(MixinMeta):
     
             await interaction.channel.send(f'{user.display_name}, {trainer.message}')
         else:
-            await interaction.send('Could not use the item.')
+            await interaction.response.send_message('Could not use the item.')
 
 
     async def __on_items_click(self, interaction: Interaction):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.getPokemonState(user)
