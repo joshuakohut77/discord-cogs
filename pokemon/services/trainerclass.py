@@ -780,7 +780,7 @@ class trainer:
     def __checkCreateTrainer(self):
         """ this will check if a trainerId exists and if not, insert them into the database """
         db = dbconn()
-        print(db)
+        
         try:
             db = dbconn()
             # do this check to see if trainer exists
