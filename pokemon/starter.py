@@ -403,6 +403,6 @@ class StarterMixin(MixinMeta):
     async def on_items_click(self, interaction: discord.Interaction, button: Button):
         await self.__on_items_click(interaction)
 
-    @discord.ui.button(custom_id='setactive', label='Set Active', style=ButtonStyle.blue)
+    @discord.ui.button(custom_id='setactive', label='Set Active', style=ButtonStyle.blurple)
     async def on_set_active_click(self, interaction: discord.Interaction, button: Button):
         await self.__on_set_active_click(interaction)
