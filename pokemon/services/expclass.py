@@ -2,7 +2,7 @@
 # this is designed to calculate the experience of the defeated pokemon
 import os
 import json
-from pokeclass import Pokemon as PokemonClass
+from services.pokeclass import Pokemon as PokemonClass
 
 
 class experiance:
