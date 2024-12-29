@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 from dbclass import db as dbconn
 from loggerclass import logger as log
-from services.pokeclass import Pokemon as PokemonClass
+from pokeclass import Pokemon as PokemonClass
 from models.pokedex import PokedexModel
 
 # Class Logger
