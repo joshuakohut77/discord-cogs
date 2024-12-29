@@ -338,41 +338,48 @@ class StarterMixin(MixinMeta):
 
         firstRowBtns = []
 
-        if DisplayCard.MOVES.value != card.value:
-            # firstRowBtns.append(self.client.add_callback(
-            #     Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
-            #     self.__on_moves_click
-            # ))
-            firstRowBtns.append(
-                Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
-                self.__on_moves_click
-            )
-        if DisplayCard.STATS.value != card.value:
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
-                self.__on_stats_click,
-            ))
-        if DisplayCard.DEX.value != card.value:
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
-                self.__on_pokedex_click
-            ))
+        # if DisplayCard.MOVES.value != card.value:
+        #     firstRowBtns.append(self.client.add_callback(
+        #         Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
+        #         self.__on_moves_click
+        #     ))
 
+        # if DisplayCard.STATS.value != card.value:
+        #     firstRowBtns.append(self.client.add_callback(
+        #         Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
+        #         self.__on_stats_click,
+        #     ))
+        # if DisplayCard.DEX.value != card.value:
+        #     firstRowBtns.append(self.client.add_callback(
+        #         Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
+        #         self.__on_pokedex_click
+        #     ))
+
+        # if authorIsTrainer:
+        #     firstRowBtns.append(self.client.add_callback(
+        #         Button(style=ButtonStyle.blue, label="Items", custom_id='items'),
+        #         self.__on_items_click
+        #     ))
+        if DisplayCard.MOVES.value != card.value:
+            firstRowBtns.append(Button(style=ButtonStyle.green, label="Moves", custom_id='moves'))
+        if DisplayCard.STATS.value != card.value:
+            firstRowBtns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
+        if DisplayCard.DEX.value != card.value:
+            firstRowBtns.append(Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'))
         if authorIsTrainer:
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.blue, label="Items", custom_id='items'),
-                self.__on_items_click
-            ))
+            firstRowBtns.append(Button(style=ButtonStyle.blurple, label="Items", custom_id='items'))
+
 
             # Disable the "Set Active" button if the starter is currently the active pokemon
             # Disable the "Set Active" button if the starter is currently the active pokemon
             disabled = (activeId is not None) and (
                 pokemon.trainerId == activeId)
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.blue, label="Set Active",
-                    custom_id='setactive', disabled=disabled),
-                self.__on_set_active_click,
-            ))
+            # firstRowBtns.append(self.client.add_callback(
+            #     Button(style=ButtonStyle.blue, label="Set Active",
+            #         custom_id='setactive', disabled=disabled),
+            #     self.__on_set_active_click,
+            # ))
+            self.add_item(Button(style=ButtonStyle.blue, label="Set Active", custom_id='setactive', disabled=disabled))
 
         btns = []
         if len(firstRowBtns) > 0:
@@ -380,3 +387,22 @@ class StarterMixin(MixinMeta):
 
         return embed, btns
 
+    @discord.ui.button(custom_id='moves', label='Moves', style=ButtonStyle.green)
+    async def on_moves_click(self, interaction: discord.Interaction, button: Button):
+        await self.__on_moves_click(interaction)
+
+    @discord.ui.button(custom_id='stats', label='Stats', style=ButtonStyle.green)
+    async def on_stats_click(self, interaction: discord.Interaction, button: Button):
+        await self.__on_stats_click(interaction)
+
+    @discord.ui.button(custom_id='pokedex', label='Pokedex', style=ButtonStyle.green)
+    async def on_pokedex_click(self, interaction: discord.Interaction, button: Button):
+        await self.__on_pokedex_click(interaction)
+
+    @discord.ui.button(custom_id='items', label='Items', style=ButtonStyle.blurple)
+    async def on_items_click(self, interaction: discord.Interaction, button: Button):
+        await self.__on_items_click(interaction)
+
+    @discord.ui.button(custom_id='setactive', label='Set Active', style=ButtonStyle.blue)
+    async def on_set_active_click(self, interaction: discord.Interaction, button: Button):
+        await self.__on_set_active_click(interaction)
