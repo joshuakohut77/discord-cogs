@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 import discord
 # from discord_components import (ButtonStyle, Button, Interaction)
-from discord.ui import ButtonStyle, Button, Interaction
+from discord import ButtonStyle, Button, Interaction
 
 from redbot.core.commands.context import Context
 
