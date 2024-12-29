@@ -379,7 +379,7 @@ class StarterMixin(MixinMeta):
             #         custom_id='setactive', disabled=disabled),
             #     self.__on_set_active_click,
             # ))
-            firstRowBtns.append(Button(style=ButtonStyle.blue, label="Set Active", custom_id='setactive', disabled=disabled))
+            firstRowBtns.append(Button(style=ButtonStyle.blurple, label="Set Active", custom_id='setactive', disabled=disabled))
 
         btns = []
         if len(firstRowBtns) > 0:
