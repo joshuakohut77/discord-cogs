@@ -399,7 +399,7 @@ class PokemartMixin(MixinMeta):
         embed.set_thumbnail(
             url=f"https://pokesprites.joshkohut.com/sprites/locations/poke_mart.png")
         # embed.set_author(name=f"{user.display_name}",
-        #                  icon_url=str(user.avatar_url))
+        #                  icon_url=str(user.display_avatar.url))
 
         firstList = state.storeList[state.idx]
 

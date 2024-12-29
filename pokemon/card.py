@@ -92,7 +92,7 @@ class TrainerCardMixin(MixinMeta):
         stats.load()
 
         embed = discord.Embed(title=f"Trainer")
-        embed.set_author(name=f"{trainerUser.display_name}", icon_url=str(trainerUser.avatar_url))
+        embed.set_author(name=f"{trainerUser.display_name}", icon_url=str(trainerUser.display_avatar.url))
         
         embed.add_field(name='Battles', value=f'{stats.total_battles}', inline=True)
         embed.add_field(name='Victories', value=f'{stats.total_victory}', inline=True)
@@ -147,7 +147,7 @@ class TrainerCardMixin(MixinMeta):
 
     def __createAboutEmbed(self, user: discord.User, trainer: TrainerClass, inventory: InventoryClass, keyitems: KeyItemsClass):
         embed = discord.Embed(title=f"Trainer")
-        embed.set_author(name=f"{user.display_name}", icon_url=str(user.avatar_url))
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
         
         embed.add_field(name='Money', value=f'¥{inventory.money}', inline=False)
 

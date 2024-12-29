@@ -67,7 +67,7 @@ class MapMixin(MixinMeta):
         desc = f'You are at {name}.' if authorIsTrainer else f'{user.display_name} is at {name}.'
 
         embed = discord.Embed(title = f'{name}', description = desc)
-        embed.set_author(name=f"{user.display_name}", icon_url=str(user.avatar_url))
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
         embed.set_image(url = attachment.url)
 
         message = await ctx.send(
