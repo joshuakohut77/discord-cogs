@@ -386,7 +386,7 @@ class StarterMixin(MixinMeta):
             btns.append(firstRowBtns)
         
         view = View()
-        for button in btns:
+        for button in firstRowBtns:
             view.add_item(button)
 
         return embed, view
