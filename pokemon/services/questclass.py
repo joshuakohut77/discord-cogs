@@ -4,7 +4,7 @@ import random
 from typing import List
 from keyitemsclass import keyitems as kitems
 from inventoryclass import inventory as inv
-from .pokeclass import Pokemon as pokeClass
+from services.pokeclass import Pokemon as pokeClass
 from loggerclass import logger as log
 from uniqueencounters import uniqueEncounters as uEnc
 import models.quest as QuestModel
