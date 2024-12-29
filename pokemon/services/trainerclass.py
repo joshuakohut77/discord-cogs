@@ -5,6 +5,11 @@ from typing import final
 # import config
 import json
 import random
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+sys.path.append(os.path.join(os.path.dirname(
+    os.path.realpath(__file__)), 'models'))
+sys.path.append(os.path.join(os.path.dirname(
+    os.path.realpath(__file__)), 'services'))
 from services.dbclass import db as dbconn
 from services.encounterclass import encounter
 from inventoryclass import inventory as inv
@@ -19,6 +24,8 @@ from uniqueencounters import uniqueEncounters as uEnc
 from datetime import datetime
 from time import time
 from models.location import LocationModel
+
+
 
 # Global Config Variables
 STARTER_LEVEL = 5 #config.starterLevel
