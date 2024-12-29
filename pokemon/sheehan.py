@@ -25,7 +25,7 @@ c = card.value == DisplayCard.MOVES.value
 trainer = TrainerClass('181602702734655488')
 pokemon = trainer.getStarterPokemon()
 
-print(pokemon)
+print(pokemon.pokemonName)
 
 # location = trainer.getLocation()
 
