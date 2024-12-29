@@ -14,8 +14,8 @@ from pokedexclass import pokedex
 from services.locationclass import location as LocationClass
 from loggerclass import logger as log
 from services.pokeclass import Pokemon as pokeClass
-from questclass import quests
-from uniqueencounters import uniqueEncounters as uEnc
+from services.questclass import quests
+from services.uniqueencounters import uniqueEncounters as uEnc
 from datetime import datetime
 from time import time
 from models.location import LocationModel
