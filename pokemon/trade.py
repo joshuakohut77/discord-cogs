@@ -77,7 +77,7 @@ class TradeMixin(MixinMeta):
         message: discord.Message = await ctx.send(
             content=f'{trainerUser.mention} {user.display_name} wants to trade with you.',
             embed=embed,
-            components=btns
+            view=btns
 
         )
 
@@ -122,7 +122,7 @@ class TradeMixin(MixinMeta):
             message: discord.Message = await message.edit(
                 content=f'{user.display_name} is choosing a pokemon to offer {sender.display_name}.',
                 embed=embed,
-                components=btns
+                view=btns
             )
             state.messageId = message.id
             self.__tradeState[str(user.id)] = state
@@ -137,7 +137,7 @@ class TradeMixin(MixinMeta):
             message: discord.Message = await message.edit(
                 content=f'{user.display_name} declined {sender.display_name}\'s trade.',
                 embed=embed,
-                components=btns
+                view=btns
             )
             del self.__tradeState[str(user.id)]
 
@@ -205,7 +205,7 @@ class TradeMixin(MixinMeta):
         message: discord.Message = await message.edit(
             content=f'{user.display_name} traded his {receiverPokemon.pokemonName} for {senderDiscord.display_name}\'s {senderPokemon.pokemonName}!',
             embed=embed,
-            components=[]
+            view=[]
         )
         del self.__tradeState[str(user.id)]
 
@@ -221,7 +221,7 @@ class TradeMixin(MixinMeta):
         state.idx = state.idx + 1
 
         embed, btns = self.__pokemonPcTradeCard(user, state.pokemonList, state.idx)
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_original_response(embed=embed, view=btns)
         state.messageId = message.id
         self.__tradeState[str(user.id)] = state
     
@@ -237,7 +237,7 @@ class TradeMixin(MixinMeta):
         state.idx = state.idx - 1
 
         embed, btns = self.__pokemonPcTradeCard(user, state.pokemonList, state.idx)
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_original_response(embed=embed, view=btns)
         state.messageId = message.id
         self.__tradeState[str(user.id)] = state
 

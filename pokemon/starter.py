@@ -77,7 +77,7 @@ class StarterMixin(MixinMeta):
 
         embed, btns = self.__pokemonSingleCard(user, state, state.card, authorIsTrainer)
 
-        message: discord.Message = await ctx.send(embed=embed, components=btns)
+        message: discord.Message = await ctx.send(embed=embed, view=btns)
         self.setPokemonState(author, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
 
 
@@ -122,7 +122,7 @@ class StarterMixin(MixinMeta):
 
         embed, btns = self.__pokemonSingleCard(trainerUser, state, DisplayCard.MOVES, authorIsTrainer)
 
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.edit_original_responseal_response(embed=embed, view=btns)
         self.setPokemonState(user, PokemonState(state.discordId, message.id, DisplayCard.MOVES, state.pokemon, state.active, None))
     
 
@@ -144,7 +144,7 @@ class StarterMixin(MixinMeta):
 
         embed, btns = self.__pokemonSingleCard(trainerUser, state, DisplayCard.DEX, authorIsTrainer)
 
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_original_response(embed=embed, view=btns)
         self.setPokemonState(user, PokemonState(state.discordId, message.id, DisplayCard.DEX, state.pokemon, state.active, None))
     
 
@@ -166,7 +166,7 @@ class StarterMixin(MixinMeta):
 
         embed, btns = self.__pokemonSingleCard(trainerUser, state, DisplayCard.STATS, authorIsTrainer)
 
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_original_response(embed=embed, view=btns)
         self.setPokemonState(user, PokemonState(state.discordId, message.id, DisplayCard.STATS, state.pokemon, state.active, None))
     
 
@@ -199,7 +199,7 @@ class StarterMixin(MixinMeta):
 
         embed, btns = self.__pokemonSingleCard(user, state, DisplayCard.STATS)
 
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_original_response(embed=embed, view=btns)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.STATS, state.pokemon, state.active, None))
 
@@ -233,7 +233,7 @@ class StarterMixin(MixinMeta):
         if trainer.message:
             ctx = await self.bot.get_context(interaction.message)
             embed, btns = await self.__pokemonItemsCard(user, state, state.card, ctx)
-            message = await interaction.edit_origin(embed=embed, components=btns)
+            message = await interaction.edit_original_response(embed=embed, view=btns)
             self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
     
             await interaction.channel.send(f'{user.display_name}, {trainer.message}')
@@ -254,7 +254,7 @@ class StarterMixin(MixinMeta):
 
         embed, btns = await self.__pokemonItemsCard(user, state, DisplayCard.ITEMS, ctx)
 
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_original_response(embed=embed, view=btns)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.ITEMS, state.pokemon, state.active, state.idx))
 

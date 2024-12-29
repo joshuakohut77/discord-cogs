@@ -68,7 +68,7 @@ class TrainerCardMixin(MixinMeta):
             self.__on_stats_click,
         ))
  
-        message: discord.Message = await ctx.send(embed=embed, components=[btns])
+        message: discord.Message = await ctx.send(embed=embed, view=[btns])
         self.__cards[str(author.id)] = CardState(user.id, message.id, message.channel.id)
 
 
@@ -108,7 +108,7 @@ class TrainerCardMixin(MixinMeta):
             self.__on_about_click,
         ))
  
-        message = await interaction.edit_origin(embed=embed, components=[btns])     
+        message = await interaction.edit_original_response(embed=embed, view=[btns])     
         self.__cards[str(user.id)] = CardState(state.discordId, message.id, message.channel.id)
 
 
@@ -141,7 +141,7 @@ class TrainerCardMixin(MixinMeta):
             self.__on_stats_click,
         ))
  
-        message = await interaction.edit_origin(embed=embed, components=[btns])     
+        message = await interaction.edit_original_response(embed=embed, view=[btns])     
         self.__cards[str(user.id)] = CardState(state.discordId, message.id, message.channel.id)
 
 

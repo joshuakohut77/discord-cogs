@@ -80,7 +80,7 @@ class InventoryMixin(MixinMeta):
 
         message: discord.Message = await ctx.send(
             embed=embed,
-            components=[btns]
+            view=[btns]
         )
         self.__inventory[str(author.id)] = InventoryState(user.id, message.id, message.channel.id)
 
@@ -136,7 +136,7 @@ class InventoryMixin(MixinMeta):
             self.__on_keyitems_click,
         ))
 
-        message = await interaction.edit_origin(embed=embed, components=[btns])
+        message = await interaction.edit_original_response(embed=embed, view=[btns])
 
         self.__inventory[str(user.id)] = InventoryState(state.discordId, message.id, message.channel.id)
 
@@ -160,9 +160,9 @@ class InventoryMixin(MixinMeta):
         
         embed, btns = self.createItemsEmbed(trainerUser)
 
-        message = await interaction.edit_origin(
+        message = await interaction.edit_original_response(
             embed=embed,
-            components=[btns]
+            view=[btns]
         )
         self.__inventory[str(user.id)] = InventoryState(state.discordId, message.id, message.channel.id)
     
@@ -229,7 +229,7 @@ class InventoryMixin(MixinMeta):
             self.__on_hm_click,
         ))
 
-        message = await interaction.edit_origin(embed=embed, components=[btns])
+        message = await interaction.edit_original_response(embed=embed, view=[btns])
         self.__inventory[str(user.id)] = InventoryState(state.discordId, message.id, message.channel.id)
 
 

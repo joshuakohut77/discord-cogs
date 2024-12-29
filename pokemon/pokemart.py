@@ -383,7 +383,7 @@ class PokemartMixin(MixinMeta):
 
         message = await ctx.send(
             embed=embed,
-            components=btns
+            view=btns
         )
         state.messageId = message.id
         state.channelId = message.channel.id
@@ -445,7 +445,7 @@ class PokemartMixin(MixinMeta):
         state.idx = state.idx + 1
 
         embed, btns = self.__storePageEmbed(user, state)
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_original_response(embed=embed, view=btns)
 
         state.messageId = message.id
         self.__store[str(user.id)] = state
@@ -461,7 +461,7 @@ class PokemartMixin(MixinMeta):
         state.idx = state.idx - 1
 
         embed, btns = self.__storePageEmbed(user, state)
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_original_response(embed=embed, view=btns)
 
         state.messageId = message.id
         self.__store[str(user.id)] = state
