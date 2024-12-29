@@ -336,10 +336,12 @@ class StarterMixin(MixinMeta):
         firstRowBtns = []
 
         if DisplayCard.MOVES.value != card.value:
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
-                self.__on_moves_click
-            ))
+            # firstRowBtns.append(self.client.add_callback(
+            #     Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
+            #     self.__on_moves_click
+            # ))
+            firstRowBtns.append(self.add_item(Button(style=discord.ButtonStyle.green, label="Moves", custom_id='moves')))
+
         if DisplayCard.STATS.value != card.value:
             firstRowBtns.append(self.client.add_callback(
                 Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),

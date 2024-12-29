@@ -464,7 +464,7 @@ class EncountersMixin(MixinMeta):
             color=color
         )
         embed.set_author(name=f"{user.display_name}",
-                        icon_url=str(user.avatar_url))
+                        icon_url=str(user.display_avatar.url))
         
         types = wildPokemon.type1
         # Pokemon are not guaranteed to have a second type.
@@ -524,7 +524,7 @@ HP    : {wildPokemon.currentHP} / {stats['hp']}
 #             color=color
 #         )
 #         embed.set_author(name=f"{user.display_name}",
-#                         icon_url=str(user.avatar_url))
+#                         icon_url=str(user.display_avatar.url))
         
 #         types = pokemon.type1
 #         # Pokemon are not guaranteed to have a second type.

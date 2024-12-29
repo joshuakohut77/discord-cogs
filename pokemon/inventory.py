@@ -109,7 +109,7 @@ class InventoryMixin(MixinMeta):
         embed = discord.Embed(title=f"Bag")
         embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/trainer_bag.png")
         embed.set_author(name=f"{trainerUser.display_name}",
-                        icon_url=str(trainerUser.avatar_url))
+                        icon_url=str(trainerUser.display_avatar.url))
 
         keyitems = KeyItemClass(str(user.id))
 
@@ -192,7 +192,7 @@ class InventoryMixin(MixinMeta):
         embed = discord.Embed(title=f"Bag")
         embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/trainer_bag.png")
         embed.set_author(name=f"{trainerUser.display_name}",
-                        icon_url=str(trainerUser.avatar_url))
+                        icon_url=str(trainerUser.display_avatar.url))
 
         items = []
 
@@ -243,7 +243,7 @@ class InventoryMixin(MixinMeta):
         embed = discord.Embed(title=f"Bag")
         embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/trainer_bag.png")
         embed.set_author(name=f"{user.display_name}",
-                        icon_url=str(user.avatar_url))
+                        icon_url=str(user.display_avatar.url))
 
         items = []
 

@@ -75,7 +75,7 @@ def createPokemonEmbedWithFile(user: Member, pokemon: PokemonClass):
     # Create the embed object
     embed = discord.Embed(title=f"#{pokemon.pokedexId}  {pokemon.pokemonName.capitalize()}", color=color)
     embed.set_author(name=f"{user.display_name}",
-                    icon_url=str(user.avatar_url))
+                    icon_url=str(user.display_avatar.url))
     
     types = pokemon.type1
     if pokemon.type2 is not None:
@@ -110,7 +110,7 @@ def createPokemonAboutEmbed(user: Member, pokemon: PokemonClass) -> Embed:
     # Create the embed object
     embed = discord.Embed(title=f"#{pokemon.pokedexId}  {pokemon.pokemonName.capitalize()}", color=color)
     embed.set_author(name=f"{user.display_name}",
-                    icon_url=str(user.avatar_url))
+                    icon_url=str(user.display_avatar.url))
     
     types = pokemon.type1
     if pokemon.type2 is not None:
@@ -193,7 +193,7 @@ def createPokedexEntryEmbed(user: Member, pokemon: PokemonClass, dex: PokedexMod
     # Create the embed object
     embed = discord.Embed(title=f"#{pokemon.trainerId}  {pokemon.pokemonName.capitalize()}", color=color)
     embed.set_author(name=f"{user.display_name}",
-                    icon_url=str(user.avatar_url))
+                    icon_url=str(user.display_avatar.url))
     
     types = pokemon.type1
     if pokemon.type2 is not None:
