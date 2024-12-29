@@ -393,6 +393,7 @@ class StarterMixin(MixinMeta):
 
     @discord.ui.button(custom_id='moves', label='Moves', style=ButtonStyle.green)
     async def on_moves_click(self, interaction: discord.Interaction, button: Button):
+        1/0
         await self.__on_moves_click(interaction)
 
     @discord.ui.button(custom_id='stats', label='Stats', style=ButtonStyle.green)
