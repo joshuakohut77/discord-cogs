@@ -384,8 +384,12 @@ class StarterMixin(MixinMeta):
         btns = []
         if len(firstRowBtns) > 0:
             btns.append(firstRowBtns)
+        
+        view = View()
+        for button in btns:
+            view.add_item(button)
 
-        return embed, btns
+        return embed, view
 
     @discord.ui.button(custom_id='moves', label='Moves', style=ButtonStyle.green)
     async def on_moves_click(self, interaction: discord.Interaction, button: Button):
