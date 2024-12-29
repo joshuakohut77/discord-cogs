@@ -11,7 +11,7 @@ from inventoryclass import inventory as inv
 from keyitemsclass import keyitems as kitems
 from leaderboardclass import leaderboard
 from pokedexclass import pokedex
-from services.locationclass import location as LocationClass
+from locationclass import location as LocationClass
 from loggerclass import logger as log
 from services.pokeclass import Pokemon as pokeClass
 from services.questclass import quests
