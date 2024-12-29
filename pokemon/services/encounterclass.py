@@ -12,7 +12,7 @@ from leaderboardclass import leaderboard
 from loggerclass import logger as log
 from uniqueencounters import uniqueEncounters as uEnc
 from pokedexclass import pokedex
-from pokeclass import Pokemon as PokemonClass
+from services.pokeclass import Pokemon as PokemonClass
 from ailmentsclass import ailment 
 
 # Global Config Variables
