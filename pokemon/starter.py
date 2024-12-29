@@ -100,7 +100,7 @@ class StarterMixin(MixinMeta):
 
         embed, btns = self.__pokemonSingleCard(user, state, state.card, authorIsTrainer)
 
-        message: discord.Message = await ctx.send(embed=embed, components=btns)
+        message: discord.Message = await ctx.send(embed=embed, view=btns)
         self.setPokemonState(author, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
 
 
