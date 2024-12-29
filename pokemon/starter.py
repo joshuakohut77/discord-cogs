@@ -361,7 +361,9 @@ class StarterMixin(MixinMeta):
         #         self.__on_items_click
         #     ))
         if DisplayCard.MOVES.value != card.value:
-            firstRowBtns.append(Button(style=ButtonStyle.green, label="Moves", custom_id='moves'))
+            button = Button(style=ButtonStyle.green, label="Moves", custom_id='moves')
+            button.callback = self.on_moves_click
+            firstRowBtns.append(button)
         if DisplayCard.STATS.value != card.value:
             firstRowBtns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
         if DisplayCard.DEX.value != card.value:
@@ -393,7 +395,6 @@ class StarterMixin(MixinMeta):
 
     @discord.ui.button(custom_id='moves', label='Moves', style=ButtonStyle.green)
     async def on_moves_click(self, interaction: discord.Interaction, button: Button):
-        1/0
         await self.__on_moves_click(interaction)
 
     @discord.ui.button(custom_id='stats', label='Stats', style=ButtonStyle.green)
