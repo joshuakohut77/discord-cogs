@@ -72,12 +72,12 @@ class MapMixin(MixinMeta):
 
         message = await ctx.send(
             embed=embed,
-            components=btns
+            view=btns
         )
         # message = await ctx.send(
         #     content=location.name,
         #     file=file,
-        #     components=btns
+        #     view=btns
         # )
         self.__locations[str(user.id)] = LocationState(str(user.id), location, message.id)
     
@@ -181,14 +181,14 @@ class MapMixin(MixinMeta):
         embed = discord.Embed(title = f'{name}', description = f'You walked North to {name}.')
         embed.set_image(url = attachment.url)
 
-        message = await interaction.edit_origin(
+        message = await interaction.edit_original_response(
             embed=embed,
-            components=btns
+            view=btns
         )
-        # message = await interaction.edit_origin(
+        # message = await interaction.edit_original_response(
         #     content=f'You walked North to {north}.',
         #     file=file,
-        #     components=btns
+        #     view=btns
         # )
         self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
         
@@ -231,15 +231,15 @@ class MapMixin(MixinMeta):
         embed = discord.Embed(title = f'{name}', description = f'You walked South to {name}.')
         embed.set_image(url = attachment.url)
 
-        message = await interaction.edit_origin(
+        message = await interaction.edit_original_response(
             embed=embed,
-            components=btns
+            view=btns
         )
 
-        # message = await interaction.edit_origin(
+        # message = await interaction.edit_original_response(
         #     content=f'You walked South to {south}.',
         #     file=file,
-        #     components=btns
+        #     view=btns
         # )
         self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
 
@@ -282,14 +282,14 @@ class MapMixin(MixinMeta):
         embed = discord.Embed(title = f'{name}', description = f'You walked East to {name}.')
         embed.set_image(url = attachment.url)
 
-        message = await interaction.edit_origin(
+        message = await interaction.edit_original_response(
             embed=embed,
-            components=btns
+            view=btns
         )
-        # message = await interaction.edit_origin(
+        # message = await interaction.edit_original_response(
         #     content=f'You walked East to {east}.',
         #     file=file,
-        #     components=btns
+        #     view=btns
         # )
         self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
 
@@ -332,14 +332,14 @@ class MapMixin(MixinMeta):
         embed = discord.Embed(title = f'{name}', description = f'You walked West to {name}.')
         embed.set_image(url = attachment.url)
 
-        message = await interaction.edit_origin(
+        message = await interaction.edit_original_response(
             embed=embed,
-            components=btns
+            view=btns
         )
-        # message = await interaction.edit_origin(
+        # message = await interaction.edit_original_response(
         #     content=f'You walked West to {west}.',
         #     file=file,
-        #     components=btns
+        #     view=btns
         # )
         self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
 

@@ -94,7 +94,7 @@ class EncountersMixin(MixinMeta):
 
         message: discord.Message = await ctx.send(
             content="What do you want to do?",
-            components=btns
+            view=btns
         )
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, model, trainer.getActivePokemon(), None, '')
@@ -148,9 +148,9 @@ class EncountersMixin(MixinMeta):
         elif action.value == 'pokeflute':
             msg = 'You played the Poké Flute!'
 
-        await interaction.edit_origin(
+        await interaction.edit_original_response(
             content=msg,
-            components=btns
+            view=btns
         )
 
         # await interaction.respond(type=5, content="Walking through tall grass...")
@@ -226,7 +226,7 @@ class EncountersMixin(MixinMeta):
         message = await interaction.channel.send(
             # content=f'{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!',
             embed=embed,
-            components=[btns]
+            view=[btns]
         )
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, state.location, active, wildPokemon, desc)
@@ -244,10 +244,10 @@ class EncountersMixin(MixinMeta):
         state = self.__useractions[str(user.id)]
         trainer = TrainerClass(str(user.id))
 
-        # await interaction.edit_origin(
+        # await interaction.edit_original_response(
         #     content=f'{trainer.message}',
         #     embed=embed,
-        #     components=[]
+        #     view=[]
         # )
 
         trainer.fight(state.wildPokemon)
@@ -272,7 +272,7 @@ class EncountersMixin(MixinMeta):
         await message.edit(
             content=f'{trainer.message}',
             embed=embed,
-            components=[]
+            view=[]
         )
         del self.__useractions[str(user.id)]
 
@@ -300,10 +300,10 @@ class EncountersMixin(MixinMeta):
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
 
 
-        await interaction.edit_origin(
+        await interaction.edit_original_response(
             # content=f'{user.display_name} ran away from a wild {state.pokemon.pokemonName.capitalize()}!',
             embed=embed,
-            components=[]
+            view=[]
         )
         del self.__useractions[str(user.id)]
         
@@ -365,9 +365,9 @@ class EncountersMixin(MixinMeta):
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
         
-        message = await interaction.edit_origin(
+        message = await interaction.edit_original_response(
             embed=embed,
-            components=[btns, secondRow]
+            view=[btns, secondRow]
         )
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, state.location, state.activePokemon, state.wildPokemon, desc)
@@ -407,10 +407,10 @@ class EncountersMixin(MixinMeta):
             self.__on_catch_click,
         ))
 
-        message = await interaction.edit_origin(
+        message = await interaction.edit_original_response(
             # content=f'{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!',
             embed=embed,
-            components=[btns]
+            view=[btns]
         )
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, state.location, active, wildPokemon, desc)
@@ -444,9 +444,9 @@ class EncountersMixin(MixinMeta):
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
         
-        await interaction.edit_origin(
+        await interaction.edit_original_response(
             embed=embed,
-            components=[]
+            view=[]
         )
         del self.__useractions[str(user.id)]
 
