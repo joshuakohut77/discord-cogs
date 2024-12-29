@@ -122,7 +122,7 @@ class StarterMixin(MixinMeta):
 
         embed, btns = self.__pokemonSingleCard(trainerUser, state, DisplayCard.MOVES, authorIsTrainer)
 
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_original_response(embed=embed, components=btns)
         self.setPokemonState(user, PokemonState(state.discordId, message.id, DisplayCard.MOVES, state.pokemon, state.active, None))
     
 
