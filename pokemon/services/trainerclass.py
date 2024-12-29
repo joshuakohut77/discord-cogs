@@ -6,16 +6,16 @@ from typing import final
 import json
 import random
 from dbclass import db as dbconn
-from services.encounterclass import encounter
+from encounterclass import encounter
 from inventoryclass import inventory as inv
 from keyitemsclass import keyitems as kitems
 from leaderboardclass import leaderboard
 from pokedexclass import pokedex
 from locationclass import location as LocationClass
 from loggerclass import logger as log
-from services.pokeclass import Pokemon as pokeClass
-from services.questclass import quests
-from services.uniqueencounters import uniqueEncounters as uEnc
+from pokeclass import Pokemon as pokeClass
+from questclass import quests
+from uniqueencounters import uniqueEncounters as uEnc
 from datetime import datetime
 from time import time
 from models.location import LocationModel
