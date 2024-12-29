@@ -362,7 +362,7 @@ class StarterMixin(MixinMeta):
         #     ))
         if DisplayCard.MOVES.value != card.value:
             button = Button(style=ButtonStyle.green, label="Moves", custom_id='moves')
-            button.callback = self.on_moves_click
+            button.callback = self.__on_moves_click
             firstRowBtns.append(button)
         if DisplayCard.STATS.value != card.value:
             firstRowBtns.append(Button(style=ButtonStyle.green, label="Stats", custom_id='stats'))
