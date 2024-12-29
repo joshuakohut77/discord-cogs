@@ -120,7 +120,7 @@ class PokedexMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkPokedexState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state: PokedexState = self.__pokedexState[str(user.id)]
@@ -137,7 +137,7 @@ class PokedexMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkPokedexState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state: PokedexState = self.__pokedexState[str(user.id)]

@@ -89,7 +89,7 @@ class InventoryMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkInventoryState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         # name = uuid.uuid4()
@@ -145,7 +145,7 @@ class InventoryMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkInventoryState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
         
 
@@ -171,7 +171,7 @@ class InventoryMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkInventoryState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         inv = KeyItemClass(str(user.id))
