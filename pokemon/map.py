@@ -236,8 +236,8 @@ class MapMixin(MixinMeta):
         
         embed = discord.Embed(title = f'{name}', description = f'You walked South to {name}.')
         embed.set_image(url = attachment.url)
-
-        encViewList = enc.get_encounters(interaction)
+        encounter = enc(MixinMeta)
+        encViewList = encounter.get_encounters(interaction)
         if encViewList is not None:
             for method in encViewList:
                 btns.add_item(method)
