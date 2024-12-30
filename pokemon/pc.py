@@ -197,7 +197,7 @@ class PcMixin(MixinMeta):
 
     async def __on_pokemon_withdraw(self, interaction: Interaction):
         user = interaction.user
-        await interaction.response.defer()
+        
         if not self.checkPokemonState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -219,6 +219,8 @@ class PcMixin(MixinMeta):
         if trainer.statuscode == 69:
             await interaction.response.send_message(f'{getTrainerGivenPokemonName(pokemon)} is now in your party.')
             return
+        
+        await interaction.response.defer()
 
 
     async def __on_pokedex_click(self, interaction: Interaction):
