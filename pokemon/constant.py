@@ -89,7 +89,6 @@ SUPER_ROD = '<:super_rod:974547060101632031>'
 
 
 
-
 LOCATION_DISPLAY_NAMES = {
     "digletts-cave": 'Digletts Cave',
     "mt-moon": 'Mt. Moon',
