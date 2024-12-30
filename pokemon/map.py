@@ -11,13 +11,13 @@ if TYPE_CHECKING:
 from redbot.core import commands
 from redbot.core.commands.context import Context
 
-import constant as cnst
+
 from models.location import LocationModel
 from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
 
 from .abcd import MixinMeta
-
+import constant
 
 DiscordUser = Union[discord.Member,discord.User]
 
@@ -89,7 +89,7 @@ class MapMixin(MixinMeta):
         sw = []
         if authorIsTrainer:
             if location.north is not None:
-                north = cnst.LOCATION_DISPLAY_NAMES[location.north]
+                north = constant.LOCATION_DISPLAY_NAMES[location.north]
                 ne.append(self.client.add_callback(
                     Button(style=ButtonStyle.gray, emoji='⬆', label=f"{north}", disabled=False),
                     self.__on_north,
