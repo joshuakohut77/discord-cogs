@@ -241,8 +241,8 @@ class MapMixin(MixinMeta):
         encViewList = await encounter.get_encounters(interaction)
         
         if encViewList is not None:
-            for meth in encViewList:
-                btns.add_item(meth)
+            for method in encViewList:
+                btns.add_item(method)
         
         message = await interaction.message.edit(
             embed=embed,
