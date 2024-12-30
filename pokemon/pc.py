@@ -353,7 +353,7 @@ class PcMixin(MixinMeta):
         state = self.getPokemonState(user)
 
         ctx = await self.bot.get_context(interaction.message)
-
+        
         embed, btns = await self.__pokemonItemsCard(user, state, DisplayCard.ITEMS, ctx)
 
         message = await interaction.message.edit(embed=embed, view=btns)
@@ -426,6 +426,11 @@ class PcMixin(MixinMeta):
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.REVIVE)
             button = Button(style=ButtonStyle.gray, emoji=emote, label="Revive", custom_id='revive', row=1)
             button.callback = self.on_use_item_pc
+            view.add_item(button)
+
+        # if the trainer has no items available for use
+        if len(view.children()) == 0:
+            button = Button(style=ButtonStyle.gray, label="You have no items", custom_id='noitems', row=1, disabled=True)
             view.add_item(button)
 
         button = Button(style=ButtonStyle.gray, label="Back", custom_id='back', row=2)
@@ -563,7 +568,7 @@ class PcMixin(MixinMeta):
     async def on_pokemon_withdraw_pc(self, interaction: discord.Interaction):
         await self.__on_pokemon_withdraw(interaction)
 
-    @discord.ui.button(custom_id='items-pc', label='Items', style=ButtonStyle.primary)
+    @discord.ui.button(custom_id='items', label='Items', style=ButtonStyle.primary)
     async def on_items_click_pc(self, interaction: discord.Interaction):
         await self.__on_items_click(interaction)    
 
