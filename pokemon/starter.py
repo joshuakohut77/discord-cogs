@@ -342,28 +342,6 @@ class StarterMixin(MixinMeta):
 
         firstRowBtns = []
 
-        # if DisplayCard.MOVES.value != card.value:
-        #     firstRowBtns.append(self.client.add_callback(
-        #         Button(style=ButtonStyle.green, label="Moves", custom_id='moves'),
-        #         self.__on_moves_click
-        #     ))
-
-        # if DisplayCard.STATS.value != card.value:
-        #     firstRowBtns.append(self.client.add_callback(
-        #         Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
-        #         self.__on_stats_click,
-        #     ))
-        # if DisplayCard.DEX.value != card.value:
-        #     firstRowBtns.append(self.client.add_callback(
-        #         Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex'),
-        #         self.__on_pokedex_click
-        #     ))
-
-        # if authorIsTrainer:
-        #     firstRowBtns.append(self.client.add_callback(
-        #         Button(style=ButtonStyle.blue, label="Items", custom_id='items'),
-        #         self.__on_items_click
-        #     ))
         if DisplayCard.MOVES.value != card.value:
             button = Button(style=ButtonStyle.green, label="Moves", custom_id='moves')
             button.callback = self.on_moves_click
@@ -383,11 +361,7 @@ class StarterMixin(MixinMeta):
             # Disable the "Set Active" button if the starter is currently the active pokemon
             disabled = (activeId is not None) and (
                 pokemon.trainerId == activeId)
-            # firstRowBtns.append(self.client.add_callback(
-            #     Button(style=ButtonStyle.blue, label="Set Active",
-            #         custom_id='setactive', disabled=disabled),
-            #     self.__on_set_active_click,
-            # ))
+
             button = Button(style=ButtonStyle.blurple, label="Set Active", custom_id='setactive', disabled=disabled)
             button.callback = self.on_set_active_click
             firstRowBtns.append(button)
