@@ -393,43 +393,43 @@ class PartyMixin(MixinMeta):
         
         view = View()
         if i > 0:
-            button = Button(style=ButtonStyle.gray, label="Previous", custom_id='previous')
+            button = Button(style=ButtonStyle.gray, label="Previous", custom_id='previous', row=0)
             button.callback = self.on_prev_click
-            view.add_item(button, row=0)
+            view.add_item(button)
         if i < pokeLength - 1:
-            button = Button(style=ButtonStyle.gray, label="Next", custom_id='next')
+            button = Button(style=ButtonStyle.gray, label="Next", custom_id='next', row=0)
             button.callback = self.on_next_click
-            view.add_item(button, row=0)
+            view.add_item(button)
 
         if inv.potion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.POTION)
-            button = Button(style=ButtonStyle.gray, emoji=emote, label="Potion", custom_id='potion')
+            button = Button(style=ButtonStyle.gray, emoji=emote, label="Potion", custom_id='potion', row=1)
             button.callback = self.on_use_item
-            view.add_item(button, row=1)
+            view.add_item(button)
         if inv.superpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.SUPERPOTION)
-            button = Button(style=ButtonStyle.gray, emoji=emote, label="Super Potion", custom_id='superpotion')
+            button = Button(style=ButtonStyle.gray, emoji=emote, label="Super Potion", custom_id='superpotion', row=1)
             button.callback = self.on_use_item
-            view.add_item(button, row=1)
+            view.add_item(button)
         if inv.hyperpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.HYPERPOTION)
-            button = Button(style=ButtonStyle.gray, emoji=emote, label="Hyper Potion", custom_id='hyperpotion')
+            button = Button(style=ButtonStyle.gray, emoji=emote, label="Hyper Potion", custom_id='hyperpotion', row=1)
             button.callback = self.on_use_item
-            view.add_item(button, row=1)
+            view.add_item(button)
         if inv.maxpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.MAXPOTION)
-            button = Button(style=ButtonStyle.gray, emoji=emote, label="Max Potion", custom_id='maxpotion')
+            button = Button(style=ButtonStyle.gray, emoji=emote, label="Max Potion", custom_id='maxpotion', row=1)
             button.callback = self.on_use_item
-            view.add_item(button, row=1)
+            view.add_item(button)
         if inv.revive > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.REVIVE)
-            button = Button(style=ButtonStyle.gray, emoji=emote, label="Revive", custom_id='revive')
+            button = Button(style=ButtonStyle.gray, emoji=emote, label="Revive", custom_id='revive', row=1)
             button.callback = self.on_use_item
-            view.add_item(button, row=1)
+            view.add_item(button)
 
-        button = Button(style=ButtonStyle.gray, label="Back", custom_id='back')
+        button = Button(style=ButtonStyle.gray, label="Back", custom_id='back', row=2)
         button.callback = self.on_items_back
-        view.add_item(button, row=2)
+        view.add_item(button)
 
         return embed, view
 
@@ -492,47 +492,47 @@ class PartyMixin(MixinMeta):
         
         view = View()
         if i > 0:
-            button = Button(style=ButtonStyle.gray, label="Previous", custom_id='previous')
+            button = Button(style=ButtonStyle.gray, label="Previous", custom_id='previous', row=0)
             button.callback = self.on_prev_click
-            view.add_item(button, row=0)
+            view.add_item(button)
 
         if i < pokeLength - 1:
-            button = Button(style=ButtonStyle.gray, label="Next", custom_id='next')
+            button = Button(style=ButtonStyle.gray, label="Next", custom_id='next', row=0)
             button.callback = self.on_next_click
-            view.add_item(button, row=0)
+            view.add_item(button)
 
         if authorIsTrainer:
             if DisplayCard.MOVES.value != card.value:
-                button = Button(style=ButtonStyle.green, label="Moves", custom_id='moves')
+                button = Button(style=ButtonStyle.green, label="Moves", custom_id='moves', row=1)
                 button.callback = self.on_moves_click
-                view.add_item(button, row=1)
+                view.add_item(button)
             if DisplayCard.STATS.value != card.value:
-                button = Button(style=ButtonStyle.green, label="Stats", custom_id='stats')
+                button = Button(style=ButtonStyle.green, label="Stats", custom_id='stats', row=1)
                 button.callback = self.on_stats_click
-                view.add_item(button, row=1)
+                view.add_item(button)
             if DisplayCard.DEX.value != card.value:
-                button = Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex')
+                button = Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex', row=1)
                 button.callback = self.on_pokedex_click
-                view.add_item(button, row=1)
+                view.add_item(button)
             
             activeDisabled = (activeId is not None) and (pokemon.trainerId == activeId)
 
-            button = Button(style=ButtonStyle.primary, label="Set Active", custom_id='active', disabled=activeDisabled)
+            button = Button(style=ButtonStyle.primary, label="Set Active", custom_id='active', disabled=activeDisabled, row=1)
             button.callback = self.on_set_active
-            view.add_item(button, row=1)
+            view.add_item(button)
 
-            button = Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled)
+            button = Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled, row=1)
             button.callback = self.on_release_click
-            view.add_item(button, row=1)
+            view.add_item(button)
 
         if authorIsTrainer:
-            button = Button(style=ButtonStyle.green, label="Deposit", custom_id='deposit')
+            button = Button(style=ButtonStyle.green, label="Deposit", custom_id='deposit', row=2)
             button.callback = self.on_pokemon_deposit
-            view.add_item(button, row=2)
+            view.add_item(button)
 
-            button = Button(style=ButtonStyle.primary, label="Items", custom_id='items')
+            button = Button(style=ButtonStyle.primary, label="Items", custom_id='items', row=2)
             button.callback = self.on_items_click
-            view.add_item(button, row=2)
+            view.add_item(button)
 
         return embed, view
 
