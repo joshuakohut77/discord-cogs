@@ -505,7 +505,7 @@ class PcMixin(MixinMeta):
             button.callback = self.on_pokemon_withdraw
             view.add_item(button)
 
-            button = Button(style=ButtonStyle.primary, label="Items", custom_id='items', row=2)
+            button = Button(style=ButtonStyle.primary, label="Item", custom_id='items', row=2)
             button.callback = self.on_items_click
             view.add_item(button)
 
@@ -564,7 +564,7 @@ class PcMixin(MixinMeta):
     async def on_pokemon_withdraw(self, interaction: discord.Interaction):
         await self.__on_pokemon_withdraw(interaction)
 
-    @discord.ui.button(custom_id='items', label='Items', style=ButtonStyle.primary)
+    @discord.ui.button(custom_id='items', label='Item', style=ButtonStyle.primary)
     async def on_items_click(self, interaction: discord.Interaction):
         await self.__on_items_click(interaction)    
 
