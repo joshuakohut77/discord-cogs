@@ -126,7 +126,7 @@ class StarterMixin(MixinMeta):
         # if not interaction.response.is_done():
         #     message = await interaction.response.send_message(embed=embed, view=btns)
         # else:
-        message = await interaction.response.send_message(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
 
 
         self.setPokemonState(user, PokemonState(state.discordId, message.id, DisplayCard.MOVES, state.pokemon, state.active, None))
@@ -378,11 +378,11 @@ class StarterMixin(MixinMeta):
             firstRowBtns.append(button)
         if DisplayCard.STATS.value != card.value:
             button = Button(style=ButtonStyle.green, label="Stats", custom_id='stats')
-            button.callback = self.__on_stats_click
+            button.callback = self.on_stats_click
             firstRowBtns.append(button)
         if DisplayCard.DEX.value != card.value:
             button = Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex')
-            button.callback = self.__on_pokedex_click
+            button.callback = self.on_pokedex_click
             firstRowBtns.append(button)
         if authorIsTrainer:
             firstRowBtns.append(Button(style=ButtonStyle.blurple, label="Items", custom_id='items'))
@@ -397,7 +397,7 @@ class StarterMixin(MixinMeta):
             #     self.__on_set_active_click,
             # ))
             button = Button(style=ButtonStyle.blurple, label="Set Active", custom_id='setactive', disabled=disabled)
-            button.callback = self.__on_set_active_click
+            button.callback = self.on_set_active_click
             firstRowBtns.append(button)
 
         btns = []
@@ -414,18 +414,18 @@ class StarterMixin(MixinMeta):
     async def on_moves_click(self, interaction: discord.Interaction):
         await self.__on_moves_click(interaction)
 
-    # @discord.ui.button(custom_id='stats', label='Stats', style=ButtonStyle.green)
-    # async def on_stats_click(self, interaction: discord.Interaction, button: Button):
-    #     await self.__on_stats_click(interaction)
+    @discord.ui.button(custom_id='stats', label='Stats', style=ButtonStyle.green)
+    async def on_stats_click(self, interaction: discord.Interaction):
+        await self.__on_stats_click(interaction)
 
-    # @discord.ui.button(custom_id='pokedex', label='Pokedex', style=ButtonStyle.green)
-    # async def on_pokedex_click(self, interaction: discord.Interaction, button: Button):
-    #     await self.__on_pokedex_click(interaction)
+    @discord.ui.button(custom_id='pokedex', label='Pokedex', style=ButtonStyle.green)
+    async def on_pokedex_click(self, interaction: discord.Interaction):
+        await self.__on_pokedex_click(interaction)
 
-    # @discord.ui.button(custom_id='items', label='Items', style=ButtonStyle.blurple)
-    # async def on_items_click(self, interaction: discord.Interaction, button: Button):
-    #     await self.__on_items_click(interaction)
+    @discord.ui.button(custom_id='items', label='Items', style=ButtonStyle.blurple)
+    async def on_items_click(self, interaction: discord.Interaction):
+        await self.__on_items_click(interaction)
 
-    # @discord.ui.button(custom_id='setactive', label='Set Active', style=ButtonStyle.blurple)
-    # async def on_set_active_click(self, interaction: discord.Interaction, button: Button):
-    #     await self.__on_set_active_click(interaction)
+    @discord.ui.button(custom_id='setactive', label='Set Active', style=ButtonStyle.blurple)
+    async def on_set_active_click(self, interaction: discord.Interaction):
+        await self.__on_set_active_click(interaction)
