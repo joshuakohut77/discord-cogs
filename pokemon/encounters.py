@@ -91,12 +91,12 @@ class EncountersMixin(MixinMeta):
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, model, trainer.getActivePokemon(), None, '')
 
-    async def get_encounters(self, user):
+    async def get_encounters(self, userId):
         
-        trainer = TrainerClass(str(user.id))
+        trainer = TrainerClass(str(userId))
         model = trainer.getLocation()
 
-        location = LocationClass(str(user.id))
+        location = LocationClass(str(userId))
         methods: list[ActionModel] = location.getMethods()
 
         if len(methods) == 0:
