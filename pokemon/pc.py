@@ -76,7 +76,7 @@ class PcMixin(MixinMeta):
     
     async def __on_set_active(self, interaction: Interaction):
         user = interaction.user
-
+        await interaction.response.defer()
         if not self.checkPokemonState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -107,7 +107,7 @@ class PcMixin(MixinMeta):
 
     async def __on_next_click(self, interaction: Interaction):
         user = interaction.user
-
+        await interaction.response.defer()
         if not self.checkPokemonState(user, interaction.message):
             msg = await interaction.response.send_message('This is not for you.', ephemeral=True)
             await asyncio.sleep(2)
@@ -137,7 +137,7 @@ class PcMixin(MixinMeta):
 
     async def __on_prev_click(self, interaction: Interaction):
         user = interaction.user
-
+        await interaction.response.defer()
         if not self.checkPokemonState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -165,7 +165,7 @@ class PcMixin(MixinMeta):
 
     async def __on_moves_click(self, interaction: Interaction):
         user = interaction.user
-
+        await interaction.response.defer()
         if not self.checkPokemonState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -181,7 +181,7 @@ class PcMixin(MixinMeta):
 
     async def __on_stats_click(self, interaction: Interaction):
         user = interaction.user
-
+        await interaction.response.defer()
         if not self.checkPokemonState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -197,7 +197,7 @@ class PcMixin(MixinMeta):
 
     async def __on_pokemon_withdraw(self, interaction: Interaction):
         user = interaction.user
-
+        await interaction.response.defer()
         if not self.checkPokemonState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -223,7 +223,7 @@ class PcMixin(MixinMeta):
 
     async def __on_pokedex_click(self, interaction: Interaction):
         user = interaction.user
-
+        await interaction.response.defer()
         if not self.checkPokemonState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -240,7 +240,7 @@ class PcMixin(MixinMeta):
 
     async def __on_release_click(self, interaction: Interaction):
         user = interaction.user
-
+        await interaction.response.defer()
         if not self.checkPokemonState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -290,7 +290,7 @@ class PcMixin(MixinMeta):
 
     async def __on_items_back(self, interaction: Interaction):
         user = interaction.user
-
+        await interaction.response.defer()
         if not self.checkPokemonState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -307,7 +307,7 @@ class PcMixin(MixinMeta):
     
     async def __on_use_item(self, interaction: Interaction):
         user = interaction.user
-
+        await interaction.response.defer()
         if not self.checkPokemonState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -343,7 +343,7 @@ class PcMixin(MixinMeta):
 
     async def __on_items_click(self, interaction: Interaction):
         user = interaction.user
-
+        await interaction.response.defer()
         if not self.checkPokemonState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -564,6 +564,10 @@ class PcMixin(MixinMeta):
     @discord.ui.button(custom_id='items', label='Items', style=ButtonStyle.primary)
     async def on_items_click(self, interaction: discord.Interaction):
         await self.__on_items_click(interaction)    
+
+    @discord.ui.button(custom_id='back', label='Back', style=ButtonStyle.gray)
+    async def on_items_back(self, interaction: discord.Interaction):
+        await self.__on_items_back(interaction)    
 
     # # TODO: Apparently there is a limit of 5 buttons at a time
     # @_trainer.command()
