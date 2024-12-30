@@ -402,34 +402,40 @@ class PcMixin(MixinMeta):
             button.callback = self.on_next_click_pc
             view.add_item(button)
 
+        itemFound = False
         if inv.potion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.POTION)
             button = Button(style=ButtonStyle.gray, emoji=emote, label="Potion", custom_id='potion', row=1)
             button.callback = self.on_use_item_pc
             view.add_item(button)
+            itemFound = True
         if inv.superpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.SUPERPOTION)
             button = Button(style=ButtonStyle.gray, emoji=emote, label="Super Potion", custom_id='superpotion', row=1)
             button.callback = self.on_use_item_pc
             view.add_item(button)
+            itemFound = True
         if inv.hyperpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.HYPERPOTION)
             button = Button(style=ButtonStyle.gray, emoji=emote, label="Hyper Potion", custom_id='hyperpotion', row=1)
             button.callback = self.on_use_item_pc
             view.add_item(button)
+            itemFound = True
         if inv.maxpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.MAXPOTION)
             button = Button(style=ButtonStyle.gray, emoji=emote, label="Max Potion", custom_id='maxpotion', row=1)
             button.callback = self.on_use_item_pc
             view.add_item(button)
+            itemFound = True
         if inv.revive > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.REVIVE)
             button = Button(style=ButtonStyle.gray, emoji=emote, label="Revive", custom_id='revive', row=1)
             button.callback = self.on_use_item_pc
             view.add_item(button)
+            itemFound = True
 
         # if the trainer has no items available for use
-        if len(view.children) <= 0 or view.children is None:
+        if not itemFound:
             button = Button(style=ButtonStyle.gray, label="You have no items", custom_id='noitems', row=1, disabled=True)
             view.add_item(button)
 
