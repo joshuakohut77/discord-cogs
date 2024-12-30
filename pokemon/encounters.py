@@ -118,7 +118,7 @@ class EncountersMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            await interaction.response.send_message('This is not for you.!', ephemeral=True)
             return
 
         await interaction.response.defer()
