@@ -2,6 +2,9 @@ from logging import disable
 import sys
 import os
 
+import constant
+print(constant.LOCATION_DISPLAY_NAMES)
+
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(os.path.join(os.path.dirname(
     os.path.realpath(__file__)), 'models'))
