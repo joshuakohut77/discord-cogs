@@ -19,6 +19,7 @@ import constant
 from models.location import LocationModel
 from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
+from encounters import EncountersMixin as enc
 
 from .abcd import MixinMeta
 
@@ -187,7 +188,7 @@ class MapMixin(MixinMeta):
 
         embed = discord.Embed(title = f'{name}', description = f'You walked North to {name}.')
         embed.set_image(url = attachment.url)
-
+        
         message = await interaction.message.edit(
             embed=embed,
             view=btns
@@ -198,7 +199,7 @@ class MapMixin(MixinMeta):
 
     async def __on_south(self, interaction: Interaction):
         user = interaction.user
-        
+
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -236,6 +237,10 @@ class MapMixin(MixinMeta):
         embed = discord.Embed(title = f'{name}', description = f'You walked South to {name}.')
         embed.set_image(url = attachment.url)
 
+        encViewList = enc.get_encounters(interaction)
+        if encViewList is not None:
+            for method in encViewList:
+                btns.add_item(method)
         message = await interaction.message.edit(
             embed=embed,
             view=btns
