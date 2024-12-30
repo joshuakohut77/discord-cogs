@@ -303,7 +303,7 @@ class MapMixin(MixinMeta):
         east = state.location.east
 
         if east is None:
-            await interaction.response.send_message('You can not travel East from here.')
+            await interaction.response.send_message('You can not travel East from here.', ephemeral=True)
             return
 
         loc = LocationClass()
