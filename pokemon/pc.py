@@ -506,7 +506,7 @@ class PcMixin(MixinMeta):
             view.add_item(button)
 
             button = Button(style=ButtonStyle.primary, label="Items", custom_id='items-pc', row=2)
-            button.callback = self.on_items_click
+            button.callback = self.on_items_pc_click
             view.add_item(button)
 
         return embed, view
@@ -565,7 +565,7 @@ class PcMixin(MixinMeta):
         await self.__on_pokemon_withdraw(interaction)
 
     @discord.ui.button(custom_id='items-pc', label='Items', style=ButtonStyle.primary)
-    async def on_items_click(self, interaction: discord.Interaction):
+    async def on_items_pc_click(self, interaction: discord.Interaction):
         await self.__on_items_click(interaction)    
 
     @discord.ui.button(custom_id='back', label='Back', style=ButtonStyle.gray)
