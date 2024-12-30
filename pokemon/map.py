@@ -63,7 +63,7 @@ class MapMixin(MixinMeta):
         attachment: discord.Attachment = temp_message.attachments[0]
 
         name = constant.LOCATION_DISPLAY_NAMES[location.name]
-
+        
         desc = f'You are at {name}.' if authorIsTrainer else f'{user.display_name} is at {name}.'
 
         embed = discord.Embed(title = f'{name}', description = desc)
@@ -89,6 +89,7 @@ class MapMixin(MixinMeta):
         sw = []
         if authorIsTrainer:
             if location.north is not None:
+                name = constant.LOCATION_DISPLAY_NAMES
                 north = constant.LOCATION_DISPLAY_NAMES[location.north]
                 ne.append(self.client.add_callback(
                     Button(style=ButtonStyle.gray, emoji='⬆', label=f"{north}", disabled=False),
