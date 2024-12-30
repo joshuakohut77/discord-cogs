@@ -91,48 +91,72 @@ class MapMixin(MixinMeta):
         if authorIsTrainer:
             if location.north is not None:
                 north = constant.LOCATION_DISPLAY_NAMES[location.north]
-                ne.append(self.client.add_callback(
-                    Button(style=ButtonStyle.gray, emoji='⬆', label=f"{north}", disabled=False),
-                    self.__on_north,
-                ))
+                button = Button(style=ButtonStyle.gray, emoji='⬆', label=f"{north}", custom_id='clickNorth', disabled=False)
+                button.callback = self.on_north
+                ne.append(button)
+                # ne.append(self.client.add_callback(
+                #     Button(style=ButtonStyle.gray, emoji='⬆', label=f"{north}", disabled=False),
+                #     self.__on_north,
+                # ))
             else:
-                ne.append(self.client.add_callback(
-                    Button(style=ButtonStyle.gray, emoji='⬆', label=f"--", disabled=False),
-                    self.__on_north,
-                ))
+                button = Button(style=ButtonStyle.gray, emoji='⬆', label=f"--", custom_id='clickNorth', disabled=False)
+                button.callback = self.on_north
+                ne.append(button)
+                # ne.append(self.client.add_callback(
+                #     Button(style=ButtonStyle.gray, emoji='⬆', label=f"--", disabled=False),
+                #     self.__on_north,
+                # ))
             if location.east is not None:
                 east = constant.LOCATION_DISPLAY_NAMES[location.east]
-                ne.append(self.client.add_callback(
-                    Button(style=ButtonStyle.gray, emoji='➡', label=f"{east}", disabled=False),
-                    self.__on_east,
-                ))
+                button = Button(style=ButtonStyle.gray, emoji='➡', label=f"{east}", custom_id='clickEast', disabled=False)
+                button.callback = self.on_east
+                ne.append(button)
+                # ne.append(self.client.add_callback(
+                #     Button(style=ButtonStyle.gray, emoji='➡', label=f"{east}", disabled=False),
+                #     self.__on_east,
+                # ))
             else:
-                ne.append(self.client.add_callback(
-                    Button(style=ButtonStyle.gray, emoji='➡', label=f"--", disabled=False),
-                    self.__on_east,
-                ))
+                button = Button(style=ButtonStyle.gray, emoji='➡', label=f"--", custom_id='clickEast', disabled=False)
+                button.callback = self.on_east
+                ne.append(button)
+                # ne.append(self.client.add_callback(
+                #     Button(style=ButtonStyle.gray, emoji='➡', label=f"--", disabled=False),
+                #     self.__on_east,
+                # ))
             if location.south is not None:
                 south = constant.LOCATION_DISPLAY_NAMES[location.south]
-                sw.append(self.client.add_callback(
-                    Button(style=ButtonStyle.gray, emoji='⬇', label=f"{south}", disabled=False),
-                    self.__on_south,
-                ))
+                button = Button(style=ButtonStyle.gray, emoji='⬇', label=f"{south}", custom_id='clickSouth', disabled=False)
+                button.callback = self.on_south
+                sw.append(button)
+                # sw.append(self.client.add_callback(
+                #     Button(style=ButtonStyle.gray, emoji='⬇', label=f"{south}", disabled=False),
+                #     self.__on_south,
+                # ))
             else:
-                sw.append(self.client.add_callback(
-                    Button(style=ButtonStyle.gray, emoji='⬇', label=f"--", disabled=False),
-                    self.__on_south,
-                ))
+                button = Button(style=ButtonStyle.gray, emoji='⬇', label=f"--", custom_id='clickSouth', disabled=False)
+                button.callback = self.on_south
+                sw.append(button)
+                # sw.append(self.client.add_callback(
+                #     Button(style=ButtonStyle.gray, emoji='⬇', label=f"--", disabled=False),
+                #     self.__on_south,
+                # ))
             if location.west is not None:
                 west = constant.LOCATION_DISPLAY_NAMES[location.west]
-                sw.append(self.client.add_callback(
-                    Button(style=ButtonStyle.gray, emoji='⬅', label=f"{west}", disabled=False),
-                    self.__on_west,
-                ))
+                button = Button(style=ButtonStyle.gray, emoji='⬅', label=f"{west}", custom_id='clickWest', disabled=False)
+                button.callback = self.on_west
+                sw.append(button)
+                # sw.append(self.client.add_callback(
+                #     Button(style=ButtonStyle.gray, emoji='⬅', label=f"{west}", disabled=False),
+                #     self.__on_west,
+                # ))
             else:
-                sw.append(self.client.add_callback(
-                    Button(style=ButtonStyle.gray, emoji='⬅', label=f"--", disabled=False),
-                    self.__on_west,
-                ))
+                button = Button(style=ButtonStyle.gray, emoji='⬅', label=f"--", custom_id='clickWest', disabled=False)
+                button.callback = self.on_west
+                sw.append(button)
+                # sw.append(self.client.add_callback(
+                #     Button(style=ButtonStyle.gray, emoji='⬅', label=f"--", disabled=False),
+                #     self.__on_west,
+                # ))
 
         btns = []
         if len(ne) > 0:
@@ -140,9 +164,29 @@ class MapMixin(MixinMeta):
         if len(sw) > 0:
             btns.append(sw)
 
+        view = View()
+        for button in ne:
+            view.add_item(button)
+        for button in sw:
+            view.add_item(button)
 
-        return file, btns
+        return file, view
+    
+    @discord.ui.button(custom_id='clickNorth', style=ButtonStyle.gray)
+    async def on_north(self, interaction: discord.Interaction):
+        await self.__on_north(interaction)
 
+    @discord.ui.button(custom_id='clickSouth', style=ButtonStyle.gray)
+    async def on_south(self, interaction: discord.Interaction):
+        await self.__on_south(interaction)
+
+    @discord.ui.button(custom_id='clickWest', style=ButtonStyle.gray)
+    async def on_west(self, interaction: discord.Interaction):
+        await self.__on_west(interaction)
+
+    @discord.ui.button(custom_id='clickEast', style=ButtonStyle.gray)
+    async def on_east(self, interaction: discord.Interaction):
+        await self.__on_east(interaction)
 
     async def __on_north(self, interaction: Interaction):
         user = interaction.user
