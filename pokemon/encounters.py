@@ -91,8 +91,7 @@ class EncountersMixin(MixinMeta):
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, model, trainer.getActivePokemon(), None, '')
 
-    async def get_encounters(self, interaction: discord.Interaction):
-        user = interaction.author
+    async def get_encounters(self, user):
         
         trainer = TrainerClass(str(user.id))
         model = trainer.getLocation()
