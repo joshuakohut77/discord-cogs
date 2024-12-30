@@ -566,4 +566,4 @@ class PartyMixin(MixinMeta):
 
     @discord.ui.button(custom_id='back', label='Back', style=ButtonStyle.gray)
     async def on_items_back(self, interaction: discord.Interaction):
-        await self.__on_items_back(interaction)    
+        await self.__on_items_back(interaction)
