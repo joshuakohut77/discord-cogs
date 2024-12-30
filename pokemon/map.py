@@ -197,7 +197,7 @@ class MapMixin(MixinMeta):
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.')
             return
-
+        await interaction.response.defer()
         state = self.__locations[str(user.id)]
         north = state.location.north
 
@@ -229,7 +229,7 @@ class MapMixin(MixinMeta):
         embed = discord.Embed(title = f'{name}', description = f'You walked North to {name}.')
         embed.set_image(url = attachment.url)
 
-        message = await interaction.edit_original_response(
+        message = await interaction.message.edit(
             embed=embed,
             view=btns
         )
@@ -247,7 +247,7 @@ class MapMixin(MixinMeta):
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.')
             return
-
+        await interaction.response.defer()
         state = self.__locations[str(user.id)]
         south = state.location.south
 
@@ -279,7 +279,7 @@ class MapMixin(MixinMeta):
         embed = discord.Embed(title = f'{name}', description = f'You walked South to {name}.')
         embed.set_image(url = attachment.url)
 
-        message = await interaction.edit_original_response(
+        message = await interaction.message.edit(
             embed=embed,
             view=btns
         )
@@ -298,7 +298,7 @@ class MapMixin(MixinMeta):
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.')
             return
-
+        await interaction.response.defer()
         state = self.__locations[str(user.id)]
         east = state.location.east
 
@@ -330,7 +330,7 @@ class MapMixin(MixinMeta):
         embed = discord.Embed(title = f'{name}', description = f'You walked East to {name}.')
         embed.set_image(url = attachment.url)
 
-        message = await interaction.edit_original_response(
+        message = await interaction.message.edit(
             embed=embed,
             view=btns
         )
@@ -348,7 +348,7 @@ class MapMixin(MixinMeta):
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.')
             return
-
+        await interaction.response.defer()
         state = self.__locations[str(user.id)]
         west = state.location.west
 
@@ -380,7 +380,7 @@ class MapMixin(MixinMeta):
         embed = discord.Embed(title = f'{name}', description = f'You walked West to {name}.')
         embed.set_image(url = attachment.url)
 
-        message = await interaction.edit_original_response(
+        message = await interaction.message.edit(
             embed=embed,
             view=btns
         )
