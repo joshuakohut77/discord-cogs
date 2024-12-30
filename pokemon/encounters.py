@@ -169,7 +169,7 @@ class EncountersMixin(MixinMeta):
             return
         
         if ActionType.QUEST.value == action.type.value:
-            trainer.quest(interaction.custom_id)
+            trainer.quest(interaction.data['custom_id'])
             await interaction.channel.send(trainer.message)
             return
 
@@ -429,17 +429,17 @@ class EncountersMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         # items = InventoryClass(trainer.discordId)
 
-        if interaction.custom_id == 'pokeball':
+        if interaction.data['custom_id'] == 'pokeball':
             trainer.catch(state.wildPokemon, 'poke-ball')
-        elif interaction.custom_id == 'greatball':
+        elif interaction.data['custom_id'] == 'greatball':
             trainer.catch(state.wildPokemon, 'great-ball')
-        elif interaction.custom_id == 'ultraball':
+        elif interaction.data['custom_id'] == 'ultraball':
             trainer.catch(state.wildPokemon, 'ultra-ball')
-        elif interaction.custom_id == 'masterball':
+        elif interaction.data['custom_id'] == 'masterball':
             trainer.catch(state.wildPokemon, 'master-ball')
 
         desc = state.descLog
-        desc += f'''{user.display_name} threw a {interaction.custom_id}!
+        desc += f'''{user.display_name} threw a {interaction.data['custom_id']}!
 {trainer.message}
 '''
 
