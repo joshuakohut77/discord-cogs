@@ -99,6 +99,10 @@ class EncountersMixin(MixinMeta):
         location = LocationClass(str(user.id))
         methods: list[ActionModel] = location.getMethods()
 
+        message = interaction.message
+        self.__useractions[str(user.id)] = ActionState(
+            str(user.id), message.channel.id, message.id, model, trainer.getActivePokemon(), None, '')
+
         if len(methods) == 0:
             return None
 
@@ -118,8 +122,9 @@ class EncountersMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.!', ephemeral=True)
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
+
 
         await interaction.response.defer()
 
@@ -140,16 +145,6 @@ class EncountersMixin(MixinMeta):
             button = Button(style=color, label=f"{method.name}", custom_id=f'{method.value}', disabled=True)
             # button.callback = self.on_action
             view.add_item(button)
-
-
-        # Check for the possibility of too many actions
-        # if len(btns) > 3:
-        #     firstRow = btns[:3]
-        #     secondRow = btns[3:]
-        #     btns = [firstRow, secondRow]
-        # else:
-        #     btns = [btns]
-        
 
         action: ActionModel
         for method in methods:
@@ -582,8 +577,8 @@ HP    : {wildPokemon.currentHP} / {stats['hp']}
         state: ActionState
         if str(user.id) not in self.__useractions.keys():
             return False
-        # else:
-        #     state = self.__useractions[str(user.id)]
-        #     if state.messageId != message.id:
-        #         return False
+        else:
+            state = self.__useractions[str(user.id)]
+            if state.messageId != message.id:
+                return False
         return True
