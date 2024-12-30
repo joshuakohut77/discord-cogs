@@ -75,7 +75,7 @@ class PartyMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
         state = self.getPokemonState(user)
@@ -98,7 +98,7 @@ class PartyMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
         state = self.getPokemonState(user)
@@ -127,7 +127,7 @@ class PartyMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
         state = self.getPokemonState(user)
@@ -155,7 +155,7 @@ class PartyMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
         state = self.getPokemonState(user)
@@ -171,7 +171,7 @@ class PartyMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
         state = self.getPokemonState(user)
@@ -187,7 +187,7 @@ class PartyMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
         
         state = self.getPokemonState(user)
@@ -231,7 +231,7 @@ class PartyMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
         state = self.getPokemonState(user)
@@ -248,7 +248,7 @@ class PartyMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
         
         state = self.getPokemonState(user)
@@ -293,7 +293,7 @@ class PartyMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
         
         state = self.getPokemonState(user)
@@ -329,7 +329,7 @@ class PartyMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
         state = self.getPokemonState(user)
@@ -347,7 +347,7 @@ class PartyMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
         state = self.getPokemonState(user)
