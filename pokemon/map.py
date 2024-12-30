@@ -119,7 +119,7 @@ class MapMixin(MixinMeta):
                 #     self.__on_east,
                 # ))
             else:
-                button = Button(style=ButtonStyle.gray, emoji='➡', label=f"--", custom_id='clickEast', disabled=True)
+                button = Button(style=ButtonStyle.gray, emoji='➡', label=f"--", custom_id='clickEast', disabled=False)
                 button.callback = self.on_east
                 ne.append(button)
                 # ne.append(self.client.add_callback(
@@ -197,7 +197,7 @@ class MapMixin(MixinMeta):
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
-        await interaction.response.defer()
+        # await interaction.response.defer()
         state = self.__locations[str(user.id)]
         north = state.location.north
 
@@ -247,7 +247,7 @@ class MapMixin(MixinMeta):
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
-        await interaction.response.defer()
+        # await interaction.response.defer()
         state = self.__locations[str(user.id)]
         south = state.location.south
 
@@ -348,7 +348,7 @@ class MapMixin(MixinMeta):
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
-        await interaction.response.defer()
+        # await interaction.response.defer()
         state = self.__locations[str(user.id)]
         west = state.location.west
 
