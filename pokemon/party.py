@@ -89,7 +89,7 @@ class PartyMixin(MixinMeta):
         state.active = pokemon.trainerId
         embed, components = self.__pokemonPcCard(user, state, state.card)
 
-        message = await interaction.edit_original_response(embed=embed, view=components)
+        message = await interaction.message.edit(embed=embed, view=components)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         
@@ -107,7 +107,7 @@ class PartyMixin(MixinMeta):
         if DisplayCard.ITEMS.value == state.card.value:
             ctx = await self.bot.get_context(interaction.message)
             embed, btns = await self.__pokemonItemsCard(user, state, DisplayCard.ITEMS, ctx)
-            message = await interaction.edit_original_response(embed=embed, view=btns)
+            message = await interaction.message.edit(embed=embed, view=btns)
             self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         else:
             authorIsTrainer = str(user.id) == state.discordId
@@ -118,7 +118,7 @@ class PartyMixin(MixinMeta):
                 trainerUser = await ctx.guild.fetch_member(int(state.discordId))
 
             embed, btns = self.__pokemonPcCard(trainerUser, state, state.card, authorIsTrainer)
-            message = await interaction.edit_original_response(embed=embed, view=btns)
+            message = await interaction.message.edit(embed=embed, view=btns)
             self.setPokemonState(user, PokemonState(state.discordId, message.id, state.card, state.pokemon, state.active, state.idx))
     
     
@@ -136,7 +136,7 @@ class PartyMixin(MixinMeta):
         if DisplayCard.ITEMS.value == state.card.value:
             ctx = await self.bot.get_context(interaction.message)
             embed, btns = await self.__pokemonItemsCard(user, state, DisplayCard.ITEMS, ctx)
-            message = await interaction.edit_original_response(embed=embed, view=btns)
+            message = await interaction.message.edit(embed=embed, view=btns)
             self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         else:
             authorIsTrainer = str(user.id) == state.discordId
@@ -147,7 +147,7 @@ class PartyMixin(MixinMeta):
                 trainerUser = await ctx.guild.fetch_member(int(state.discordId))
 
             embed, btns = self.__pokemonPcCard(trainerUser, state, state.card, authorIsTrainer)
-            message = await interaction.edit_original_response(embed=embed, view=btns)
+            message = await interaction.message.edit(embed=embed, view=btns)
             self.setPokemonState(user, PokemonState(state.discordId, message.id, state.card, state.pokemon, state.active, state.idx))
 
 
@@ -162,7 +162,7 @@ class PartyMixin(MixinMeta):
 
         embed, firstRow, secondRow = self.__pokemonPcCard(user, state, DisplayCard.MOVES)
 
-        message = await interaction.edit_original_response(embed=embed, view=[firstRow, secondRow])
+        message = await interaction.message.edit(embed=embed, view=[firstRow, secondRow])
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.MOVES, state.pokemon, state.active, state.idx))
 
@@ -178,7 +178,7 @@ class PartyMixin(MixinMeta):
 
         embed, components = self.__pokemonPcCard(user, state, DisplayCard.STATS)
 
-        message = await interaction.edit_original_response(embed=embed, view=components)
+        message = await interaction.message.edit(embed=embed, view=components)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.STATS, state.pokemon, state.active, state.idx))
 
@@ -217,7 +217,7 @@ class PartyMixin(MixinMeta):
                 state.idx = 0
 
                 embed, components = self.__pokemonPcCard(user, state, state.card)
-                message = await interaction.edit_original_response(embed=embed, view=components)
+                message = await interaction.message.edit(embed=embed, view=components)
                 
                 self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
             elif i < pokeLength - 1:
@@ -238,7 +238,7 @@ class PartyMixin(MixinMeta):
 
         embed, btns = self.__pokemonPcCard(user, state, DisplayCard.DEX)
 
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.DEX, state.pokemon, state.active, state.idx))
 
@@ -317,7 +317,7 @@ class PartyMixin(MixinMeta):
         if trainer.message:
             ctx = await self.bot.get_context(interaction.message)
             embed, btns = await self.__pokemonItemsCard(user, state, state.card, ctx)
-            message = await interaction.edit_original_response(embed=embed, view=btns)
+            message = await interaction.message.edit(embed=embed, view=btns)
             self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
     
             await interaction.channel.send(f'{user.display_name}, {trainer.message}')
@@ -338,7 +338,7 @@ class PartyMixin(MixinMeta):
 
         embed, btns = await self.__pokemonItemsCard(user, state, DisplayCard.ITEMS, ctx)
 
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.ITEMS, state.pokemon, state.active, state.idx))
 
@@ -354,7 +354,7 @@ class PartyMixin(MixinMeta):
 
         embed, btns = self.__pokemonPcCard(user, state, DisplayCard.STATS)
 
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.STATS, state.pokemon, state.active, state.idx))
 
