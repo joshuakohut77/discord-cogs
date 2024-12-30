@@ -298,7 +298,7 @@ class MapMixin(MixinMeta):
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.')
             return
-        await interaction.response.defer()
+        # await interaction.response.defer()
         state = self.__locations[str(user.id)]
         east = state.location.east
 
