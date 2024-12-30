@@ -106,7 +106,7 @@ class StarterMixin(MixinMeta):
 
     async def __on_moves_click(self, interaction: Interaction):
         user = interaction.user
-
+        await interaction.response.defer()
         if not self.checkPokemonState(user, interaction.message):
             await interaction.response.send_message('This is not for you.')
             return
@@ -122,10 +122,6 @@ class StarterMixin(MixinMeta):
 
         embed, btns = self.__pokemonSingleCard(trainerUser, state, DisplayCard.MOVES, authorIsTrainer)
 
-        # message = await interaction.edit_original_response(embed=embed, view=btns)
-        # if not interaction.response.is_done():
-        #     message = await interaction.response.send_message(embed=embed, view=btns)
-        # else:
         message = await interaction.message.edit(embed=embed, view=btns)
 
 
@@ -134,7 +130,7 @@ class StarterMixin(MixinMeta):
 
     async def __on_pokedex_click(self, interaction: Interaction):
         user = interaction.user
-
+        await interaction.response.defer()
         if not self.checkPokemonState(user, interaction.message):
             await interaction.response.send_message('This is not for you.')
             return
