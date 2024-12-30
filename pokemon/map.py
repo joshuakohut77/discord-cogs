@@ -19,7 +19,7 @@ import constant
 from models.location import LocationModel
 from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
-from encounters import EncountersMixin as enc
+from .encounters import EncountersMixin as enc
 
 from .abcd import MixinMeta
 
