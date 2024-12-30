@@ -151,7 +151,7 @@ class MapMixin(MixinMeta):
 
     async def __on_north(self, interaction: Interaction):
         user = interaction.user
-        # await interaction.response.defer()
+        
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -163,6 +163,8 @@ class MapMixin(MixinMeta):
             await interaction.response.send_message('You can not travel North from here.', ephemeral=True)
             return
 
+        await interaction.response.defer()
+
         loc = LocationClass()
         direction = loc.getLocationByName(north)
         if loc.statuscode == 96:
@@ -171,7 +173,7 @@ class MapMixin(MixinMeta):
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        # await interaction.response.send_message(f'You walked North to {north}.')
+        
 
         file, btns = self.__createMapCard(direction)
 
@@ -197,7 +199,7 @@ class MapMixin(MixinMeta):
 
     async def __on_south(self, interaction: Interaction):
         user = interaction.user
-        # await interaction.response.defer()
+        
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -208,6 +210,8 @@ class MapMixin(MixinMeta):
         if south is None:
             await interaction.response.send_message('You can not travel South from here.', ephemeral=True)
             return
+        
+        await interaction.response.defer()
 
         loc = LocationClass()
         direction = loc.getLocationByName(south)
@@ -217,7 +221,7 @@ class MapMixin(MixinMeta):
 
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
-        # await interaction.response.send_message(f'You walked South to {south}.')
+        
 
         file, btns = self.__createMapCard(direction)
 
@@ -243,7 +247,7 @@ class MapMixin(MixinMeta):
 
     async def __on_east(self, interaction: Interaction):
         user = interaction.user
-        # await interaction.response.defer()
+        
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -254,7 +258,7 @@ class MapMixin(MixinMeta):
         if east is None:
             await interaction.response.send_message('You can not travel East from here.', ephemeral=True)
             return
-
+        await interaction.response.defer()
         loc = LocationClass()
         direction = loc.getLocationByName(east)
         if loc.statuscode == 96:
@@ -289,7 +293,7 @@ class MapMixin(MixinMeta):
 
     async def __on_west(self, interaction: Interaction):
         user = interaction.user
-        # await interaction.response.defer()
+        
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -300,7 +304,7 @@ class MapMixin(MixinMeta):
         if west is None:
             await interaction.response.send_message('You can not travel West from here.', ephemeral=True)
             return
-
+        await interaction.response.defer()
         loc = LocationClass()
         direction = loc.getLocationByName(west)
         if loc.statuscode == 96:
