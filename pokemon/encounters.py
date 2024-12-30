@@ -91,6 +91,26 @@ class EncountersMixin(MixinMeta):
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, model, trainer.getActivePokemon(), None, '')
 
+    async def get_encounters(self, interaction: Interaction):
+        user = interaction.author
+        
+        trainer = TrainerClass(str(user.id))
+        model = trainer.getLocation()
+
+        location = LocationClass(str(user.id))
+        methods: list[ActionModel] = location.getMethods()
+
+        if len(methods) == 0:
+            return None
+
+        view = View()
+        for method in methods:
+            button = Button(style=ButtonStyle.gray, label=f"{method.name}", custom_id=f'{method.value}', disabled=False)
+            button.callback = self.on_action
+            view.add_item(button)
+
+        return view
+
     # @discord.ui.button(custom_id='clickNorth', style=ButtonStyle.gray)
     async def on_action(self, interaction: discord.Interaction):
         await self.__on_action(interaction)
@@ -103,7 +123,7 @@ class EncountersMixin(MixinMeta):
             return
 
         await interaction.response.defer()
-        
+
         location = LocationClass(str(user.id))
         methods: list[ActionModel] = location.getMethods()
 
