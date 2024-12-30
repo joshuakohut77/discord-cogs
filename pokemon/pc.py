@@ -344,7 +344,7 @@ class PcMixin(MixinMeta):
 
 
     async def __on_items_click(self, interaction: Interaction):
-        user = interaction.user
+        user = interaction.usersd
         1/0
         await interaction.response.defer()
         if not self.checkPokemonState(user, interaction.message):
