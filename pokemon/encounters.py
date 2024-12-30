@@ -99,9 +99,11 @@ class EncountersMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
+        await interaction.response.defer()
+        
         location = LocationClass(str(user.id))
         methods: list[ActionModel] = location.getMethods()
 
@@ -239,7 +241,8 @@ class EncountersMixin(MixinMeta):
         if not self.__checkUserActionState(user, interaction.message):
             await interaction.response.send_message('This is not for you.')
             return
-
+        
+        await interaction.response.defer()
         await interaction.respond(type=5, content="Battling...")
 
         state = self.__useractions[str(user.id)]
@@ -282,9 +285,10 @@ class EncountersMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
+        await interaction.response.defer()
         state = self.__useractions[str(user.id)]
         trainer = TrainerClass(str(user.id))
         trainer.runAway(state.wildPokemon)
@@ -313,10 +317,10 @@ class EncountersMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
-
+        await interaction.response.defer()
         state = self.__useractions[str(user.id)]
         trainer = TrainerClass(str(user.id))
         items = InventoryClass(trainer.discordId)
@@ -351,7 +355,7 @@ class EncountersMixin(MixinMeta):
 
         if len(btns) == 0:
             # TODO: Achievement Unlocked: No Balls
-            await interaction.response.send_message('You have no balls!')
+            await interaction.response.send_message('You have no balls!', ephemeral=True)
             return
 
         secondRow = []
@@ -378,9 +382,10 @@ class EncountersMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
+        await interaction.response.defer()
         # active = trainer.getActivePokemon()
         state = self.__useractions[str(user.id)]
         wildPokemon = state.wildPokemon
@@ -421,9 +426,10 @@ class EncountersMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
+        await interaction.response.defer()
 
         state = self.__useractions[str(user.id)]
         trainer = TrainerClass(str(user.id))
