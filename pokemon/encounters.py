@@ -6,9 +6,7 @@ import asyncio
 import discord
 from discord import (Embed, Member)
 from discord import message
-# from discord_components import (
-#     DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction, component)
-# from discord import ui, ButtonStyle, Button, Interaction
+
 from discord import ButtonStyle, Interaction
 from discord.ui import Button, View
 
