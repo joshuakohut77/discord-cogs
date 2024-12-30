@@ -150,7 +150,7 @@ class StarterMixin(MixinMeta):
 
         embed, btns = self.__pokemonSingleCard(trainerUser, state, DisplayCard.DEX, authorIsTrainer)
 
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
         self.setPokemonState(user, PokemonState(state.discordId, message.id, DisplayCard.DEX, state.pokemon, state.active, None))
     
 
@@ -172,11 +172,7 @@ class StarterMixin(MixinMeta):
 
         embed, btns = self.__pokemonSingleCard(trainerUser, state, DisplayCard.STATS, authorIsTrainer)
 
-        message = await interaction.edit_original_response(embed=embed, view=btns)
-        if not interaction.response.is_done():
-            message = await interaction.response.send_message(embed=embed, view=btns)
-        else:
-            message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
 
 
         self.setPokemonState(user, PokemonState(state.discordId, message.id, DisplayCard.STATS, state.pokemon, state.active, None))
