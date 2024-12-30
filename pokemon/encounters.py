@@ -582,8 +582,8 @@ HP    : {wildPokemon.currentHP} / {stats['hp']}
         state: ActionState
         if str(user.id) not in self.__useractions.keys():
             return False
-        else:
-            state = self.__useractions[str(user.id)]
-            if state.messageId != message.id:
-                return False
+        # else:
+        #     state = self.__useractions[str(user.id)]
+        #     if state.messageId != message.id:
+        #         return False
         return True
