@@ -489,7 +489,7 @@ class PcMixin(MixinMeta):
             
             activeDisabled = (activeId is not None) and (pokemon.trainerId == activeId)
 
-            button = Button(style=ButtonStyle.blue, label="Set Active", custom_id='active', disabled=activeDisabled)
+            button = Button(style=ButtonStyle.primary, label="Set Active", custom_id='active', disabled=activeDisabled)
             button.callback = self.on_set_active
             view.add_item(button, row=1)
 
@@ -502,7 +502,7 @@ class PcMixin(MixinMeta):
             button.callback = self.on_pokemon_withdraw
             view.add_item(button, row=2)
 
-            button = Button(style=ButtonStyle.blue, label="Items", custom_id='items')
+            button = Button(style=ButtonStyle.primary, label="Items", custom_id='items')
             button.callback = self.on_items_click
             view.add_item(button, row=2)
 
@@ -549,7 +549,7 @@ class PcMixin(MixinMeta):
     async def on_pokedex_click(self, interaction: discord.Interaction):
         await self.__on_pokedex_click(interaction)
 
-    @discord.ui.button(custom_id='active', label='Set Active', style=ButtonStyle.blue)
+    @discord.ui.button(custom_id='active', label='Set Active', style=ButtonStyle.primary)
     async def on_set_active(self, interaction: discord.Interaction):
         await self.__on_set_active(interaction)
 
@@ -561,7 +561,7 @@ class PcMixin(MixinMeta):
     async def on_pokemon_withdraw(self, interaction: discord.Interaction):
         await self.__on_pokemon_withdraw(interaction)
 
-    @discord.ui.button(custom_id='items', label='Items', style=ButtonStyle.blue)
+    @discord.ui.button(custom_id='items', label='Items', style=ButtonStyle.primary)
     async def on_items_click(self, interaction: discord.Interaction):
         await self.__on_items_click(interaction)    
 
