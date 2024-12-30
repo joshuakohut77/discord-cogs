@@ -159,7 +159,8 @@ LOCATION_DISPLAY_NAMES = {
     "safari-zone": 'Safari Zone',
     "safari-zone-1": 'Safari Zone 1',
     "safari-zone-2": 'Safari Zone 2',
-    "safari-zone-3": 'Safari Zone 3'
+    "safari-zone-3": 'Safari Zone 3',
+    "professor-oak-lab": "Profesor Oak's Lab"
 }
 
 
