@@ -79,7 +79,7 @@ class EncountersMixin(MixinMeta):
         view = View()
         for method in methods:
             button = Button(style=ButtonStyle.gray, label=f"{method.name}", custom_id=f'{method.value}', disabled=False)
-            button.callback = self.on_action
+            button.callback = self.on_action_encounter
             view.add_item(button)
 
         message: discord.Message = await ctx.send(
@@ -107,13 +107,13 @@ class EncountersMixin(MixinMeta):
         viewList = []
         for method in methods:
             button = Button(style=ButtonStyle.gray, label=f"{method.name}", custom_id=f'{method.value}', disabled=False)
-            button.callback = self.on_action
+            button.callback = self.on_action_encounter
             viewList.append(button)
 
         return viewList
 
     # @discord.ui.button(custom_id='clickNorth', style=ButtonStyle.gray)
-    async def on_action(self, interaction: discord.Interaction):
+    async def on_action_encounter(self, interaction: discord.Interaction):
         await self.__on_action(interaction)
 
     async def __on_action(self, interaction: Interaction):
@@ -141,7 +141,7 @@ class EncountersMixin(MixinMeta):
             # )
 
             button = Button(style=color, label=f"{method.name}", custom_id=f'{method.value}', disabled=True)
-            # button.callback = self.on_action
+            # button.callback = self.on_action_encounter
             view.add_item(button)
 
         action: ActionModel
@@ -227,15 +227,15 @@ class EncountersMixin(MixinMeta):
         btns = []
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.green, label="Fight", custom_id='fight'),
-            self.__on_fight_click,
+            self.__on_fight_click_encounter,
         ))
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.green, label="Run away", custom_id='runaway'),
-            self.__on_runaway_click,
+            self.__on_runaway_click_encounter,
         ))
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.green, label="Catch", custom_id='catch'),
-            self.__on_catch_click,
+            self.__on_catch_click_encounter,
         ))
 
         message = await interaction.channel.send(
@@ -247,7 +247,7 @@ class EncountersMixin(MixinMeta):
             str(user.id), message.channel.id, message.id, state.location, active, wildPokemon, desc)
 
 
-    async def __on_fight_click(self, interaction: Interaction):
+    async def __on_fight_click_encounter(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
@@ -293,7 +293,7 @@ class EncountersMixin(MixinMeta):
         del self.__useractions[str(user.id)]
 
 
-    async def __on_runaway_click(self, interaction: Interaction):
+    async def __on_runaway_click_encounter(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
@@ -325,7 +325,7 @@ class EncountersMixin(MixinMeta):
         del self.__useractions[str(user.id)]
         
 
-    async def __on_catch_click(self, interaction: Interaction):
+    async def __on_catch_click_encounter(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
@@ -344,25 +344,25 @@ class EncountersMixin(MixinMeta):
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.POKEBALL)
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji=emote, label="Poke Ball", custom_id='pokeball'),
-                self.__on_throw_pokeball,
+                self.__on_throw_pokeball_encounter,
             ))
         if items.greatball > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.GREATBALL)
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji=emote, label="Great Ball", custom_id='greatball'),
-                self.__on_throw_pokeball,
+                self.__on_throw_pokeball_encounter,
             ))
         if items.ultraball > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.ULTRABALL)
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji=emote, label=f"Ultra Ball", custom_id='ultraball'),
-                self.__on_throw_pokeball,
+                self.__on_throw_pokeball_encounter,
             ))
         if items.masterball > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.MASTERBALL)
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji=emote, label=f"Master Ball", custom_id='masterball'),
-                self.__on_throw_pokeball,
+                self.__on_throw_pokeball_encounter,
             ))
 
         if len(btns) == 0:
@@ -373,7 +373,7 @@ class EncountersMixin(MixinMeta):
         secondRow = []
         secondRow.append(self.client.add_callback(
             Button(style=ButtonStyle.gray, label=f"Back", custom_id='back'),
-            self.__on_catch_back,
+            self.__on_catch_back_encounter,
         ))
 
         desc = state.descLog
@@ -390,7 +390,7 @@ class EncountersMixin(MixinMeta):
             str(user.id), message.channel.id, message.id, state.location, state.activePokemon, state.wildPokemon, desc)
 
 
-    async def __on_catch_back(self, interaction: Interaction):
+    async def __on_catch_back_encounter(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
@@ -414,15 +414,15 @@ class EncountersMixin(MixinMeta):
         btns = []
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.green, label="Fight", custom_id='fight'),
-            self.__on_fight_click,
+            self.__on_fight_click_encounter,
         ))
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.green, label="Run away", custom_id='runaway'),
-            self.__on_runaway_click,
+            self.__on_runaway_click_encounter,
         ))
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.green, label="Catch", custom_id='catch'),
-            self.__on_catch_click,
+            self.__on_catch_click_encounter,
         ))
 
         message = await interaction.edit_original_response(
@@ -434,7 +434,7 @@ class EncountersMixin(MixinMeta):
             str(user.id), message.channel.id, message.id, state.location, active, wildPokemon, desc)
 
 
-    async def __on_throw_pokeball(self, interaction: Interaction):
+    async def __on_throw_pokeball_encounter(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):

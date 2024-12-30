@@ -300,15 +300,15 @@ class PartyMixin(MixinMeta):
         pokemon = state.pokemon[state.idx]
 
         item = ''
-        if interaction.custom_id == 'potion':
+        if interaction.data['custom_id'] == 'potion':
             item = 'potion'
-        elif interaction.custom_id == 'superpotion':
+        elif interaction.data['custom_id'] == 'superpotion':
             item = 'super-potion'
-        elif interaction.custom_id == 'hyperpotion':
+        elif interaction.data['custom_id'] == 'hyperpotion':
             item = 'hyper-potion'
-        elif interaction.custom_id == 'maxpotion':
+        elif interaction.data['custom_id'] == 'maxpotion':
             item = 'max-potion'
-        elif interaction.custom_id == 'revive':
+        elif interaction.data['custom_id'] == 'revive':
             item = 'revive'
 
         trainer = TrainerClass(str(user.id))
@@ -394,71 +394,71 @@ class PartyMixin(MixinMeta):
         view = View()
         if i > 0:
             button = Button(style=ButtonStyle.gray, label="Previous", custom_id='previous', row=0)
-            button.callback = self.on_prev_click
+            button.callback = self.on_prev_click_party
             view.add_item(button)
         if i < pokeLength - 1:
             button = Button(style=ButtonStyle.gray, label="Next", custom_id='next', row=0)
-            button.callback = self.on_next_click
+            button.callback = self.on_next_click_party
             view.add_item(button)
 
         if inv.potion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.POTION)
             button = Button(style=ButtonStyle.gray, emoji=emote, label="Potion", custom_id='potion', row=1)
-            button.callback = self.on_use_item
+            button.callback = self.on_use_item_party
             view.add_item(button)
         if inv.superpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.SUPERPOTION)
             button = Button(style=ButtonStyle.gray, emoji=emote, label="Super Potion", custom_id='superpotion', row=1)
-            button.callback = self.on_use_item
+            button.callback = self.on_use_item_party
             view.add_item(button)
         if inv.hyperpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.HYPERPOTION)
             button = Button(style=ButtonStyle.gray, emoji=emote, label="Hyper Potion", custom_id='hyperpotion', row=1)
-            button.callback = self.on_use_item
+            button.callback = self.on_use_item_party
             view.add_item(button)
         if inv.maxpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.MAXPOTION)
             button = Button(style=ButtonStyle.gray, emoji=emote, label="Max Potion", custom_id='maxpotion', row=1)
-            button.callback = self.on_use_item
+            button.callback = self.on_use_item_party
             view.add_item(button)
         if inv.revive > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.REVIVE)
             button = Button(style=ButtonStyle.gray, emoji=emote, label="Revive", custom_id='revive', row=1)
-            button.callback = self.on_use_item
+            button.callback = self.on_use_item_party
             view.add_item(button)
 
         button = Button(style=ButtonStyle.gray, label="Back", custom_id='back', row=2)
-        button.callback = self.on_items_back
+        button.callback = self.on_items_back_party
         view.add_item(button)
 
         return embed, view
 
     @discord.ui.button(custom_id='previous', label='Previous', style=ButtonStyle.gray)
-    async def on_prev_click(self, interaction: discord.Interaction):
+    async def on_prev_click_party(self, interaction: discord.Interaction):
         await self.__on_prev_click(interaction)
     
     @discord.ui.button(custom_id='next', label='Next', style=ButtonStyle.gray)
-    async def on_next_click(self, interaction: discord.Interaction):
+    async def on_next_click_party(self, interaction: discord.Interaction):
         await self.__on_next_click(interaction)
     
     @discord.ui.button(custom_id='potion', label='Potion', style=ButtonStyle.gray)
-    async def on_use_item(self, interaction: discord.Interaction):
+    async def on_use_item_party(self, interaction: discord.Interaction):
         await self.__on_use_item(interaction)
     
     @discord.ui.button(custom_id='superpotion', label='Super Potion', style=ButtonStyle.gray)
-    async def on_use_item(self, interaction: discord.Interaction):
+    async def on_use_item_party(self, interaction: discord.Interaction):
         await self.__on_use_item(interaction)
 
     @discord.ui.button(custom_id='hyperpotion', label='Hyper Potion', style=ButtonStyle.gray)
-    async def on_use_item(self, interaction: discord.Interaction):
+    async def on_use_item_party(self, interaction: discord.Interaction):
         await self.__on_use_item(interaction)
 
     @discord.ui.button(custom_id='maxpotion', label='Max Potion', style=ButtonStyle.gray)
-    async def on_use_item(self, interaction: discord.Interaction):
+    async def on_use_item_party(self, interaction: discord.Interaction):
         await self.__on_use_item(interaction)
 
     @discord.ui.button(custom_id='revive', label='Revive', style=ButtonStyle.gray)
-    async def on_use_item(self, interaction: discord.Interaction):
+    async def on_use_item_party(self, interaction: discord.Interaction):
         await self.__on_use_item(interaction)
 
     def __pokemonPcCard(self, user: discord.User, state: PokemonState, card: DisplayCard, authorIsTrainer: bool = True):
@@ -493,77 +493,77 @@ class PartyMixin(MixinMeta):
         view = View()
         if i > 0:
             button = Button(style=ButtonStyle.gray, label="Previous", custom_id='previous', row=0)
-            button.callback = self.on_prev_click
+            button.callback = self.on_prev_click_party
             view.add_item(button)
 
         if i < pokeLength - 1:
             button = Button(style=ButtonStyle.gray, label="Next", custom_id='next', row=0)
-            button.callback = self.on_next_click
+            button.callback = self.on_next_click_party
             view.add_item(button)
 
         if authorIsTrainer:
             if DisplayCard.MOVES.value != card.value:
                 button = Button(style=ButtonStyle.green, label="Moves", custom_id='moves', row=1)
-                button.callback = self.on_moves_click
+                button.callback = self.on_moves_click_party
                 view.add_item(button)
             if DisplayCard.STATS.value != card.value:
                 button = Button(style=ButtonStyle.green, label="Stats", custom_id='stats', row=1)
-                button.callback = self.on_stats_click
+                button.callback = self.on_stats_click_party
                 view.add_item(button)
             if DisplayCard.DEX.value != card.value:
                 button = Button(style=ButtonStyle.green, label="Pokedex", custom_id='pokedex', row=1)
-                button.callback = self.on_pokedex_click
+                button.callback = self.on_pokedex_click_party
                 view.add_item(button)
             
             activeDisabled = (activeId is not None) and (pokemon.trainerId == activeId)
 
             button = Button(style=ButtonStyle.primary, label="Set Active", custom_id='active', disabled=activeDisabled, row=1)
-            button.callback = self.on_set_active
+            button.callback = self.on_set_active_party
             view.add_item(button)
 
             button = Button(style=ButtonStyle.red, label="Release", custom_id='release', disabled=activeDisabled, row=1)
-            button.callback = self.on_release_click
+            button.callback = self.on_release_click_party
             view.add_item(button)
 
         if authorIsTrainer:
             button = Button(style=ButtonStyle.green, label="Deposit", custom_id='deposit', row=2)
-            button.callback = self.on_pokemon_deposit
+            button.callback = self.on_pokemon_deposit_party
             view.add_item(button)
 
             button = Button(style=ButtonStyle.primary, label="Items", custom_id='items', row=2)
-            button.callback = self.on_items_click
+            button.callback = self.on_items_click_party
             view.add_item(button)
 
         return embed, view
 
     @discord.ui.button(custom_id='moves', label='Moves', style=ButtonStyle.green)
-    async def on_moves_click(self, interaction: discord.Interaction):
+    async def on_moves_click_party(self, interaction: discord.Interaction):
         await self.__on_moves_click(interaction)
 
     @discord.ui.button(custom_id='stats', label='Stats', style=ButtonStyle.green)
-    async def on_stats_click(self, interaction: discord.Interaction):
+    async def on_stats_click_party(self, interaction: discord.Interaction):
         await self.__on_stats_click(interaction)
 
     @discord.ui.button(custom_id='pokedex', label='Pokedex', style=ButtonStyle.green)
-    async def on_pokedex_click(self, interaction: discord.Interaction):
+    async def on_pokedex_click_party(self, interaction: discord.Interaction):
         await self.__on_pokedex_click(interaction)
 
     @discord.ui.button(custom_id='active', label='Set Active', style=ButtonStyle.primary)
-    async def on_set_active(self, interaction: discord.Interaction):
+    async def on_set_active_party(self, interaction: discord.Interaction):
         await self.__on_set_active(interaction)
 
     @discord.ui.button(custom_id='release', label='Release', style=ButtonStyle.red)
-    async def on_release_click(self, interaction: discord.Interaction):
+    async def on_release_click_party(self, interaction: discord.Interaction):
         await self.__on_release_click(interaction)
 
     @discord.ui.button(custom_id='deposit', label='Deposit', style=ButtonStyle.green)
-    async def on_pokemon_deposit(self, interaction: discord.Interaction):
+    async def on_pokemon_deposit_party(self, interaction: discord.Interaction):
         await self.__on_pokemon_deposit(interaction)
 
     @discord.ui.button(custom_id='items', label='Items', style=ButtonStyle.primary)
-    async def on_items_click(self, interaction: discord.Interaction):
+    async def on_items_click_party(self, interaction: discord.Interaction):
         await self.__on_items_click(interaction)
 
     @discord.ui.button(custom_id='back', label='Back', style=ButtonStyle.gray)
-    async def on_items_back(self, interaction: discord.Interaction):
+    async def on_items_back_party(self, interaction: discord.Interaction):
         await self.__on_items_back(interaction)
