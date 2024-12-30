@@ -156,7 +156,7 @@ class StarterMixin(MixinMeta):
 
     async def __on_stats_click(self, interaction: Interaction):
         user = interaction.user
-
+        await interaction.response.defer()
         if not self.checkPokemonState(user, interaction.message):
             await interaction.response.send_message('This is not for you.')
             return
