@@ -78,20 +78,11 @@ class EncountersMixin(MixinMeta):
             await ctx.send('No encounters available at your location.')
             return
 
-        # btns = []
         view = View()
         for method in methods:
-            button = Button(style=ButtonStyle.gray, emoji='⬆', label=f"{method.name}", custom_id=f'{method.value}', disabled=False)
+            button = Button(style=ButtonStyle.gray, label=f"{method.name}", custom_id=f'{method.value}', disabled=False)
             button.callback = self.on_action
             view.add_item(button)
-
-        # Check for the possibility of too many actions
-        # if len(btns) > 3:
-        #     firstRow = btns[:3]
-        #     secondRow = btns[3:]
-        #     btns = [firstRow, secondRow]
-        # else:
-        #     btns = [btns]
 
         message: discord.Message = await ctx.send(
             content="What do you want to do?",
@@ -135,7 +126,7 @@ class EncountersMixin(MixinMeta):
 
         action: ActionModel
         for method in methods:
-            if method.value == interaction.custom_id:
+            if method.value == interaction.data['custom_id']:
                 action = method
                 break
 
@@ -152,7 +143,7 @@ class EncountersMixin(MixinMeta):
         elif action.value == 'pokeflute':
             msg = 'You played the Poké Flute!'
 
-        await interaction.edit_original_response(
+        await interaction.message.edit(
             content=msg,
             view=btns
         )
@@ -160,7 +151,7 @@ class EncountersMixin(MixinMeta):
         # await interaction.respond(type=5, content="Walking through tall grass...")
 
         state = self.__useractions[str(user.id)]
-        method = interaction.custom_id
+        method = interaction.data['custom_id']
 
         # if method == 'walk':
         trainer = TrainerClass(str(user.id))
