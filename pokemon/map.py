@@ -174,7 +174,6 @@ class MapMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
         
-
         file, btns = self.__createMapCard(direction)
 
         log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
