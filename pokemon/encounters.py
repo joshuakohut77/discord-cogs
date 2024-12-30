@@ -8,7 +8,9 @@ from discord import (Embed, Member)
 from discord import message
 # from discord_components import (
 #     DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction, component)
-from discord import ui, ButtonStyle, Button, Interaction
+# from discord import ui, ButtonStyle, Button, Interaction
+from discord import ButtonStyle, Interaction
+from discord.ui import Button, View
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -76,25 +78,24 @@ class EncountersMixin(MixinMeta):
             await ctx.send('No encounters available at your location.')
             return
 
-        btns = []
+        # btns = []
+        view = View()
         for method in methods:
-            btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray,
-                       label=f"{method.name}", custom_id=f'{method.value}'),
-                self.__on_action
-            ))
+            button = Button(style=ButtonStyle.gray, emoji='⬆', label=f"{method.name}", custom_id=f'{method.value}', disabled=False)
+            button.callback = self.on_action
+            view.add_item(button)
 
         # Check for the possibility of too many actions
-        if len(btns) > 3:
-            firstRow = btns[:3]
-            secondRow = btns[3:]
-            btns = [firstRow, secondRow]
-        else:
-            btns = [btns]
+        # if len(btns) > 3:
+        #     firstRow = btns[:3]
+        #     secondRow = btns[3:]
+        #     btns = [firstRow, secondRow]
+        # else:
+        #     btns = [btns]
 
         message: discord.Message = await ctx.send(
             content="What do you want to do?",
-            view=btns
+            view=view
         )
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, model, trainer.getActivePokemon(), None, '')
