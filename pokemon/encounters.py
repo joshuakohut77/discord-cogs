@@ -91,7 +91,7 @@ class EncountersMixin(MixinMeta):
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, model, trainer.getActivePokemon(), None, '')
 
-    async def get_encounters(self, interaction: Interaction):
+    async def get_encounters(self, interaction: discord.Interaction):
         user = interaction.author
         
         trainer = TrainerClass(str(user.id))
@@ -103,13 +103,13 @@ class EncountersMixin(MixinMeta):
         if len(methods) == 0:
             return None
 
-        view = View()
+        viewList = []
         for method in methods:
             button = Button(style=ButtonStyle.gray, label=f"{method.name}", custom_id=f'{method.value}', disabled=False)
             button.callback = self.on_action
-            view.add_item(button)
+            viewList.append(button)
 
-        return view
+        return viewList
 
     # @discord.ui.button(custom_id='clickNorth', style=ButtonStyle.gray)
     async def on_action(self, interaction: discord.Interaction):
