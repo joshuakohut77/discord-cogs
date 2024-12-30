@@ -112,9 +112,9 @@ class EncountersMixin(MixinMeta):
             if method == interaction.data['custom_id']:
                 color = ButtonStyle.green
             
-            btns.append(
-                Button(style=color, label=f"{method.name}", custom_id=f'{method.value}', disabled=True)
-            )
+            # btns.append(
+            #     Button(style=color, label=f"{method.name}", custom_id=f'{method.value}', disabled=True)
+            # )
 
             button = Button(style=color, label=f"{method.name}", custom_id=f'{method.value}', disabled=True)
             # button.callback = self.on_action
