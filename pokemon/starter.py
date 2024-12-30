@@ -374,7 +374,7 @@ class StarterMixin(MixinMeta):
         #     ))
         if DisplayCard.MOVES.value != card.value:
             button = Button(style=ButtonStyle.green, label="Moves", custom_id='moves')
-            button.callback = self.__on_moves_click
+            button.callback = self.on_moves_click
             firstRowBtns.append(button)
         if DisplayCard.STATS.value != card.value:
             button = Button(style=ButtonStyle.green, label="Stats", custom_id='stats')
@@ -388,7 +388,6 @@ class StarterMixin(MixinMeta):
             firstRowBtns.append(Button(style=ButtonStyle.blurple, label="Items", custom_id='items'))
 
 
-            # Disable the "Set Active" button if the starter is currently the active pokemon
             # Disable the "Set Active" button if the starter is currently the active pokemon
             disabled = (activeId is not None) and (
                 pokemon.trainerId == activeId)
@@ -411,9 +410,9 @@ class StarterMixin(MixinMeta):
 
         return embed, view
 
-    # @discord.ui.button(custom_id='moves', label='Moves', style=ButtonStyle.green)
-    # async def on_moves_click(self, interaction: discord.Interaction, button: Button):
-    #     await self.__on_moves_click(interaction)
+    @discord.ui.button(custom_id='moves', label='Moves', style=ButtonStyle.green)
+    async def on_moves_click(self, interaction: discord.Interaction, button: Button):
+        await self.__on_moves_click(interaction)
 
     # @discord.ui.button(custom_id='stats', label='Stats', style=ButtonStyle.green)
     # async def on_stats_click(self, interaction: discord.Interaction, button: Button):
