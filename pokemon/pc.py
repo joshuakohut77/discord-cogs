@@ -424,7 +424,7 @@ class PcMixin(MixinMeta):
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.REVIVE)
             button = Button(style=ButtonStyle.gray, emoji=emote, label="Revive", custom_id='revive')
             button.callback = self.on_use_item
-            view.add_item(button), row=1
+            view.add_item(button, row=1)
 
         button = Button(style=ButtonStyle.gray, label="Back", custom_id='back')
         button.callback = self.on_items_back
