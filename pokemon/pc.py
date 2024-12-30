@@ -100,7 +100,7 @@ class PcMixin(MixinMeta):
         state.active = pokemon.trainerId
         embed, btns = self.__pokemonPcCard(user, state, state.card)
 
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         
@@ -120,7 +120,7 @@ class PcMixin(MixinMeta):
         if DisplayCard.ITEMS.value == state.card.value:
             ctx = await self.bot.get_context(interaction.message)
             embed, btns = await self.__pokemonItemsCard(user, state, DisplayCard.ITEMS, ctx)
-            message = await interaction.edit_original_response(embed=embed, view=btns)
+            message = await interaction.message.edit(embed=embed, view=btns)
             self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         else:
             authorIsTrainer = str(user.id) == state.discordId
@@ -131,7 +131,7 @@ class PcMixin(MixinMeta):
                 trainerUser = await ctx.guild.fetch_member(int(state.discordId))
 
             embed, btns = self.__pokemonPcCard(trainerUser, state, state.card, authorIsTrainer)
-            message = await interaction.edit_original_response(embed=embed, view=btns)
+            message = await interaction.message.edit(embed=embed, view=btns)
             self.setPokemonState(user, PokemonState(state.discordId, message.id, state.card, state.pokemon, state.active, state.idx))
     
 
@@ -148,7 +148,7 @@ class PcMixin(MixinMeta):
         if DisplayCard.ITEMS.value == state.card.value:
             ctx = await self.bot.get_context(interaction.message)
             embed, btns = await self.__pokemonItemsCard(user, state, DisplayCard.ITEMS, ctx)
-            message = await interaction.edit_original_response(embed=embed, view=btns)
+            message = await interaction.message.edit(embed=embed, view=btns)
             self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         else:
             authorIsTrainer = str(user.id) == state.discordId
@@ -159,7 +159,7 @@ class PcMixin(MixinMeta):
                 trainerUser = await ctx.guild.fetch_member(int(state.discordId))
 
             embed, btns = self.__pokemonPcCard(trainerUser, state, state.card, authorIsTrainer)
-            message = await interaction.edit_original_response(embed=embed, view=btns)
+            message = await interaction.message.edit(embed=embed, view=btns)
             self.setPokemonState(user, PokemonState(state.discordId, message.id, state.card, state.pokemon, state.active, state.idx))
 
 
@@ -174,7 +174,7 @@ class PcMixin(MixinMeta):
 
         embed, btns = self.__pokemonPcCard(user, state, DisplayCard.MOVES)
 
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.MOVES, state.pokemon, state.active, state.idx))
 
@@ -190,7 +190,7 @@ class PcMixin(MixinMeta):
 
         embed, btns = self.__pokemonPcCard(user, state, DisplayCard.STATS)
 
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.STATS, state.pokemon, state.active, state.idx))
 
@@ -232,7 +232,7 @@ class PcMixin(MixinMeta):
 
         embed, btns = self.__pokemonPcCard(user, state, DisplayCard.DEX)
 
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.DEX, state.pokemon, state.active, state.idx))
 
@@ -281,7 +281,7 @@ class PcMixin(MixinMeta):
         if i < pokeLength - 1:
             embed, btns = self.__pokemonPcCard(user, state, state.card)
 
-            message = await interaction.edit_original_response(embed=embed, view=btns)
+            message = await interaction.message.edit(embed=embed, view=btns)
             
             self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
         else:
@@ -299,7 +299,7 @@ class PcMixin(MixinMeta):
 
         embed, btns = self.__pokemonPcCard(user, state, DisplayCard.STATS)
 
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.STATS, state.pokemon, state.active, state.idx))
 
@@ -333,7 +333,7 @@ class PcMixin(MixinMeta):
         if trainer.message:
             ctx = await self.bot.get_context(interaction.message)
             embed, btns = await self.__pokemonItemsCard(user, state, state.card, ctx)
-            message = await interaction.edit_original_response(embed=embed, view=btns)
+            message = await interaction.message.edit(embed=embed, view=btns)
             self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, state.idx))
     
             await interaction.channel.send(f'{user.display_name}, {trainer.message}')
@@ -354,7 +354,7 @@ class PcMixin(MixinMeta):
 
         embed, btns = await self.__pokemonItemsCard(user, state, DisplayCard.ITEMS, ctx)
 
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
         
         self.setPokemonState(user, PokemonState(str(user.id), message.id, DisplayCard.ITEMS, state.pokemon, state.active, state.idx))
 
