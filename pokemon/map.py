@@ -237,12 +237,12 @@ class MapMixin(MixinMeta):
         embed = discord.Embed(title = f'{name}', description = f'You walked South to {name}.')
         embed.set_image(url = attachment.url)
         
-        encounter = enc(MixinMeta)
-        encViewList = await encounter.get_encounters(interaction)
+        # encounter = enc(MixinMeta)
+        # encViewList = await encounter.get_encounters(interaction)
         
-        if encViewList is not None:
-            for method in encViewList:
-                btns.add_item(method)
+        # if encViewList is not None:
+        #     for method in encViewList:
+        #         btns.add_item(method)
         
         message = await interaction.message.edit(
             embed=embed,
