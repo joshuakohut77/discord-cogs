@@ -105,7 +105,8 @@ class EncountersMixin(MixinMeta):
         location = LocationClass(str(user.id))
         methods: list[ActionModel] = location.getMethods()
 
-        btns = []
+        view = View()
+        # btns = []
         for method in methods:
             color = ButtonStyle.gray
             if method == interaction.data['custom_id']:
@@ -115,13 +116,18 @@ class EncountersMixin(MixinMeta):
                 Button(style=color, label=f"{method.name}", custom_id=f'{method.value}', disabled=True)
             )
 
+            button = Button(style=color, label=f"{method.name}", custom_id=f'{method.value}', disabled=True)
+            # button.callback = self.on_action
+            view.add_item(button)
+
+
         # Check for the possibility of too many actions
-        if len(btns) > 3:
-            firstRow = btns[:3]
-            secondRow = btns[3:]
-            btns = [firstRow, secondRow]
-        else:
-            btns = [btns]
+        # if len(btns) > 3:
+        #     firstRow = btns[:3]
+        #     secondRow = btns[3:]
+        #     btns = [firstRow, secondRow]
+        # else:
+        #     btns = [btns]
         
 
         action: ActionModel
@@ -145,7 +151,7 @@ class EncountersMixin(MixinMeta):
 
         await interaction.message.edit(
             content=msg,
-            view=btns
+            view=view
         )
 
         # await interaction.respond(type=5, content="Walking through tall grass...")
