@@ -2,9 +2,6 @@ from logging import disable
 import sys
 import os
 
-import constant
-print(constant.LOCATION_DISPLAY_NAMES)
-
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(os.path.join(os.path.dirname(
     os.path.realpath(__file__)), 'models'))
@@ -26,9 +23,10 @@ b = card.value == DisplayCard.STATS.value
 c = card.value == DisplayCard.MOVES.value
 
 trainer = TrainerClass('181602702734655488')
-pokemon = trainer.getStarterPokemon()
 
-print(pokemon.pokemonName)
+
+pokeList = trainer.getPokemon(party=True)
+print(pokeList)
 
 # location = trainer.getLocation()
 
