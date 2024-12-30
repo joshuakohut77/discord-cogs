@@ -119,7 +119,7 @@ class MapMixin(MixinMeta):
                 #     self.__on_east,
                 # ))
             else:
-                button = Button(style=ButtonStyle.gray, emoji='➡', label=f"--", custom_id='clickEast', disabled=False)
+                button = Button(style=ButtonStyle.gray, emoji='➡', label=f"--", custom_id='clickEast', disabled=True)
                 button.callback = self.on_east
                 ne.append(button)
                 # ne.append(self.client.add_callback(
@@ -195,14 +195,14 @@ class MapMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkMapState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
         await interaction.response.defer()
         state = self.__locations[str(user.id)]
         north = state.location.north
 
         if north is None:
-            await interaction.response.send_message('You can not travel North from here.')
+            await interaction.response.send_message('You can not travel North from here.', ephemeral=True)
             return
 
         loc = LocationClass()
@@ -245,14 +245,14 @@ class MapMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkMapState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
         await interaction.response.defer()
         state = self.__locations[str(user.id)]
         south = state.location.south
 
         if south is None:
-            await interaction.response.send_message('You can not travel South from here.')
+            await interaction.response.send_message('You can not travel South from here.', ephemeral=True)
             return
 
         loc = LocationClass()
@@ -296,7 +296,7 @@ class MapMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkMapState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
         # await interaction.response.defer()
         state = self.__locations[str(user.id)]
@@ -346,14 +346,14 @@ class MapMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkMapState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
         await interaction.response.defer()
         state = self.__locations[str(user.id)]
         west = state.location.west
 
         if west is None:
-            await interaction.response.send_message('You can not travel West from here.')
+            await interaction.response.send_message('You can not travel West from here.', ephemeral=True)
             return
 
         loc = LocationClass()
