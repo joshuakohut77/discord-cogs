@@ -349,7 +349,7 @@ class PcMixin(MixinMeta):
         if not self.checkPokemonState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
-
+        await interaction.response.send_message('Inside items clicked', ephemeral=True)
         state = self.getPokemonState(user)
 
         ctx = await self.bot.get_context(interaction.message)
