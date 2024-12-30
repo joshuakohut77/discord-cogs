@@ -117,7 +117,7 @@ class EncountersMixin(MixinMeta):
         btns = []
         for method in methods:
             color = ButtonStyle.gray
-            if method == interaction.custom_id:
+            if method == interaction.data['custom_id']:
                 color = ButtonStyle.green
             
             btns.append(
