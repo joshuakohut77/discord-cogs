@@ -429,7 +429,7 @@ class PcMixin(MixinMeta):
             view.add_item(button)
 
         # if the trainer has no items available for use
-        if len(view.children) == 0:
+        if len(view.children) <= 0 or view.children is None:
             button = Button(style=ButtonStyle.gray, label="You have no items", custom_id='noitems', row=1, disabled=True)
             view.add_item(button)
 
