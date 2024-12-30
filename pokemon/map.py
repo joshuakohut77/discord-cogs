@@ -89,89 +89,47 @@ class MapMixin(MixinMeta):
     def __createMapCard(self, location: LocationModel, authorIsTrainer = True):
         file = discord.File(f"{location.spritePath}", filename=f"{location.name}.png")
 
-        ne = []
-        sw = []
+        view = View()
         if authorIsTrainer:
             if location.north is not None:
                 north = constant.LOCATION_DISPLAY_NAMES[location.north]
                 button = Button(style=ButtonStyle.gray, emoji='⬆', label=f"{north}", custom_id='clickNorth', disabled=False)
                 button.callback = self.on_north
-                ne.append(button)
-                # ne.append(self.client.add_callback(
-                #     Button(style=ButtonStyle.gray, emoji='⬆', label=f"{north}", disabled=False),
-                #     self.__on_north,
-                # ))
+                view.add_item(button)
             else:
                 button = Button(style=ButtonStyle.gray, emoji='⬆', label=f"--", custom_id='clickNorth', disabled=False)
                 button.callback = self.on_north
-                ne.append(button)
-                # ne.append(self.client.add_callback(
-                #     Button(style=ButtonStyle.gray, emoji='⬆', label=f"--", disabled=False),
-                #     self.__on_north,
-                # ))
+                view.add_item(button)
+
             if location.east is not None:
                 east = constant.LOCATION_DISPLAY_NAMES[location.east]
                 button = Button(style=ButtonStyle.gray, emoji='➡', label=f"{east}", custom_id='clickEast', disabled=False)
                 button.callback = self.on_east
-                ne.append(button)
-                # ne.append(self.client.add_callback(
-                #     Button(style=ButtonStyle.gray, emoji='➡', label=f"{east}", disabled=False),
-                #     self.__on_east,
-                # ))
+                view.add_item(button)
             else:
                 button = Button(style=ButtonStyle.gray, emoji='➡', label=f"--", custom_id='clickEast', disabled=False)
                 button.callback = self.on_east
-                ne.append(button)
-                # ne.append(self.client.add_callback(
-                #     Button(style=ButtonStyle.gray, emoji='➡', label=f"--", disabled=False),
-                #     self.__on_east,
-                # ))
+                view.add_item(button)
+
             if location.south is not None:
                 south = constant.LOCATION_DISPLAY_NAMES[location.south]
                 button = Button(style=ButtonStyle.gray, emoji='⬇', label=f"{south}", custom_id='clickSouth', disabled=False)
                 button.callback = self.on_south
-                sw.append(button)
-                # sw.append(self.client.add_callback(
-                #     Button(style=ButtonStyle.gray, emoji='⬇', label=f"{south}", disabled=False),
-                #     self.__on_south,
-                # ))
+                view.add_item(button)
             else:
                 button = Button(style=ButtonStyle.gray, emoji='⬇', label=f"--", custom_id='clickSouth', disabled=False)
                 button.callback = self.on_south
-                sw.append(button)
-                # sw.append(self.client.add_callback(
-                #     Button(style=ButtonStyle.gray, emoji='⬇', label=f"--", disabled=False),
-                #     self.__on_south,
-                # ))
+                view.add_item(button)
+
             if location.west is not None:
                 west = constant.LOCATION_DISPLAY_NAMES[location.west]
                 button = Button(style=ButtonStyle.gray, emoji='⬅', label=f"{west}", custom_id='clickWest', disabled=False)
                 button.callback = self.on_west
-                sw.append(button)
-                # sw.append(self.client.add_callback(
-                #     Button(style=ButtonStyle.gray, emoji='⬅', label=f"{west}", disabled=False),
-                #     self.__on_west,
-                # ))
+                view.add_item(button)
             else:
                 button = Button(style=ButtonStyle.gray, emoji='⬅', label=f"--", custom_id='clickWest', disabled=False)
                 button.callback = self.on_west
-                sw.append(button)
-                # sw.append(self.client.add_callback(
-                #     Button(style=ButtonStyle.gray, emoji='⬅', label=f"--", disabled=False),
-                #     self.__on_west,
-                # ))
-
-        btns = []
-        if len(ne) > 0:
-            btns.append(ne)
-        if len(sw) > 0:
-            btns.append(sw)
-
-        view = View()
-        for button in ne:
-            view.add_item(button)
-        for button in sw:
-            view.add_item(button)
+                view.add_item(button)
 
         return file, view
     
@@ -233,11 +191,7 @@ class MapMixin(MixinMeta):
             embed=embed,
             view=btns
         )
-        # message = await interaction.edit_original_response(
-        #     content=f'You walked North to {north}.',
-        #     file=file,
-        #     view=btns
-        # )
+
         self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
         
 
@@ -284,11 +238,6 @@ class MapMixin(MixinMeta):
             view=btns
         )
 
-        # message = await interaction.edit_original_response(
-        #     content=f'You walked South to {south}.',
-        #     file=file,
-        #     view=btns
-        # )
         self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
 
 
@@ -334,11 +283,7 @@ class MapMixin(MixinMeta):
             embed=embed,
             view=btns
         )
-        # message = await interaction.edit_original_response(
-        #     content=f'You walked East to {east}.',
-        #     file=file,
-        #     view=btns
-        # )
+
         self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
 
 
@@ -384,11 +329,7 @@ class MapMixin(MixinMeta):
             embed=embed,
             view=btns
         )
-        # message = await interaction.edit_original_response(
-        #     content=f'You walked West to {west}.',
-        #     file=file,
-        #     view=btns
-        # )
+
         self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
 
 
