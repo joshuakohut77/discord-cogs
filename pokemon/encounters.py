@@ -100,6 +100,9 @@ class EncountersMixin(MixinMeta):
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, model, trainer.getActivePokemon(), None, '')
 
+    # @discord.ui.button(custom_id='clickNorth', style=ButtonStyle.gray)
+    async def on_action(self, interaction: discord.Interaction):
+        await self.__on_action(interaction)
 
     async def __on_action(self, interaction: Interaction):
         user = interaction.user
