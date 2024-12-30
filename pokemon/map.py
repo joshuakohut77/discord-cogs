@@ -11,13 +11,14 @@ if TYPE_CHECKING:
 from redbot.core import commands
 from redbot.core.commands.context import Context
 
+import constant
 
 from models.location import LocationModel
 from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
 
 from .abcd import MixinMeta
-import constant
+
 
 DiscordUser = Union[discord.Member,discord.User]
 
