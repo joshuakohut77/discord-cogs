@@ -238,6 +238,7 @@ class MapMixin(MixinMeta):
         embed.set_image(url = attachment.url)
         encounter = enc(MixinMeta)
         encViewList = encounter.get_encounters(interaction)
+        await encViewList
         if encViewList is not None:
             for meth in encViewList:
                 btns.add_item(meth)
