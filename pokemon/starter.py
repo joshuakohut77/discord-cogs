@@ -277,52 +277,38 @@ class StarterMixin(MixinMeta):
 
         inv = InventoryClass(str(user.id))
 
-
-        firstRowBtns = []
+        view = View()
         if inv.potion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.POTION)
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.grey, emoji=emote, label="Potion", custom_id='potion'),
-                self.__on_use_item
-            ))
+            button = Button(style=ButtonStyle.gray, emoji=emote, label="Potion", custom_id='potion', row=0)
+            button.callback = self.on_use_item
+            view.add_item(button)
         if inv.superpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.SUPERPOTION)
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.grey, emoji=emote, label="Super Potion", custom_id='superpotion'),
-                self.__on_use_item
-            ))
+            button = Button(style=ButtonStyle.gray, emoji=emote, label="Super Potion", custom_id='superpotion', row=0)
+            button.callback = self.on_use_item
+            view.add_item(button)
         if inv.hyperpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.HYPERPOTION)
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.grey, emoji=emote, label="Hyper Potion", custom_id='hyperpotion'),
-                self.__on_use_item
-            ))
+            button = Button(style=ButtonStyle.gray, emoji=emote, label="Hyper Potion", custom_id='hyperpotion', row=0)
+            button.callback = self.on_use_item
+            view.add_item(button)
         if inv.maxpotion > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.MAXPOTION)
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.grey, emoji=emote, label="Max Potion", custom_id='maxpotion'),
-                self.__on_use_item
-            ))
+            button = Button(style=ButtonStyle.gray, emoji=emote, label="Max Potion", custom_id='maxpotion', row=0)
+            button.callback = self.on_use_item
+            view.add_item(button)
         if inv.revive > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.REVIVE)
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.grey, emoji=emote, label="Revive", custom_id='revive'),
-                self.__on_use_item
-            ))
+            button = Button(style=ButtonStyle.gray, emoji=emote, label="Revive", custom_id='revive', row=0)
+            button.callback = self.on_use_item
+            view.add_item(button)
 
-        secondRowBtns = []
-        secondRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.grey, label="Back", custom_id='back'),
-            self.__on_items_back
-        ))
+        button = Button(style=ButtonStyle.gray, label="Back", custom_id='back', row=1)
+        button.callback = self.on_items_back
+        view.add_item(button)
 
-        btns = []
-        if len(firstRowBtns) > 0:
-            btns.append(firstRowBtns)
-        if len(secondRowBtns) > 0:
-            btns.append(secondRowBtns)
-
-        return embed, btns
+        return embed, view
 
 
     def __pokemonSingleCard(self, user: discord.User, state: PokemonState, card: DisplayCard, authorIsTrainer = True):
@@ -393,3 +379,27 @@ class StarterMixin(MixinMeta):
     @discord.ui.button(custom_id='setactive', label='Set Active', style=ButtonStyle.blurple)
     async def on_set_active_click(self, interaction: discord.Interaction):
         await self.__on_set_active_click(interaction)
+
+    @discord.ui.button(custom_id='back', label='Back', style=ButtonStyle.gray)
+    async def on_items_back(self, interaction: discord.Interaction):
+        await self.__on_items_back(interaction)   
+
+    @discord.ui.button(custom_id='potion', label='Potion', style=ButtonStyle.gray)
+    async def on_use_item(self, interaction: discord.Interaction):
+        await self.__on_use_item(interaction)
+    
+    @discord.ui.button(custom_id='superpotion', label='Super Potion', style=ButtonStyle.gray)
+    async def on_use_item(self, interaction: discord.Interaction):
+        await self.__on_use_item(interaction)
+
+    @discord.ui.button(custom_id='hyperpotion', label='Hyper Potion', style=ButtonStyle.gray)
+    async def on_use_item(self, interaction: discord.Interaction):
+        await self.__on_use_item(interaction)
+
+    @discord.ui.button(custom_id='maxpotion', label='Max Potion', style=ButtonStyle.gray)
+    async def on_use_item(self, interaction: discord.Interaction):
+        await self.__on_use_item(interaction)
+
+    @discord.ui.button(custom_id='revive', label='Revive', style=ButtonStyle.gray)
+    async def on_use_item(self, interaction: discord.Interaction):
+        await self.__on_use_item(interaction)
