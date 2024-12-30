@@ -217,7 +217,7 @@ class PcMixin(MixinMeta):
             return
         
         if trainer.statuscode == 69:
-            await interaction.response.send_message(f'{getTrainerGivenPokemonName(pokemon)} is now in your party.')
+            await interaction.response.send_message(f'{getTrainerGivenPokemonName(pokemon)} is now in your party.', ephemeral=True)
             return
         
         await interaction.response.defer()
