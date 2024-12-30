@@ -151,7 +151,7 @@ class MapMixin(MixinMeta):
 
     async def __on_north(self, interaction: Interaction):
         user = interaction.user
-        await interaction.response.defer()
+        # await interaction.response.defer()
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -197,7 +197,7 @@ class MapMixin(MixinMeta):
 
     async def __on_south(self, interaction: Interaction):
         user = interaction.user
-        await interaction.response.defer()
+        # await interaction.response.defer()
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -243,7 +243,7 @@ class MapMixin(MixinMeta):
 
     async def __on_east(self, interaction: Interaction):
         user = interaction.user
-        await interaction.response.defer()
+        # await interaction.response.defer()
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
@@ -289,7 +289,7 @@ class MapMixin(MixinMeta):
 
     async def __on_west(self, interaction: Interaction):
         user = interaction.user
-        await interaction.response.defer()
+        # await interaction.response.defer()
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
