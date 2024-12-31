@@ -116,6 +116,7 @@ class PyBoyCog(commands.Cog):
         self.running = False
         if self.pyboy:
             self.pyboy.save_state(self.state_file)
+            await ctx.send("Game Saved!.")
             self.pyboy.stop()
             self.pyboy = None
         # await self.channel.send("Game loop ended.")
