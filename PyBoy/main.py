@@ -88,7 +88,7 @@ class PyBoyCog(commands.Cog):
                     
                     if len(messageArr)>3:
                         old_message = messageArr.pop(0)
-                        old_message.delete()
+                        await old_message.delete()
 
                     await asyncio.sleep(1)
 
