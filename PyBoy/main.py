@@ -8,6 +8,10 @@ if TYPE_CHECKING:
 
 import discord
 from redbot.core import Config, commands
+from pyboy import PyBoy
+from io import BytesIO
+import asyncio
+import os
 
 # from .event import EventMixin
 
