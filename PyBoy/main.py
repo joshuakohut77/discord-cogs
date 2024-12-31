@@ -127,8 +127,11 @@ class PyBoyCog(commands.Cog):
             await ctx.send("No game is currently running.")
             return
         
-        self.pyboy.save_state(self.state_file)
-        await ctx.send("Game Saved!.")
+        try:
+            self.pyboy.save_state(self.state_file)
+            await ctx.send("Game Saved!")
+        except:
+            await ctx.send("An Error occurred while saving.")
         self.running = False
         self.pyboy.stop()
         self.pyboy = None
