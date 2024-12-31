@@ -37,6 +37,7 @@ class PyBoyCog(commands.Cog):
             return
 
         rom_path = f"/roms/{rom_name}.gb"  # Path to ROM
+        sav_path = f"/roms/{rom_name}.sav"  # Path to save file
         if not os.path.exists(rom_path):
             await ctx.send("The specified ROM does not exist.")
             return
@@ -45,7 +46,7 @@ class PyBoyCog(commands.Cog):
             self.pyboy = PyBoy(rom_path, window="null")  # Headless mode
             self.running = True
             self.channel = ctx.channel
-            self.state_file = f"{rom_name}.sav"
+            self.state_file = sav_path
             if not os.path.exists(self.state_file):
                 self.state_file = None
             self.pyboy.tick()
