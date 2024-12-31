@@ -61,8 +61,14 @@ class PyBoyCog(commands.Cog):
         await ctx.send("Starting...")
         message = None
         messageArr = []
-        if self.state_file is not None:
+        await ctx.send(self.state_file)
+        # Load the saved game state if exists
+        try:
             self.pyboy.load_state(self.state_file)
+            print("Game state loaded successfully.")
+        except Exception as e:
+            print(f"No saved state found: {e}")
+
         while self.running and self.pyboy.tick(25):
             try:
                 # Capture the frame
