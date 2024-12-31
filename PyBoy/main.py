@@ -81,13 +81,15 @@ class PyBoyCog(commands.Cog):
                 try:
                     # await self.channel.send(file=file)
                     # message = await ctx.send(file=file)
+
+                    
+                    message = await ctx.send(content="Game Stream", file=file)
+                    messageArr.append(message)
+                    
                     if len(messageArr)>3:
-                        
-                        await messageArr[0].delete()
-                    
-                    
-                    messageArr.append(await ctx.send(content="Game Stream", file=file))
-                    
+                        old_message = messageArr.pop(0)
+                        old_message.delete()
+
                     await asyncio.sleep(1)
 
                     # log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
