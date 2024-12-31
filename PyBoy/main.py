@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 import discord
 from redbot.core import Config, commands
-from pyboy import PyBoy, PressButton
+from pyboy import PyBoy
 from io import BytesIO
 import asyncio
 import os
@@ -134,18 +134,18 @@ class PyBoyCog(commands.Cog):
             return
 
         if message.content.upper() == "A":
-            self.pyboy.press_button(PressButton.A)
+            self.pyboy.press_button(self.pyboy.PRESS_BUTTON_A)  # Press the 'A' button
         elif message.content.upper() == "B":
-            self.pyboy.press_button(PressButton.B)
+            self.pyboy.press_button(self.pyboy.PRESS_BUTTON_B)
         elif message.content.upper() == "S":
-            self.pyboy.press_button(PressButton.START)
+            self.pyboy.press_button(self.pyboy.PRESS_BUTTON_START)
         elif message.content.upper() == "U":
-            self.pyboy.press_button(PressButton.UP)
+            self.pyboy.press_button(self.pyboy.PRESS_BUTTON_UP)
         elif message.content.upper() == "D":
-            self.pyboy.press_button(PressButton.DOWN)
+            self.pyboy.press_button(self.pyboy.PRESS_BUTTON_DOWN)
         elif message.content.upper() == "L":
-            self.pyboy.press_button(PressButton.LEFT)
+            self.pyboy.press_button(self.pyboy.PRESS_BUTTON_LEFT)
         elif message.content.upper() == "R":
-            self.pyboy.press_button(PressButton.RIGHT)
+            self.pyboy.press_button(self.pyboy.PRESS_BUTTON_RIGHT)
 
         await asyncio.sleep(0.1)  # Small delay to allow input processing
