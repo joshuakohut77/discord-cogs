@@ -81,16 +81,24 @@ class PyBoyCog(commands.Cog):
                 try:
                     # await self.channel.send(file=file)
                     # message = await ctx.send(file=file)
-
-                    log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
-                    temp_message = await log_channel.send(file = file)
-                    attachment: discord.Attachment = temp_message.attachments[0]
-                    embed = discord.Embed(title='Melkor Plays Pokemon', color=discord.Color.red())
-                    embed.set_image(url=attachment.url)
-                    if message is None:
-                        message = await ctx.send(embed=embed)
+                    if message:
+                        # If there's an existing message, edit it with the new file
+                        await message.delete()
                     else:
-                        message = await message.edit(embed=embed)
+                        # If no message exists, send the first frame
+                        message = await ctx.send(content="Game Stream", file=file)
+                    
+                    await asyncio.sleep(1)
+
+                    # log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
+                    # temp_message = await log_channel.send(file = file)
+                    # attachment: discord.Attachment = temp_message.attachments[0]
+                    # embed = discord.Embed(title='Melkor Plays Pokemon', color=discord.Color.red())
+                    # embed.set_image(url=attachment.url)
+                    # if message is None:
+                    #     message = await ctx.send(embed=embed)
+                    # else:
+                    #     message = await message.edit(embed=embed)
 
 
                 except Exception as e:
