@@ -37,7 +37,7 @@ class PyBoyCog(commands.Cog):
             return
 
         rom_path = f"/roms/{rom_name}.gb"  # Path to ROM
-        sav_path = f"{rom_name}.sav"  # Path to save file
+        sav_path = f"/roms/{rom_name}.sav"  # Path to save file
         if not os.path.exists(rom_path):
             await ctx.send("The specified ROM does not exist.")
             return
