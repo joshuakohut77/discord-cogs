@@ -83,25 +83,14 @@ class PyBoyCog(commands.Cog):
                     # message = await ctx.send(file=file)
 
                     
-                    message = await ctx.send(content="Game Stream", file=file)
+                    message = await ctx.send(content="Melkor Plays Pokemon", file=file)
                     messageArr.append(message)
                     
-                    if len(messageArr)>3:
+                    if len(messageArr)>2:
                         old_message = messageArr.pop(0)
                         await old_message.delete()
 
                     await asyncio.sleep(1)
-
-                    # log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
-                    # temp_message = await log_channel.send(file = file)
-                    # attachment: discord.Attachment = temp_message.attachments[0]
-                    # embed = discord.Embed(title='Melkor Plays Pokemon', color=discord.Color.red())
-                    # embed.set_image(url=attachment.url)
-                    # if message is None:
-                    #     message = await ctx.send(embed=embed)
-                    # else:
-                    #     message = await message.edit(embed=embed)
-
 
                 except Exception as e:
                     # await self.channel.send(f"Error sending file to Discord: {e}")
@@ -140,8 +129,8 @@ class PyBoyCog(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         """Handle user inputs."""
-        if not self.running or message.channel != self.channel:
-            return
+        # if not self.running or message.channel != self.channel:
+        #     return
 
         if message.content.upper() == "A":
             self.pyboy.button('a')  # Press the 'A' button
