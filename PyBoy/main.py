@@ -82,13 +82,17 @@ class PyBoyCog(commands.Cog):
                     # await self.channel.send(file=file)
                     # message = await ctx.send(file=file)
 
-                    if message is None:
-                        message = await ctx.send(file=file)
-                        image_url = message.attachments[0].url
-                    else:
-                        embed = discord.Embed(title='Melkor Plays Pokemon', color=discord.Color.red())
-                        embed.set_image(url=image_url)
-                        message = await message.edit(embed=embed)
+                    log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
+                    temp_message = await log_channel.send(file = file)
+                    attachment: discord.Attachment = temp_message.attachments[0]
+
+                    # if message is None:
+                    #     message = await ctx.send(file=file)
+                    #     image_url = message.attachments[0].url
+                    # else:
+                    embed = discord.Embed(title='Melkor Plays Pokemon', color=discord.Color.red())
+                    embed.set_image(url=attachment.url)
+                    message = await message.edit(embed=embed)
 
 
                 except Exception as e:
