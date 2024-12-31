@@ -61,7 +61,7 @@ class PyBoyCog(commands.Cog):
         await ctx.send("Starting...")
         message = None
         messageArr = []
-        await ctx.send(self.state_file)
+        await ctx.send(str(self.state_file))
         # Load the saved game state if exists
         try:
             self.pyboy.load_state(self.state_file)
