@@ -146,6 +146,8 @@ class PyBoyCog(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         """Handle user inputs."""
+        if not self.channel:
+            return
         # if not self.running or message.channel != self.channel:
         #     return
 
@@ -164,7 +166,7 @@ class PyBoyCog(commands.Cog):
         elif message.content.upper() == "R":
             self.pyboy.button('right')
 
-        if message.channel == self.channel:
+        if message.channel == self.channel and message.user != self.bot:
             await message.delete()
 
         await asyncio.sleep(0.1)  # Small delay to allow input processing
