@@ -44,7 +44,7 @@ class PyBoyCog(commands.Cog):
             self.pyboy = PyBoy(rom_path, window_type="headless")  # Headless mode
             self.running = True
             self.channel = ctx.channel
-            
+            self.pyboy.tick()
             await ctx.send(f"Starting {rom_name}. Use messages like `A`, `B`, `U`, `D`, `L`, `R`, or `S` for inputs. Type `stop_game` to end.")
             await self._game_loop(ctx)
         except Exception as e:
