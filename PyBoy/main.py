@@ -81,7 +81,7 @@ class PyBoyCog(commands.Cog):
                     # await self.channel.send(file=file)
                     # message = await ctx.send(file=file)
                     embed = discord.Embed(title='Melkor Plays Pokemon', color=discord.Color.red())
-                    embed.set_image(url=file)
+                    embed.set_image(url=img_bytes)
                     if message is None:
                         message = await ctx.send(embed=embed)
                     else:
