@@ -44,7 +44,7 @@ class PyBoyCog(commands.Cog):
             self.pyboy = PyBoy(rom_path, window_type="headless")  # Headless mode
             self.running = True
             self.channel = ctx.channel
-            await ctx.send(f"Channel: {self.pyboy.tick()}")
+            
             await ctx.send(f"Starting {rom_name}. Use messages like `A`, `B`, `U`, `D`, `L`, `R`, or `S` for inputs. Type `stop_game` to end.")
             await self._game_loop(ctx)
         except Exception as e:
@@ -54,13 +54,13 @@ class PyBoyCog(commands.Cog):
 
     async def _game_loop(self, ctx):
         """Main game loop."""
-        await ctx.send(f"Channel: {self.running}")
+        
         while self.running and not self.pyboy.tick():
             try:
                 # Capture and send the frame
                 screen_image = self.pyboy.screen_image()
                 if screen_image is None:
-                    print("Error: PyBoy failed to capture screen image.")
+                    ctx.send("Error: PyBoy failed to capture screen image.")
                 img_bytes = BytesIO()
                 screen_image.save(img_bytes, format="PNG")
                 img_bytes.seek(0)
