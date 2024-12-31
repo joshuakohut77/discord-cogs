@@ -66,8 +66,8 @@ class PyBoyCog(commands.Cog):
                 img_bytes.seek(0)
 
                 file = discord.File(img_bytes, filename="game_frame.png")
-                await self.channel.send(file=file)
-                await asyncio.sleep(0.2)  # Adjust frame rate
+                await ctx.send(file=file)
+                await asyncio.sleep(1.2)  # Adjust frame rate
             except Exception as e:
                 await self.channel.send(f"Error during game loop: {e}")
                 self.running = False
