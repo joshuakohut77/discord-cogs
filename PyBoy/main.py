@@ -165,6 +165,6 @@ class PyBoyCog(commands.Cog):
             self.pyboy.button('right')
 
         if message.channel == self.channel:
-            message.delete()
+            await message.delete()
 
         await asyncio.sleep(0.1)  # Small delay to allow input processing
