@@ -146,7 +146,7 @@ class PyBoyCog(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         """Handle user inputs."""
-        if not self.channel:
+        if not self.channel or message.channel.guild.id != '501142330351550498':
             return
         # if not self.running or message.channel != self.channel:
         #     return
