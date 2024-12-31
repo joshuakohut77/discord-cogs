@@ -57,7 +57,7 @@ class PyBoyCog(commands.Cog):
         await ctx.send("Starting...")
         message = None
         messageArr = []
-        while self.running and self.pyboy.tick(15):
+        while self.running and self.pyboy.tick(25):
             try:
                 # Capture the frame
                 screen_image = self.pyboy.screen.image
