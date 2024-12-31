@@ -47,8 +47,6 @@ class PyBoyCog(commands.Cog):
             self.running = True
             self.channel = ctx.channel
             self.state_file = sav_path
-            if not os.path.exists(self.state_file):
-                self.state_file = None
             self.pyboy.tick()
             await ctx.send(f"Starting {rom_name}. Use messages like `A`, `B`, `U`, `D`, `L`, `R`, or `S` for inputs. Type `stop_game` to end.")
             await self._game_loop(ctx)
