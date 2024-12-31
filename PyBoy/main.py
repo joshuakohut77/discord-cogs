@@ -130,8 +130,8 @@ class PyBoyCog(commands.Cog):
         try:
             self.pyboy.save_state(self.state_file)
             await ctx.send("Game Saved!")
-        except:
-            await ctx.send("An Error occurred while saving.")
+        except Exception as e:
+            await ctx.send(f"Save error: {e}")
         self.running = False
         self.pyboy.stop()
         self.pyboy = None
