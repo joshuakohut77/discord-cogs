@@ -53,29 +53,52 @@ class PyBoyCog(commands.Cog):
             self.pyboy = None
 
     async def _game_loop(self, ctx):
-        """Main game loop."""
-        await ctx.send("TEST START")
+        """Main game loop with debugging."""
+        await ctx.send("Starting...")
         while self.running and not self.pyboy.tick():
             try:
-                await ctx.send("!!!!!!!!!!!!!!.")
-                # Capture and send the frame
+                # Capture the frame
                 screen_image = self.pyboy.screen_image()
                 if screen_image is None:
-                    ctx.send("Error: PyBoy failed to capture screen image.")
+                    # await self.channel.send("Error: Unable to capture screen image.")
+                    await ctx.send("Error: Unable to capture screen image.")
+                    break
+
+                # Convert to BytesIO
                 img_bytes = BytesIO()
-                screen_image.save(img_bytes, format="PNG")
-                img_bytes.seek(0)
+                try:
+                    screen_image.save(img_bytes, format="PNG")
+                    img_bytes.seek(0)
+                except Exception as e:
+                    # await self.channel.send(f"Error saving image: {e}")
+                    await ctx.send(f"Error saving image: {e}")
+                    break
 
+                # Send image to Discord
                 file = discord.File(img_bytes, filename="game_frame.png")
-                await ctx.send(file=file)
-                await asyncio.sleep(1.2)  # Adjust frame rate
-            except Exception as e:
-                await self.channel.send(f"Error during game loop: {e}")
-                self.running = False
+                try:
+                    # await self.channel.send(file=file)
+                    await ctx.send(file=file)
+                except Exception as e:
+                    # await self.channel.send(f"Error sending file to Discord: {e}")
+                    await ctx.send(f"Error sending file to Discord: {e}")
+                    break
 
+                await asyncio.sleep(0.5)  # Adjust frame rate
+            except Exception as e:
+                # await self.channel.send(f"Unexpected error: {e}")
+                await ctx.send(f"Unexpected error: {e}")
+                self.running = False
+                break
+
+        # Cleanup
         self.running = False
-        self.pyboy.stop()
-        self.pyboy = None
+        if self.pyboy:
+            self.pyboy.stop()
+            self.pyboy = None
+        # await self.channel.send("Game loop ended.")
+        await ctx.send("Game loop ended.")
+
 
     @commands.command()
     async def stop_game(self, ctx):
