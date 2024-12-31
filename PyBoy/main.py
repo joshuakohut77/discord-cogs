@@ -136,16 +136,16 @@ class PyBoyCog(commands.Cog):
         if message.content.upper() == "A":
             self.pyboy.button('a')  # Press the 'A' button
         elif message.content.upper() == "B":
-            self.pyboy.press_button(self.pyboy.PRESS_BUTTON_B)
+            self.pyboy.button('b')
         elif message.content.upper() == "S":
-            self.pyboy.press_button(self.pyboy.PRESS_BUTTON_START)
+            self.pyboy.button('start')
         elif message.content.upper() == "U":
-            self.pyboy.press_button(self.pyboy.PRESS_BUTTON_UP)
+            self.pyboy.button('up')
         elif message.content.upper() == "D":
-            self.pyboy.press_button(self.pyboy.PRESS_BUTTON_DOWN)
+            self.pyboy.button('down')
         elif message.content.upper() == "L":
-            self.pyboy.press_button(self.pyboy.PRESS_BUTTON_LEFT)
+            self.pyboy.button('left')
         elif message.content.upper() == "R":
-            self.pyboy.press_button(self.pyboy.PRESS_BUTTON_RIGHT)
+            self.pyboy.button('right')
 
         await asyncio.sleep(0.1)  # Small delay to allow input processing
