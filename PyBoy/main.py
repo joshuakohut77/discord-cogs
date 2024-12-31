@@ -82,7 +82,8 @@ class PyBoyCog(commands.Cog):
                     if message is None:
                         message = await ctx.send(file=file)
                     else:
-                        message = await message.edit(file=file)
+                        message.delete()
+                        message = await ctx.send(file=file)
                 except Exception as e:
                     # await self.channel.send(f"Error sending file to Discord: {e}")
                     await ctx.send(f"Error sending file to Discord: {e}")
