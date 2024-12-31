@@ -148,9 +148,7 @@ class PyBoyCog(commands.Cog):
         """Handle user inputs."""
         if not self.channel:
             return
-        if message.channel.guild.id != '958537357634719804':
-            return
-        # if not self.running or message.channel != self.channel:
+        # if message.channel.guild.id != '958537357634719804':
         #     return
 
         if message.content.upper() == "A":
