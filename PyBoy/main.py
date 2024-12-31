@@ -79,11 +79,15 @@ class PyBoyCog(commands.Cog):
                 file = discord.File(img_bytes, filename="game_frame.png")
                 try:
                     # await self.channel.send(file=file)
+                    # message = await ctx.send(file=file)
+                    embed = discord.Embed(title='Melkor Plays Pokemon', color=discord.Color.red())
+                    embed.set_image(file)
                     if message is None:
-                        message = await ctx.send(file=file)
+                        message = await ctx.send(embed=embed)
                     else:
-                        message.delete()
-                        message = await ctx.send(file=file)
+                        message = await message.edit(embed=embed)
+
+
                 except Exception as e:
                     # await self.channel.send(f"Error sending file to Discord: {e}")
                     await ctx.send(f"Error sending file to Discord: {e}")
