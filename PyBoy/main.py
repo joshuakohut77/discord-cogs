@@ -63,12 +63,12 @@ class PyBoyCog(commands.Cog):
         await ctx.send(str(self.state_file))
         # Load the saved game state if exists
         try:
-            self.pyboy.load_state(self.state_file)
-            print("Game state loaded successfully.")
+            with open(self.state_file, "rb") as state_file:
+                self.pyboy.load_state(state_file)
         except Exception as e:
             print(f"No saved state found: {e}")
 
-        while self.running and self.pyboy.tick(25):
+        while self.running and self.pyboy.tick(50):
             try:
                 # Capture the frame
                 screen_image = self.pyboy.screen.image
@@ -131,7 +131,7 @@ class PyBoyCog(commands.Cog):
             # Save state in a file
             with open(self.state_file, "wb") as state_file:
                 self.pyboy.save_state(state_file)
-                print(f"Game state saved to {self.state_file}")
+                
 
             # self.pyboy.save_state(self.state_file)
             # await ctx.send("Game Saved!")
