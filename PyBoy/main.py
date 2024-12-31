@@ -27,6 +27,7 @@ class PyBoyCog(commands.Cog):
         self.pyboy = None  # Emulator instance
         self.running = False  # Game running state
         self.channel = None  # Channel where the game is active
+        self.state_file = None # File where the ROM state is saved
 
     @commands.command()
     async def start_game(self, ctx, rom_name: str):
@@ -44,6 +45,9 @@ class PyBoyCog(commands.Cog):
             self.pyboy = PyBoy(rom_path, window="null")  # Headless mode
             self.running = True
             self.channel = ctx.channel
+            self.state_file = f"{rom_name}.sav"
+            if not os.path.exists(self.state_file):
+                self.state_file = None
             self.pyboy.tick()
             await ctx.send(f"Starting {rom_name}. Use messages like `A`, `B`, `U`, `D`, `L`, `R`, or `S` for inputs. Type `stop_game` to end.")
             await self._game_loop(ctx)
@@ -57,6 +61,8 @@ class PyBoyCog(commands.Cog):
         await ctx.send("Starting...")
         message = None
         messageArr = []
+        if self.state_file is not None:
+            self.pyboy.load_state(self.state_file)
         while self.running and self.pyboy.tick(25):
             try:
                 # Capture the frame
@@ -79,9 +85,6 @@ class PyBoyCog(commands.Cog):
                 # Send image to Discord
                 file = discord.File(img_bytes, filename="game_frame.png")
                 try:
-                    # await self.channel.send(file=file)
-                    # message = await ctx.send(file=file)
-
                     
                     message = await ctx.send(content="Melkor Plays Pokemon", file=file)
                     messageArr.append(message)
@@ -107,6 +110,7 @@ class PyBoyCog(commands.Cog):
         # Cleanup
         self.running = False
         if self.pyboy:
+            self.pyboy.save_state(self.state_file)
             self.pyboy.stop()
             self.pyboy = None
         # await self.channel.send("Game loop ended.")
