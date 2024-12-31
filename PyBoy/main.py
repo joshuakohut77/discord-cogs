@@ -94,7 +94,7 @@ class PyBoyCog(commands.Cog):
                     message = await ctx.send(content="Melkor Plays Pokemon", file=file)
                     messageArr.append(message)
                     
-                    if len(messageArr)>2:
+                    if len(messageArr)>1:
                         old_message = messageArr.pop(0)
                         await old_message.delete()
 
