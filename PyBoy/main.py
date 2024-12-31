@@ -128,8 +128,13 @@ class PyBoyCog(commands.Cog):
             return
         
         try:
-            self.pyboy.save_state(self.state_file)
-            await ctx.send("Game Saved!")
+            # Save state in a file
+            with open(self.state_file, "wb") as state_file:
+                self.pyboy.save_state(state_file)
+                print(f"Game state saved to {self.state_file}")
+
+            # self.pyboy.save_state(self.state_file)
+            # await ctx.send("Game Saved!")
         except Exception as e:
             await ctx.send(f"Save error: {e}")
         self.running = False
