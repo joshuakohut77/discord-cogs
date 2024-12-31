@@ -54,9 +54,10 @@ class PyBoyCog(commands.Cog):
 
     async def _game_loop(self, ctx):
         """Main game loop."""
-        
+        await ctx.send("TEST START")
         while self.running and not self.pyboy.tick():
             try:
+                await ctx.send("!!!!!!!!!!!!!!.")
                 # Capture and send the frame
                 screen_image = self.pyboy.screen_image()
                 if screen_image is None:
