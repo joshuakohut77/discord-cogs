@@ -56,7 +56,7 @@ class PyBoyCog(commands.Cog):
         """Main game loop with debugging."""
         await ctx.send("Starting...")
         message = None
-        image_url = None
+        messageArr = []
         while self.running and self.pyboy.tick():
             try:
                 # Capture the frame
@@ -81,12 +81,12 @@ class PyBoyCog(commands.Cog):
                 try:
                     # await self.channel.send(file=file)
                     # message = await ctx.send(file=file)
-                    if message:
+                    if len(messageArr)>3:
                         
-                        await message.delete()
+                        await messageArr[0].delete()
                     
                     
-                    message = await ctx.send(content="Game Stream", file=file)
+                    messageArr.append(await ctx.send(content="Game Stream", file=file))
                     
                     await asyncio.sleep(1)
 
