@@ -148,8 +148,8 @@ class PyBoyCog(commands.Cog):
         """Handle user inputs."""
         if not self.channel:
             return
-        # if message.channel.guild.id != '958537357634719804':
-        #     return
+        if str(message.channel.guild.id) != '958537357634719804':
+            return
 
         if message.content.upper() == "A":
             self.pyboy.button('a')  # Press the 'A' button
