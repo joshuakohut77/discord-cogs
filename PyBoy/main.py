@@ -82,11 +82,11 @@ class PyBoyCog(commands.Cog):
                     # await self.channel.send(file=file)
                     # message = await ctx.send(file=file)
                     if message:
-                        # If there's an existing message, edit it with the new file
+                        
                         await message.delete()
-                    else:
-                        # If no message exists, send the first frame
-                        message = await ctx.send(content="Game Stream", file=file)
+                    
+                    
+                    message = await ctx.send(content="Game Stream", file=file)
                     
                     await asyncio.sleep(1)
 
