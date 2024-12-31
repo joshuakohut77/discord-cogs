@@ -35,7 +35,7 @@ class PyBoyCog(commands.Cog):
             await ctx.send("A game is already running. Please stop it first.")
             return
 
-        rom_path = f"./roms/{rom_name}.gb"  # Path to ROM
+        rom_path = f"/roms/{rom_name}.gb"  # Path to ROM
         if not os.path.exists(rom_path):
             await ctx.send("The specified ROM does not exist.")
             return
