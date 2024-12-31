@@ -46,14 +46,15 @@ class PyBoyCog(commands.Cog):
             self.channel = ctx.channel
             await ctx.send(f"Channel: {self.pyboy.tick()}")
             await ctx.send(f"Starting {rom_name}. Use messages like `A`, `B`, `U`, `D`, `L`, `R`, or `S` for inputs. Type `stop_game` to end.")
-            await self._game_loop()
+            await self._game_loop(ctx)
         except Exception as e:
             await ctx.send(f"An error occurred while starting the game: {e}")
             self.running = False
             self.pyboy = None
 
-    async def _game_loop(self):
+    async def _game_loop(self, ctx):
         """Main game loop."""
+        await ctx.send(f"Channel: {self.running}")
         while self.running and not self.pyboy.tick():
             try:
                 # Capture and send the frame
