@@ -56,6 +56,7 @@ class PyBoyCog(commands.Cog):
         """Main game loop with debugging."""
         await ctx.send("Starting...")
         message = None
+        image_url = None
         while self.running and self.pyboy.tick():
             try:
                 # Capture the frame
@@ -80,11 +81,13 @@ class PyBoyCog(commands.Cog):
                 try:
                     # await self.channel.send(file=file)
                     # message = await ctx.send(file=file)
-                    embed = discord.Embed(title='Melkor Plays Pokemon', color=discord.Color.red())
-                    embed.set_image(url=img_bytes)
+
                     if message is None:
-                        message = await ctx.send(embed=embed)
+                        message = await ctx.send(file=file)
+                        image_url = message.attachments[0].url
                     else:
+                        embed = discord.Embed(title='Melkor Plays Pokemon', color=discord.Color.red())
+                        embed.set_image(url=image_url)
                         message = await message.edit(embed=embed)
 
 
