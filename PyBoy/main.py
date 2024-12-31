@@ -41,7 +41,7 @@ class PyBoyCog(commands.Cog):
             return
 
         try:
-            self.pyboy = PyBoy(rom_path, window_type="headless")  # Headless mode
+            self.pyboy = PyBoy(rom_path, window="null")  # Headless mode
             self.running = True
             self.channel = ctx.channel
             self.pyboy.tick()
@@ -58,7 +58,7 @@ class PyBoyCog(commands.Cog):
         while self.running and self.pyboy.tick():
             try:
                 # Capture the frame
-                screen_image = self.pyboy.screen_image()
+                screen_image = self.pyboy.screen.image
                 if screen_image is None:
                     # await self.channel.send("Error: Unable to capture screen image.")
                     await ctx.send("Error: Unable to capture screen image.")
