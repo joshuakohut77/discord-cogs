@@ -166,7 +166,7 @@ class PyBoyCog(commands.Cog):
         elif message.content.upper() == "R":
             self.pyboy.button('right')
 
-        if message.channel == self.channel and message.user != self.bot:
+        if message.channel == self.channel and message.author.id != self.bot.user.id:
             await message.delete()
 
         await asyncio.sleep(0.1)  # Small delay to allow input processing
