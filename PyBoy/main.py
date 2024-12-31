@@ -57,6 +57,8 @@ class PyBoyCog(commands.Cog):
             try:
                 # Capture and send the frame
                 screen_image = self.pyboy.screen_image()
+                if screen_image is None:
+                    print("Error: PyBoy failed to capture screen image.")
                 img_bytes = BytesIO()
                 screen_image.save(img_bytes, format="PNG")
                 img_bytes.seek(0)
