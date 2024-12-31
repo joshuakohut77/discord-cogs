@@ -134,7 +134,7 @@ class PyBoyCog(commands.Cog):
             return
 
         if message.content.upper() == "A":
-            self.pyboy.press_button(self.pyboy.PRESS_BUTTON_A)  # Press the 'A' button
+            self.pyboy.button('a')  # Press the 'A' button
         elif message.content.upper() == "B":
             self.pyboy.press_button(self.pyboy.PRESS_BUTTON_B)
         elif message.content.upper() == "S":
