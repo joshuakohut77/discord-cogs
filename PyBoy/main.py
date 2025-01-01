@@ -199,7 +199,7 @@ class PyBoyCog(commands.Cog):
         
 
 
-        await asyncio.sleep(5/60)  # Small delay to allow input processing
+        await asyncio.sleep(10/60)  # Small delay to allow input processing
 
 
     async def __log_message_data(self, userId, cmdCount):
