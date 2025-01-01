@@ -172,7 +172,7 @@ class PyBoyCog(commands.Cog):
 
         userId = message.author.id
         if userId != self.bot.user.id:
-            await self.__log_message_data(self, userId, cmdCount)
+            await self.__log_message_data(userId, cmdCount)
         
         if message.channel == self.channel and message.author.id != self.bot.user.id:
             await message.delete()
