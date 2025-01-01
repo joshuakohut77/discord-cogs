@@ -108,7 +108,7 @@ class PyBoyCog(commands.Cog):
                             await old_message.delete()
 
                         # await asyncio.sleep(1)
-                        await asyncio.sleep(max(0, frame_interval - elapsed_time))
+                        
 
                     except Exception as e:
                         # await self.channel.send(f"Error sending file to Discord: {e}")
@@ -117,7 +117,8 @@ class PyBoyCog(commands.Cog):
                     
                     elapsed_time = time.time() - start_time
 
-                    await asyncio.sleep(0.5)  # Adjust frame rate
+                    # await asyncio.sleep(0.5)  # Adjust frame rate
+                    await asyncio.sleep(max(0, frame_interval - elapsed_time))
             except Exception as e:
                 # await self.channel.send(f"Unexpected error: {e}")
                 await ctx.send(f"Unexpected error: {e}")
