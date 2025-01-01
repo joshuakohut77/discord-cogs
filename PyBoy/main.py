@@ -70,7 +70,7 @@ class PyBoyCog(commands.Cog):
         except Exception as e:
             print(f"No saved state found: {e}")
 
-        while self.running and self.pyboy.tick(50):
+        while self.running and self.pyboy.tick(30):
             try:
                 # Capture the frame
                 screen_image = self.pyboy.screen.image
@@ -187,7 +187,7 @@ class PyBoyCog(commands.Cog):
         
 
 
-        await asyncio.sleep(0.1)  # Small delay to allow input processing
+        await asyncio.sleep(0.5)  # Small delay to allow input processing
 
 
     async def __log_message_data(self, userId, cmdCount):
