@@ -62,8 +62,8 @@ class PyBoyCog(commands.Cog):
         await ctx.send("Starting...")
         message = None
         messageArr = []
-        ticks_per_second = 60  # Accurate emulation speed
-        frame_interval = 1 / ticks_per_second  # Time between ticks
+        frames_per_update = 12  # Capture a frame every 12 emulator ticks (5 FPS updates)
+        ticks_per_second = 60  # Maintain accurate emulation speed
         await ctx.send(str(self.state_file))
         # Load the saved game state if exists
         try:
@@ -78,7 +78,7 @@ class PyBoyCog(commands.Cog):
             try:
                 self.pyboy.tick()
 
-                if self.pyboy.frame_count % 12 == 0:
+                if self.pyboy.frame_count % frames_per_update == 0:
                     # Capture the frame
                     screen_image = self.pyboy.screen.image
                     if screen_image is None:
@@ -119,7 +119,7 @@ class PyBoyCog(commands.Cog):
                     elapsed_time = time.time() - start_time
 
                     # await asyncio.sleep(0.5)  # Adjust frame rate
-                    await asyncio.sleep(max(0, frame_interval - elapsed_time))
+                    time.sleep(max(0, 1 / ticks_per_second - elapsed_time))
             except Exception as e:
                 # await self.channel.send(f"Unexpected error: {e}")
                 await ctx.send(f"Unexpected error: {e}")
