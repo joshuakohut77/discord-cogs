@@ -76,7 +76,7 @@ class PyBoyCog(commands.Cog):
         while self.running:
             start_time = time.time()
             try:
-                self.pyboy.tick()
+                self.pyboy.tick(5)
 
                 if self.pyboy.frame_count % 12 == 0:
                     # Capture the frame
@@ -85,6 +85,7 @@ class PyBoyCog(commands.Cog):
                         # await self.channel.send("Error: Unable to capture screen image.")
                         await ctx.send("Error: Unable to capture screen image.")
                         break
+                    
 
                     # Convert to BytesIO
                     img_bytes = BytesIO()
@@ -198,7 +199,7 @@ class PyBoyCog(commands.Cog):
         
 
 
-        await asyncio.sleep(0.5)  # Small delay to allow input processing
+        await asyncio.sleep(5/60)  # Small delay to allow input processing
 
 
     async def __log_message_data(self, userId, cmdCount):
