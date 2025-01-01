@@ -30,6 +30,7 @@ class PyBoyCog(commands.Cog):
         self.running = False  # Game running state
         self.channel = None  # Channel where the game is active
         self.state_file = None # File where the ROM state is saved
+        
 
     @commands.command()
     async def start_game(self, ctx, rom_name: str):
@@ -50,7 +51,7 @@ class PyBoyCog(commands.Cog):
             self.channel = ctx.channel
             self.state_file = sav_path
             self.pyboy.tick()
-            await ctx.send(f"Starting {rom_name}. Use messages like `A`, `B`, `U`, `D`, `L`, `R`, or `S` for inputs. Type `stop_game` to end.")
+            # await ctx.send(f"Starting {rom_name}. Use messages like `A`, `B`, `U`, `D`, `L`, `R`, or `S` for inputs. Type `stop_game` to end.")
             await self._game_loop(ctx)
         except Exception as e:
             await ctx.send(f"An error occurred while starting the game: {e}")
@@ -59,12 +60,11 @@ class PyBoyCog(commands.Cog):
 
     async def _game_loop(self, ctx):
         """Main game loop with debugging."""
-        await ctx.send("Starting...")
+        # await ctx.send("Starting...")
         message = None
         messageArr = []
         frames_per_update = 12  # Capture a frame every 12 emulator ticks (5 FPS updates)
         ticks_per_second = 60  # Maintain accurate emulation speed
-        await ctx.send(str(self.state_file))
         # Load the saved game state if exists
         try:
             with open(self.state_file, "rb") as state_file:
@@ -75,6 +75,8 @@ class PyBoyCog(commands.Cog):
         # while self.running and self.pyboy.tick(30):
         while self.running:
             start_time = time.time()
+            last_save = time.time() 
+            ten_minutes = 10*60
             try:
                 self.pyboy.tick()
 
@@ -117,6 +119,11 @@ class PyBoyCog(commands.Cog):
                         break
                     
                     elapsed_time = time.time() - start_time
+
+                    if (time.time() - last_save) >= ten_minutes:
+                         with open(self.state_file, "wb") as state_file:
+                            self.pyboy.save_state(state_file)
+                            last_save = time.time()
 
                     # await asyncio.sleep(0.5)  # Adjust frame rate
                     time.sleep(max(0, 1 / ticks_per_second - elapsed_time))
@@ -162,7 +169,7 @@ class PyBoyCog(commands.Cog):
         """Handle user inputs."""
         if not self.channel:
             return
-        if str(message.channel.guild.id) != '958537357634719804':
+        if str(message.channel.guild.id) != '501142330351550498':
             return
         if message.content[0] == '.' or message.author.id == self.bot.user.id:
             return
