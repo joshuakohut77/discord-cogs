@@ -12,6 +12,8 @@ from pyboy import PyBoy
 from io import BytesIO
 import asyncio
 import os
+from datetime import datetime
+from dbclass import db as dbconn
 
 # from .event import EventMixin
 
@@ -151,6 +153,8 @@ class PyBoyCog(commands.Cog):
         if str(message.channel.guild.id) != '958537357634719804':
             return
 
+        cmdCount = 0
+
         if message.content.upper() == "A":
             self.pyboy.button('a')  # Press the 'A' button
         elif message.content.upper() == "B":
@@ -166,7 +170,26 @@ class PyBoyCog(commands.Cog):
         elif message.content.upper() == "R":
             self.pyboy.button('right')
 
+        userId = message.author.id
+        if userId != self.bot.user.id:
+            await self.__log_message_data(self, userId, cmdCount)
+        
         if message.channel == self.channel and message.author.id != self.bot.user.id:
             await message.delete()
+        
+
 
         await asyncio.sleep(0.1)  # Small delay to allow input processing
+
+
+    async def __log_message_data(self, userId, cmdCount):
+        # log to the database 
+        try:
+            db = dbconn()
+            db.executeWithoutCommit('INSERT INTO "PyBoyStats" ("UserId", "CommandCount") VALUES({userId}, {cmdCount});')
+            db.commit()
+        except:
+            db.rollback()
+        finally:
+            del db
+        return
