@@ -13,7 +13,7 @@ from io import BytesIO
 import asyncio
 import os
 import time
-from dbclass import db as dbconn
+from .dbclass import db as dbconn
 
 # from .event import EventMixin
 
