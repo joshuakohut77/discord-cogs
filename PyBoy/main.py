@@ -153,25 +153,31 @@ class PyBoyCog(commands.Cog):
         if str(message.channel.guild.id) != '958537357634719804':
             return
 
-        cmdCount = 0
+        target_letters = {'A', 'B', 'S', 'U', 'D', 'L', 'R'}
+        extracted_letters = [char for char in message.content.upper() if char in target_letters]
 
-        if message.content.upper() == "A":
-            self.pyboy.button('a')  # Press the 'A' button
-        elif message.content.upper() == "B":
-            self.pyboy.button('b')
-        elif message.content.upper() == "S":
-            self.pyboy.button('start')
-        elif message.content.upper() == "U":
-            self.pyboy.button('up')
-        elif message.content.upper() == "D":
-            self.pyboy.button('down')
-        elif message.content.upper() == "L":
-            self.pyboy.button('left')
-        elif message.content.upper() == "R":
-            self.pyboy.button('right')
+        cmdCount = len(extracted_letters)
+
+        if cmdCount > 25:
+            return
+        for letter in extracted_letters:
+            if letter.upper() == "A":
+                self.pyboy.button('a')  # Press the 'A' button
+            elif letter.upper() == "B":
+                self.pyboy.button('b')
+            elif letter.upper() == "S":
+                self.pyboy.button('start')
+            elif letter.upper() == "U":
+                self.pyboy.button('up')
+            elif letter.upper() == "D":
+                self.pyboy.button('down')
+            elif letter.upper() == "L":
+                self.pyboy.button('left')
+            elif letter.upper() == "R":
+                self.pyboy.button('right')
 
         userId = message.author.id
-        if userId != self.bot.user.id:
+        if userId != self.bot.user.id and cmdCount > 0:
             await self.__log_message_data(userId, cmdCount)
         
         if message.channel == self.channel and message.author.id != self.bot.user.id:
