@@ -12,7 +12,7 @@ from pyboy import PyBoy
 from io import BytesIO
 import asyncio
 import os
-from datetime import datetime
+import time
 from dbclass import db as dbconn
 
 # from .event import EventMixin
@@ -62,6 +62,8 @@ class PyBoyCog(commands.Cog):
         await ctx.send("Starting...")
         message = None
         messageArr = []
+        ticks_per_second = 60  # Accurate emulation speed
+        frame_interval = 1 / ticks_per_second  # Time between ticks
         await ctx.send(str(self.state_file))
         # Load the saved game state if exists
         try:
@@ -70,44 +72,52 @@ class PyBoyCog(commands.Cog):
         except Exception as e:
             print(f"No saved state found: {e}")
 
-        while self.running and self.pyboy.tick(30):
+        # while self.running and self.pyboy.tick(30):
+        while self.running:
+            start_time = time.time()
             try:
-                # Capture the frame
-                screen_image = self.pyboy.screen.image
-                if screen_image is None:
-                    # await self.channel.send("Error: Unable to capture screen image.")
-                    await ctx.send("Error: Unable to capture screen image.")
-                    break
+                self.pyboy.tick()
 
-                # Convert to BytesIO
-                img_bytes = BytesIO()
-                try:
-                    screen_image.save(img_bytes, format="PNG")
-                    img_bytes.seek(0)
-                except Exception as e:
-                    # await self.channel.send(f"Error saving image: {e}")
-                    await ctx.send(f"Error saving image: {e}")
-                    break
+                if self.pyboy.frame_count % 12 == 0:
+                    # Capture the frame
+                    screen_image = self.pyboy.screen.image
+                    if screen_image is None:
+                        # await self.channel.send("Error: Unable to capture screen image.")
+                        await ctx.send("Error: Unable to capture screen image.")
+                        break
 
-                # Send image to Discord
-                file = discord.File(img_bytes, filename="game_frame.png")
-                try:
+                    # Convert to BytesIO
+                    img_bytes = BytesIO()
+                    try:
+                        screen_image.save(img_bytes, format="PNG")
+                        img_bytes.seek(0)
+                    except Exception as e:
+                        # await self.channel.send(f"Error saving image: {e}")
+                        await ctx.send(f"Error saving image: {e}")
+                        break
+
+                    # Send image to Discord
+                    file = discord.File(img_bytes, filename="game_frame.png")
+                    try:
+                        
+                        message = await ctx.send(content="Melkor Plays Pokemon", file=file)
+                        messageArr.append(message)
+                        
+                        if len(messageArr)>2:
+                            old_message = messageArr.pop(0)
+                            await old_message.delete()
+
+                        # await asyncio.sleep(1)
+                        await asyncio.sleep(max(0, frame_interval - elapsed_time))
+
+                    except Exception as e:
+                        # await self.channel.send(f"Error sending file to Discord: {e}")
+                        await ctx.send(f"Error sending file to Discord: {e}")
+                        break
                     
-                    message = await ctx.send(content="Melkor Plays Pokemon", file=file)
-                    messageArr.append(message)
-                    
-                    if len(messageArr)>2:
-                        old_message = messageArr.pop(0)
-                        await old_message.delete()
+                    elapsed_time = time.time() - start_time
 
-                    await asyncio.sleep(1)
-
-                except Exception as e:
-                    # await self.channel.send(f"Error sending file to Discord: {e}")
-                    await ctx.send(f"Error sending file to Discord: {e}")
-                    break
-
-                await asyncio.sleep(0.5)  # Adjust frame rate
+                    await asyncio.sleep(0.5)  # Adjust frame rate
             except Exception as e:
                 # await self.channel.send(f"Unexpected error: {e}")
                 await ctx.send(f"Unexpected error: {e}")
