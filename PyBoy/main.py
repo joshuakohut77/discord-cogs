@@ -76,7 +76,7 @@ class PyBoyCog(commands.Cog):
         while self.running:
             start_time = time.time()
             try:
-                self.pyboy.tick(5)
+                self.pyboy.tick()
 
                 if self.pyboy.frame_count % 12 == 0:
                     # Capture the frame
