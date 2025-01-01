@@ -186,7 +186,7 @@ class PyBoyCog(commands.Cog):
         # log to the database 
         try:
             db = dbconn()
-            db.executeWithoutCommit('INSERT INTO "PyBoyStats" ("UserId", "CommandCount") VALUES({userId}, {cmdCount});')
+            db.executeWithoutCommit('INSERT INTO "PyBoyStats" ("UserId", "CommandCount") VALUES(%(userId)s, %(cmdCount)s);', { 'userId': userId, 'cmdCount': cmdCount })
             db.commit()
         except:
             db.rollback()
