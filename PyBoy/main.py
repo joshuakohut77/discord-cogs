@@ -190,7 +190,7 @@ class PyBoyCog(commands.Cog):
             elif letter.upper() == "R":
                 self.pyboy.button('right')
 
-            await asyncio.sleep(5/60)  # Small delay to allow input processing
+            await asyncio.sleep(10/60)  # Small delay to allow input processing
         userId = message.author.id
         if userId != self.bot.user.id and cmdCount > 0:
             await self.__log_message_data(userId, cmdCount)
