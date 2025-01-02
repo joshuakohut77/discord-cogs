@@ -87,7 +87,7 @@ class PyBoyCog(commands.Cog):
                     if screen_image is None:
                         # await self.channel.send("Error: Unable to capture screen image.")
                         await ctx.send("Error: Unable to capture screen image.")
-                        break
+                        
                     
 
                     # Convert to BytesIO
@@ -98,7 +98,7 @@ class PyBoyCog(commands.Cog):
                     except Exception as e:
                         # await self.channel.send(f"Error saving image: {e}")
                         await ctx.send(f"Error saving image: {e}")
-                        break
+                        
 
                     # Send image to Discord
                     file = discord.File(img_bytes, filename="game_frame.png")
@@ -117,7 +117,7 @@ class PyBoyCog(commands.Cog):
                     except Exception as e:
                         # await self.channel.send(f"Error sending file to Discord: {e}")
                         await ctx.send(f"Error sending file to Discord: {e}")
-                        break
+                        
                     
                     elapsed_time = time.time() - start_time
 
@@ -210,7 +210,7 @@ class PyBoyCog(commands.Cog):
                 await message.delete()
         except:
             capturedErrorAndTryAgain = 1
-            
+
         
 
 
