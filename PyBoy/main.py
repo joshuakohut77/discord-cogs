@@ -71,11 +71,12 @@ class PyBoyCog(commands.Cog):
                 self.pyboy.load_state(state_file)
         except Exception as e:
             print(f"No saved state found: {e}")
-
+        
+        last_save = time.time() 
         # while self.running and self.pyboy.tick(30):
         while self.running:
             start_time = time.time()
-            last_save = time.time() 
+            
             ten_minutes = 10*60
             try:
                 self.pyboy.tick()
