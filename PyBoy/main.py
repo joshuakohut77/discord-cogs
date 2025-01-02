@@ -172,8 +172,10 @@ class PyBoyCog(commands.Cog):
             return
         if str(message.channel.guild.id) != '501142330351550498':
             return
-        if message.content[0] == '.' or message.author.id == self.bot.user.id:
-            return
+        
+        if len(str(message.content)) > 0:
+            if str(message.content)[0] == '.' or message.author.id == self.bot.user.id:
+                return
 
         target_letters = {'A', 'B', 'S', 'U', 'D', 'L', 'R'}
         extracted_letters = [char for char in message.content.upper() if char in target_letters]
