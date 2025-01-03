@@ -229,8 +229,10 @@ class PyBoyCog(commands.Cog):
             
             if message.channel == self.channel and message.author.id != self.bot.user.id:
                 await message.delete()
-        except:
-            capturedErrorAndTryAgain = 1
+        except Exception as e:
+            # await self.channel.send(f"Unexpected error: {e}")
+            ctx = await self.bot.get_context(message)
+            await ctx.send(f"Unexpected error: {e}")
 
     
     @commands.Cog.listener()
@@ -239,6 +241,7 @@ class PyBoyCog(commands.Cog):
             return
 
         emoji = reaction.emoji
+
 
         target_letters = {'A', 'B', 'S', 'U', 'D', 'L', 'R'}
         
