@@ -192,9 +192,14 @@ class PyBoyCog(commands.Cog):
         target_letters = {'A', 'B', 'S', 'U', 'D', 'L', 'R'}
         extracted_letters = [char for char in message.content.upper() if char in target_letters]
 
+        if message.attachments:
+            for attachment in message.attachments:
+                extracted_letters.append([char for char in attachment.filename.upper() if char in target_letters])
+
+
         cmdCount = len(extracted_letters)
 
-        if cmdCount > 25:
+        if cmdCount > 55:
             return
         try:
             for letter in extracted_letters:
@@ -223,10 +228,48 @@ class PyBoyCog(commands.Cog):
         except:
             capturedErrorAndTryAgain = 1
 
-        
+    
+    @commands.Cog.listener()
+    async def on_reaction_add(self, reaction, user):
+        if user == self.bot.user:
+            return
 
+        emoji = reaction.emoji
 
+        target_letters = {'A', 'B', 'S', 'U', 'D', 'L', 'R'}
         
+        extracted_letters = []
+        if isinstance(emoji, str):
+            # Unicode emoji
+            
+            extracted_letters.append([char for char in emoji.upper() if char in target_letters])
+        elif isinstance(emoji, discord.Emoji):
+            # Custom emoji
+            
+            extracted_letters.append([char for char in emoji.name.upper() if char in target_letters])
+
+        cmdCount = len(extracted_letters)
+
+        for letter in extracted_letters:
+            if letter.upper() == "A":
+                self.pyboy.button('a')  # Press the 'A' button
+            elif letter.upper() == "B":
+                self.pyboy.button('b')
+            elif letter.upper() == "S":
+                self.pyboy.button('start')
+            elif letter.upper() == "U":
+                self.pyboy.button('up')
+            elif letter.upper() == "D":
+                self.pyboy.button('down')
+            elif letter.upper() == "L":
+                self.pyboy.button('left')
+            elif letter.upper() == "R":
+                self.pyboy.button('right')
+
+            await asyncio.sleep(1)  # Small delay to allow input processing
+        userId = user.id
+        if userId != self.bot.user.id and cmdCount > 0:
+            await self.__log_message_data(userId, cmdCount)
 
 
     async def __log_message_data(self, userId, cmdCount):
