@@ -51,6 +51,7 @@ class PyBoyCog(commands.Cog):
             self.channel = ctx.channel
             self.state_file = sav_path
             self.pyboy.tick()
+            self.rom_name = rom_name
             # await ctx.send(f"Starting {rom_name}. Use messages like `A`, `B`, `U`, `D`, `L`, `R`, or `S` for inputs. Type `stop_game` to end.")
             await self._game_loop(ctx)
         except Exception as e:
@@ -129,7 +130,10 @@ class PyBoyCog(commands.Cog):
 
                             # stop and restart the PyBoy due to some unknown bug where the emulator stops responding to buttons
                             self.pyboy.stop()
-                            self.pyboy = None
+                            
+                            rom_path = f"/roms/{self.rom_name}.gb"  # Path to ROM
+                            self.pyboy = PyBoy(rom_path, window="null")  # Headless mode
+                            
 
                             # Load the saved game state if exists
                             try:
