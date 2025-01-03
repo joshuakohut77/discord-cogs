@@ -246,11 +246,11 @@ class PyBoyCog(commands.Cog):
         if isinstance(emoji, str):
             # Unicode emoji
             
-            extracted_letters.extend([char for char in emoji.upper() if char in target_letters])
+            extracted_letters.extend([char for char in str(emoji).upper() if char in target_letters])
         elif isinstance(emoji, discord.Emoji):
             # Custom emoji
             
-            extracted_letters.extend([char for char in emoji.name.upper() if char in target_letters])
+            extracted_letters.extend([char for char in str(emoji.name).upper() if char in target_letters])
 
         cmdCount = len(extracted_letters)
 
