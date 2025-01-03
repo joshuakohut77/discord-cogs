@@ -123,8 +123,20 @@ class PyBoyCog(commands.Cog):
 
                     if (time.time() - last_save) >= ten_minutes:
                          with open(self.state_file, "wb") as state_file:
+                            # save the current state:
                             self.pyboy.save_state(state_file)
                             last_save = time.time()
+
+                            # stop and restart the PyBoy due to some unknown bug where the emulator stops responding to buttons
+                            self.pyboy.stop()
+                            self.pyboy = None
+
+                            # Load the saved game state if exists
+                            try:
+                                with open(self.state_file, "rb") as state_file:
+                                    self.pyboy.load_state(state_file)
+                            except Exception as e:
+                                print(f"No saved state found: {e}")
 
                     # await asyncio.sleep(0.5)  # Adjust frame rate
                     time.sleep(max(0, 1 / ticks_per_second - elapsed_time))
