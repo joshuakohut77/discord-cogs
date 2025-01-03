@@ -198,7 +198,7 @@ class PyBoyCog(commands.Cog):
 
         if message.attachments:
             for attachment in message.attachments:
-                extracted_letters = extracted_letters + [char for char in attachment.filename.upper() if char in target_letters]
+                extracted_letters.extend([char for char in attachment.filename.upper() if char in target_letters])
 
 
         cmdCount = len(extracted_letters)
