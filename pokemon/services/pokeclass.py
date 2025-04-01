@@ -11,7 +11,7 @@ import random
 from dbclass import db as dbconn
 from leaderboardclass import leaderboard
 from loggerclass import logger as log
-from pokebase.interface import APIResource
+# from pokebase.interface import APIResource
 from statclass import PokeStats
 from ailmentsclass import ailment
 from time import time
@@ -404,6 +404,7 @@ class Pokemon:
             FROM pokemon
             LEFT JOIN ailments ON pokemon."id" = ailments."pokemonId"
             WHERE "id" = %(pokemonId)s'''
+    
         result = db.querySingle(queryString, {'pokemonId': int(pokemonId)})
 
         if result:

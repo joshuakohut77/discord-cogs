@@ -1,0 +1,10 @@
+{
+    "author" : ["BiCuriousGeorge#8804"],
+    "install_msg" : "",
+    "name" : "alphabetical",
+    "short" : "Checks if message is in alphabetical order",
+    "description" : "",
+    "tags" : ["fun"],
+    "requirements" : [],
+    "hidden" : false
+}

@@ -2,8 +2,9 @@ from __future__ import annotations
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 import discord
-from discord_components import (
-    DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
+# from discord_components import (
+#     DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
+from discord import ui, ButtonStyle, Button, Interaction
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -67,7 +68,7 @@ class TrainerCardMixin(MixinMeta):
             self.__on_stats_click,
         ))
  
-        message: discord.Message = await ctx.send(embed=embed, components=[btns])
+        message: discord.Message = await ctx.send(embed=embed, view=[btns])
         self.__cards[str(author.id)] = CardState(user.id, message.id, message.channel.id)
 
 
@@ -75,7 +76,7 @@ class TrainerCardMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkCardState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state: CardState = self.__cards[str(user.id)]
@@ -91,7 +92,7 @@ class TrainerCardMixin(MixinMeta):
         stats.load()
 
         embed = discord.Embed(title=f"Trainer")
-        embed.set_author(name=f"{trainerUser.display_name}", icon_url=str(trainerUser.avatar_url))
+        embed.set_author(name=f"{trainerUser.display_name}", icon_url=str(trainerUser.display_avatar.url))
         
         embed.add_field(name='Battles', value=f'{stats.total_battles}', inline=True)
         embed.add_field(name='Victories', value=f'{stats.total_victory}', inline=True)
@@ -107,7 +108,7 @@ class TrainerCardMixin(MixinMeta):
             self.__on_about_click,
         ))
  
-        message = await interaction.edit_origin(embed=embed, components=[btns])     
+        message = await interaction.edit_original_response(embed=embed, view=[btns])     
         self.__cards[str(user.id)] = CardState(state.discordId, message.id, message.channel.id)
 
 
@@ -115,7 +116,7 @@ class TrainerCardMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkCardState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state: CardState = self.__cards[str(user.id)]
@@ -140,13 +141,13 @@ class TrainerCardMixin(MixinMeta):
             self.__on_stats_click,
         ))
  
-        message = await interaction.edit_origin(embed=embed, components=[btns])     
+        message = await interaction.edit_original_response(embed=embed, view=[btns])     
         self.__cards[str(user.id)] = CardState(state.discordId, message.id, message.channel.id)
 
 
     def __createAboutEmbed(self, user: discord.User, trainer: TrainerClass, inventory: InventoryClass, keyitems: KeyItemsClass):
         embed = discord.Embed(title=f"Trainer")
-        embed.set_author(name=f"{user.display_name}", icon_url=str(user.avatar_url))
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
         
         embed.add_field(name='Money', value=f'¥{inventory.money}', inline=False)
 

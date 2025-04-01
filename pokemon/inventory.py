@@ -7,8 +7,9 @@ import constant
 
 import discord
 from discord import (Embed, Member)
-from discord_components import (
-    DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
+# from discord_components import (
+#     DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
+from discord import ui, ButtonStyle, Button, Interaction
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -79,7 +80,7 @@ class InventoryMixin(MixinMeta):
 
         message: discord.Message = await ctx.send(
             embed=embed,
-            components=[btns]
+            view=[btns]
         )
         self.__inventory[str(author.id)] = InventoryState(user.id, message.id, message.channel.id)
 
@@ -88,7 +89,7 @@ class InventoryMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkInventoryState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         # name = uuid.uuid4()
@@ -108,7 +109,7 @@ class InventoryMixin(MixinMeta):
         embed = discord.Embed(title=f"Bag")
         embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/trainer_bag.png")
         embed.set_author(name=f"{trainerUser.display_name}",
-                        icon_url=str(trainerUser.avatar_url))
+                        icon_url=str(trainerUser.display_avatar.url))
 
         keyitems = KeyItemClass(str(user.id))
 
@@ -135,7 +136,7 @@ class InventoryMixin(MixinMeta):
             self.__on_keyitems_click,
         ))
 
-        message = await interaction.edit_origin(embed=embed, components=[btns])
+        message = await interaction.edit_original_response(embed=embed, view=[btns])
 
         self.__inventory[str(user.id)] = InventoryState(state.discordId, message.id, message.channel.id)
 
@@ -144,7 +145,7 @@ class InventoryMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkInventoryState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
         
 
@@ -159,9 +160,9 @@ class InventoryMixin(MixinMeta):
         
         embed, btns = self.createItemsEmbed(trainerUser)
 
-        message = await interaction.edit_origin(
+        message = await interaction.edit_original_response(
             embed=embed,
-            components=[btns]
+            view=[btns]
         )
         self.__inventory[str(user.id)] = InventoryState(state.discordId, message.id, message.channel.id)
     
@@ -170,7 +171,7 @@ class InventoryMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkInventoryState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         inv = KeyItemClass(str(user.id))
@@ -191,7 +192,7 @@ class InventoryMixin(MixinMeta):
         embed = discord.Embed(title=f"Bag")
         embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/trainer_bag.png")
         embed.set_author(name=f"{trainerUser.display_name}",
-                        icon_url=str(trainerUser.avatar_url))
+                        icon_url=str(trainerUser.display_avatar.url))
 
         items = []
 
@@ -228,7 +229,7 @@ class InventoryMixin(MixinMeta):
             self.__on_hm_click,
         ))
 
-        message = await interaction.edit_origin(embed=embed, components=[btns])
+        message = await interaction.edit_original_response(embed=embed, view=[btns])
         self.__inventory[str(user.id)] = InventoryState(state.discordId, message.id, message.channel.id)
 
 
@@ -242,7 +243,7 @@ class InventoryMixin(MixinMeta):
         embed = discord.Embed(title=f"Bag")
         embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/trainer_bag.png")
         embed.set_author(name=f"{user.display_name}",
-                        icon_url=str(user.avatar_url))
+                        icon_url=str(user.display_avatar.url))
 
         items = []
 

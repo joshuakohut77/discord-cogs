@@ -5,6 +5,7 @@ from typing import final
 # import config
 import json
 import random
+
 from dbclass import db as dbconn
 from encounterclass import encounter
 from inventoryclass import inventory as inv
@@ -19,6 +20,8 @@ from uniqueencounters import uniqueEncounters as uEnc
 from datetime import datetime
 from time import time
 from models.location import LocationModel
+
+
 
 # Global Config Variables
 STARTER_LEVEL = 5 #config.starterLevel
@@ -776,6 +779,8 @@ class trainer:
 
     def __checkCreateTrainer(self):
         """ this will check if a trainerId exists and if not, insert them into the database """
+        db = dbconn()
+        
         try:
             db = dbconn()
             # do this check to see if trainer exists

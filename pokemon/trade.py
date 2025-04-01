@@ -3,7 +3,9 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 
 import discord
-from discord_components import (ButtonStyle, Button, Interaction, interaction)
+# from discord_components import (ButtonStyle, Button, Interaction, interaction)
+from discord import ui, ButtonStyle, Button, Interaction
+
 from redbot.core.commands.context import Context
 
 if TYPE_CHECKING:
@@ -75,7 +77,7 @@ class TradeMixin(MixinMeta):
         message: discord.Message = await ctx.send(
             content=f'{trainerUser.mention} {user.display_name} wants to trade with you.',
             embed=embed,
-            components=btns
+            view=btns
 
         )
 
@@ -92,7 +94,7 @@ class TradeMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkTradeState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.__tradeState[str(user.id)]
@@ -107,7 +109,7 @@ class TradeMixin(MixinMeta):
         
 
         if interaction.custom_id == 'accept':
-            await interaction.send('You accepted this trade.')
+            await interaction.response.send_message('You accepted this trade.')
 
             trainer = TrainerClass(str(user.id))
             pokemonList = trainer.getPokemon(False, True)
@@ -120,12 +122,12 @@ class TradeMixin(MixinMeta):
             message: discord.Message = await message.edit(
                 content=f'{user.display_name} is choosing a pokemon to offer {sender.display_name}.',
                 embed=embed,
-                components=btns
+                view=btns
             )
             state.messageId = message.id
             self.__tradeState[str(user.id)] = state
         else:
-            await interaction.send('You declined this trade.')
+            await interaction.response.send_message('You declined this trade.')
 
             trader = TrainerClass(state.senderDiscordId)
             pokemon = trader.getPokemonById(state.senderPokemonId)
@@ -135,7 +137,7 @@ class TradeMixin(MixinMeta):
             message: discord.Message = await message.edit(
                 content=f'{user.display_name} declined {sender.display_name}\'s trade.',
                 embed=embed,
-                components=btns
+                view=btns
             )
             del self.__tradeState[str(user.id)]
 
@@ -177,7 +179,7 @@ class TradeMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkTradeState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
         
         state = self.__tradeState[str(user.id)]
@@ -190,7 +192,7 @@ class TradeMixin(MixinMeta):
         enc = EncounterClass(senderPokemon, receiverPokemon)
         enc.trade()
 
-        await interaction.send('Trade complete')
+        await interaction.response.send_message('Trade complete')
 
         embed, btns = self.__pokemonPcTradeCard(user, state.pokemonList, state.idx)
 
@@ -203,7 +205,7 @@ class TradeMixin(MixinMeta):
         message: discord.Message = await message.edit(
             content=f'{user.display_name} traded his {receiverPokemon.pokemonName} for {senderDiscord.display_name}\'s {senderPokemon.pokemonName}!',
             embed=embed,
-            components=[]
+            view=[]
         )
         del self.__tradeState[str(user.id)]
 
@@ -212,14 +214,14 @@ class TradeMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkTradeState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.__tradeState[str(user.id)]
         state.idx = state.idx + 1
 
         embed, btns = self.__pokemonPcTradeCard(user, state.pokemonList, state.idx)
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_original_response(embed=embed, view=btns)
         state.messageId = message.id
         self.__tradeState[str(user.id)] = state
     
@@ -228,14 +230,14 @@ class TradeMixin(MixinMeta):
         user = interaction.user
 
         if not self.checkPokemonState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state = self.__tradeState[str(user.id)]
         state.idx = state.idx - 1
 
         embed, btns = self.__pokemonPcTradeCard(user, state.pokemonList, state.idx)
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_original_response(embed=embed, view=btns)
         state.messageId = message.id
         self.__tradeState[str(user.id)] = state
 

@@ -2,6 +2,9 @@
 
 import psycopg as pg
 
+
+
+
 # The python equivalent of dotnets IDisposable pattern is their Context Managers
 # https://book.pythontips.com/en/latest/context_managers.html
 #
@@ -21,23 +24,22 @@ class db:
     def __init__(self, params=None):
         self.faulted = False
         # TODO: need a better way to pass in db configs through all the objects.
-        self.conn = pg.connect(
-            host=(
-                params and params.host) or "REDACTED_HOST",
-            dbname=(params and params.dbname) or "pokemon_db",
-            user=(params and params.user) or "redbot",
-            # todo remove password from source control
-            password=(params and params.password) or "REDACTED_PASSWORD",
-            port=(params and params.port) or REDACTED_PORT)
-
         # self.conn = pg.connect(
         #     host=(
         #         params and params.host) or "REDACTED_HOST",
         #     dbname=(params and params.dbname) or "pokemon_db",
         #     user=(params and params.user) or "redbot",
         #     # todo remove password from source control
-        #     password=(params and params.password) or "REDACTED",
-        #     port=(params and params.port) or 5432)
+        #     password=(params and params.password) or "REDACTED_PASSWORD",
+        #     port=(params and params.port) or REDACTED_PORT)
+
+        self.conn = pg.connect(
+            host="REDACTED_HOST",
+            dbname="pokemon_db",
+            user="redbot",
+            # todo remove password from source control
+            password="REDACTED",
+            port=5432)
 
     def __del__(self):
         self.conn.close()
