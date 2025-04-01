@@ -1,0 +1,10 @@
+{
+    "author" : ["BiCuriousGeorge#8804"],
+    "install_msg" : "",
+    "name" : "PyBoy",
+    "short" : "Implements PyBoy with discord inputs",
+    "description" : "",
+    "tags" : ["fun"],
+    "requirements" : [],
+    "hidden" : false
+}

@@ -1,0 +1,10 @@
+{
+    "author" : ["BigBluePopsicle#9027"],
+    "install_msg" : "",
+    "name" : "whoa",
+    "short" : "Keanu Reeves saying Whoa",
+    "description" : "This cog integrates with the Keanu Reeves whoa database",
+    "tags" : ["fun"],
+    "requirements" : [],
+    "hidden" : false
+}

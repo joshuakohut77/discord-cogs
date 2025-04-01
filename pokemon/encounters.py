@@ -6,9 +6,9 @@ import asyncio
 import discord
 from discord import (Embed, Member)
 from discord import message
-from discord_components import (
-    DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction, component)
 
+from discord import ButtonStyle, Interaction
+from discord.ui import Button, View
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -76,62 +76,77 @@ class EncountersMixin(MixinMeta):
             await ctx.send('No encounters available at your location.')
             return
 
-        btns = []
+        view = View()
         for method in methods:
-            btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray,
-                       label=f"{method.name}", custom_id=f'{method.value}'),
-                self.__on_action
-            ))
-
-        # Check for the possibility of too many actions
-        if len(btns) > 3:
-            firstRow = btns[:3]
-            secondRow = btns[3:]
-            btns = [firstRow, secondRow]
-        else:
-            btns = [btns]
+            button = Button(style=ButtonStyle.gray, label=f"{method.name}", custom_id=f'{method.value}', disabled=False)
+            button.callback = self.on_action_encounter
+            view.add_item(button)
 
         message: discord.Message = await ctx.send(
             content="What do you want to do?",
-            components=btns
+            view=view
         )
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, model, trainer.getActivePokemon(), None, '')
 
+    async def get_encounters(self, interaction: Interaction):
+        user = interaction.user
+        trainer = TrainerClass(str(user.id))
+        model = trainer.getLocation()
+
+        location = LocationClass(str(user.id))
+        methods: list[ActionModel] = location.getMethods()
+
+        message = interaction.message
+        self.__useractions[str(user.id)] = ActionState(
+            str(user.id), message.channel.id, message.id, model, trainer.getActivePokemon(), None, '')
+
+        if len(methods) == 0:
+            return None
+
+        viewList = []
+        for method in methods:
+            button = Button(style=ButtonStyle.gray, label=f"{method.name}", custom_id=f'{method.value}', disabled=False)
+            button.callback = self.on_action_encounter
+            viewList.append(button)
+
+        return viewList
+
+    # @discord.ui.button(custom_id='clickNorth', style=ButtonStyle.gray)
+    async def on_action_encounter(self, interaction: discord.Interaction):
+        await self.__on_action(interaction)
 
     async def __on_action(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
+
+
+        await interaction.response.defer()
 
         location = LocationClass(str(user.id))
         methods: list[ActionModel] = location.getMethods()
 
-        btns = []
+        view = View()
+        # btns = []
         for method in methods:
             color = ButtonStyle.gray
-            if method == interaction.custom_id:
+            if method == interaction.data['custom_id']:
                 color = ButtonStyle.green
             
-            btns.append(
-                Button(style=color, label=f"{method.name}", custom_id=f'{method.value}', disabled=True)
-            )
+            # btns.append(
+            #     Button(style=color, label=f"{method.name}", custom_id=f'{method.value}', disabled=True)
+            # )
 
-        # Check for the possibility of too many actions
-        if len(btns) > 3:
-            firstRow = btns[:3]
-            secondRow = btns[3:]
-            btns = [firstRow, secondRow]
-        else:
-            btns = [btns]
-        
+            button = Button(style=color, label=f"{method.name}", custom_id=f'{method.value}', disabled=True)
+            # button.callback = self.on_action_encounter
+            view.add_item(button)
 
         action: ActionModel
         for method in methods:
-            if method.value == interaction.custom_id:
+            if method.value == interaction.data['custom_id']:
                 action = method
                 break
 
@@ -148,15 +163,15 @@ class EncountersMixin(MixinMeta):
         elif action.value == 'pokeflute':
             msg = 'You played the Poké Flute!'
 
-        await interaction.edit_origin(
+        await interaction.message.edit(
             content=msg,
-            components=btns
+            view=view
         )
 
         # await interaction.respond(type=5, content="Walking through tall grass...")
 
         state = self.__useractions[str(user.id)]
-        method = interaction.custom_id
+        method = interaction.data['custom_id']
 
         # if method == 'walk':
         trainer = TrainerClass(str(user.id))
@@ -168,7 +183,7 @@ class EncountersMixin(MixinMeta):
             return
         
         if ActionType.QUEST.value == action.type.value:
-            trainer.quest(interaction.custom_id)
+            trainer.quest(interaction.data['custom_id'])
             await interaction.channel.send(trainer.message)
             return
 
@@ -195,13 +210,13 @@ class EncountersMixin(MixinMeta):
                     await interaction.channel.send(trainer.message)
                 else:
                     await interaction.channel.send('No pokemon encountered.')
-                # await interaction.send('No pokemon encountered.')
+                # await interaction.response.send_message('No pokemon encountered.')
                 return
 
         # active = trainer.getActivePokemon()
         active = state.activePokemon
         
-        # await interaction.send(f'You encountered a wild {pokemon.pokemonName}!')
+        # await interaction.response.send_message(f'You encountered a wild {pokemon.pokemonName}!')
         desc = f'''
 {user.display_name} encountered a wild {wildPokemon.pokemonName.capitalize()}!
 {user.display_name} sent out {getTrainerGivenPokemonName(active)}.
@@ -212,48 +227,49 @@ class EncountersMixin(MixinMeta):
         btns = []
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.green, label="Fight", custom_id='fight'),
-            self.__on_fight_click,
+            self.__on_fight_click_encounter,
         ))
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.green, label="Run away", custom_id='runaway'),
-            self.__on_runaway_click,
+            self.__on_runaway_click_encounter,
         ))
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.green, label="Catch", custom_id='catch'),
-            self.__on_catch_click,
+            self.__on_catch_click_encounter,
         ))
 
         message = await interaction.channel.send(
             # content=f'{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!',
             embed=embed,
-            components=[btns]
+            view=[btns]
         )
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, state.location, active, wildPokemon, desc)
 
 
-    async def __on_fight_click(self, interaction: Interaction):
+    async def __on_fight_click_encounter(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
-
+        
+        await interaction.response.defer()
         await interaction.respond(type=5, content="Battling...")
 
         state = self.__useractions[str(user.id)]
         trainer = TrainerClass(str(user.id))
 
-        # await interaction.edit_origin(
+        # await interaction.edit_original_response(
         #     content=f'{trainer.message}',
         #     embed=embed,
-        #     components=[]
+        #     view=[]
         # )
 
         trainer.fight(state.wildPokemon)
 
         if trainer.statuscode == 96:
-            await interaction.send(trainer.message)
+            await interaction.response.send_message(trainer.message)
             return
 
         channel: discord.TextChannel = self.bot.get_channel(state.channelId)
@@ -267,29 +283,30 @@ class EncountersMixin(MixinMeta):
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, active, desc)
 
-        await interaction.send(trainer.message)
+        await interaction.response.send_message(trainer.message)
         # await interaction.channel.send(
         await message.edit(
             content=f'{trainer.message}',
             embed=embed,
-            components=[]
+            view=[]
         )
         del self.__useractions[str(user.id)]
 
 
-    async def __on_runaway_click(self, interaction: Interaction):
+    async def __on_runaway_click_encounter(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
+        await interaction.response.defer()
         state = self.__useractions[str(user.id)]
         trainer = TrainerClass(str(user.id))
         trainer.runAway(state.wildPokemon)
 
         if trainer.statuscode == 96:
-            interaction.send(trainer.message)
+            interaction.response.send_message(trainer.message)
             return
 
         desc = state.descLog
@@ -300,22 +317,22 @@ class EncountersMixin(MixinMeta):
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
 
 
-        await interaction.edit_origin(
+        await interaction.edit_original_response(
             # content=f'{user.display_name} ran away from a wild {state.pokemon.pokemonName.capitalize()}!',
             embed=embed,
-            components=[]
+            view=[]
         )
         del self.__useractions[str(user.id)]
         
 
-    async def __on_catch_click(self, interaction: Interaction):
+    async def __on_catch_click_encounter(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
-
+        await interaction.response.defer()
         state = self.__useractions[str(user.id)]
         trainer = TrainerClass(str(user.id))
         items = InventoryClass(trainer.discordId)
@@ -327,36 +344,36 @@ class EncountersMixin(MixinMeta):
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.POKEBALL)
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji=emote, label="Poke Ball", custom_id='pokeball'),
-                self.__on_throw_pokeball,
+                self.__on_throw_pokeball_encounter,
             ))
         if items.greatball > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.GREATBALL)
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji=emote, label="Great Ball", custom_id='greatball'),
-                self.__on_throw_pokeball,
+                self.__on_throw_pokeball_encounter,
             ))
         if items.ultraball > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.ULTRABALL)
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji=emote, label=f"Ultra Ball", custom_id='ultraball'),
-                self.__on_throw_pokeball,
+                self.__on_throw_pokeball_encounter,
             ))
         if items.masterball > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.MASTERBALL)
             btns.append(self.client.add_callback(
                 Button(style=ButtonStyle.gray, emoji=emote, label=f"Master Ball", custom_id='masterball'),
-                self.__on_throw_pokeball,
+                self.__on_throw_pokeball_encounter,
             ))
 
         if len(btns) == 0:
             # TODO: Achievement Unlocked: No Balls
-            await interaction.send('You have no balls!')
+            await interaction.response.send_message('You have no balls!', ephemeral=True)
             return
 
         secondRow = []
         secondRow.append(self.client.add_callback(
             Button(style=ButtonStyle.gray, label=f"Back", custom_id='back'),
-            self.__on_catch_back,
+            self.__on_catch_back_encounter,
         ))
 
         desc = state.descLog
@@ -365,27 +382,28 @@ class EncountersMixin(MixinMeta):
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
         
-        message = await interaction.edit_origin(
+        message = await interaction.edit_original_response(
             embed=embed,
-            components=[btns, secondRow]
+            view=[btns, secondRow]
         )
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, state.location, state.activePokemon, state.wildPokemon, desc)
 
 
-    async def __on_catch_back(self, interaction: Interaction):
+    async def __on_catch_back_encounter(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
+        await interaction.response.defer()
         # active = trainer.getActivePokemon()
         state = self.__useractions[str(user.id)]
         wildPokemon = state.wildPokemon
         active = state.activePokemon
         
-        # await interaction.send(f'You encountered a wild {pokemon.pokemonName}!')
+        # await interaction.response.send_message(f'You encountered a wild {pokemon.pokemonName}!')
         desc = f'''
 {user.display_name} encountered a wild {wildPokemon.pokemonName.capitalize()}!
 {user.display_name} sent out {getTrainerGivenPokemonName(active)}.
@@ -396,57 +414,58 @@ class EncountersMixin(MixinMeta):
         btns = []
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.green, label="Fight", custom_id='fight'),
-            self.__on_fight_click,
+            self.__on_fight_click_encounter,
         ))
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.green, label="Run away", custom_id='runaway'),
-            self.__on_runaway_click,
+            self.__on_runaway_click_encounter,
         ))
         btns.append(self.client.add_callback(
             Button(style=ButtonStyle.green, label="Catch", custom_id='catch'),
-            self.__on_catch_click,
+            self.__on_catch_click_encounter,
         ))
 
-        message = await interaction.edit_origin(
+        message = await interaction.edit_original_response(
             # content=f'{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!',
             embed=embed,
-            components=[btns]
+            view=[btns]
         )
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, state.location, active, wildPokemon, desc)
 
 
-    async def __on_throw_pokeball(self, interaction: Interaction):
+    async def __on_throw_pokeball_encounter(self, interaction: Interaction):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
+        await interaction.response.defer()
 
         state = self.__useractions[str(user.id)]
         trainer = TrainerClass(str(user.id))
         # items = InventoryClass(trainer.discordId)
 
-        if interaction.custom_id == 'pokeball':
+        if interaction.data['custom_id'] == 'pokeball':
             trainer.catch(state.wildPokemon, 'poke-ball')
-        elif interaction.custom_id == 'greatball':
+        elif interaction.data['custom_id'] == 'greatball':
             trainer.catch(state.wildPokemon, 'great-ball')
-        elif interaction.custom_id == 'ultraball':
+        elif interaction.data['custom_id'] == 'ultraball':
             trainer.catch(state.wildPokemon, 'ultra-ball')
-        elif interaction.custom_id == 'masterball':
+        elif interaction.data['custom_id'] == 'masterball':
             trainer.catch(state.wildPokemon, 'master-ball')
 
         desc = state.descLog
-        desc += f'''{user.display_name} threw a {interaction.custom_id}!
+        desc += f'''{user.display_name} threw a {interaction.data['custom_id']}!
 {trainer.message}
 '''
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
         
-        await interaction.edit_origin(
+        await interaction.edit_original_response(
             embed=embed,
-            components=[]
+            view=[]
         )
         del self.__useractions[str(user.id)]
 
@@ -464,7 +483,7 @@ class EncountersMixin(MixinMeta):
             color=color
         )
         embed.set_author(name=f"{user.display_name}",
-                        icon_url=str(user.avatar_url))
+                        icon_url=str(user.display_avatar.url))
         
         types = wildPokemon.type1
         # Pokemon are not guaranteed to have a second type.
@@ -524,7 +543,7 @@ HP    : {wildPokemon.currentHP} / {stats['hp']}
 #             color=color
 #         )
 #         embed.set_author(name=f"{user.display_name}",
-#                         icon_url=str(user.avatar_url))
+#                         icon_url=str(user.display_avatar.url))
         
 #         types = pokemon.type1
 #         # Pokemon are not guaranteed to have a second type.

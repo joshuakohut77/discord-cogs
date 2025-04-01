@@ -3,7 +3,8 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 
 import discord
-from discord_components import (DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
+# from discord_components import (DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
+from discord import ui, ButtonStyle, Button, Interaction
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -75,7 +76,7 @@ class PokedexMixin(MixinMeta):
 
         embed, btns = self.__createDexEmbed(user, state)
 
-        message = await ctx.send(embed=embed, components=btns)
+        message = await ctx.send(embed=embed, view=btns)
         state.messageId = message.id
         state.channelId = message.channel.id
         self.__pokedexState[str(user.id)] = state
@@ -86,7 +87,7 @@ class PokedexMixin(MixinMeta):
         embed = discord.Embed(title=f"Pokédex")
         embed.set_thumbnail(url=f"https://pokesprites.joshkohut.com/sprites/pokedex.png")
         embed.set_author(name=f"{user.display_name}",
-                        icon_url=str(user.avatar_url))
+                        icon_url=str(user.display_avatar.url))
 
 
         page = state.dexList[state.idx]
@@ -119,14 +120,14 @@ class PokedexMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkPokedexState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state: PokedexState = self.__pokedexState[str(user.id)]
         state.idx = state.idx + 1
 
         embed, btns = self.__createDexEmbed(user, state)
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_original_response(embed=embed, view=btns)
 
         state.messageId = message.id
         self.__pokedexState[str(user.id)] = state
@@ -136,14 +137,14 @@ class PokedexMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkPokedexState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state: PokedexState = self.__pokedexState[str(user.id)]
         state.idx = state.idx - 1
 
         embed, btns = self.__createDexEmbed(user, state)
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_original_response(embed=embed, view=btns)
 
         state.messageId = message.id
         self.__pokedexState[str(user.id)] = state

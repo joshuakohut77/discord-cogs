@@ -5,7 +5,9 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 import discord
 from discord import embeds
 from discord import emoji
-from discord_components import (ButtonStyle, Button, Interaction)
+# from discord_components import (ButtonStyle, Button, Interaction)
+from discord import ui, ButtonStyle, Button, Interaction
+
 from models.location import LocationModel
 
 if TYPE_CHECKING:
@@ -381,7 +383,7 @@ class PokemartMixin(MixinMeta):
 
         message = await ctx.send(
             embed=embed,
-            components=btns
+            view=btns
         )
         state.messageId = message.id
         state.channelId = message.channel.id
@@ -397,7 +399,7 @@ class PokemartMixin(MixinMeta):
         embed.set_thumbnail(
             url=f"https://pokesprites.joshkohut.com/sprites/locations/poke_mart.png")
         # embed.set_author(name=f"{user.display_name}",
-        #                  icon_url=str(user.avatar_url))
+        #                  icon_url=str(user.display_avatar.url))
 
         firstList = state.storeList[state.idx]
 
@@ -436,14 +438,14 @@ class PokemartMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkStoreState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state: StoreState = self.__store[str(user.id)]
         state.idx = state.idx + 1
 
         embed, btns = self.__storePageEmbed(user, state)
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_original_response(embed=embed, view=btns)
 
         state.messageId = message.id
         self.__store[str(user.id)] = state
@@ -452,14 +454,14 @@ class PokemartMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkStoreState(user, interaction.message):
-            await interaction.send('This is not for you.')
+            await interaction.response.send_message('This is not for you.')
             return
 
         state: StoreState = self.__store[str(user.id)]
         state.idx = state.idx - 1
 
         embed, btns = self.__storePageEmbed(user, state)
-        message = await interaction.edit_origin(embed=embed, components=btns)
+        message = await interaction.edit_original_response(embed=embed, view=btns)
 
         state.messageId = message.id
         self.__store[str(user.id)] = state

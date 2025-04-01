@@ -6,5 +6,5 @@ if TYPE_CHECKING:
 
 from .main import redditGifFix
 
-def setup(bot: Red):
-    bot.add_cog(redditGifFix(bot))
+async def setup(bot: Red):
+    await bot.add_cog(redditGifFix(bot))
