@@ -45,9 +45,6 @@ class WorkFlow:
             reply = self.chodecoin_ping_workflow.process_chodecoin_ping_request(message, author)
             return reply, None, None
 
-        elif process == RequestFor.leaderboard:
-            return "", self.leaderboard_workflow.process_leaderboard_request(), None
-
         elif process == RequestFor.targeted_coin_count:
             return self.targeted_coin_count_workflow.process_targeted_coin_count_request(message, author), None, None
 
@@ -78,8 +75,6 @@ class WorkFlow:
     def identify_request(self, message):
         if self.chodecoin_ping_workflow.is_chodecoin_ping(message):
             return RequestFor.chodecoin_ping
-        elif is_leaderboard_workflow(message):
-            return RequestFor.leaderboard
         elif is_targeted_coin_count_request(message):
             return RequestFor.targeted_coin_count
         elif is_dank_hof_workflow(message):
@@ -98,3 +93,6 @@ class WorkFlow:
             return RequestFor.import_coin_bank
         else:
             return None
+
+def process_leaderboard_request_command(self):
+    return "", self.leaderboard_workflow.process_leaderboard_request(), None
