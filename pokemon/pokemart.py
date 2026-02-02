@@ -6,7 +6,8 @@ import discord
 from discord import embeds
 from discord import emoji
 # from discord_components import (ButtonStyle, Button, Interaction)
-from discord import ui, ButtonStyle, Button, Interaction
+from discord import ButtonStyle, Interaction
+from discord.ui import Button, View
 
 from models.location import LocationModel
 
@@ -414,54 +415,50 @@ class PokemartMixin(MixinMeta):
             embed.add_field(name=f"{emoji}  {name} — {price}",
                             value=description, inline=False)
 
-        firstRowBtns = []
+        view = View()
 
         if state.idx > 0:
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray,
-                       label='Previous', custom_id='previous'),
-                self.__on_prev_click
-            ))
+            button = Button(style=ButtonStyle.gray, label='Previous', custom_id='previous')
+            button.callback = self.on_prev_click_pokemart
+            view.add_item(button)
+
         if state.idx < len(state.storeList) - 1:
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
-                self.__on_next_click
-            ))
+            button = Button(style=ButtonStyle.gray, label="Next", custom_id='next')
+            button.callback = self.on_next_click_pokemart
+            view.add_item(button)
 
-        btns = []
-        if len(firstRowBtns) > 0:
-            btns.append(firstRowBtns)
-
-        return embed, btns
+        return embed, view
 
     async def __on_next_click(self, interaction: Interaction):
         user = interaction.user
+        await interaction.response.defer()
 
         if not self.__checkStoreState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.followup.send('This is not for you.', ephemeral=True)
             return
 
         state: StoreState = self.__store[str(user.id)]
         state.idx = state.idx + 1
 
         embed, btns = self.__storePageEmbed(user, state)
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
 
         state.messageId = message.id
         self.__store[str(user.id)] = state
 
     async def __on_prev_click(self, interaction: Interaction):
         user = interaction.user
+        await interaction.response.defer()
 
         if not self.__checkStoreState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.followup.send('This is not for you.', ephemeral=True)
             return
 
         state: StoreState = self.__store[str(user.id)]
         state.idx = state.idx - 1
 
         embed, btns = self.__storePageEmbed(user, state)
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
 
         state.messageId = message.id
         self.__store[str(user.id)] = state
@@ -522,3 +519,11 @@ class PokemartMixin(MixinMeta):
 
         # Send to logging channel
         await self.sendToLoggingChannel(store.message)
+
+    @discord.ui.button(custom_id='next', label='Next', style=ButtonStyle.gray)
+    async def on_next_click_pokemart(self, interaction: discord.Interaction):
+        await self.__on_next_click(interaction)
+
+    @discord.ui.button(custom_id='previous', label='Previous', style=ButtonStyle.gray)
+    async def on_prev_click_pokemart(self, interaction: discord.Interaction):
+        await self.__on_prev_click(interaction)

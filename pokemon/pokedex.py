@@ -4,7 +4,8 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 import discord
 # from discord_components import (DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
-from discord import ui, ButtonStyle, Button, Interaction
+from discord import ButtonStyle, Interaction
+from discord.ui import Button, View
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -95,39 +96,34 @@ class PokedexMixin(MixinMeta):
         trainerDex = "\r\n".join(page) if len(page) > 0 else 'No Pokémon encountered yet.'
         embed.add_field(name='Pokémon', value=f"{trainerDex}", inline=False)
 
-        firstRowBtns = []
+        view = View()
 
         if state.idx > 0:
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray,
-                       label='Previous', custom_id='previous'),
-                self.__on_prev_click
-            ))
+            button = Button(style=ButtonStyle.gray, label='Previous', custom_id='previous')
+            button.callback = self.on_prev_click_pokedex
+            view.add_item(button)
+
         if state.idx < len(state.dexList) - 1:
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
-                self.__on_next_click
-            ))
+            button = Button(style=ButtonStyle.gray, label="Next", custom_id='next')
+            button.callback = self.on_next_click_pokedex
+            view.add_item(button)
 
-        btns = []
-        if len(firstRowBtns) > 0:
-            btns.append(firstRowBtns)
-
-        return embed, btns
+        return embed, view
 
 
     async def __on_next_click(self, interaction: Interaction):
         user = interaction.user
+        await interaction.response.defer()
 
         if not self.__checkPokedexState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.followup.send('This is not for you.', ephemeral=True)
             return
 
         state: PokedexState = self.__pokedexState[str(user.id)]
         state.idx = state.idx + 1
 
         embed, btns = self.__createDexEmbed(user, state)
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
 
         state.messageId = message.id
         self.__pokedexState[str(user.id)] = state
@@ -135,16 +131,17 @@ class PokedexMixin(MixinMeta):
 
     async def __on_prev_click(self, interaction: Interaction):
         user = interaction.user
+        await interaction.response.defer()
 
         if not self.__checkPokedexState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.followup.send('This is not for you.', ephemeral=True)
             return
 
         state: PokedexState = self.__pokedexState[str(user.id)]
         state.idx = state.idx - 1
 
         embed, btns = self.__createDexEmbed(user, state)
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
 
         state.messageId = message.id
         self.__pokedexState[str(user.id)] = state
@@ -159,3 +156,11 @@ class PokedexMixin(MixinMeta):
             if state.messageId != message.id:
                 return False
         return True
+
+    @discord.ui.button(custom_id='next', label='Next', style=ButtonStyle.gray)
+    async def on_next_click_pokedex(self, interaction: discord.Interaction):
+        await self.__on_next_click(interaction)
+
+    @discord.ui.button(custom_id='previous', label='Previous', style=ButtonStyle.gray)
+    async def on_prev_click_pokedex(self, interaction: discord.Interaction):
+        await self.__on_prev_click(interaction)

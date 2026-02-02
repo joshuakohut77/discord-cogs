@@ -4,7 +4,8 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 import discord
 # from discord_components import (ButtonStyle, Button, Interaction, interaction)
-from discord import ui, ButtonStyle, Button, Interaction
+from discord import ButtonStyle, Interaction
+from discord.ui import Button, View
 
 from redbot.core.commands.context import Context
 
@@ -160,22 +161,17 @@ class TradeMixin(MixinMeta):
 
         embed = createStatsEmbed(user, pokemon)
 
-        firstRowBtns = []
+        view = View()
 
-        firstRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Accept Trade", custom_id='accept'),
-            self.__on_trade_click
-        ))
-        firstRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.red, label="Decline Trade", custom_id='decline'),
-            self.__on_trade_click
-        ))
+        button = Button(style=ButtonStyle.green, label="Accept Trade", custom_id='accept')
+        button.callback = self.on_trade_click_trade
+        view.add_item(button)
 
-        btns = []
-        if len(firstRowBtns) > 0:
-            btns.append(firstRowBtns)
+        button = Button(style=ButtonStyle.red, label="Decline Trade", custom_id='decline')
+        button.callback = self.on_trade_click_trade
+        view.add_item(button)
 
-        return embed, btns
+        return embed, view
 
 
     async def __on_offer_trade(self, interaction: Interaction):
@@ -218,32 +214,34 @@ class TradeMixin(MixinMeta):
 
     async def __on_next_click(self, interaction: Interaction):
         user = interaction.user
+        await interaction.response.defer()
 
         if not self.__checkTradeState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.followup.send('This is not for you.', ephemeral=True)
             return
 
         state = self.__tradeState[str(user.id)]
         state.idx = state.idx + 1
 
         embed, btns = self.__pokemonPcTradeCard(user, state.pokemonList, state.idx)
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
         state.messageId = message.id
         self.__tradeState[str(user.id)] = state
     
 
     async def __on_prev_click(self, interaction: Interaction):
         user = interaction.user
+        await interaction.response.defer()
 
-        if not self.checkPokemonState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+        if not self.__checkTradeState(user, interaction.message):
+            await interaction.followup.send('This is not for you.', ephemeral=True)
             return
 
         state = self.__tradeState[str(user.id)]
         state.idx = state.idx - 1
 
         embed, btns = self.__pokemonPcTradeCard(user, state.pokemonList, state.idx)
-        message = await interaction.edit_original_response(embed=embed, view=btns)
+        message = await interaction.message.edit(embed=embed, view=btns)
         state.messageId = message.id
         self.__tradeState[str(user.id)] = state
 
@@ -259,29 +257,36 @@ class TradeMixin(MixinMeta):
 
         embed = createStatsEmbed(user, pokemon)
 
-        firstRowBtns = []
+        view = View()
+
         if idx > 0:
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, label='Previous', custom_id='previous'),
-                self.__on_prev_click
-            ))
+            button = Button(style=ButtonStyle.gray, label='Previous', custom_id='previous')
+            button.callback = self.on_prev_click_trade
+            view.add_item(button)
+
         if idx < len(pokemonList) - 1:
-            firstRowBtns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, label="Next", custom_id='next'),
-                self.__on_next_click
-            ))
+            button = Button(style=ButtonStyle.gray, label="Next", custom_id='next')
+            button.callback = self.on_next_click_trade
+            view.add_item(button)
 
-        secondRowBtns = []
-        firstRowBtns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Offer to trade", custom_id='offer'),
-            self.__on_offer_trade
-        ))
+        button = Button(style=ButtonStyle.green, label="Offer to trade", custom_id='offer')
+        button.callback = self.on_offer_trade_trade
+        view.add_item(button)
 
+        return embed, view
 
-        btns = []
-        if len(firstRowBtns) > 0:
-            btns.append(firstRowBtns)
-        if len(secondRowBtns) > 0:
-            btns.append(secondRowBtns)
+    @discord.ui.button(custom_id='accept', label='Accept Trade', style=ButtonStyle.green)
+    async def on_trade_click_trade(self, interaction: discord.Interaction):
+        await self.__on_trade_click(interaction)
 
-        return embed, btns
+    @discord.ui.button(custom_id='next', label='Next', style=ButtonStyle.gray)
+    async def on_next_click_trade(self, interaction: discord.Interaction):
+        await self.__on_next_click(interaction)
+
+    @discord.ui.button(custom_id='previous', label='Previous', style=ButtonStyle.gray)
+    async def on_prev_click_trade(self, interaction: discord.Interaction):
+        await self.__on_prev_click(interaction)
+
+    @discord.ui.button(custom_id='offer', label='Offer to trade', style=ButtonStyle.green)
+    async def on_offer_trade_trade(self, interaction: discord.Interaction):
+        await self.__on_offer_trade(interaction)
