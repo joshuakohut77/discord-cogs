@@ -92,6 +92,389 @@ class EncountersMixin(MixinMeta):
     __locations_data: dict = None
     __battle_states: dict[str, BattleState] = {}
 
+    def __create_post_battle_buttons(self, user_id: str) -> View:
+        """Create navigation buttons to show after battle ends"""
+        view = View()
+        
+        # Map button
+        map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
+        map_button.callback = self.on_nav_map_click
+        view.add_item(map_button)
+        
+        # Party button
+        party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
+        party_button.callback = self.on_nav_party_click
+        view.add_item(party_button)
+        
+        # Check if at Pokemon Center for heal button
+        trainer = TrainerClass(user_id)
+        location = trainer.getLocation()
+        if location.pokecenter:
+            heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal')
+            heal_button.callback = self.on_nav_heal_click
+            view.add_item(heal_button)
+        
+        return view
+
+
+# =============================================================================
+# SEPARATOR - NEXT METHOD
+# =============================================================================
+
+    async def on_nav_map_click(self, interaction: discord.Interaction):
+        """Handle Map button click - show map with encounters/quests/gym buttons"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+        
+        # Get available actions at this location
+        location_obj = LocationClass(str(user.id))
+        methods = location_obj.getMethods()
+        quest_buttons = self.__get_available_quests(str(user.id), location.name)
+        gym_button = self.__get_gym_button(str(user.id), location.locationId)
+        
+        # Create map embed
+        from .constant import LOCATION_DISPLAY_NAMES
+        location_name = LOCATION_DISPLAY_NAMES.get(location.name, location.name.replace('-', ' ').title())
+        
+        embed = discord.Embed(
+            title=f"🗺️ {location_name}",
+            description="Choose an action:",
+            color=discord.Color.blue()
+        )
+        
+        # Show available actions
+        actions_list = []
+        if len(methods) > 0:
+            actions_list.append("⚔️ Encounters available")
+        if len(quest_buttons) > 0:
+            actions_list.append("📜 Quests available")
+        if gym_button and not gym_button.disabled:
+            actions_list.append("🏛️ Gym available")
+        if location.pokecenter:
+            actions_list.append("🏥 Pokemon Center")
+        
+        if actions_list:
+            embed.add_field(
+                name="📍 Available Here",
+                value="\n".join(actions_list),
+                inline=False
+            )
+        
+        # Add location image if available
+        embed.set_image(url=f"https://pokesprites.joshkohut.com/sprites/locations/{location.name}.png")
+        
+        # Create navigation view
+        view = View()
+        
+        # ROW 0: Direction buttons
+        if location.north:
+            north_name = LOCATION_DISPLAY_NAMES.get(location.north, location.north)
+            north_btn = Button(style=ButtonStyle.gray, emoji='⬆️', label=f"{north_name[:20]}", custom_id='dir_north', row=0)
+            north_btn.callback = self.on_direction_click
+            view.add_item(north_btn)
+        
+        if location.east:
+            east_name = LOCATION_DISPLAY_NAMES.get(location.east, location.east)
+            east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label=f"{east_name[:20]}", custom_id='dir_east', row=0)
+            east_btn.callback = self.on_direction_click
+            view.add_item(east_btn)
+        
+        if location.south:
+            south_name = LOCATION_DISPLAY_NAMES.get(location.south, location.south)
+            south_btn = Button(style=ButtonStyle.gray, emoji='⬇️', label=f"{south_name[:20]}", custom_id='dir_south', row=0)
+            south_btn.callback = self.on_direction_click
+            view.add_item(south_btn)
+        
+        if location.west:
+            west_name = LOCATION_DISPLAY_NAMES.get(location.west, location.west)
+            west_btn = Button(style=ButtonStyle.gray, emoji='⬅️', label=f"{west_name[:20]}", custom_id='dir_west', row=0)
+            west_btn.callback = self.on_direction_click
+            view.add_item(west_btn)
+        
+        # ROW 1: Action buttons
+        if len(methods) > 0:
+            enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='nav_encounters', row=1)
+            enc_btn.callback = self.on_nav_encounters_click
+            view.add_item(enc_btn)
+        
+        if len(quest_buttons) > 0:
+            quest_btn = Button(style=ButtonStyle.blurple, label="📜 Quests", custom_id='nav_quests', row=1)
+            quest_btn.callback = self.on_nav_quests_click
+            view.add_item(quest_btn)
+        
+        if gym_button and not gym_button.disabled:
+            gym_btn = Button(style=ButtonStyle.red, label="🏛️ Gym", custom_id='nav_gym', row=1)
+            gym_btn.callback = self.on_gym_click
+            view.add_item(gym_btn)
+        
+        # ROW 2: Utility buttons
+        party_btn = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party', row=2)
+        party_btn.callback = self.on_nav_party_click
+        view.add_item(party_btn)
+        
+        message = await interaction.message.edit(embed=embed, view=view)
+        
+        # Update action state
+        self.__useractions[str(user.id)] = ActionState(
+            str(user.id), message.channel.id, message.id, location, trainer.getActivePokemon(), None, ''
+        )
+
+
+# =============================================================================
+# SEPARATOR - NEXT METHOD
+# =============================================================================
+
+    async def on_direction_click(self, interaction: discord.Interaction):
+        """Handle direction button clicks (North/South/East/West)"""
+        user = interaction.user
+        
+        if str(user.id) not in self.__useractions:
+            await interaction.response.send_message('Session expired. Use ,trainer map to start.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Get direction from custom_id (dir_north, dir_south, etc.)
+        direction = interaction.data['custom_id'].replace('dir_', '')
+        
+        trainer = TrainerClass(str(user.id))
+        current_location = trainer.getLocation()
+        
+        # Get target location ID based on direction
+        target_location_name = None
+        if direction == 'north':
+            target_location_name = current_location.north
+        elif direction == 'south':
+            target_location_name = current_location.south
+        elif direction == 'east':
+            target_location_name = current_location.east
+        elif direction == 'west':
+            target_location_name = current_location.west
+        
+        if not target_location_name:
+            await interaction.followup.send('Cannot go that direction.', ephemeral=True)
+            return
+        
+        # Check for location blockers using quests.json
+        from services.questclass import quests as QuestsClass
+        quest_obj = QuestsClass(str(user.id))
+        
+        quests_data = self.__load_quests_data()
+        location_blocked = False
+        blocker_message = ""
+        
+        for quest_id, quest_data in quests_data.items():
+            if quest_data.get('name') == target_location_name:
+                blockers = quest_data.get('blockers', [])
+                if blockers and quest_obj.locationBlocked(blockers):
+                    location_blocked = True
+                    missing_items = [item.replace('_', ' ').title() for item in blockers]
+                    blocker_message = f'You cannot travel there yet. You need: {", ".join(missing_items)}'
+                    break
+        
+        if location_blocked:
+            await interaction.followup.send(blocker_message, ephemeral=True)
+            return
+        
+        # Get the target location data
+        location_obj = LocationClass()
+        new_location = location_obj.getLocationByName(target_location_name)
+        
+        # Move to new location
+        trainer.setLocation(new_location.locationId)
+        
+        # Show new location's map by calling on_nav_map_click
+        await self.on_nav_map_click(interaction)
+
+
+# =============================================================================
+# SEPARATOR - NEXT METHOD
+# =============================================================================
+
+    async def on_nav_party_click(self, interaction: discord.Interaction):
+        """Handle Party button click - show simplified party view"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        trainer = TrainerClass(str(user.id))
+        pokeList = trainer.getPokemon(party=True)
+        active = trainer.getActivePokemon()
+
+        if len(pokeList) == 0:
+            await interaction.followup.send('You do not have any Pokemon.', ephemeral=True)
+            return
+
+        # Create party display
+        embed = discord.Embed(
+            title="👥 Your Party",
+            description="Your Pokemon team",
+            color=discord.Color.blue()
+        )
+        
+        # Show all party Pokemon
+        for i, poke in enumerate(pokeList, 1):
+            poke.load(pokemonId=poke.trainerId)
+            stats = poke.getPokeStats()
+            is_active = "⭐" if poke.trainerId == active.trainerId else ""
+            status = "💚" if poke.currentHP > 0 else "💀"
+            
+            poke_name = poke.nickName if poke.nickName else poke.pokemonName.capitalize()
+            
+            embed.add_field(
+                name=f"{i}. {poke_name} {is_active}",
+                value=f"{status} Lv.{poke.currentLevel} | HP: {poke.currentHP}/{stats['hp']}",
+                inline=False
+            )
+        
+        # Add navigation buttons
+        view = View()
+        
+        map_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='nav_map')
+        map_btn.callback = self.on_nav_map_click
+        view.add_item(map_btn)
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+
+# =============================================================================
+# SEPARATOR - NEXT METHOD
+# =============================================================================
+
+    async def on_nav_encounters_click(self, interaction: discord.Interaction):
+        """Handle Encounters button - show encounter options with back button"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        trainer = TrainerClass(str(user.id))
+        location_model = trainer.getLocation()
+        
+        location = LocationClass(str(user.id))
+        methods = location.getMethods()
+        
+        if len(methods) == 0:
+            await interaction.followup.send('No encounters available here.', ephemeral=True)
+            return
+        
+        # Create encounter buttons
+        view = View()
+        for method in methods:
+            button = Button(style=ButtonStyle.gray, label=f"{method.name}", custom_id=f'{method.value}')
+            button.callback = self.on_action_encounter
+            view.add_item(button)
+        
+        # Back to map button
+        back_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='nav_map', row=1)
+        back_btn.callback = self.on_nav_map_click
+        view.add_item(back_btn)
+        
+        from .constant import LOCATION_DISPLAY_NAMES
+        location_name = LOCATION_DISPLAY_NAMES.get(location_model.name, location_model.name.replace('-', ' ').title())
+        
+        message = await interaction.message.edit(
+            content=f"**{location_name}**\nWhat do you want to do?",
+            view=view
+        )
+        
+        self.__useractions[str(user.id)] = ActionState(
+            str(user.id), message.channel.id, message.id, location_model, trainer.getActivePokemon(), None, ''
+        )
+
+
+# =============================================================================
+# SEPARATOR - NEXT METHOD
+# =============================================================================
+
+    async def on_nav_quests_click(self, interaction: discord.Interaction):
+        """Handle Quests button - show quest options with back button"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+        
+        quest_buttons = self.__get_available_quests(str(user.id), location.name)
+        
+        if len(quest_buttons) == 0:
+            await interaction.followup.send('No quests available here.', ephemeral=True)
+            return
+        
+        # Create view with quest buttons
+        view = View()
+        for quest_btn in quest_buttons:
+            view.add_item(quest_btn)
+        
+        # Back to map button
+        back_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='nav_map', row=1)
+        back_btn.callback = self.on_nav_map_click
+        view.add_item(back_btn)
+        
+        from .constant import LOCATION_DISPLAY_NAMES
+        location_name = LOCATION_DISPLAY_NAMES.get(location.name, location.name.replace('-', ' ').title())
+        
+        await interaction.message.edit(
+            content=f"**{location_name}**\nAvailable Quests:",
+            view=view
+        )
+
+
+# =============================================================================
+# SEPARATOR - NEXT METHOD
+# =============================================================================
+
+    async def on_nav_heal_click(self, interaction: discord.Interaction):
+        """Handle Heal button - heal all Pokemon at Pokemon Center"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+        
+        if not location.pokecenter:
+            await interaction.followup.send('No Pokemon Center at this location.', ephemeral=True)
+            return
+        
+        # Heal all party Pokemon
+        party = trainer.getPokemon(party=True)
+        healed_count = 0
+        
+        for poke in party:
+            poke.load(pokemonId=poke.trainerId)
+            stats = poke.getPokeStats()
+            if poke.currentHP < stats['hp']:
+                poke.currentHP = stats['hp']
+                poke.save()
+                healed_count += 1
+        
+        embed = discord.Embed(
+            title="🏥 Pokemon Center",
+            description=f"✨ Healed {healed_count} Pokemon!\n\nYour team is ready for battle!",
+            color=discord.Color.green()
+        )
+        
+        # Show party status after healing
+        party_status = []
+        for i, poke in enumerate(party, 1):
+            poke.load(pokemonId=poke.trainerId)
+            stats = poke.getPokeStats()
+            poke_name = poke.nickName if poke.nickName else poke.pokemonName.capitalize()
+            party_status.append(f"{i}. {poke_name} - Lv.{poke.currentLevel} - HP: {poke.currentHP}/{stats['hp']} 💚")
+        
+        embed.add_field(
+            name="Your Party",
+            value="\n".join(party_status[:6]),  # Max 6 Pokemon
+            inline=False
+        )
+        
+        # Add back to map button
+        view = self.__create_post_battle_buttons(str(user.id))
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+
+
     # Helper method to get next available Pokemon from party
     def __get_next_party_pokemon(self, party_list: list, current_index: int):
         """Get next Pokemon with HP > 0 from party"""
@@ -423,7 +806,7 @@ class EncountersMixin(MixinMeta):
         await interaction.message.edit(embed=embed, view=view)
 
     async def __handle_gym_battle_victory(self, interaction: discord.Interaction, battle_state: BattleState):
-        """Handle when player wins a gym battle - shows all Pokemon used"""
+        """Handle when player wins a gym battle - shows all Pokemon used with navigation"""
         trainer_model = battle_state.trainer_model
         battle_manager = battle_state.battle_manager
         
@@ -534,9 +917,12 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
         
-        await interaction.message.edit(embed=embed, view=View())
+        # ADD NAVIGATION BUTTONS - This is the key change!
+        view = self.__create_post_battle_buttons(str(user.id))
         
-        # Check for more trainers
+        await interaction.message.edit(embed=embed, view=view)
+        
+        # Check for more trainers and send as followup (not in embed)
         remaining = battle_manager.getRemainingTrainerCount()
         if remaining > 0:
             next_up = battle_manager.getNextTrainer()
@@ -554,7 +940,7 @@ class EncountersMixin(MixinMeta):
                 )
 
     async def __handle_gym_battle_defeat(self, interaction: discord.Interaction, battle_state: BattleState):
-        """Handle when player loses a gym battle - shows team info"""
+        """Handle when player loses a gym battle - shows team info with navigation"""
         
         player_max_hp = battle_state.player_pokemon.getPokeStats()['hp']
         enemy_max_hp = battle_state.enemy_pokemon.getPokeStats()['hp']
@@ -604,8 +990,10 @@ class EncountersMixin(MixinMeta):
                 inline=False
             )
         
-        await interaction.message.edit(embed=embed, view=View())
-
+        # ADD NAVIGATION BUTTONS - This is the key change!
+        view = self.__create_post_battle_buttons(str(user.id))
+        
+        await interaction.message.edit(embed=embed, view=view)
 
     def __load_quests_data(self):
         """Load quests.json file"""
@@ -963,6 +1351,8 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
 
+
+
             if remaining > 0:
                 next_up = battle.getNextTrainer()
                 embed.add_field(
@@ -978,7 +1368,8 @@ class EncountersMixin(MixinMeta):
                     inline=True
                 )
 
-            await interaction.followup.send(embed=embed, ephemeral=False)
+            view_nav = self.__create_post_battle_buttons(str(user.id))
+            await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
 
         else:
             # DEFEAT
@@ -1009,7 +1400,8 @@ class EncountersMixin(MixinMeta):
                 inline=False
             )
 
-            await interaction.followup.send(embed=embed, ephemeral=False)
+            view_nav = self.__create_post_battle_buttons(str(user.id))
+            await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
 
 
     # New handler for MANUAL trainer battles
@@ -1218,7 +1610,9 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
 
-            await interaction.followup.send(embed=embed, ephemeral=False)
+            view_nav = self.__create_post_battle_buttons(str(user.id))
+            await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
+            
             
         else:
             # DEFEAT
@@ -1249,7 +1643,8 @@ class EncountersMixin(MixinMeta):
                 inline=False
             )
 
-            await interaction.followup.send(embed=embed, ephemeral=False)
+            view_nav = self.__create_post_battle_buttons(str(user.id))
+            await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
 
     async def on_gym_click(self, interaction: discord.Interaction):
             """Handle gym button clicks - now shows battle type choice"""

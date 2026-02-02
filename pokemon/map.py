@@ -103,7 +103,8 @@ class MapMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         location = trainer.getLocation()
 
-        file, btns = self.__createMapCard(location, authorIsTrainer)
+        # UPDATED: Pass user_id to enable action buttons
+        file, btns = self.__createMapCard(location, authorIsTrainer, str(user.id) if authorIsTrainer else None)
 
         temp_message = await self.sendToLoggingChannel(f'{user.display_name} is at {location.name}', file)
         attachment: discord.Attachment = temp_message.attachments[0]
@@ -120,61 +121,79 @@ class MapMixin(MixinMeta):
             embed=embed,
             view=btns
         )
-        # message = await ctx.send(
-        #     content=location.name,
-        #     file=file,
-        #     view=btns
-        # )
         self.__locations[str(user.id)] = LocationState(str(user.id), location, message.id)
     
 
-    def __createMapCard(self, location: LocationModel, authorIsTrainer = True):
+    def __createMapCard(self, location: LocationModel, authorIsTrainer = True, user_id: str = None):
+        """Create map card with direction buttons AND action buttons"""
         file = discord.File(f"{location.spritePath}", filename=f"{location.name}.png")
 
         view = View()
+        
         if authorIsTrainer:
+            # ROW 0: Direction buttons
             if location.north is not None:
                 north = constant.LOCATION_DISPLAY_NAMES[location.north]
-                button = Button(style=ButtonStyle.gray, emoji='⬆', label=f"{north}", custom_id='clickNorth', disabled=False)
-                button.callback = self.on_north
-                view.add_item(button)
-            else:
-                button = Button(style=ButtonStyle.gray, emoji='⬆', label=f"--", custom_id='clickNorth', disabled=False)
+                button = Button(style=ButtonStyle.gray, emoji='⬆', label=f"{north[:20]}", custom_id='clickNorth', disabled=False, row=0)
                 button.callback = self.on_north
                 view.add_item(button)
 
             if location.east is not None:
                 east = constant.LOCATION_DISPLAY_NAMES[location.east]
-                button = Button(style=ButtonStyle.gray, emoji='➡', label=f"{east}", custom_id='clickEast', disabled=False)
-                button.callback = self.on_east
-                view.add_item(button)
-            else:
-                button = Button(style=ButtonStyle.gray, emoji='➡', label=f"--", custom_id='clickEast', disabled=False)
+                button = Button(style=ButtonStyle.gray, emoji='➡', label=f"{east[:20]}", custom_id='clickEast', disabled=False, row=0)
                 button.callback = self.on_east
                 view.add_item(button)
 
             if location.south is not None:
                 south = constant.LOCATION_DISPLAY_NAMES[location.south]
-                button = Button(style=ButtonStyle.gray, emoji='⬇', label=f"{south}", custom_id='clickSouth', disabled=False)
-                button.callback = self.on_south
-                view.add_item(button)
-            else:
-                button = Button(style=ButtonStyle.gray, emoji='⬇', label=f"--", custom_id='clickSouth', disabled=False)
+                button = Button(style=ButtonStyle.gray, emoji='⬇', label=f"{south[:20]}", custom_id='clickSouth', disabled=False, row=0)
                 button.callback = self.on_south
                 view.add_item(button)
 
             if location.west is not None:
                 west = constant.LOCATION_DISPLAY_NAMES[location.west]
-                button = Button(style=ButtonStyle.gray, emoji='⬅', label=f"{west}", custom_id='clickWest', disabled=False)
+                button = Button(style=ButtonStyle.gray, emoji='⬅', label=f"{west[:20]}", custom_id='clickWest', disabled=False, row=0)
                 button.callback = self.on_west
                 view.add_item(button)
-            else:
-                button = Button(style=ButtonStyle.gray, emoji='⬅', label=f"--", custom_id='clickWest', disabled=False)
-                button.callback = self.on_west
-                view.add_item(button)
+            
+            # ROW 1: Action buttons (Encounters, Quests, Gym) - only if user_id provided
+            if user_id:
+                # Check for encounters
+                location_obj = LocationClass(user_id)
+                methods = location_obj.getMethods()
+                
+                if len(methods) > 0:
+                    enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='map_encounters', row=1)
+                    enc_btn.callback = self.on_map_encounters_click
+                    view.add_item(enc_btn)
+                
+                # Check for quests
+                has_quests = False
+                for quest_id, quest_info in self.__quests_data.items() if self.__quests_data else []:
+                    if quest_info.get('name') == location.name:
+                        if quest_info.get('quest'):
+                            has_quests = True
+                            break
+                
+                if has_quests:
+                    quest_btn = Button(style=ButtonStyle.blurple, label="📜 Quests", custom_id='map_quests', row=1)
+                    quest_btn.callback = self.on_map_quests_click
+                    view.add_item(quest_btn)
+                
+                # Check for gym
+                if location.gym:
+                    gym_btn = Button(style=ButtonStyle.red, label="🏛️ Gym", custom_id='map_gym', row=1)
+                    gym_btn.callback = self.on_map_gym_click
+                    view.add_item(gym_btn)
+                
+                # ROW 2: Party button
+                party_btn = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='map_party', row=2)
+                party_btn.callback = self.on_map_party_click
+                view.add_item(party_btn)
 
         return file, view
-    
+
+
     @discord.ui.button(custom_id='clickNorth', style=ButtonStyle.gray)
     async def on_north(self, interaction: discord.Interaction):
         await self.__on_north(interaction)
@@ -406,6 +425,59 @@ class MapMixin(MixinMeta):
 
         self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
 
+    async def on_map_encounters_click(self, interaction: discord.Interaction):
+        """Handle Encounters button click from map - redirect to trainer encounter command"""
+        user = interaction.user
+        
+        if not self.__checkMapState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+        
+        # Simply tell them to use the encounter command for now
+        # We can't easily call encounters.py methods from here due to mixin separation
+        await interaction.response.send_message(
+            'Click this to show encounters: Type `,trainer encounter` or use the emoji reaction shortcut.',
+            ephemeral=True
+        )
+
+    async def on_map_quests_click(self, interaction: discord.Interaction):
+        """Handle Quests button from map"""
+        user = interaction.user
+        
+        if not self.__checkMapState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+        
+        await interaction.response.send_message(
+            'Use `,trainer encounter` to see quests at this location.',
+            ephemeral=True
+        )
+
+    async def on_map_gym_click(self, interaction: discord.Interaction):
+        """Handle Gym button from map"""
+        user = interaction.user
+        
+        if not self.__checkMapState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+        
+        await interaction.response.send_message(
+            'Use `,trainer encounter` to access the gym.',
+            ephemeral=True
+        )
+    
+    async def on_map_party_click(self, interaction: discord.Interaction):
+        """Handle Party button from map"""
+        user = interaction.user
+        
+        if not self.__checkMapState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+        
+        await interaction.response.send_message(
+            'Use `,trainer party` to view your party.',
+            ephemeral=True
+        )
 
     def __checkMapState(self, user: discord.User, message: discord.Message):
         state: LocationState
