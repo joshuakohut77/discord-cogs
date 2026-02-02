@@ -206,12 +206,17 @@ class EncountersMixin(MixinMeta):
         # Execute one turn of battle with the selected move
         enc = EncounterClass(battle_state.player_pokemon, battle_state.enemy_pokemon)
         
-        # The encounter modifies pokemon1 and pokemon2 internally
-        # We need to use those modified versions
+        # DEBUG: Check enc object before fight
+        enc_p1_before = enc.pokemon1.currentHP
+        enc_p2_before = enc.pokemon2.currentHP
+        
         result = enc.fight(battleType='manual', move=move_name)
         
-        # CRITICAL FIX: The EncounterClass modifies enc.pokemon1 and enc.pokemon2
-        # We need to use those, not the original references
+        # DEBUG: Check enc object after fight
+        enc_p1_after = enc.pokemon1.currentHP
+        enc_p2_after = enc.pokemon2.currentHP
+        
+        # Update battle state with modified pokemon
         battle_state.player_pokemon = enc.pokemon1
         battle_state.enemy_pokemon = enc.pokemon2
         
@@ -226,6 +231,12 @@ class EncountersMixin(MixinMeta):
         # Create battle log entry with detailed information
         log_lines = []
         log_lines.append(f"**Turn {battle_state.turn_number}:**")
+        log_lines.append(f"DEBUG: Enc P1 HP: {enc_p1_before} → {enc_p1_after}")
+        log_lines.append(f"DEBUG: Enc P2 HP: {enc_p2_before} → {enc_p2_after}")
+        log_lines.append(f"DEBUG: Battle State P1: {player_hp_before} → {player_hp_after}")
+        log_lines.append(f"DEBUG: Battle State P2: {enemy_hp_before} → {enemy_hp_after}")
+        log_lines.append(f"DEBUG: Move used: {move_name}")
+        log_lines.append(f"DEBUG: Result: {result}")
         
         # Your Pokemon's action
         if player_damage > 0:
@@ -236,14 +247,13 @@ class EncountersMixin(MixinMeta):
         # Enemy Pokemon's action  
         if enemy_damage > 0:
             log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} attacked! Dealt {enemy_damage} damage!")
-        elif enemy_hp_after > 0:  # Enemy is still alive but did no damage
+        elif enemy_hp_after > 0:
             log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} attacked but missed!")
         
-        # Only keep current turn
         battle_state.battle_log = ["\n".join(log_lines)]
         battle_state.turn_number += 1
         
-        # Check for battle end - check HP directly since result might be None
+        # Check for battle end
         if battle_state.enemy_pokemon.currentHP <= 0:
             await self.__handle_gym_battle_victory(interaction, battle_state)
             del self.__battle_states[user_id]
@@ -254,7 +264,7 @@ class EncountersMixin(MixinMeta):
             del self.__battle_states[user_id]
             return
         
-        # Battle continues - update display with new HP values
+        # Battle continues - update display
         embed = self.__create_battle_embed(user, battle_state)
         view = self.__create_move_buttons(battle_state)
         
