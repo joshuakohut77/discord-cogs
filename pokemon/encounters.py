@@ -59,6 +59,8 @@ class EncountersMixin(MixinMeta):
 
     __useractions: dict[str, ActionState] = {}
     __quests_data: dict = None
+    __gyms_data: dict = None
+    __locations_data: dict = None
 
     def __load_quests_data(self):
         """Load quests.json file"""
@@ -67,6 +69,22 @@ class EncountersMixin(MixinMeta):
             with open(config_path, 'r') as f:
                 self.__quests_data = json.load(f)
         return self.__quests_data
+
+    def __load_gyms_data(self):
+        """Load gyms.json file"""
+        if self.__gyms_data is None:
+            config_path = os.path.join(os.path.dirname(__file__), 'configs', 'gyms.json')
+            with open(config_path, 'r') as f:
+                self.__gyms_data = json.load(f)
+        return self.__gyms_data
+
+    def __load_locations_data(self):
+        """Load locations.json file"""
+        if self.__locations_data is None:
+            config_path = os.path.join(os.path.dirname(__file__), 'configs', 'locations.json')
+            with open(config_path, 'r') as f:
+                self.__locations_data = json.load(f)
+        return self.__locations_data
 
     def __get_available_quests(self, user_id: str, location_name: str) -> list:
         """
@@ -115,6 +133,40 @@ class EncountersMixin(MixinMeta):
 
         return True
 
+    def __get_gym_button(self, user_id: str, location_id: str) -> Button:
+        """
+        Get gym button if location has a gym and trainer meets requirements.
+        Returns Button object or None.
+        """
+        locations_data = self.__load_locations_data()
+
+        # Check if location has a gym
+        location_info = locations_data.get(str(location_id))
+        if not location_info or not location_info.get('gym', False):
+            return None
+
+        # Load gym data
+        gyms_data = self.__load_gyms_data()
+        gym_info = gyms_data.get(str(location_id))
+
+        if not gym_info:
+            return None
+
+        # Check if trainer has requirements for gym leader
+        requirements = gym_info['leader'].get('requirements', [])
+        has_requirements = self.__check_prerequisites(user_id, requirements)
+
+        # Create gym button (disabled if requirements not met)
+        button = Button(
+            style=ButtonStyle.red,
+            label="Gym Challenge",
+            custom_id='gym_challenge',
+            disabled=not has_requirements
+        )
+        button.callback = self.on_gym_click
+
+        return button
+
     @commands.group(name="trainer")
     @commands.guild_only()
     async def _trainer(self, ctx: commands.Context) -> None:
@@ -134,9 +186,12 @@ class EncountersMixin(MixinMeta):
         # Get quest buttons before checking if methods are empty
         quest_buttons = self.__get_available_quests(str(user.id), model.name)
 
-        # If no encounters and no quests, return early
-        if len(methods) == 0 and len(quest_buttons) == 0:
-            await ctx.send('No encounters or quests available at your location.')
+        # Get gym button if location has a gym
+        gym_button = self.__get_gym_button(str(user.id), model.locationId)
+
+        # If no encounters, quests, or gym, return early
+        if len(methods) == 0 and len(quest_buttons) == 0 and gym_button is None:
+            await ctx.send('No encounters, quests, or gyms available at your location.')
             return
 
         view = View()
@@ -148,6 +203,10 @@ class EncountersMixin(MixinMeta):
         # Add quest buttons
         for quest_button in quest_buttons:
             view.add_item(quest_button)
+
+        # Add gym button
+        if gym_button:
+            view.add_item(gym_button)
 
         message: discord.Message = await ctx.send(
             content="What do you want to do?",
@@ -242,6 +301,59 @@ class EncountersMixin(MixinMeta):
                 view.add_item(new_button)
 
         await interaction.message.edit(view=view)
+
+    async def on_gym_click(self, interaction: discord.Interaction):
+        """Handle gym button clicks"""
+        user = interaction.user
+
+        if not self.__checkUserActionState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+
+        # Get location and gym data
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+
+        gyms_data = self.__load_gyms_data()
+        gym_info = gyms_data.get(str(location.locationId))
+
+        if not gym_info:
+            await interaction.response.send_message('Gym data not found.', ephemeral=True)
+            return
+
+        # Check requirements again
+        requirements = gym_info['leader'].get('requirements', [])
+        if not self.__check_prerequisites(str(user.id), requirements):
+            missing = [req.replace('_', ' ').title() for req in requirements]
+            await interaction.response.send_message(
+                f'You do not meet the requirements to challenge this gym. You need: {", ".join(missing)}',
+                ephemeral=True
+            )
+            return
+
+        # TODO: Check if all trainers have been defeated
+        # For now, placeholder logic
+        trainers = gym_info.get('trainers', [])
+        num_trainers = len(trainers)
+
+        # PLACEHOLDER: Assume trainers not yet defeated
+        trainers_defeated = False  # TODO: Check database for defeated trainers
+
+        if not trainers_defeated and num_trainers > 0:
+            await interaction.response.send_message(
+                f'**{gym_info["leader"]["gym-name"]}**\n\n'
+                f'You must defeat all {num_trainers} gym trainers before you can challenge {gym_info["leader"]["gym-leader"]}.\n\n'
+                f'*[Placeholder: Trainer battle system not yet implemented]*',
+                ephemeral=False
+            )
+        else:
+            # All trainers defeated or no trainers, can challenge leader
+            await interaction.response.send_message(
+                f'**{gym_info["leader"]["gym-name"]}**\n\n'
+                f'You are ready to challenge Gym Leader {gym_info["leader"]["gym-leader"]} for the {gym_info["leader"]["badge"]}!\n\n'
+                f'*[Placeholder: Gym leader battle system not yet implemented]*',
+                ephemeral=False
+            )
 
     async def __on_action(self, interaction: Interaction):
         user = interaction.user
