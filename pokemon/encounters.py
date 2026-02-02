@@ -121,10 +121,13 @@ class EncountersMixin(MixinMeta):
 # SEPARATOR - NEXT METHOD
 # =============================================================================
 
-    async def on_nav_map_click(self, interaction: discord.Interaction):
+    async def on_nav_map_click(self, interaction: discord.Interaction, already_deferred: bool = False):
         """Handle Map button click - show map with sprite and buttons"""
         user = interaction.user
-        await interaction.response.defer()
+        
+        # Only defer if not already deferred
+        if not already_deferred:
+            await interaction.response.defer()
         
         trainer = TrainerClass(str(user.id))
         location = trainer.getLocation()
@@ -138,7 +141,7 @@ class EncountersMixin(MixinMeta):
         from .constant import LOCATION_DISPLAY_NAMES
         location_name = LOCATION_DISPLAY_NAMES.get(location.name, location.name.replace('-', ' ').title())
         
-        # Create embed with location sprite (like ,trainer map does)
+        # Create embed
         embed = discord.Embed(
             title=f"{location_name}",
             description=f"You are at {location_name}.",
@@ -146,12 +149,24 @@ class EncountersMixin(MixinMeta):
         )
         embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
         
-        # Set the location sprite image
+        # Load location sprite as file attachment (like ,trainer map does)
         try:
-            sprite_url = f"https://pokesprites.joshkohut.com/sprites/locations/{location.name}.png"
-            embed.set_image(url=sprite_url)
-        except:
-            pass
+            # Create file from sprite path
+            sprite_file = discord.File(location.spritePath, filename=f"{location.name}.png")
+            
+            # Upload to logging channel to get URL
+            temp_message = await self.sendToLoggingChannel(f'{user.display_name} viewing map', sprite_file)
+            if temp_message and temp_message.attachments:
+                attachment = temp_message.attachments[0]
+                embed.set_image(url=attachment.url)
+        except Exception as e:
+            print(f"Error loading location sprite: {e}")
+            # Try URL fallback
+            try:
+                sprite_url = f"https://pokesprites.joshkohut.com/sprites/locations/{location.name}.png"
+                embed.set_image(url=sprite_url)
+            except:
+                pass
         
         # Create navigation view with reorganized button rows
         view = View()
@@ -163,7 +178,6 @@ class EncountersMixin(MixinMeta):
             north_btn.callback = self.on_direction_click
             view.add_item(north_btn)
         else:
-            # Disabled placeholder
             north_btn = Button(style=ButtonStyle.gray, emoji='⬆️', label="---", custom_id='dir_north_disabled', disabled=True, row=0)
             view.add_item(north_btn)
         
@@ -173,7 +187,6 @@ class EncountersMixin(MixinMeta):
             south_btn.callback = self.on_direction_click
             view.add_item(south_btn)
         else:
-            # Disabled placeholder
             south_btn = Button(style=ButtonStyle.gray, emoji='⬇️', label="---", custom_id='dir_south_disabled', disabled=True, row=0)
             view.add_item(south_btn)
         
@@ -184,7 +197,6 @@ class EncountersMixin(MixinMeta):
             east_btn.callback = self.on_direction_click
             view.add_item(east_btn)
         else:
-            # Disabled placeholder
             east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label="---", custom_id='dir_east_disabled', disabled=True, row=1)
             view.add_item(east_btn)
         
@@ -194,7 +206,6 @@ class EncountersMixin(MixinMeta):
             west_btn.callback = self.on_direction_click
             view.add_item(west_btn)
         else:
-            # Disabled placeholder
             west_btn = Button(style=ButtonStyle.gray, emoji='⬅️', label="---", custom_id='dir_west_disabled', disabled=True, row=1)
             view.add_item(west_btn)
         
@@ -296,8 +307,8 @@ class EncountersMixin(MixinMeta):
         # Move to new location
         trainer.setLocation(new_location.locationId)
         
-        # Recreate the map view with action buttons
-        await self.on_nav_map_click(interaction)
+        # Recreate the map view with action buttons - PASS already_deferred=True
+        await self.on_nav_map_click(interaction, already_deferred=True)
 
 
 # =============================================================================
