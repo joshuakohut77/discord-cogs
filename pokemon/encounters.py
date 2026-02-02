@@ -338,8 +338,17 @@ class EncountersMixin(MixinMeta):
         enemy_name = list(trainer_pokemon_data.keys())[0]
         enemy_level = trainer_pokemon_data[enemy_name]
 
-        enemy_pokemon = PokemonClass(enemy_name)
-        enemy_pokemon.create(enemy_level)
+        # Validate pokemon name
+        if not enemy_name or enemy_name == 'None':
+            await interaction.followup.send(f'Error: Invalid Pokemon name in trainer data: {enemy_name}', ephemeral=True)
+            return
+
+        try:
+            enemy_pokemon = PokemonClass(enemy_name)
+            enemy_pokemon.create(enemy_level)
+        except Exception as e:
+            await interaction.followup.send(f'Error creating enemy Pokemon "{enemy_name}" at level {enemy_level}: {str(e)}', ephemeral=True)
+            return
 
         # Start the battle
         enc = EncounterClass(active_pokemon, enemy_pokemon)
@@ -416,8 +425,17 @@ class EncountersMixin(MixinMeta):
         enemy_name = list(leader_pokemon_data.keys())[0]
         enemy_level = leader_pokemon_data[enemy_name]
 
-        enemy_pokemon = PokemonClass(enemy_name)
-        enemy_pokemon.create(enemy_level)
+        # Validate pokemon name
+        if not enemy_name or enemy_name == 'None':
+            await interaction.followup.send(f'Error: Invalid Pokemon name in gym leader data: {enemy_name}', ephemeral=True)
+            return
+
+        try:
+            enemy_pokemon = PokemonClass(enemy_name)
+            enemy_pokemon.create(enemy_level)
+        except Exception as e:
+            await interaction.followup.send(f'Error creating gym leader Pokemon "{enemy_name}" at level {enemy_level}: {str(e)}', ephemeral=True)
+            return
 
         # Start the battle
         enc = EncounterClass(active_pokemon, enemy_pokemon)
