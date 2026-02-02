@@ -122,7 +122,7 @@ class EncountersMixin(MixinMeta):
 # =============================================================================
 
     async def on_nav_map_click(self, interaction: discord.Interaction):
-        """Handle Map button click - show map with encounters/quests/gym buttons"""
+        """Handle Map button click - show map with sprite and buttons"""
         user = interaction.user
         await interaction.response.defer()
         
@@ -135,85 +135,94 @@ class EncountersMixin(MixinMeta):
         quest_buttons = self.__get_available_quests(str(user.id), location.name)
         gym_button = self.__get_gym_button(str(user.id), location.locationId)
         
-        # Create map embed
         from .constant import LOCATION_DISPLAY_NAMES
         location_name = LOCATION_DISPLAY_NAMES.get(location.name, location.name.replace('-', ' ').title())
         
+        # Create embed with location sprite (like ,trainer map does)
         embed = discord.Embed(
-            title=f"🗺️ {location_name}",
-            description="Choose an action:",
+            title=f"{location_name}",
+            description=f"You are at {location_name}.",
             color=discord.Color.blue()
         )
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
         
-        # Show available actions
-        actions_list = []
-        if len(methods) > 0:
-            actions_list.append("⚔️ Encounters available")
-        if len(quest_buttons) > 0:
-            actions_list.append("📜 Quests available")
-        if gym_button and not gym_button.disabled:
-            actions_list.append("🏛️ Gym available")
-        if location.pokecenter:
-            actions_list.append("🏥 Pokemon Center")
+        # Set the location sprite image
+        try:
+            sprite_url = f"https://pokesprites.joshkohut.com/sprites/locations/{location.name}.png"
+            embed.set_image(url=sprite_url)
+        except:
+            pass
         
-        if actions_list:
-            embed.add_field(
-                name="📍 Available Here",
-                value="\n".join(actions_list),
-                inline=False
-            )
-        
-        # Add location image if available
-        embed.set_image(url=f"https://pokesprites.joshkohut.com/sprites/locations/{location.name}.png")
-        
-        # Create navigation view
+        # Create navigation view with reorganized button rows
         view = View()
         
-        # ROW 0: Direction buttons
+        # ROW 0: North/South buttons
         if location.north:
             north_name = LOCATION_DISPLAY_NAMES.get(location.north, location.north)
-            north_btn = Button(style=ButtonStyle.gray, emoji='⬆️', label=f"{north_name[:20]}", custom_id='dir_north', row=0)
+            north_btn = Button(style=ButtonStyle.gray, emoji='⬆️', label=f"{north_name[:15]}", custom_id='dir_north', row=0)
             north_btn.callback = self.on_direction_click
             view.add_item(north_btn)
-        
-        if location.east:
-            east_name = LOCATION_DISPLAY_NAMES.get(location.east, location.east)
-            east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label=f"{east_name[:20]}", custom_id='dir_east', row=0)
-            east_btn.callback = self.on_direction_click
-            view.add_item(east_btn)
+        else:
+            # Disabled placeholder
+            north_btn = Button(style=ButtonStyle.gray, emoji='⬆️', label="---", custom_id='dir_north_disabled', disabled=True, row=0)
+            view.add_item(north_btn)
         
         if location.south:
             south_name = LOCATION_DISPLAY_NAMES.get(location.south, location.south)
-            south_btn = Button(style=ButtonStyle.gray, emoji='⬇️', label=f"{south_name[:20]}", custom_id='dir_south', row=0)
+            south_btn = Button(style=ButtonStyle.gray, emoji='⬇️', label=f"{south_name[:15]}", custom_id='dir_south', row=0)
             south_btn.callback = self.on_direction_click
             view.add_item(south_btn)
+        else:
+            # Disabled placeholder
+            south_btn = Button(style=ButtonStyle.gray, emoji='⬇️', label="---", custom_id='dir_south_disabled', disabled=True, row=0)
+            view.add_item(south_btn)
+        
+        # ROW 1: East/West buttons
+        if location.east:
+            east_name = LOCATION_DISPLAY_NAMES.get(location.east, location.east)
+            east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label=f"{east_name[:15]}", custom_id='dir_east', row=1)
+            east_btn.callback = self.on_direction_click
+            view.add_item(east_btn)
+        else:
+            # Disabled placeholder
+            east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label="---", custom_id='dir_east_disabled', disabled=True, row=1)
+            view.add_item(east_btn)
         
         if location.west:
             west_name = LOCATION_DISPLAY_NAMES.get(location.west, location.west)
-            west_btn = Button(style=ButtonStyle.gray, emoji='⬅️', label=f"{west_name[:20]}", custom_id='dir_west', row=0)
+            west_btn = Button(style=ButtonStyle.gray, emoji='⬅️', label=f"{west_name[:15]}", custom_id='dir_west', row=1)
             west_btn.callback = self.on_direction_click
             view.add_item(west_btn)
+        else:
+            # Disabled placeholder
+            west_btn = Button(style=ButtonStyle.gray, emoji='⬅️', label="---", custom_id='dir_west_disabled', disabled=True, row=1)
+            view.add_item(west_btn)
         
-        # ROW 1: Action buttons
+        # ROW 2: Action buttons (Encounters, Quests, Gym)
         if len(methods) > 0:
-            enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='nav_encounters', row=1)
+            enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='nav_encounters', row=2)
             enc_btn.callback = self.on_nav_encounters_click
             view.add_item(enc_btn)
         
         if len(quest_buttons) > 0:
-            quest_btn = Button(style=ButtonStyle.blurple, label="📜 Quests", custom_id='nav_quests', row=1)
+            quest_btn = Button(style=ButtonStyle.blurple, label="📜 Quests", custom_id='nav_quests', row=2)
             quest_btn.callback = self.on_nav_quests_click
             view.add_item(quest_btn)
         
         if gym_button and not gym_button.disabled:
-            gym_btn = Button(style=ButtonStyle.red, label="🏛️ Gym", custom_id='nav_gym', row=1)
+            gym_btn = Button(style=ButtonStyle.red, label="🏛️ Gym", custom_id='nav_gym', row=2)
             gym_btn.callback = self.on_gym_click
             view.add_item(gym_btn)
         
-        # ROW 2: Utility buttons
-        party_btn = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party', row=2)
+        # ROW 3: Utility buttons
+        party_btn = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party', row=3)
         party_btn.callback = self.on_nav_party_click
         view.add_item(party_btn)
+        
+        if location.pokecenter:
+            heal_btn = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal', row=3)
+            heal_btn.callback = self.on_nav_heal_click
+            view.add_item(heal_btn)
         
         message = await interaction.message.edit(embed=embed, view=view)
         
@@ -221,6 +230,7 @@ class EncountersMixin(MixinMeta):
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, location, trainer.getActivePokemon(), None, ''
         )
+
 
 
 # =============================================================================
@@ -425,7 +435,7 @@ class EncountersMixin(MixinMeta):
 # =============================================================================
 
     async def on_nav_heal_click(self, interaction: discord.Interaction):
-        """Handle Heal button - heal all Pokemon at Pokemon Center"""
+        """Handle Heal button - heal all Pokemon at Pokemon Center with detailed feedback"""
         user = interaction.user
         await interaction.response.defer()
         
@@ -436,40 +446,51 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('No Pokemon Center at this location.', ephemeral=True)
             return
         
-        # Heal all party Pokemon
+        # Get party before healing
         party = trainer.getPokemon(party=True)
+        
+        # Track healing details
+        healing_details = []
         healed_count = 0
         
         for poke in party:
             poke.load(pokemonId=poke.trainerId)
             stats = poke.getPokeStats()
-            if poke.currentHP < stats['hp']:
-                poke.currentHP = stats['hp']
+            max_hp = stats['hp']
+            current_hp = poke.currentHP
+            
+            poke_name = poke.nickName if poke.nickName else poke.pokemonName.capitalize()
+            
+            if current_hp < max_hp:
+                # Pokemon needs healing
+                hp_restored = max_hp - current_hp
+                poke.currentHP = max_hp
                 poke.save()
                 healed_count += 1
+                healing_details.append(f"✨ {poke_name} - Lv.{poke.currentLevel}")
+                healing_details.append(f"   HP: {current_hp}/{max_hp} → {max_hp}/{max_hp} (+{hp_restored})")
+            else:
+                # Already at full HP
+                healing_details.append(f"💚 {poke_name} - Lv.{poke.currentLevel}")
+                healing_details.append(f"   HP: {max_hp}/{max_hp} (Already healthy!)")
         
         embed = discord.Embed(
             title="🏥 Pokemon Center",
-            description=f"✨ Healed {healed_count} Pokemon!\n\nYour team is ready for battle!",
+            description=f"Welcome! We've restored your Pokemon to full health!\n\n**Healed {healed_count} Pokemon**",
             color=discord.Color.green()
         )
         
-        # Show party status after healing
-        party_status = []
-        for i, poke in enumerate(party, 1):
-            poke.load(pokemonId=poke.trainerId)
-            stats = poke.getPokeStats()
-            poke_name = poke.nickName if poke.nickName else poke.pokemonName.capitalize()
-            party_status.append(f"{i}. {poke_name} - Lv.{poke.currentLevel} - HP: {poke.currentHP}/{stats['hp']} 💚")
-        
         embed.add_field(
-            name="Your Party",
-            value="\n".join(party_status[:6]),  # Max 6 Pokemon
+            name="Your Party Status",
+            value="\n".join(healing_details),
             inline=False
         )
         
-        # Add back to map button
-        view = self.__create_post_battle_buttons(battle_state.user_id)
+        embed.set_footer(text="We hope to see you again! 💚")
+        
+        # Add navigation buttons
+        view = self.__create_post_battle_buttons(str(user.id))
+        
         await interaction.message.edit(embed=embed, view=view)
 
 
