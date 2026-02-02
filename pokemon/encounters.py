@@ -366,6 +366,9 @@ class EncountersMixin(MixinMeta):
         if battle_state.player_pokemon.currentHP <= 0:
             log_lines.append(f"💀 Your {battle_state.player_pokemon.pokemonName.capitalize()} fainted!")
             
+            # CRITICAL: Save the fainted Pokemon's HP to database before switching
+            battle_state.player_pokemon.save()
+            
             # Check if player has more Pokemon
             next_pokemon, next_index = self.__get_next_party_pokemon(battle_state.player_party, battle_state.player_current_index)
             
@@ -400,8 +403,8 @@ class EncountersMixin(MixinMeta):
         embed = self.__create_battle_embed(user, battle_state)
         view = self.__create_move_buttons(battle_state)
         
-        await interaction.message.edit(embed=embed, view=view)    
-    
+        await interaction.message.edit(embed=embed, view=view)
+
     async def __handle_gym_battle_victory(self, interaction: discord.Interaction, battle_state: BattleState):
         """Handle when player wins a gym battle - shows all Pokemon used"""
         trainer_model = battle_state.trainer_model
