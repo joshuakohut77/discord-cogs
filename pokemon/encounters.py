@@ -949,14 +949,14 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send(
                 f"**Trainers Remaining:** {remaining}\n"
                 f"**Next Opponent:** {next_up.name if next_up else 'Unknown'}",
-                ephemeral=False
+                ephemeral=True
             )
         else:
             gym_leader = battle_manager.getGymLeader()
             if gym_leader and not hasattr(trainer_model, 'badge'):
                 await interaction.followup.send(
                     f"All gym trainers defeated! You can now challenge Gym Leader {gym_leader.name}!",
-                    ephemeral=False
+                    ephemeral=True
                 )
 
     async def __handle_gym_battle_defeat(self, interaction: discord.Interaction, battle_state: BattleState):
@@ -1238,7 +1238,7 @@ class EncountersMixin(MixinMeta):
         # Execute the quest
         trainer.quest(quest_name)
 
-        await interaction.response.send_message(trainer.message, ephemeral=False)
+        await interaction.response.send_message(trainer.message, ephemeral=True)
 
         # Disable the quest button after completion
         view = View()
@@ -1392,7 +1392,7 @@ class EncountersMixin(MixinMeta):
                 )
 
             view_nav = self.__create_post_battle_buttons(str(user.id))
-            await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
+            await interaction.followup.send(embed=embed, view=view_nav, ephemeral=True)
 
         else:
             # DEFEAT
@@ -1424,7 +1424,7 @@ class EncountersMixin(MixinMeta):
             )
 
             view_nav = self.__create_post_battle_buttons(str(user.id))
-            await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
+            await interaction.followup.send(embed=embed, view=view_nav, ephemeral=True)
 
 
     # New handler for MANUAL trainer battles
@@ -1634,7 +1634,7 @@ class EncountersMixin(MixinMeta):
             )
 
             view_nav = self.__create_post_battle_buttons(str(user.id))
-            await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
+            await interaction.followup.send(embed=embed, view=view_nav, ephemeral=True)
             
             
         else:
@@ -1667,7 +1667,7 @@ class EncountersMixin(MixinMeta):
             )
 
             view_nav = self.__create_post_battle_buttons(str(user.id))
-            await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
+            await interaction.followup.send(embed=embed, view=view_nav, ephemeral=True)
 
     async def on_gym_click(self, interaction: discord.Interaction):
             """Handle gym button clicks - now shows battle type choice"""
@@ -1740,7 +1740,7 @@ class EncountersMixin(MixinMeta):
                         await interaction.followup.send(
                             f'**{gym_info["leader"]["gym-name"]}**\n\n'
                             f'You have already defeated Gym Leader {gym_info["leader"]["gym-leader"]} and earned the {gym_info["leader"]["badge"]}!',
-                            ephemeral=False
+                            ephemeral=True
                         )
                     else:
                         await interaction.followup.send(battle.message, ephemeral=True)
