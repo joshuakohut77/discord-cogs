@@ -514,6 +514,43 @@ class EncountersMixin(MixinMeta):
         enemy_pokemon.create(enemy_level)
         return enemy_pokemon
 
+    async def __show_battle_intro(self, interaction: discord.Interaction, trainer_name: str, 
+                                   sprite_path: str, is_gym_leader: bool, gym_name: str = None):
+        """Show battle intro screen with trainer/gym leader sprite before battle starts"""
+        
+        if is_gym_leader:
+            title = f"🏛️ {gym_name}"
+            description = f"**Gym Leader {trainer_name}** wants to battle!"
+        else:
+            title = "⚔️ Trainer Battle!"
+            description = f"**{trainer_name}** wants to battle!"
+        
+        embed = discord.Embed(
+            title=title,
+            description=description,
+            color=discord.Color.red()
+        )
+        
+        # Set the trainer/gym leader sprite
+        try:
+            # The sprite_path from gyms.json is like: "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/brock.png"
+            # We need to convert this to a URL or use a local file
+            # For now, we'll try to use it as an attachment
+            sprite_file = discord.File(sprite_path)
+            
+            message = await interaction.followup.send(
+                embed=embed,
+                file=sprite_file
+            )
+        except:
+            # Fallback if sprite file doesn't work
+            message = await interaction.followup.send(embed=embed)
+        
+        # Wait 3 seconds
+        await asyncio.sleep(3)
+        
+        return message
+
     def __create_battle_embed(self, user: discord.User, battle_state: BattleState) -> discord.Embed:
         """Create an embed showing the current battle state - Enemy first, Player second"""
         player_poke = battle_state.player_pokemon
@@ -1429,7 +1466,7 @@ class EncountersMixin(MixinMeta):
 
     # New handler for MANUAL trainer battles
     async def on_gym_battle_manual(self, interaction: discord.Interaction):
-        """Handle MANUAL battle with gym trainer - supports multiple Pokemon"""
+        """Handle MANUAL battle with gym trainer - supports multiple Pokemon with intro"""
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
@@ -1462,14 +1499,22 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('No trainer to battle.', ephemeral=True)
             return
 
+        # SHOW INTRO SCREEN with trainer sprite
+        intro_message = await self.__show_battle_intro(
+            interaction, 
+            next_trainer.name, 
+            next_trainer.spritePath,
+            is_gym_leader=False
+        )
+
         # Get enemy's full Pokemon list
-        enemy_pokemon_list = next_trainer.pokemon  # List of dicts
+        enemy_pokemon_list = next_trainer.pokemon
 
         # Create first enemy Pokemon
         try:
             first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0])
         except Exception as e:
-            await interaction.followup.send(f'Error creating enemy Pokemon: {str(e)}', ephemeral=True)
+            await intro_message.edit(content=f'Error creating enemy Pokemon: {str(e)}')
             return
 
         # START MANUAL BATTLE with multiple Pokemon support
@@ -1488,13 +1533,15 @@ class EncountersMixin(MixinMeta):
 
         self.__battle_states[str(user.id)] = battle_state
 
+        # REPLACE intro screen with battle interface
         embed = self.__create_battle_embed(user, battle_state)
         view = self.__create_move_buttons(battle_state)
 
-        message = await interaction.followup.send(
+        message = await intro_message.edit(
             content=f"**Manual Battle Started!**\n{next_trainer.name} has {len(enemy_pokemon_list)} Pokemon!",
             embed=embed,
-            view=view
+            view=view,
+            attachments=[]  # Remove the sprite attachment
         )
 
         battle_state.message_id = message.id
@@ -1776,7 +1823,7 @@ class EncountersMixin(MixinMeta):
                     )
 
     async def on_gym_leader_battle_manual(self, interaction: discord.Interaction):
-        """Handle MANUAL battle with gym leader - supports multiple Pokemon"""
+        """Handle MANUAL battle with gym leader - supports multiple Pokemon with intro"""
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
@@ -1803,6 +1850,7 @@ class EncountersMixin(MixinMeta):
             return
 
         gyms_data = self.__load_gyms_data()
+        gym_info = gyms_data.get(str(location.locationId))
         battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
 
         gym_leader = battle.getGymLeader()
@@ -1814,6 +1862,15 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send(f'Error: Gym Leader has no Pokemon data.', ephemeral=True)
             return
 
+        # SHOW INTRO SCREEN with gym leader sprite
+        intro_message = await self.__show_battle_intro(
+            interaction,
+            gym_leader.name,
+            gym_info["leader"]["leader_spritePath"],
+            is_gym_leader=True,
+            gym_name=gym_info["leader"]["gym-name"]
+        )
+
         # Get enemy's full Pokemon list
         enemy_pokemon_list = gym_leader.pokemon
 
@@ -1821,7 +1878,7 @@ class EncountersMixin(MixinMeta):
         try:
             first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0])
         except Exception as e:
-            await interaction.followup.send(f'Error creating gym leader Pokemon: {str(e)}', ephemeral=True)
+            await intro_message.edit(content=f'Error creating gym leader Pokemon: {str(e)}')
             return
 
         # START MANUAL BATTLE
@@ -1840,13 +1897,15 @@ class EncountersMixin(MixinMeta):
 
         self.__battle_states[str(user.id)] = battle_state
 
+        # REPLACE intro screen with battle interface
         embed = self.__create_battle_embed(user, battle_state)
         view = self.__create_move_buttons(battle_state)
 
-        message = await interaction.followup.send(
+        message = await intro_message.edit(
             content=f"**Gym Leader Battle Started!**\n{gym_leader.name} has {len(enemy_pokemon_list)} Pokemon!",
             embed=embed,
-            view=view
+            view=view,
+            attachments=[]  # Remove the sprite attachment
         )
 
         battle_state.message_id = message.id
