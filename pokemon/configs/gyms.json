@@ -4,8 +4,8 @@
       "locationId": 67,
       "locationName": "celadon-city",
       "gym-leader": "Erika",
-      "leader_spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/erika.png",
-      "gym_spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/celadon_gym.png",
+      "leader_spritePath": "/sprites/trainers/erika.png",
+      "gym_spritePath": "/sprites/locations/celadon_gym.png",
       "gym-name": "Celadon Gym",
       "badge": "Rainbow Badge",
       "keyitem": "rainbow_badge",
@@ -27,7 +27,7 @@
     "trainers": [
       {
         "name": "Lass",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/lass.png",
+        "spritePath": "/sprites/trainers/lass.png",
         "money": 345,
         "enemy_uuid": "8bf6a570",
         "pokemon": [
@@ -41,7 +41,7 @@
       },
       {
         "name": "Beauty",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/beauty.png",
+        "spritePath": "/sprites/trainers/beauty.png",
         "money": 1470,
         "enemy_uuid": "8bf6a660",
         "pokemon": [
@@ -61,7 +61,7 @@
       },
       {
         "name": "Beauty",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/beauty.png",
+        "spritePath": "/sprites/trainers/beauty.png",
         "money": 1680,
         "enemy_uuid": "8bf6a85e",
         "pokemon": [
@@ -75,7 +75,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtainer.png",
+        "spritePath": "/sprites/trainers/jrtainer.png",
         "money": 480,
         "enemy_uuid": "8bf6a94e",
         "pokemon": [
@@ -89,7 +89,7 @@
       },
       {
         "name": "Beauty",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/beauty.png",
+        "spritePath": "/sprites/trainers/beauty.png",
         "money": 1820,
         "enemy_uuid": "8bf6aa2a",
         "pokemon": [
@@ -100,7 +100,7 @@
       },
       {
         "name": "Cootrainer",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/cooltrainer.png",
+        "spritePath": "/sprites/trainers/cooltrainer.png",
         "money": 840,
         "enemy_uuid": "8bf6aafc",
         "pokemon": [
@@ -117,7 +117,7 @@
       },
       {
         "name": "Lass",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/lass.png",
+        "spritePath": "/sprites/trainers/lass.png",
         "money": 345,
         "enemy_uuid": "8bf6abd8",
         "pokemon": [
@@ -136,8 +136,8 @@
       "locationId": 68,
       "locationName": "cerulean-city",
       "gym-leader": "Misty",
-      "leader_spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/misty.png",
-      "gym_spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/cerulean_gym.png",
+      "leader_spritePath": "/sprites/trainers/misty.png",
+      "gym_spritePath": "/sprites/locations/cerulean_gym.png",
       "gym-name": "Cerulean Gym",
       "badge": "Cascade Badge",
       "keyitem": "cascade_badge",
@@ -156,7 +156,7 @@
     "trainers": [
       {
         "name": "Swimmer",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/swimmer.png",
+        "spritePath": "/sprites/trainers/swimmer.png",
         "money": 80,
         "enemy_uuid": "8bf6ad86",
         "pokemon": [
@@ -170,7 +170,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
+        "spritePath": "/sprites/trainers/jrtrainer.png",
         "money": 380,
         "enemy_uuid": "8bf6ae62",
         "pokemon": [
@@ -186,8 +186,8 @@
       "locationId": 71,
       "locationName": "cinnabar-island",
       "gym-leader": "Blaine",
-      "leader_spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/blaine.png",
-      "gym_spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/cinnabar_gym.png",
+      "leader_spritePath": "/sprites/trainers/blaine.png",
+      "gym_spritePath": "/sprites/locations/cinnabar_gym.png",
       "gym-name": "Cinnabar Gym",
       "badge": "Volcano Badge",
       "keyitem": "volcano_badge",
@@ -212,7 +212,7 @@
     "trainers": [
       {
         "name": "Burglar",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/burglar.png",
+        "spritePath": "/sprites/trainers/burglar.png",
         "money": 3240,
         "enemy_uuid": "8bf6b1a0",
         "pokemon": [
@@ -229,7 +229,7 @@
       },
       {
         "name": "Super Nerd",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/supernerd.png",
+        "spritePath": "/sprites/trainers/supernerd.png",
         "money": 900,
         "enemy_uuid": "8bf6b27c",
         "pokemon": [
@@ -246,7 +246,7 @@
       },
       {
         "name": "Super Nerd",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/supernerd.png",
+        "spritePath": "/sprites/trainers/supernerd.png",
         "money": 850,
         "enemy_uuid": "8bf6b34e",
         "pokemon": [
@@ -266,7 +266,7 @@
       },
       {
         "name": "Burglar",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/burglar.png",
+        "spritePath": "/sprites/trainers/burglar.png",
         "money": 3690,
         "enemy_uuid": "8bf6b420",
         "pokemon": [
@@ -277,7 +277,7 @@
       },
       {
         "name": "Super Nerd",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/supernerd.png",
+        "spritePath": "/sprites/trainers/supernerd.png",
         "money": 1025,
         "enemy_uuid": "8bf6b4fc",
         "pokemon": [
@@ -288,7 +288,7 @@
       },
       {
         "name": "Burglar",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/burglar.png",
+        "spritePath": "/sprites/trainers/burglar.png",
         "money": 3330,
         "enemy_uuid": "8bf6b5d8",
         "pokemon": [
@@ -302,7 +302,7 @@
       },
       {
         "name": "Super Nerd",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/supernerd.png",
+        "spritePath": "/sprites/trainers/supernerd.png",
         "money": 925,
         "enemy_uuid": "8bf6b6b4",
         "pokemon": [
@@ -321,8 +321,8 @@
       "locationId": 76,
       "locationName": "fuchsia-city",
       "gym-leader": "Koga",
-      "leader_spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/koga.png",
-      "gym_spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/fuchsia_gym.png",
+      "leader_spritePath": "/sprites/trainers/koga.png",
+      "gym_spritePath": "/sprites/locations/fuchsia_gym.png",
       "gym-name": "Fuchsia Gym",
       "badge": "Soul Badge",
       "keyitem": "soul_badge",
@@ -347,7 +347,7 @@
     "trainers": [
       {
         "name": "Juggler",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/juggler.png",
+        "spritePath": "/sprites/trainers/juggler.png",
         "money": 1190,
         "enemy_uuid": "8bf6b98e",
         "pokemon": [
@@ -361,7 +361,7 @@
       },
       {
         "name": "Juggler",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/juggler.png",
+        "spritePath": "/sprites/trainers/juggler.png",
         "money": 1330,
         "enemy_uuid": "8bf6ba60",
         "pokemon": [
@@ -372,7 +372,7 @@
       },
       {
         "name": "Juggler",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/juggler.png",
+        "spritePath": "/sprites/trainers/juggler.png",
         "money": 1085,
         "enemy_uuid": "8bf6bb3c",
         "pokemon": [
@@ -392,7 +392,7 @@
       },
       {
         "name": "Tamer",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/tamer.png",
+        "spritePath": "/sprites/trainers/tamer.png",
         "money": 1320,
         "enemy_uuid": "8bf6bc18",
         "pokemon": [
@@ -409,7 +409,7 @@
       },
       {
         "name": "Tamer",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/tamer.png",
+        "spritePath": "/sprites/trainers/tamer.png",
         "money": 1360,
         "enemy_uuid": "8bf6bcf4",
         "pokemon": [
@@ -423,7 +423,7 @@
       },
       {
         "name": "Juggler",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/juggler.png",
+        "spritePath": "/sprites/trainers/juggler.png",
         "money": 1190,
         "enemy_uuid": "8bf6bdc6",
         "pokemon": [
@@ -442,8 +442,8 @@
       "locationId": 151,
       "locationName": "vermilion-city",
       "gym-leader": "Lt. Surge",
-      "leader_spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/ltsurge.png",
-      "gym_spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/vermilion_gym.png",
+      "leader_spritePath": "/sprites/trainers/ltsurge.png",
+      "gym_spritePath": "/sprites/locations/vermilion_gym.png",
       "gym-name": "Vermilion Gym",
       "badge": "Thunder Badge",
       "keyitem": "thunder_badge",
@@ -465,7 +465,7 @@
     "trainers": [
       {
         "name": "Sailor",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/sailor.png",
+        "spritePath": "/sprites/trainers/sailor.png",
         "money": 630,
         "enemy_uuid": "8bf6c0b4",
         "pokemon": [
@@ -479,7 +479,7 @@
       },
       {
         "name": "Rocker",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/rocker.png",
+        "spritePath": "/sprites/trainers/rocker.png",
         "money": 500,
         "enemy_uuid": "8bf6c190",
         "pokemon": [
@@ -496,7 +496,7 @@
       },
       {
         "name": "Gentleman",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/gentleman.png",
+        "spritePath": "/sprites/trainers/gentleman.png",
         "money": 1610,
         "enemy_uuid": "8bf6c262",
         "pokemon": [
@@ -512,8 +512,8 @@
       "locationId": 154,
       "locationName": "viridian-city",
       "gym-leader": "Giovanni",
-      "leader_spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/giovanni.png",
-      "gym_spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/viridian_gym.png",
+      "leader_spritePath": "/sprites/trainers/giovanni.png",
+      "gym_spritePath": "/sprites/locations/viridian_gym.png",
       "gym-name": "Viridian Gym",
       "badge": "Earth Badge",
       "keyitem": "earth_badge",
@@ -543,7 +543,7 @@
     "trainers": [
       {
         "name": "Tamer",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/tamer.png",
+        "spritePath": "/sprites/trainers/tamer.png",
         "money": 1560,
         "enemy_uuid": "8bf6c41a",
         "pokemon": [
@@ -557,7 +557,7 @@
       },
       {
         "name": "Blackbelt",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/blackbelt.png",
+        "spritePath": "/sprites/trainers/blackbelt.png",
         "money": 1075,
         "enemy_uuid": "8bf6c4ec",
         "pokemon": [
@@ -568,7 +568,7 @@
       },
       {
         "name": "Cooltrainer",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/cooltrainer.png",
+        "spritePath": "/sprites/trainers/cooltrainer.png",
         "money": 1365,
         "enemy_uuid": "8bf6c5be",
         "pokemon": [
@@ -582,7 +582,7 @@
       },
       {
         "name": "Tamer",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/tamer.png",
+        "spritePath": "/sprites/trainers/tamer.png",
         "money": 1720,
         "enemy_uuid": "8bf6c7b2",
         "pokemon": [
@@ -593,7 +593,7 @@
       },
       {
         "name": "Blackbelt",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/blackbelt.png",
+        "spritePath": "/sprites/trainers/blackbelt.png",
         "money": 1000,
         "enemy_uuid": "8bf6c884",
         "pokemon": [
@@ -607,7 +607,7 @@
       },
       {
         "name": "Cooltrainer",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/cooltrainer.png",
+        "spritePath": "/sprites/trainers/cooltrainer.png",
         "money": 1365,
         "enemy_uuid": "8bf6c960",
         "pokemon": [
@@ -621,7 +621,7 @@
       },
       {
         "name": "Cooltrainer",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/cooltrainer.png",
+        "spritePath": "/sprites/trainers/cooltrainer.png",
         "money": 1505,
         "enemy_uuid": "8bf6ca32",
         "pokemon": [
@@ -632,7 +632,7 @@
       },
       {
         "name": "Blackbelt",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/blackbelt.png",
+        "spritePath": "/sprites/trainers/blackbelt.png",
         "money": 950,
         "enemy_uuid": "8bf6cb04",
         "pokemon": [
@@ -654,8 +654,8 @@
       "locationId": 231,
       "locationName": "pewter-city",
       "gym-leader": "Brock",
-      "leader_spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/brock.png",
-      "gym_spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pewter_gym.png",
+      "leader_spritePath": "/sprites/trainers/brock.png",
+      "gym_spritePath": "/sprites/locations/pewter_gym.png",
       "gym-name": "Pewter Gym",
       "badge": "Boulder Badge",
       "keyitem": "boulder_badge",
@@ -674,7 +674,7 @@
     "trainers": [
       {
         "name": "Jr. Trainer",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/jrtrainer.png",
+        "spritePath": "/sprites/trainers/jrtrainer.png",
         "money": 220,
         "enemy_uuid": "8bf6ce4c",
         "pokemon": [
@@ -693,8 +693,8 @@
       "locationId": 234,
       "locationName": "saffron-city",
       "gym-leader": "Sabrina",
-      "leader_spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/sabrina.png",
-      "gym_spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/saffron_gym.png",
+      "leader_spritePath": "/sprites/trainers/sabrina.png",
+      "gym_spritePath": "/sprites/locations/saffron_gym.png",
       "gym-name": "Saffron Gym",
       "badge": "Marsh Badge",
       "keyitem": "marsh_badge",
@@ -719,7 +719,7 @@
     "trainers": [
       {
         "name": "Psychic",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/psychic.png",
+        "spritePath": "/sprites/trainers/psychic.png",
         "money": 330,
         "enemy_uuid": "8bf6d004",
         "pokemon": [
@@ -736,7 +736,7 @@
       },
       {
         "name": "Psychic",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/psychic.png",
+        "spritePath": "/sprites/trainers/psychic.png",
         "money": 340,
         "enemy_uuid": "8bf6d0d6",
         "pokemon": [
@@ -750,7 +750,7 @@
       },
       {
         "name": "Channeler",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/channeler.png",
+        "spritePath": "/sprites/trainers/channeler.png",
         "money": 1140,
         "enemy_uuid": "8bf6d1a8",
         "pokemon": [
@@ -761,7 +761,7 @@
       },
       {
         "name": "Psychic",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/psychic.png",
+        "spritePath": "/sprites/trainers/psychic.png",
         "money": 380,
         "enemy_uuid": "8bf6d27a",
         "pokemon": [
@@ -772,7 +772,7 @@
       },
       {
         "name": "Channeler",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/channeler.png",
+        "spritePath": "/sprites/trainers/channeler.png",
         "money": 1020,
         "enemy_uuid": "8bf6d356",
         "pokemon": [
@@ -786,7 +786,7 @@
       },
       {
         "name": "Channeler",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/channeler.png",
+        "spritePath": "/sprites/trainers/channeler.png",
         "money": 990,
         "enemy_uuid": "8bf6d432",
         "pokemon": [
@@ -803,7 +803,7 @@
       },
       {
         "name": "Psychic",
-        "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/psychic.png",
+        "spritePath": "/sprites/trainers/psychic.png",
         "money": 310,
         "enemy_uuid": "8bf6d5fe",
         "pokemon": [
