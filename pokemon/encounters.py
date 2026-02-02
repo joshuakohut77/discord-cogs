@@ -216,15 +216,17 @@ class EncountersMixin(MixinMeta):
         player_damage = enemy_hp_before - enemy_hp_after
         enemy_damage = player_hp_before - player_hp_after
         
-        print(f"DEBUG: Before - Player HP: {player_hp_before}, Enemy HP: {enemy_hp_before}")
-        print(f"DEBUG: After - Player HP: {player_hp_after}, Enemy HP: {enemy_hp_after}")
-        print(f"DEBUG: Player damage dealt: {player_damage}, Enemy damage dealt: {enemy_damage}")
-        print(f"DEBUG: Result: {result}")
+
 
         # Create battle log entry with detailed information
         log_lines = []
         log_lines.append(f"**Turn {battle_state.turn_number}:**")
         
+        log_lines.append(f"DEBUG: Before HP - You:{player_hp_before} Enemy:{enemy_hp_before}")
+        log_lines.append(f"DEBUG: After HP - You:{player_hp_after} Enemy:{enemy_hp_after}")
+        log_lines.append(f"DEBUG: Damage - You dealt:{player_damage} Enemy dealt:{enemy_damage}")
+        log_lines.append(f"DEBUG: Result: {result}")
+
         # Your Pokemon's action
         if player_damage > 0:
             log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}! Dealt {player_damage} damage!")
