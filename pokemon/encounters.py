@@ -26,6 +26,7 @@ from services.inventoryclass import inventory as InventoryClass
 from services.pokeclass import Pokemon as PokemonClass
 from services.questclass import quests as QuestsClass
 from services.battleclass import battle as BattleClass
+from services.encounterclass import encounter as EncounterClass
 
 from .abcd import MixinMeta
 from .functions import (getTypeColor)
@@ -303,6 +304,146 @@ class EncountersMixin(MixinMeta):
 
         await interaction.message.edit(view=view)
 
+    async def on_gym_battle_trainer(self, interaction: discord.Interaction):
+        """Handle gym trainer battle button clicks"""
+        user = interaction.user
+
+        if not self.__checkUserActionState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+
+        await interaction.response.defer()
+
+        # Get trainer and location
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+        active_pokemon = trainer.getActivePokemon()
+
+        if active_pokemon.currentHP == 0:
+            await interaction.followup.send('Your active Pokemon has fainted! Heal at a Pokemon Center first.', ephemeral=True)
+            return
+
+        # Get gym and battle data
+        gyms_data = self.__load_gyms_data()
+        gym_info = gyms_data.get(str(location.locationId))
+        battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
+
+        next_trainer = battle.getNextTrainer()
+        if not next_trainer:
+            await interaction.followup.send('No trainer to battle.', ephemeral=True)
+            return
+
+        # Create enemy Pokemon from trainer data
+        trainer_pokemon_data = next_trainer.pokemon[0]  # First pokemon
+        enemy_name = list(trainer_pokemon_data.keys())[0]
+        enemy_level = trainer_pokemon_data[enemy_name]
+
+        enemy_pokemon = PokemonClass(enemy_name)
+        enemy_pokemon.create(enemy_level)
+
+        # Start the battle
+        enc = EncounterClass(active_pokemon, enemy_pokemon)
+        result = enc.fight(battleType='auto')
+
+        if result.get('result') == 'victory':
+            # Handle victory
+            battle.battleVictory(next_trainer)
+
+            # Check if more trainers remain
+            remaining = battle.getRemainingTrainerCount()
+
+            if remaining > 0:
+                next_up = battle.getNextTrainer()
+                await interaction.followup.send(
+                    f'**Victory!**\n\n'
+                    f'{enc.message}\n\n'
+                    f'Defeated {next_trainer.name}!\n'
+                    f'Earned ${next_trainer.money}\n\n'
+                    f'**Trainers Remaining:** {remaining}\n'
+                    f'**Next Opponent:** {next_up.name if next_up else "Unknown"}',
+                    ephemeral=False
+                )
+            else:
+                gym_leader = battle.getGymLeader()
+                await interaction.followup.send(
+                    f'**Victory!**\n\n'
+                    f'{enc.message}\n\n'
+                    f'Defeated {next_trainer.name}!\n'
+                    f'Earned ${next_trainer.money}\n\n'
+                    f'All gym trainers defeated! You can now challenge Gym Leader {gym_leader.gym_leader if gym_leader else ""}!',
+                    ephemeral=False
+                )
+        else:
+            # Handle defeat
+            await interaction.followup.send(
+                f'**Defeat!**\n\n'
+                f'{enc.message}\n\n'
+                f'You were defeated by {next_trainer.name}. Heal your Pokemon and try again!',
+                ephemeral=False
+            )
+
+    async def on_gym_battle_leader(self, interaction: discord.Interaction):
+        """Handle gym leader battle button clicks"""
+        user = interaction.user
+
+        if not self.__checkUserActionState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+
+        await interaction.response.defer()
+
+        # Get trainer and location
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+        active_pokemon = trainer.getActivePokemon()
+
+        if active_pokemon.currentHP == 0:
+            await interaction.followup.send('Your active Pokemon has fainted! Heal at a Pokemon Center first.', ephemeral=True)
+            return
+
+        # Get gym and battle data
+        gyms_data = self.__load_gyms_data()
+        gym_info = gyms_data.get(str(location.locationId))
+        battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
+
+        gym_leader = battle.getGymLeader()
+        if not gym_leader or battle.statuscode == 420:
+            await interaction.followup.send(battle.message if battle.message else 'Cannot challenge gym leader.', ephemeral=True)
+            return
+
+        # Create enemy Pokemon from gym leader data (use first pokemon)
+        leader_pokemon_data = gym_leader.pokemon[0]
+        enemy_name = list(leader_pokemon_data.keys())[0]
+        enemy_level = leader_pokemon_data[enemy_name]
+
+        enemy_pokemon = PokemonClass(enemy_name)
+        enemy_pokemon.create(enemy_level)
+
+        # Start the battle
+        enc = EncounterClass(active_pokemon, enemy_pokemon)
+        result = enc.fight(battleType='auto')
+
+        if result.get('result') == 'victory':
+            # Handle gym leader victory
+            battle.gymLeaderVictory(gym_leader)
+
+            await interaction.followup.send(
+                f'**VICTORY!**\n\n'
+                f'{enc.message}\n\n'
+                f'🏆 You defeated Gym Leader {gym_leader.gym_leader}!\n'
+                f'💰 Earned ${gym_leader.money}\n'
+                f'🎖️ Earned the {gym_leader.badge}!',
+                ephemeral=False
+            )
+        else:
+            # Handle defeat
+            await interaction.followup.send(
+                f'**Defeat!**\n\n'
+                f'{enc.message}\n\n'
+                f'You were defeated by Gym Leader {gym_leader.gym_leader}. Heal your Pokemon and try again!',
+                ephemeral=False
+            )
+
     async def on_gym_click(self, interaction: discord.Interaction):
         """Handle gym button clicks"""
         user = interaction.user
@@ -310,6 +451,8 @@ class EncountersMixin(MixinMeta):
         if not self.__checkUserActionState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
+
+        await interaction.response.defer()
 
         # Get location and gym data
         trainer = TrainerClass(str(user.id))
@@ -319,14 +462,14 @@ class EncountersMixin(MixinMeta):
         gym_info = gyms_data.get(str(location.locationId))
 
         if not gym_info:
-            await interaction.response.send_message('Gym data not found.', ephemeral=True)
+            await interaction.followup.send('Gym data not found.', ephemeral=True)
             return
 
         # Check requirements again
         requirements = gym_info['leader'].get('requirements', [])
         if not self.__check_prerequisites(str(user.id), requirements):
             missing = [req.replace('_', ' ').title() for req in requirements]
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 f'You do not meet the requirements to challenge this gym. You need: {", ".join(missing)}',
                 ephemeral=True
             )
@@ -342,16 +485,21 @@ class EncountersMixin(MixinMeta):
             # Need to defeat trainers first
             next_trainer = battle.getNextTrainer()
             if next_trainer:
-                await interaction.response.send_message(
+                # Create battle button
+                view = View()
+                battle_button = Button(style=ButtonStyle.red, label="Battle Trainer", custom_id='gym_battle_trainer')
+                battle_button.callback = self.on_gym_battle_trainer
+                view.add_item(battle_button)
+
+                await interaction.followup.send(
                     f'**{gym_info["leader"]["gym-name"]}**\n\n'
-                    f'You must defeat all {remaining_trainers} remaining gym trainers before you can challenge {gym_info["leader"]["gym-leader"]}.\n\n'
-                    f'**Next Trainer:** {next_trainer.name}\n'
-                    f'**Reward:** ${next_trainer.money}\n\n'
-                    f'*[Battle system not yet implemented - this would start the trainer battle]*',
-                    ephemeral=False
+                    f'Trainers Remaining: {remaining_trainers}\n\n'
+                    f'**Next Opponent:** {next_trainer.name}\n'
+                    f'**Reward:** ${next_trainer.money}\n',
+                    view=view
                 )
             else:
-                await interaction.response.send_message('Error getting next trainer.', ephemeral=True)
+                await interaction.followup.send('Error getting next trainer.', ephemeral=True)
         else:
             # All trainers defeated, try to get gym leader
             gym_leader = battle.getGymLeader()
@@ -359,27 +507,32 @@ class EncountersMixin(MixinMeta):
             if battle.statuscode == 420:
                 # Check if already completed
                 if "already completed" in battle.message.lower():
-                    await interaction.response.send_message(
+                    await interaction.followup.send(
                         f'**{gym_info["leader"]["gym-name"]}**\n\n'
                         f'You have already defeated Gym Leader {gym_info["leader"]["gym-leader"]} and earned the {gym_info["leader"]["badge"]}!',
                         ephemeral=False
                     )
                 else:
-                    await interaction.response.send_message(battle.message, ephemeral=True)
+                    await interaction.followup.send(battle.message, ephemeral=True)
                 return
 
             if gym_leader:
-                await interaction.response.send_message(
+                # Create battle button for gym leader
+                view = View()
+                battle_button = Button(style=ButtonStyle.red, label="Challenge Gym Leader", custom_id='gym_battle_leader')
+                battle_button.callback = self.on_gym_battle_leader
+                view.add_item(battle_button)
+
+                await interaction.followup.send(
                     f'**{gym_info["leader"]["gym-name"]}**\n\n'
-                    f'All gym trainers have been defeated! You are ready to challenge Gym Leader {gym_info["leader"]["gym-leader"]} for the {gym_info["leader"]["badge"]}!\n\n'
+                    f'All gym trainers defeated!\n\n'
                     f'**Gym Leader:** {gym_leader.gym_leader}\n'
                     f'**Badge:** {gym_leader.badge}\n'
-                    f'**Reward:** ${gym_leader.money}\n\n'
-                    f'*[Battle system not yet implemented - this would start the gym leader battle]*',
-                    ephemeral=False
+                    f'**Reward:** ${gym_leader.money}\n',
+                    view=view
                 )
             else:
-                await interaction.response.send_message(
+                await interaction.followup.send(
                     f'Error: Could not load gym leader data. Status: {battle.statuscode}, Message: {battle.message}',
                     ephemeral=True
                 )
