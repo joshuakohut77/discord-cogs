@@ -349,6 +349,9 @@ class EncountersMixin(MixinMeta):
         enemy_name = list(trainer_pokemon_data.keys())[0]
         enemy_level = trainer_pokemon_data[enemy_name]
 
+        # Debug logging
+        await interaction.followup.send(f'DEBUG: enemy_name={enemy_name}, type={type(enemy_name)}, enemy_level={enemy_level}, trainer_pokemon_data={trainer_pokemon_data}', ephemeral=True)
+
         # Validate pokemon name
         if not enemy_name or enemy_name == 'None' or enemy_name == None:
             await interaction.followup.send(f'Error: Invalid Pokemon name in trainer data: {enemy_name}', ephemeral=True)
@@ -357,6 +360,11 @@ class EncountersMixin(MixinMeta):
         try:
             enemy_pokemon = PokemonClass(enemy_name)
             enemy_pokemon.create(enemy_level)
+            
+            # Debug: Check what the pokemon object looks like after creation
+            if enemy_pokemon.pokemonName is None or enemy_pokemon.pokemonName == 'None':
+                await interaction.followup.send(f'ERROR: After create(), pokemonName is {enemy_pokemon.pokemonName}', ephemeral=True)
+                return
         except Exception as e:
             await interaction.followup.send(f'Error creating enemy Pokemon "{enemy_name}" at level {enemy_level}: {str(e)}', ephemeral=True)
             return
@@ -431,13 +439,24 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send(battle.message if battle.message else 'Cannot challenge gym leader.', ephemeral=True)
             return
 
+        # Validate gym leader has pokemon data
+        if not gym_leader.pokemon or len(gym_leader.pokemon) == 0:
+            await interaction.followup.send(f'Error: Gym Leader {gym_leader.gym_leader} has no Pokemon data.', ephemeral=True)
+            return
+
         # Create enemy Pokemon from gym leader data (use first pokemon)
         leader_pokemon_data = gym_leader.pokemon[0]
+        
+        # Additional validation - check if pokemon_data is a dict and not None
+        if not isinstance(leader_pokemon_data, dict) or not leader_pokemon_data:
+            await interaction.followup.send(f'Error: Invalid Pokemon data for gym leader {gym_leader.gym_leader}: {leader_pokemon_data}', ephemeral=True)
+            return
+            
         enemy_name = list(leader_pokemon_data.keys())[0]
         enemy_level = leader_pokemon_data[enemy_name]
 
         # Validate pokemon name
-        if not enemy_name or enemy_name == 'None':
+        if not enemy_name or enemy_name == 'None' or enemy_name == None:
             await interaction.followup.send(f'Error: Invalid Pokemon name in gym leader data: {enemy_name}', ephemeral=True)
             return
 
@@ -459,9 +478,9 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send(
                 f'**VICTORY!**\n\n'
                 f'{enc.message}\n\n'
-                f'🏆 You defeated Gym Leader {gym_leader.gym_leader}!\n'
-                f'💰 Earned ${gym_leader.money}\n'
-                f'🎖️ Earned the {gym_leader.badge}!',
+                f'Defeated Gym Leader {gym_leader.gym_leader}!\n'
+                f'Earned ${gym_leader.money}\n'
+                f'**Received {gym_leader.badge}!**',
                 ephemeral=False
             )
         else:
