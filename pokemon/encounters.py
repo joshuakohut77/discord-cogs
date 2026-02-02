@@ -56,20 +56,30 @@ class ActionState:
         self.descLog = descLog
 
 class BattleState:
-    """Track ongoing manual battle state"""
+    """Track ongoing manual battle state with multiple Pokemon support"""
     def __init__(self, user_id: str, channel_id: int, message_id: int, 
-                 player_pokemon: PokemonClass, enemy_pokemon: PokemonClass,
+                 player_party: list, enemy_pokemon_list: list,
                  enemy_name: str, trainer_model, battle_manager):
         self.user_id = user_id
         self.channel_id = channel_id
         self.message_id = message_id
-        self.player_pokemon = player_pokemon
-        self.enemy_pokemon = enemy_pokemon
+        
+        # Player's full party
+        self.player_party = player_party  # List of PokemonClass objects
+        self.player_current_index = 0  # Index of current Pokemon
+        self.player_pokemon = player_party[0]  # Current Pokemon
+        
+        # Enemy's full team
+        self.enemy_pokemon_data = enemy_pokemon_list  # List of dicts like [{"geodude": 12}, {"onix": 14}]
+        self.enemy_current_index = 0  # Index of current Pokemon
+        self.enemy_pokemon = None  # Will be set after creating first Pokemon
+        
         self.enemy_name = enemy_name
-        self.trainer_model = trainer_model  # TrainerBattleModel or GymLeaderModel
-        self.battle_manager = battle_manager  # BattleClass instance
+        self.trainer_model = trainer_model
+        self.battle_manager = battle_manager
         self.battle_log = []
         self.turn_number = 1
+        self.defeated_enemies = []  # Track defeated enemy Pokemon
 
 
 class EncountersMixin(MixinMeta):
@@ -80,6 +90,25 @@ class EncountersMixin(MixinMeta):
     __gyms_data: dict = None
     __locations_data: dict = None
     __battle_states: dict[str, BattleState] = {}
+
+    # Helper method to get next available Pokemon from party
+    def __get_next_party_pokemon(self, party_list: list, current_index: int):
+        """Get next Pokemon with HP > 0 from party"""
+        for i in range(current_index + 1, len(party_list)):
+            pokemon = party_list[i]
+            pokemon.load(pokemonId=pokemon.trainerId)
+            if pokemon.currentHP > 0:
+                return pokemon, i
+        return None, -1
+
+    def __create_enemy_pokemon(self, pokemon_data: dict):
+        """Create an enemy Pokemon from data dict like {"geodude": 12}"""
+        enemy_name = list(pokemon_data.keys())[0]
+        enemy_level = pokemon_data[enemy_name]
+        
+        enemy_pokemon = PokemonClass(None, enemy_name)
+        enemy_pokemon.create(enemy_level)
+        return enemy_pokemon
 
     def __create_battle_embed(self, user: discord.User, battle_state: BattleState) -> discord.Embed:
         """Create an embed showing the current battle state"""
@@ -179,7 +208,7 @@ class EncountersMixin(MixinMeta):
         return view
 
     async def on_battle_move_click(self, interaction: discord.Interaction):
-        """Handle when player selects a move during manual battle"""
+        """Handle when player selects a move during manual battle - with Pokemon switching"""
         user = interaction.user
         user_id = str(user.id)
         
@@ -189,7 +218,6 @@ class EncountersMixin(MixinMeta):
         
         battle_state = self.__battle_states[user_id]
         
-        # Verify this is the correct message
         if battle_state.message_id != interaction.message.id:
             await interaction.response.send_message('This is not the current battle.', ephemeral=True)
             return
@@ -199,48 +227,36 @@ class EncountersMixin(MixinMeta):
         # Extract move name from custom_id
         move_name = interaction.data['custom_id'].replace('battle_move_', '')
         
-        # Store HP before battle for damage calculation
+        # Store HP before battle
         player_hp_before = battle_state.player_pokemon.currentHP
         enemy_hp_before = battle_state.enemy_pokemon.currentHP
         
-        # WORKAROUND: Since manual mode doesn't apply damage, we'll use auto mode
-        # but capture the state after just one exchange
-        # Create a fresh encounter for this turn
-        enc = EncounterClass(battle_state.player_pokemon, battle_state.enemy_pokemon)
-        
-        # Use auto battle but we'll manually track what happened
-        # The issue is that manual mode doesn't work, so let's do our own calculation
+        # Execute battle turn using our manual damage calculation
         import random
         import json
-        import os
         
-        # Load moves config to calculate damage
         moves_path = os.path.join(os.path.dirname(__file__), 'configs', 'moves.json')
         with open(moves_path, 'r') as f:
             moves_config = json.load(f)
         
-        # Load type effectiveness
         type_path = os.path.join(os.path.dirname(__file__), 'configs', 'typeEffectiveness.json')
         with open(type_path, 'r') as f:
             type_effectiveness = json.load(f)
         
-        # Get player's move data
+        # Player's move
         player_move = moves_config.get(move_name, {})
         player_power = player_move.get('power', 0)
         player_accuracy = player_move.get('accuracy', 100)
         player_move_type = player_move.get('moveType', 'normal')
         damage_class = player_move.get('damage_class', 'physical')
         
-        # Calculate if player's move hits
         player_hit = random.randint(1, 100) <= player_accuracy
         player_damage = 0
         
         if player_hit and player_power and player_power > 0:
-            # Get stats
             player_stats = battle_state.player_pokemon.getPokeStats()
             enemy_stats = battle_state.enemy_pokemon.getPokeStats()
             
-            # Determine attack and defense stats
             if damage_class == 'physical':
                 attack = player_stats['attack']
                 defense = enemy_stats['defense']
@@ -248,32 +264,64 @@ class EncountersMixin(MixinMeta):
                 attack = player_stats['special-attack']
                 defense = enemy_stats['special-defense']
             
-            # Calculate base damage
             level = battle_state.player_pokemon.currentLevel
             base_damage = ((2 * level / 5 + 2) * player_power * (attack / defense) / 50 + 2)
+            random_mult = random.randrange(217, 256) / 255
             
-            # Apply random multiplier
-            random_mult = random.uniform(0.85, 1.0)
-            
-            # STAB (Same Type Attack Bonus)
             stab = 1.5 if (player_move_type == battle_state.player_pokemon.type1 or 
                         player_move_type == battle_state.player_pokemon.type2) else 1.0
             
-            # Type effectiveness
             defending_type = battle_state.enemy_pokemon.type1
             effectiveness = type_effectiveness.get(player_move_type, {}).get(defending_type, 1.0)
             
-            # Final damage
             player_damage = int(base_damage * random_mult * stab * effectiveness)
-            
-            # Apply damage
             new_enemy_hp = max(0, battle_state.enemy_pokemon.currentHP - player_damage)
             battle_state.enemy_pokemon.currentHP = new_enemy_hp
         
-        # Now enemy attacks back (if still alive)
+        # Create battle log
+        log_lines = []
+        log_lines.append(f"**Turn {battle_state.turn_number}:**")
+        
+        if player_hit and player_damage > 0:
+            log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}! Dealt {player_damage} damage!")
+        elif player_hit and player_power == 0:
+            log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}! (Status move)")
+        else:
+            log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()} but it missed!")
+        
+        # Check if enemy fainted
+        if battle_state.enemy_pokemon.currentHP <= 0:
+            log_lines.append(f"💀 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} fainted!")
+            battle_state.defeated_enemies.append(battle_state.enemy_pokemon.pokemonName)
+            
+            # Check if enemy has more Pokemon
+            if battle_state.enemy_current_index < len(battle_state.enemy_pokemon_data) - 1:
+                # Enemy has more Pokemon - switch to next one
+                battle_state.enemy_current_index += 1
+                next_enemy_data = battle_state.enemy_pokemon_data[battle_state.enemy_current_index]
+                battle_state.enemy_pokemon = self.__create_enemy_pokemon(next_enemy_data)
+                
+                log_lines.append(f"⚡ {battle_state.enemy_name} sent out {battle_state.enemy_pokemon.pokemonName.capitalize()}!")
+                
+                battle_state.battle_log = ["\n".join(log_lines)]
+                battle_state.turn_number += 1
+                
+                # Update display with new enemy Pokemon
+                embed = self.__create_battle_embed(user, battle_state)
+                view = self.__create_move_buttons(battle_state)
+                await interaction.message.edit(embed=embed, view=view)
+                return
+            else:
+                # Enemy has no more Pokemon - PLAYER WINS!
+                battle_state.battle_log = ["\n".join(log_lines)]
+                battle_state.player_pokemon.save()
+                await self.__handle_gym_battle_victory(interaction, battle_state)
+                del self.__battle_states[user_id]
+                return
+        
+        # Enemy attacks back (if still alive)
         enemy_damage = 0
         if battle_state.enemy_pokemon.currentHP > 0:
-            # Enemy picks random move
             enemy_moves = [m for m in battle_state.enemy_pokemon.getMoves() if m and m.lower() != 'none']
             if enemy_moves:
                 enemy_move_name = random.choice(enemy_moves)
@@ -283,7 +331,6 @@ class EncountersMixin(MixinMeta):
                 enemy_move_type = enemy_move.get('moveType', 'normal')
                 enemy_damage_class = enemy_move.get('damage_class', 'physical')
                 
-                # Calculate if enemy hits
                 enemy_hit = random.randint(1, 100) <= enemy_accuracy
                 
                 if enemy_hit and enemy_power and enemy_power > 0:
@@ -299,7 +346,7 @@ class EncountersMixin(MixinMeta):
                     
                     level = battle_state.enemy_pokemon.currentLevel
                     base_damage = ((2 * level / 5 + 2) * enemy_power * (attack / defense) / 50 + 2)
-                    random_mult = random.uniform(0.85, 1.0)
+                    random_mult = random.randrange(217, 256) / 255
                     
                     stab = 1.5 if (enemy_move_type == battle_state.enemy_pokemon.type1 or 
                                 enemy_move_type == battle_state.enemy_pokemon.type2) else 1.0
@@ -308,74 +355,64 @@ class EncountersMixin(MixinMeta):
                     effectiveness = type_effectiveness.get(enemy_move_type, {}).get(defending_type, 1.0)
                     
                     enemy_damage = int(base_damage * random_mult * stab * effectiveness)
-                    
                     new_player_hp = max(0, battle_state.player_pokemon.currentHP - enemy_damage)
                     battle_state.player_pokemon.currentHP = new_player_hp
+                    
+                    log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} used {enemy_move_name.replace('-', ' ').title()}! Dealt {enemy_damage} damage!")
+                else:
+                    log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} attacked but missed!")
         
-        # Create battle log
-        log_lines = []
-        log_lines.append(f"**Turn {battle_state.turn_number}:**")
-        
-        # Player's action
-        if player_hit and player_damage > 0:
-            log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}! Dealt {player_damage} damage!")
-        elif player_hit and player_power == 0:
-            log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}! (Status move)")
-        else:
-            log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()} but it missed!")
-        
-        # Enemy's action
-        if battle_state.enemy_pokemon.currentHP > 0:
-            if enemy_damage > 0:
-                log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} attacked! Dealt {enemy_damage} damage!")
+        # Check if player's Pokemon fainted
+        if battle_state.player_pokemon.currentHP <= 0:
+            log_lines.append(f"💀 Your {battle_state.player_pokemon.pokemonName.capitalize()} fainted!")
+            
+            # Check if player has more Pokemon
+            next_pokemon, next_index = self.__get_next_party_pokemon(battle_state.player_party, battle_state.player_current_index)
+            
+            if next_pokemon:
+                # Player has more Pokemon - switch to next one
+                battle_state.player_current_index = next_index
+                battle_state.player_pokemon = next_pokemon
+                
+                log_lines.append(f"⚡ You sent out {battle_state.player_pokemon.pokemonName.capitalize()}!")
+                
+                battle_state.battle_log = ["\n".join(log_lines)]
+                battle_state.turn_number += 1
+                
+                # Update display with new player Pokemon
+                embed = self.__create_battle_embed(user, battle_state)
+                view = self.__create_move_buttons(battle_state)
+                await interaction.message.edit(embed=embed, view=view)
+                return
             else:
-                log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} attacked but missed!")
+                # Player has no more Pokemon - PLAYER LOSES!
+                battle_state.battle_log = ["\n".join(log_lines)]
+                battle_state.player_pokemon.save()
+                await self.__handle_gym_battle_defeat(interaction, battle_state)
+                del self.__battle_states[user_id]
+                return
         
+        # Battle continues
         battle_state.battle_log = ["\n".join(log_lines)]
         battle_state.turn_number += 1
         
-        # Check for battle end
-        if battle_state.enemy_pokemon.currentHP <= 0:
-            # Save the player's pokemon HP to database before victory
-            battle_state.player_pokemon.save()
-            await self.__handle_gym_battle_victory(interaction, battle_state)
-            del self.__battle_states[user_id]
-            return
-        
-        elif battle_state.player_pokemon.currentHP <= 0:
-            # Save the player's pokemon HP to database before defeat
-            battle_state.player_pokemon.save()
-            await self.__handle_gym_battle_defeat(interaction, battle_state)
-            del self.__battle_states[user_id]
-            return
-        
-        # Battle continues - update display
+        # Update display
         embed = self.__create_battle_embed(user, battle_state)
         view = self.__create_move_buttons(battle_state)
         
-        await interaction.message.edit(embed=embed, view=view)
-    
+        await interaction.message.edit(embed=embed, view=view)    
     
     async def __handle_gym_battle_victory(self, interaction: discord.Interaction, battle_state: BattleState):
-        """Handle when player wins a gym battle"""
+        """Handle when player wins a gym battle - shows all Pokemon used"""
         trainer_model = battle_state.trainer_model
         battle_manager = battle_state.battle_manager
         
-        # Get max HP for display
         player_max_hp = battle_state.player_pokemon.getPokeStats()['hp']
-        enemy_max_hp = battle_state.enemy_pokemon.getPokeStats()['hp']
         player_level = battle_state.player_pokemon.currentLevel
-        enemy_level = battle_state.enemy_pokemon.currentLevel
         
-        # Set enemy HP to 0 since they fainted
-        battle_state.enemy_pokemon.currentHP = 0
-        
-        # Award rewards and get experience message
+        # Award rewards
         if hasattr(trainer_model, 'badge'):  # It's a gym leader
             battle_manager.gymLeaderVictory(trainer_model)
-            
-            # Reload player pokemon to get exp/level up info
-            battle_state.player_pokemon.load(pokemonId=battle_state.player_pokemon.trainerId)
             
             embed = discord.Embed(
                 title="🏆 VICTORY!",
@@ -383,25 +420,34 @@ class EncountersMixin(MixinMeta):
                 color=discord.Color.gold()
             )
             
-            # Battle Summary
-            summary = []
-            summary.append(f"**Your {battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
-            summary.append(f"HP: {battle_state.player_pokemon.currentHP}/{player_max_hp}")
-            summary.append("")
-            summary.append(f"**{trainer_model.name}'s {battle_state.enemy_pokemon.pokemonName.capitalize()}** (Lv.{enemy_level})")
-            summary.append(f"HP: 0/{enemy_max_hp} ❌")
+            # Show all defeated enemy Pokemon
+            enemy_summary = []
+            enemy_summary.append(f"**Defeated {len(battle_state.defeated_enemies)} Pokemon:**")
+            for i, poke_name in enumerate(battle_state.defeated_enemies, 1):
+                enemy_summary.append(f"{i}. {poke_name.capitalize()} ❌")
             
             embed.add_field(
-                name="📊 Battle Summary",
-                value="\n".join(summary),
-                inline=False
+                name="🎯 Enemy Team",
+                value="\n".join(enemy_summary),
+                inline=True
+            )
+            
+            # Show player's current Pokemon
+            player_summary = []
+            player_summary.append(f"**Your {battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
+            player_summary.append(f"HP: {battle_state.player_pokemon.currentHP}/{player_max_hp}")
+            
+            embed.add_field(
+                name="💚 Your Pokemon",
+                value="\n".join(player_summary),
+                inline=True
             )
             
             # Battle log
             if battle_state.battle_log:
                 log_text = "\n".join(battle_state.battle_log)
                 embed.add_field(
-                    name="⚔️ Battle Log",
+                    name="⚔️ Final Turn",
                     value=log_text[:1024],
                     inline=False
                 )
@@ -421,34 +467,43 @@ class EncountersMixin(MixinMeta):
         else:  # It's a trainer
             battle_manager.battleVictory(trainer_model)
             
-            # Reload player pokemon to get exp/level up info
-            battle_state.player_pokemon.load(pokemonId=battle_state.player_pokemon.trainerId)
-            
             embed = discord.Embed(
                 title="🎉 VICTORY!",
                 description=f"You defeated {trainer_model.name}!",
                 color=discord.Color.green()
             )
             
-            # Battle Summary
-            summary = []
-            summary.append(f"**Your {battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
-            summary.append(f"HP: {battle_state.player_pokemon.currentHP}/{player_max_hp}")
-            summary.append("")
-            summary.append(f"**Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()}** (Lv.{enemy_level})")
-            summary.append(f"HP: 0/{enemy_max_hp} ❌")
+            # Show all defeated enemy Pokemon
+            enemy_summary = []
+            if len(battle_state.defeated_enemies) > 1:
+                enemy_summary.append(f"**Defeated {len(battle_state.defeated_enemies)} Pokemon:**")
+                for i, poke_name in enumerate(battle_state.defeated_enemies, 1):
+                    enemy_summary.append(f"{i}. {poke_name.capitalize()} ❌")
+            else:
+                enemy_summary.append(f"**Enemy {battle_state.defeated_enemies[0].capitalize()}** ❌")
             
             embed.add_field(
-                name="📊 Battle Summary",
-                value="\n".join(summary),
-                inline=False
+                name="🎯 Enemy Team",
+                value="\n".join(enemy_summary),
+                inline=True
+            )
+            
+            # Show player's current Pokemon
+            player_summary = []
+            player_summary.append(f"**{battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
+            player_summary.append(f"HP: {battle_state.player_pokemon.currentHP}/{player_max_hp}")
+            
+            embed.add_field(
+                name="💚 Your Pokemon",
+                value="\n".join(player_summary),
+                inline=True
             )
             
             # Battle log
             if battle_state.battle_log:
                 log_text = "\n".join(battle_state.battle_log)
                 embed.add_field(
-                    name="⚔️ Battle Log",
+                    name="⚔️ Final Turn",
                     value=log_text[:1024],
                     inline=False
                 )
@@ -465,10 +520,10 @@ class EncountersMixin(MixinMeta):
         remaining = battle_manager.getRemainingTrainerCount()
         if remaining > 0:
             next_up = battle_manager.getNextTrainer()
-            embed.add_field(
-                name="⚔️ Next",
-                value=f"{remaining} trainers remaining\nNext: {next_up.name if next_up else 'Unknown'}",
-                inline=True
+            await interaction.followup.send(
+                f"**Trainers Remaining:** {remaining}\n"
+                f"**Next Opponent:** {next_up.name if next_up else 'Unknown'}",
+                ephemeral=False
             )
         else:
             gym_leader = battle_manager.getGymLeader()
@@ -479,16 +534,12 @@ class EncountersMixin(MixinMeta):
                 )
 
     async def __handle_gym_battle_defeat(self, interaction: discord.Interaction, battle_state: BattleState):
-        """Handle when player loses a gym battle"""
+        """Handle when player loses a gym battle - shows team info"""
         
-        # Get max HP for display
         player_max_hp = battle_state.player_pokemon.getPokeStats()['hp']
         enemy_max_hp = battle_state.enemy_pokemon.getPokeStats()['hp']
         player_level = battle_state.player_pokemon.currentLevel
         enemy_level = battle_state.enemy_pokemon.currentLevel
-        
-        # Set player HP to 0 since they fainted
-        battle_state.player_pokemon.currentHP = 0
         
         embed = discord.Embed(
             title="💀 DEFEAT",
@@ -496,30 +547,45 @@ class EncountersMixin(MixinMeta):
             color=discord.Color.dark_red()
         )
         
-        # Battle Summary
-        summary = []
-        summary.append(f"**Your {battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
-        summary.append(f"HP: 0/{player_max_hp} ❌")
-        summary.append("")
-        summary.append(f"**Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()}** (Lv.{enemy_level})")
-        summary.append(f"HP: {battle_state.enemy_pokemon.currentHP}/{enemy_max_hp}")
+        # Show player's fainted Pokemon count
+        fainted_count = battle_state.player_current_index + 1
+        total_party = len(battle_state.player_party)
+        
+        player_summary = []
+        player_summary.append(f"**Your Team:** {fainted_count}/{total_party} fainted")
+        player_summary.append(f"Last: {battle_state.player_pokemon.pokemonName.capitalize()} (Lv.{player_level})")
+        player_summary.append(f"HP: 0/{player_max_hp} ❌")
         
         embed.add_field(
-            name="📊 Battle Summary",
-            value="\n".join(summary),
-            inline=False
+            name="💚 Your Team",
+            value="\n".join(player_summary),
+            inline=True
+        )
+        
+        # Show enemy's current Pokemon
+        enemy_summary = []
+        enemy_summary.append(f"**{battle_state.enemy_pokemon.pokemonName.capitalize()}** (Lv.{enemy_level})")
+        enemy_summary.append(f"HP: {battle_state.enemy_pokemon.currentHP}/{enemy_max_hp}")
+        if len(battle_state.defeated_enemies) > 0:
+            enemy_summary.append(f"\nDefeated: {len(battle_state.defeated_enemies)}/{len(battle_state.enemy_pokemon_data)}")
+        
+        embed.add_field(
+            name="🎯 Enemy Team",
+            value="\n".join(enemy_summary),
+            inline=True
         )
         
         # Battle log
         if battle_state.battle_log:
             log_text = "\n".join(battle_state.battle_log)
             embed.add_field(
-                name="⚔️ Battle Log",
+                name="⚔️ Final Turn",
                 value=log_text[:1024],
                 inline=False
             )
         
         await interaction.message.edit(embed=embed, view=View())
+
 
     def __load_quests_data(self):
         """Load quests.json file"""
@@ -928,66 +994,75 @@ class EncountersMixin(MixinMeta):
 
     # New handler for MANUAL trainer battles
     async def on_gym_battle_manual(self, interaction: discord.Interaction):
-            """Handle MANUAL battle with gym trainer"""
-            user = interaction.user
+        """Handle MANUAL battle with gym trainer - supports multiple Pokemon"""
+        user = interaction.user
 
-            if not self.__checkUserActionState(user, interaction.message):
-                await interaction.response.send_message('This is not for you.', ephemeral=True)
-                return
+        if not self.__checkUserActionState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
 
-            await interaction.response.defer()
+        await interaction.response.defer()
 
-            trainer = TrainerClass(str(user.id))
-            location = trainer.getLocation()
-            active_pokemon = trainer.getActivePokemon()
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+        
+        # Get player's full party
+        player_party = trainer.getPokemon(party=True)
+        
+        # Load all party Pokemon and filter out fainted ones
+        alive_party = []
+        for poke in player_party:
+            poke.load(pokemonId=poke.trainerId)
+            if poke.currentHP > 0:
+                alive_party.append(poke)
+        
+        if len(alive_party) == 0:
+            await interaction.followup.send('All your party Pokemon have fainted! Heal at a Pokemon Center first.', ephemeral=True)
+            return
 
-            if active_pokemon.currentHP == 0:
-                await interaction.followup.send('Your active Pokemon has fainted!', ephemeral=True)
-                return
+        battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
+        next_trainer = battle.getNextTrainer()
+        
+        if not next_trainer:
+            await interaction.followup.send('No trainer to battle.', ephemeral=True)
+            return
 
-            battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
-            next_trainer = battle.getNextTrainer()
-            
-            if not next_trainer:
-                await interaction.followup.send('No trainer to battle.', ephemeral=True)
-                return
+        # Get enemy's full Pokemon list
+        enemy_pokemon_list = next_trainer.pokemon  # List of dicts
 
-            # Create enemy Pokemon
-            trainer_pokemon_data = next_trainer.pokemon[0]
-            enemy_name = list(trainer_pokemon_data.keys())[0]
-            enemy_level = trainer_pokemon_data[enemy_name]
+        # Create first enemy Pokemon
+        try:
+            first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0])
+        except Exception as e:
+            await interaction.followup.send(f'Error creating enemy Pokemon: {str(e)}', ephemeral=True)
+            return
 
-            try:
-                enemy_pokemon = PokemonClass(None, enemy_name)
-                enemy_pokemon.create(enemy_level)
-            except Exception as e:
-                await interaction.followup.send(f'Error creating enemy Pokemon: {str(e)}', ephemeral=True)
-                return
+        # START MANUAL BATTLE with multiple Pokemon support
+        battle_state = BattleState(
+            user_id=str(user.id),
+            channel_id=interaction.channel_id,
+            message_id=0,
+            player_party=alive_party,
+            enemy_pokemon_list=enemy_pokemon_list,
+            enemy_name=next_trainer.name,
+            trainer_model=next_trainer,
+            battle_manager=battle
+        )
+        
+        battle_state.enemy_pokemon = first_enemy_pokemon
 
-            # START MANUAL BATTLE
-            battle_state = BattleState(
-                user_id=str(user.id),
-                channel_id=interaction.channel_id,
-                message_id=0,
-                player_pokemon=active_pokemon,
-                enemy_pokemon=enemy_pokemon,
-                enemy_name=next_trainer.name,
-                trainer_model=next_trainer,
-                battle_manager=battle
-            )
+        self.__battle_states[str(user.id)] = battle_state
 
-            self.__battle_states[str(user.id)] = battle_state
+        embed = self.__create_battle_embed(user, battle_state)
+        view = self.__create_move_buttons(battle_state)
 
-            embed = self.__create_battle_embed(user, battle_state)
-            view = self.__create_move_buttons(battle_state)
+        message = await interaction.followup.send(
+            content=f"**Manual Battle Started!**\n{next_trainer.name} has {len(enemy_pokemon_list)} Pokemon!",
+            embed=embed,
+            view=view
+        )
 
-            message = await interaction.followup.send(
-                content=f"**Manual Battle Started!**",
-                embed=embed,
-                view=view
-            )
-
-            battle_state.message_id = message.id
+        battle_state.message_id = message.id
 
     async def on_gym_leader_battle_auto(self, interaction: discord.Interaction):
         """Handle gym leader AUTO battle"""
@@ -1263,79 +1338,80 @@ class EncountersMixin(MixinMeta):
                     )
 
     async def on_gym_leader_battle_manual(self, interaction: discord.Interaction):
-            """Handle MANUAL battle with gym leader"""
-            user = interaction.user
+        """Handle MANUAL battle with gym leader - supports multiple Pokemon"""
+        user = interaction.user
 
-            if not self.__checkUserActionState(user, interaction.message):
-                await interaction.response.send_message('This is not for you.', ephemeral=True)
-                return
+        if not self.__checkUserActionState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
 
-            await interaction.response.defer()
+        await interaction.response.defer()
 
-            trainer = TrainerClass(str(user.id))
-            location = trainer.getLocation()
-            active_pokemon = trainer.getActivePokemon()
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+        
+        # Get player's full party
+        player_party = trainer.getPokemon(party=True)
+        
+        # Load all party Pokemon and filter out fainted ones
+        alive_party = []
+        for poke in player_party:
+            poke.load(pokemonId=poke.trainerId)
+            if poke.currentHP > 0:
+                alive_party.append(poke)
+        
+        if len(alive_party) == 0:
+            await interaction.followup.send('All your party Pokemon have fainted!', ephemeral=True)
+            return
 
-            if active_pokemon.currentHP == 0:
-                await interaction.followup.send('Your active Pokemon has fainted!', ephemeral=True)
-                return
+        gyms_data = self.__load_gyms_data()
+        battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
 
-            gyms_data = self.__load_gyms_data()
-            battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
+        gym_leader = battle.getGymLeader()
+        if not gym_leader or battle.statuscode == 420:
+            await interaction.followup.send(battle.message if battle.message else 'Cannot challenge gym leader.', ephemeral=True)
+            return
 
-            gym_leader = battle.getGymLeader()
-            if not gym_leader or battle.statuscode == 420:
-                await interaction.followup.send(battle.message if battle.message else 'Cannot challenge gym leader.', ephemeral=True)
-                return
+        if not gym_leader.pokemon or len(gym_leader.pokemon) == 0:
+            await interaction.followup.send(f'Error: Gym Leader has no Pokemon data.', ephemeral=True)
+            return
 
-            if not gym_leader.pokemon or len(gym_leader.pokemon) == 0:
-                await interaction.followup.send(f'Error: Gym Leader has no Pokemon data.', ephemeral=True)
-                return
+        # Get enemy's full Pokemon list
+        enemy_pokemon_list = gym_leader.pokemon
 
-            leader_pokemon_data = gym_leader.pokemon[0]
-            
-            if not isinstance(leader_pokemon_data, dict) or not leader_pokemon_data:
-                await interaction.followup.send(f'Error: Invalid Pokemon data for gym leader', ephemeral=True)
-                return
-                
-            enemy_name = list(leader_pokemon_data.keys())[0]
-            enemy_level = leader_pokemon_data[enemy_name]
+        # Create first enemy Pokemon
+        try:
+            first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0])
+        except Exception as e:
+            await interaction.followup.send(f'Error creating gym leader Pokemon: {str(e)}', ephemeral=True)
+            return
 
-            if not enemy_name or enemy_name == 'None' or enemy_name == None:
-                await interaction.followup.send(f'Error: Invalid Pokemon name', ephemeral=True)
-                return
+        # START MANUAL BATTLE
+        battle_state = BattleState(
+            user_id=str(user.id),
+            channel_id=interaction.channel_id,
+            message_id=0,
+            player_party=alive_party,
+            enemy_pokemon_list=enemy_pokemon_list,
+            enemy_name=gym_leader.name,
+            trainer_model=gym_leader,
+            battle_manager=battle
+        )
+        
+        battle_state.enemy_pokemon = first_enemy_pokemon
 
-            try:
-                enemy_pokemon = PokemonClass(None, enemy_name)
-                enemy_pokemon.create(enemy_level)
-            except Exception as e:
-                await interaction.followup.send(f'Error creating gym leader Pokemon: {str(e)}', ephemeral=True)
-                return
+        self.__battle_states[str(user.id)] = battle_state
 
-            # START MANUAL BATTLE
-            battle_state = BattleState(
-                user_id=str(user.id),
-                channel_id=interaction.channel_id,
-                message_id=0,
-                player_pokemon=active_pokemon,
-                enemy_pokemon=enemy_pokemon,
-                enemy_name=gym_leader.name,
-                trainer_model=gym_leader,
-                battle_manager=battle
-            )
+        embed = self.__create_battle_embed(user, battle_state)
+        view = self.__create_move_buttons(battle_state)
 
-            self.__battle_states[str(user.id)] = battle_state
+        message = await interaction.followup.send(
+            content=f"**Gym Leader Battle Started!**\n{gym_leader.name} has {len(enemy_pokemon_list)} Pokemon!",
+            embed=embed,
+            view=view
+        )
 
-            embed = self.__create_battle_embed(user, battle_state)
-            view = self.__create_move_buttons(battle_state)
-
-            message = await interaction.followup.send(
-                content=f"**Gym Leader Battle Started!**",
-                embed=embed,
-                view=view
-            )
-
-            battle_state.message_id = message.id
+        battle_state.message_id = message.id
 
     async def __on_action(self, interaction: Interaction):
         user = interaction.user
