@@ -286,7 +286,7 @@ class EncountersMixin(MixinMeta):
         # Move to new location
         trainer.setLocation(new_location.locationId)
         
-        # Show new location's map by calling on_nav_map_click
+        # Recreate the map view with action buttons
         await self.on_nav_map_click(interaction)
 
 
@@ -469,8 +469,7 @@ class EncountersMixin(MixinMeta):
         )
         
         # Add back to map button
-        view = self.__create_post_battle_buttons(str(user.id))
-        
+        view = self.__create_post_battle_buttons(battle_state.user_id)
         await interaction.message.edit(embed=embed, view=view)
 
 
@@ -918,7 +917,7 @@ class EncountersMixin(MixinMeta):
             )
         
         # ADD NAVIGATION BUTTONS - This is the key change!
-        view = self.__create_post_battle_buttons(str(user.id))
+        view = self.__create_post_battle_buttons(battle_state.user_id)
         
         await interaction.message.edit(embed=embed, view=view)
         
@@ -941,6 +940,9 @@ class EncountersMixin(MixinMeta):
 
     async def __handle_gym_battle_defeat(self, interaction: discord.Interaction, battle_state: BattleState):
         """Handle when player loses a gym battle - shows team info with navigation"""
+        
+        # GET user from interaction - THIS WAS MISSING!
+        user = interaction.user
         
         player_max_hp = battle_state.player_pokemon.getPokeStats()['hp']
         enemy_max_hp = battle_state.enemy_pokemon.getPokeStats()['hp']
@@ -990,8 +992,8 @@ class EncountersMixin(MixinMeta):
                 inline=False
             )
         
-        # ADD NAVIGATION BUTTONS - This is the key change!
-        view = self.__create_post_battle_buttons(str(user.id))
+        # ADD NAVIGATION BUTTONS - use battle_state.user_id instead of str(user.id)
+        view = self.__create_post_battle_buttons(battle_state.user_id)
         
         await interaction.message.edit(embed=embed, view=view)
 
