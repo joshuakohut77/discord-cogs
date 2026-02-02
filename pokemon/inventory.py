@@ -80,7 +80,7 @@ class InventoryMixin(MixinMeta):
 
         message: discord.Message = await ctx.send(
             embed=embed,
-            view=[btns]
+            view=btns
         )
         self.__inventory[str(author.id)] = InventoryState(user.id, message.id, message.channel.id)
 
@@ -130,13 +130,12 @@ class InventoryMixin(MixinMeta):
         trainerHMs = "\r\n".join(hms) if len(hms) > 0 else 'No HMs yet.'
         embed.add_field(name='HMs', value=trainerHMs, inline=False)
 
-        btns = []
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.gray, label="← Key Items", custom_id='keyitems'),
-            self.__on_keyitems_click,
-        ))
+        view = ui.View()
+        button = Button(style=ButtonStyle.gray, label="← Key Items", custom_id='keyitems')
+        button.callback = self.on_keyitems_click_inventory
+        view.add_item(button)
 
-        message = await interaction.edit_original_response(embed=embed, view=[btns])
+        message = await interaction.edit_original_response(embed=embed, view=view)
 
         self.__inventory[str(user.id)] = InventoryState(state.discordId, message.id, message.channel.id)
 
@@ -162,7 +161,7 @@ class InventoryMixin(MixinMeta):
 
         message = await interaction.edit_original_response(
             embed=embed,
-            view=[btns]
+            view=btns
         )
         self.__inventory[str(user.id)] = InventoryState(state.discordId, message.id, message.channel.id)
     
@@ -219,17 +218,16 @@ class InventoryMixin(MixinMeta):
         trainerItems = "\r\n".join(items) if len(items) > 0 else 'No key items yet.'
         embed.add_field(name='Key Items', value=trainerItems, inline=False)
 
-        btns = []
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.gray, label="← Items", custom_id='items'),
-            self.__on_items_click,
-        ))
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.gray, label='HMs →', custom_id='hms'),
-            self.__on_hm_click,
-        ))
+        view = ui.View()
+        button = Button(style=ButtonStyle.gray, label="← Items", custom_id='items')
+        button.callback = self.on_items_click_inventory
+        view.add_item(button)
 
-        message = await interaction.edit_original_response(embed=embed, view=[btns])
+        button = Button(style=ButtonStyle.gray, label='HMs →', custom_id='hms')
+        button.callback = self.on_hm_click_inventory
+        view.add_item(button)
+
+        message = await interaction.edit_original_response(embed=embed, view=view)
         self.__inventory[str(user.id)] = InventoryState(state.discordId, message.id, message.channel.id)
 
 
@@ -352,10 +350,21 @@ class InventoryMixin(MixinMeta):
         trainerItems = "\r\n".join(items) if len(items) > 0 else 'No items yet.'
         embed.add_field(name='Items', value=trainerItems, inline=False)
 
-        btns = []
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.gray, label='Key Items →', custom_id='keyitems'),
-            self.__on_keyitems_click,
-        ))
+        view = ui.View()
+        button = Button(style=ButtonStyle.gray, label='Key Items →', custom_id='keyitems')
+        button.callback = self.on_keyitems_click_inventory
+        view.add_item(button)
 
-        return embed, btns
+        return embed, view
+
+    @discord.ui.button(custom_id='keyitems', label='Key Items →', style=ButtonStyle.gray)
+    async def on_keyitems_click_inventory(self, interaction: discord.Interaction):
+        await self.__on_keyitems_click(interaction)
+
+    @discord.ui.button(custom_id='items', label='← Items', style=ButtonStyle.gray)
+    async def on_items_click_inventory(self, interaction: discord.Interaction):
+        await self.__on_items_click(interaction)
+
+    @discord.ui.button(custom_id='hms', label='HMs →', style=ButtonStyle.gray)
+    async def on_hm_click_inventory(self, interaction: discord.Interaction):
+        await self.__on_hm_click(interaction)
