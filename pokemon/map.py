@@ -241,7 +241,7 @@ class MapMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         trainer.setLocation(direction.locationId)
         
-        file, btns = self.__createMapCard(direction)
+        file, btns = self.__createMapCard(direction, True, str(user.id))
 
         temp_message = await self.sendToLoggingChannel(
             content=f'{user.display_name} walked North to {north}',
@@ -294,7 +294,7 @@ class MapMixin(MixinMeta):
         trainer.setLocation(direction.locationId)
         
 
-        file, btns = self.__createMapCard(direction)
+        file, btns = self.__createMapCard(direction, True, str(user.id))
 
         temp_message = await self.sendToLoggingChannel(
             content=f'{user.display_name} walked South to {south}',
@@ -353,7 +353,7 @@ class MapMixin(MixinMeta):
         trainer.setLocation(direction.locationId)
         # await interaction.response.send_message(f'You walked East to {east}.')
 
-        file, btns = self.__createMapCard(direction)
+        file, btns = self.__createMapCard(direction, True, str(user.id))
 
         temp_message = await self.sendToLoggingChannel(
             content=f'{user.display_name} walked East to {east}',
@@ -405,7 +405,7 @@ class MapMixin(MixinMeta):
         trainer.setLocation(direction.locationId)
         # await interaction.response.send_message(f'You walked West to {west}.')
 
-        file, btns = self.__createMapCard(direction)
+        file, btns = self.__createMapCard(direction, True, str(user.id))
 
         temp_message = await self.sendToLoggingChannel(
             content=f'{user.display_name} walked West to {west}',
@@ -425,59 +425,288 @@ class MapMixin(MixinMeta):
 
         self.__locations[str(user.id)] = LocationState(str(user.id), direction, message.id)
 
-    async def on_map_encounters_click(self, interaction: discord.Interaction):
-        """Handle Encounters button click from map - redirect to trainer encounter command"""
-        user = interaction.user
-        
-        if not self.__checkMapState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.', ephemeral=True)
-            return
-        
-        # Simply tell them to use the encounter command for now
-        # We can't easily call encounters.py methods from here due to mixin separation
+    async def _forward_to_encounter_handler(self, interaction: discord.Interaction):
+        """Temporary - forward encounter method clicks"""
         await interaction.response.send_message(
-            'Click this to show encounters: Type `,trainer encounter` or use the emoji reaction shortcut.',
+            'Use `,trainer encounter` to access encounters.',
             ephemeral=True
         )
 
-    async def on_map_quests_click(self, interaction: discord.Interaction):
-        """Handle Quests button from map"""
-        user = interaction.user
-        
-        if not self.__checkMapState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.', ephemeral=True)
-            return
-        
+    async def _forward_quest_handler(self, interaction: discord.Interaction):
+        """Temporary - forward quest clicks"""
         await interaction.response.send_message(
-            'Use `,trainer encounter` to see quests at this location.',
+            'Use `,trainer encounter` to access quests.',
             ephemeral=True
         )
 
-    async def on_map_gym_click(self, interaction: discord.Interaction):
-        """Handle Gym button from map"""
-        user = interaction.user
-        
-        if not self.__checkMapState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.', ephemeral=True)
-            return
-        
+    async def _forward_gym_handler(self, interaction: discord.Interaction):
+        """Temporary - forward gym clicks"""
         await interaction.response.send_message(
             'Use `,trainer encounter` to access the gym.',
             ephemeral=True
         )
-    
-    async def on_map_party_click(self, interaction: discord.Interaction):
-        """Handle Party button from map"""
+
+    def _get_gym_button_for_location(self, user_id: str, location_id: str):
+        """Helper to get gym button"""
+        # Load locations and gyms data
+        locations_path = os.path.join(os.path.dirname(__file__), 'configs', 'locations.json')
+        with open(locations_path, 'r') as f:
+            locations_data = json.load(f)
+        
+        location_info = locations_data.get(str(location_id))
+        if not location_info or not location_info.get('gym', False):
+            return None
+        
+        gyms_path = os.path.join(os.path.dirname(__file__), 'configs', 'gyms.json')
+        with open(gyms_path, 'r') as f:
+            gyms_data = json.load(f)
+        
+        gym_info = gyms_data.get(str(location_id))
+        if not gym_info:
+            return None
+        
+        # Check requirements
+        requirements = gym_info['leader'].get('requirements', [])
+        has_requirements = True
+        
+        if requirements:
+            quest_obj = QuestsClass(user_id)
+            for req in requirements:
+                if hasattr(quest_obj.keyitems, req):
+                    if not getattr(quest_obj.keyitems, req):
+                        has_requirements = False
+                        break
+                else:
+                    has_requirements = False
+                    break
+        
+        button = Button(
+            style=ButtonStyle.red,
+            label="Gym Challenge",
+            custom_id='gym_challenge',
+            disabled=not has_requirements
+        )
+        button.callback = self._forward_gym_handler
+        
+        return button
+
+    async def on_map_encounters_click(self, interaction: discord.Interaction):
+        """Handle Encounters button click from map - show encounter options"""
         user = interaction.user
         
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
         
+        await interaction.response.defer()
+        
+        # Get location
+        trainer = TrainerClass(str(user.id))
+        location_model = trainer.getLocation()
+        
+        # Get encounter methods
+        location_obj = LocationClass(str(user.id))
+        methods = location_obj.getMethods()
+        
+        # Get quest and gym buttons too
+        from .encounters import EncountersMixin
+        quest_buttons = self._get_quest_buttons_for_location(str(user.id), location_model.name)
+        gym_button = self._get_gym_button_for_location(str(user.id), location_model.locationId)
+        
+        if len(methods) == 0 and len(quest_buttons) == 0 and gym_button is None:
+            await interaction.followup.send('No encounters, quests, or gyms available.', ephemeral=True)
+            return
+        
+        # Create encounter view (same as ,trainer encounter command)
+        view = View()
+        for method in methods:
+            button = Button(style=ButtonStyle.gray, label=f"{method.name}", custom_id=f'{method.value}', disabled=False)
+            # Note: We need to forward to encounters.py handler, but we're in map.py
+            # For now, show message to use command
+            button.callback = self._forward_to_encounter_handler
+            view.add_item(button)
+        
+        # Add quest buttons
+        for quest_btn in quest_buttons:
+            view.add_item(quest_btn)
+        
+        # Add gym button
+        if gym_button:
+            view.add_item(gym_button)
+        
+        # Back button
+        back_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='back_to_map', row=2)
+        back_btn.callback = self.on_back_to_map
+        view.add_item(back_btn)
+        
+        message = await interaction.message.edit(
+            content=f"**{constant.LOCATION_DISPLAY_NAMES.get(location_model.name, location_model.name)}**\nWhat do you want to do?",
+            view=view
+        )
+        
+        # Store state for encounter handlers
+        self.__locations[str(user.id)].messageId = message.id
+
+    def _get_quest_buttons_for_location(self, user_id: str, location_name: str) -> list:
+        """Helper to get quest buttons - similar to encounters.py version"""
+        quests_data = self.__load_quests()
+        quest_buttons = []
+
+        for quest_id, quest_info in quests_data.items():
+            if quest_info.get('name') == location_name:
+                quest_list = quest_info.get('quest', [])
+                pre_requisites = quest_info.get('pre-requsites', [])
+
+                for quest_name in quest_list:
+                    # Check prerequisites
+                    quest_obj = QuestsClass(user_id)
+                    has_prerequisites = True
+                    
+                    for prereq in pre_requisites:
+                        if hasattr(quest_obj.keyitems, prereq):
+                            if not getattr(quest_obj.keyitems, prereq):
+                                has_prerequisites = False
+                                break
+                        else:
+                            has_prerequisites = False
+                            break
+
+                    button = Button(
+                        style=ButtonStyle.blurple,
+                        label=f"Quest: {quest_name}",
+                        custom_id=f'quest_{quest_name}',
+                        disabled=not has_prerequisites
+                    )
+                    # Note: callback would need to forward to encounters.py
+                    button.callback = self._forward_quest_handler
+                    quest_buttons.append(button)
+
+        return quest_buttons
+
+    async def on_map_quests_click(self, interaction: discord.Interaction):
+        """Handle Quests button from map - show quests"""
+        user = interaction.user
+        
+        if not self.__checkMapState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+        
+        quest_buttons = self._get_quest_buttons_for_location(str(user.id), location.name)
+        
+        if len(quest_buttons) == 0:
+            await interaction.followup.send('No quests available here.', ephemeral=True)
+            return
+        
+        # Show quests
+        view = View()
+        for quest_btn in quest_buttons:
+            view.add_item(quest_btn)
+        
+        # Back button
+        back_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='back_to_map', row=1)
+        back_btn.callback = self.on_back_to_map
+        view.add_item(back_btn)
+        
+        await interaction.message.edit(
+            content=f"**{constant.LOCATION_DISPLAY_NAMES.get(location.name, location.name)}**\nAvailable Quests:",
+            view=view
+        )
+
+    async def on_map_gym_click(self, interaction: discord.Interaction):
+        """Handle Gym button from map - forward to gym handler"""
+        user = interaction.user
+        
+        if not self.__checkMapState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+        
+        # For now, tell user to use encounter command
+        # Ideally we'd forward to the gym click handler in encounters.py
         await interaction.response.send_message(
-            'Use `,trainer party` to view your party.',
+            'Use `,trainer encounter` then click "Gym Challenge" button.',
             ephemeral=True
         )
+    
+    async def on_map_party_click(self, interaction: discord.Interaction):
+        """Handle Party button from map - show party"""
+        user = interaction.user
+        
+        if not self.__checkMapState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Show simplified party view
+        trainer = TrainerClass(str(user.id))
+        pokeList = trainer.getPokemon(party=True)
+        active = trainer.getActivePokemon()
+
+        if len(pokeList) == 0:
+            await interaction.followup.send('You do not have any Pokemon.', ephemeral=True)
+            return
+
+        # Create party display
+        embed = discord.Embed(
+            title="👥 Your Party",
+            description="Your Pokemon team",
+            color=discord.Color.blue()
+        )
+        
+        # Show all party Pokemon
+        for i, poke in enumerate(pokeList, 1):
+            poke.load(pokemonId=poke.trainerId)
+            stats = poke.getPokeStats()
+            is_active = "⭐" if poke.trainerId == active.trainerId else ""
+            status = "💚" if poke.currentHP > 0 else "💀"
+            
+            poke_name = poke.nickName if poke.nickName else poke.pokemonName.capitalize()
+            
+            embed.add_field(
+                name=f"{i}. {poke_name} {is_active}",
+                value=f"{status} Lv.{poke.currentLevel} | HP: {poke.currentHP}/{stats['hp']}",
+                inline=False
+            )
+        
+        # Back to map button
+        view = View()
+        map_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='back_to_map')
+        map_btn.callback = self.on_back_to_map
+        view.add_item(map_btn)
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+    async def on_back_to_map(self, interaction: discord.Interaction):
+        """Handle Back to Map button - recreate map view"""
+        user = interaction.user
+        
+        if not self.__checkMapState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Get current location
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+        
+        # Recreate map card with action buttons
+        file, btns = self.__createMapCard(location, True, str(user.id))
+        
+        temp_message = await self.sendToLoggingChannel(f'{user.display_name} viewing map', file)
+        attachment = temp_message.attachments[0]
+        
+        name = constant.LOCATION_DISPLAY_NAMES[location.name]
+        embed = discord.Embed(title=f'{name}', description=f'You are at {name}.')
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+        embed.set_image(url=attachment.url)
+        
+        await interaction.message.edit(embed=embed, view=btns)
 
     def __checkMapState(self, user: discord.User, message: discord.Message):
         state: LocationState
