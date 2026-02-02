@@ -88,9 +88,10 @@ class InventoryMixin(MixinMeta):
 
     async def __on_hm_click(self, interaction: Interaction):
         user = interaction.user
+        await interaction.response.defer()
 
         if not self.__checkInventoryState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.followup.send('This is not for you.', ephemeral=True)
             return
 
         # name = uuid.uuid4()
@@ -136,18 +137,19 @@ class InventoryMixin(MixinMeta):
         button.callback = self.on_keyitems_click_inventory
         view.add_item(button)
 
-        message = await interaction.edit_original_response(embed=embed, view=view)
+        message = await interaction.message.edit(embed=embed, view=view)
 
         self.__inventory[str(user.id)] = InventoryState(state.discordId, message.id, message.channel.id)
 
 
     async def __on_items_click(self, interaction: Interaction):
         user = interaction.user
+        await interaction.response.defer()
 
         if not self.__checkInventoryState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.followup.send('This is not for you.', ephemeral=True)
             return
-        
+
 
         state: InventoryState = self.__inventory[str(user.id)]
 
@@ -157,10 +159,10 @@ class InventoryMixin(MixinMeta):
         if not authorIsTrainer:
             ctx: Context = await self.bot.get_context(interaction.message)
             trainerUser = await ctx.guild.fetch_member(int(state.discordId))
-        
+
         embed, btns = self.createItemsEmbed(trainerUser)
 
-        message = await interaction.edit_original_response(
+        message = await interaction.message.edit(
             embed=embed,
             view=btns
         )
@@ -169,9 +171,10 @@ class InventoryMixin(MixinMeta):
 
     async def __on_keyitems_click(self, interaction: Interaction):
         user = interaction.user
+        await interaction.response.defer()
 
         if not self.__checkInventoryState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.followup.send('This is not for you.', ephemeral=True)
             return
 
         inv = KeyItemClass(str(user.id))
@@ -228,7 +231,7 @@ class InventoryMixin(MixinMeta):
         button.callback = self.on_hm_click_inventory
         view.add_item(button)
 
-        message = await interaction.edit_original_response(embed=embed, view=view)
+        message = await interaction.message.edit(embed=embed, view=view)
         self.__inventory[str(user.id)] = InventoryState(state.discordId, message.id, message.channel.id)
 
 
