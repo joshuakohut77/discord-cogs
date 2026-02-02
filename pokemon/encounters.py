@@ -1467,7 +1467,6 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send(embed=embed, view=view_nav, ephemeral=True)
 
 
-    # New handler for MANUAL trainer battles
     async def on_gym_battle_manual(self, interaction: discord.Interaction):
         """Handle MANUAL battle with gym trainer - supports multiple Pokemon with intro"""
         user = interaction.user
@@ -1866,11 +1865,10 @@ class EncountersMixin(MixinMeta):
             return
 
         # SHOW INTRO SCREEN with gym leader sprite
-        # gym_leader.spritePath has the path from the GymLeaderModel
         intro_message = await self.__show_battle_intro(
             interaction,
             gym_leader.name,
-            gym_leader.spritePath,  # Use the spritePath from the model
+            gym_info["leader"]["leader_spritePath"],
             is_gym_leader=True,
             gym_name=gym_info["leader"]["gym-name"]
         )
