@@ -255,7 +255,6 @@ class EncountersMixin(MixinMeta):
             return
         
         await interaction.response.defer()
-        await interaction.respond(type=5, content="Battling...")
 
         state = self.__useractions[str(user.id)]
         trainer = TrainerClass(str(user.id))
