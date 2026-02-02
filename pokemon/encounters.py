@@ -333,13 +333,24 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('No trainer to battle.', ephemeral=True)
             return
 
+        # Validate trainer has pokemon data
+        if not next_trainer.pokemon or len(next_trainer.pokemon) == 0:
+            await interaction.followup.send(f'Error: Trainer {next_trainer.name} has no Pokemon data.', ephemeral=True)
+            return
+
         # Create enemy Pokemon from trainer data
         trainer_pokemon_data = next_trainer.pokemon[0]  # First pokemon
+        
+        # Additional validation - check if pokemon_data is a dict and not None
+        if not isinstance(trainer_pokemon_data, dict) or not trainer_pokemon_data:
+            await interaction.followup.send(f'Error: Invalid Pokemon data for trainer {next_trainer.name}: {trainer_pokemon_data}', ephemeral=True)
+            return
+            
         enemy_name = list(trainer_pokemon_data.keys())[0]
         enemy_level = trainer_pokemon_data[enemy_name]
 
         # Validate pokemon name
-        if not enemy_name or enemy_name == 'None':
+        if not enemy_name or enemy_name == 'None' or enemy_name == None:
             await interaction.followup.send(f'Error: Invalid Pokemon name in trainer data: {enemy_name}', ephemeral=True)
             return
 
