@@ -9,7 +9,8 @@ import discord
 from discord import (Embed, Member)
 # from discord_components import (
 #     DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
-from discord import ui, ButtonStyle, Button, Interaction
+from discord import ButtonStyle, Interaction
+from discord.ui import Button, View
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -130,7 +131,7 @@ class InventoryMixin(MixinMeta):
         trainerHMs = "\r\n".join(hms) if len(hms) > 0 else 'No HMs yet.'
         embed.add_field(name='HMs', value=trainerHMs, inline=False)
 
-        view = ui.View()
+        view = View()
         button = Button(style=ButtonStyle.gray, label="← Key Items", custom_id='keyitems')
         button.callback = self.on_keyitems_click_inventory
         view.add_item(button)
@@ -218,7 +219,7 @@ class InventoryMixin(MixinMeta):
         trainerItems = "\r\n".join(items) if len(items) > 0 else 'No key items yet.'
         embed.add_field(name='Key Items', value=trainerItems, inline=False)
 
-        view = ui.View()
+        view = View()
         button = Button(style=ButtonStyle.gray, label="← Items", custom_id='items')
         button.callback = self.on_items_click_inventory
         view.add_item(button)
@@ -350,7 +351,7 @@ class InventoryMixin(MixinMeta):
         trainerItems = "\r\n".join(items) if len(items) > 0 else 'No items yet.'
         embed.add_field(name='Items', value=trainerItems, inline=False)
 
-        view = ui.View()
+        view = View()
         button = Button(style=ButtonStyle.gray, label='Key Items →', custom_id='keyitems')
         button.callback = self.on_keyitems_click_inventory
         view.add_item(button)
