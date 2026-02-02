@@ -27,6 +27,7 @@ from services.pokeclass import Pokemon as PokemonClass
 from services.questclass import quests as QuestsClass
 from services.battleclass import battle as BattleClass
 from services.encounterclass import encounter as EncounterClass
+from services.expclass import experiance as exp
 
 from .abcd import MixinMeta
 from .functions import (getTypeColor)
@@ -292,6 +293,22 @@ class EncountersMixin(MixinMeta):
         # Check if enemy fainted
         if battle_state.enemy_pokemon.currentHP <= 0:
             log_lines.append(f"💀 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} fainted!")
+            
+            # AWARD EXPERIENCE for defeating this Pokemon
+            from expclass import experiance as exp
+            expObj = exp(battle_state.enemy_pokemon)
+            expGained = expObj.getExpGained()
+            evGained = expObj.getEffortValue()
+            
+            # Apply experience to player's current Pokemon
+            current_hp = battle_state.player_pokemon.currentHP
+            levelUp, expMsg = battle_state.player_pokemon.processBattleOutcome(expGained, evGained, current_hp)
+            
+            if levelUp:
+                log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up!")
+            if expMsg:
+                log_lines.append(f"📈 {expMsg}")
+            
             battle_state.defeated_enemies.append(battle_state.enemy_pokemon.pokemonName)
             
             # Check if enemy has more Pokemon
