@@ -191,15 +191,6 @@ class EncountersMixin(MixinMeta):
             view.add_item(south_btn)
         
         # ROW 1: East/West buttons
-        if location.east:
-            east_name = LOCATION_DISPLAY_NAMES.get(location.east, location.east)
-            east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label=f"{east_name[:15]}", custom_id='dir_east', row=1)
-            east_btn.callback = self.on_direction_click
-            view.add_item(east_btn)
-        else:
-            east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label="---", custom_id='dir_east_disabled', disabled=True, row=1)
-            view.add_item(east_btn)
-        
         if location.west:
             west_name = LOCATION_DISPLAY_NAMES.get(location.west, location.west)
             west_btn = Button(style=ButtonStyle.gray, emoji='⬅️', label=f"{west_name[:15]}", custom_id='dir_west', row=1)
@@ -209,6 +200,17 @@ class EncountersMixin(MixinMeta):
             west_btn = Button(style=ButtonStyle.gray, emoji='⬅️', label="---", custom_id='dir_west_disabled', disabled=True, row=1)
             view.add_item(west_btn)
         
+        
+        if location.east:
+            east_name = LOCATION_DISPLAY_NAMES.get(location.east, location.east)
+            east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label=f"{east_name[:15]}", custom_id='dir_east', row=1)
+            east_btn.callback = self.on_direction_click
+            view.add_item(east_btn)
+        else:
+            east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label="---", custom_id='dir_east_disabled', disabled=True, row=1)
+            view.add_item(east_btn)
+        
+
         # ROW 2: Action buttons (Encounters, Quests, Gym)
         if len(methods) > 0:
             enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='nav_encounters', row=2)
