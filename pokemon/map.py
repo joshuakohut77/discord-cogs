@@ -153,6 +153,16 @@ class MapMixin(MixinMeta):
                 view.add_item(button)
             
             # ROW 1: East/West buttons - ALWAYS SHOW
+            if location.west is not None:
+                west = constant.LOCATION_DISPLAY_NAMES[location.west]
+                button = Button(style=ButtonStyle.gray, emoji='⬅', label=f"{west[:15]}", custom_id='clickWest', disabled=False, row=1)
+                button.callback = self.on_west
+                view.add_item(button)
+            else:
+                # Disabled button
+                button = Button(style=ButtonStyle.gray, emoji='⬅', label="---", custom_id='clickWest', disabled=True, row=1)
+                view.add_item(button)
+
             if location.east is not None:
                 east = constant.LOCATION_DISPLAY_NAMES[location.east]
                 button = Button(style=ButtonStyle.gray, emoji='➡', label=f"{east[:15]}", custom_id='clickEast', disabled=False, row=1)
@@ -163,15 +173,7 @@ class MapMixin(MixinMeta):
                 button = Button(style=ButtonStyle.gray, emoji='➡', label="---", custom_id='clickEast', disabled=True, row=1)
                 view.add_item(button)
 
-            if location.west is not None:
-                west = constant.LOCATION_DISPLAY_NAMES[location.west]
-                button = Button(style=ButtonStyle.gray, emoji='⬅', label=f"{west[:15]}", custom_id='clickWest', disabled=False, row=1)
-                button.callback = self.on_west
-                view.add_item(button)
-            else:
-                # Disabled button
-                button = Button(style=ButtonStyle.gray, emoji='⬅', label="---", custom_id='clickWest', disabled=True, row=1)
-                view.add_item(button)
+
             
             # ROW 2: Action buttons (Encounters, Quests, Gym) - only if user_id provided
             if user_id:
