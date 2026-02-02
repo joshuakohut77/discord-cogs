@@ -1,5 +1,7 @@
 from __future__ import annotations
 from typing import Any, Dict, List, Union, TYPE_CHECKING
+import json
+import os
 
 import discord
 
@@ -17,6 +19,7 @@ import constant
 from models.location import LocationModel
 from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
+from services.keyitemsclass import keyitems as KeyItemClass
 from .encounters import EncountersMixin as enc
 
 from .abcd import MixinMeta
@@ -40,6 +43,53 @@ class MapMixin(MixinMeta):
     """Map"""
 
     __locations: dict[str, LocationState] = {}
+    __quests_data: dict = None
+
+    def __load_quests(self):
+        """Load quests.json file"""
+        if self.__quests_data is None:
+            config_path = os.path.join(os.path.dirname(__file__), 'configs', 'quests.json')
+            with open(config_path, 'r') as f:
+                self.__quests_data = json.load(f)
+        return self.__quests_data
+
+    def __check_location_blockers(self, user_id: str, location_name: str) -> tuple[bool, str]:
+        """
+        Check if trainer has required key items to enter a location.
+        Returns (can_travel, missing_items_message)
+        """
+        quests = self.__load_quests()
+
+        # Find the quest entry for this location
+        location_quest = None
+        for quest_id, quest_data in quests.items():
+            if quest_data.get('name') == location_name:
+                location_quest = quest_data
+                break
+
+        # If no quest entry or no blockers, allow travel
+        if not location_quest or not location_quest.get('blockers'):
+            return True, ""
+
+        # Check if trainer has all required key items
+        keyitems = KeyItemClass(user_id)
+        blockers = location_quest['blockers']
+        missing_items = []
+
+        for blocker in blockers:
+            # Check if the key item attribute exists and is True
+            if hasattr(keyitems, blocker):
+                if not getattr(keyitems, blocker):
+                    missing_items.append(blocker.replace('_', ' ').title())
+            else:
+                # If attribute doesn't exist, assume it's missing
+                missing_items.append(blocker.replace('_', ' ').title())
+
+        if missing_items:
+            message = f"You cannot travel there yet. You need: {', '.join(missing_items)}"
+            return False, message
+
+        return True, ""
 
     @commands.group(name="trainer")
     @commands.guild_only()
@@ -150,16 +200,22 @@ class MapMixin(MixinMeta):
 
     async def __on_north(self, interaction: Interaction):
         user = interaction.user
-        
+
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
-        
+
         state = self.__locations[str(user.id)]
         north = state.location.north
 
         if north is None:
             await interaction.response.send_message('You can not travel North from here.', ephemeral=True)
+            return
+
+        # Check if trainer has required key items to enter this location
+        can_travel, blocker_message = self.__check_location_blockers(str(user.id), north)
+        if not can_travel:
+            await interaction.response.send_message(blocker_message, ephemeral=True)
             return
 
         await interaction.response.defer()
@@ -200,14 +256,20 @@ class MapMixin(MixinMeta):
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
-        
+
         state = self.__locations[str(user.id)]
         south = state.location.south
 
         if south is None:
             await interaction.response.send_message('You can not travel South from here.', ephemeral=True)
             return
-        
+
+        # Check if trainer has required key items to enter this location
+        can_travel, blocker_message = self.__check_location_blockers(str(user.id), south)
+        if not can_travel:
+            await interaction.response.send_message(blocker_message, ephemeral=True)
+            return
+
         await interaction.response.defer()
 
         loc = LocationClass()
@@ -250,17 +312,24 @@ class MapMixin(MixinMeta):
 
     async def __on_east(self, interaction: Interaction):
         user = interaction.user
-        
+
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
-        
+
         state = self.__locations[str(user.id)]
         east = state.location.east
 
         if east is None:
             await interaction.response.send_message('You can not travel East from here.', ephemeral=True)
             return
+
+        # Check if trainer has required key items to enter this location
+        can_travel, blocker_message = self.__check_location_blockers(str(user.id), east)
+        if not can_travel:
+            await interaction.response.send_message(blocker_message, ephemeral=True)
+            return
+
         await interaction.response.defer()
         loc = LocationClass()
         direction = loc.getLocationByName(east)
@@ -295,17 +364,24 @@ class MapMixin(MixinMeta):
 
     async def __on_west(self, interaction: Interaction):
         user = interaction.user
-        
+
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
-        
+
         state = self.__locations[str(user.id)]
         west = state.location.west
 
         if west is None:
             await interaction.response.send_message('You can not travel West from here.', ephemeral=True)
             return
+
+        # Check if trainer has required key items to enter this location
+        can_travel, blocker_message = self.__check_location_blockers(str(user.id), west)
+        if not can_travel:
+            await interaction.response.send_message(blocker_message, ephemeral=True)
+            return
+
         await interaction.response.defer()
         loc = LocationClass()
         direction = loc.getLocationByName(west)
