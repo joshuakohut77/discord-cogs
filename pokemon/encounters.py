@@ -723,9 +723,9 @@ class EncountersMixin(MixinMeta):
         enc = EncounterClass(active_pokemon, enemy_pokemon)
         result = enc.fight(battleType='auto')
 
-        # Get final stats
-        player_end_hp = active_pokemon.currentHP
-        enemy_end_hp = enemy_pokemon.currentHP
+        # Get final stats - CRITICAL: use enc.pokemon1 and enc.pokemon2 which have the updated HP
+        player_end_hp = enc.pokemon1.currentHP
+        enemy_end_hp = enc.pokemon2.currentHP
         
         # Parse the battle message for additional context
         battle_text = enc.message if enc.message else ""
@@ -757,8 +757,9 @@ class EncountersMixin(MixinMeta):
 
             # Experience and rewards info
             if battle_text:
+                # Parse the battle text to show a cleaner log
                 embed.add_field(
-                    name="📈 Results",
+                    name="⚔️ Battle Log",
                     value=battle_text[:1024],
                     inline=False
                 )
@@ -808,19 +809,13 @@ class EncountersMixin(MixinMeta):
                 inline=False
             )
 
-            # Battle details
+            # Battle log
             if battle_text:
                 embed.add_field(
-                    name="⚔️ Battle Details",
+                    name="⚔️ Battle Log",
                     value=battle_text[:1024],
                     inline=False
                 )
-
-            embed.add_field(
-                name="💊 Next Steps",
-                value="Visit a Pokemon Center to heal your team!",
-                inline=False
-            )
 
             await interaction.followup.send(embed=embed, ephemeral=False)
 
@@ -947,9 +942,9 @@ class EncountersMixin(MixinMeta):
         enc = EncounterClass(active_pokemon, enemy_pokemon)
         result = enc.fight(battleType='auto')
 
-        # Get final stats
-        player_end_hp = active_pokemon.currentHP
-        enemy_end_hp = enemy_pokemon.currentHP
+        # Get final stats - use enc.pokemon1 and enc.pokemon2
+        player_end_hp = enc.pokemon1.currentHP
+        enemy_end_hp = enc.pokemon2.currentHP
         battle_text = enc.message if enc.message else ""
 
         if result.get('result') == 'victory':
@@ -977,7 +972,7 @@ class EncountersMixin(MixinMeta):
 
             if battle_text:
                 embed.add_field(
-                    name="📈 Results",
+                    name="⚔️ Battle Log",
                     value=battle_text[:1024],
                     inline=False
                 )
@@ -1019,16 +1014,10 @@ class EncountersMixin(MixinMeta):
 
             if battle_text:
                 embed.add_field(
-                    name="⚔️ Battle Details",
+                    name="⚔️ Battle Log",
                     value=battle_text[:1024],
                     inline=False
                 )
-
-            embed.add_field(
-                name="💊 Next Steps",
-                value="Visit a Pokemon Center to heal and try again!",
-                inline=False
-            )
 
             await interaction.followup.send(embed=embed, ephemeral=False)
 
