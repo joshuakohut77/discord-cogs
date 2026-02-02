@@ -199,20 +199,40 @@ class EncountersMixin(MixinMeta):
         # Extract move name from custom_id
         move_name = interaction.data['custom_id'].replace('battle_move_', '')
         
+        # Store HP before battle for damage calculation
+        player_hp_before = battle_state.player_pokemon.currentHP
+        enemy_hp_before = battle_state.enemy_pokemon.currentHP
+        
         # Execute one turn of battle with the selected move
         enc = EncounterClass(battle_state.player_pokemon, battle_state.enemy_pokemon)
         result = enc.fight(battleType='manual', move=move_name)
         
-        # Add to battle log
-        if enc.message:
-            # Parse and format the message
-            log_entry = f"Turn {battle_state.turn_number}: {enc.message}"
-            battle_state.battle_log.append(log_entry)
+        # Get updated HP after battle turn
+        player_hp_after = battle_state.player_pokemon.currentHP
+        enemy_hp_after = battle_state.enemy_pokemon.currentHP
         
+        # Calculate damage dealt
+        player_damage = enemy_hp_before - enemy_hp_after
+        enemy_damage = player_hp_before - player_hp_after
+        
+        # Create battle log entry with detailed information
+        log_lines = []
+        log_lines.append(f"**Turn {battle_state.turn_number}:**")
+        
+        # Your Pokemon's action
+        if player_damage > 0:
+            log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}! Dealt {player_damage} damage!")
+        else:
+            log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}! It missed or had no effect!")
+        
+        # Enemy Pokemon's action  
+        if enemy_damage > 0:
+            log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} attacked! Dealt {enemy_damage} damage!")
+        elif enemy_hp_after > 0:  # Enemy is still alive but did no damage
+            log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} attacked but missed!")
+        
+        battle_state.battle_log.append("\n".join(log_lines))
         battle_state.turn_number += 1
-        
-        # Reload Pokemon to get updated HP
-        battle_state.player_pokemon.load(pokemonId=battle_state.player_pokemon.trainerId)
         
         # Check for battle end
         if result.get('result') == 'victory':
@@ -225,12 +245,12 @@ class EncountersMixin(MixinMeta):
             del self.__battle_states[user_id]
             return
         
-        # Battle continues - update display
+        # Battle continues - update display with new HP values
         embed = self.__create_battle_embed(user, battle_state)
         view = self.__create_move_buttons(battle_state)
         
         await interaction.message.edit(embed=embed, view=view)
-
+    
     async def __handle_gym_battle_victory(self, interaction: discord.Interaction, battle_state: BattleState):
         """Handle when player wins a gym battle"""
         trainer_model = battle_state.trainer_model
