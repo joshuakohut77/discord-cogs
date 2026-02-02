@@ -34,7 +34,7 @@ class db:
         #     port=(params and params.port) or 25060)
 
         self.conn = pg.connect(
-            host="postgresql.joshkohut.com",
+            host="postgres_container",
             dbname="pokemon_db",
             user="redbot",
             # todo remove password from source control

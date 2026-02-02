@@ -30,6 +30,19 @@ class MixinMeta(ABC):
 
     async def sendToLoggingChannel(self, content: str, file: discord.File = None, embed: discord.Embed = None):
         log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
+        if log_channel is None:
+            # If logging channel doesn't exist, use the first available text channel
+            for guild in self.bot.guilds:
+                for channel in guild.text_channels:
+                    if channel.permissions_for(guild.me).send_messages:
+                        log_channel = channel
+                        break
+                if log_channel:
+                    break
+
+        if log_channel is None:
+            raise RuntimeError("No valid logging channel found. Please configure a logging channel.")
+
         temp_message: discord.Message = await log_channel.send(
             content=content,
             embed=embed,
