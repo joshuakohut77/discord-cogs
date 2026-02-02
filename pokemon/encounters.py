@@ -1866,10 +1866,11 @@ class EncountersMixin(MixinMeta):
             return
 
         # SHOW INTRO SCREEN with gym leader sprite
+        # gym_leader.spritePath has the path from the GymLeaderModel
         intro_message = await self.__show_battle_intro(
             interaction,
             gym_leader.name,
-            gym_info["leader"]["leader_spritePath"],
+            gym_leader.spritePath,  # Use the spritePath from the model
             is_gym_leader=True,
             gym_name=gym_info["leader"]["gym-name"]
         )
