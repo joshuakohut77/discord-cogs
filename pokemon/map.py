@@ -175,10 +175,9 @@ class MapMixin(MixinMeta):
         
         file, btns = self.__createMapCard(direction)
 
-        log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
-        temp_message = await log_channel.send(
+        temp_message = await self.sendToLoggingChannel(
             content=f'{user.display_name} walked North to {north}',
-            file = file
+            file=file
         )
         attachment: discord.Attachment = temp_message.attachments[0]
 
@@ -223,10 +222,9 @@ class MapMixin(MixinMeta):
 
         file, btns = self.__createMapCard(direction)
 
-        log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
-        temp_message = await log_channel.send(
+        temp_message = await self.sendToLoggingChannel(
             content=f'{user.display_name} walked South to {south}',
-            file = file
+            file=file
         )
         attachment: discord.Attachment = temp_message.attachments[0]
 
@@ -276,10 +274,9 @@ class MapMixin(MixinMeta):
 
         file, btns = self.__createMapCard(direction)
 
-        log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
-        temp_message = await log_channel.send(
+        temp_message = await self.sendToLoggingChannel(
             content=f'{user.display_name} walked East to {east}',
-            file = file
+            file=file
         )
         attachment: discord.Attachment = temp_message.attachments[0]
 
@@ -322,10 +319,9 @@ class MapMixin(MixinMeta):
 
         file, btns = self.__createMapCard(direction)
 
-        log_channel: discord.TextChannel = self.bot.get_channel(971280525312557157)
-        temp_message = await log_channel.send(
+        temp_message = await self.sendToLoggingChannel(
             content=f'{user.display_name} walked West to {west}',
-            file = file
+            file=file
         )
         attachment: discord.Attachment = temp_message.attachments[0]
 
