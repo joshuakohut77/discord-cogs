@@ -676,10 +676,8 @@ class EncountersMixin(MixinMeta):
 
         await interaction.message.edit(view=view)
 
-  # New handler for AUTO trainer battles
     async def on_gym_battle_auto(self, interaction: discord.Interaction):
         """Handle AUTO battle with gym trainer"""
-        # This is the same as the old on_gym_battle_trainer but renamed
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
@@ -715,37 +713,116 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send(f'Error creating enemy Pokemon: {str(e)}', ephemeral=True)
             return
 
+        # Store initial stats for summary
+        player_start_hp = active_pokemon.currentHP
+        enemy_start_hp = enemy_pokemon.currentHP
+        player_level = active_pokemon.currentLevel
+        enemy_level_start = enemy_pokemon.currentLevel
+
         # AUTO BATTLE
         enc = EncounterClass(active_pokemon, enemy_pokemon)
         result = enc.fight(battleType='auto')
 
+        # Get final stats
+        player_end_hp = active_pokemon.currentHP
+        enemy_end_hp = enemy_pokemon.currentHP
+        
+        # Parse the battle message for additional context
+        battle_text = enc.message if enc.message else ""
+
+        # Create a nice embed with battle summary
         if result.get('result') == 'victory':
             battle.battleVictory(next_trainer)
             remaining = battle.getRemainingTrainerCount()
 
+            embed = discord.Embed(
+                title="🎉 Victory!",
+                description=f"You defeated {next_trainer.name}!",
+                color=discord.Color.green()
+            )
+
+            # Battle Summary
+            summary = []
+            summary.append(f"**Your {active_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
+            summary.append(f"HP: {player_start_hp} → {player_end_hp}")
+            summary.append("")
+            summary.append(f"**Enemy {enemy_pokemon.pokemonName.capitalize()}** (Lv.{enemy_level_start})")
+            summary.append(f"HP: {enemy_start_hp} → {enemy_end_hp} ❌")
+            
+            embed.add_field(
+                name="📊 Battle Summary",
+                value="\n".join(summary),
+                inline=False
+            )
+
+            # Experience and rewards info
+            if battle_text:
+                embed.add_field(
+                    name="📈 Results",
+                    value=battle_text[:1024],
+                    inline=False
+                )
+
+            embed.add_field(
+                name="💰 Reward",
+                value=f"${next_trainer.money}",
+                inline=True
+            )
+
             if remaining > 0:
                 next_up = battle.getNextTrainer()
-                await interaction.followup.send(
-                    f'**Victory!**\n\n{enc.message}\n\n'
-                    f'Defeated {next_trainer.name}! Earned ${next_trainer.money}\n\n'
-                    f'**Trainers Remaining:** {remaining}\n'
-                    f'**Next Opponent:** {next_up.name if next_up else "Unknown"}',
-                    ephemeral=False
+                embed.add_field(
+                    name="⚔️ Next",
+                    value=f"{remaining} trainers remaining\nNext: {next_up.name if next_up else 'Unknown'}",
+                    inline=True
                 )
             else:
                 gym_leader = battle.getGymLeader()
-                await interaction.followup.send(
-                    f'**Victory!**\n\n{enc.message}\n\n'
-                    f'Defeated {next_trainer.name}! Earned ${next_trainer.money}\n\n'
-                    f'All gym trainers defeated! Challenge Gym Leader {gym_leader.gym_leader if gym_leader else ""}!',
-                    ephemeral=False
+                embed.add_field(
+                    name="🏆 Gym Progress",
+                    value=f"All trainers defeated!\nChallenge {gym_leader.gym_leader if gym_leader else 'Gym Leader'}!",
+                    inline=True
                 )
+
+            await interaction.followup.send(embed=embed, ephemeral=False)
+
         else:
-            await interaction.followup.send(
-                f'**Defeat!**\n\n{enc.message}\n\n'
-                f'You were defeated by {next_trainer.name}. Heal and try again!',
-                ephemeral=False
+            # DEFEAT
+            embed = discord.Embed(
+                title="💀 Defeat",
+                description=f"You were defeated by {next_trainer.name}...",
+                color=discord.Color.red()
             )
+
+            # Battle Summary
+            summary = []
+            summary.append(f"**Your {active_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
+            summary.append(f"HP: {player_start_hp} → {player_end_hp} ❌")
+            summary.append("")
+            summary.append(f"**Enemy {enemy_pokemon.pokemonName.capitalize()}** (Lv.{enemy_level_start})")
+            summary.append(f"HP: {enemy_start_hp} → {enemy_end_hp}")
+            
+            embed.add_field(
+                name="📊 Battle Summary",
+                value="\n".join(summary),
+                inline=False
+            )
+
+            # Battle details
+            if battle_text:
+                embed.add_field(
+                    name="⚔️ Battle Details",
+                    value=battle_text[:1024],
+                    inline=False
+                )
+
+            embed.add_field(
+                name="💊 Next Steps",
+                value="Visit a Pokemon Center to heal your team!",
+                inline=False
+            )
+
+            await interaction.followup.send(embed=embed, ephemeral=False)
 
     # New handler for MANUAL trainer battles
     async def on_gym_battle_manual(self, interaction: discord.Interaction):
@@ -811,7 +888,7 @@ class EncountersMixin(MixinMeta):
         battle_state.message_id = message.id
     
     async def on_gym_leader_battle_auto(self, interaction: discord.Interaction):
-        """Handle gym leader battle button clicks"""
+        """Handle gym leader AUTO battle with full summary"""
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
@@ -820,7 +897,6 @@ class EncountersMixin(MixinMeta):
 
         await interaction.response.defer()
 
-        # Get trainer and location
         trainer = TrainerClass(str(user.id))
         location = trainer.getLocation()
         active_pokemon = trainer.getActivePokemon()
@@ -829,7 +905,6 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('Your active Pokemon has fainted! Heal at a Pokemon Center first.', ephemeral=True)
             return
 
-        # Get gym and battle data
         gyms_data = self.__load_gyms_data()
         gym_info = gyms_data.get(str(location.locationId))
         battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
@@ -839,23 +914,19 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send(battle.message if battle.message else 'Cannot challenge gym leader.', ephemeral=True)
             return
 
-        # Validate gym leader has pokemon data
         if not gym_leader.pokemon or len(gym_leader.pokemon) == 0:
             await interaction.followup.send(f'Error: Gym Leader {gym_leader.gym_leader} has no Pokemon data.', ephemeral=True)
             return
 
-        # Create enemy Pokemon from gym leader data (use first pokemon)
         leader_pokemon_data = gym_leader.pokemon[0]
         
-        # Additional validation - check if pokemon_data is a dict and not None
         if not isinstance(leader_pokemon_data, dict) or not leader_pokemon_data:
-            await interaction.followup.send(f'Error: Invalid Pokemon data for gym leader {gym_leader.gym_leader}: {leader_pokemon_data}', ephemeral=True)
+            await interaction.followup.send(f'Error: Invalid Pokemon data for gym leader {gym_leader.gym_leader}', ephemeral=True)
             return
             
         enemy_name = list(leader_pokemon_data.keys())[0]
         enemy_level = leader_pokemon_data[enemy_name]
 
-        # Validate pokemon name
         if not enemy_name or enemy_name == 'None' or enemy_name == None:
             await interaction.followup.send(f'Error: Invalid Pokemon name in gym leader data: {enemy_name}', ephemeral=True)
             return
@@ -864,33 +935,102 @@ class EncountersMixin(MixinMeta):
             enemy_pokemon = PokemonClass(None, enemy_name)
             enemy_pokemon.create(enemy_level)
         except Exception as e:
-            await interaction.followup.send(f'Error creating gym leader Pokemon "{enemy_name}" at level {enemy_level}: {str(e)}', ephemeral=True)
+            await interaction.followup.send(f'Error creating gym leader Pokemon: {str(e)}', ephemeral=True)
             return
+
+        # Store initial stats
+        player_start_hp = active_pokemon.currentHP
+        enemy_start_hp = enemy_pokemon.currentHP
+        player_level = active_pokemon.currentLevel
 
         # Start the battle
         enc = EncounterClass(active_pokemon, enemy_pokemon)
         result = enc.fight(battleType='auto')
 
+        # Get final stats
+        player_end_hp = active_pokemon.currentHP
+        enemy_end_hp = enemy_pokemon.currentHP
+        battle_text = enc.message if enc.message else ""
+
         if result.get('result') == 'victory':
-            # Handle gym leader victory
             battle.gymLeaderVictory(gym_leader)
 
-            await interaction.followup.send(
-                f'**VICTORY!**\n\n'
-                f'{enc.message}\n\n'
-                f'Defeated Gym Leader {gym_leader.gym_leader}!\n'
-                f'Earned ${gym_leader.money}\n'
-                f'**Received {gym_leader.badge}!**',
-                ephemeral=False
+            embed = discord.Embed(
+                title="🏆 VICTORY!",
+                description=f"You defeated Gym Leader {gym_leader.gym_leader}!",
+                color=discord.Color.gold()
             )
+
+            # Battle Summary
+            summary = []
+            summary.append(f"**Your {active_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
+            summary.append(f"HP: {player_start_hp} → {player_end_hp}")
+            summary.append("")
+            summary.append(f"**{gym_leader.gym_leader}'s {enemy_pokemon.pokemonName.capitalize()}** (Lv.{enemy_level})")
+            summary.append(f"HP: {enemy_start_hp} → {enemy_end_hp} ❌")
+            
+            embed.add_field(
+                name="📊 Battle Summary",
+                value="\n".join(summary),
+                inline=False
+            )
+
+            if battle_text:
+                embed.add_field(
+                    name="📈 Results",
+                    value=battle_text[:1024],
+                    inline=False
+                )
+
+            embed.add_field(
+                name="🎖️ Badge Earned",
+                value=gym_leader.badge,
+                inline=True
+            )
+
+            embed.add_field(
+                name="💰 Prize Money",
+                value=f"${gym_leader.money}",
+                inline=True
+            )
+
+            await interaction.followup.send(embed=embed, ephemeral=False)
+            
         else:
-            # Handle defeat
-            await interaction.followup.send(
-                f'**Defeat!**\n\n'
-                f'{enc.message}\n\n'
-                f'You were defeated by Gym Leader {gym_leader.gym_leader}. Heal your Pokemon and try again!',
-                ephemeral=False
+            embed = discord.Embed(
+                title="💀 Defeat",
+                description=f"You were defeated by Gym Leader {gym_leader.gym_leader}...",
+                color=discord.Color.dark_red()
             )
+
+            # Battle Summary
+            summary = []
+            summary.append(f"**Your {active_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
+            summary.append(f"HP: {player_start_hp} → {player_end_hp} ❌")
+            summary.append("")
+            summary.append(f"**{gym_leader.gym_leader}'s {enemy_pokemon.pokemonName.capitalize()}** (Lv.{enemy_level})")
+            summary.append(f"HP: {enemy_start_hp} → {enemy_end_hp}")
+            
+            embed.add_field(
+                name="📊 Battle Summary",
+                value="\n".join(summary),
+                inline=False
+            )
+
+            if battle_text:
+                embed.add_field(
+                    name="⚔️ Battle Details",
+                    value=battle_text[:1024],
+                    inline=False
+                )
+
+            embed.add_field(
+                name="💊 Next Steps",
+                value="Visit a Pokemon Center to heal and try again!",
+                inline=False
+            )
+
+            await interaction.followup.send(embed=embed, ephemeral=False)
 
     async def on_gym_click(self, interaction: discord.Interaction):
         """Handle gym button clicks - now shows battle type choice"""
