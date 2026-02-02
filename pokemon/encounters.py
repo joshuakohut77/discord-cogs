@@ -273,6 +273,9 @@ class EncountersMixin(MixinMeta):
             return
 
         channel: discord.TextChannel = self.bot.get_channel(state.channelId)
+        if channel is None:
+            await interaction.response.send_message('Error: Channel not found. The original message may have been deleted.', ephemeral=True)
+            return
         message: discord.Message = await channel.fetch_message(state.messageId)
 
         desc = state.descLog
