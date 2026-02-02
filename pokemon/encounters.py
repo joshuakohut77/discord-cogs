@@ -268,12 +268,12 @@ class EncountersMixin(MixinMeta):
         trainer.fight(state.wildPokemon)
 
         if trainer.statuscode == 96:
-            await interaction.response.send_message(trainer.message)
+            await interaction.followup.send(trainer.message, ephemeral=True)
             return
 
         channel: discord.TextChannel = self.bot.get_channel(state.channelId)
         if channel is None:
-            await interaction.response.send_message('Error: Channel not found. The original message may have been deleted.', ephemeral=True)
+            await interaction.followup.send('Error: Channel not found. The original message may have been deleted.', ephemeral=True)
             return
         message: discord.Message = await channel.fetch_message(state.messageId)
 
@@ -285,12 +285,11 @@ class EncountersMixin(MixinMeta):
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, active, desc)
 
-        await interaction.response.send_message(trainer.message)
         # await interaction.channel.send(
         await message.edit(
             content=f'{trainer.message}',
             embed=embed,
-            view=[]
+            view=View()
         )
         del self.__useractions[str(user.id)]
 
