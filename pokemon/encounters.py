@@ -349,22 +349,16 @@ class EncountersMixin(MixinMeta):
         enemy_name = list(trainer_pokemon_data.keys())[0]
         enemy_level = trainer_pokemon_data[enemy_name]
 
-        # Debug logging
-        await interaction.followup.send(f'DEBUG: enemy_name={enemy_name}, type={type(enemy_name)}, enemy_level={enemy_level}, trainer_pokemon_data={trainer_pokemon_data}', ephemeral=True)
-
         # Validate pokemon name
         if not enemy_name or enemy_name == 'None' or enemy_name == None:
             await interaction.followup.send(f'Error: Invalid Pokemon name in trainer data: {enemy_name}', ephemeral=True)
             return
 
         try:
-            enemy_pokemon = PokemonClass(enemy_name)
+            # FIXED: PokemonClass constructor expects (discordId, pokedexId)
+            # For enemy Pokemon, pass None as discordId and pokemon name as pokedexId
+            enemy_pokemon = PokemonClass(None, enemy_name)
             enemy_pokemon.create(enemy_level)
-            
-            # Debug: Check what the pokemon object looks like after creation
-            if enemy_pokemon.pokemonName is None or enemy_pokemon.pokemonName == 'None':
-                await interaction.followup.send(f'ERROR: After create(), pokemonName is {enemy_pokemon.pokemonName}', ephemeral=True)
-                return
         except Exception as e:
             await interaction.followup.send(f'Error creating enemy Pokemon "{enemy_name}" at level {enemy_level}: {str(e)}', ephemeral=True)
             return
@@ -461,7 +455,7 @@ class EncountersMixin(MixinMeta):
             return
 
         try:
-            enemy_pokemon = PokemonClass(enemy_name)
+            enemy_pokemon = PokemonClass(None, enemy_name)
             enemy_pokemon.create(enemy_level)
         except Exception as e:
             await interaction.followup.send(f'Error creating gym leader Pokemon "{enemy_name}" at level {enemy_level}: {str(e)}', ephemeral=True)
