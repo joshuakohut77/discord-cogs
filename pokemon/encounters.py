@@ -205,9 +205,16 @@ class EncountersMixin(MixinMeta):
         
         # Execute one turn of battle with the selected move
         enc = EncounterClass(battle_state.player_pokemon, battle_state.enemy_pokemon)
+        
+        # The encounter modifies pokemon1 and pokemon2 internally
+        # We need to use those modified versions
         result = enc.fight(battleType='manual', move=move_name)
         
-
+        # CRITICAL FIX: The EncounterClass modifies enc.pokemon1 and enc.pokemon2
+        # We need to use those, not the original references
+        battle_state.player_pokemon = enc.pokemon1
+        battle_state.enemy_pokemon = enc.pokemon2
+        
         # Get updated HP after battle turn
         player_hp_after = battle_state.player_pokemon.currentHP
         enemy_hp_after = battle_state.enemy_pokemon.currentHP
@@ -216,17 +223,10 @@ class EncountersMixin(MixinMeta):
         player_damage = enemy_hp_before - enemy_hp_after
         enemy_damage = player_hp_before - player_hp_after
         
-
-
         # Create battle log entry with detailed information
         log_lines = []
         log_lines.append(f"**Turn {battle_state.turn_number}:**")
         
-        log_lines.append(f"DEBUG: Before HP - You:{player_hp_before} Enemy:{enemy_hp_before}")
-        log_lines.append(f"DEBUG: After HP - You:{player_hp_after} Enemy:{enemy_hp_after}")
-        log_lines.append(f"DEBUG: Damage - You dealt:{player_damage} Enemy dealt:{enemy_damage}")
-        log_lines.append(f"DEBUG: Result: {result}")
-
         # Your Pokemon's action
         if player_damage > 0:
             log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}! Dealt {player_damage} damage!")
@@ -239,16 +239,17 @@ class EncountersMixin(MixinMeta):
         elif enemy_hp_after > 0:  # Enemy is still alive but did no damage
             log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} attacked but missed!")
         
+        # Only keep current turn
         battle_state.battle_log = ["\n".join(log_lines)]
         battle_state.turn_number += 1
         
-        # Check for battle end
-        if result.get('result') == 'victory':
+        # Check for battle end - check HP directly since result might be None
+        if battle_state.enemy_pokemon.currentHP <= 0:
             await self.__handle_gym_battle_victory(interaction, battle_state)
             del self.__battle_states[user_id]
             return
         
-        elif result.get('result') == 'defeat':
+        elif battle_state.player_pokemon.currentHP <= 0:
             await self.__handle_gym_battle_defeat(interaction, battle_state)
             del self.__battle_states[user_id]
             return
