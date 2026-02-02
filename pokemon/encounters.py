@@ -781,7 +781,7 @@ class EncountersMixin(MixinMeta):
                 gym_leader = battle.getGymLeader()
                 embed.add_field(
                     name="🏆 Gym Progress",
-                    value=f"All trainers defeated!\nChallenge {gym_leader.gym_leader if gym_leader else 'Gym Leader'}!",
+                    value=f"All trainers defeated!\nChallenge {gym_leader.name if gym_leader else 'Gym Leader'}!",
                     inline=True
                 )
 
