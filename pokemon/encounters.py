@@ -361,23 +361,68 @@ class EncountersMixin(MixinMeta):
         trainer_model = battle_state.trainer_model
         battle_manager = battle_state.battle_manager
         
-        # Award rewards
-        if hasattr(trainer_model, 'gym_leader'):  # It's a gym leader
+        # Get max HP for display
+        player_max_hp = battle_state.player_pokemon.getPokeStats()['hp']
+        enemy_max_hp = battle_state.enemy_pokemon.getPokeStats()['hp']
+        player_level = battle_state.player_pokemon.currentLevel
+        enemy_level = battle_state.enemy_pokemon.currentLevel
+        
+        # Set enemy HP to 0 since they fainted
+        battle_state.enemy_pokemon.currentHP = 0
+        
+        # Award rewards and get experience message
+        if hasattr(trainer_model, 'badge'):  # It's a gym leader
             battle_manager.gymLeaderVictory(trainer_model)
+            
+            # Reload player pokemon to get exp/level up info
+            battle_state.player_pokemon.load(pokemonId=battle_state.player_pokemon.trainerId)
             
             embed = discord.Embed(
                 title="🏆 VICTORY!",
-                description=f"You defeated Gym Leader {trainer_model.gym_leader}!",
+                description=f"You defeated Gym Leader {trainer_model.name}!",
                 color=discord.Color.gold()
             )
             
+            # Battle Summary
+            summary = []
+            summary.append(f"**Your {battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
+            summary.append(f"HP: {battle_state.player_pokemon.currentHP}/{player_max_hp}")
+            summary.append("")
+            summary.append(f"**{trainer_model.name}'s {battle_state.enemy_pokemon.pokemonName.capitalize()}** (Lv.{enemy_level})")
+            summary.append(f"HP: 0/{enemy_max_hp} ❌")
+            
             embed.add_field(
-                name="💰 Rewards",
-                value=f"**Badge:** {trainer_model.badge}\n**Money:** ${trainer_model.money}",
+                name="📊 Battle Summary",
+                value="\n".join(summary),
                 inline=False
             )
+            
+            # Battle log
+            if battle_state.battle_log:
+                log_text = "\n".join(battle_state.battle_log)
+                embed.add_field(
+                    name="⚔️ Battle Log",
+                    value=log_text[:1024],
+                    inline=False
+                )
+            
+            embed.add_field(
+                name="🎖️ Badge Earned",
+                value=trainer_model.badge,
+                inline=True
+            )
+            
+            embed.add_field(
+                name="💰 Prize Money",
+                value=f"${trainer_model.money}",
+                inline=True
+            )
+            
         else:  # It's a trainer
             battle_manager.battleVictory(trainer_model)
+            
+            # Reload player pokemon to get exp/level up info
+            battle_state.player_pokemon.load(pokemonId=battle_state.player_pokemon.trainerId)
             
             embed = discord.Embed(
                 title="🎉 VICTORY!",
@@ -385,16 +430,34 @@ class EncountersMixin(MixinMeta):
                 color=discord.Color.green()
             )
             
+            # Battle Summary
+            summary = []
+            summary.append(f"**Your {battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
+            summary.append(f"HP: {battle_state.player_pokemon.currentHP}/{player_max_hp}")
+            summary.append("")
+            summary.append(f"**Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()}** (Lv.{enemy_level})")
+            summary.append(f"HP: 0/{enemy_max_hp} ❌")
+            
             embed.add_field(
-                name="💰 Rewards",
-                value=f"**Money:** ${trainer_model.money}",
+                name="📊 Battle Summary",
+                value="\n".join(summary),
                 inline=False
             )
-        
-        # Add battle summary
-        if battle_state.battle_log:
-            log_text = "\n".join(battle_state.battle_log[-3:])
-            embed.add_field(name="📜 Battle Summary", value=log_text[:1024], inline=False)
+            
+            # Battle log
+            if battle_state.battle_log:
+                log_text = "\n".join(battle_state.battle_log)
+                embed.add_field(
+                    name="⚔️ Battle Log",
+                    value=log_text[:1024],
+                    inline=False
+                )
+            
+            embed.add_field(
+                name="💰 Reward",
+                value=f"${trainer_model.money}",
+                inline=True
+            )
         
         await interaction.message.edit(embed=embed, view=View())
         
@@ -402,37 +465,59 @@ class EncountersMixin(MixinMeta):
         remaining = battle_manager.getRemainingTrainerCount()
         if remaining > 0:
             next_up = battle_manager.getNextTrainer()
-            await interaction.followup.send(
-                f"**Trainers Remaining:** {remaining}\n"
-                f"**Next Opponent:** {next_up.name if next_up else 'Unknown'}",
-                ephemeral=False
+            embed.add_field(
+                name="⚔️ Next",
+                value=f"{remaining} trainers remaining\nNext: {next_up.name if next_up else 'Unknown'}",
+                inline=True
             )
         else:
             gym_leader = battle_manager.getGymLeader()
-            if gym_leader and not hasattr(trainer_model, 'gym_leader'):
+            if gym_leader and not hasattr(trainer_model, 'badge'):
                 await interaction.followup.send(
-                    f"All gym trainers defeated! You can now challenge Gym Leader {gym_leader.gym_leader}!",
+                    f"All gym trainers defeated! You can now challenge Gym Leader {gym_leader.name}!",
                     ephemeral=False
                 )
 
     async def __handle_gym_battle_defeat(self, interaction: discord.Interaction, battle_state: BattleState):
         """Handle when player loses a gym battle"""
+        
+        # Get max HP for display
+        player_max_hp = battle_state.player_pokemon.getPokeStats()['hp']
+        enemy_max_hp = battle_state.enemy_pokemon.getPokeStats()['hp']
+        player_level = battle_state.player_pokemon.currentLevel
+        enemy_level = battle_state.enemy_pokemon.currentLevel
+        
+        # Set player HP to 0 since they fainted
+        battle_state.player_pokemon.currentHP = 0
+        
         embed = discord.Embed(
             title="💀 DEFEAT",
             description=f"You were defeated by {battle_state.enemy_name}...",
             color=discord.Color.dark_red()
         )
         
-        # Add battle summary
-        if battle_state.battle_log:
-            log_text = "\n".join(battle_state.battle_log[-3:])
-            embed.add_field(name="📜 Battle Summary", value=log_text[:1024], inline=False)
+        # Battle Summary
+        summary = []
+        summary.append(f"**Your {battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
+        summary.append(f"HP: 0/{player_max_hp} ❌")
+        summary.append("")
+        summary.append(f"**Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()}** (Lv.{enemy_level})")
+        summary.append(f"HP: {battle_state.enemy_pokemon.currentHP}/{enemy_max_hp}")
         
         embed.add_field(
-            name="💊 Next Steps",
-            value="Head to a Pokemon Center to heal your Pokemon and try again!",
+            name="📊 Battle Summary",
+            value="\n".join(summary),
             inline=False
         )
+        
+        # Battle log
+        if battle_state.battle_log:
+            log_text = "\n".join(battle_state.battle_log)
+            embed.add_field(
+                name="⚔️ Battle Log",
+                value=log_text[:1024],
+                inline=False
+            )
         
         await interaction.message.edit(embed=embed, view=View())
 
