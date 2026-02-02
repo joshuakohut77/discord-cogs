@@ -179,8 +179,9 @@ class battle:
             db = dbconn()
             insertString = 'INSERT INTO trainer_battles (discord_id, "locationId", enemy_uuid) VALUES(%(discordId)s, %(locationId)s, %(enemy_uuid)s)'
             db.execute(insertString, { 'enemy_uuid': enemy_uuid, 'locationId': self.locationId, 'discordId': self.discordId })
-        except:
+        except Exception as e:
             self.statuscode = 96
+            self.message = f'Error loading trainer list: {str(e)}'
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
@@ -196,8 +197,9 @@ class battle:
             result = db.querySingle(queryString, { 'enemy_uuid': enemy_uuid, 'locationId': self.locationId, 'discordId': self.discordId })
             if result:
                 enemyCompleted = True
-        except:
+        except Exception as e:
             self.statuscode = 96
+            self.message = f'Error loading trainer list: {str(e)}'
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
