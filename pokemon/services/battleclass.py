@@ -119,18 +119,17 @@ class battle:
                 enemyUUIDs.append(row[0])
             
             if self.enemyType == 'wild':
-                configPath = './configs/enemyTrainers.json'
+                configPath = '../configs/enemyTrainers.json'
             elif self.enemyType == 'gym':
-                configPath = './configs/gyms.json'
+                configPath = '../configs/gyms.json'
             else:
                 self.statuscode = 96
                 self.message = 'invalid enemyType. use "wild" or "gym"'
-                return 
-            
-            loadedConfig = json.load(open(configPath, 'r'))
-            # TODO uncomment 
-            # p = os.path.join(os.path.dirname(os.path.realpath(__file__)), configPath)
-            # loadedConfig = json.load(open(p, 'r'))
+                return
+
+            # Use absolute path relative to this file's location
+            p = os.path.join(os.path.dirname(os.path.realpath(__file__)), configPath)
+            loadedConfig = json.load(open(p, 'r'))
             
             if self.enemyType == 'wild':
                 trainerConfigList = loadedConfig[str(self.locationId)]
@@ -160,8 +159,9 @@ class battle:
                         trainerModelList.remove(trainer)
             
 
-        except:
+        except Exception as e:
             self.statuscode = 96
+            self.message = f'Error loading trainer list: {str(e)}'
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
