@@ -335,19 +335,7 @@ class EncountersMixin(MixinMeta):
         # Use battle class to check gym progress
         battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
 
-        # Check if gym leader already defeated
-        gym_leader = battle.getGymLeader()
-        if battle.statuscode == 420:
-            # Either trainers not defeated or already completed
-            if "already completed" in battle.message.lower():
-                await interaction.response.send_message(
-                    f'**{gym_info["leader"]["gym-name"]}**\n\n'
-                    f'You have already defeated Gym Leader {gym_info["leader"]["gym-leader"]} and earned the {gym_info["leader"]["badge"]}!',
-                    ephemeral=False
-                )
-                return
-
-        # Get remaining trainer count
+        # Get remaining trainer count first
         remaining_trainers = battle.getRemainingTrainerCount()
 
         if remaining_trainers > 0:
@@ -365,7 +353,21 @@ class EncountersMixin(MixinMeta):
             else:
                 await interaction.response.send_message('Error getting next trainer.', ephemeral=True)
         else:
-            # All trainers defeated, can challenge leader
+            # All trainers defeated, try to get gym leader
+            gym_leader = battle.getGymLeader()
+
+            if battle.statuscode == 420:
+                # Check if already completed
+                if "already completed" in battle.message.lower():
+                    await interaction.response.send_message(
+                        f'**{gym_info["leader"]["gym-name"]}**\n\n'
+                        f'You have already defeated Gym Leader {gym_info["leader"]["gym-leader"]} and earned the {gym_info["leader"]["badge"]}!',
+                        ephemeral=False
+                    )
+                else:
+                    await interaction.response.send_message(battle.message, ephemeral=True)
+                return
+
             if gym_leader:
                 await interaction.response.send_message(
                     f'**{gym_info["leader"]["gym-name"]}**\n\n'
@@ -378,7 +380,7 @@ class EncountersMixin(MixinMeta):
                 )
             else:
                 await interaction.response.send_message(
-                    f'Error: Could not load gym leader data.',
+                    f'Error: Could not load gym leader data. Status: {battle.statuscode}, Message: {battle.message}',
                     ephemeral=True
                 )
 
