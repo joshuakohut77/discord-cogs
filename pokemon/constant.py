@@ -121,6 +121,7 @@ LOCATION_DISPLAY_NAMES = {
     "kanto-route-9": 'Route 9',
     "seafoam-islands": 'Seafoam Islands',
     "cerulean-cave": 'Cerulean Cave',
+    "kanto-victory-road": 'Victory Road Start',
     "kanto-victory-road-1": 'Victory Road 1',
     "viridian-forest": 'Viridian Forest',
     "kanto-route-23": 'Route 23',
