@@ -111,7 +111,7 @@ class EncountersMixin(MixinMeta):
         return enemy_pokemon
 
     def __create_battle_embed(self, user: discord.User, battle_state: BattleState) -> discord.Embed:
-        """Create an embed showing the current battle state"""
+        """Create an embed showing the current battle state - Enemy first, Player second"""
         player_poke = battle_state.player_pokemon
         enemy_poke = battle_state.enemy_pokemon
         
@@ -134,19 +134,7 @@ class EncountersMixin(MixinMeta):
             color=discord.Color.red()
         )
         
-        # Player Pokemon info
-        player_types = player_poke.type1
-        if player_poke.type2:
-            player_types += f", {player_poke.type2}"
-        
-        embed.add_field(
-            name=f"💚 Your {player_poke.pokemonName.capitalize()} (Lv.{player_poke.currentLevel})",
-            value=f"**HP:** {player_poke.currentHP}/{player_stats['hp']} {make_hp_bar(player_hp_pct)}\n"
-                f"**Type:** {player_types}",
-            inline=False
-        )
-        
-        # Enemy Pokemon info
+        # Enemy Pokemon info FIRST
         enemy_types = enemy_poke.type1
         if enemy_poke.type2:
             enemy_types += f", {enemy_poke.type2}"
@@ -154,7 +142,19 @@ class EncountersMixin(MixinMeta):
         embed.add_field(
             name=f"❤️ Enemy {enemy_poke.pokemonName.capitalize()} (Lv.{enemy_poke.currentLevel})",
             value=f"**HP:** {enemy_poke.currentHP}/{enemy_stats['hp']} {make_hp_bar(enemy_hp_pct)}\n"
-                f"**Type:** {enemy_types}",
+                  f"**Type:** {enemy_types}",
+            inline=False
+        )
+        
+        # Player Pokemon info SECOND
+        player_types = player_poke.type1
+        if player_poke.type2:
+            player_types += f", {player_poke.type2}"
+        
+        embed.add_field(
+            name=f"💚 Your {player_poke.pokemonName.capitalize()} (Lv.{player_poke.currentLevel})",
+            value=f"**HP:** {player_poke.currentHP}/{player_stats['hp']} {make_hp_bar(player_hp_pct)}\n"
+                  f"**Type:** {player_types}",
             inline=False
         )
         
