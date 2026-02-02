@@ -131,8 +131,12 @@ class EncountersMixin(MixinMeta):
         location = LocationClass(str(user.id))
         methods: list[ActionModel] = location.getMethods()
 
-        if len(methods) == 0:
-            await ctx.send('No encounters available at your location.')
+        # Get quest buttons before checking if methods are empty
+        quest_buttons = self.__get_available_quests(str(user.id), model.name)
+
+        # If no encounters and no quests, return early
+        if len(methods) == 0 and len(quest_buttons) == 0:
+            await ctx.send('No encounters or quests available at your location.')
             return
 
         view = View()
@@ -141,8 +145,7 @@ class EncountersMixin(MixinMeta):
             button.callback = self.on_action_encounter
             view.add_item(button)
 
-        # Add quest buttons if there are quests available at this location
-        quest_buttons = self.__get_available_quests(str(user.id), model.name)
+        # Add quest buttons
         for quest_button in quest_buttons:
             view.add_item(quest_button)
 
