@@ -200,7 +200,6 @@ class EncountersMixin(MixinMeta):
             west_btn = Button(style=ButtonStyle.gray, emoji='⬅️', label="---", custom_id='dir_west_disabled', disabled=True, row=1)
             view.add_item(west_btn)
         
-        
         if location.east:
             east_name = LOCATION_DISPLAY_NAMES.get(location.east, location.east)
             east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label=f"{east_name[:15]}", custom_id='dir_east', row=1)
