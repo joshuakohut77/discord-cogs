@@ -19,7 +19,7 @@ import constant
 from models.location import LocationModel
 from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
-from services.keyitemsclass import keyitems as KeyItemClass
+from services.questclass import quests as QuestsClass
 from .encounters import EncountersMixin as enc
 
 from .abcd import MixinMeta
@@ -56,13 +56,14 @@ class MapMixin(MixinMeta):
     def __check_location_blockers(self, user_id: str, location_name: str) -> tuple[bool, str]:
         """
         Check if trainer has required key items to enter a location.
-        Returns (can_travel, missing_items_message)
+        Returns (can_travel, error_message)
+        Uses the existing quests.locationBlocked() method for consistency.
         """
-        quests = self.__load_quests()
+        quests_data = self.__load_quests()
 
         # Find the quest entry for this location
         location_quest = None
-        for quest_id, quest_data in quests.items():
+        for quest_id, quest_data in quests_data.items():
             if quest_data.get('name') == location_name:
                 location_quest = quest_data
                 break
@@ -71,22 +72,14 @@ class MapMixin(MixinMeta):
         if not location_quest or not location_quest.get('blockers'):
             return True, ""
 
-        # Check if trainer has all required key items
-        keyitems = KeyItemClass(user_id)
+        # Use the existing quests class to check blockers
+        quest_obj = QuestsClass(user_id)
         blockers = location_quest['blockers']
-        missing_items = []
 
-        for blocker in blockers:
-            # Check if the key item attribute exists and is True
-            if hasattr(keyitems, blocker):
-                if not getattr(keyitems, blocker):
-                    missing_items.append(blocker.replace('_', ' ').title())
-            else:
-                # If attribute doesn't exist, assume it's missing
-                missing_items.append(blocker.replace('_', ' ').title())
-
-        if missing_items:
-            message = f"You cannot travel there yet. You need: {', '.join(missing_items)}"
+        if quest_obj.locationBlocked(blockers):
+            # Location is blocked - provide helpful message about what's needed
+            blocker_names = [blocker.replace('_', ' ').title() for blocker in blockers]
+            message = f"You cannot travel there yet. Required: {', '.join(blocker_names)}"
             return False, message
 
         return True, ""
