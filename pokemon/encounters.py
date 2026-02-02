@@ -25,6 +25,7 @@ from services.locationclass import location as LocationClass
 from services.inventoryclass import inventory as InventoryClass
 from services.pokeclass import Pokemon as PokemonClass
 from services.questclass import quests as QuestsClass
+from services.battleclass import battle as BattleClass
 
 from .abcd import MixinMeta
 from .functions import (getTypeColor)
@@ -331,29 +332,55 @@ class EncountersMixin(MixinMeta):
             )
             return
 
-        # TODO: Check if all trainers have been defeated
-        # For now, placeholder logic
-        trainers = gym_info.get('trainers', [])
-        num_trainers = len(trainers)
+        # Use battle class to check gym progress
+        battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
 
-        # PLACEHOLDER: Assume trainers not yet defeated
-        trainers_defeated = False  # TODO: Check database for defeated trainers
+        # Check if gym leader already defeated
+        gym_leader = battle.getGymLeader()
+        if battle.statuscode == 420:
+            # Either trainers not defeated or already completed
+            if "already completed" in battle.message.lower():
+                await interaction.response.send_message(
+                    f'**{gym_info["leader"]["gym-name"]}**\n\n'
+                    f'You have already defeated Gym Leader {gym_info["leader"]["gym-leader"]} and earned the {gym_info["leader"]["badge"]}!',
+                    ephemeral=False
+                )
+                return
 
-        if not trainers_defeated and num_trainers > 0:
-            await interaction.response.send_message(
-                f'**{gym_info["leader"]["gym-name"]}**\n\n'
-                f'You must defeat all {num_trainers} gym trainers before you can challenge {gym_info["leader"]["gym-leader"]}.\n\n'
-                f'*[Placeholder: Trainer battle system not yet implemented]*',
-                ephemeral=False
-            )
+        # Get remaining trainer count
+        remaining_trainers = battle.getRemainingTrainerCount()
+
+        if remaining_trainers > 0:
+            # Need to defeat trainers first
+            next_trainer = battle.getNextTrainer()
+            if next_trainer:
+                await interaction.response.send_message(
+                    f'**{gym_info["leader"]["gym-name"]}**\n\n'
+                    f'You must defeat all {remaining_trainers} remaining gym trainers before you can challenge {gym_info["leader"]["gym-leader"]}.\n\n'
+                    f'**Next Trainer:** {next_trainer.name}\n'
+                    f'**Reward:** ${next_trainer.money}\n\n'
+                    f'*[Battle system not yet implemented - this would start the trainer battle]*',
+                    ephemeral=False
+                )
+            else:
+                await interaction.response.send_message('Error getting next trainer.', ephemeral=True)
         else:
-            # All trainers defeated or no trainers, can challenge leader
-            await interaction.response.send_message(
-                f'**{gym_info["leader"]["gym-name"]}**\n\n'
-                f'You are ready to challenge Gym Leader {gym_info["leader"]["gym-leader"]} for the {gym_info["leader"]["badge"]}!\n\n'
-                f'*[Placeholder: Gym leader battle system not yet implemented]*',
-                ephemeral=False
-            )
+            # All trainers defeated, can challenge leader
+            if gym_leader:
+                await interaction.response.send_message(
+                    f'**{gym_info["leader"]["gym-name"]}**\n\n'
+                    f'All gym trainers have been defeated! You are ready to challenge Gym Leader {gym_info["leader"]["gym-leader"]} for the {gym_info["leader"]["badge"]}!\n\n'
+                    f'**Gym Leader:** {gym_leader.gym_leader}\n'
+                    f'**Badge:** {gym_leader.badge}\n'
+                    f'**Reward:** ${gym_leader.money}\n\n'
+                    f'*[Battle system not yet implemented - this would start the gym leader battle]*',
+                    ephemeral=False
+                )
+            else:
+                await interaction.response.send_message(
+                    f'Error: Could not load gym leader data.',
+                    ephemeral=True
+                )
 
     async def __on_action(self, interaction: Interaction):
         user = interaction.user
