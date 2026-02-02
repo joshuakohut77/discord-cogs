@@ -249,10 +249,8 @@ class TradeMixin(MixinMeta):
     def __pokemonPcTradeCard(self, user: discord.User, pokemonList: List[PokemonClass], idx: int):
         pokemon = pokemonList[idx]
 
-        # Kind of a hack, but if the property is still set to None,
-        # then we probably haven't loaded this pokemon yet.
-        if pokemon.pokemonName is None:
-            pokemon.load(pokemonId=pokemon.trainerId)
+        # Always reload pokemon data to ensure we have the latest stats from database
+        pokemon.load(pokemonId=pokemon.trainerId)
 
 
         embed = createStatsEmbed(user, pokemon)
