@@ -491,13 +491,15 @@ class EncountersMixin(MixinMeta):
                 battle_button.callback = self.on_gym_battle_trainer
                 view.add_item(battle_button)
 
-                await interaction.followup.send(
+                message = await interaction.followup.send(
                     f'**{gym_info["leader"]["gym-name"]}**\n\n'
                     f'Trainers Remaining: {remaining_trainers}\n\n'
                     f'**Next Opponent:** {next_trainer.name}\n'
                     f'**Reward:** ${next_trainer.money}\n',
                     view=view
                 )
+                # Update state with new message ID
+                self.__useractions[str(user.id)].messageId = message.id
             else:
                 await interaction.followup.send('Error getting next trainer.', ephemeral=True)
         else:
@@ -523,7 +525,7 @@ class EncountersMixin(MixinMeta):
                 battle_button.callback = self.on_gym_battle_leader
                 view.add_item(battle_button)
 
-                await interaction.followup.send(
+                message = await interaction.followup.send(
                     f'**{gym_info["leader"]["gym-name"]}**\n\n'
                     f'All gym trainers defeated!\n\n'
                     f'**Gym Leader:** {gym_leader.gym_leader}\n'
@@ -531,6 +533,8 @@ class EncountersMixin(MixinMeta):
                     f'**Reward:** ${gym_leader.money}\n',
                     view=view
                 )
+                # Update state with new message ID
+                self.__useractions[str(user.id)].messageId = message.id
             else:
                 await interaction.followup.send(
                     f'Error: Could not load gym leader data. Status: {battle.statuscode}, Message: {battle.message}',
