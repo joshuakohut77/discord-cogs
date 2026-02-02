@@ -14,7 +14,7 @@
       "requirements": [],
       "pokemon": [
         {
-          "victreebell": 29
+          "victreebel": 29
         },
         {
           "tangela": 24
@@ -32,7 +32,7 @@
         "enemy_uuid": "8bf6a570",
         "pokemon": [
           {
-            "bellsproud": 23
+            "bellsprout": 23
           },
           {
             "weepinbell": 23
@@ -49,13 +49,13 @@
             "oddish": 21
           },
           {
-            "bellsproud": 21
+            "bellsprout": 21
           },
           {
             "oddish": 21
           },
           {
-            "bellsproud": 21
+            "bellsprout": 21
           }
         ]
       },
@@ -66,10 +66,10 @@
         "enemy_uuid": "8bf6a85e",
         "pokemon": [
           {
-            "bellsproud": 24
+            "bellsprout": 24
           },
           {
-            "bellsproud": 24
+            "bellsprout": 24
           }
         ]
       },
