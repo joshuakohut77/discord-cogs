@@ -533,17 +533,20 @@ class EncountersMixin(MixinMeta):
         
         # Set the trainer/gym leader sprite
         try:
-            # The sprite_path from gyms.json is like: "/data/cogs/CogManager/cogs/pokemon/sprites/trainers/brock.png"
-            # We need to convert this to a URL or use a local file
-            # For now, we'll try to use it as an attachment
-            sprite_file = discord.File(sprite_path)
+            # The sprite_path from gyms.json is like: "/sprites/trainers/brock.png"
+            # Convert to full file system path
+            full_sprite_path = os.path.join(os.path.dirname(__file__), sprite_path.lstrip('/'))
+            
+            sprite_file = discord.File(full_sprite_path, filename=f"{trainer_name}.png")
+            embed.set_image(url=f"attachment://{trainer_name}.png")
             
             message = await interaction.followup.send(
                 embed=embed,
                 file=sprite_file
             )
-        except:
-            # Fallback if sprite file doesn't work
+        except Exception as e:
+            # Fallback if sprite file doesn't work - just show text
+            print(f"Error loading sprite: {e}")
             message = await interaction.followup.send(embed=embed)
         
         # Wait 3 seconds
