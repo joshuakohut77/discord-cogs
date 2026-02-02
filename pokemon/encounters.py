@@ -207,6 +207,11 @@ class EncountersMixin(MixinMeta):
         enc = EncounterClass(battle_state.player_pokemon, battle_state.enemy_pokemon)
         result = enc.fight(battleType='manual', move=move_name)
         
+        print(f"DEBUG: Before - Player HP: {player_hp_before}, Enemy HP: {enemy_hp_before}")
+        print(f"DEBUG: After - Player HP: {player_hp_after}, Enemy HP: {enemy_hp_after}")
+        print(f"DEBUG: Player damage dealt: {player_damage}, Enemy damage dealt: {enemy_damage}")
+        print(f"DEBUG: Result: {result}")
+
         # Get updated HP after battle turn
         player_hp_after = battle_state.player_pokemon.currentHP
         enemy_hp_after = battle_state.enemy_pokemon.currentHP
@@ -231,7 +236,7 @@ class EncountersMixin(MixinMeta):
         elif enemy_hp_after > 0:  # Enemy is still alive but did no damage
             log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} attacked but missed!")
         
-        battle_state.battle_log.append("\n".join(log_lines))
+        battle_state.battle_log = ["\n".join(log_lines)]
         battle_state.turn_number += 1
         
         # Check for battle end
