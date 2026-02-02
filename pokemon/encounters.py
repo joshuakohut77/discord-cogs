@@ -224,24 +224,24 @@ class EncountersMixin(MixinMeta):
 
         embed = self.__wildPokemonEncounter(user, wildPokemon, active, desc)
 
-        btns = []
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Fight", custom_id='fight'),
-            self.__on_fight_click_encounter,
-        ))
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Run away", custom_id='runaway'),
-            self.__on_runaway_click_encounter,
-        ))
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Catch", custom_id='catch'),
-            self.__on_catch_click_encounter,
-        ))
+        view = View()
+
+        button = Button(style=ButtonStyle.green, label="Fight", custom_id='fight')
+        button.callback = self.on_fight_click_encounter
+        view.add_item(button)
+
+        button = Button(style=ButtonStyle.green, label="Run away", custom_id='runaway')
+        button.callback = self.on_runaway_click_encounter
+        view.add_item(button)
+
+        button = Button(style=ButtonStyle.green, label="Catch", custom_id='catch')
+        button.callback = self.on_catch_click_encounter
+        view.add_item(button)
 
         message = await interaction.channel.send(
             # content=f'{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!',
             embed=embed,
-            view=[btns]
+            view=view
         )
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, state.location, active, wildPokemon, desc)
@@ -309,7 +309,7 @@ class EncountersMixin(MixinMeta):
         trainer.runAway(state.wildPokemon)
 
         if trainer.statuscode == 96:
-            interaction.response.send_message(trainer.message)
+            await interaction.followup.send(trainer.message)
             return
 
         desc = state.descLog
@@ -320,10 +320,10 @@ class EncountersMixin(MixinMeta):
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
 
 
-        await interaction.edit_original_response(
+        await interaction.message.edit(
             # content=f'{user.display_name} ran away from a wild {state.pokemon.pokemonName.capitalize()}!',
             embed=embed,
-            view=[]
+            view=View()
         )
         del self.__useractions[str(user.id)]
         
@@ -342,52 +342,55 @@ class EncountersMixin(MixinMeta):
 
         ctx = await self.bot.get_context(interaction.message)
 
-        btns = []
+        view = View()
+        has_balls = False
+
         if items.pokeball > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.POKEBALL)
-            btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji=emote, label="Poke Ball", custom_id='pokeball'),
-                self.__on_throw_pokeball_encounter,
-            ))
+            button = Button(style=ButtonStyle.gray, emoji=emote, label="Poke Ball", custom_id='pokeball')
+            button.callback = self.on_throw_pokeball_encounter
+            view.add_item(button)
+            has_balls = True
+
         if items.greatball > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.GREATBALL)
-            btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji=emote, label="Great Ball", custom_id='greatball'),
-                self.__on_throw_pokeball_encounter,
-            ))
+            button = Button(style=ButtonStyle.gray, emoji=emote, label="Great Ball", custom_id='greatball')
+            button.callback = self.on_throw_pokeball_encounter
+            view.add_item(button)
+            has_balls = True
+
         if items.ultraball > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.ULTRABALL)
-            btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji=emote, label=f"Ultra Ball", custom_id='ultraball'),
-                self.__on_throw_pokeball_encounter,
-            ))
+            button = Button(style=ButtonStyle.gray, emoji=emote, label=f"Ultra Ball", custom_id='ultraball')
+            button.callback = self.on_throw_pokeball_encounter
+            view.add_item(button)
+            has_balls = True
+
         if items.masterball > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.MASTERBALL)
-            btns.append(self.client.add_callback(
-                Button(style=ButtonStyle.gray, emoji=emote, label=f"Master Ball", custom_id='masterball'),
-                self.__on_throw_pokeball_encounter,
-            ))
+            button = Button(style=ButtonStyle.gray, emoji=emote, label=f"Master Ball", custom_id='masterball')
+            button.callback = self.on_throw_pokeball_encounter
+            view.add_item(button)
+            has_balls = True
 
-        if len(btns) == 0:
+        if not has_balls:
             # TODO: Achievement Unlocked: No Balls
-            await interaction.response.send_message('You have no balls!', ephemeral=True)
+            await interaction.followup.send('You have no balls!', ephemeral=True)
             return
 
-        secondRow = []
-        secondRow.append(self.client.add_callback(
-            Button(style=ButtonStyle.gray, label=f"Back", custom_id='back'),
-            self.__on_catch_back_encounter,
-        ))
+        button = Button(style=ButtonStyle.gray, label=f"Back", custom_id='back')
+        button.callback = self.on_catch_back_encounter
+        view.add_item(button)
 
         desc = state.descLog
         desc += f'''{user.display_name} chose to catch the wild {state.wildPokemon.pokemonName.capitalize()}.
 '''
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
-        
-        message = await interaction.edit_original_response(
+
+        message = await interaction.message.edit(
             embed=embed,
-            view=[btns, secondRow]
+            view=view
         )
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, state.location, state.activePokemon, state.wildPokemon, desc)
@@ -414,24 +417,24 @@ class EncountersMixin(MixinMeta):
 
         embed = self.__wildPokemonEncounter(user, wildPokemon, active, desc)
 
-        btns = []
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Fight", custom_id='fight'),
-            self.__on_fight_click_encounter,
-        ))
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Run away", custom_id='runaway'),
-            self.__on_runaway_click_encounter,
-        ))
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Catch", custom_id='catch'),
-            self.__on_catch_click_encounter,
-        ))
+        view = View()
 
-        message = await interaction.edit_original_response(
+        button = Button(style=ButtonStyle.green, label="Fight", custom_id='fight')
+        button.callback = self.on_fight_click_encounter
+        view.add_item(button)
+
+        button = Button(style=ButtonStyle.green, label="Run away", custom_id='runaway')
+        button.callback = self.on_runaway_click_encounter
+        view.add_item(button)
+
+        button = Button(style=ButtonStyle.green, label="Catch", custom_id='catch')
+        button.callback = self.on_catch_click_encounter
+        view.add_item(button)
+
+        message = await interaction.message.edit(
             # content=f'{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!',
             embed=embed,
-            view=[btns]
+            view=view
         )
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, state.location, active, wildPokemon, desc)
@@ -465,10 +468,10 @@ class EncountersMixin(MixinMeta):
 '''
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
-        
-        await interaction.edit_original_response(
+
+        await interaction.message.edit(
             embed=embed,
-            view=[]
+            view=View()
         )
         del self.__useractions[str(user.id)]
 
@@ -583,3 +586,23 @@ HP    : {wildPokemon.currentHP} / {stats['hp']}
             if state.messageId != message.id:
                 return False
         return True
+
+    @discord.ui.button(custom_id='fight', label='Fight', style=ButtonStyle.green)
+    async def on_fight_click_encounter(self, interaction: discord.Interaction):
+        await self.__on_fight_click_encounter(interaction)
+
+    @discord.ui.button(custom_id='runaway', label='Run away', style=ButtonStyle.green)
+    async def on_runaway_click_encounter(self, interaction: discord.Interaction):
+        await self.__on_runaway_click_encounter(interaction)
+
+    @discord.ui.button(custom_id='catch', label='Catch', style=ButtonStyle.green)
+    async def on_catch_click_encounter(self, interaction: discord.Interaction):
+        await self.__on_catch_click_encounter(interaction)
+
+    @discord.ui.button(custom_id='back', label='Back', style=ButtonStyle.gray)
+    async def on_catch_back_encounter(self, interaction: discord.Interaction):
+        await self.__on_catch_back_encounter(interaction)
+
+    @discord.ui.button(custom_id='pokeball', label='Poke Ball', style=ButtonStyle.gray)
+    async def on_throw_pokeball_encounter(self, interaction: discord.Interaction):
+        await self.__on_throw_pokeball_encounter(interaction)

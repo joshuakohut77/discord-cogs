@@ -4,7 +4,8 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 import discord
 # from discord_components import (
 #     DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
-from discord import ui, ButtonStyle, Button, Interaction
+from discord import ButtonStyle, Interaction
+from discord.ui import Button, View
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -62,21 +63,21 @@ class TrainerCardMixin(MixinMeta):
         
         embed = self.__createAboutEmbed(user, trainer, inventory, keyitems)
 
-        btns = []
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
-            self.__on_stats_click,
-        ))
- 
-        message: discord.Message = await ctx.send(embed=embed, view=[btns])
+        view = View()
+        button = Button(style=ButtonStyle.green, label="Stats", custom_id='stats')
+        button.callback = self.on_stats_click_card
+        view.add_item(button)
+
+        message: discord.Message = await ctx.send(embed=embed, view=view)
         self.__cards[str(author.id)] = CardState(user.id, message.id, message.channel.id)
 
 
     async def __on_stats_click(self, interaction: Interaction):
         user = interaction.user
+        await interaction.response.defer()
 
         if not self.__checkCardState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.followup.send('This is not for you.', ephemeral=True)
             return
 
         state: CardState = self.__cards[str(user.id)]
@@ -93,7 +94,7 @@ class TrainerCardMixin(MixinMeta):
 
         embed = discord.Embed(title=f"Trainer")
         embed.set_author(name=f"{trainerUser.display_name}", icon_url=str(trainerUser.display_avatar.url))
-        
+
         embed.add_field(name='Battles', value=f'{stats.total_battles}', inline=True)
         embed.add_field(name='Victories', value=f'{stats.total_victory}', inline=True)
         embed.add_field(name='Defeats', value=f'{stats.total_defeat}', inline=True)
@@ -102,21 +103,21 @@ class TrainerCardMixin(MixinMeta):
         embed.add_field(name='Pokemon Evolved', value=f'{stats.total_evolved}', inline=True)
         embed.add_field(name='Pokemon Traded', value=f'{stats.total_trades}', inline=True)
 
-        btns = []
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="About", custom_id='about'),
-            self.__on_about_click,
-        ))
- 
-        message = await interaction.edit_original_response(embed=embed, view=[btns])     
+        view = View()
+        button = Button(style=ButtonStyle.green, label="About", custom_id='about')
+        button.callback = self.on_about_click_card
+        view.add_item(button)
+
+        message = await interaction.message.edit(embed=embed, view=view)
         self.__cards[str(user.id)] = CardState(state.discordId, message.id, message.channel.id)
 
 
     async def __on_about_click(self, interaction: Interaction):
         user = interaction.user
+        await interaction.response.defer()
 
         if not self.__checkCardState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.followup.send('This is not for you.', ephemeral=True)
             return
 
         state: CardState = self.__cards[str(user.id)]
@@ -132,16 +133,15 @@ class TrainerCardMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         inventory = InventoryClass(trainer.discordId)
         keyitems = KeyItemsClass(trainer.discordId)
-        
+
         embed = self.__createAboutEmbed(trainerUser, trainer, inventory, keyitems)
 
-        btns = []
-        btns.append(self.client.add_callback(
-            Button(style=ButtonStyle.green, label="Stats", custom_id='stats'),
-            self.__on_stats_click,
-        ))
- 
-        message = await interaction.edit_original_response(embed=embed, view=[btns])     
+        view = View()
+        button = Button(style=ButtonStyle.green, label="Stats", custom_id='stats')
+        button.callback = self.on_stats_click_card
+        view.add_item(button)
+
+        message = await interaction.message.edit(embed=embed, view=view)
         self.__cards[str(user.id)] = CardState(state.discordId, message.id, message.channel.id)
 
 
@@ -185,3 +185,11 @@ class TrainerCardMixin(MixinMeta):
             if state.messageId != message.id:
                 return False
         return True
+
+    @discord.ui.button(custom_id='stats', label='Stats', style=ButtonStyle.green)
+    async def on_stats_click_card(self, interaction: discord.Interaction):
+        await self.__on_stats_click(interaction)
+
+    @discord.ui.button(custom_id='about', label='About', style=ButtonStyle.green)
+    async def on_about_click_card(self, interaction: discord.Interaction):
+        await self.__on_about_click(interaction)
