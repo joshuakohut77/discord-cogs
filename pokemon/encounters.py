@@ -203,63 +203,148 @@ class EncountersMixin(MixinMeta):
         player_hp_before = battle_state.player_pokemon.currentHP
         enemy_hp_before = battle_state.enemy_pokemon.currentHP
         
-        # Execute one turn of battle with the selected move
+        # WORKAROUND: Since manual mode doesn't apply damage, we'll use auto mode
+        # but capture the state after just one exchange
+        # Create a fresh encounter for this turn
         enc = EncounterClass(battle_state.player_pokemon, battle_state.enemy_pokemon)
         
-        # DEBUG: Check enc object before fight
-        enc_p1_before = enc.pokemon1.currentHP
-        enc_p2_before = enc.pokemon2.currentHP
+        # Use auto battle but we'll manually track what happened
+        # The issue is that manual mode doesn't work, so let's do our own calculation
+        import random
+        import json
+        import os
         
-        result = enc.fight(battleType='manual', move=move_name)
+        # Load moves config to calculate damage
+        moves_path = os.path.join(os.path.dirname(__file__), 'configs', 'moves.json')
+        with open(moves_path, 'r') as f:
+            moves_config = json.load(f)
         
-        # DEBUG: Check enc object after fight
-        enc_p1_after = enc.pokemon1.currentHP
-        enc_p2_after = enc.pokemon2.currentHP
+        # Load type effectiveness
+        type_path = os.path.join(os.path.dirname(__file__), 'configs', 'typeEffectiveness.json')
+        with open(type_path, 'r') as f:
+            type_effectiveness = json.load(f)
         
-        # Update battle state with modified pokemon
-        battle_state.player_pokemon = enc.pokemon1
-        battle_state.enemy_pokemon = enc.pokemon2
+        # Get player's move data
+        player_move = moves_config.get(move_name, {})
+        player_power = player_move.get('power', 0)
+        player_accuracy = player_move.get('accuracy', 100)
+        player_move_type = player_move.get('moveType', 'normal')
+        damage_class = player_move.get('damage_class', 'physical')
         
-        # Get updated HP after battle turn
-        player_hp_after = battle_state.player_pokemon.currentHP
-        enemy_hp_after = battle_state.enemy_pokemon.currentHP
+        # Calculate if player's move hits
+        player_hit = random.randint(1, 100) <= player_accuracy
+        player_damage = 0
         
-        # Calculate damage dealt
-        player_damage = enemy_hp_before - enemy_hp_after
-        enemy_damage = player_hp_before - player_hp_after
+        if player_hit and player_power and player_power > 0:
+            # Get stats
+            player_stats = battle_state.player_pokemon.getPokeStats()
+            enemy_stats = battle_state.enemy_pokemon.getPokeStats()
+            
+            # Determine attack and defense stats
+            if damage_class == 'physical':
+                attack = player_stats['attack']
+                defense = enemy_stats['defense']
+            else:
+                attack = player_stats['special-attack']
+                defense = enemy_stats['special-defense']
+            
+            # Calculate base damage
+            level = battle_state.player_pokemon.currentLevel
+            base_damage = ((2 * level / 5 + 2) * player_power * (attack / defense) / 50 + 2)
+            
+            # Apply random multiplier
+            random_mult = random.uniform(0.85, 1.0)
+            
+            # STAB (Same Type Attack Bonus)
+            stab = 1.5 if (player_move_type == battle_state.player_pokemon.type1 or 
+                        player_move_type == battle_state.player_pokemon.type2) else 1.0
+            
+            # Type effectiveness
+            defending_type = battle_state.enemy_pokemon.type1
+            effectiveness = type_effectiveness.get(player_move_type, {}).get(defending_type, 1.0)
+            
+            # Final damage
+            player_damage = int(base_damage * random_mult * stab * effectiveness)
+            
+            # Apply damage
+            new_enemy_hp = max(0, battle_state.enemy_pokemon.currentHP - player_damage)
+            battle_state.enemy_pokemon.currentHP = new_enemy_hp
         
-        # Create battle log entry with detailed information
+        # Now enemy attacks back (if still alive)
+        enemy_damage = 0
+        if battle_state.enemy_pokemon.currentHP > 0:
+            # Enemy picks random move
+            enemy_moves = [m for m in battle_state.enemy_pokemon.getMoves() if m and m.lower() != 'none']
+            if enemy_moves:
+                enemy_move_name = random.choice(enemy_moves)
+                enemy_move = moves_config.get(enemy_move_name, {})
+                enemy_power = enemy_move.get('power', 0)
+                enemy_accuracy = enemy_move.get('accuracy', 100)
+                enemy_move_type = enemy_move.get('moveType', 'normal')
+                enemy_damage_class = enemy_move.get('damage_class', 'physical')
+                
+                # Calculate if enemy hits
+                enemy_hit = random.randint(1, 100) <= enemy_accuracy
+                
+                if enemy_hit and enemy_power and enemy_power > 0:
+                    enemy_stats = battle_state.enemy_pokemon.getPokeStats()
+                    player_stats = battle_state.player_pokemon.getPokeStats()
+                    
+                    if enemy_damage_class == 'physical':
+                        attack = enemy_stats['attack']
+                        defense = player_stats['defense']
+                    else:
+                        attack = enemy_stats['special-attack']
+                        defense = player_stats['special-defense']
+                    
+                    level = battle_state.enemy_pokemon.currentLevel
+                    base_damage = ((2 * level / 5 + 2) * enemy_power * (attack / defense) / 50 + 2)
+                    random_mult = random.uniform(0.85, 1.0)
+                    
+                    stab = 1.5 if (enemy_move_type == battle_state.enemy_pokemon.type1 or 
+                                enemy_move_type == battle_state.enemy_pokemon.type2) else 1.0
+                    
+                    defending_type = battle_state.player_pokemon.type1
+                    effectiveness = type_effectiveness.get(enemy_move_type, {}).get(defending_type, 1.0)
+                    
+                    enemy_damage = int(base_damage * random_mult * stab * effectiveness)
+                    
+                    new_player_hp = max(0, battle_state.player_pokemon.currentHP - enemy_damage)
+                    battle_state.player_pokemon.currentHP = new_player_hp
+        
+        # Create battle log
         log_lines = []
         log_lines.append(f"**Turn {battle_state.turn_number}:**")
-        log_lines.append(f"DEBUG: Enc P1 HP: {enc_p1_before} → {enc_p1_after}")
-        log_lines.append(f"DEBUG: Enc P2 HP: {enc_p2_before} → {enc_p2_after}")
-        log_lines.append(f"DEBUG: Battle State P1: {player_hp_before} → {player_hp_after}")
-        log_lines.append(f"DEBUG: Battle State P2: {enemy_hp_before} → {enemy_hp_after}")
-        log_lines.append(f"DEBUG: Move used: {move_name}")
-        log_lines.append(f"DEBUG: Result: {result}")
         
-        # Your Pokemon's action
-        if player_damage > 0:
+        # Player's action
+        if player_hit and player_damage > 0:
             log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}! Dealt {player_damage} damage!")
+        elif player_hit and player_power == 0:
+            log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}! (Status move)")
         else:
-            log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}! It missed or had no effect!")
+            log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()} but it missed!")
         
-        # Enemy Pokemon's action  
-        if enemy_damage > 0:
-            log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} attacked! Dealt {enemy_damage} damage!")
-        elif enemy_hp_after > 0:
-            log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} attacked but missed!")
+        # Enemy's action
+        if battle_state.enemy_pokemon.currentHP > 0:
+            if enemy_damage > 0:
+                log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} attacked! Dealt {enemy_damage} damage!")
+            else:
+                log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} attacked but missed!")
         
         battle_state.battle_log = ["\n".join(log_lines)]
         battle_state.turn_number += 1
         
         # Check for battle end
         if battle_state.enemy_pokemon.currentHP <= 0:
+            # Save the player's pokemon HP to database before victory
+            battle_state.player_pokemon.save()
             await self.__handle_gym_battle_victory(interaction, battle_state)
             del self.__battle_states[user_id]
             return
         
         elif battle_state.player_pokemon.currentHP <= 0:
+            # Save the player's pokemon HP to database before defeat
+            battle_state.player_pokemon.save()
             await self.__handle_gym_battle_defeat(interaction, battle_state)
             del self.__battle_states[user_id]
             return
@@ -269,6 +354,7 @@ class EncountersMixin(MixinMeta):
         view = self.__create_move_buttons(battle_state)
         
         await interaction.message.edit(embed=embed, view=view)
+    
     
     async def __handle_gym_battle_victory(self, interaction: discord.Interaction, battle_state: BattleState):
         """Handle when player wins a gym battle"""
