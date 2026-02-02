@@ -2,6 +2,8 @@ from __future__ import annotations
 from re import A
 from typing import Any, Dict, List, Union, TYPE_CHECKING
 import asyncio
+import json
+import os
 
 import discord
 from discord import (Embed, Member)
@@ -22,6 +24,7 @@ from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
 from services.inventoryclass import inventory as InventoryClass
 from services.pokeclass import Pokemon as PokemonClass
+from services.questclass import quests as QuestsClass
 
 from .abcd import MixinMeta
 from .functions import (getTypeColor)
@@ -55,6 +58,62 @@ class EncountersMixin(MixinMeta):
     """Encounters"""
 
     __useractions: dict[str, ActionState] = {}
+    __quests_data: dict = None
+
+    def __load_quests_data(self):
+        """Load quests.json file"""
+        if self.__quests_data is None:
+            config_path = os.path.join(os.path.dirname(__file__), 'configs', 'quests.json')
+            with open(config_path, 'r') as f:
+                self.__quests_data = json.load(f)
+        return self.__quests_data
+
+    def __get_available_quests(self, user_id: str, location_name: str) -> list:
+        """
+        Get available quest buttons for the current location.
+        Checks if trainer has pre-requisites needed to do the quest.
+        Returns list of Button objects for available quests.
+        """
+        quests_data = self.__load_quests_data()
+        quest_buttons = []
+
+        # Find quests for this location
+        for quest_id, quest_info in quests_data.items():
+            if quest_info.get('name') == location_name:
+                quest_list = quest_info.get('quest', [])
+                pre_requisites = quest_info.get('pre-requsites', [])
+
+                # Add a button for each quest at this location
+                for quest_name in quest_list:
+                    # Check if trainer has pre-requisites
+                    has_prerequisites = self.__check_prerequisites(user_id, pre_requisites)
+
+                    button = Button(
+                        style=ButtonStyle.blurple,
+                        label=f"Quest: {quest_name}",
+                        custom_id=f'quest_{quest_name}',
+                        disabled=not has_prerequisites
+                    )
+                    button.callback = self.on_quest_click
+                    quest_buttons.append(button)
+
+        return quest_buttons
+
+    def __check_prerequisites(self, user_id: str, pre_requisites: list) -> bool:
+        """Check if trainer has all pre-requisites for a quest"""
+        if not pre_requisites:
+            return True
+
+        quest_obj = QuestsClass(user_id)
+
+        for prereq in pre_requisites:
+            if hasattr(quest_obj.keyitems, prereq):
+                if not getattr(quest_obj.keyitems, prereq):
+                    return False
+            else:
+                return False
+
+        return True
 
     @commands.group(name="trainer")
     @commands.guild_only()
@@ -65,7 +124,7 @@ class EncountersMixin(MixinMeta):
     @_trainer.command(aliases=['enc'])
     async def encounter(self, ctx: commands.Context):
         user = ctx.author
-        
+
         trainer = TrainerClass(str(user.id))
         model = trainer.getLocation()
 
@@ -81,6 +140,11 @@ class EncountersMixin(MixinMeta):
             button = Button(style=ButtonStyle.gray, label=f"{method.name}", custom_id=f'{method.value}', disabled=False)
             button.callback = self.on_action_encounter
             view.add_item(button)
+
+        # Add quest buttons if there are quests available at this location
+        quest_buttons = self.__get_available_quests(str(user.id), model.name)
+        for quest_button in quest_buttons:
+            view.add_item(quest_button)
 
         message: discord.Message = await ctx.send(
             content="What do you want to do?",
@@ -115,6 +179,66 @@ class EncountersMixin(MixinMeta):
     # @discord.ui.button(custom_id='clickNorth', style=ButtonStyle.gray)
     async def on_action_encounter(self, interaction: discord.Interaction):
         await self.__on_action(interaction)
+
+    async def on_quest_click(self, interaction: discord.Interaction):
+        """Handle quest button clicks"""
+        user = interaction.user
+
+        if not self.__checkUserActionState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+
+        # Extract quest name from custom_id (format: 'quest_QuestName')
+        quest_name = interaction.data['custom_id'].replace('quest_', '')
+
+        # Get location and pre-requisites
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+
+        quests_data = self.__load_quests_data()
+        location_quest_info = None
+
+        for quest_id, quest_info in quests_data.items():
+            if quest_info.get('name') == location.name:
+                location_quest_info = quest_info
+                break
+
+        if not location_quest_info:
+            await interaction.response.send_message('Quest data not found.', ephemeral=True)
+            return
+
+        # Check pre-requisites again
+        pre_requisites = location_quest_info.get('pre-requsites', [])
+        if not self.__check_prerequisites(str(user.id), pre_requisites):
+            missing = [prereq.replace('_', ' ').title() for prereq in pre_requisites]
+            await interaction.response.send_message(
+                f'You do not meet the requirements for this quest. You need: {", ".join(missing)}',
+                ephemeral=True
+            )
+            return
+
+        # Execute the quest
+        trainer.quest(quest_name)
+
+        await interaction.response.send_message(trainer.message, ephemeral=False)
+
+        # Disable the quest button after completion
+        view = View()
+        for item in interaction.message.components:
+            for button in item.children:
+                new_button = Button(
+                    style=button.style,
+                    label=button.label,
+                    custom_id=button.custom_id,
+                    disabled=button.custom_id == interaction.data['custom_id']
+                )
+                if button.custom_id == interaction.data['custom_id']:
+                    new_button.callback = self.on_quest_click
+                else:
+                    new_button.callback = self.on_action_encounter
+                view.add_item(new_button)
+
+        await interaction.message.edit(view=view)
 
     async def __on_action(self, interaction: Interaction):
         user = interaction.user
