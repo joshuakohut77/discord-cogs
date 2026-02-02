@@ -125,74 +125,92 @@ class MapMixin(MixinMeta):
     
 
     def __createMapCard(self, location: LocationModel, authorIsTrainer = True, user_id: str = None):
-        """Create map card with direction buttons AND action buttons"""
+        """Create map card with ALL direction buttons (disabled if unavailable) AND action buttons"""
         file = discord.File(f"{location.spritePath}", filename=f"{location.name}.png")
 
         view = View()
         
         if authorIsTrainer:
-            # ROW 0: Direction buttons
+            # ROW 0: North/South buttons - ALWAYS SHOW
             if location.north is not None:
                 north = constant.LOCATION_DISPLAY_NAMES[location.north]
-                button = Button(style=ButtonStyle.gray, emoji='⬆', label=f"{north[:20]}", custom_id='clickNorth', disabled=False, row=0)
+                button = Button(style=ButtonStyle.gray, emoji='⬆', label=f"{north[:15]}", custom_id='clickNorth', disabled=False, row=0)
                 button.callback = self.on_north
                 view.add_item(button)
-
-            if location.east is not None:
-                east = constant.LOCATION_DISPLAY_NAMES[location.east]
-                button = Button(style=ButtonStyle.gray, emoji='➡', label=f"{east[:20]}", custom_id='clickEast', disabled=False, row=0)
-                button.callback = self.on_east
+            else:
+                # Disabled button
+                button = Button(style=ButtonStyle.gray, emoji='⬆', label="---", custom_id='clickNorth', disabled=True, row=0)
                 view.add_item(button)
 
             if location.south is not None:
                 south = constant.LOCATION_DISPLAY_NAMES[location.south]
-                button = Button(style=ButtonStyle.gray, emoji='⬇', label=f"{south[:20]}", custom_id='clickSouth', disabled=False, row=0)
+                button = Button(style=ButtonStyle.gray, emoji='⬇', label=f"{south[:15]}", custom_id='clickSouth', disabled=False, row=0)
                 button.callback = self.on_south
+                view.add_item(button)
+            else:
+                # Disabled button
+                button = Button(style=ButtonStyle.gray, emoji='⬇', label="---", custom_id='clickSouth', disabled=True, row=0)
+                view.add_item(button)
+            
+            # ROW 1: East/West buttons - ALWAYS SHOW
+            if location.east is not None:
+                east = constant.LOCATION_DISPLAY_NAMES[location.east]
+                button = Button(style=ButtonStyle.gray, emoji='➡', label=f"{east[:15]}", custom_id='clickEast', disabled=False, row=1)
+                button.callback = self.on_east
+                view.add_item(button)
+            else:
+                # Disabled button
+                button = Button(style=ButtonStyle.gray, emoji='➡', label="---", custom_id='clickEast', disabled=True, row=1)
                 view.add_item(button)
 
             if location.west is not None:
                 west = constant.LOCATION_DISPLAY_NAMES[location.west]
-                button = Button(style=ButtonStyle.gray, emoji='⬅', label=f"{west[:20]}", custom_id='clickWest', disabled=False, row=0)
+                button = Button(style=ButtonStyle.gray, emoji='⬅', label=f"{west[:15]}", custom_id='clickWest', disabled=False, row=1)
                 button.callback = self.on_west
                 view.add_item(button)
+            else:
+                # Disabled button
+                button = Button(style=ButtonStyle.gray, emoji='⬅', label="---", custom_id='clickWest', disabled=True, row=1)
+                view.add_item(button)
             
-            # ROW 1: Action buttons (Encounters, Quests, Gym) - only if user_id provided
+            # ROW 2: Action buttons (Encounters, Quests, Gym) - only if user_id provided
             if user_id:
                 # Check for encounters
                 location_obj = LocationClass(user_id)
                 methods = location_obj.getMethods()
                 
                 if len(methods) > 0:
-                    enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='map_encounters', row=1)
+                    enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='map_encounters', row=2)
                     enc_btn.callback = self.on_map_encounters_click
                     view.add_item(enc_btn)
                 
                 # Check for quests
+                quests_data = self.__load_quests()
                 has_quests = False
-                for quest_id, quest_info in self.__quests_data.items() if self.__quests_data else []:
-                    if quest_info.get('name') == location.name:
-                        if quest_info.get('quest'):
-                            has_quests = True
-                            break
+                if quests_data:
+                    for quest_id, quest_info in quests_data.items():
+                        if quest_info.get('name') == location.name:
+                            if quest_info.get('quest'):
+                                has_quests = True
+                                break
                 
                 if has_quests:
-                    quest_btn = Button(style=ButtonStyle.blurple, label="📜 Quests", custom_id='map_quests', row=1)
+                    quest_btn = Button(style=ButtonStyle.blurple, label="📜 Quests", custom_id='map_quests', row=2)
                     quest_btn.callback = self.on_map_quests_click
                     view.add_item(quest_btn)
                 
                 # Check for gym
                 if location.gym:
-                    gym_btn = Button(style=ButtonStyle.red, label="🏛️ Gym", custom_id='map_gym', row=1)
+                    gym_btn = Button(style=ButtonStyle.red, label="🏛️ Gym", custom_id='map_gym', row=2)
                     gym_btn.callback = self.on_map_gym_click
                     view.add_item(gym_btn)
                 
-                # ROW 2: Party button
-                party_btn = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='map_party', row=2)
+                # ROW 3: Party button
+                party_btn = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='map_party', row=3)
                 party_btn.callback = self.on_map_party_click
                 view.add_item(party_btn)
 
         return file, view
-
 
     @discord.ui.button(custom_id='clickNorth', style=ButtonStyle.gray)
     async def on_north(self, interaction: discord.Interaction):
@@ -617,21 +635,135 @@ class MapMixin(MixinMeta):
             view=view
         )
 
+    async def on_gym_battle_from_map(self, interaction: discord.Interaction):
+        """Forward gym battle to encounters.py - tell user to use encounter command for now"""
+        await interaction.response.send_message(
+            'Gym battle integration in progress. Please use `,trainer encounter` then click "Gym Challenge" for now.',
+            ephemeral=True
+        )
+
     async def on_map_gym_click(self, interaction: discord.Interaction):
-        """Handle Gym button from map - forward to gym handler"""
+        """Handle Gym button from map - show gym battle options"""
         user = interaction.user
         
         if not self.__checkMapState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
         
-        # For now, tell user to use encounter command
-        # Ideally we'd forward to the gym click handler in encounters.py
-        await interaction.response.send_message(
-            'Use `,trainer encounter` then click "Gym Challenge" button.',
-            ephemeral=True
-        )
-    
+        await interaction.response.defer()
+        
+        # Load gym data
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+        
+        gyms_path = os.path.join(os.path.dirname(__file__), 'configs', 'gyms.json')
+        with open(gyms_path, 'r') as f:
+            gyms_data = json.load(f)
+        
+        gym_info = gyms_data.get(str(location.locationId))
+        
+        if not gym_info:
+            await interaction.followup.send('No gym at this location.', ephemeral=True)
+            return
+        
+        # Check requirements
+        requirements = gym_info['leader'].get('requirements', [])
+        has_requirements = True
+        
+        if requirements:
+            quest_obj = QuestsClass(str(user.id))
+            for req in requirements:
+                if hasattr(quest_obj.keyitems, req):
+                    if not getattr(quest_obj.keyitems, req):
+                        has_requirements = False
+                        break
+                else:
+                    has_requirements = False
+                    break
+        
+        if not has_requirements:
+            missing = [req.replace('_', ' ').title() for req in requirements]
+            await interaction.followup.send(
+                f'You do not meet the requirements for this gym. You need: {", ".join(missing)}',
+                ephemeral=True
+            )
+            return
+        
+        # Import battle class to check progress
+        from services.battleclass import battle as BattleClass
+        battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
+        remaining_trainers = battle.getRemainingTrainerCount()
+        
+        if remaining_trainers > 0:
+            # Show trainer battle options
+            next_trainer = battle.getNextTrainer()
+            if next_trainer:
+                view = View()
+                
+                # Auto Battle button
+                auto_button = Button(style=ButtonStyle.gray, label="⚡ Auto Battle", custom_id='gym_battle_auto_map')
+                auto_button.callback = self.on_gym_battle_from_map
+                view.add_item(auto_button)
+                
+                # Manual Battle button
+                manual_button = Button(style=ButtonStyle.green, label="🎮 Manual Battle", custom_id='gym_battle_manual_map')
+                manual_button.callback = self.on_gym_battle_from_map
+                view.add_item(manual_button)
+                
+                # Back button
+                back_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='back_to_map')
+                back_btn.callback = self.on_back_to_map
+                view.add_item(back_btn)
+
+                await interaction.message.edit(
+                    content=f'**{gym_info["leader"]["gym-name"]}**\n\n'
+                            f'Trainers Remaining: {remaining_trainers}\n\n'
+                            f'**Next Opponent:** {next_trainer.name}\n'
+                            f'**Reward:** ${next_trainer.money}\n\n'
+                            f'Choose your battle mode:',
+                    view=view
+                )
+            else:
+                await interaction.followup.send('Error getting next trainer.', ephemeral=True)
+        else:
+            # Show gym leader options
+            gym_leader = battle.getGymLeader()
+            
+            if battle.statuscode == 420:
+                await interaction.followup.send(battle.message, ephemeral=True)
+                return
+            
+            if gym_leader:
+                view = View()
+                
+                # Auto Battle button
+                auto_button = Button(style=ButtonStyle.gray, label="⚡ Auto Battle Leader", custom_id='gym_leader_battle_auto_map')
+                auto_button.callback = self.on_gym_battle_from_map
+                view.add_item(auto_button)
+                
+                # Manual Battle button
+                manual_button = Button(style=ButtonStyle.green, label="🎮 Manual Battle Leader", custom_id='gym_leader_battle_manual_map')
+                manual_button.callback = self.on_gym_battle_from_map
+                view.add_item(manual_button)
+                
+                # Back button
+                back_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='back_to_map')
+                back_btn.callback = self.on_back_to_map
+                view.add_item(back_btn)
+
+                await interaction.message.edit(
+                    content=f'**{gym_info["leader"]["gym-name"]}**\n\n'
+                            f'All gym trainers defeated!\n\n'
+                            f'**Gym Leader:** {gym_leader.name}\n'
+                            f'**Badge:** {gym_leader.badge}\n'
+                            f'**Reward:** ${gym_leader.money}\n\n'
+                            f'Choose your battle mode:',
+                    view=view
+                )
+            else:
+                await interaction.followup.send('Error loading gym leader.', ephemeral=True)
+
+
     async def on_map_party_click(self, interaction: discord.Interaction):
         """Handle Party button from map - show party"""
         user = interaction.user
