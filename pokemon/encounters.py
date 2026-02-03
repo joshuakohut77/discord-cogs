@@ -535,7 +535,10 @@ class EncountersMixin(MixinMeta):
             is_active = "⭐ " if poke.trainerId == active.trainerId else ""
             is_selected = "➤ " if poke.trainerId == selected_pokemon.trainerId else ""
             
-            pokemon_emoji = f":{poke.pokemonName}:"
+            pokemon_emoji = constant.POKEMON_EMOJIS.get(
+                    poke.pokemonName.upper(),
+                    f":{poke.pokemonName}:"
+                    )
             
             if poke.currentHP <= 0:
                 status_text = "💀 FAINTED"
