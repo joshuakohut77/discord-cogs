@@ -283,10 +283,10 @@ class EncountersMixin(MixinMeta):
         battle_state = self.__wild_battle_states[user_id]
         trainer = TrainerClass(user_id)
         
-        # Get ball type from custom_id (e.g., 'wild_catch_pokeball' -> 'pokeball')
+        # Get ball type from custom_id
         ball_id = interaction.data['custom_id'].replace('wild_catch_', '')
         
-        # Convert button ID to item format that the trainer.catch() method expects
+        # Convert button ID to item format
         ball_type_map = {
             'pokeball': 'poke-ball',
             'greatball': 'great-ball',
@@ -295,22 +295,37 @@ class EncountersMixin(MixinMeta):
         }
         ball_type = ball_type_map.get(ball_id, 'poke-ball')
         
-        # CORRECT: Use trainer.catch() - this is the method that exists in TrainerClass
+        # Call catch method
         trainer.catch(battle_state.wild_pokemon, ball_type)
         
         if trainer.statuscode == 420:
-            # Successful catch
+            # ===== SUCCESSFUL CATCH =====
             embed = discord.Embed(
                 title="🎉 CAUGHT!",
                 description=f"{trainer.message}",
                 color=discord.Color.green()
             )
             
-            # Use existing post battle buttons (includes Map button)
-            view = self.__create_post_battle_buttons(user_id)
+            # Create buttons inline
+            view = View()
+            
+            map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
+            map_button.callback = self.on_nav_map_click
+            view.add_item(map_button)
+            
+            party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
+            party_button.callback = self.on_nav_party_click
+            view.add_item(party_button)
+            
+            # Check if at Pokemon Center
+            location = trainer.getLocation()
+            if location.pokecenter:
+                heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal')
+                heal_button.callback = self.on_nav_heal_click
+                view.add_item(heal_button)
             
             await interaction.message.edit(
-                content=None,  # Clear battle started message
+                content=None,
                 embed=embed,
                 view=view
             )
@@ -318,25 +333,39 @@ class EncountersMixin(MixinMeta):
             del self.__wild_battle_states[user_id]
             
         elif trainer.statuscode == 96:
-            # FAILED CATCH - Pokemon ran away (battle is over)
+            # ===== POKEMON ESCAPED =====
             embed = discord.Embed(
                 title="💨 Pokemon Escaped!",
                 description=f"{trainer.message}\n\nThe wild {battle_state.wild_pokemon.pokemonName.capitalize()} got away!",
                 color=discord.Color.orange()
             )
             
-            # Show which Pokemon escaped
             embed.add_field(
                 name="Escaped",
                 value=f"**{battle_state.wild_pokemon.pokemonName.capitalize()}** (Lv.{battle_state.wild_pokemon.currentLevel})",
                 inline=True
             )
             
-            # Use existing post battle buttons (includes Map button)
-            view = self.__create_post_battle_buttons(user_id)
+            # Create buttons inline (SAME AS SUCCESS CASE)
+            view = View()
+            
+            map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
+            map_button.callback = self.on_nav_map_click
+            view.add_item(map_button)
+            
+            party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
+            party_button.callback = self.on_nav_party_click
+            view.add_item(party_button)
+            
+            # Check if at Pokemon Center
+            location = trainer.getLocation()
+            if location.pokecenter:
+                heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal')
+                heal_button.callback = self.on_nav_heal_click
+                view.add_item(heal_button)
             
             await interaction.message.edit(
-                content=None,  # Clear battle started message
+                content=None,
                 embed=embed,
                 view=view
             )
@@ -344,7 +373,8 @@ class EncountersMixin(MixinMeta):
             del self.__wild_battle_states[user_id]
             
         else:
-            # Failed catch but Pokemon didn't run - continue battle
+            # ===== FAILED CATCH, CONTINUE BATTLE =====
+            # (This shouldn't happen based on the catch logic, but keeping as fallback)
             log_lines = [f"**Turn {battle_state.turn_number}:**"]
             log_lines.append(trainer.message)
             battle_state.battle_log = ["\n".join(log_lines)]
@@ -354,10 +384,11 @@ class EncountersMixin(MixinMeta):
             view = self.__create_wild_battle_move_buttons(battle_state)
             
             await interaction.message.edit(
-                content="**Wild Battle**",  # Restore battle message
+                content="**Wild Battle**",
                 embed=embed,
                 view=view
             )
+
 
     async def on_wild_battle_catch_click(self, interaction: discord.Interaction):
         """Handle attempting to catch Pokemon during battle"""
