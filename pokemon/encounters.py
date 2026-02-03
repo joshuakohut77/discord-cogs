@@ -329,14 +329,23 @@ class EncountersMixin(MixinMeta):
         }
         ball_type = ball_type_map.get(ball_id, 'poke-ball')
         
+        # DEBUG: Check party before catch
+        party_count_before = trainer.getPartySize()
+        
         # Call catch method
         trainer.catch(battle_state.wild_pokemon, ball_type)
         
+        # DEBUG: Check party after catch
+        party_count_after = trainer.getPartySize()
+        
         if trainer.statuscode == 420:
             # Successful catch
+            # DEBUG: Add debug info to the message
+            debug_msg = f"\n\n🔍 DEBUG:\nParty before: {party_count_before}\nParty after: {party_count_after}\nPokemon party value should be: {party_count_before < 6}"
+            
             embed = discord.Embed(
                 title="🎉 CAUGHT!",
-                description=f"{trainer.message}",
+                description=f"{trainer.message}{debug_msg}",
                 color=discord.Color.green()
             )
             
@@ -349,46 +358,6 @@ class EncountersMixin(MixinMeta):
             )
             
             del self.__wild_battle_states[user_id]
-            
-        elif trainer.statuscode == 96:
-            # Pokemon escaped
-            embed = discord.Embed(
-                title="💨 Pokemon Escaped!",
-                description=f"{trainer.message}\n\nThe wild {battle_state.wild_pokemon.pokemonName.capitalize()} got away!",
-                color=discord.Color.orange()
-            )
-            
-            embed.add_field(
-                name="Escaped",
-                value=f"**{battle_state.wild_pokemon.pokemonName.capitalize()}** (Lv.{battle_state.wild_pokemon.currentLevel})",
-                inline=True
-            )
-            
-            view = self.__create_post_battle_buttons(user_id)
-            
-            await interaction.message.edit(
-                content=None,
-                embed=embed,
-                view=view
-            )
-            
-            del self.__wild_battle_states[user_id]
-            
-        else:
-            # Failed catch, continue battle
-            log_lines = [f"**Turn {battle_state.turn_number}:**"]
-            log_lines.append(trainer.message)
-            battle_state.battle_log = ["\n".join(log_lines)]
-            battle_state.turn_number += 1
-            
-            embed = self.__create_wild_battle_embed(user, battle_state)
-            view = self.__create_wild_battle_move_buttons(battle_state)
-            
-            await interaction.message.edit(
-                content="**Wild Battle**",
-                embed=embed,
-                view=view
-            )
 
     async def on_wild_battle_catch_click(self, interaction: discord.Interaction):
         """Handle attempting to catch Pokemon during battle"""
