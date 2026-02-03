@@ -1383,7 +1383,7 @@ class EncountersMixin(MixinMeta):
         # Default to active Pokemon or first in party
         selected_trainer_id = bag_state.selected_pokemon_id or str(active.trainerId)
         
-        # Find the selected Pokemon
+        # Find the selected Pokemon and RELOAD IT
         selected_pokemon = None
         for poke in pokeList:
             if str(poke.trainerId) == selected_trainer_id:
@@ -1394,6 +1394,9 @@ class EncountersMixin(MixinMeta):
             selected_pokemon = pokeList[0]
             selected_trainer_id = str(selected_pokemon.trainerId)
             bag_state.selected_pokemon_id = selected_trainer_id
+        
+        # CRITICAL FIX: Reload the selected Pokemon to get all its data
+        selected_pokemon.load(pokemonId=selected_pokemon.trainerId)
 
         # Create embed for selected Pokemon
         from .functions import createStatsEmbed
@@ -1667,13 +1670,45 @@ class EncountersMixin(MixinMeta):
         # Get current Pokemon entry
         current_entry = pokedex_list[index]
         
-        # Get full Pokemon details - FIX: PokemonClass requires discordId
-        pokemon = PokemonClass(str(user.id))
-        pokemon.load(pokemonId=current_entry.pokemonId)
+        # CRITICAL FIX: Create Pokemon using the pokemon NAME (pokedexId), not trainerId
+        # This creates a fresh Pokemon object with just the species data
+        pokemon = PokemonClass(str(user.id), current_entry.pokemonName)
         
-        # Create color based on type
+        # Load the Pokemon config data (not from DB, just species info)
+        try:
+            import os
+            import json
+            p = os.path.join(os.path.dirname(__file__), 'configs/pokemon.json')
+            with open(p, 'r') as f:
+                pokemon_config = json.load(f)
+            
+            poke_data = pokemon_config.get(current_entry.pokemonName, {})
+            
+            # Set the basic data we need for display
+            pokemon.pokemonName = current_entry.pokemonName
+            pokemon.pokedexId = current_entry.pokemonId
+            pokemon.type1 = poke_data.get('type_1')
+            pokemon.type2 = poke_data.get('type_2')
+            
+            # Get sprite URLs
+            sprite_base = "https://pokesprites.joshkohut.com/sprites/pokemon/"
+            pokemon.frontSpriteURL = f"{sprite_base}{current_entry.pokemonId}.png"
+            
+        except Exception as e:
+            print(f"Error loading Pokemon config: {e}")
+            # Fallback - just use what we have
+            pokemon.pokemonName = current_entry.pokemonName
+            pokemon.pokedexId = current_entry.pokemonId
+            pokemon.type1 = "unknown"
+            pokemon.type2 = None
+            pokemon.frontSpriteURL = f"https://pokesprites.joshkohut.com/sprites/pokemon/{current_entry.pokemonId}.png"
+        
+        # Create color based on type (with safety check)
         from .functions import getTypeColor
-        color = getTypeColor(pokemon.type1)
+        try:
+            color = getTypeColor(pokemon.type1) if pokemon.type1 else discord.Color.blue()
+        except:
+            color = discord.Color.blue()
         
         embed = discord.Embed(
             title=f"#{str(current_entry.pokemonId).zfill(3)} - {current_entry.pokemonName.capitalize()}",
@@ -1683,8 +1718,8 @@ class EncountersMixin(MixinMeta):
         embed.set_thumbnail(url=pokemon.frontSpriteURL)
         
         # Type info
-        types = pokemon.type1
-        if pokemon.type2 is not None:
+        types = pokemon.type1 if pokemon.type1 else "Unknown"
+        if pokemon.type2 is not None and pokemon.type2:
             types += f', {pokemon.type2}'
         embed.add_field(name="Type", value=types, inline=True)
         
