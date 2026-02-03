@@ -90,8 +90,8 @@ class ailment:
                             burn, "freeze", paralysis, "trap", "confusion", "disable")
                             VALUES(%(mostRecent)s, %(sleep)s, %(poison)s, 
                             %(burn)s, %(freeze)s, %(paralysis)s,
-                            %(trap)s, %(confusion)s, %(disable)s)
-                            WHERE "pokemonId"=%(pokemonId)s'''
+                            %(trap)s, %(confusion)s, %(disable)s)'''
+                            
                 values = { "mostRecent":self.mostRecent, "sleep":self.sleep, "poison":self.poison, 
                             "burn":self.burn, "freeze":self.freeze, "paralysis":self.paralysis, 
                             "trap":self.trap, "confusion":self.confusion, "disable":self.disable, 
