@@ -50,36 +50,36 @@ class quests:
                 if not self.keyitems.HM05:
                     locationBlocked = True
                     break
-            if item == 'badge_boulder':
-                if not self.keyitems.badge_boulder:
+            if item == 'boulder_badge':
+                if not self.keyitems.boulder:
                     locationBlocked = True
                     break
-            if item == 'badge_cascade':
-                if not self.keyitems.badge_cascade:
+            if item == 'cascade_badge':
+                if not self.keyitems.cascade:
                     locationBlocked = True
                     break
-            if item == 'badge_thunder':
-                if not self.keyitems.badge_thunder:
+            if item == 'thunder_badge':
+                if not self.keyitems.thunder:
                     locationBlocked = True
                     break
-            if item == 'badge_rainbow':
-                if not self.keyitems.badge_rainbow:
+            if item == 'rainbow_badge':
+                if not self.keyitems.rainbow:
                     locationBlocked = True
                     break
-            if item == 'badge_soul':
-                if not self.keyitems.badge_soul:
+            if item == 'soul_badge':
+                if not self.keyitems.soul:
                     locationBlocked = True
                     break
-            if item == 'badge_marsh':
-                if not self.keyitems.badge_marsh:
+            if item == 'marsh_badge':
+                if not self.keyitems.marsh:
                     locationBlocked = True
                     break
-            if item == 'badge_volcano':
-                if not self.keyitems.badge_volcano:
+            if item == 'volcano_badge':
+                if not self.keyitems.volcano:
                     locationBlocked = True
                     break
-            if item == 'badge_earth':
-                if not self.keyitems.badge_earth:
+            if item == 'earth_badge':
+                if not self.keyitems.earth:
                     locationBlocked = True
                     break
             if item == 'pokeflute':
@@ -168,36 +168,36 @@ class quests:
                 if not self.keyitems.HM05:
                     requirementsMet = False
                     break
-            if item == 'badge_boulder':
-                if not self.keyitems.badge_boulder:
+            if item == 'boulder_badge':
+                if not self.keyitems.boulder:
                     requirementsMet = False
                     break
-            if item == 'badge_cascade':
-                if not self.keyitems.badge_cascade:
+            if item == 'cascade_badge':
+                if not self.keyitems.cascade:
                     requirementsMet = False
                     break
-            if item == 'badge_thunder':
-                if not self.keyitems.badge_thunder:
+            if item == 'thunder_badge':
+                if not self.keyitems.thunder:
                     requirementsMet = False
                     break
-            if item == 'badge_rainbow':
-                if not self.keyitems.badge_rainbow:
+            if item == 'rainbow_badge':
+                if not self.keyitems.rainbow:
                     requirementsMet = False
                     break
-            if item == 'badge_soul':
-                if not self.keyitems.badge_soul:
+            if item == 'soul_badge':
+                if not self.keyitems.soul:
                     requirementsMet = False
                     break
-            if item == 'badge_marsh':
-                if not self.keyitems.badge_marsh:
+            if item == 'marsh_badge':
+                if not self.keyitems.marsh:
                     requirementsMet = False
                     break
-            if item == 'badge_volcano':
-                if not self.keyitems.badge_volcano:
+            if item == 'volcano_badge':
+                if not self.keyitems.volcano:
                     requirementsMet = False
                     break
-            if item == 'badge_earth':
-                if not self.keyitems.badge_earth:
+            if item == 'earth_badge':
+                if not self.keyitems.earth:
                     requirementsMet = False
                     break
             if item == 'pokeflute':
