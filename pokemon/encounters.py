@@ -283,9 +283,20 @@ class EncountersMixin(MixinMeta):
         battle_state = self.__wild_battle_states[user_id]
         trainer = TrainerClass(user_id)
         
-        ball_type = interaction.data['custom_id'].replace('wild_catch_', '')
+        # Get ball type from custom_id (e.g., 'wild_catch_pokeball' -> 'pokeball')
+        ball_id = interaction.data['custom_id'].replace('wild_catch_', '')
         
-        trainer.catchPokemon(battle_state.wild_pokemon, ball_type)
+        # Convert button ID to item format that the trainer.catch() method expects
+        ball_type_map = {
+            'pokeball': 'poke-ball',
+            'greatball': 'great-ball',
+            'ultraball': 'ultra-ball',
+            'masterball': 'master-ball'
+        }
+        ball_type = ball_type_map.get(ball_id, 'poke-ball')
+        
+        # CORRECT: Use trainer.catch() - this is the method that exists in TrainerClass
+        trainer.catch(battle_state.wild_pokemon, ball_type)
         
         if trainer.statuscode == 420:
             # Successful catch
@@ -295,11 +306,14 @@ class EncountersMixin(MixinMeta):
                 color=discord.Color.green()
             )
             
-            # KEY CHANGE: Use existing post battle buttons
+            # Use existing post battle buttons (includes Map button)
             view = self.__create_post_battle_buttons(user_id)
             
-            # KEY CHANGE: Clear content and use existing message
-            await interaction.message.edit(content=None, embed=embed, view=view)
+            await interaction.message.edit(
+                content=None,  # Clear battle started message
+                embed=embed,
+                view=view
+            )
             
             del self.__wild_battle_states[user_id]
         else:
@@ -344,6 +358,10 @@ class EncountersMixin(MixinMeta):
         view = View()
         has_balls = False
         
+        # IMPORTANT: Use custom_id format that matches the old system
+        # Format: 'wild_catch_pokeball' not just 'pokeball'
+        # This ensures the ball_type_map in on_wild_battle_throw_ball works correctly
+        
         if items.pokeball > 0:
             emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.POKEBALL)
             button = Button(style=ButtonStyle.gray, emoji=emote, label="Poke Ball", custom_id='wild_catch_pokeball')
@@ -386,6 +404,7 @@ class EncountersMixin(MixinMeta):
         embed.description = "**Choose a Poke Ball to throw!**"
         
         await interaction.message.edit(embed=embed, view=view)
+
 
     async def on_wild_battle_move_click(self, interaction: discord.Interaction):
         """Handle move selection in wild battle"""
