@@ -2686,10 +2686,6 @@ class EncountersMixin(MixinMeta):
         )
 
 
-# =============================================================================
-# SEPARATOR - NEXT METHOD
-# =============================================================================
-
     async def on_nav_heal_click(self, interaction: discord.Interaction):
         """Handle Heal button - heal all Pokemon at Pokemon Center with detailed feedback"""
         user = interaction.user
@@ -2716,10 +2712,16 @@ class EncountersMixin(MixinMeta):
             current_hp = poke.currentHP
             
             poke_name = poke.nickName if poke.nickName else poke.pokemonName.capitalize()
-            pokemon_emoji = constant.POKEMON_EMOJIS.get(
-                    poke.pokemonName.upper(),
-                    f":{poke.pokemonName}:"
-                    )
+            
+            # Try multiple name formats to find emoji
+            # First try uppercase without hyphens/spaces
+            clean_name = poke.pokemonName.upper().replace('-', '').replace(' ', '').replace('.', '')
+            pokemon_emoji = constant.POKEMON_EMOJIS.get(clean_name)
+            
+            # If still not found, just use a generic Pokeball emoji or nothing
+            if not pokemon_emoji:
+                pokemon_emoji = constant.POKEBALL  # or just use "" for no emoji
+            
             if current_hp < max_hp:
                 # Pokemon needs healing
                 hp_restored = max_hp - current_hp
@@ -2745,10 +2747,14 @@ class EncountersMixin(MixinMeta):
             inline=False
         )
         
-        embed.set_footer(text="We hope to see you again! 💚")
+        embed.set_footer(text="We hope to see you again!")
         
-        # Add navigation buttons
-        view = self.__create_post_battle_buttons(str(user.id))
+        # Keep the heal view with map navigation
+        view = View()
+        
+        map_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='nav_map')
+        map_btn.callback = self.on_nav_map_click
+        view.add_item(map_btn)
         
         await interaction.message.edit(embed=embed, view=view)
 
