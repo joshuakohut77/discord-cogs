@@ -82,6 +82,24 @@ class BattleState:
         self.turn_number = 1
         self.defeated_enemies = []  # Track defeated enemy Pokemon
 
+class BagState:
+    """State for bag menu navigation"""
+    discord_id: str
+    message_id: int
+    channel_id: int
+    current_view: str  # 'items', 'keyitems', 'hms', 'party', 'pokedex'
+    pokedex_index: int  # For paginating through pokedex
+    selected_pokemon_id: str  # For party view
+    
+    def __init__(self, discord_id: str, message_id: int, channel_id: int, current_view: str = 'items'):
+        self.discord_id = discord_id
+        self.message_id = message_id
+        self.channel_id = channel_id
+        self.current_view = current_view
+        self.pokedex_index = 0
+        self.selected_pokemon_id = None
+
+
 class WildBattleState:
     """Track ongoing wild Pokemon battle state"""
     user_id: str
@@ -126,6 +144,7 @@ class EncountersMixin(MixinMeta):
     __locations_data: dict = None
     __battle_states: dict[str, BattleState] = {}
     __wild_battle_states: Dict[str, WildBattleState] = {}
+    __bag_states: dict[str, BagState] = {}
 
     def __create_post_battle_buttons(self, user_id: str) -> View:
         """Create navigation buttons to show after battle ends"""
@@ -838,9 +857,9 @@ class EncountersMixin(MixinMeta):
             view.add_item(gym_btn)
         
         # ROW 3: Utility buttons
-        party_btn = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party', row=3)
-        party_btn.callback = self.on_nav_party_click
-        view.add_item(party_btn)
+        bag_btn = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_bag', row=3)
+        bag_btn.callback = self.on_nav_bag_click
+        view.add_item(bag_btn)
         
         # Add Mart button if location has a Pokemart
         if self.__has_pokemart(location.locationId):
@@ -932,115 +951,477 @@ class EncountersMixin(MixinMeta):
 
 
 
-    async def on_nav_party_click(self, interaction: discord.Interaction):
-        """Handle Party button click - show enhanced party view with Pokemon selection"""
+    async def on_nav_bag_click(self, interaction: discord.Interaction):
+        """Handle Bag button click - show bag with items"""
         user = interaction.user
         await interaction.response.defer()
         
-        trainer = TrainerClass(str(user.id))
-        pokeList = trainer.getPokemon(party=True)
-        active = trainer.getActivePokemon()
-
-        if len(pokeList) == 0:
-            await interaction.followup.send('You do not have any Pokemon.', ephemeral=True)
-            return
-
-        # Create party display
-        embed = discord.Embed(
-            title="💥 Your Party",
-            description="Your Pokemon team",
-            color=discord.Color.blue()
+        # Create bag state
+        bag_state = BagState(
+            discord_id=str(user.id),
+            message_id=interaction.message.id,
+            channel_id=interaction.channel_id,
+            current_view='items'
         )
+        self.__bag_states[str(user.id)] = bag_state
         
-        # Show all party Pokemon with emoji
-        for i, poke in enumerate(pokeList, 1):
-            poke.load(pokemonId=poke.trainerId)
-            stats = poke.getPokeStats()
-            is_active = "⭐ " if poke.trainerId == active.trainerId else ""
-            
-            # Use Pokemon emoji from constant
-            pokemon_emoji = constant.POKEMON_EMOJIS.get(
-                poke.pokemonName.upper(),
-                f":{poke.pokemonName}:"
-            )
-            
-            # Show fainted status
-            if poke.currentHP <= 0:
-                status_text = "💀 FAINTED"
-            else:
-                status_text = f"HP: {poke.currentHP}/{stats['hp']}"
-            
-            poke_name = poke.nickName if poke.nickName else poke.pokemonName.capitalize()
-            
-            embed.add_field(
-                name=f"{is_active}{pokemon_emoji} {i}. {poke_name}",
-                value=f"Lv.{poke.currentLevel} | {status_text}",
-                inline=False
-            )
-        
-        embed.set_footer(text="Select a Pokemon from the dropdown to manage")
-        
-        # Create view with dropdown and action buttons
-        view = View()
-        
-        # ROW 0: Pokemon selection dropdown
-        from discord.ui import Select
-        
-        select = Select(
-            placeholder="Select a Pokemon to manage...",
-            custom_id="pokemon_select",
-            row=0
-        )
-        
-        # Add options for each Pokemon in party
-        for i, poke in enumerate(pokeList, 1):
-            poke.load(pokemonId=poke.trainerId)
-            poke_name = poke.nickName if poke.nickName else poke.pokemonName.capitalize()
-            
-            # Show active status in label
-            label = f"{'⭐ ' if poke.trainerId == active.trainerId else ''}{poke_name} (Lv.{poke.currentLevel})"
-            
-            # Show HP status in description
-            stats = poke.getPokeStats()
-            if poke.currentHP <= 0:
-                description = "💀 Fainted"
-            else:
-                description = f"HP: {poke.currentHP}/{stats['hp']}"
-            
-            select.add_option(
-                label=label[:100],  # Discord label limit
-                value=str(poke.trainerId),  # Use trainerId as unique identifier
-                description=description[:100]
-                # Remove emoji from select options - Discord doesn't support custom emojis here
-            )
-        
-        select.callback = self.on_pokemon_select
-        view.add_item(select)
-        
-        # ROW 1: Party management actions (disabled by default until Pokemon selected)
-        moves_btn = Button(style=ButtonStyle.gray, label="🎯 Moves", custom_id='party_moves', row=1, disabled=True)
-        moves_btn.callback = self.on_party_moves_click
-        view.add_item(moves_btn)
-        
-        set_active_btn = Button(style=ButtonStyle.gray, label="⭐ Set Active", custom_id='party_set_active', row=1, disabled=True)
-        set_active_btn.callback = self.on_party_set_active_click
-        view.add_item(set_active_btn)
-        
-        # ROW 2: Pokemon actions
-        deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='party_deposit', row=2, disabled=True)
-        deposit_btn.callback = self.on_party_deposit_click
-        view.add_item(deposit_btn)
-        
-        release_btn = Button(style=ButtonStyle.gray, label="🗑️ Release", custom_id='party_release', row=2, disabled=True)
-        release_btn.callback = self.on_party_release_click
-        view.add_item(release_btn)
-        
-        # ROW 3: Navigation
-        map_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='nav_map', row=3)
-        map_btn.callback = self.on_nav_map_click
-        view.add_item(map_btn)
+        # Show items view
+        embed = self.__create_items_embed(user)
+        view = self.__create_bag_navigation_view('items')
         
         await interaction.message.edit(embed=embed, view=view)
+
+    def __create_items_embed(self, user: discord.User) -> discord.Embed:
+        """Create embed showing trainer's items"""
+        from services.inventoryclass import inventory as InventoryClass
+        
+        inv = InventoryClass(str(user.id))
+        
+        embed = discord.Embed(title="Bag - Items", color=discord.Color.blue())
+        embed.set_thumbnail(url="https://pokesprites.joshkohut.com/sprites/trainer_bag.png")
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+        
+        items = []
+        
+        # Pokeballs
+        if inv.pokeball > 0:
+            items.append(f'{constant.POKEBALL} **Poké Balls** — {inv.pokeball}')
+        if inv.greatball > 0:
+            items.append(f'{constant.GREATBALL} **Great Balls** — {inv.greatball}')
+        if inv.ultraball > 0:
+            items.append(f'{constant.ULTRABALL} **Ultra Balls** — {inv.ultraball}')
+        if inv.masterball > 0:
+            items.append(f'{constant.MASTERBALL} **Master Ball** — {inv.masterball}')
+        
+        # Potions
+        if inv.potion > 0:
+            items.append(f'{constant.POTION} **Potion** — {inv.potion}')
+        if inv.superpotion > 0:
+            items.append(f'{constant.SUPERPOTION} **Super Potions** — {inv.superpotion}')
+        if inv.hyperpotion > 0:
+            items.append(f'{constant.HYPERPOTION} **Hyper Potions** — {inv.hyperpotion}')
+        if inv.maxpotion > 0:
+            items.append(f'{constant.MAXPOTION} **Max Potions** — {inv.maxpotion}')
+        if inv.fullrestore > 0:
+            items.append(f'{constant.FULLRESTORE} **Full Restore** — {inv.fullrestore}')
+        
+        # Revival items
+        if inv.revive > 0:
+            items.append(f'{constant.REVIVE} **Revive** — {inv.revive}')
+        if inv.maxrevive > 0:
+            items.append(f'{constant.MAXREVIVE} **Max Revive** — {inv.maxrevive}')
+        
+        # Status healers
+        if inv.antidote > 0:
+            items.append(f'{constant.ANTIDOTE} **Antidote** — {inv.antidote}')
+        if inv.awakening > 0:
+            items.append(f'{constant.AWAKENING} **Awakening** — {inv.awakening}')
+        if inv.burnheal > 0:
+            items.append(f'{constant.BURNHEAL} **Burn Heal** — {inv.burnheal}')
+        if inv.iceheal > 0:
+            items.append(f'{constant.ICEHEAL} **Ice Heal** — {inv.iceheal}')
+        if inv.paralyzeheal > 0:
+            items.append(f'{constant.PARALYZEHEAL} **Paralyze Heal** — {inv.paralyzeheal}')
+        
+        # Other items
+        if inv.repel > 0:
+            items.append(f'{constant.REPEL} **Repel** — {inv.repel}')
+        if inv.superrepel > 0:
+            items.append(f'{constant.SUPERREPEL} **Super Repel** — {inv.superrepel}')
+        if inv.maxrepel > 0:
+            items.append(f'{constant.MAXREPEL} **Max Repel** — {inv.maxrepel}')
+        if inv.escaperope > 0:
+            items.append(f'{constant.ESCAPEROPE} **Escape Rope** — {inv.escaperope}')
+        
+        # Evolution stones
+        if inv.firestone > 0:
+            items.append(f'{constant.FIRESTONE} **Fire Stone** — {inv.firestone}')
+        if inv.waterstone > 0:
+            items.append(f'{constant.WATERSTONE} **Water Stone** — {inv.waterstone}')
+        if inv.thunderstone > 0:
+            items.append(f'{constant.THUNDERSTONE} **Thunder Stone** — {inv.thunderstone}')
+        if inv.leafstone > 0:
+            items.append(f'{constant.LEAFSTONE} **Leaf Stone** — {inv.leafstone}')
+        if inv.moonstone > 0:
+            items.append(f'{constant.MOONSTONE} **Moon Stone** — {inv.moonstone}')
+        
+        # Other misc items
+        if inv.nugget > 0:
+            items.append(f'{constant.NUGGET} **Nugget** — {inv.nugget}')
+        if inv.freshwater > 0:
+            items.append(f'{constant.FRESHWATER} **Fresh Water** — {inv.freshwater}')
+        if inv.sodapop > 0:
+            items.append(f'{constant.SODAPOP} **Soda Pop** — {inv.sodapop}')
+        if inv.lemonade > 0:
+            items.append(f'{constant.LEMONADE} **Lemonade** — {inv.lemonade}')
+        
+        items_text = "\n".join(items) if len(items) > 0 else "No items yet."
+        embed.add_field(name="Items", value=items_text, inline=False)
+        
+        return embed
+
+    def __create_keyitems_embed(self, user: discord.User) -> discord.Embed:
+        """Create embed showing trainer's key items"""
+        from services.keyitemsclass import keyitems as KeyItemClass
+        
+        inv = KeyItemClass(str(user.id))
+        
+        embed = discord.Embed(title="Bag - Key Items", color=discord.Color.gold())
+        embed.set_thumbnail(url="https://pokesprites.joshkohut.com/sprites/trainer_bag.png")
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+        
+        items = []
+        
+        if inv.pokeflute:
+            items.append(f'{constant.POKEFLUTE} **Poké Flute**')
+        if inv.silph_scope:
+            items.append(f'{constant.SILPH_SCOPE} **Silph Scope**')
+        if inv.oaks_parcel:
+            items.append(f'{constant.OAK_PARCEL} **Oak\'s Parcel**')
+        if inv.ss_ticket:
+            items.append(f'{constant.SS_TICKET} **S.S. Ticket**')
+        if inv.bicycle:
+            items.append(f'{constant.BICYCLE} **Bicycle**')
+        if inv.old_rod:
+            items.append(f'{constant.OLD_ROD} **Old Rod**')
+        if inv.good_rod:
+            items.append(f'{constant.GOODROD} **Good Rod**')
+        if inv.super_rod:
+            items.append(f'{constant.SUPER_ROD} **Super Rod**')
+        if inv.item_finder:
+            items.append(f'{constant.ITEM_FINDER} **Item Finder**')
+        
+        items_text = "\n".join(items) if len(items) > 0 else "No key items yet."
+        embed.add_field(name="Key Items", value=items_text, inline=False)
+        
+        return embed
+
+    async def on_bag_items_click(self, interaction: discord.Interaction):
+        """Show items view"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.followup.send('Session expired. Use ,trainer map to start.', ephemeral=True)
+            return
+        
+        bag_state = self.__bag_states[str(user.id)]
+        bag_state.current_view = 'items'
+        
+        embed = self.__create_items_embed(user)
+        view = self.__create_bag_navigation_view('items')
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+    async def on_bag_keyitems_click(self, interaction: discord.Interaction):
+        """Show key items view"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.followup.send('Session expired. Use ,trainer map to start.', ephemeral=True)
+            return
+        
+        bag_state = self.__bag_states[str(user.id)]
+        bag_state.current_view = 'keyitems'
+        
+        embed = self.__create_keyitems_embed(user)
+        view = self.__create_bag_navigation_view('keyitems')
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    async def on_bag_hms_click(self, interaction: discord.Interaction):
+        """Show HMs view"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.followup.send('Session expired. Use ,trainer map to start.', ephemeral=True)
+            return
+        
+        bag_state = self.__bag_states[str(user.id)]
+        bag_state.current_view = 'hms'
+        
+        embed = self.__create_hms_embed(user)
+        view = self.__create_bag_navigation_view('hms')
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    async def on_bag_party_click(self, interaction: discord.Interaction):
+        """Show party view (reuse existing party functionality)"""
+        user = interaction.user
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.response.send_message('Session expired. Use ,trainer map to start.', ephemeral=True)
+            return
+        
+        bag_state = self.__bag_states[str(user.id)]
+        bag_state.current_view = 'party'
+        
+        # Call the existing party view method
+        await self.on_nav_party_click(interaction)
+
+
+    async def on_bag_pokedex_click(self, interaction: discord.Interaction):
+        """Show pokedex view"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.followup.send('Session expired. Use ,trainer map to start.', ephemeral=True)
+            return
+        
+        bag_state = self.__bag_states[str(user.id)]
+        bag_state.current_view = 'pokedex'
+        bag_state.pokedex_index = 0  # Reset to first entry
+        
+        embed = self.__create_pokedex_embed(user, 0)
+        view = self.__create_bag_navigation_view('pokedex')
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    async def on_pokedex_prev_click(self, interaction: discord.Interaction):
+        """Navigate to previous Pokemon in pokedex"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.followup.send('Session expired.', ephemeral=True)
+            return
+        
+        bag_state = self.__bag_states[str(user.id)]
+        
+        # Get pokedex list to check bounds
+        from services.trainerclass import trainer as TrainerClass
+        trainer = TrainerClass(str(user.id))
+        pokedex_list = trainer.getPokedex()
+        
+        if bag_state.pokedex_index > 0:
+            bag_state.pokedex_index -= 1
+        else:
+            # Loop to end
+            bag_state.pokedex_index = len(pokedex_list) - 1
+        
+        embed = self.__create_pokedex_embed(user, bag_state.pokedex_index)
+        view = self.__create_bag_navigation_view('pokedex')
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    async def on_pokedex_next_click(self, interaction: discord.Interaction):
+        """Navigate to next Pokemon in pokedex"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.followup.send('Session expired.', ephemeral=True)
+            return
+        
+        bag_state = self.__bag_states[str(user.id)]
+        
+        # Get pokedex list to check bounds
+        from services.trainerclass import trainer as TrainerClass
+        trainer = TrainerClass(str(user.id))
+        pokedex_list = trainer.getPokedex()
+        
+        if bag_state.pokedex_index < len(pokedex_list) - 1:
+            bag_state.pokedex_index += 1
+        else:
+            # Loop to start
+            bag_state.pokedex_index = 0
+        
+        embed = self.__create_pokedex_embed(user, bag_state.pokedex_index)
+        view = self.__create_bag_navigation_view('pokedex')
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    async def on_bag_back_to_map_click(self, interaction: discord.Interaction):
+        """Return to map from bag"""
+        user = interaction.user
+        
+        # Clean up bag state
+        if str(user.id) in self.__bag_states:
+            del self.__bag_states[str(user.id)]
+        
+        # Call existing map navigation
+        await self.on_nav_map_click(interaction)
+
+    def __create_bag_navigation_view(self, current_view: str) -> View:
+        """Create navigation buttons for bag system"""
+        view = View()
+        
+        # ROW 0: Bag category buttons
+        items_btn = Button(
+            style=ButtonStyle.blurple if current_view == 'items' else ButtonStyle.gray,
+            label="Items",
+            custom_id='bag_items',
+            row=0
+        )
+        items_btn.callback = self.on_bag_items_click
+        view.add_item(items_btn)
+        
+        keyitems_btn = Button(
+            style=ButtonStyle.blurple if current_view == 'keyitems' else ButtonStyle.gray,
+            label="Key Items",
+            custom_id='bag_keyitems',
+            row=0
+        )
+        keyitems_btn.callback = self.on_bag_keyitems_click
+        view.add_item(keyitems_btn)
+        
+        hms_btn = Button(
+            style=ButtonStyle.blurple if current_view == 'hms' else ButtonStyle.gray,
+            label="HMs",
+            custom_id='bag_hms',
+            row=0
+        )
+        hms_btn.callback = self.on_bag_hms_click
+        view.add_item(hms_btn)
+        
+        # ROW 1: Party and Pokedex buttons
+        party_btn = Button(
+            style=ButtonStyle.blurple if current_view == 'party' else ButtonStyle.gray,
+            label="👥 Party",
+            custom_id='bag_party',
+            row=1
+        )
+        party_btn.callback = self.on_bag_party_click
+        view.add_item(party_btn)
+        
+        pokedex_btn = Button(
+            style=ButtonStyle.blurple if current_view == 'pokedex' else ButtonStyle.gray,
+            label="📖 Pokédex",
+            custom_id='bag_pokedex',
+            row=1
+        )
+        pokedex_btn.callback = self.on_bag_pokedex_click
+        view.add_item(pokedex_btn)
+        
+        # ROW 2: Pokedex navigation (only show when in pokedex view)
+        if current_view == 'pokedex':
+            prev_btn = Button(
+                style=ButtonStyle.gray,
+                label="◀ Previous",
+                custom_id='pokedex_prev',
+                row=2
+            )
+            prev_btn.callback = self.on_pokedex_prev_click
+            view.add_item(prev_btn)
+            
+            next_btn = Button(
+                style=ButtonStyle.gray,
+                label="Next ▶",
+                custom_id='pokedex_next',
+                row=2
+            )
+            next_btn.callback = self.on_pokedex_next_click
+            view.add_item(next_btn)
+        
+        # ROW 3: Back to Map button (always available)
+        map_btn = Button(
+            style=ButtonStyle.primary,
+            label="🗺️ Back to Map",
+            custom_id='bag_back_to_map',
+            row=3
+        )
+        map_btn.callback = self.on_bag_back_to_map_click
+        view.add_item(map_btn)
+        
+        return view
+
+    def __create_pokedex_embed(self, user: discord.User, index: int = 0) -> discord.Embed:
+        """Create embed showing trainer's pokedex with individual Pokemon details"""
+        from services.trainerclass import trainer as TrainerClass
+        from services.pokeclass import Pokemon as PokemonClass
+        from services.pokedexclass import pokedex as PokedexClass
+        from models.pokedex import PokedexModel
+        
+        trainer = TrainerClass(str(user.id))
+        pokedex_list: List[PokedexModel] = trainer.getPokedex()
+        
+        if len(pokedex_list) == 0:
+            embed = discord.Embed(
+                title="Pokédex",
+                description="No Pokémon encountered yet!",
+                color=discord.Color.red()
+            )
+            embed.set_thumbnail(url="https://pokesprites.joshkohut.com/sprites/pokedex.png")
+            embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+            return embed
+        
+        # Sort by Pokemon ID
+        pokedex_list.sort(key=lambda x: x.pokemonId)
+        
+        # Get current Pokemon entry
+        current_entry = pokedex_list[index]
+        
+        # Get full Pokemon details
+        pokemon = PokemonClass()
+        pokemon.load(pokemonId=current_entry.pokemonId)
+        
+        # Create color based on type
+        from .functions import getTypeColor
+        color = getTypeColor(pokemon.type1)
+        
+        embed = discord.Embed(
+            title=f"#{str(current_entry.pokemonId).zfill(3)} - {current_entry.pokemonName.capitalize()}",
+            color=color
+        )
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+        embed.set_thumbnail(url=pokemon.frontSpriteURL)
+        
+        # Type info
+        types = pokemon.type1
+        if pokemon.type2 is not None:
+            types += f', {pokemon.type2}'
+        embed.add_field(name="Type", value=types, inline=True)
+        
+        # Physical attributes
+        embed.add_field(name="Height", value=f"{current_entry.height / 10} m", inline=True)
+        embed.add_field(name="Weight", value=f"{current_entry.weight / 10} kg", inline=True)
+        
+        # Most recent catch date
+        embed.add_field(name="First Seen", value=current_entry.mostRecent, inline=False)
+        
+        # Description
+        embed.add_field(name="Description", value=current_entry.description, inline=False)
+        
+        # Footer showing progress
+        embed.set_footer(text=f"Pokédex Entry {index + 1} of {len(pokedex_list)}")
+        
+        return embed
+
+    def __create_hms_embed(self, user: discord.User) -> discord.Embed:
+        """Create embed showing trainer's HMs"""
+        from services.keyitemsclass import keyitems as KeyItemClass
+        
+        keyitems = KeyItemClass(str(user.id))
+        
+        embed = discord.Embed(title="Bag - HMs", color=discord.Color.purple())
+        embed.set_thumbnail(url="https://pokesprites.joshkohut.com/sprites/trainer_bag.png")
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+        
+        hms = []
+        
+        if keyitems.HM01:
+            hms.append(f'{constant.HM01} **HM01 - Cut**')
+        if keyitems.HM02:
+            hms.append(f'{constant.HM02} **HM02 - Fly**')
+        if keyitems.HM03:
+            hms.append(f'{constant.HM03} **HM03 - Surf**')
+        if keyitems.HM04:
+            hms.append(f'{constant.HM04} **HM04 - Strength**')
+        if keyitems.HM05:
+            hms.append(f'{constant.HM05} **HM05 - Flash**')
+        
+        hms_text = "\n".join(hms) if len(hms) > 0 else "No HMs yet."
+        embed.add_field(name="HMs", value=hms_text, inline=False)
+        
+        return embed
 
     async def on_pokemon_select(self, interaction: discord.Interaction):
         """Handle Pokemon selection from dropdown - enables action buttons"""
