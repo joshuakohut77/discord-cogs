@@ -3081,11 +3081,13 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send(trainer.message, ephemeral=True)
             return
 
+        # SAVE PLAYER POKEMON HP
+        active = trainer.getActivePokemon()
+
         desc = state.descLog
         desc += f'''{user.display_name} chose to auto fight!
     {trainer.message}
     '''
-        active = trainer.getActivePokemon()
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, active, desc)
 
@@ -3114,6 +3116,7 @@ class EncountersMixin(MixinMeta):
         )
         
         del self.__useractions[str(user.id)]
+
 
     async def __on_fight_click_encounter(self, interaction: Interaction):
         """Redirect to manual fight (kept for compatibility)"""
@@ -3260,20 +3263,27 @@ class EncountersMixin(MixinMeta):
 
         view = View()
 
-        button = Button(style=ButtonStyle.green, label="Fight", custom_id='fight')
-        button.callback = self.on_fight_click_encounter
-        view.add_item(button)
+        # Auto Fight button
+        auto_button = Button(style=ButtonStyle.gray, label="⚡ Auto Fight", custom_id='wild_auto_fight')
+        auto_button.callback = self.on_wild_auto_fight_click
+        view.add_item(auto_button)
 
-        button = Button(style=ButtonStyle.green, label="Run away", custom_id='runaway')
-        button.callback = self.on_runaway_click_encounter
-        view.add_item(button)
+        # Manual Fight button
+        manual_button = Button(style=ButtonStyle.green, label="🎮 Manual Fight", custom_id='wild_manual_fight')
+        manual_button.callback = self.on_wild_manual_fight_click
+        view.add_item(manual_button)
 
-        button = Button(style=ButtonStyle.green, label="Catch", custom_id='catch')
-        button.callback = self.on_catch_click_encounter
-        view.add_item(button)
+        # Run away button
+        run_button = Button(style=ButtonStyle.danger, label="🏃 Run Away", custom_id='wild_run_away')
+        run_button.callback = self.on_runaway_click_encounter
+        view.add_item(run_button)
+
+        # Catch button
+        catch_button = Button(style=ButtonStyle.success, label="🔴 Catch", custom_id='wild_catch')
+        catch_button.callback = self.on_catch_click_encounter
+        view.add_item(catch_button)
 
         message = await interaction.message.edit(
-            # content=f'{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!',
             embed=embed,
             view=view
         )
