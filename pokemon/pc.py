@@ -88,11 +88,11 @@ class PcMixin(MixinMeta):
         trainer.setActivePokemon(pokemon.trainerId)
 
         if trainer.statuscode == 420:
-            await interaction.response.send_message(trainer.message)
+            await interaction.response.send_message(trainer.message, ephemeral=True)
             return
 
         if trainer.statuscode == 96:
-            await interaction.response.send_message('Something went wrong. Active pokemon not set.')
+            await interaction.response.send_message('Something went wrong. Active pokemon not set.', ephemeral=True)
             return
 
         await interaction.channel.send(f'{user.display_name} set their active pokemon to {getTrainerGivenPokemonName(pokemon)}.')
@@ -213,7 +213,7 @@ class PcMixin(MixinMeta):
         trainer.withdraw(pokemon.trainerId)
 
         if trainer.statuscode == 420:
-            await interaction.response.send_message(trainer.message)
+            await interaction.response.send_message(trainer.message, ephemeral=True)
             return
         
         if trainer.statuscode == 69:
@@ -257,14 +257,14 @@ class PcMixin(MixinMeta):
         pokemon: PokemonClass = pokeList[i]
 
         if pokemon.trainerId == activeId:
-            await interaction.response.send_message('You cannot release your active pokemon.')
+            await interaction.response.send_message('You cannot release your active pokemon.', ephemeral=True)
             return
 
         trainer = TrainerClass(str(user.id))
         starter = trainer.getStarterPokemon()
 
         if pokemon.trainerId == starter.trainerId:
-            await interaction.response.send_message('You cannot release your starter pokemon.')
+            await interaction.response.send_message('You cannot release your starter pokemon.', ephemeral=True)
             return
 
         trainer.releasePokemon(pokemon.trainerId)
@@ -340,7 +340,7 @@ class PcMixin(MixinMeta):
     
             await interaction.channel.send(f'{user.display_name}, {trainer.message}')
         else:
-            await interaction.response.send_message('Could not use the item.')
+            await interaction.response.send_message('Could not use the item.', ephemeral=True)
 
 
     async def __on_items_click(self, interaction: Interaction):
