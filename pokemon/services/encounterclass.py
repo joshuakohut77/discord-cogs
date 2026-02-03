@@ -14,6 +14,7 @@ from uniqueencounters import uniqueEncounters as uEnc
 from pokedexclass import pokedex
 from pokeclass import Pokemon as PokemonClass
 from ailmentsclass import ailment 
+from trainerclass import trainer as trainer_import
 
 # Global Config Variables
 MAX_BATTLE_TURNS = 50
@@ -512,8 +513,16 @@ class encounter:
             # leaderboard stats
             lb = leaderboard(self.pokemon1.discordId)
             lb.catch()
-            # pokemon caught successfully. Save it to the trainers inventory
+            
+            # Check party size before saving
+            trainer = trainer_import(self.pokemon1.discordId)
+            party_count = trainer.getPartySize()
+            
+            # Set party status based on party size
             self.pokemon2.discordId = self.pokemon1.discordId
+            self.pokemon2.party = party_count < 6  # True if party < 6, False otherwise
+            
+            # Save it to the trainers inventory
             self.pokemon2.save()
             if self.pokemon2.statuscode == 96:
                 self.statuscode = 96

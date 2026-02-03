@@ -41,6 +41,7 @@ class Pokemon:
         self.currentLevel = None
         self.currentExp = None
         self.traded = None
+        self.party = None
         self.base_exp = None
         self.type1 = None
         self.type2 = None
@@ -126,6 +127,7 @@ class Pokemon:
             self.type2 = pokemon['type2']
 
             self.traded = False
+            self.party = None
             self.currentExp = self.__getBaseLevelExperience()
             ivDict = self.__generatePokemonIV()
             evDict = self.__generatePokemonEV()
