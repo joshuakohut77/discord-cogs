@@ -3943,7 +3943,7 @@ class EncountersMixin(MixinMeta):
                 )
 
             view_nav = self.__create_post_battle_buttons(str(user.id))
-            await interaction.message.edit(embed=embed, view=view_nav, ephemeral=False)
+            await interaction.message.edit(embed=embed, view=view_nav)
 
         else:
             # DEFEAT
@@ -3975,7 +3975,7 @@ class EncountersMixin(MixinMeta):
             )
 
             view_nav = self.__create_post_battle_buttons(str(user.id))
-            await interaction.message.edit(embed=embed, view=view_nav, ephemeral=False)
+            await interaction.message.edit(embed=embed, view=view_nav)
 
 
     async def on_gym_battle_manual(self, interaction: discord.Interaction):
