@@ -333,19 +333,14 @@ class EncountersMixin(MixinMeta):
         party_count_before = trainer.getPartySize()
         
         # Call catch method
-        trainer.catch(battle_state.wild_pokemon, ball_type)
-        
-        # DEBUG: Check party after catch
-        party_count_after = trainer.getPartySize()
+        trainer.catch(battle_state.wild_pokemon, ball_type)       
         
         if trainer.statuscode == 420:
             # Successful catch
-            # DEBUG: Add debug info to the message
-            debug_msg = f"\n\n🔍 DEBUG:\nParty before: {party_count_before}\nParty after: {party_count_after}\nPokemon party value should be: {party_count_before < 6}"
             
             embed = discord.Embed(
                 title="🎉 CAUGHT!",
-                description=f"{trainer.message}{debug_msg}",
+                description=f"{trainer.message}",
                 color=discord.Color.green()
             )
             
