@@ -44,7 +44,7 @@
     ],
     "blockers": [
       "bicycle",
-      "badge_marsh"
+      "marsh_badge"
     ],
     "name": "fuchsia-city"
   },
@@ -90,7 +90,7 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [
-      "badge_marsh"
+      "marsh_badge"
     ],
     "name": "kanto-route-12-N"
   },
@@ -201,7 +201,7 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [
-      "badge_boulder"
+      "boulder_badge"
     ],
     "name": "kanto-route-3"
   },
@@ -215,7 +215,7 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [
-      "badge_cascade"
+      "cascade_badge"
     ],
     "name": "kanto-route-5"
   },
@@ -241,7 +241,7 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [
-      "badge_thunder"
+      "thunder_badge"
     ],
     "name": "kanto-route-9"
   },
@@ -273,8 +273,8 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [
-      "badge_earth",
-      "badge_volcano"
+      "earth_badge",
+      "volcano_badge"
     ],
     "name": "kanto-victory-road"
   },
@@ -294,7 +294,7 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [
-      "badge_earth"
+      "earth_badge"
     ],
     "name": "kanto-route-23-S"
   },
@@ -328,7 +328,7 @@
   },
   "162": {
     "pre-requsites": [
-      "badge_soul"
+      "soul_badge"
     ],
     "quest": [],
     "blockers": [],
@@ -358,7 +358,7 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [
-      "badge_earth"
+      "earth_badge"
     ],
     "name": "indigo-plateau"
   },
@@ -366,7 +366,7 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [
-      "badge_rainbow",
+      "rainbow_badge",
       "silph_scope",
       "pokeflute"
     ],
@@ -460,7 +460,7 @@
       "Fishing Brother"
     ],
     "blockers": [
-      "badge_marsh",
+      "marsh_badge",
       "pokeflute"
     ],
     "name": "kanto-route-12-S"
@@ -599,7 +599,7 @@
   },
   "1623": {
     "pre-requsites": [
-      "badge_soul"
+      "soul_badge"
     ],
     "quest": [
       "Lone House"
