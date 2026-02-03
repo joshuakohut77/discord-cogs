@@ -136,7 +136,7 @@ def createPokemonAboutEmbed(user: Member, pokemon: PokemonClass) -> Embed:
             name="Move 3", value=f"{pokemon.move_3}", inline=False)
     if pokemon.move_4:
         embed.add_field(
-            name="Move 1", value=f"{pokemon.move_4}", inline=False)
+            name="Move 4", value=f"{pokemon.move_4}", inline=False)
 
     embed.set_thumbnail(url=pokemon.frontSpriteURL)
     return embed
