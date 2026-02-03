@@ -1008,8 +1008,6 @@ class EncountersMixin(MixinMeta):
         # Revival items
         if inv.revive > 0:
             items.append(f'{constant.REVIVE} **Revive** — {inv.revive}')
-        if inv.maxrevive > 0:
-            items.append(f'{constant.MAXREVIVE} **Max Revive** — {inv.maxrevive}')
         
         # Status healers
         if inv.antidote > 0:
