@@ -295,34 +295,29 @@ class EncountersMixin(MixinMeta):
         }
         ball_type = ball_type_map.get(ball_id, 'poke-ball')
         
+        print(f"[DEBUG] Throwing {ball_type} at {battle_state.wild_pokemon.pokemonName}")
+        
         # Call catch method
         trainer.catch(battle_state.wild_pokemon, ball_type)
         
+        print(f"[DEBUG] Catch result: statuscode={trainer.statuscode}, message={trainer.message}")
+        
         if trainer.statuscode == 420:
             # ===== SUCCESSFUL CATCH =====
+            print(f"[DEBUG] SUCCESS - Creating view with post battle buttons")
+            
             embed = discord.Embed(
                 title="🎉 CAUGHT!",
                 description=f"{trainer.message}",
                 color=discord.Color.green()
             )
             
-            # Create buttons inline
-            view = View()
+            # Try using the existing method
+            view = self.__create_post_battle_buttons(user_id)
             
-            map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
-            map_button.callback = self.on_nav_map_click
-            view.add_item(map_button)
-            
-            party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
-            party_button.callback = self.on_nav_party_click
-            view.add_item(party_button)
-            
-            # Check if at Pokemon Center
-            location = trainer.getLocation()
-            if location.pokecenter:
-                heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal')
-                heal_button.callback = self.on_nav_heal_click
-                view.add_item(heal_button)
+            print(f"[DEBUG] View created, children count: {len(view.children)}")
+            for i, child in enumerate(view.children):
+                print(f"[DEBUG]   Button {i}: {child.label}")
             
             await interaction.message.edit(
                 content=None,
@@ -330,10 +325,14 @@ class EncountersMixin(MixinMeta):
                 view=view
             )
             
+            print(f"[DEBUG] Message edited successfully")
+            
             del self.__wild_battle_states[user_id]
             
         elif trainer.statuscode == 96:
             # ===== POKEMON ESCAPED =====
+            print(f"[DEBUG] ESCAPED - Creating view with post battle buttons")
+            
             embed = discord.Embed(
                 title="💨 Pokemon Escaped!",
                 description=f"{trainer.message}\n\nThe wild {battle_state.wild_pokemon.pokemonName.capitalize()} got away!",
@@ -346,23 +345,12 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
             
-            # Create buttons inline (SAME AS SUCCESS CASE)
-            view = View()
+            # Try using the existing method
+            view = self.__create_post_battle_buttons(user_id)
             
-            map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
-            map_button.callback = self.on_nav_map_click
-            view.add_item(map_button)
-            
-            party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
-            party_button.callback = self.on_nav_party_click
-            view.add_item(party_button)
-            
-            # Check if at Pokemon Center
-            location = trainer.getLocation()
-            if location.pokecenter:
-                heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal')
-                heal_button.callback = self.on_nav_heal_click
-                view.add_item(heal_button)
+            print(f"[DEBUG] View created, children count: {len(view.children)}")
+            for i, child in enumerate(view.children):
+                print(f"[DEBUG]   Button {i}: {child.label}")
             
             await interaction.message.edit(
                 content=None,
@@ -370,11 +358,14 @@ class EncountersMixin(MixinMeta):
                 view=view
             )
             
+            print(f"[DEBUG] Message edited successfully")
+            
             del self.__wild_battle_states[user_id]
             
         else:
             # ===== FAILED CATCH, CONTINUE BATTLE =====
-            # (This shouldn't happen based on the catch logic, but keeping as fallback)
+            print(f"[DEBUG] CONTINUE - statuscode={trainer.statuscode}")
+            
             log_lines = [f"**Turn {battle_state.turn_number}:**"]
             log_lines.append(trainer.message)
             battle_state.battle_log = ["\n".join(log_lines)]
