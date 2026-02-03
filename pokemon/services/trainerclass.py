@@ -7,7 +7,6 @@ import json
 import random
 
 from dbclass import db as dbconn
-from encounterclass import encounter
 from inventoryclass import inventory as inv
 from keyitemsclass import keyitems as kitems
 from leaderboardclass import leaderboard
@@ -20,7 +19,10 @@ from uniqueencounters import uniqueEncounters as uEnc
 from datetime import datetime
 from time import time
 from models.location import LocationModel
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from .encounterclass import encounter
 
 
 # Global Config Variables

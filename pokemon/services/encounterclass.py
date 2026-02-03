@@ -14,7 +14,10 @@ from uniqueencounters import uniqueEncounters as uEnc
 from pokedexclass import pokedex
 from pokeclass import Pokemon as PokemonClass
 from ailmentsclass import ailment 
-from trainerclass import trainer as trainer_import
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .trainerclass import trainer as trainer_import
 
 # Global Config Variables
 MAX_BATTLE_TURNS = 50
