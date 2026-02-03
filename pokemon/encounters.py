@@ -317,7 +317,7 @@ class EncountersMixin(MixinMeta):
 # =============================================================================
 
     async def on_nav_party_click(self, interaction: discord.Interaction):
-        """Handle Party button click - show simplified party view"""
+        """Handle Party button click - show enhanced party view with Pokemon emojis"""
         user = interaction.user
         await interaction.response.defer()
         
@@ -336,31 +336,99 @@ class EncountersMixin(MixinMeta):
             color=discord.Color.blue()
         )
         
-        # Show all party Pokemon
+        # Show all party Pokemon with emoji
         for i, poke in enumerate(pokeList, 1):
             poke.load(pokemonId=poke.trainerId)
             stats = poke.getPokeStats()
-            is_active = "⭐" if poke.trainerId == active.trainerId else ""
-            status = "💚" if poke.currentHP > 0 else "💀"
+            is_active = "⭐ " if poke.trainerId == active.trainerId else ""
+            
+            # Use Pokemon emoji instead of heart/skull
+            # Format: :pokemon_name: (lowercase, hyphens for spaces)
+            pokemon_emoji = f":{poke.pokemonName}:"
+            
+            # Show fainted status
+            if poke.currentHP <= 0:
+                status_text = "💀 FAINTED"
+            else:
+                status_text = f"HP: {poke.currentHP}/{stats['hp']}"
             
             poke_name = poke.nickName if poke.nickName else poke.pokemonName.capitalize()
             
             embed.add_field(
-                name=f"{i}. {poke_name} {is_active}",
-                value=f"{status} Lv.{poke.currentLevel} | HP: {poke.currentHP}/{stats['hp']}",
+                name=f"{is_active}{pokemon_emoji} {i}. {poke_name}",
+                value=f"Lv.{poke.currentLevel} | {status_text}",
                 inline=False
             )
         
-        # Add navigation buttons
+        embed.set_footer(text="Select a Pokemon to manage or return to map")
+        
+        # Create view with action buttons
         view = View()
         
-        map_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='nav_map')
+        # ROW 0: Pokemon selection buttons (if you have multiple Pokemon)
+        # For now, we'll just show navigation buttons
+        # TODO: Add Pokemon selection for individual management
+        
+        # ROW 1: Party management actions
+        moves_btn = Button(style=ButtonStyle.gray, label="🎯 Moves", custom_id='party_moves', row=1, disabled=True)
+        moves_btn.callback = self.on_party_moves_click
+        view.add_item(moves_btn)
+        
+        pokedex_btn = Button(style=ButtonStyle.gray, label="📖 Pokédex", custom_id='party_pokedex', row=1, disabled=True)
+        pokedex_btn.callback = self.on_party_pokedex_click
+        view.add_item(pokedex_btn)
+        
+        # ROW 2: Pokemon actions
+        set_active_btn = Button(style=ButtonStyle.gray, label="⭐ Set Active", custom_id='party_set_active', row=2, disabled=True)
+        set_active_btn.callback = self.on_party_set_active_click
+        view.add_item(set_active_btn)
+        
+        deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='party_deposit', row=2, disabled=True)
+        deposit_btn.callback = self.on_party_deposit_click
+        view.add_item(deposit_btn)
+        
+        release_btn = Button(style=ButtonStyle.gray, label="🗑️ Release", custom_id='party_release', row=2, disabled=True)
+        release_btn.callback = self.on_party_release_click
+        view.add_item(release_btn)
+        
+        # ROW 3: Navigation
+        map_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='nav_map', row=3)
         map_btn.callback = self.on_nav_map_click
         view.add_item(map_btn)
         
+        full_party_btn = Button(style=ButtonStyle.green, label="📋 Full Party View", custom_id='nav_full_party', row=3)
+        full_party_btn.callback = self.on_nav_full_party_click
+        view.add_item(full_party_btn)
+        
         await interaction.message.edit(embed=embed, view=view)
 
-
+    async def on_party_moves_click(self, interaction: discord.Interaction):
+        """Show moves for selected Pokemon (PLACEHOLDER)"""
+        await interaction.response.send_message(
+            'Moves view coming soon! Use `,trainer party` for full functionality.',
+            ephemeral=True
+        )
+    
+    async def on_party_set_active_click(self, interaction: discord.Interaction):
+        """Set active Pokemon (PLACEHOLDER)"""
+        await interaction.response.send_message(
+            'Set Active coming soon! Use `,trainer party` for full functionality.',
+            ephemeral=True
+        )
+    
+    async def on_party_release_click(self, interaction: discord.Interaction):
+        """Release Pokemon (PLACEHOLDER)"""
+        await interaction.response.send_message(
+            'Release coming soon! Use `,trainer party` for full functionality.',
+            ephemeral=True
+        )
+    
+    async def on_nav_full_party_click(self, interaction: discord.Interaction):
+        """Open the full party management interface (existing party.py system)"""
+        await interaction.response.send_message(
+            'Use `,trainer party` to access the full party management interface with all features.',
+            ephemeral=True
+        )
 # =============================================================================
 # SEPARATOR - NEXT METHOD
 # =============================================================================
