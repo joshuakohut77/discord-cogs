@@ -2648,11 +2648,6 @@ class EncountersMixin(MixinMeta):
             str(user.id), message.channel.id, message.id, location_model, trainer.getActivePokemon(), None, ''
         )
 
-
-# =============================================================================
-# SEPARATOR - NEXT METHOD
-# =============================================================================
-
     async def on_nav_quests_click(self, interaction: discord.Interaction):
         """Handle Quests button - show quest options with back button"""
         user = interaction.user
@@ -2672,8 +2667,8 @@ class EncountersMixin(MixinMeta):
         for quest_btn in quest_buttons:
             view.add_item(quest_btn)
         
-        # Back to map button
-        back_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='nav_map', row=1)
+        # Back to map button - USE UNIQUE custom_id
+        back_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='quest_back_to_map', row=1)
         back_btn.callback = self.on_nav_map_click
         view.add_item(back_btn)
         
