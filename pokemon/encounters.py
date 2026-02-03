@@ -2662,6 +2662,10 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('No quests available here.', ephemeral=True)
             return
         
+        # IMPORTANT: Clear action state to prevent encounter button routing
+        if str(user.id) in self.__useractions:
+            del self.__useractions[str(user.id)]
+        
         # Create view with quest buttons
         view = View()
         for quest_btn in quest_buttons:
