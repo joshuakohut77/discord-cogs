@@ -1147,19 +1147,329 @@ class EncountersMixin(MixinMeta):
         await interaction.message.edit(embed=embed, view=view)
 
 
-    async def on_bag_party_click(self, interaction: discord.Interaction):
-        """Show party view (reuse existing party functionality)"""
+
+    async def on_bag_pokemon_select(self, interaction: discord.Interaction):
+        """Handle Pokemon selection in bag party view"""
         user = interaction.user
         
         if str(user.id) not in self.__bag_states:
-            await interaction.response.send_message('Session expired. Use ,trainer map to start.', ephemeral=True)
+            await interaction.response.send_message('Session expired.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        bag_state = self.__bag_states[str(user.id)]
+        
+        # Get selected Pokemon ID from select menu
+        selected_trainer_id = interaction.data['values'][0]
+        bag_state.selected_pokemon_id = selected_trainer_id
+        
+        from services.trainerclass import trainer as TrainerClass
+        
+        trainer = TrainerClass(str(user.id))
+        pokeList = trainer.getPokemon(party=True)
+        active = trainer.getActivePokemon()
+        
+        # Find the selected Pokemon
+        selected_pokemon = None
+        for poke in pokeList:
+            if str(poke.trainerId) == selected_trainer_id:
+                selected_pokemon = poke
+                break
+        
+        if selected_pokemon is None:
+            await interaction.followup.send('Pokemon not found.', ephemeral=True)
+            return
+        
+        # Reload to get latest stats
+        selected_pokemon.load(pokemonId=selected_pokemon.trainerId)
+        
+        # Create embed for selected Pokemon
+        from .functions import createStatsEmbed
+        embed = createStatsEmbed(user, selected_pokemon)
+        
+        # Mark if this is the active Pokemon
+        if selected_pokemon.trainerId == active.trainerId:
+            embed.title = f"⭐ {embed.title}"
+            embed.set_footer(text="This is your active Pokemon!")
+        
+        # Recreate view with updated selection
+        from discord.ui import Select
+        from discord import SelectOption
+        
+        view = View()
+        
+        # ROW 0: Pokemon selector
+        select = Select(placeholder="Choose a Pokemon", custom_id='pokemon_select', row=0)
+        for poke in pokeList:
+            poke.load(pokemonId=poke.trainerId)
+            
+            label = f"{poke.pokemonName.capitalize()}"
+            if poke.nickName:
+                label = f"{poke.nickName} ({poke.pokemonName.capitalize()})"
+            label += f" Lv.{poke.currentLevel}"
+            
+            stats = poke.getPokeStats()
+            if poke.currentHP <= 0:
+                description = "💀 Fainted"
+            else:
+                description = f"HP: {poke.currentHP}/{stats['hp']}"
+            
+            select.add_option(
+                label=label[:100],
+                value=str(poke.trainerId),
+                description=description[:100],
+                default=(str(poke.trainerId) == selected_trainer_id)
+            )
+        
+        select.callback = self.on_bag_pokemon_select
+        view.add_item(select)
+        
+        # ROW 1: Party management actions
+        moves_btn = Button(style=ButtonStyle.blurple, label="🎯 Moves", custom_id='bag_party_moves', row=1)
+        moves_btn.callback = self.on_bag_party_moves_click
+        view.add_item(moves_btn)
+        
+        is_already_active = (selected_pokemon.trainerId == active.trainerId)
+        set_active_btn = Button(
+            style=ButtonStyle.green if not is_already_active else ButtonStyle.gray,
+            label="⭐ Set Active",
+            custom_id='bag_party_set_active',
+            row=1,
+            disabled=is_already_active
+        )
+        set_active_btn.callback = self.on_bag_party_set_active_click
+        view.add_item(set_active_btn)
+        
+        # ROW 2: Pokemon actions
+        deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
+        deposit_btn.callback = self.on_bag_party_deposit_click
+        view.add_item(deposit_btn)
+        
+        release_btn = Button(style=ButtonStyle.red, label="🗑️ Release", custom_id='bag_party_release', row=2)
+        release_btn.callback = self.on_bag_party_release_click
+        view.add_item(release_btn)
+        
+        # ROW 3: Navigation
+        back_btn = Button(style=ButtonStyle.gray, label="← Back to Bag", custom_id='party_back_to_bag', row=3)
+        back_btn.callback = self.on_party_back_to_bag_click
+        view.add_item(back_btn)
+        
+        map_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='party_back_to_map', row=3)
+        map_btn.callback = self.on_bag_back_to_map_click
+        view.add_item(map_btn)
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+    async def on_bag_party_moves_click(self, interaction: discord.Interaction):
+        """Show moves for selected Pokemon"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.followup.send('Session expired.', ephemeral=True)
+            return
+        
+        bag_state = self.__bag_states[str(user.id)]
+        selected_trainer_id = bag_state.selected_pokemon_id
+        
+        if not selected_trainer_id:
+            await interaction.followup.send('No Pokemon selected.', ephemeral=True)
+            return
+        
+        from services.trainerclass import trainer as TrainerClass
+        
+        trainer = TrainerClass(str(user.id))
+        pokemon = trainer.getPokemonById(int(selected_trainer_id))
+        
+        if not pokemon:
+            await interaction.followup.send('Pokemon not found.', ephemeral=True)
+            return
+        
+        # Reload to get latest data
+        pokemon.load(pokemonId=pokemon.trainerId)
+        
+        from .functions import createPokemonAboutEmbed
+        embed = createPokemonAboutEmbed(user, pokemon)
+        
+        # Keep same view structure
+        await interaction.followup.send(embed=embed, ephemeral=True)
+
+
+    async def on_bag_party_set_active_click(self, interaction: discord.Interaction):
+        """Set selected Pokemon as active"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.followup.send('Session expired.', ephemeral=True)
+            return
+        
+        bag_state = self.__bag_states[str(user.id)]
+        selected_trainer_id = bag_state.selected_pokemon_id
+        
+        if not selected_trainer_id:
+            await interaction.followup.send('No Pokemon selected.', ephemeral=True)
+            return
+        
+        from services.trainerclass import trainer as TrainerClass
+        
+        trainer = TrainerClass(str(user.id))
+        trainer.setActivePokemon(int(selected_trainer_id))
+        
+        # Refresh the party view
+        await self.on_bag_party_click(interaction)
+
+
+    async def on_bag_party_deposit_click(self, interaction: discord.Interaction):
+        """Deposit Pokemon to PC (placeholder)"""
+        await interaction.response.send_message(
+            'Deposit coming soon! Use `,trainer pc` for full functionality.',
+            ephemeral=True
+        )
+
+
+    async def on_bag_party_release_click(self, interaction: discord.Interaction):
+        """Release Pokemon (placeholder)"""
+        await interaction.response.send_message(
+            'Release coming soon! Use `,trainer party` for full functionality.',
+            ephemeral=True
+        )
+
+
+    async def on_party_back_to_bag_click(self, interaction: discord.Interaction):
+        """Return to bag items view from party"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.followup.send('Session expired.', ephemeral=True)
+            return
+        
+        bag_state = self.__bag_states[str(user.id)]
+        bag_state.current_view = 'items'
+        bag_state.selected_pokemon_id = None  # Clear selection
+        
+        embed = self.__create_items_embed(user)
+        view = self.__create_bag_navigation_view('items')
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    async def on_bag_party_click(self, interaction: discord.Interaction):
+        """Show party view with full party management interface"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.followup.send('Session expired. Use ,trainer map to start.', ephemeral=True)
             return
         
         bag_state = self.__bag_states[str(user.id)]
         bag_state.current_view = 'party'
         
-        # Call the existing party view method
-        await self.on_nav_bag_click(interaction)
+        from services.trainerclass import trainer as TrainerClass
+        from discord.ui import Select
+        from discord import SelectOption
+        
+        trainer = TrainerClass(str(user.id))
+        pokeList = trainer.getPokemon(party=True)
+        active = trainer.getActivePokemon()
+
+        if len(pokeList) == 0:
+            await interaction.followup.send('You do not have any Pokemon.', ephemeral=True)
+            return
+
+        # Default to active Pokemon or first in party
+        selected_trainer_id = bag_state.selected_pokemon_id or str(active.trainerId)
+        
+        # Find the selected Pokemon
+        selected_pokemon = None
+        for poke in pokeList:
+            if str(poke.trainerId) == selected_trainer_id:
+                selected_pokemon = poke
+                break
+        
+        if selected_pokemon is None:
+            selected_pokemon = pokeList[0]
+            selected_trainer_id = str(selected_pokemon.trainerId)
+            bag_state.selected_pokemon_id = selected_trainer_id
+
+        # Create embed for selected Pokemon
+        from .functions import createStatsEmbed
+        embed = createStatsEmbed(user, selected_pokemon)
+        
+        # Mark if this is the active Pokemon
+        if selected_pokemon.trainerId == active.trainerId:
+            embed.title = f"⭐ {embed.title}"
+            embed.set_footer(text="This is your active Pokemon!")
+        
+        # Create view with Pokemon selector
+        view = View()
+        
+        # ROW 0: Pokemon selector
+        select = Select(placeholder="Choose a Pokemon", custom_id='pokemon_select', row=0)
+        for poke in pokeList:
+            # Reload to get latest stats from database
+            poke.load(pokemonId=poke.trainerId)
+            
+            label = f"{poke.pokemonName.capitalize()}"
+            if poke.nickName:
+                label = f"{poke.nickName} ({poke.pokemonName.capitalize()})"
+            label += f" Lv.{poke.currentLevel}"
+            
+            stats = poke.getPokeStats()
+            if poke.currentHP <= 0:
+                description = "💀 Fainted"
+            else:
+                description = f"HP: {poke.currentHP}/{stats['hp']}"
+            
+            select.add_option(
+                label=label[:100],
+                value=str(poke.trainerId),
+                description=description[:100],
+                default=(str(poke.trainerId) == selected_trainer_id)
+            )
+        
+        select.callback = self.on_bag_pokemon_select
+        view.add_item(select)
+        
+        # ROW 1: Party management actions
+        moves_btn = Button(style=ButtonStyle.blurple, label="🎯 Moves", custom_id='bag_party_moves', row=1)
+        moves_btn.callback = self.on_bag_party_moves_click
+        view.add_item(moves_btn)
+        
+        # Disable Set Active if already active
+        is_already_active = (selected_pokemon.trainerId == active.trainerId)
+        set_active_btn = Button(
+            style=ButtonStyle.green if not is_already_active else ButtonStyle.gray,
+            label="⭐ Set Active",
+            custom_id='bag_party_set_active',
+            row=1,
+            disabled=is_already_active
+        )
+        set_active_btn.callback = self.on_bag_party_set_active_click
+        view.add_item(set_active_btn)
+        
+        # ROW 2: Pokemon actions
+        deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
+        deposit_btn.callback = self.on_bag_party_deposit_click
+        view.add_item(deposit_btn)
+        
+        release_btn = Button(style=ButtonStyle.red, label="🗑️ Release", custom_id='bag_party_release', row=2)
+        release_btn.callback = self.on_bag_party_release_click
+        view.add_item(release_btn)
+        
+        # ROW 3: Navigation back
+        back_btn = Button(style=ButtonStyle.gray, label="← Back to Bag", custom_id='party_back_to_bag', row=3)
+        back_btn.callback = self.on_party_back_to_bag_click
+        view.add_item(back_btn)
+        
+        map_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='party_back_to_map', row=3)
+        map_btn.callback = self.on_bag_back_to_map_click
+        view.add_item(map_btn)
+        
+        await interaction.message.edit(embed=embed, view=view)
 
 
     async def on_bag_pokedex_click(self, interaction: discord.Interaction):
@@ -1357,7 +1667,7 @@ class EncountersMixin(MixinMeta):
         # Get current Pokemon entry
         current_entry = pokedex_list[index]
         
-        # Get full Pokemon details
+        # Get full Pokemon details - FIX: PokemonClass requires discordId
         pokemon = PokemonClass(str(user.id))
         pokemon.load(pokemonId=current_entry.pokemonId)
         
