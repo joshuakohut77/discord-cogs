@@ -312,9 +312,6 @@ class EncountersMixin(MixinMeta):
         await self.on_nav_map_click(interaction, already_deferred=True)
 
 
-# =============================================================================
-# SEPARATOR - NEXT METHOD
-# =============================================================================
 
     async def on_nav_party_click(self, interaction: discord.Interaction):
         """Handle Party button click - show enhanced party view with Pokemon emojis"""
