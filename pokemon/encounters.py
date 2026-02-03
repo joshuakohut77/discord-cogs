@@ -834,6 +834,12 @@ class EncountersMixin(MixinMeta):
             heal_btn.callback = self.on_nav_heal_click
             view.add_item(heal_btn)
         
+        # Add Mart button if location has a Pokemart
+        if self.__has_pokemart(location.locationId):
+            mart_btn = Button(style=ButtonStyle.blurple, label="🏪 Mart", custom_id='nav_mart', row=3)
+            mart_btn.callback = self.on_nav_mart_click
+            view.add_item(mart_btn)
+        
         message = await interaction.message.edit(embed=embed, view=view)
         
         # Update action state
@@ -2123,6 +2129,12 @@ class EncountersMixin(MixinMeta):
             heal_btn.callback = self.on_nav_heal_click
             view.add_item(heal_btn)
         
+        # Add Mart button if location has a Pokemart
+        if self.__has_pokemart(location.locationId):
+            mart_btn = Button(style=ButtonStyle.blurple, label="🏪 Mart", custom_id='nav_mart', row=3)
+            mart_btn.callback = self.on_nav_mart_click
+            view.add_item(mart_btn)
+        
         message = await ctx.send(embed=embed, view=view)
         
         # Initialize action state
@@ -2510,6 +2522,170 @@ class EncountersMixin(MixinMeta):
 
         battle_state.message_id = message.id
 
+    async def on_nav_mart_click(self, interaction: discord.Interaction, already_deferred: bool = False):
+        """Handle Mart button click - open Pokemart shop interface"""
+        user = interaction.user
+        
+        if not already_deferred:
+            await interaction.response.defer()
+        
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+        
+        # Import StoreClass to check for Pokemart
+        from services.storeclass import store as StoreClass
+        store = StoreClass(str(user.id), location.locationId)
+        
+        # Check if there's a Pokemart at this location
+        if store.statuscode == 420:
+            # No Pokemart here - show error with navigation buttons
+            embed = discord.Embed(
+                title="❌ No Poké Mart",
+                description=store.message,
+                color=discord.Color.red()
+            )
+            embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+            
+            # Create navigation view
+            view = View()
+            
+            map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
+            map_button.callback = self.on_nav_map_click
+            view.add_item(map_button)
+            
+            party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
+            party_button.callback = self.on_nav_party_click
+            view.add_item(party_button)
+            
+            await interaction.message.edit(
+                content=None,
+                embed=embed,
+                view=view
+            )
+            return
+        
+        # There IS a Pokemart - show the shop interface
+        from .pokemart import StoreState
+        
+        # Create store state
+        state = StoreState(user.id, interaction.message.id, interaction.message.channel.id, location, store.storeList, 0)
+        
+        # Get the shop embed and buttons from pokemart's page embed method
+        embed, btns = self.__create_mart_embed(user, state)
+        
+        # Add a "Back to Map" button at the end
+        back_btn = Button(style=ButtonStyle.secondary, label="🗺️ Back to Map", custom_id='mart_back_to_map', row=4)
+        back_btn.callback = self.on_mart_back_to_map
+        btns.add_item(back_btn)
+        
+        # Store the mart state
+        if not hasattr(self, '_PokemartMixin__store'):
+            self._PokemartMixin__store = {}
+        self._PokemartMixin__store[str(user.id)] = state
+        
+        await interaction.message.edit(
+            content=None,
+            embed=embed,
+            view=btns
+        )
+
+    async def on_mart_prev_click(self, interaction: discord.Interaction):
+        """Handle Previous page in Mart"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if not hasattr(self, '_PokemartMixin__store') or str(user.id) not in self._PokemartMixin__store:
+            await interaction.followup.send('This is not for you.', ephemeral=True)
+            return
+        
+        state = self._PokemartMixin__store[str(user.id)]
+        state.idx = state.idx - 1
+        
+        embed, btns = self.__create_mart_embed(user, state)
+        
+        # Add back to map button
+        back_btn = Button(style=ButtonStyle.secondary, label="🗺️ Back to Map", custom_id='mart_back_to_map', row=4)
+        back_btn.callback = self.on_mart_back_to_map
+        btns.add_item(back_btn)
+        
+        await interaction.message.edit(embed=embed, view=btns)
+
+    async def on_mart_next_click(self, interaction: discord.Interaction):
+        """Handle Next page in Mart"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if not hasattr(self, '_PokemartMixin__store') or str(user.id) not in self._PokemartMixin__store:
+            await interaction.followup.send('This is not for you.', ephemeral=True)
+            return
+        
+        state = self._PokemartMixin__store[str(user.id)]
+        state.idx = state.idx + 1
+        
+        embed, btns = self.__create_mart_embed(user, state)
+        
+        # Add back to map button
+        back_btn = Button(style=ButtonStyle.secondary, label="🗺️ Back to Map", custom_id='mart_back_to_map', row=4)
+        back_btn.callback = self.on_mart_back_to_map
+        btns.add_item(back_btn)
+        
+        await interaction.message.edit(embed=embed, view=btns)
+
+    async def on_mart_back_to_map(self, interaction: discord.Interaction):
+        """Handle Back to Map button from Mart"""
+        user = interaction.user
+        
+        # Clean up mart state
+        if hasattr(self, '_PokemartMixin__store') and str(user.id) in self._PokemartMixin__store:
+            del self._PokemartMixin__store[str(user.id)]
+        
+        # Return to map view
+        await self.on_nav_map_click(interaction, already_deferred=False)
+
+    def __create_mart_embed(self, user: discord.Member, state):
+        """Create the Pokemart shop embed - mirrors pokemart.py's __storePageEmbed"""
+        from .constant import LOCATION_DISPLAY_NAMES
+        
+        embed = discord.Embed(
+            title=f"Poké Mart - {LOCATION_DISPLAY_NAMES.get(state.location.name, state.location.name)}"
+        )
+        embed.set_thumbnail(
+            url=f"https://pokesprites.joshkohut.com/sprites/locations/poke_mart.png"
+        )
+        
+        # Import item display names
+        from .pokemart import itemDisplayNames
+        
+        firstList = state.storeList[state.idx]
+        
+        for item in firstList:
+            key = item.name
+            price = item.price
+            
+            emoji = itemDisplayNames[key]['emoji']
+            description = itemDisplayNames[key]['desc']
+            name = itemDisplayNames[key]['name']
+            
+            embed.add_field(
+                name=f"{emoji}  {name} — {price}",
+                value=description,
+                inline=False
+            )
+        
+        view = View()
+        
+        if state.idx > 0:
+            button = Button(style=ButtonStyle.gray, label='Previous', custom_id='mart_previous')
+            button.callback = self.on_mart_prev_click
+            view.add_item(button)
+        
+        if state.idx < len(state.storeList) - 1:
+            button = Button(style=ButtonStyle.gray, label="Next", custom_id='mart_next')
+            button.callback = self.on_mart_next_click
+            view.add_item(button)
+        
+        return embed, view
+
     async def on_gym_leader_battle_auto(self, interaction: discord.Interaction):
         """Handle gym leader AUTO battle"""
         user = interaction.user
@@ -2873,6 +3049,23 @@ class EncountersMixin(MixinMeta):
         )
 
         battle_state.message_id = message.id
+
+
+    def __has_pokemart(self, location_id: int) -> bool:
+        """Check if the current location has a Pokemart"""
+        import json
+        import os
+        
+        try:
+            store_path = os.path.join(os.path.dirname(__file__), '../configs/store.json')
+            with open(store_path, 'r') as f:
+                store_data = json.load(f)
+            
+            # If locationId exists in store.json, there's a Pokemart
+            return str(location_id) in store_data
+        except:
+            return False
+
 
     async def __on_action(self, interaction: Interaction):
         user = interaction.user
