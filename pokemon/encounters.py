@@ -2047,18 +2047,7 @@ class EncountersMixin(MixinMeta):
             description=f"You are at {location_name}.",
             color=discord.Color.blue()
         )
-        if hasattr(self, '_mart_debug'):
-            debug_info = self._mart_debug
-            if 'error' in debug_info:
-                debug_text = f"ERROR: {debug_info['error']}"
-            else:
-                debug_text = f"Location: {debug_info['location_id']}\n"
-                debug_text += f"Path: {debug_info['store_path']}\n"
-                debug_text += f"Exists: {debug_info['path_exists']}\n"
-                debug_text += f"Has Mart: {debug_info['has_mart']}\n"
-                debug_text += f"Sample IDs: {', '.join(debug_info['sample_locations'])}"
-            
-            embed.add_field(name="🔍 Mart Debug", value=debug_text, inline=False)
+
         embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
         
         # Load location sprite
@@ -3067,55 +3056,55 @@ class EncountersMixin(MixinMeta):
         battle_state.message_id = message.id
 
 
-    # def __has_pokemart(self, location_id: int) -> bool:
-    #     """Check if the current location has a Pokemart"""
-    #     import json
-    #     import os
-        
-    #     try:
-    #         store_path = os.path.join(os.path.dirname(__file__), '../configs/store.json')
-    #         with open(store_path, 'r') as f:
-    #             store_data = json.load(f)
-            
-    #         # If locationId exists in store.json, there's a Pokemart
-    #         return str(location_id) in store_data
-    #     except:
-    #         return False
-
     def __has_pokemart(self, location_id: int) -> bool:
         """Check if the current location has a Pokemart"""
         import json
         import os
         
         try:
-            # Use the same path logic as storeclass.py
-            store_path = os.path.join(os.path.dirname(__file__), 'configs/store.json')
-            
-            path_exists = os.path.exists(store_path)
-            
+            store_path = os.path.join(os.path.dirname(__file__), '../configs/store.json')
             with open(store_path, 'r') as f:
                 store_data = json.load(f)
             
             # If locationId exists in store.json, there's a Pokemart
-            has_mart = str(location_id) in store_data
-            
-            # Store debug info for display in map command
-            self._mart_debug = {
-                'location_id': location_id,
-                'store_path': store_path,
-                'path_exists': path_exists,
-                'has_mart': has_mart,
-                'sample_locations': list(store_data.keys())[:5]
-            }
-            
-            return has_mart
-        except Exception as e:
-            # Store error for display
-            self._mart_debug = {
-                'location_id': location_id,
-                'error': str(e)
-            }
+            return str(location_id) in store_data
+        except:
             return False
+
+    # def __has_pokemart(self, location_id: int) -> bool:
+    #     """Check if the current location has a Pokemart"""
+    #     import json
+    #     import os
+        
+    #     try:
+    #         # Use the same path logic as storeclass.py
+    #         store_path = os.path.join(os.path.dirname(__file__), 'configs/store.json')
+            
+    #         path_exists = os.path.exists(store_path)
+            
+    #         with open(store_path, 'r') as f:
+    #             store_data = json.load(f)
+            
+    #         # If locationId exists in store.json, there's a Pokemart
+    #         has_mart = str(location_id) in store_data
+            
+    #         # Store debug info for display in map command
+    #         self._mart_debug = {
+    #             'location_id': location_id,
+    #             'store_path': store_path,
+    #             'path_exists': path_exists,
+    #             'has_mart': has_mart,
+    #             'sample_locations': list(store_data.keys())[:5]
+    #         }
+            
+    #         return has_mart
+    #     except Exception as e:
+    #         # Store error for display
+    #         self._mart_debug = {
+    #             'location_id': location_id,
+    #             'error': str(e)
+    #         }
+    #         return False
 
 
     async def __on_action(self, interaction: Interaction):
