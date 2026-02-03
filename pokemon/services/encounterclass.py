@@ -522,8 +522,9 @@ class encounter:
             self.pokemon2.discordId = self.pokemon1.discordId
             self.pokemon2.party = party_count < 6  # True if party < 6, False otherwise
             
-            # DEBUG: Store debug info in message
-            debug_info = f"\n\nDEBUG: party_count={party_count}, party={self.pokemon2.party}, type={type(self.pokemon2.party).__name__}"
+            # DEBUG: Check what we're about to save
+            debug_party_value = self.pokemon2.party
+            debug_party_type = type(self.pokemon2.party).__name__
             
             # Save it to the trainers inventory
             self.pokemon2.save()
@@ -531,8 +532,12 @@ class encounter:
                 self.statuscode = 96
                 self.message = 'error occured during pokemon2 save()'
                 return self.message
+            
+            # DEBUG: Check if it's still the same after save
+            debug_party_after = self.pokemon2.party
+            
             self.statuscode = 420
-            self.message = "You successfully caught the pokemon" + debug_info
+            self.message = f"You successfully caught the pokemon\n\nDEBUG BEFORE SAVE: party={debug_party_value}, type={debug_party_type}\nDEBUG AFTER SAVE: party={debug_party_after}"
             self.updateUniqueEncounters()
 
         else:
