@@ -2662,9 +2662,8 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('No quests available here.', ephemeral=True)
             return
         
-        # IMPORTANT: Clear action state to prevent encounter button routing
-        if str(user.id) in self.__useractions:
-            del self.__useractions[str(user.id)]
+        # DON'T delete action state - just create new view
+        # Quest buttons don't need action state
         
         # Create view with quest buttons
         view = View()
@@ -2673,7 +2672,7 @@ class EncountersMixin(MixinMeta):
         
         # Back to map button with dedicated callback
         back_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='quest_back_to_map', row=1)
-        back_btn.callback = self.on_quest_back_to_map_click  # Use dedicated handler
+        back_btn.callback = self.on_quest_back_to_map_click
         view.add_item(back_btn)
         
         from .constant import LOCATION_DISPLAY_NAMES
@@ -3752,10 +3751,6 @@ class EncountersMixin(MixinMeta):
     async def on_quest_click(self, interaction: discord.Interaction):
         """Handle quest button clicks"""
         user = interaction.user
-
-        if not self.__checkUserActionState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.', ephemeral=True)
-            return
 
         # Extract quest name from custom_id (format: 'quest_QuestName')
         quest_name = interaction.data['custom_id'].replace('quest_', '')
