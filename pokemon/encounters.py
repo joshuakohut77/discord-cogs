@@ -2606,7 +2606,7 @@ class EncountersMixin(MixinMeta):
         # Create embed
         from .constant import LOCATION_DISPLAY_NAMES
         embed = discord.Embed(
-            title=f"🏪 Sell Items - {LOCATION_DISPLAY_NAMES.get(state.location.name, state.location.name)}",
+            title=f"Sell Items - {LOCATION_DISPLAY_NAMES.get(state.location.name, state.location.name)}",
             description=f"Select an item to sell.\n\n💰 Your Money: **${inventory.money:,}**\n\n*Items sell for 50% of purchase price*",
             color=discord.Color.blurple()
         )
@@ -3027,7 +3027,7 @@ class EncountersMixin(MixinMeta):
         # Create embed
         from .constant import LOCATION_DISPLAY_NAMES
         embed = discord.Embed(
-            title=f"🏪 Buy Items - {LOCATION_DISPLAY_NAMES.get(state.location.name, state.location.name)}",
+            title=f"Buy Items - {LOCATION_DISPLAY_NAMES.get(state.location.name, state.location.name)}",
             description=f"Select an item to purchase.\n\n💰 Your Money: **${inventory.money:,}**",
             color=discord.Color.green()
         )
