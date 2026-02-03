@@ -157,7 +157,7 @@ class EncountersMixin(MixinMeta):
         
         # Party button
         party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
-        party_button.callback = self.on_nav_party_click
+        party_button.callback = self.on_nav_bag_click
         view.add_item(party_button)
         
         # Check if at Pokemon Center for heal button
@@ -1161,7 +1161,7 @@ class EncountersMixin(MixinMeta):
         bag_state.current_view = 'party'
         
         # Call the existing party view method
-        await self.on_nav_party_click(interaction)
+        await self.on_nav_bag_click(interaction)
 
 
     async def on_bag_pokedex_click(self, interaction: discord.Interaction):
@@ -2518,7 +2518,7 @@ class EncountersMixin(MixinMeta):
         
         # ROW 3: Utility buttons
         party_btn = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party', row=3)
-        party_btn.callback = self.on_nav_party_click
+        party_btn.callback = self.on_nav_bag_click
         view.add_item(party_btn)
         
         # Add Mart button if location has a Pokemart
@@ -4094,7 +4094,7 @@ class EncountersMixin(MixinMeta):
                     view.add_item(map_button)
                     
                     party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
-                    party_button.callback = self.on_nav_party_click
+                    party_button.callback = self.on_nav_bag_click
                     view.add_item(party_button)
                     
                     # Check if at Pokemon Center
@@ -4142,7 +4142,7 @@ class EncountersMixin(MixinMeta):
                     view.add_item(map_button)
                     
                     party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
-                    party_button.callback = self.on_nav_party_click
+                    party_button.callback = self.on_nav_bag_click
                     view.add_item(party_button)
                     
                     # Check if at Pokemon Center
@@ -4294,7 +4294,7 @@ class EncountersMixin(MixinMeta):
         view.add_item(map_button)
         
         party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
-        party_button.callback = self.on_nav_party_click
+        party_button.callback = self.on_nav_bag_click
         view.add_item(party_button)
         
         # Check if at Pokemon Center
@@ -4349,7 +4349,7 @@ class EncountersMixin(MixinMeta):
         view.add_item(map_button)
         
         party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
-        party_button.callback = self.on_nav_party_click
+        party_button.callback = self.on_nav_bag_click
         view.add_item(party_button)
         
         # Check if at Pokemon Center
@@ -4526,7 +4526,7 @@ class EncountersMixin(MixinMeta):
         view.add_item(map_button)
         
         party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
-        party_button.callback = self.on_nav_party_click
+        party_button.callback = self.on_nav_bag_click
         view.add_item(party_button)
         
         # Check if at Pokemon Center
