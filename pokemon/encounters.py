@@ -533,7 +533,7 @@ class EncountersMixin(MixinMeta):
             poke.load(pokemonId=poke.trainerId)
             stats = poke.getPokeStats()
             is_active = "⭐ " if poke.trainerId == active.trainerId else ""
-            is_selected = "➤ " if poke.trainerId == selected_pokemon.trainerId else ""
+            is_selected = " " if poke.trainerId == selected_pokemon.trainerId else ""
             
             pokemon_emoji = constant.POKEMON_EMOJIS.get(
                     poke.pokemonName.upper(),
