@@ -431,8 +431,8 @@ class quests:
         self.keyitems.oaks_parcel_delivered = True
         self.keyitems.oaks_parcel = False
         self.message = dedent("""\
-                            You found Professor Oak in your 
-                            mothers bedroom and delivered his parcel.""")
+                            Professor Oak was busy in your mothers bedroom. 
+                            You left his parcel on his desk.""")
         self.keyitems.save()
         return
 
