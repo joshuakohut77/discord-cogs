@@ -426,6 +426,20 @@ class EncountersMixin(MixinMeta):
             'Use `,trainer party` to access the full party management interface with all features.',
             ephemeral=True
         )
+    
+    async def on_party_pokedex_click(self, interaction: discord.Interaction):
+        """Show Pokédex entry for selected Pokemon (PLACEHOLDER)"""
+        await interaction.response.send_message(
+            'Pokédex view coming soon! Use `,trainer party` for full functionality.',
+            ephemeral=True
+        )
+
+    async def on_party_deposit_click(self, interaction: discord.Interaction):
+        """Deposit Pokemon to PC (PLACEHOLDER)"""
+        await interaction.response.send_message(
+            'Deposit coming soon! Use `,trainer party` for full functionality.',
+            ephemeral=True
+        )
 # =============================================================================
 # SEPARATOR - NEXT METHOD
 # =============================================================================
