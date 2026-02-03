@@ -316,8 +316,35 @@ class EncountersMixin(MixinMeta):
             )
             
             del self.__wild_battle_states[user_id]
+            
+        elif trainer.statuscode == 96:
+            # FAILED CATCH - Pokemon ran away (battle is over)
+            embed = discord.Embed(
+                title="💨 Pokemon Escaped!",
+                description=f"{trainer.message}\n\nThe wild {battle_state.wild_pokemon.pokemonName.capitalize()} got away!",
+                color=discord.Color.orange()
+            )
+            
+            # Show which Pokemon escaped
+            embed.add_field(
+                name="Escaped",
+                value=f"**{battle_state.wild_pokemon.pokemonName.capitalize()}** (Lv.{battle_state.wild_pokemon.currentLevel})",
+                inline=True
+            )
+            
+            # Use existing post battle buttons (includes Map button)
+            view = self.__create_post_battle_buttons(user_id)
+            
+            await interaction.message.edit(
+                content=None,  # Clear battle started message
+                embed=embed,
+                view=view
+            )
+            
+            del self.__wild_battle_states[user_id]
+            
         else:
-            # Failed catch - continue battle
+            # Failed catch but Pokemon didn't run - continue battle
             log_lines = [f"**Turn {battle_state.turn_number}:**"]
             log_lines.append(trainer.message)
             battle_state.battle_log = ["\n".join(log_lines)]
