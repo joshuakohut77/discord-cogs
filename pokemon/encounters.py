@@ -82,6 +82,27 @@ class BattleState:
         self.turn_number = 1
         self.defeated_enemies = []  # Track defeated enemy Pokemon
 
+class WildBattleState:
+    """Track ongoing wild Pokemon battle state"""
+    user_id: str
+    channel_id: int
+    message_id: int
+    
+    player_pokemon: PokemonClass
+    wild_pokemon: PokemonClass
+    
+    turn_number: int
+    battle_log: list[str]
+    
+    def __init__(self, user_id: str, channel_id: int, message_id: int, 
+                 player_pokemon: PokemonClass, wild_pokemon: PokemonClass):
+        self.user_id = user_id
+        self.channel_id = channel_id
+        self.message_id = message_id
+        self.player_pokemon = player_pokemon
+        self.wild_pokemon = wild_pokemon
+        self.turn_number = 1
+        self.battle_log = []
 
 class EncountersMixin(MixinMeta):
     """Encounters"""
@@ -91,6 +112,7 @@ class EncountersMixin(MixinMeta):
     __gyms_data: dict = None
     __locations_data: dict = None
     __battle_states: dict[str, BattleState] = {}
+    __wild_battle_states: Dict[str, WildBattleState] = {}
 
     def __create_post_battle_buttons(self, user_id: str) -> View:
         """Create navigation buttons to show after battle ends"""
@@ -120,6 +142,533 @@ class EncountersMixin(MixinMeta):
 # =============================================================================
 # SEPARATOR - NEXT METHOD
 # =============================================================================
+    async def __handle_wild_battle_victory(self, interaction: discord.Interaction, battle_state: WildBattleState):
+        """Handle when player defeats wild Pokemon"""
+        user = interaction.user
+        
+        player_max_hp = battle_state.player_pokemon.getPokeStats()['hp']
+        player_level = battle_state.player_pokemon.currentLevel
+        
+        embed = discord.Embed(
+            title="🏆 VICTORY!",
+            description=f"You defeated the wild {battle_state.wild_pokemon.pokemonName.capitalize()}!",
+            color=discord.Color.green()
+        )
+        
+        player_summary = []
+        player_summary.append(f"**{battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
+        player_summary.append(f"HP: {battle_state.player_pokemon.currentHP}/{player_max_hp}")
+        
+        embed.add_field(
+            name="💚 Your Pokemon",
+            value="\n".join(player_summary),
+            inline=True
+        )
+        
+        # Battle log
+        if battle_state.battle_log:
+            log_text = "\n".join(battle_state.battle_log)
+            embed.add_field(
+                name="⚔️ Final Turn",
+                value=log_text[:1024],
+                inline=False
+            )
+        
+        # ADD NAVIGATION BUTTONS
+        view = self.__create_post_battle_buttons(battle_state.user_id)
+        
+        await interaction.message.edit(embed=embed, view=view)
+    
+    async def __handle_wild_battle_defeat(self, interaction: discord.Interaction, battle_state: WildBattleState):
+        """Handle when player loses to wild Pokemon"""
+        user = interaction.user
+        
+        player_max_hp = battle_state.player_pokemon.getPokeStats()['hp']
+        player_level = battle_state.player_pokemon.currentLevel
+        
+        embed = discord.Embed(
+            title="💀 DEFEAT",
+            description=f"You were defeated by the wild {battle_state.wild_pokemon.pokemonName.capitalize()}...",
+            color=discord.Color.dark_red()
+        )
+        
+        player_summary = []
+        player_summary.append(f"**{battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
+        player_summary.append(f"HP: 0/{player_max_hp} ❌")
+        
+        embed.add_field(
+            name="💚 Your Pokemon",
+            value="\n".join(player_summary),
+            inline=True
+        )
+        
+        # Battle log
+        if battle_state.battle_log:
+            log_text = "\n".join(battle_state.battle_log)
+            embed.add_field(
+                name="⚔️ Final Turn",
+                value=log_text[:1024],
+                inline=False
+            )
+        
+        view = self.__create_post_battle_buttons(battle_state.user_id)
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+    async def on_wild_battle_run_click(self, interaction: discord.Interaction):
+        """Handle running away from wild battle"""
+        user = interaction.user
+        user_id = str(user.id)
+        
+        if user_id not in self.__wild_battle_states:
+            await interaction.response.send_message('No active wild battle found.', ephemeral=True)
+            return
+        
+        battle_state = self.__wild_battle_states[user_id]
+        
+        if battle_state.message_id != interaction.message.id:
+            await interaction.response.send_message('This is not the current battle.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Save player Pokemon HP
+        battle_state.player_pokemon.save()
+        
+        embed = discord.Embed(
+            title="🏃 Ran Away!",
+            description=f"You ran away from the wild {battle_state.wild_pokemon.pokemonName.capitalize()}!",
+            color=discord.Color.blue()
+        )
+        
+        view = self.__create_post_battle_buttons(user_id)
+        
+        await interaction.message.edit(embed=embed, view=view)
+        
+        # Clean up battle state
+        del self.__wild_battle_states[user_id]
+
+    async def on_wild_battle_catch_back(self, interaction: discord.Interaction):
+        """Go back to battle from catch screen"""
+        user = interaction.user
+        user_id = str(user.id)
+        
+        if user_id not in self.__wild_battle_states:
+            await interaction.response.send_message('No active wild battle found.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        battle_state = self.__wild_battle_states[user_id]
+        
+        # Restore battle interface
+        embed = self.__create_wild_battle_embed(user, battle_state)
+        view = self.__create_wild_battle_move_buttons(battle_state)
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    async def on_wild_battle_throw_ball(self, interaction: discord.Interaction):
+        """Handle throwing a Pokeball at wild Pokemon"""
+        user = interaction.user
+        user_id = str(user.id)
+        
+        if user_id not in self.__wild_battle_states:
+            await interaction.response.send_message('No active wild battle found.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        battle_state = self.__wild_battle_states[user_id]
+        trainer = TrainerClass(user_id)
+        
+        # Get ball type from custom_id
+        ball_type = interaction.data['custom_id'].replace('wild_catch_', '')
+        
+        # Use existing catch logic
+        trainer.catchPokemon(battle_state.wild_pokemon, ball_type)
+        
+        if trainer.statuscode == 420:
+            # Successful catch
+            embed = discord.Embed(
+                title="🎉 CAUGHT!",
+                description=f"{trainer.message}",
+                color=discord.Color.green()
+            )
+            
+            view = self.__create_post_battle_buttons(user_id)
+            await interaction.message.edit(embed=embed, view=view)
+            
+            del self.__wild_battle_states[user_id]
+        else:
+            # Failed catch - continue battle
+            log_lines = [f"**Turn {battle_state.turn_number}:**"]
+            log_lines.append(trainer.message)
+            battle_state.battle_log = ["\n".join(log_lines)]
+            battle_state.turn_number += 1
+            
+            embed = self.__create_wild_battle_embed(user, battle_state)
+            view = self.__create_wild_battle_move_buttons(battle_state)
+            
+            await interaction.message.edit(embed=embed, view=view)
+
+    async def on_wild_battle_catch_click(self, interaction: discord.Interaction):
+        """Handle attempting to catch Pokemon during battle"""
+        user = interaction.user
+        user_id = str(user.id)
+        
+        if user_id not in self.__wild_battle_states:
+            await interaction.response.send_message('No active wild battle found.', ephemeral=True)
+            return
+        
+        battle_state = self.__wild_battle_states[user_id]
+        
+        if battle_state.message_id != interaction.message.id:
+            await interaction.response.send_message('This is not the current battle.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Show Pokeball selection (reuse existing logic)
+        trainer = TrainerClass(user_id)
+        items = InventoryClass(trainer.discordId)
+        
+        ctx = await self.bot.get_context(interaction.message)
+        
+        view = View()
+        has_balls = False
+        
+        if items.pokeball > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.POKEBALL)
+            button = Button(style=ButtonStyle.gray, emoji=emote, label="Poke Ball", custom_id='wild_catch_pokeball')
+            button.callback = self.on_wild_battle_throw_ball
+            view.add_item(button)
+            has_balls = True
+        
+        if items.greatball > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.GREATBALL)
+            button = Button(style=ButtonStyle.gray, emoji=emote, label="Great Ball", custom_id='wild_catch_greatball')
+            button.callback = self.on_wild_battle_throw_ball
+            view.add_item(button)
+            has_balls = True
+        
+        if items.ultraball > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.ULTRABALL)
+            button = Button(style=ButtonStyle.gray, emoji=emote, label="Ultra Ball", custom_id='wild_catch_ultraball')
+            button.callback = self.on_wild_battle_throw_ball
+            view.add_item(button)
+            has_balls = True
+        
+        if items.masterball > 0:
+            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.MASTERBALL)
+            button = Button(style=ButtonStyle.gray, emoji=emote, label="Master Ball", custom_id='wild_catch_masterball')
+            button.callback = self.on_wild_battle_throw_ball
+            view.add_item(button)
+            has_balls = True
+        
+        if not has_balls:
+            await interaction.followup.send('You have no Poke Balls!', ephemeral=True)
+            return
+        
+        # Add back button
+        back_button = Button(style=ButtonStyle.gray, label="Back", custom_id='wild_catch_back')
+        back_button.callback = self.on_wild_battle_catch_back
+        view.add_item(back_button)
+        
+        # Update embed to show catch attempt
+        embed = self.__create_wild_battle_embed(user, battle_state)
+        embed.description = "**Choose a Poke Ball to throw!**"
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+    async def on_wild_battle_move_click(self, interaction: discord.Interaction):
+        """Handle move selection in wild battle"""
+        user = interaction.user
+        user_id = str(user.id)
+        
+        if user_id not in self.__wild_battle_states:
+            await interaction.response.send_message('No active wild battle found.', ephemeral=True)
+            return
+        
+        battle_state = self.__wild_battle_states[user_id]
+        
+        if battle_state.message_id != interaction.message.id:
+            await interaction.response.send_message('This is not the current battle.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Extract move name from custom_id
+        move_name = interaction.data['custom_id'].replace('wild_battle_move_', '')
+        
+        # Execute battle turn (same damage calculation as trainer battles)
+        import random
+        import json
+        
+        moves_path = os.path.join(os.path.dirname(__file__), 'configs', 'moves.json')
+        with open(moves_path, 'r') as f:
+            moves_config = json.load(f)
+        
+        type_path = os.path.join(os.path.dirname(__file__), 'configs', 'typeEffectiveness.json')
+        with open(type_path, 'r') as f:
+            type_effectiveness = json.load(f)
+        
+        # Player's move
+        player_move = moves_config.get(move_name, {})
+        player_power = player_move.get('power', 0)
+        player_accuracy = player_move.get('accuracy', 100)
+        player_move_type = player_move.get('moveType', 'normal')
+        damage_class = player_move.get('damage_class', 'physical')
+        
+        player_hit = random.randint(1, 100) <= player_accuracy
+        player_damage = 0
+        
+        if player_hit and player_power and player_power > 0:
+            player_stats = battle_state.player_pokemon.getPokeStats()
+            wild_stats = battle_state.wild_pokemon.getPokeStats()
+            
+            if damage_class == 'physical':
+                attack = player_stats['attack']
+                defense = wild_stats['defense']
+            else:
+                attack = player_stats['special-attack']
+                defense = wild_stats['special-defense']
+            
+            level = battle_state.player_pokemon.currentLevel
+            base_damage = ((2 * level / 5 + 2) * player_power * (attack / defense) / 50 + 2)
+            random_mult = random.randrange(217, 256) / 255
+            
+            stab = 1.5 if (player_move_type == battle_state.player_pokemon.type1 or 
+                        player_move_type == battle_state.player_pokemon.type2) else 1.0
+            
+            defending_type = battle_state.wild_pokemon.type1
+            effectiveness = type_effectiveness.get(player_move_type, {}).get(defending_type, 1.0)
+            
+            player_damage = int(base_damage * random_mult * stab * effectiveness)
+            new_wild_hp = max(0, battle_state.wild_pokemon.currentHP - player_damage)
+            battle_state.wild_pokemon.currentHP = new_wild_hp
+        
+        # Create battle log
+        log_lines = []
+        log_lines.append(f"**Turn {battle_state.turn_number}:**")
+        
+        if player_hit and player_damage > 0:
+            log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}! Dealt {player_damage} damage!")
+        elif player_hit and player_power == 0:
+            log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}! (Status move)")
+        else:
+            log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()} but it missed!")
+        
+        # Check if wild Pokemon fainted
+        if battle_state.wild_pokemon.currentHP <= 0:
+            log_lines.append(f"💀 Wild {battle_state.wild_pokemon.pokemonName.capitalize()} fainted!")
+            
+            # AWARD EXPERIENCE
+            from services.expclass import experiance as exp
+            expObj = exp(battle_state.wild_pokemon)
+            expGained = expObj.getExpGained()
+            evGained = expObj.getEffortValue()
+            
+            current_hp = battle_state.player_pokemon.currentHP
+            levelUp, expMsg = battle_state.player_pokemon.processBattleOutcome(expGained, evGained, current_hp)
+            
+            if levelUp:
+                log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up!")
+            if expMsg:
+                log_lines.append(f"📈 {expMsg}")
+            
+            battle_state.battle_log = ["\n".join(log_lines)]
+            
+            # Show victory screen
+            await self.__handle_wild_battle_victory(interaction, battle_state)
+            del self.__wild_battle_states[user_id]
+            return
+        
+        # Wild Pokemon attacks back
+        wild_damage = 0
+        wild_moves = [m for m in battle_state.wild_pokemon.getMoves() if m and m.lower() != 'none']
+        if wild_moves:
+            wild_move_name = random.choice(wild_moves)
+            wild_move = moves_config.get(wild_move_name, {})
+            wild_power = wild_move.get('power', 0)
+            wild_accuracy = wild_move.get('accuracy', 100)
+            wild_move_type = wild_move.get('moveType', 'normal')
+            wild_damage_class = wild_move.get('damage_class', 'physical')
+            
+            wild_hit = random.randint(1, 100) <= wild_accuracy
+            
+            if wild_hit and wild_power and wild_power > 0:
+                wild_stats = battle_state.wild_pokemon.getPokeStats()
+                player_stats = battle_state.player_pokemon.getPokeStats()
+                
+                if wild_damage_class == 'physical':
+                    attack = wild_stats['attack']
+                    defense = player_stats['defense']
+                else:
+                    attack = wild_stats['special-attack']
+                    defense = player_stats['special-defense']
+                
+                level = battle_state.wild_pokemon.currentLevel
+                base_damage = ((2 * level / 5 + 2) * wild_power * (attack / defense) / 50 + 2)
+                random_mult = random.randrange(217, 256) / 255
+                
+                stab = 1.5 if (wild_move_type == battle_state.wild_pokemon.type1 or 
+                            wild_move_type == battle_state.wild_pokemon.type2) else 1.0
+                
+                defending_type = battle_state.player_pokemon.type1
+                effectiveness = type_effectiveness.get(wild_move_type, {}).get(defending_type, 1.0)
+                
+                wild_damage = int(base_damage * random_mult * stab * effectiveness)
+                new_player_hp = max(0, battle_state.player_pokemon.currentHP - wild_damage)
+                battle_state.player_pokemon.currentHP = new_player_hp
+                
+                log_lines.append(f"• Wild {battle_state.wild_pokemon.pokemonName.capitalize()} used {wild_move_name.replace('-', ' ').title()}! Dealt {wild_damage} damage!")
+            else:
+                log_lines.append(f"• Wild {battle_state.wild_pokemon.pokemonName.capitalize()} attacked but missed!")
+        
+        # Check if player's Pokemon fainted
+        if battle_state.player_pokemon.currentHP <= 0:
+            log_lines.append(f"💀 Your {battle_state.player_pokemon.pokemonName.capitalize()} fainted!")
+            battle_state.battle_log = ["\n".join(log_lines)]
+            battle_state.player_pokemon.save()
+            
+            await self.__handle_wild_battle_defeat(interaction, battle_state)
+            del self.__wild_battle_states[user_id]
+            return
+        
+        # Battle continues
+        battle_state.battle_log = ["\n".join(log_lines)]
+        battle_state.turn_number += 1
+        
+        # Update display
+        embed = self.__create_wild_battle_embed(user, battle_state)
+        view = self.__create_wild_battle_move_buttons(battle_state)
+        
+        await interaction.message.edit(embed=embed, view=view)
+    
+    def __create_wild_battle_move_buttons(self, battle_state: WildBattleState) -> View:
+        """Create buttons for moves, run away, and catch options"""
+        view = View()
+        moves = battle_state.player_pokemon.getMoves()
+        
+        # Load move data to show power/type
+        try:
+            p = os.path.join(os.path.dirname(__file__), 'configs', 'moves.json')
+            with open(p, 'r') as f:
+                moves_config = json.load(f)
+        except:
+            moves_config = {}
+        
+        # Add move buttons (in a row)
+        move_buttons = []
+        for i, move_name in enumerate(moves):
+            if move_name and move_name.lower() != 'none':
+                move_data = moves_config.get(move_name, {})
+                power = move_data.get('power', 0)
+                move_type = move_data.get('moveType', '???')
+                
+                if power and power > 0:
+                    label = f"{move_name.replace('-', ' ').title()} ({power})"
+                else:
+                    label = f"{move_name.replace('-', ' ').title()}"
+                
+                button = Button(
+                    style=ButtonStyle.primary, 
+                    label=label, 
+                    custom_id=f'wild_battle_move_{move_name}',
+                    row=0
+                )
+                button.callback = self.on_wild_battle_move_click
+                move_buttons.append(button)
+        
+        for btn in move_buttons[:4]:  # Max 4 moves
+            view.add_item(btn)
+        
+        # Add Run Away button (second row)
+        run_button = Button(
+            style=ButtonStyle.danger, 
+            label="🏃 Run Away", 
+            custom_id='wild_battle_run',
+            row=1
+        )
+        run_button.callback = self.on_wild_battle_run_click
+        view.add_item(run_button)
+        
+        # Add Catch button (second row)
+        catch_button = Button(
+            style=ButtonStyle.success, 
+            label="🔴 Catch", 
+            custom_id='wild_battle_catch',
+            row=1
+        )
+        catch_button.callback = self.on_wild_battle_catch_click
+        view.add_item(catch_button)
+        
+        return view
+
+
+    def __create_wild_battle_embed(self, user: discord.User, battle_state: WildBattleState) -> discord.Embed:
+        """Create an embed showing the current wild battle state"""
+        player_poke = battle_state.player_pokemon
+        wild_poke = battle_state.wild_pokemon
+        
+        player_stats = player_poke.getPokeStats()
+        wild_stats = wild_poke.getPokeStats()
+        
+        # Calculate HP percentages for visual bar
+        player_hp_pct = (player_poke.currentHP / player_stats['hp']) * 100 if player_stats['hp'] > 0 else 0
+        wild_hp_pct = (wild_poke.currentHP / wild_stats['hp']) * 100 if wild_stats['hp'] > 0 else 0
+        
+        # Create HP bar visualization
+        def make_hp_bar(percentage):
+            filled = int(percentage / 10)
+            empty = 10 - filled
+            return '█' * filled + '░' * empty
+        
+        embed = discord.Embed(
+            title=f"⚔️ Wild Battle: {user.display_name} vs Wild {wild_poke.pokemonName.capitalize()}",
+            description=f"**Turn {battle_state.turn_number}**\nChoose your move!",
+            color=discord.Color.gold()
+        )
+        
+        # Wild Pokemon info FIRST
+        wild_types = wild_poke.type1
+        if wild_poke.type2:
+            wild_types += f", {wild_poke.type2}"
+        
+        embed.add_field(
+            name=f"❤️ Wild {wild_poke.pokemonName.capitalize()} (Lv.{wild_poke.currentLevel})",
+            value=f"**HP:** {wild_poke.currentHP}/{wild_stats['hp']} {make_hp_bar(wild_hp_pct)}\n"
+                f"**Type:** {wild_types}",
+            inline=False
+        )
+        
+        # Player Pokemon info SECOND
+        player_types = player_poke.type1
+        if player_poke.type2:
+            player_types += f", {player_poke.type2}"
+        
+        embed.add_field(
+            name=f"💚 Your {player_poke.pokemonName.capitalize()} (Lv.{player_poke.currentLevel})",
+            value=f"**HP:** {player_poke.currentHP}/{player_stats['hp']} {make_hp_bar(player_hp_pct)}\n"
+                f"**Type:** {player_types}",
+            inline=False
+        )
+        
+        # Battle log (last 5 messages)
+        if battle_state.battle_log:
+            log_text = "\n".join(battle_state.battle_log[-5:])
+            embed.add_field(
+                name="📜 Battle Log",
+                value=log_text[:1024],  # Discord field limit
+                inline=False
+            )
+        
+        embed.set_thumbnail(url=wild_poke.frontSpriteURL)
+        embed.set_image(url=player_poke.backSpriteURL)
+        
+        return embed
+
 
     async def on_nav_map_click(self, interaction: discord.Interaction, already_deferred: bool = False):
         """Handle Map button click - show map with sprite and buttons"""
@@ -2408,6 +2957,7 @@ class EncountersMixin(MixinMeta):
 
 
     async def __on_fight_click_encounter(self, interaction: Interaction):
+        """Start manual battle with wild Pokemon using trainer battle interface"""
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
@@ -2418,39 +2968,42 @@ class EncountersMixin(MixinMeta):
 
         state = self.__useractions[str(user.id)]
         trainer = TrainerClass(str(user.id))
-
-        # await interaction.edit_original_response(
-        #     content=f'{trainer.message}',
-        #     embed=embed,
-        #     view=[]
-        # )
-
-        trainer.fight(state.wildPokemon)
-
-        if trainer.statuscode == 96:
-            await interaction.followup.send(trainer.message, ephemeral=True)
+        
+        # Get player's active Pokemon
+        active_pokemon = state.activePokemon
+        
+        # Check if active Pokemon can battle
+        if active_pokemon.currentHP <= 0:
+            await interaction.followup.send('Your active Pokemon has fainted! You need to heal first.', ephemeral=True)
+            del self.__useractions[str(user.id)]
             return
-
-        channel: discord.TextChannel = self.bot.get_channel(state.channelId)
-        if channel is None:
-            await interaction.followup.send('Error: Channel not found. The original message may have been deleted.', ephemeral=True)
-            return
-        message: discord.Message = await channel.fetch_message(state.messageId)
-
-        desc = state.descLog
-        desc += f'''{user.display_name} chose to fight!
-{trainer.message}
-'''
-        active = trainer.getActivePokemon()
-
-        embed = self.__wildPokemonEncounter(user, state.wildPokemon, active, desc)
-
-        # await interaction.channel.send(
-        await message.edit(
-            content=f'{trainer.message}',
-            embed=embed,
-            view=View()
+        
+        # Create wild battle state (similar to trainer battles but for wild Pokemon)
+        wild_battle_state = WildBattleState(
+            user_id=str(user.id),
+            channel_id=interaction.channel_id,
+            message_id=0,
+            player_pokemon=active_pokemon,
+            wild_pokemon=state.wildPokemon
         )
+        
+        # Store in wild battle states dict (you'll need to add this)
+        self.__wild_battle_states[str(user.id)] = wild_battle_state
+        
+        # Create battle embed and move buttons
+        embed = self.__create_wild_battle_embed(user, wild_battle_state)
+        view = self.__create_wild_battle_move_buttons(wild_battle_state)
+        
+        # Update the existing message with battle interface
+        message = await interaction.message.edit(
+            content=f"**Wild Battle Started!**",
+            embed=embed,
+            view=view
+        )
+        
+        wild_battle_state.message_id = message.id
+        
+        # Clean up old action state since we're now in battle state
         del self.__useractions[str(user.id)]
 
 
