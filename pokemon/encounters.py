@@ -1358,7 +1358,7 @@ class EncountersMixin(MixinMeta):
         current_entry = pokedex_list[index]
         
         # Get full Pokemon details
-        pokemon = PokemonClass()
+        pokemon = PokemonClass(str(user.id))
         pokemon.load(pokemonId=current_entry.pokemonId)
         
         # Create color based on type
