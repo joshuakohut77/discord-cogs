@@ -3160,7 +3160,7 @@ class EncountersMixin(MixinMeta):
         
         del self.__useractions[str(user.id)]
 
-    aasync def __on_fight_click_encounter(self, interaction: Interaction):
+    async def __on_fight_click_encounter(self, interaction: Interaction):
         """Redirect to manual fight (kept for compatibility)"""
         await self.on_wild_manual_fight_click(interaction)
 
