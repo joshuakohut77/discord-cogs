@@ -5012,39 +5012,42 @@ class EncountersMixin(MixinMeta):
         except Exception as e:
             return False
 
-    async def __on_action(self, interaction: Interaction):
+    async def __on_action(self, interaction: discord.Interaction):
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
-
         await interaction.response.defer()
-
+        # active = trainer.getActivePokemon()
+        state = self.__useractions[str(user.id)]
+        wildPokemon = state.wildPokemon
+        active = state.activePokemon
+        
         location = LocationClass(str(user.id))
         methods: list[ActionModel] = location.getMethods()
 
         view = View()
-        # btns = []
         for method in methods:
             color = ButtonStyle.gray
             if method == interaction.data['custom_id']:
                 color = ButtonStyle.green
             
-            # btns.append(
-            #     Button(style=color, label=f"{method.name}", custom_id=f'{method.value}', disabled=True)
-            # )
-
             button = Button(style=color, label=f"{method.name}", custom_id=f'{method.value}', disabled=True)
-            # button.callback = self.on_action_encounter
             view.add_item(button)
 
-        action: ActionModel
+        # Find the matching action
+        action: ActionModel = None
         for method in methods:
             if method.value == interaction.data['custom_id']:
                 action = method
                 break
+        
+        # If no matching action found, this button shouldn't have called this method
+        if action is None:
+            await interaction.followup.send('Invalid action.', ephemeral=True)
+            return
 
         msg = 'Walking through tall grass...'
 
