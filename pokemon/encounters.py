@@ -158,7 +158,7 @@ class EncountersMixin(MixinMeta):
         view.add_item(map_button)
         
         # Party button
-        party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
+        party_button = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_party')
         party_button.callback = self.on_nav_bag_click
         view.add_item(party_button)
         
@@ -5006,7 +5006,7 @@ class EncountersMixin(MixinMeta):
                     map_button.callback = self.on_nav_map_click
                     view.add_item(map_button)
                     
-                    party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
+                    party_button = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_party')
                     party_button.callback = self.on_nav_bag_click
                     view.add_item(party_button)
                     
@@ -5054,7 +5054,7 @@ class EncountersMixin(MixinMeta):
                     map_button.callback = self.on_nav_map_click
                     view.add_item(map_button)
                     
-                    party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
+                    party_button = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_party')
                     party_button.callback = self.on_nav_bag_click
                     view.add_item(party_button)
                     
@@ -5206,7 +5206,7 @@ class EncountersMixin(MixinMeta):
         map_button.callback = self.on_nav_map_click
         view.add_item(map_button)
         
-        party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
+        party_button = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_party')
         party_button.callback = self.on_nav_bag_click
         view.add_item(party_button)
         
@@ -5261,7 +5261,7 @@ class EncountersMixin(MixinMeta):
         map_button.callback = self.on_nav_map_click
         view.add_item(map_button)
         
-        party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
+        party_button = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_party')
         party_button.callback = self.on_nav_bag_click
         view.add_item(party_button)
         
@@ -5438,7 +5438,7 @@ class EncountersMixin(MixinMeta):
         map_button.callback = self.on_nav_map_click
         view.add_item(map_button)
         
-        party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
+        party_button = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_party')
         party_button.callback = self.on_nav_bag_click
         view.add_item(party_button)
         
