@@ -1670,11 +1670,7 @@ class EncountersMixin(MixinMeta):
         # Get current Pokemon entry
         current_entry = pokedex_list[index]
         
-        # CRITICAL FIX: Create Pokemon using the pokemon NAME (pokedexId), not trainerId
-        # This creates a fresh Pokemon object with just the species data
-        pokemon = PokemonClass(str(user.id), current_entry.pokemonName)
-        
-        # Load the Pokemon config data (not from DB, just species info)
+        # Load the Pokemon config data (species info from pokemon.json)
         try:
             import os
             import json
@@ -1684,29 +1680,25 @@ class EncountersMixin(MixinMeta):
             
             poke_data = pokemon_config.get(current_entry.pokemonName, {})
             
-            # Set the basic data we need for display
-            pokemon.pokemonName = current_entry.pokemonName
-            pokemon.pokedexId = current_entry.pokemonId
-            pokemon.type1 = poke_data.get('type_1')
-            pokemon.type2 = poke_data.get('type_2')
+            # Get type info directly from config
+            type1 = poke_data.get('type1', 'unknown')
+            type2 = poke_data.get('type2')  # Can be None
             
             # Get sprite URLs
             sprite_base = "https://pokesprites.joshkohut.com/sprites/pokemon/"
-            pokemon.frontSpriteURL = f"{sprite_base}{current_entry.pokemonId}.png"
+            sprite_url = f"{sprite_base}{current_entry.pokemonId}.png"
             
         except Exception as e:
             print(f"Error loading Pokemon config: {e}")
-            # Fallback - just use what we have
-            pokemon.pokemonName = current_entry.pokemonName
-            pokemon.pokedexId = current_entry.pokemonId
-            pokemon.type1 = "unknown"
-            pokemon.type2 = None
-            pokemon.frontSpriteURL = f"https://pokesprites.joshkohut.com/sprites/pokemon/{current_entry.pokemonId}.png"
+            # Fallback
+            type1 = "unknown"
+            type2 = None
+            sprite_url = f"https://pokesprites.joshkohut.com/sprites/pokemon/{current_entry.pokemonId}.png"
         
         # Create color based on type (with safety check)
         from .functions import getTypeColor
         try:
-            color = getTypeColor(pokemon.type1) if pokemon.type1 else discord.Color.blue()
+            color = getTypeColor(type1) if type1 else discord.Color.blue()
         except:
             color = discord.Color.blue()
         
@@ -1715,12 +1707,13 @@ class EncountersMixin(MixinMeta):
             color=color
         )
         embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
-        embed.set_thumbnail(url=pokemon.frontSpriteURL)
+        embed.set_thumbnail(url=sprite_url)
         
-        # Type info
-        types = pokemon.type1 if pokemon.type1 else "Unknown"
-        if pokemon.type2 is not None and pokemon.type2:
-            types += f', {pokemon.type2}'
+        # Type info - format as Type1/Type2
+        if type2 is not None and type2:
+            types = f"{type1.capitalize()}/{type2.capitalize()}"
+        else:
+            types = type1.capitalize()
         embed.add_field(name="Type", value=types, inline=True)
         
         # Physical attributes
