@@ -3062,13 +3062,15 @@ class EncountersMixin(MixinMeta):
         import os
         
         try:
-            store_path = os.path.join(os.path.dirname(__file__), '../configs/store.json')
+            # Use the same path logic as storeclass.py
+            store_path = os.path.join(os.path.dirname(__file__), 'configs/store.json')
+            
             with open(store_path, 'r') as f:
                 store_data = json.load(f)
             
             # If locationId exists in store.json, there's a Pokemart
             return str(location_id) in store_data
-        except:
+        except Exception as e:
             return False
 
     # def __has_pokemart(self, location_id: int) -> bool:
