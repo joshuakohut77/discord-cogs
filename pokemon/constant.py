@@ -213,7 +213,7 @@ LOCATION_DISPLAY_NAMES = {
     "lance-room": "Lance's Room",
     "champion-room": 'Champion Room'
 }
-
+ 
 MEW = '<:mew:981373697468276786>'
 
 ABRA = '<:abra:981370699774050334>'

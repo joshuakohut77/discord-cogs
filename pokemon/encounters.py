@@ -343,7 +343,7 @@ class EncountersMixin(MixinMeta):
             # Format: :pokemon_name: (lowercase, hyphens for spaces)
             # pokemon_emoji = f":{poke.pokemonName}:"
             pokemon_emoji = getattr(constant, poke.pokemonName.upper(), None)
-            pokemon_emoji = constant.POKEBALL
+            pokemon_emoji = constant.BULBASAUR
             
             # Show fainted status
             if poke.currentHP <= 0:
