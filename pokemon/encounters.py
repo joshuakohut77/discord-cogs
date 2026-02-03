@@ -3256,8 +3256,8 @@ class EncountersMixin(MixinMeta):
 
         state = self.__useractions[str(user.id)]
         trainer = TrainerClass(str(user.id))
-        # items = InventoryClass(trainer.discordId)
 
+        # Determine which ball was thrown
         if interaction.data['custom_id'] == 'pokeball':
             trainer.catch(state.wildPokemon, 'poke-ball')
         elif interaction.data['custom_id'] == 'greatball':
@@ -3269,15 +3269,37 @@ class EncountersMixin(MixinMeta):
 
         desc = state.descLog
         desc += f'''{user.display_name} threw a {interaction.data['custom_id']}!
-{trainer.message}
-'''
+    {trainer.message}
+    '''
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
 
+        # CREATE NAVIGATION BUTTONS BASED ON RESULT
+        # statuscode 420 = success OR failure (both end the encounter)
+        # statuscode 96 = also ends encounter
+        # Either way, add navigation buttons
+        view = View()
+        
+        map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
+        map_button.callback = self.on_nav_map_click
+        view.add_item(map_button)
+        
+        party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
+        party_button.callback = self.on_nav_party_click
+        view.add_item(party_button)
+        
+        # Check if at Pokemon Center
+        location = trainer.getLocation()
+        if location.pokecenter:
+            heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal')
+            heal_button.callback = self.on_nav_heal_click
+            view.add_item(heal_button)
+
         await interaction.message.edit(
             embed=embed,
-            view=View()
+            view=view  # Changed from View() to view with buttons
         )
+        
         del self.__useractions[str(user.id)]
 
         # Send to logging channel
