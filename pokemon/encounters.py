@@ -389,7 +389,10 @@ class EncountersMixin(MixinMeta):
                 label=label[:100],  # Discord label limit
                 value=str(poke.trainerId),  # Use trainerId as unique identifier
                 description=description[:100],
-                emoji=f":{poke.pokemonName}:"
+                emoji = constant.POKEMON_EMOJIS.get(
+                    poke.pokemonName.upper(),
+                    f":{poke.pokemonName}:"
+                    )
             )
         
         select.callback = self.on_pokemon_select
