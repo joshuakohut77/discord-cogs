@@ -829,16 +829,18 @@ class EncountersMixin(MixinMeta):
         party_btn.callback = self.on_nav_party_click
         view.add_item(party_btn)
         
-        if location.pokecenter:
-            heal_btn = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal', row=3)
-            heal_btn.callback = self.on_nav_heal_click
-            view.add_item(heal_btn)
-        
         # Add Mart button if location has a Pokemart
         if self.__has_pokemart(location.locationId):
             mart_btn = Button(style=ButtonStyle.blurple, label="🏪 Mart", custom_id='nav_mart', row=3)
             mart_btn.callback = self.on_nav_mart_click
             view.add_item(mart_btn)
+
+        if location.pokecenter:
+            heal_btn = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal', row=3)
+            heal_btn.callback = self.on_nav_heal_click
+            view.add_item(heal_btn)
+        
+
         
         message = await interaction.message.edit(embed=embed, view=view)
         
@@ -2124,16 +2126,18 @@ class EncountersMixin(MixinMeta):
         party_btn.callback = self.on_nav_party_click
         view.add_item(party_btn)
         
-        if location.pokecenter:
-            heal_btn = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal', row=3)
-            heal_btn.callback = self.on_nav_heal_click
-            view.add_item(heal_btn)
-        
         # Add Mart button if location has a Pokemart
         if self.__has_pokemart(location.locationId):
             mart_btn = Button(style=ButtonStyle.blurple, label="🏪 Mart", custom_id='nav_mart', row=3)
             mart_btn.callback = self.on_nav_mart_click
             view.add_item(mart_btn)
+
+        if location.pokecenter:
+            heal_btn = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal', row=3)
+            heal_btn.callback = self.on_nav_heal_click
+            view.add_item(heal_btn)
+        
+
         
         message = await ctx.send(embed=embed, view=view)
         
