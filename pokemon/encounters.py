@@ -270,7 +270,7 @@ class EncountersMixin(MixinMeta):
 
 
     async def on_wild_battle_throw_ball(self, interaction: discord.Interaction):
-        """Handle throwing a Pokeball at wild Pokemon - DEBUG VERSION"""
+        """Handle throwing a Pokeball at wild Pokemon"""
         user = interaction.user
         user_id = str(user.id)
         
@@ -298,40 +298,15 @@ class EncountersMixin(MixinMeta):
         # Call catch method
         trainer.catch(battle_state.wild_pokemon, ball_type)
         
-        # Build debug info
-        debug_info = []
-        debug_info.append(f"Ball Type: {ball_type}")
-        debug_info.append(f"Status Code: {trainer.statuscode}")
-        debug_info.append(f"Message: {trainer.message}")
-        
         if trainer.statuscode == 420:
-            # ===== SUCCESSFUL CATCH =====
+            # Successful catch
             embed = discord.Embed(
                 title="🎉 CAUGHT!",
                 description=f"{trainer.message}",
                 color=discord.Color.green()
             )
             
-            # Try using the existing method
-            try:
-                view = self.__create_post_battle_buttons(user_id)
-                button_count = len(view.children)
-                button_labels = [child.label for child in view.children]
-                
-                debug_info.append(f"\nView Created: YES")
-                debug_info.append(f"Button Count: {button_count}")
-                debug_info.append(f"Button Labels: {', '.join(button_labels)}")
-            except Exception as e:
-                view = View()
-                debug_info.append(f"\nView Created: ERROR")
-                debug_info.append(f"Error: {str(e)}")
-            
-            # Add debug field to embed
-            embed.add_field(
-                name="🐛 Debug Info",
-                value="\n".join(debug_info),
-                inline=False
-            )
+            view = self.__create_post_battle_buttons(user_id)
             
             await interaction.message.edit(
                 content=None,
@@ -342,7 +317,7 @@ class EncountersMixin(MixinMeta):
             del self.__wild_battle_states[user_id]
             
         elif trainer.statuscode == 96:
-            # ===== POKEMON ESCAPED =====
+            # Pokemon escaped
             embed = discord.Embed(
                 title="💨 Pokemon Escaped!",
                 description=f"{trainer.message}\n\nThe wild {battle_state.wild_pokemon.pokemonName.capitalize()} got away!",
@@ -355,26 +330,7 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
             
-            # Try using the existing method
-            try:
-                view = self.__create_post_battle_buttons(user_id)
-                button_count = len(view.children)
-                button_labels = [child.label for child in view.children]
-                
-                debug_info.append(f"\nView Created: YES")
-                debug_info.append(f"Button Count: {button_count}")
-                debug_info.append(f"Button Labels: {', '.join(button_labels)}")
-            except Exception as e:
-                view = View()
-                debug_info.append(f"\nView Created: ERROR")
-                debug_info.append(f"Error: {str(e)}")
-            
-            # Add debug field to embed
-            embed.add_field(
-                name="🐛 Debug Info",
-                value="\n".join(debug_info),
-                inline=False
-            )
+            view = self.__create_post_battle_buttons(user_id)
             
             await interaction.message.edit(
                 content=None,
@@ -385,10 +341,9 @@ class EncountersMixin(MixinMeta):
             del self.__wild_battle_states[user_id]
             
         else:
-            # ===== FAILED CATCH, CONTINUE BATTLE =====
+            # Failed catch, continue battle
             log_lines = [f"**Turn {battle_state.turn_number}:**"]
             log_lines.append(trainer.message)
-            log_lines.append(f"[DEBUG: statuscode={trainer.statuscode}]")
             battle_state.battle_log = ["\n".join(log_lines)]
             battle_state.turn_number += 1
             
