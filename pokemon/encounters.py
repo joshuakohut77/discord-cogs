@@ -342,8 +342,13 @@ class EncountersMixin(MixinMeta):
             # Use Pokemon emoji instead of heart/skull
             # Format: :pokemon_name: (lowercase, hyphens for spaces)
             # pokemon_emoji = f":{poke.pokemonName}:"
-            pokemon_emoji = getattr(constant, poke.pokemonName.upper(), None)
-            pokemon_emoji = constant.BULBASAUR
+            # pokemon_emoji = getattr(constant, poke.pokemonName.upper(), None)
+            # pokemon_emoji = constant.BULBASAUR
+
+            pokemon_emoji = constant.POKEMON_EMOJIS.get(
+                poke.pokemonName.upper(),
+                f":{poke.pokemonName}:"
+)
             
             # Show fainted status
             if poke.currentHP <= 0:
