@@ -721,8 +721,8 @@ class EncountersMixin(MixinMeta):
         """Handle Map button click - show map with sprite and buttons"""
         user = interaction.user
         
-        # Only defer if not already deferred
-        if not already_deferred:
+        # Check if response was already done
+        if not already_deferred and not interaction.response.is_done():
             await interaction.response.defer()
         
         trainer = TrainerClass(str(user.id))
@@ -1527,7 +1527,7 @@ class EncountersMixin(MixinMeta):
     async def on_bag_party_release_click(self, interaction: discord.Interaction):
         """Release Pokemon (placeholder)"""
         await interaction.response.send_message(
-            'Release coming soon! Use `,trainer party` for full functionality.',
+            'Release cuming soon!',
             ephemeral=True
         )
 
