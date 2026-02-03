@@ -165,7 +165,6 @@ class EncountersMixin(MixinMeta):
             inline=True
         )
         
-        # Battle log
         if battle_state.battle_log:
             log_text = "\n".join(battle_state.battle_log)
             embed.add_field(
@@ -174,10 +173,11 @@ class EncountersMixin(MixinMeta):
                 inline=False
             )
         
-        # ADD NAVIGATION BUTTONS
+        # KEY CHANGE: Use existing post battle buttons
         view = self.__create_post_battle_buttons(battle_state.user_id)
         
-        await interaction.message.edit(embed=embed, view=view)
+        # KEY CHANGE: Clear content and use existing message
+        await interaction.message.edit(content=None, embed=embed, view=view)
     
     async def __handle_wild_battle_defeat(self, interaction: discord.Interaction, battle_state: WildBattleState):
         """Handle when player loses to wild Pokemon"""
@@ -202,7 +202,6 @@ class EncountersMixin(MixinMeta):
             inline=True
         )
         
-        # Battle log
         if battle_state.battle_log:
             log_text = "\n".join(battle_state.battle_log)
             embed.add_field(
@@ -211,9 +210,11 @@ class EncountersMixin(MixinMeta):
                 inline=False
             )
         
+        # KEY CHANGE: Use existing post battle buttons
         view = self.__create_post_battle_buttons(battle_state.user_id)
         
-        await interaction.message.edit(embed=embed, view=view)
+        # KEY CHANGE: Clear content and use existing message
+        await interaction.message.edit(content=None, embed=embed, view=view)
 
     async def on_wild_battle_run_click(self, interaction: discord.Interaction):
         """Handle running away from wild battle"""
@@ -232,7 +233,6 @@ class EncountersMixin(MixinMeta):
         
         await interaction.response.defer()
         
-        # Save player Pokemon HP
         battle_state.player_pokemon.save()
         
         embed = discord.Embed(
@@ -241,11 +241,12 @@ class EncountersMixin(MixinMeta):
             color=discord.Color.blue()
         )
         
+        # KEY CHANGE: Use existing post battle buttons
         view = self.__create_post_battle_buttons(user_id)
         
-        await interaction.message.edit(embed=embed, view=view)
+        # KEY CHANGE: Clear content and use existing message
+        await interaction.message.edit(content=None, embed=embed, view=view)
         
-        # Clean up battle state
         del self.__wild_battle_states[user_id]
 
     async def on_wild_battle_catch_back(self, interaction: discord.Interaction):
@@ -282,10 +283,8 @@ class EncountersMixin(MixinMeta):
         battle_state = self.__wild_battle_states[user_id]
         trainer = TrainerClass(user_id)
         
-        # Get ball type from custom_id
         ball_type = interaction.data['custom_id'].replace('wild_catch_', '')
         
-        # Use existing catch logic
         trainer.catchPokemon(battle_state.wild_pokemon, ball_type)
         
         if trainer.statuscode == 420:
@@ -296,8 +295,11 @@ class EncountersMixin(MixinMeta):
                 color=discord.Color.green()
             )
             
+            # KEY CHANGE: Use existing post battle buttons
             view = self.__create_post_battle_buttons(user_id)
-            await interaction.message.edit(embed=embed, view=view)
+            
+            # KEY CHANGE: Clear content and use existing message
+            await interaction.message.edit(content=None, embed=embed, view=view)
             
             del self.__wild_battle_states[user_id]
         else:
@@ -310,7 +312,11 @@ class EncountersMixin(MixinMeta):
             embed = self.__create_wild_battle_embed(user, battle_state)
             view = self.__create_wild_battle_move_buttons(battle_state)
             
-            await interaction.message.edit(embed=embed, view=view)
+            await interaction.message.edit(
+                content="**Wild Battle**",  # Restore battle message
+                embed=embed,
+                view=view
+            )
 
     async def on_wild_battle_catch_click(self, interaction: discord.Interaction):
         """Handle attempting to catch Pokemon during battle"""
@@ -597,7 +603,7 @@ class EncountersMixin(MixinMeta):
         # Add Catch button (second row)
         catch_button = Button(
             style=ButtonStyle.success, 
-            label="🔴 Catch", 
+            label="Catch", 
             custom_id='wild_battle_catch',
             row=1
         )
@@ -2947,7 +2953,7 @@ class EncountersMixin(MixinMeta):
         button.callback = self.on_catch_click_encounter
         view.add_item(button)
 
-        message = await interaction.channel.send(
+        message = await interaction.message.edit(
             # content=f'{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!',
             embed=embed,
             view=view
