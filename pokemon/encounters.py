@@ -2952,9 +2952,44 @@ class EncountersMixin(MixinMeta):
             wildPokemon = trainer.onlyone()
             if wildPokemon is None:
                 if trainer.statuscode == 420:
-                    await interaction.followup.send(trainer.message, ephemeral=True)
+                    # Create error embed with navigation buttons
+                    embed = discord.Embed(
+                        title="❌ Cannot Perform Action",
+                        description=trainer.message,
+                        color=discord.Color.red()
+                    )
+                    embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+                    
+                    # Create navigation view
+                    view = View()
+                    
+                    map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
+                    map_button.callback = self.on_nav_map_click
+                    view.add_item(map_button)
+                    
+                    party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
+                    party_button.callback = self.on_nav_party_click
+                    view.add_item(party_button)
+                    
+                    # Check if at Pokemon Center
+                    location = trainer.getLocation()
+                    if location.pokecenter:
+                        heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal')
+                        heal_button.callback = self.on_nav_heal_click
+                        view.add_item(heal_button)
+                    
+                    # Edit the message with embed and buttons
+                    await interaction.message.edit(
+                        content=None,
+                        embed=embed,
+                        view=view
+                    )
+                    
+                    # Clean up action state
+                    if str(user.id) in self.__useractions:
+                        del self.__useractions[str(user.id)]
                 else:
-                    await interaction.followup.send('No pokemon encountered.', ephemeral=True)
+                    await interaction.channel.send('No pokemon encountered.', ephemeral=True)
                 return
 
 
@@ -2965,10 +3000,44 @@ class EncountersMixin(MixinMeta):
             wildPokemon = trainer.encounter(method)
             if wildPokemon is None:
                 if trainer.statuscode == 420:
-                    await interaction.followup.send(trainer.message, ephemeral=True)
+                    # Create error embed with navigation buttons
+                    embed = discord.Embed(
+                        title="❌ Cannot Use This Method",
+                        description=trainer.message,
+                        color=discord.Color.red()
+                    )
+                    embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+                    
+                    # Create navigation view
+                    view = View()
+                    
+                    map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
+                    map_button.callback = self.on_nav_map_click
+                    view.add_item(map_button)
+                    
+                    party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
+                    party_button.callback = self.on_nav_party_click
+                    view.add_item(party_button)
+                    
+                    # Check if at Pokemon Center
+                    location = trainer.getLocation()
+                    if location.pokecenter:
+                        heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal')
+                        heal_button.callback = self.on_nav_heal_click
+                        view.add_item(heal_button)
+                    
+                    # Edit the message with embed and buttons
+                    await interaction.message.edit(
+                        content=None,
+                        embed=embed,
+                        view=view
+                    )
+                    
+                    # Clean up action state
+                    if str(user.id) in self.__useractions:
+                        del self.__useractions[str(user.id)]
                 else:
-                    await interaction.followup.send('No pokemon encountered.', ephemeral=True)
-                # await interaction.response.send_message('No pokemon encountered.')
+                    await interaction.channel.send('No pokemon encountered.', ephemeral=True)
                 return
 
         # active = trainer.getActivePokemon()
