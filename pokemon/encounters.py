@@ -340,7 +340,10 @@ class EncountersMixin(MixinMeta):
             is_active = "⭐ " if poke.trainerId == active.trainerId else ""
             
             # Use Pokemon emoji
-            pokemon_emoji = f":{poke.pokemonName}:"
+            pokemon_emoji = constant.POKEMON_EMOJIS.get(
+                    poke.pokemonName.upper(),
+                    f":{poke.pokemonName}:"
+                    )
             
             # Show fainted status
             if poke.currentHP <= 0:
