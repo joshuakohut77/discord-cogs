@@ -193,18 +193,6 @@ class Pokemon:
                           'move_1': self.move_1, 'move_2': self.move_2, 'move_3': self.move_3, 'move_4': self.move_4,
                           'type_1': self.type1, 'type_2': self.type2, 'nickName': self.nickName, 
                           'currentHP': self.currentHP, 'party': self.party }
-                
-                # DEBUG: Store what we're about to save
-                import json
-                debug_data = {
-                    'pokemonName': self.pokemonName,
-                    'party_value': self.party,
-                    'party_type': str(type(self.party)),
-                    'discordId': self.discordId
-                }
-                # Write to a file since we can't easily send messages from here
-                with open('/tmp/pokemon_save_debug.txt', 'a') as f:
-                    f.write(json.dumps(debug_data) + '\n')
 
                 trainerIds = db.executeAndReturn(queryString, values)
                 if trainerIds:
