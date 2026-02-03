@@ -2542,7 +2542,8 @@ class EncountersMixin(MixinMeta):
 
     async def on_mart_sell_menu(self, interaction: discord.Interaction):
         """Show sell menu with player's items"""
-        from discord.ui import Select, SelectOption
+        from discord.ui import Select
+        from discord import SelectOption
         from .pokemart import itemDisplayNames
         from services.inventoryclass import inventory as InventoryClass
         
@@ -2811,7 +2812,8 @@ class EncountersMixin(MixinMeta):
 
     async def on_mart_item_selected(self, interaction: discord.Interaction):
         """Handle item selection from dropdown"""
-        from discord.ui import Select, SelectOption
+        from discord.ui import Select
+        from discord import SelectOption
         from .pokemart import itemDisplayNames
         from services.inventoryclass import inventory as InventoryClass
         
@@ -2998,7 +3000,8 @@ class EncountersMixin(MixinMeta):
 
     async def on_mart_buy_menu(self, interaction: discord.Interaction):
         """Show buy menu with item dropdown"""
-        from discord.ui import Select, SelectOption
+        from discord.ui import Select
+        from discord import SelectOption
         from .pokemart import itemDisplayNames
         from services.inventoryclass import inventory as InventoryClass
         
@@ -3100,7 +3103,7 @@ class EncountersMixin(MixinMeta):
         # Create main mart menu
         from .constant import LOCATION_DISPLAY_NAMES
         embed = discord.Embed(
-            title=f"🏪 Poké Mart - {LOCATION_DISPLAY_NAMES.get(location.name, location.name)}",
+            title=f"Poké Mart - {LOCATION_DISPLAY_NAMES.get(location.name, location.name)}",
             description=f"Welcome to the Poké Mart!\n\n💰 Your Money: **${inventory.money:,}**",
             color=discord.Color.blue()
         )
