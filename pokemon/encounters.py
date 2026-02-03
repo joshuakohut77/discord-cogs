@@ -270,7 +270,7 @@ class EncountersMixin(MixinMeta):
 
 
     async def on_wild_battle_throw_ball(self, interaction: discord.Interaction):
-        """Handle throwing a Pokeball at wild Pokemon"""
+        """Handle throwing a Pokeball at wild Pokemon - DEBUG VERSION"""
         user = interaction.user
         user_id = str(user.id)
         
@@ -295,17 +295,17 @@ class EncountersMixin(MixinMeta):
         }
         ball_type = ball_type_map.get(ball_id, 'poke-ball')
         
-        print(f"[DEBUG] Throwing {ball_type} at {battle_state.wild_pokemon.pokemonName}")
-        
         # Call catch method
         trainer.catch(battle_state.wild_pokemon, ball_type)
         
-        print(f"[DEBUG] Catch result: statuscode={trainer.statuscode}, message={trainer.message}")
+        # Build debug info
+        debug_info = []
+        debug_info.append(f"Ball Type: {ball_type}")
+        debug_info.append(f"Status Code: {trainer.statuscode}")
+        debug_info.append(f"Message: {trainer.message}")
         
         if trainer.statuscode == 420:
             # ===== SUCCESSFUL CATCH =====
-            print(f"[DEBUG] SUCCESS - Creating view with post battle buttons")
-            
             embed = discord.Embed(
                 title="🎉 CAUGHT!",
                 description=f"{trainer.message}",
@@ -313,11 +313,25 @@ class EncountersMixin(MixinMeta):
             )
             
             # Try using the existing method
-            view = self.__create_post_battle_buttons(user_id)
+            try:
+                view = self.__create_post_battle_buttons(user_id)
+                button_count = len(view.children)
+                button_labels = [child.label for child in view.children]
+                
+                debug_info.append(f"\nView Created: YES")
+                debug_info.append(f"Button Count: {button_count}")
+                debug_info.append(f"Button Labels: {', '.join(button_labels)}")
+            except Exception as e:
+                view = View()
+                debug_info.append(f"\nView Created: ERROR")
+                debug_info.append(f"Error: {str(e)}")
             
-            print(f"[DEBUG] View created, children count: {len(view.children)}")
-            for i, child in enumerate(view.children):
-                print(f"[DEBUG]   Button {i}: {child.label}")
+            # Add debug field to embed
+            embed.add_field(
+                name="🐛 Debug Info",
+                value="\n".join(debug_info),
+                inline=False
+            )
             
             await interaction.message.edit(
                 content=None,
@@ -325,14 +339,10 @@ class EncountersMixin(MixinMeta):
                 view=view
             )
             
-            print(f"[DEBUG] Message edited successfully")
-            
             del self.__wild_battle_states[user_id]
             
         elif trainer.statuscode == 96:
             # ===== POKEMON ESCAPED =====
-            print(f"[DEBUG] ESCAPED - Creating view with post battle buttons")
-            
             embed = discord.Embed(
                 title="💨 Pokemon Escaped!",
                 description=f"{trainer.message}\n\nThe wild {battle_state.wild_pokemon.pokemonName.capitalize()} got away!",
@@ -346,11 +356,25 @@ class EncountersMixin(MixinMeta):
             )
             
             # Try using the existing method
-            view = self.__create_post_battle_buttons(user_id)
+            try:
+                view = self.__create_post_battle_buttons(user_id)
+                button_count = len(view.children)
+                button_labels = [child.label for child in view.children]
+                
+                debug_info.append(f"\nView Created: YES")
+                debug_info.append(f"Button Count: {button_count}")
+                debug_info.append(f"Button Labels: {', '.join(button_labels)}")
+            except Exception as e:
+                view = View()
+                debug_info.append(f"\nView Created: ERROR")
+                debug_info.append(f"Error: {str(e)}")
             
-            print(f"[DEBUG] View created, children count: {len(view.children)}")
-            for i, child in enumerate(view.children):
-                print(f"[DEBUG]   Button {i}: {child.label}")
+            # Add debug field to embed
+            embed.add_field(
+                name="🐛 Debug Info",
+                value="\n".join(debug_info),
+                inline=False
+            )
             
             await interaction.message.edit(
                 content=None,
@@ -358,16 +382,13 @@ class EncountersMixin(MixinMeta):
                 view=view
             )
             
-            print(f"[DEBUG] Message edited successfully")
-            
             del self.__wild_battle_states[user_id]
             
         else:
             # ===== FAILED CATCH, CONTINUE BATTLE =====
-            print(f"[DEBUG] CONTINUE - statuscode={trainer.statuscode}")
-            
             log_lines = [f"**Turn {battle_state.turn_number}:**"]
             log_lines.append(trainer.message)
+            log_lines.append(f"[DEBUG: statuscode={trainer.statuscode}]")
             battle_state.battle_log = ["\n".join(log_lines)]
             battle_state.turn_number += 1
             
@@ -380,79 +401,78 @@ class EncountersMixin(MixinMeta):
                 view=view
             )
 
-
-    async def on_wild_battle_catch_click(self, interaction: discord.Interaction):
-        """Handle attempting to catch Pokemon during battle"""
-        user = interaction.user
-        user_id = str(user.id)
-        
-        if user_id not in self.__wild_battle_states:
-            await interaction.response.send_message('No active wild battle found.', ephemeral=True)
-            return
-        
-        battle_state = self.__wild_battle_states[user_id]
-        
-        if battle_state.message_id != interaction.message.id:
-            await interaction.response.send_message('This is not the current battle.', ephemeral=True)
-            return
-        
-        await interaction.response.defer()
-        
-        # Show Pokeball selection (reuse existing logic)
-        trainer = TrainerClass(user_id)
-        items = InventoryClass(trainer.discordId)
-        
-        ctx = await self.bot.get_context(interaction.message)
-        
-        view = View()
-        has_balls = False
-        
-        # IMPORTANT: Use custom_id format that matches the old system
-        # Format: 'wild_catch_pokeball' not just 'pokeball'
-        # This ensures the ball_type_map in on_wild_battle_throw_ball works correctly
-        
-        if items.pokeball > 0:
-            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.POKEBALL)
-            button = Button(style=ButtonStyle.gray, emoji=emote, label="Poke Ball", custom_id='wild_catch_pokeball')
-            button.callback = self.on_wild_battle_throw_ball
-            view.add_item(button)
-            has_balls = True
-        
-        if items.greatball > 0:
-            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.GREATBALL)
-            button = Button(style=ButtonStyle.gray, emoji=emote, label="Great Ball", custom_id='wild_catch_greatball')
-            button.callback = self.on_wild_battle_throw_ball
-            view.add_item(button)
-            has_balls = True
-        
-        if items.ultraball > 0:
-            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.ULTRABALL)
-            button = Button(style=ButtonStyle.gray, emoji=emote, label="Ultra Ball", custom_id='wild_catch_ultraball')
-            button.callback = self.on_wild_battle_throw_ball
-            view.add_item(button)
-            has_balls = True
-        
-        if items.masterball > 0:
-            emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.MASTERBALL)
-            button = Button(style=ButtonStyle.gray, emoji=emote, label="Master Ball", custom_id='wild_catch_masterball')
-            button.callback = self.on_wild_battle_throw_ball
-            view.add_item(button)
-            has_balls = True
-        
-        if not has_balls:
-            await interaction.followup.send('You have no Poke Balls!', ephemeral=True)
-            return
-        
-        # Add back button
-        back_button = Button(style=ButtonStyle.gray, label="Back", custom_id='wild_catch_back')
-        back_button.callback = self.on_wild_battle_catch_back
-        view.add_item(back_button)
-        
-        # Update embed to show catch attempt
-        embed = self.__create_wild_battle_embed(user, battle_state)
-        embed.description = "**Choose a Poke Ball to throw!**"
-        
-        await interaction.message.edit(embed=embed, view=view)
+        async def on_wild_battle_catch_click(self, interaction: discord.Interaction):
+            """Handle attempting to catch Pokemon during battle"""
+            user = interaction.user
+            user_id = str(user.id)
+            
+            if user_id not in self.__wild_battle_states:
+                await interaction.response.send_message('No active wild battle found.', ephemeral=True)
+                return
+            
+            battle_state = self.__wild_battle_states[user_id]
+            
+            if battle_state.message_id != interaction.message.id:
+                await interaction.response.send_message('This is not the current battle.', ephemeral=True)
+                return
+            
+            await interaction.response.defer()
+            
+            # Show Pokeball selection (reuse existing logic)
+            trainer = TrainerClass(user_id)
+            items = InventoryClass(trainer.discordId)
+            
+            ctx = await self.bot.get_context(interaction.message)
+            
+            view = View()
+            has_balls = False
+            
+            # IMPORTANT: Use custom_id format that matches the old system
+            # Format: 'wild_catch_pokeball' not just 'pokeball'
+            # This ensures the ball_type_map in on_wild_battle_throw_ball works correctly
+            
+            if items.pokeball > 0:
+                emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.POKEBALL)
+                button = Button(style=ButtonStyle.gray, emoji=emote, label="Poke Ball", custom_id='wild_catch_pokeball')
+                button.callback = self.on_wild_battle_throw_ball
+                view.add_item(button)
+                has_balls = True
+            
+            if items.greatball > 0:
+                emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.GREATBALL)
+                button = Button(style=ButtonStyle.gray, emoji=emote, label="Great Ball", custom_id='wild_catch_greatball')
+                button.callback = self.on_wild_battle_throw_ball
+                view.add_item(button)
+                has_balls = True
+            
+            if items.ultraball > 0:
+                emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.ULTRABALL)
+                button = Button(style=ButtonStyle.gray, emoji=emote, label="Ultra Ball", custom_id='wild_catch_ultraball')
+                button.callback = self.on_wild_battle_throw_ball
+                view.add_item(button)
+                has_balls = True
+            
+            if items.masterball > 0:
+                emote: discord.Emoji = await commands.EmojiConverter().convert(ctx=ctx, argument=constant.MASTERBALL)
+                button = Button(style=ButtonStyle.gray, emoji=emote, label="Master Ball", custom_id='wild_catch_masterball')
+                button.callback = self.on_wild_battle_throw_ball
+                view.add_item(button)
+                has_balls = True
+            
+            if not has_balls:
+                await interaction.followup.send('You have no Poke Balls!', ephemeral=True)
+                return
+            
+            # Add back button
+            back_button = Button(style=ButtonStyle.gray, label="Back", custom_id='wild_catch_back')
+            back_button.callback = self.on_wild_battle_catch_back
+            view.add_item(back_button)
+            
+            # Update embed to show catch attempt
+            embed = self.__create_wild_battle_embed(user, battle_state)
+            embed.description = "**Choose a Poke Ball to throw!**"
+            
+            await interaction.message.edit(embed=embed, view=view)
 
 
     async def on_wild_battle_move_click(self, interaction: discord.Interaction):
