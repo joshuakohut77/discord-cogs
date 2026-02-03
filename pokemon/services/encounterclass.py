@@ -513,6 +513,7 @@ class encounter:
             return self.message
 
         if pokemonCaught:
+            from .trainerclass import trainer as trainer_import
             # leaderboard stats
             lb = leaderboard(self.pokemon1.discordId)
             lb.catch()
