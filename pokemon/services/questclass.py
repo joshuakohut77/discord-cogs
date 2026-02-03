@@ -51,35 +51,35 @@ class quests:
                     locationBlocked = True
                     break
             if item == 'boulder_badge':
-                if not self.keyitems.boulder:
+                if not self.keyitems.badge_boulder:
                     locationBlocked = True
                     break
             if item == 'cascade_badge':
-                if not self.keyitems.cascade:
+                if not self.keyitems.badge_cascade:
                     locationBlocked = True
                     break
             if item == 'thunder_badge':
-                if not self.keyitems.thunder:
+                if not self.keyitems.badge_thunder:
                     locationBlocked = True
                     break
             if item == 'rainbow_badge':
-                if not self.keyitems.rainbow:
+                if not self.keyitems.badge_rainbow:
                     locationBlocked = True
                     break
             if item == 'soul_badge':
-                if not self.keyitems.soul:
+                if not self.keyitems.badge_soul:
                     locationBlocked = True
                     break
             if item == 'marsh_badge':
-                if not self.keyitems.marsh:
+                if not self.keyitems.badge_marsh:
                     locationBlocked = True
                     break
             if item == 'volcano_badge':
-                if not self.keyitems.volcano:
+                if not self.keyitems.badge_volcano:
                     locationBlocked = True
                     break
             if item == 'earth_badge':
-                if not self.keyitems.earth:
+                if not self.keyitems.badge_earth:
                     locationBlocked = True
                     break
             if item == 'pokeflute':
@@ -169,35 +169,35 @@ class quests:
                     requirementsMet = False
                     break
             if item == 'boulder_badge':
-                if not self.keyitems.boulder:
+                if not self.keyitems.badge_boulder:
                     requirementsMet = False
                     break
             if item == 'cascade_badge':
-                if not self.keyitems.cascade:
+                if not self.keyitems.badge_cascade:
                     requirementsMet = False
                     break
             if item == 'thunder_badge':
-                if not self.keyitems.thunder:
+                if not self.keyitems.badge_thunder:
                     requirementsMet = False
                     break
             if item == 'rainbow_badge':
-                if not self.keyitems.rainbow:
+                if not self.keyitems.badge_rainbow:
                     requirementsMet = False
                     break
             if item == 'soul_badge':
-                if not self.keyitems.soul:
+                if not self.keyitems.badge_soul:
                     requirementsMet = False
                     break
             if item == 'marsh_badge':
-                if not self.keyitems.marsh:
+                if not self.keyitems.badge_marsh:
                     requirementsMet = False
                     break
             if item == 'volcano_badge':
-                if not self.keyitems.volcano:
+                if not self.keyitemsbadge_.volcano:
                     requirementsMet = False
                     break
             if item == 'earth_badge':
-                if not self.keyitems.earth:
+                if not self.keyitems.badge_earth:
                     requirementsMet = False
                     break
             if item == 'pokeflute':
