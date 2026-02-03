@@ -695,18 +695,21 @@ class EncountersMixin(MixinMeta):
             current_hp = poke.currentHP
             
             poke_name = poke.nickName if poke.nickName else poke.pokemonName.capitalize()
-            
+            pokemon_emoji = constant.POKEMON_EMOJIS.get(
+                    poke.pokemonName.upper(),
+                    f":{poke.pokemonName}:"
+                    )
             if current_hp < max_hp:
                 # Pokemon needs healing
                 hp_restored = max_hp - current_hp
                 poke.currentHP = max_hp
                 poke.save()
                 healed_count += 1
-                healing_details.append(f"✨ {poke_name} - Lv.{poke.currentLevel}")
+                healing_details.append(f"{pokemon_emoji} {poke_name} - Lv.{poke.currentLevel}")
                 healing_details.append(f"   HP: {current_hp}/{max_hp} → {max_hp}/{max_hp} (+{hp_restored})")
             else:
                 # Already at full HP
-                healing_details.append(f"💚 {poke_name} - Lv.{poke.currentLevel}")
+                healing_details.append(f"{pokemon_emoji} {poke_name} - Lv.{poke.currentLevel}")
                 healing_details.append(f"   HP: {max_hp}/{max_hp} (Already healthy!)")
         
         embed = discord.Embed(
