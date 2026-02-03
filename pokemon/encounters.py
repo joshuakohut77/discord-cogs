@@ -2149,7 +2149,7 @@ class EncountersMixin(MixinMeta):
 
         # If no encounters, quests, or gym, return early
         if len(methods) == 0 and len(quest_buttons) == 0 and gym_button is None:
-            await ctx.send('No encounters, quests, or gyms available at your location.')
+            await ctx.send('No encounters, quests, or gyms available at your location.', ephemeral=True)
             return
 
         view = View()
@@ -2937,12 +2937,12 @@ class EncountersMixin(MixinMeta):
 
         if ActionType.GIFT.value == action.type.value:
             trainer.gift()
-            await interaction.channel.send(trainer.message)
+            await interaction.followup.send(trainer.message, ephemeral=True)
             return
         
         if ActionType.QUEST.value == action.type.value:
             trainer.quest(interaction.data['custom_id'])
-            await interaction.channel.send(trainer.message)
+            await interaction.followup.send(trainer.message, ephemeral=True)
             return
 
 
@@ -2952,9 +2952,9 @@ class EncountersMixin(MixinMeta):
             wildPokemon = trainer.onlyone()
             if wildPokemon is None:
                 if trainer.statuscode == 420:
-                    await interaction.channel.send(trainer.message)
+                    await interaction.followup.send(trainer.message, ephemeral=True)
                 else:
-                    await interaction.channel.send('No pokemon encountered.')
+                    await interaction.followup.send('No pokemon encountered.', ephemeral=True)
                 return
 
 
@@ -2965,9 +2965,9 @@ class EncountersMixin(MixinMeta):
             wildPokemon = trainer.encounter(method)
             if wildPokemon is None:
                 if trainer.statuscode == 420:
-                    await interaction.channel.send(trainer.message)
+                    await interaction.followup.send(trainer.message, ephemeral=True)
                 else:
-                    await interaction.channel.send('No pokemon encountered.')
+                    await interaction.followup.send('No pokemon encountered.', ephemeral=True)
                 # await interaction.response.send_message('No pokemon encountered.')
                 return
 
@@ -3136,7 +3136,7 @@ class EncountersMixin(MixinMeta):
         trainer.runAway(state.wildPokemon)
 
         if trainer.statuscode == 96:
-            await interaction.followup.send(trainer.message)
+            await interaction.followup.send(trainer.message, ephemeral=True)
             return
 
         desc = state.descLog
