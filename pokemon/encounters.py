@@ -104,6 +104,19 @@ class WildBattleState:
         self.turn_number = 1
         self.battle_log = []
 
+
+class MartState:
+    """Track Mart UI state"""
+    def __init__(self, user_id: str, message_id: int, channel_id: int, location, store, mode: str = 'main'):
+        self.user_id = user_id
+        self.message_id = message_id
+        self.channel_id = channel_id
+        self.location = location
+        self.store = store  # StoreClass instance
+        self.mode = mode  # 'main', 'buy', 'sell'
+        self.selected_item = None
+        self.quantity = 1
+
 class EncountersMixin(MixinMeta):
     """Encounters"""
 
@@ -2527,8 +2540,528 @@ class EncountersMixin(MixinMeta):
 
         battle_state.message_id = message.id
 
+    async def on_mart_sell_menu(self, interaction: discord.Interaction):
+        """Show sell menu with player's items"""
+        from discord.ui import Select, SelectOption
+        from .pokemart import itemDisplayNames
+        from services.inventoryclass import inventory as InventoryClass
+        
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if not hasattr(self, '_mart_states') or str(user.id) not in self._mart_states:
+            await interaction.followup.send('Session expired.', ephemeral=True)
+            return
+        
+        state = self._mart_states[str(user.id)]
+        state.mode = 'sell'
+        
+        # Get trainer's inventory
+        inventory = InventoryClass(str(user.id))
+        
+        # Build list of sellable items (items with quantity > 0)
+        sellable_items = []
+        item_mapping = {
+            'poke-ball': inventory.pokeball,
+            'great-ball': inventory.greatball,
+            'ultra-ball': inventory.ultraball,
+            'master-ball': inventory.masterball,
+            'potion': inventory.potion,
+            'super-potion': inventory.superpotion,
+            'hyper-potion': inventory.hyperpotion,
+            'max-potion': inventory.maxpotion,
+            'revive': inventory.revive,
+            'full-restore': inventory.fullrestore,
+            'repel': inventory.repel,
+            'super-repel': inventory.superrepel,
+            'max-repel': inventory.maxrepel,
+            'antidote': inventory.antidote,
+            'burn-heal': inventory.burnheal,
+            'ice-heal': inventory.iceheal,
+            'paralyze-heal': inventory.paralyzeheal,
+            'awakening': inventory.awakening,
+            'escape-rope': inventory.escaperope,
+        }
+        
+        for item_name, qty in item_mapping.items():
+            if qty > 0:
+                sellable_items.append((item_name, qty))
+        
+        if not sellable_items:
+            embed = discord.Embed(
+                title="❌ No Items to Sell",
+                description="You don't have any items to sell!",
+                color=discord.Color.red()
+            )
+            
+            view = View()
+            back_btn = Button(style=ButtonStyle.secondary, label="← Back", custom_id='mart_main_menu')
+            back_btn.callback = self.on_nav_mart_click
+            view.add_item(back_btn)
+            
+            await interaction.message.edit(embed=embed, view=view)
+            return
+        
+        # Create embed
+        from .constant import LOCATION_DISPLAY_NAMES
+        embed = discord.Embed(
+            title=f"🏪 Sell Items - {LOCATION_DISPLAY_NAMES.get(state.location.name, state.location.name)}",
+            description=f"Select an item to sell.\n\n💰 Your Money: **${inventory.money:,}**\n\n*Items sell for 50% of purchase price*",
+            color=discord.Color.blurple()
+        )
+        
+        # Create dropdown
+        options = []
+        for item_name, qty in sellable_items[:25]:  # Discord limit
+            display_info = itemDisplayNames.get(item_name, {})
+            display_name = display_info.get('name', item_name)
+            emoji_str = display_info.get('emoji', '📦')
+            
+            # Get sell price (half of buy price) from storeclass
+            from services.storeclass import store as StoreClass
+            temp_store = StoreClass(str(user.id), state.location.locationId)
+            sell_price = temp_store._store__getItemPrice(item_name) // 2
+            
+            options.append(SelectOption(
+                label=f"{display_name} (x{qty}) - ${sell_price}",
+                value=item_name,
+                description=f"Sell for ${sell_price} each",
+                emoji=emoji_str
+            ))
+        
+        # Create view
+        view = View()
+        
+        select = Select(
+            placeholder="Choose an item to sell...",
+            options=options,
+            custom_id='mart_sell_select'
+        )
+        select.callback = self.on_mart_sell_item_selected
+        view.add_item(select)
+        
+        back_btn = Button(style=ButtonStyle.secondary, label="← Back", custom_id='mart_main_menu', row=1)
+        back_btn.callback = self.on_nav_mart_click
+        view.add_item(back_btn)
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    async def on_mart_sell_item_selected(self, interaction: discord.Interaction):
+        """Handle sell item selection"""
+        from .pokemart import itemDisplayNames
+        from services.inventoryclass import inventory as InventoryClass
+        from services.storeclass import store as StoreClass
+        
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if not hasattr(self, '_mart_states') or str(user.id) not in self._mart_states:
+            return
+        
+        state = self._mart_states[str(user.id)]
+        selected_item = interaction.data['values'][0]
+        state.selected_item = selected_item
+        state.quantity = 1
+        
+        # Get item info
+        inventory = InventoryClass(str(user.id))
+        temp_store = StoreClass(str(user.id), state.location.locationId)
+        sell_price = temp_store._store__getItemPrice(selected_item) // 2
+        
+        display_info = itemDisplayNames.get(selected_item, {})
+        display_name = display_info.get('name', selected_item)
+        description = display_info.get('desc', 'No description')
+        emoji_str = display_info.get('emoji', '📦')
+        
+        # Create confirmation embed
+        embed = discord.Embed(
+            title=f"{emoji_str} Sell {display_name}",
+            description=description,
+            color=discord.Color.blurple()
+        )
+        embed.add_field(name="Sell Price (50%)", value=f"${sell_price:,}", inline=True)
+        embed.add_field(name="Your Money", value=f"${inventory.money:,}", inline=True)
+        embed.add_field(name="Quantity", value=f"**{state.quantity}**", inline=True)
+        embed.add_field(name="Total Value", value=f"${sell_price * state.quantity:,}", inline=False)
+        
+        # Create view with quantity buttons
+        view = View()
+        
+        minus_btn = Button(style=ButtonStyle.gray, label="-1", custom_id='mart_sell_qty_minus', row=0)
+        minus_btn.callback = self.on_mart_sell_qty_change
+        view.add_item(minus_btn)
+        
+        plus_btn = Button(style=ButtonStyle.gray, label="+1", custom_id='mart_sell_qty_plus', row=0)
+        plus_btn.callback = self.on_mart_sell_qty_change
+        view.add_item(plus_btn)
+        
+        plus5_btn = Button(style=ButtonStyle.gray, label="+5", custom_id='mart_sell_qty_plus5', row=0)
+        plus5_btn.callback = self.on_mart_sell_qty_change
+        view.add_item(plus5_btn)
+        
+        plus10_btn = Button(style=ButtonStyle.gray, label="+10", custom_id='mart_sell_qty_plus10', row=0)
+        plus10_btn.callback = self.on_mart_sell_qty_change
+        view.add_item(plus10_btn)
+        
+        sell_btn = Button(style=ButtonStyle.green, label="✅ Sell", custom_id='mart_confirm_sell', row=1)
+        sell_btn.callback = self.on_mart_confirm_sell
+        view.add_item(sell_btn)
+        
+        back_btn = Button(style=ButtonStyle.secondary, label="← Back", custom_id='mart_sell_back', row=1)
+        back_btn.callback = self.on_mart_sell_menu
+        view.add_item(back_btn)
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    async def on_mart_sell_qty_change(self, interaction: discord.Interaction):
+        """Handle quantity changes for selling"""
+        from .pokemart import itemDisplayNames
+        from services.inventoryclass import inventory as InventoryClass
+        from services.storeclass import store as StoreClass
+        
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if not hasattr(self, '_mart_states') or str(user.id) not in self._mart_states:
+            return
+        
+        state = self._mart_states[str(user.id)]
+        
+        # Adjust quantity
+        button_id = interaction.data['custom_id']
+        if button_id == 'mart_sell_qty_minus':
+            state.quantity = max(1, state.quantity - 1)
+        elif button_id == 'mart_sell_qty_plus':
+            state.quantity += 1
+        elif button_id == 'mart_sell_qty_plus5':
+            state.quantity += 5
+        elif button_id == 'mart_sell_qty_plus10':
+            state.quantity += 10
+        
+        state.quantity = min(999, state.quantity)
+        
+        # Update embed
+        inventory = InventoryClass(str(user.id))
+        temp_store = StoreClass(str(user.id), state.location.locationId)
+        sell_price = temp_store._store__getItemPrice(state.selected_item) // 2
+        
+        display_info = itemDisplayNames.get(state.selected_item, {})
+        display_name = display_info.get('name', state.selected_item)
+        description = display_info.get('desc', 'No description')
+        emoji_str = display_info.get('emoji', '📦')
+        
+        embed = discord.Embed(
+            title=f"{emoji_str} Sell {display_name}",
+            description=description,
+            color=discord.Color.blurple()
+        )
+        embed.add_field(name="Sell Price (50%)", value=f"${sell_price:,}", inline=True)
+        embed.add_field(name="Your Money", value=f"${inventory.money:,}", inline=True)
+        embed.add_field(name="Quantity", value=f"**{state.quantity}**", inline=True)
+        embed.add_field(name="Total Value", value=f"${sell_price * state.quantity:,}", inline=False)
+        
+        await interaction.message.edit(embed=embed)
+
+
+    async def on_mart_confirm_sell(self, interaction: discord.Interaction):
+        """Execute the sale"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if not hasattr(self, '_mart_states') or str(user.id) not in self._mart_states:
+            return
+        
+        state = self._mart_states[str(user.id)]
+        
+        # Execute sale
+        state.store.sellItem(state.selected_item, state.quantity)
+        
+        # Show result
+        if state.store.statuscode == 420:
+            embed = discord.Embed(
+                title="✅ Sale Complete!" if "successfully" in state.store.message else "❌ Sale Failed",
+                description=state.store.message,
+                color=discord.Color.green() if "successfully" in state.store.message else discord.Color.red()
+            )
+        else:
+            embed = discord.Embed(
+                title="❌ Error",
+                description="An error occurred during the sale.",
+                color=discord.Color.red()
+            )
+        
+        # Add back buttons
+        view = View()
+        back_btn = Button(style=ButtonStyle.primary, label="← Back to Mart", custom_id='mart_main')
+        back_btn.callback = lambda i: self.on_nav_mart_click(i, already_deferred=True)
+        view.add_item(back_btn)
+        
+        map_btn = Button(style=ButtonStyle.secondary, label="🗺️ Map", custom_id='nav_map')
+        map_btn.callback = self.on_nav_map_click
+        view.add_item(map_btn)
+        
+        # Reset
+        state.quantity = 1
+        state.selected_item = None
+        
+        await interaction.message.edit(embed=embed, view=view)
+        await self.sendToLoggingChannel(state.store.message)
+
+    async def on_mart_item_selected(self, interaction: discord.Interaction):
+        """Handle item selection from dropdown"""
+        from discord.ui import Select, SelectOption
+        from .pokemart import itemDisplayNames
+        from services.inventoryclass import inventory as InventoryClass
+        
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if not hasattr(self, '_mart_states') or str(user.id) not in self._mart_states:
+            await interaction.followup.send('Session expired.', ephemeral=True)
+            return
+        
+        state = self._mart_states[str(user.id)]
+        
+        # Get selected item
+        selected_item = interaction.data['values'][0]
+        state.selected_item = selected_item
+        
+        # Find item price
+        item_price = None
+        for page in state.store.storeList:
+            for item in page:
+                if item.name == selected_item:
+                    item_price = item.price
+                    break
+        
+        if not item_price:
+            await interaction.followup.send('Item not found.', ephemeral=True)
+            return
+        
+        # Get display info
+        display_info = itemDisplayNames.get(selected_item, {})
+        display_name = display_info.get('name', selected_item)
+        description = display_info.get('desc', 'No description available')
+        emoji_str = display_info.get('emoji', '📦')
+        
+        # Get trainer's money
+        inventory = InventoryClass(str(user.id))
+        
+        # Create purchase confirmation embed
+        embed = discord.Embed(
+            title=f"{emoji_str} {display_name}",
+            description=description,
+            color=discord.Color.green()
+        )
+        embed.add_field(name="Price", value=f"${item_price:,}", inline=True)
+        embed.add_field(name="Your Money", value=f"${inventory.money:,}", inline=True)
+        embed.add_field(name="Quantity", value=f"**{state.quantity}**", inline=True)
+        embed.add_field(name="Total Cost", value=f"${item_price * state.quantity:,}", inline=False)
+        
+        # Create view with quantity buttons and purchase button
+        view = View()
+        
+        # Quantity adjustment buttons
+        minus_btn = Button(style=ButtonStyle.gray, label="-1", custom_id='mart_qty_minus', row=0)
+        minus_btn.callback = self.on_mart_qty_change
+        view.add_item(minus_btn)
+        
+        plus_btn = Button(style=ButtonStyle.gray, label="+1", custom_id='mart_qty_plus', row=0)
+        plus_btn.callback = self.on_mart_qty_change
+        view.add_item(plus_btn)
+        
+        plus5_btn = Button(style=ButtonStyle.gray, label="+5", custom_id='mart_qty_plus5', row=0)
+        plus5_btn.callback = self.on_mart_qty_change
+        view.add_item(plus5_btn)
+        
+        plus10_btn = Button(style=ButtonStyle.gray, label="+10", custom_id='mart_qty_plus10', row=0)
+        plus10_btn.callback = self.on_mart_qty_change
+        view.add_item(plus10_btn)
+        
+        # Purchase and back buttons
+        buy_btn = Button(style=ButtonStyle.green, label="✅ Purchase", custom_id='mart_confirm_buy', row=1)
+        buy_btn.callback = self.on_mart_confirm_purchase
+        view.add_item(buy_btn)
+        
+        back_btn = Button(style=ButtonStyle.secondary, label="← Back", custom_id='mart_buy_back', row=1)
+        back_btn.callback = self.on_mart_buy_menu
+        view.add_item(back_btn)
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    async def on_mart_qty_change(self, interaction: discord.Interaction):
+        """Handle quantity adjustment buttons"""
+        from .pokemart import itemDisplayNames
+        from services.inventoryclass import inventory as InventoryClass
+        
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if not hasattr(self, '_mart_states') or str(user.id) not in self._mart_states:
+            return
+        
+        state = self._mart_states[str(user.id)]
+        
+        # Adjust quantity based on button
+        button_id = interaction.data['custom_id']
+        if button_id == 'mart_qty_minus':
+            state.quantity = max(1, state.quantity - 1)
+        elif button_id == 'mart_qty_plus':
+            state.quantity += 1
+        elif button_id == 'mart_qty_plus5':
+            state.quantity += 5
+        elif button_id == 'mart_qty_plus10':
+            state.quantity += 10
+        
+        # Cap at 999
+        state.quantity = min(999, state.quantity)
+        
+        # Find item price
+        item_price = None
+        for page in state.store.storeList:
+            for item in page:
+                if item.name == state.selected_item:
+                    item_price = item.price
+                    break
+        
+        # Get display info
+        display_info = itemDisplayNames.get(state.selected_item, {})
+        display_name = display_info.get('name', state.selected_item)
+        description = display_info.get('desc', 'No description available')
+        emoji_str = display_info.get('emoji', '📦')
+        
+        # Get trainer's money
+        inventory = InventoryClass(str(user.id))
+        
+        # Update embed
+        embed = discord.Embed(
+            title=f"{emoji_str} {display_name}",
+            description=description,
+            color=discord.Color.green()
+        )
+        embed.add_field(name="Price", value=f"${item_price:,}", inline=True)
+        embed.add_field(name="Your Money", value=f"${inventory.money:,}", inline=True)
+        embed.add_field(name="Quantity", value=f"**{state.quantity}**", inline=True)
+        embed.add_field(name="Total Cost", value=f"${item_price * state.quantity:,}", inline=False)
+        
+        await interaction.message.edit(embed=embed)
+
+
+    async def on_mart_confirm_purchase(self, interaction: discord.Interaction):
+        """Execute the purchase"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if not hasattr(self, '_mart_states') or str(user.id) not in self._mart_states:
+            return
+        
+        state = self._mart_states[str(user.id)]
+        
+        # Execute purchase using StoreClass
+        state.store.buyItem(state.selected_item, state.quantity)
+        
+        # Show result
+        if state.store.statuscode == 420:
+            embed = discord.Embed(
+                title="✅ Purchase Complete!" if "successfully" in state.store.message else "❌ Purchase Failed",
+                description=state.store.message,
+                color=discord.Color.green() if "successfully" in state.store.message else discord.Color.red()
+            )
+        else:
+            embed = discord.Embed(
+                title="❌ Error",
+                description="An error occurred during the purchase.",
+                color=discord.Color.red()
+            )
+        
+        # Add back to mart button
+        view = View()
+        back_btn = Button(style=ButtonStyle.primary, label="← Back to Mart", custom_id='mart_main', row=0)
+        back_btn.callback = lambda i: self.on_nav_mart_click(i, already_deferred=True)
+        view.add_item(back_btn)
+        
+        map_btn = Button(style=ButtonStyle.secondary, label="🗺️ Map", custom_id='nav_map', row=0)
+        map_btn.callback = self.on_nav_map_click
+        view.add_item(map_btn)
+        
+        # Reset quantity for next purchase
+        state.quantity = 1
+        state.selected_item = None
+        
+        await interaction.message.edit(embed=embed, view=view)
+        
+        # Log to channel
+        await self.sendToLoggingChannel(state.store.message)
+
+    async def on_mart_buy_menu(self, interaction: discord.Interaction):
+        """Show buy menu with item dropdown"""
+        from discord.ui import Select, SelectOption
+        from .pokemart import itemDisplayNames
+        from services.inventoryclass import inventory as InventoryClass
+        
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if not hasattr(self, '_mart_states') or str(user.id) not in self._mart_states:
+            await interaction.followup.send('Session expired. Please reopen the mart.', ephemeral=True)
+            return
+        
+        state = self._mart_states[str(user.id)]
+        state.mode = 'buy'
+        
+        # Get all available items from store
+        all_items = []
+        for page in state.store.storeList:
+            for item in page:
+                all_items.append(item)
+        
+        # Get trainer's money
+        inventory = InventoryClass(str(user.id))
+        
+        # Create embed
+        from .constant import LOCATION_DISPLAY_NAMES
+        embed = discord.Embed(
+            title=f"🏪 Buy Items - {LOCATION_DISPLAY_NAMES.get(state.location.name, state.location.name)}",
+            description=f"Select an item to purchase.\n\n💰 Your Money: **${inventory.money:,}**",
+            color=discord.Color.green()
+        )
+        
+        # Create dropdown with items (max 25 options)
+        options = []
+        for item in all_items[:25]:  # Discord limit
+            display_name = itemDisplayNames.get(item.name, {}).get('name', item.name)
+            emoji_str = itemDisplayNames.get(item.name, {}).get('emoji', '📦')
+            
+            options.append(SelectOption(
+                label=f"{display_name} - ${item.price}",
+                value=item.name,
+                description=f"Buy for ${item.price}",
+                emoji=emoji_str
+            ))
+        
+        # Create view with dropdown
+        view = View()
+        
+        select = Select(
+            placeholder="Choose an item to buy...",
+            options=options,
+            custom_id='mart_buy_select'
+        )
+        select.callback = self.on_mart_item_selected
+        view.add_item(select)
+        
+        # Add back button
+        back_btn = Button(style=ButtonStyle.secondary, label="← Back", custom_id='mart_main_menu', row=1)
+        back_btn.callback = self.on_nav_mart_click
+        view.add_item(back_btn)
+        
+        await interaction.message.edit(embed=embed, view=view)
+
     async def on_nav_mart_click(self, interaction: discord.Interaction, already_deferred: bool = False):
-        """Handle Mart button click - open Pokemart shop interface"""
+        """Handle Mart button click - open Pokemart main menu"""
         user = interaction.user
         
         if not already_deferred:
@@ -2537,8 +3070,10 @@ class EncountersMixin(MixinMeta):
         trainer = TrainerClass(str(user.id))
         location = trainer.getLocation()
         
-        # Import StoreClass to check for Pokemart
+        # Import StoreClass
         from services.storeclass import store as StoreClass
+        from services.inventoryclass import inventory as InventoryClass
+        
         store = StoreClass(str(user.id), location.locationId)
         
         # Check if there's a Pokemart at this location
@@ -2551,48 +3086,56 @@ class EncountersMixin(MixinMeta):
             )
             embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
             
-            # Create navigation view
             view = View()
-            
             map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
             map_button.callback = self.on_nav_map_click
             view.add_item(map_button)
             
-            party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
-            party_button.callback = self.on_nav_party_click
-            view.add_item(party_button)
-            
-            await interaction.message.edit(
-                content=None,
-                embed=embed,
-                view=view
-            )
+            await interaction.message.edit(content=None, embed=embed, view=view)
             return
         
-        # There IS a Pokemart - show the shop interface
-        from .pokemart import StoreState
+        # Get trainer's money
+        inventory = InventoryClass(str(user.id))
         
-        # Create store state
-        state = StoreState(user.id, interaction.message.id, interaction.message.channel.id, location, store.storeList, 0)
-        
-        # Get the shop embed and buttons from pokemart's page embed method
-        embed, btns = self.__create_mart_embed(user, state)
-        
-        # Add a "Back to Map" button at the end
-        back_btn = Button(style=ButtonStyle.secondary, label="🗺️ Back to Map", custom_id='mart_back_to_map', row=4)
-        back_btn.callback = self.on_mart_back_to_map
-        btns.add_item(back_btn)
-        
-        # Store the mart state
-        if not hasattr(self, '_PokemartMixin__store'):
-            self._PokemartMixin__store = {}
-        self._PokemartMixin__store[str(user.id)] = state
-        
-        await interaction.message.edit(
-            content=None,
-            embed=embed,
-            view=btns
+        # Create main mart menu
+        from .constant import LOCATION_DISPLAY_NAMES
+        embed = discord.Embed(
+            title=f"🏪 Poké Mart - {LOCATION_DISPLAY_NAMES.get(location.name, location.name)}",
+            description=f"Welcome to the Poké Mart!\n\n💰 Your Money: **${inventory.money:,}**",
+            color=discord.Color.blue()
         )
+        embed.set_thumbnail(url="https://pokesprites.joshkohut.com/sprites/locations/poke_mart.png")
+        
+        # Create Buy/Sell/Back buttons
+        view = View()
+        
+        buy_btn = Button(style=ButtonStyle.green, label="💵 Buy Items", custom_id='mart_buy_menu', row=0)
+        buy_btn.callback = self.on_mart_buy_menu
+        view.add_item(buy_btn)
+        
+        sell_btn = Button(style=ButtonStyle.blurple, label="💰 Sell Items", custom_id='mart_sell_menu', row=0)
+        sell_btn.callback = self.on_mart_sell_menu
+        view.add_item(sell_btn)
+        
+        back_btn = Button(style=ButtonStyle.secondary, label="🗺️ Back to Map", custom_id='mart_back_to_map', row=1)
+        back_btn.callback = self.on_mart_back_to_map
+        view.add_item(back_btn)
+        
+        # Store mart state
+        if not hasattr(self, '_mart_states'):
+            self._mart_states = {}
+        
+        self._mart_states[str(user.id)] = MartState(
+            str(user.id), 
+            interaction.message.id, 
+            interaction.message.channel.id, 
+            location, 
+            store,
+            'main'
+        )
+        
+        await interaction.message.edit(content=None, embed=embed, view=view)
+
 
     async def on_mart_prev_click(self, interaction: discord.Interaction):
         """Handle Previous page in Mart"""
@@ -3072,42 +3615,6 @@ class EncountersMixin(MixinMeta):
             return str(location_id) in store_data
         except Exception as e:
             return False
-
-    # def __has_pokemart(self, location_id: int) -> bool:
-    #     """Check if the current location has a Pokemart"""
-    #     import json
-    #     import os
-        
-    #     try:
-    #         # Use the same path logic as storeclass.py
-    #         store_path = os.path.join(os.path.dirname(__file__), 'configs/store.json')
-            
-    #         path_exists = os.path.exists(store_path)
-            
-    #         with open(store_path, 'r') as f:
-    #             store_data = json.load(f)
-            
-    #         # If locationId exists in store.json, there's a Pokemart
-    #         has_mart = str(location_id) in store_data
-            
-    #         # Store debug info for display in map command
-    #         self._mart_debug = {
-    #             'location_id': location_id,
-    #             'store_path': store_path,
-    #             'path_exists': path_exists,
-    #             'has_mart': has_mart,
-    #             'sample_locations': list(store_data.keys())[:5]
-    #         }
-            
-    #         return has_mart
-    #     except Exception as e:
-    #         # Store error for display
-    #         self._mart_debug = {
-    #             'location_id': location_id,
-    #             'error': str(e)
-    #         }
-    #         return False
-
 
     async def __on_action(self, interaction: Interaction):
         user = interaction.user
