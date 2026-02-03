@@ -513,7 +513,7 @@ class encounter:
             return self.message
 
         if pokemonCaught:
-            from .trainerclass import trainer as trainer_import
+            
             # leaderboard stats
             lb = leaderboard(self.pokemon1.discordId)
             lb.catch()
@@ -541,7 +541,7 @@ class encounter:
             debug_party_after = self.pokemon2.party
             
             self.statuscode = 420
-            self.message = f"You successfully caught the pokemon\n\nDEBUG BEFORE SAVE: party={debug_party_value}, type={debug_party_type}\nDEBUG AFTER SAVE: party={debug_party_after}"
+            self.message = f"You successfully caught the pokemon!"
             self.updateUniqueEncounters()
 
         else:
