@@ -1978,8 +1978,13 @@ class EncountersMixin(MixinMeta):
             await interaction.message.edit(embed=embed, view=view)
             return
 
-        # Default to first Pokemon in PC
-        selected_trainer_id = bag_state.pc_selected_pokemon_id or str(pc_list[0].trainerId)
+        # CRITICAL FIX: Default to first Pokemon if no selection, OR keep existing selection
+        if bag_state.pc_selected_pokemon_id:
+            selected_trainer_id = bag_state.pc_selected_pokemon_id
+        else:
+            # First time opening PC - select first Pokemon
+            selected_trainer_id = str(pc_list[0].trainerId)
+            bag_state.pc_selected_pokemon_id = selected_trainer_id  # SAVE IT!
         
         # Find the selected Pokemon and RELOAD IT
         selected_pokemon = None
@@ -1989,6 +1994,7 @@ class EncountersMixin(MixinMeta):
                 break
         
         if selected_pokemon is None:
+            # Fallback to first if selected one not found
             selected_pokemon = pc_list[0]
             selected_trainer_id = str(selected_pokemon.trainerId)
             bag_state.pc_selected_pokemon_id = selected_trainer_id
