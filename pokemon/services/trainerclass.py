@@ -323,6 +323,7 @@ class trainer:
 
     def fight(self, pokemon2):
         """ creates a fight encounter """
+        from .encounterclass import encounter
         pokemon1 = self.getActivePokemon()
         if pokemon1 is None:
             self.statuscode = 96
@@ -338,6 +339,7 @@ class trainer:
 
     def catch(self, pokemon2, item):
         """ creates a catch encounter """
+        from .encounterclass import encounter
         pokemon1 = self.getActivePokemon()
         if pokemon1 is None:
             self.statuscode = 96
@@ -352,6 +354,7 @@ class trainer:
 
     def runAway(self, pokemon2):
         """ creates a run away encounter """
+        from .encounterclass import encounter
         pokemon1 = self.getActivePokemon()
         if pokemon1 is None:
             self.statuscode = 96
