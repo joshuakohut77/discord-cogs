@@ -193,6 +193,7 @@ class Pokemon:
                           'move_1': self.move_1, 'move_2': self.move_2, 'move_3': self.move_3, 'move_4': self.move_4,
                           'type_1': self.type1, 'type_2': self.type2, 'nickName': self.nickName, 
                           'currentHP': self.currentHP, 'party': self.party }
+                print(f"DEBUG SAVE: About to INSERT with party={self.party}, type={type(self.party)}")
                 trainerIds = db.executeAndReturn(queryString, values)
                 if trainerIds:
                     self.trainerId = trainerIds[0]
