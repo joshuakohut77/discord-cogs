@@ -2825,9 +2825,9 @@ class EncountersMixin(MixinMeta):
             view.add_item(gym_btn)
         
         # ROW 3: Utility buttons
-        party_btn = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party', row=3)
-        party_btn.callback = self.on_nav_bag_click
-        view.add_item(party_btn)
+        bag_btn = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_bag', row=3)
+        bag_btn.callback = self.on_nav_bag_click
+        view.add_item(bag_btn)
         
         # Add Mart button if location has a Pokemart
         if self.__has_pokemart(location.locationId):
