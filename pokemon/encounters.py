@@ -339,11 +339,11 @@ class EncountersMixin(MixinMeta):
             stats = poke.getPokeStats()
             is_active = "⭐ " if poke.trainerId == active.trainerId else ""
             
-            # Use Pokemon emoji
+            # Use Pokemon emoji from constant
             pokemon_emoji = constant.POKEMON_EMOJIS.get(
-                    poke.pokemonName.upper(),
-                    f":{poke.pokemonName}:"
-                    )
+                poke.pokemonName.upper(),
+                f":{poke.pokemonName}:"
+            )
             
             # Show fainted status
             if poke.currentHP <= 0:
@@ -391,11 +391,8 @@ class EncountersMixin(MixinMeta):
             select.add_option(
                 label=label[:100],  # Discord label limit
                 value=str(poke.trainerId),  # Use trainerId as unique identifier
-                description=description[:100],
-                emoji = constant.POKEMON_EMOJIS.get(
-                    poke.pokemonName.upper(),
-                    f":{poke.pokemonName}:"
-                    )
+                description=description[:100]
+                # Remove emoji from select options - Discord doesn't support custom emojis here
             )
         
         select.callback = self.on_pokemon_select
@@ -429,7 +426,6 @@ class EncountersMixin(MixinMeta):
     async def on_pokemon_select(self, interaction: discord.Interaction):
         """Handle Pokemon selection from dropdown - enables action buttons"""
         user = interaction.user
-        await interaction.response.defer()
         
         # Get selected Pokemon trainerId from dropdown value
         selected_trainer_id = interaction.data['values'][0]
@@ -447,12 +443,59 @@ class EncountersMixin(MixinMeta):
                 break
         
         if not selected_pokemon:
-            await interaction.followup.send('Pokemon not found.', ephemeral=True)
+            await interaction.response.send_message('Pokemon not found.', ephemeral=True)
             return
         
         # Store selected Pokemon in user actions for later use by buttons
-        if str(user.id) in self.__useractions:
+        if str(user.id) not in self.__useractions:
+            # Create a basic action state if it doesn't exist
+            location = trainer.getLocation()
+            self.__useractions[str(user.id)] = ActionState(
+                str(user.id), 
+                interaction.message.channel.id, 
+                interaction.message.id, 
+                location, 
+                selected_pokemon, 
+                None, 
+                ''
+            )
+        else:
             self.__useractions[str(user.id)].activePokemon = selected_pokemon
+        
+        # Update the embed to show selected Pokemon details
+        embed = discord.Embed(
+            title="💥 Your Party",
+            description=f"**Selected:** {selected_pokemon.nickName or selected_pokemon.pokemonName.capitalize()}",
+            color=discord.Color.blue()
+        )
+        
+        # Show all party Pokemon
+        for i, poke in enumerate(pokeList, 1):
+            poke.load(pokemonId=poke.trainerId)
+            stats = poke.getPokeStats()
+            is_active = "⭐ " if poke.trainerId == active.trainerId else ""
+            is_selected = "➤ " if poke.trainerId == selected_pokemon.trainerId else ""
+            
+            # Use Pokemon emoji from constant
+            pokemon_emoji = constant.POKEMON_EMOJIS.get(
+                poke.pokemonName.upper(),
+                f":{poke.pokemonName}:"
+            )
+            
+            if poke.currentHP <= 0:
+                status_text = "💀 FAINTED"
+            else:
+                status_text = f"HP: {poke.currentHP}/{stats['hp']}"
+            
+            poke_name = poke.nickName if poke.nickName else poke.pokemonName.capitalize()
+            
+            embed.add_field(
+                name=f"{is_active}{is_selected}{pokemon_emoji} {i}. {poke_name}",
+                value=f"Lv.{poke.currentLevel} | {status_text}",
+                inline=False
+            )
+        
+        embed.set_footer(text="Use the buttons below to manage the selected Pokemon")
         
         # Recreate view with buttons NOW ENABLED
         view = View()
@@ -483,8 +526,8 @@ class EncountersMixin(MixinMeta):
                 label=label[:100],
                 value=str(poke.trainerId),
                 description=description[:100],
-                emoji=f":{poke.pokemonName}:",
                 default=(str(poke.trainerId) == selected_trainer_id)  # Mark selected
+                # No emoji - Discord Select doesn't support custom emojis properly
             )
         
         select.callback = self.on_pokemon_select
@@ -521,41 +564,8 @@ class EncountersMixin(MixinMeta):
         map_btn.callback = self.on_nav_map_click
         view.add_item(map_btn)
         
-        # Update the embed to show selected Pokemon details
-        embed = discord.Embed(
-            title="💥 Your Party",
-            description=f"**Selected:** {selected_pokemon.nickName or selected_pokemon.pokemonName.capitalize()}",
-            color=discord.Color.blue()
-        )
-        
-        # Show all party Pokemon
-        for i, poke in enumerate(pokeList, 1):
-            poke.load(pokemonId=poke.trainerId)
-            stats = poke.getPokeStats()
-            is_active = "⭐ " if poke.trainerId == active.trainerId else ""
-            is_selected = " " if poke.trainerId == selected_pokemon.trainerId else ""
-            
-            pokemon_emoji = constant.POKEMON_EMOJIS.get(
-                    poke.pokemonName.upper(),
-                    f":{poke.pokemonName}:"
-                    )
-            
-            if poke.currentHP <= 0:
-                status_text = "💀 FAINTED"
-            else:
-                status_text = f"HP: {poke.currentHP}/{stats['hp']}"
-            
-            poke_name = poke.nickName if poke.nickName else poke.pokemonName.capitalize()
-            
-            embed.add_field(
-                name=f"{is_active}{is_selected}{pokemon_emoji} {i}. {poke_name}",
-                value=f"Lv.{poke.currentLevel} | {status_text}",
-                inline=False
-            )
-        
-        embed.set_footer(text="Use the buttons below to manage the selected Pokemon")
-        
-        await interaction.message.edit(embed=embed, view=view)
+        # IMPORTANT: Use response.edit_message instead of message.edit when responding to Select interaction
+        await interaction.response.edit_message(embed=embed, view=view)
 
     async def on_party_moves_click(self, interaction: discord.Interaction):
         """Show moves for selected Pokemon (PLACEHOLDER)"""
