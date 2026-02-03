@@ -314,7 +314,7 @@ class EncountersMixin(MixinMeta):
 
 
     async def on_nav_party_click(self, interaction: discord.Interaction):
-        """Handle Party button click - show enhanced party view with Pokemon emojis"""
+        """Handle Party button click - show enhanced party view with Pokemon selection"""
         user = interaction.user
         await interaction.response.defer()
         
@@ -328,7 +328,7 @@ class EncountersMixin(MixinMeta):
 
         # Create party display
         embed = discord.Embed(
-            title="👥 Your Party",
+            title="💥 Your Party",
             description="Your Pokemon team",
             color=discord.Color.blue()
         )
@@ -339,16 +339,8 @@ class EncountersMixin(MixinMeta):
             stats = poke.getPokeStats()
             is_active = "⭐ " if poke.trainerId == active.trainerId else ""
             
-            # Use Pokemon emoji instead of heart/skull
-            # Format: :pokemon_name: (lowercase, hyphens for spaces)
-            # pokemon_emoji = f":{poke.pokemonName}:"
-            # pokemon_emoji = getattr(constant, poke.pokemonName.upper(), None)
-            # pokemon_emoji = constant.BULBASAUR
-
-            pokemon_emoji = constant.POKEMON_EMOJIS.get(
-                poke.pokemonName.upper(),
-                f":{poke.pokemonName}:"
-)
+            # Use Pokemon emoji
+            pokemon_emoji = f":{poke.pokemonName}:"
             
             # Show fainted status
             if poke.currentHP <= 0:
@@ -364,29 +356,55 @@ class EncountersMixin(MixinMeta):
                 inline=False
             )
         
-        embed.set_footer(text="Select a Pokemon to manage or return to map")
+        embed.set_footer(text="Select a Pokemon from the dropdown to manage")
         
-        # Create view with action buttons
+        # Create view with dropdown and action buttons
         view = View()
         
-        # ROW 0: Pokemon selection buttons (if you have multiple Pokemon)
-        # For now, we'll just show navigation buttons
-        # TODO: Add Pokemon selection for individual management
+        # ROW 0: Pokemon selection dropdown
+        from discord.ui import Select
         
-        # ROW 1: Party management actions
+        select = Select(
+            placeholder="Select a Pokemon to manage...",
+            custom_id="pokemon_select",
+            row=0
+        )
+        
+        # Add options for each Pokemon in party
+        for i, poke in enumerate(pokeList, 1):
+            poke.load(pokemonId=poke.trainerId)
+            poke_name = poke.nickName if poke.nickName else poke.pokemonName.capitalize()
+            
+            # Show active status in label
+            label = f"{'⭐ ' if poke.trainerId == active.trainerId else ''}{poke_name} (Lv.{poke.currentLevel})"
+            
+            # Show HP status in description
+            stats = poke.getPokeStats()
+            if poke.currentHP <= 0:
+                description = "💀 Fainted"
+            else:
+                description = f"HP: {poke.currentHP}/{stats['hp']}"
+            
+            select.add_option(
+                label=label[:100],  # Discord label limit
+                value=str(poke.trainerId),  # Use trainerId as unique identifier
+                description=description[:100],
+                emoji=f":{poke.pokemonName}:"
+            )
+        
+        select.callback = self.on_pokemon_select
+        view.add_item(select)
+        
+        # ROW 1: Party management actions (disabled by default until Pokemon selected)
         moves_btn = Button(style=ButtonStyle.gray, label="🎯 Moves", custom_id='party_moves', row=1, disabled=True)
         moves_btn.callback = self.on_party_moves_click
         view.add_item(moves_btn)
         
-        pokedex_btn = Button(style=ButtonStyle.gray, label="📖 Pokédex", custom_id='party_pokedex', row=1, disabled=True)
-        pokedex_btn.callback = self.on_party_pokedex_click
-        view.add_item(pokedex_btn)
-        
-        # ROW 2: Pokemon actions
-        set_active_btn = Button(style=ButtonStyle.gray, label="⭐ Set Active", custom_id='party_set_active', row=2, disabled=True)
+        set_active_btn = Button(style=ButtonStyle.gray, label="⭐ Set Active", custom_id='party_set_active', row=1, disabled=True)
         set_active_btn.callback = self.on_party_set_active_click
         view.add_item(set_active_btn)
         
+        # ROW 2: Pokemon actions
         deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='party_deposit', row=2, disabled=True)
         deposit_btn.callback = self.on_party_deposit_click
         view.add_item(deposit_btn)
@@ -400,9 +418,133 @@ class EncountersMixin(MixinMeta):
         map_btn.callback = self.on_nav_map_click
         view.add_item(map_btn)
         
-        full_party_btn = Button(style=ButtonStyle.green, label="📋 Full Party View", custom_id='nav_full_party', row=3)
-        full_party_btn.callback = self.on_nav_full_party_click
-        view.add_item(full_party_btn)
+        await interaction.message.edit(embed=embed, view=view)
+
+    async def on_pokemon_select(self, interaction: discord.Interaction):
+        """Handle Pokemon selection from dropdown - enables action buttons"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        # Get selected Pokemon trainerId from dropdown value
+        selected_trainer_id = interaction.data['values'][0]
+        
+        trainer = TrainerClass(str(user.id))
+        pokeList = trainer.getPokemon(party=True)
+        active = trainer.getActivePokemon()
+        
+        # Find the selected Pokemon
+        selected_pokemon = None
+        for poke in pokeList:
+            poke.load(pokemonId=poke.trainerId)
+            if str(poke.trainerId) == selected_trainer_id:
+                selected_pokemon = poke
+                break
+        
+        if not selected_pokemon:
+            await interaction.followup.send('Pokemon not found.', ephemeral=True)
+            return
+        
+        # Store selected Pokemon in user actions for later use by buttons
+        if str(user.id) in self.__useractions:
+            self.__useractions[str(user.id)].activePokemon = selected_pokemon
+        
+        # Recreate view with buttons NOW ENABLED
+        view = View()
+        
+        # ROW 0: Pokemon selection dropdown (keep it)
+        from discord.ui import Select
+        
+        select = Select(
+            placeholder=f"Selected: {selected_pokemon.nickName or selected_pokemon.pokemonName.capitalize()}",
+            custom_id="pokemon_select",
+            row=0
+        )
+        
+        # Re-add all options
+        for i, poke in enumerate(pokeList, 1):
+            poke.load(pokemonId=poke.trainerId)
+            poke_name = poke.nickName if poke.nickName else poke.pokemonName.capitalize()
+            
+            label = f"{'⭐ ' if poke.trainerId == active.trainerId else ''}{poke_name} (Lv.{poke.currentLevel})"
+            
+            stats = poke.getPokeStats()
+            if poke.currentHP <= 0:
+                description = "💀 Fainted"
+            else:
+                description = f"HP: {poke.currentHP}/{stats['hp']}"
+            
+            select.add_option(
+                label=label[:100],
+                value=str(poke.trainerId),
+                description=description[:100],
+                emoji=f":{poke.pokemonName}:",
+                default=(str(poke.trainerId) == selected_trainer_id)  # Mark selected
+            )
+        
+        select.callback = self.on_pokemon_select
+        view.add_item(select)
+        
+        # ROW 1: Party management actions (NOW ENABLED)
+        moves_btn = Button(style=ButtonStyle.blurple, label="🎯 Moves", custom_id='party_moves', row=1)
+        moves_btn.callback = self.on_party_moves_click
+        view.add_item(moves_btn)
+        
+        # Disable Set Active if already active
+        is_already_active = (selected_pokemon.trainerId == active.trainerId)
+        set_active_btn = Button(
+            style=ButtonStyle.green if not is_already_active else ButtonStyle.gray,
+            label="⭐ Set Active",
+            custom_id='party_set_active',
+            row=1,
+            disabled=is_already_active
+        )
+        set_active_btn.callback = self.on_party_set_active_click
+        view.add_item(set_active_btn)
+        
+        # ROW 2: Pokemon actions
+        deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='party_deposit', row=2)
+        deposit_btn.callback = self.on_party_deposit_click
+        view.add_item(deposit_btn)
+        
+        release_btn = Button(style=ButtonStyle.red, label="🗑️ Release", custom_id='party_release', row=2)
+        release_btn.callback = self.on_party_release_click
+        view.add_item(release_btn)
+        
+        # ROW 3: Navigation
+        map_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='nav_map', row=3)
+        map_btn.callback = self.on_nav_map_click
+        view.add_item(map_btn)
+        
+        # Update the embed to show selected Pokemon details
+        embed = discord.Embed(
+            title="💥 Your Party",
+            description=f"**Selected:** {selected_pokemon.nickName or selected_pokemon.pokemonName.capitalize()}",
+            color=discord.Color.blue()
+        )
+        
+        # Show all party Pokemon
+        for i, poke in enumerate(pokeList, 1):
+            poke.load(pokemonId=poke.trainerId)
+            stats = poke.getPokeStats()
+            is_active = "⭐ " if poke.trainerId == active.trainerId else ""
+            is_selected = "➤ " if poke.trainerId == selected_pokemon.trainerId else ""
+            
+            pokemon_emoji = f":{poke.pokemonName}:"
+            
+            if poke.currentHP <= 0:
+                status_text = "💀 FAINTED"
+            else:
+                status_text = f"HP: {poke.currentHP}/{stats['hp']}"
+            
+            poke_name = poke.nickName if poke.nickName else poke.pokemonName.capitalize()
+            
+            embed.add_field(
+                name=f"{is_active}{is_selected}{pokemon_emoji} {i}. {poke_name}",
+                value=f"Lv.{poke.currentLevel} | {status_text}",
+                inline=False
+            )
+        
+        embed.set_footer(text="Use the buttons below to manage the selected Pokemon")
         
         await interaction.message.edit(embed=embed, view=view)
 
@@ -424,20 +566,6 @@ class EncountersMixin(MixinMeta):
         """Release Pokemon (PLACEHOLDER)"""
         await interaction.response.send_message(
             'Release coming soon! Use `,trainer party` for full functionality.',
-            ephemeral=True
-        )
-    
-    async def on_nav_full_party_click(self, interaction: discord.Interaction):
-        """Open the full party management interface (existing party.py system)"""
-        await interaction.response.send_message(
-            'Use `,trainer party` to access the full party management interface with all features.',
-            ephemeral=True
-        )
-    
-    async def on_party_pokedex_click(self, interaction: discord.Interaction):
-        """Show Pokédex entry for selected Pokemon (PLACEHOLDER)"""
-        await interaction.response.send_message(
-            'Pokédex view coming soon! Use `,trainer party` for full functionality.',
             ephemeral=True
         )
 
