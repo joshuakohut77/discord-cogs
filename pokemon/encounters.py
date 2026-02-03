@@ -3796,7 +3796,12 @@ class EncountersMixin(MixinMeta):
                     custom_id=button.custom_id,
                     disabled=button.custom_id == interaction.data['custom_id']
                 )
+                # Set proper callbacks based on button type
                 if button.custom_id == interaction.data['custom_id']:
+                    new_button.callback = self.on_quest_click
+                elif button.custom_id == 'quest_back_to_map':
+                    new_button.callback = self.on_quest_back_to_map_click  # FIX: Set correct callback
+                elif button.custom_id.startswith('quest_'):
                     new_button.callback = self.on_quest_click
                 else:
                     new_button.callback = self.on_action_encounter
