@@ -3029,20 +3029,27 @@ class EncountersMixin(MixinMeta):
 
         view = View()
 
-        button = Button(style=ButtonStyle.green, label="Fight", custom_id='fight')
-        button.callback = self.on_fight_click_encounter
-        view.add_item(button)
+        # Auto Fight button
+        auto_button = Button(style=ButtonStyle.gray, label="⚡ Auto Fight", custom_id='wild_auto_fight')
+        auto_button.callback = self.on_wild_auto_fight_click
+        view.add_item(auto_button)
 
-        button = Button(style=ButtonStyle.green, label="Run away", custom_id='runaway')
-        button.callback = self.on_runaway_click_encounter
-        view.add_item(button)
+        # Manual Fight button
+        manual_button = Button(style=ButtonStyle.green, label="🎮 Manual Fight", custom_id='wild_manual_fight')
+        manual_button.callback = self.on_wild_manual_fight_click
+        view.add_item(manual_button)
 
-        button = Button(style=ButtonStyle.green, label="Catch", custom_id='catch')
-        button.callback = self.on_catch_click_encounter
-        view.add_item(button)
+        # Run away button
+        run_button = Button(style=ButtonStyle.danger, label="🏃 Run Away", custom_id='wild_run_away')
+        run_button.callback = self.on_runaway_click_encounter
+        view.add_item(run_button)
+
+        # Catch button
+        catch_button = Button(style=ButtonStyle.success, label="🔴 Catch", custom_id='wild_catch')
+        catch_button.callback = self.on_catch_click_encounter
+        view.add_item(catch_button)
 
         message = await interaction.message.edit(
-            # content=f'{user.display_name} encountered a wild {pokemon.pokemonName.capitalize()}!',
             embed=embed,
             view=view
         )
@@ -3050,8 +3057,8 @@ class EncountersMixin(MixinMeta):
             str(user.id), message.channel.id, message.id, state.location, active, wildPokemon, desc)
 
 
-    async def __on_fight_click_encounter(self, interaction: Interaction):
-        """Start manual battle with wild Pokemon using trainer battle interface"""
+    async def on_wild_manual_fight_click(self, interaction: discord.Interaction):
+        """Handle MANUAL fight with wild Pokemon - new battle interface"""
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
@@ -3061,7 +3068,6 @@ class EncountersMixin(MixinMeta):
         await interaction.response.defer()
 
         state = self.__useractions[str(user.id)]
-        trainer = TrainerClass(str(user.id))
         
         # Get player's active Pokemon
         active_pokemon = state.activePokemon
@@ -3072,7 +3078,7 @@ class EncountersMixin(MixinMeta):
             del self.__useractions[str(user.id)]
             return
         
-        # Create wild battle state (similar to trainer battles but for wild Pokemon)
+        # Create wild battle state
         wild_battle_state = WildBattleState(
             user_id=str(user.id),
             channel_id=interaction.channel_id,
@@ -3081,7 +3087,7 @@ class EncountersMixin(MixinMeta):
             wild_pokemon=state.wildPokemon
         )
         
-        # Store in wild battle states dict (you'll need to add this)
+        # Store in wild battle states dict
         self.__wild_battle_states[str(user.id)] = wild_battle_state
         
         # Create battle embed and move buttons
@@ -3099,6 +3105,64 @@ class EncountersMixin(MixinMeta):
         
         # Clean up old action state since we're now in battle state
         del self.__useractions[str(user.id)]
+
+    async def on_wild_auto_fight_click(self, interaction: discord.Interaction):
+        """Handle AUTO fight with wild Pokemon - old auto-battle system"""
+        user = interaction.user
+
+        if not self.__checkUserActionState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+
+        state = self.__useractions[str(user.id)]
+        trainer = TrainerClass(str(user.id))
+
+        # Use old auto-battle system
+        trainer.fight(state.wildPokemon)
+
+        if trainer.statuscode == 96:
+            await interaction.followup.send(trainer.message, ephemeral=True)
+            return
+
+        desc = state.descLog
+        desc += f'''{user.display_name} chose to auto fight!
+    {trainer.message}
+    '''
+        active = trainer.getActivePokemon()
+
+        embed = self.__wildPokemonEncounter(user, state.wildPokemon, active, desc)
+
+        # ADD NAVIGATION BUTTONS after battle
+        view = View()
+        
+        map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
+        map_button.callback = self.on_nav_map_click
+        view.add_item(map_button)
+        
+        party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
+        party_button.callback = self.on_nav_party_click
+        view.add_item(party_button)
+        
+        # Check if at Pokemon Center
+        location = trainer.getLocation()
+        if location.pokecenter:
+            heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal')
+            heal_button.callback = self.on_nav_heal_click
+            view.add_item(heal_button)
+
+        await interaction.message.edit(
+            content=None,
+            embed=embed,
+            view=view
+        )
+        
+        del self.__useractions[str(user.id)]
+
+    aasync def __on_fight_click_encounter(self, interaction: Interaction):
+        """Redirect to manual fight (kept for compatibility)"""
+        await self.on_wild_manual_fight_click(interaction)
 
 
     async def __on_runaway_click_encounter(self, interaction: Interaction):
@@ -3119,17 +3183,34 @@ class EncountersMixin(MixinMeta):
 
         desc = state.descLog
         desc += f'''{user.display_name} chose to run away.
-{trainer.message}
-'''
+    {trainer.message}
+    '''
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
 
+        # ADD NAVIGATION BUTTONS (same as catch)
+        view = View()
+        
+        map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
+        map_button.callback = self.on_nav_map_click
+        view.add_item(map_button)
+        
+        party_button = Button(style=ButtonStyle.primary, label="👥 Party", custom_id='nav_party')
+        party_button.callback = self.on_nav_party_click
+        view.add_item(party_button)
+        
+        # Check if at Pokemon Center
+        location = trainer.getLocation()
+        if location.pokecenter:
+            heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal')
+            heal_button.callback = self.on_nav_heal_click
+            view.add_item(heal_button)
 
         await interaction.message.edit(
-            # content=f'{user.display_name} ran away from a wild {state.pokemon.pokemonName.capitalize()}!',
             embed=embed,
-            view=View()
+            view=view  # Changed from View() to view with buttons
         )
+        
         del self.__useractions[str(user.id)]
         
 
