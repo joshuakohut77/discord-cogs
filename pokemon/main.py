@@ -19,7 +19,7 @@ from .pokecenter import PokecenterMixin
 from .pc import PcMixin
 from .party import PartyMixin
 from .inventory import InventoryMixin
-from .map import MapMixin
+# from .map import MapMixin  # DEPRECATED - functionality moved to EncountersMixin
 from .encounters import EncountersMixin
 from .debug import DebugMixin
 from .card import TrainerCardMixin
@@ -62,7 +62,7 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class Pokemon(StarterMixin, PcMixin, PartyMixin, PokemartMixin, PokecenterMixin, TradeMixin, InventoryMixin, MapMixin, TrainerCardMixin, EncountersMixin, PokedexMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
+class Pokemon(StarterMixin, PcMixin, PartyMixin, PokemartMixin, PokecenterMixin, TradeMixin, InventoryMixin, TrainerCardMixin, EncountersMixin, PokedexMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):
