@@ -2667,9 +2667,9 @@ class EncountersMixin(MixinMeta):
         for quest_btn in quest_buttons:
             view.add_item(quest_btn)
         
-        # Back to map button - USE UNIQUE custom_id
+        # Back to map button with dedicated callback
         back_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='quest_back_to_map', row=1)
-        back_btn.callback = self.on_nav_map_click
+        back_btn.callback = self.on_quest_back_to_map_click  # Use dedicated handler
         view.add_item(back_btn)
         
         from .constant import LOCATION_DISPLAY_NAMES
@@ -2678,6 +2678,128 @@ class EncountersMixin(MixinMeta):
         await interaction.message.edit(
             content=f"**{location_name}**\nAvailable Quests:",
             view=view
+        )
+
+    async def on_quest_back_to_map_click(self, interaction: discord.Interaction):
+        """Handle Back to Map from quest menu"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        # Call the main map navigation method
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+        
+        # Get available actions at this location
+        location_obj = LocationClass(str(user.id))
+        methods = location_obj.getMethods()
+        quest_buttons = self.__get_available_quests(str(user.id), location.name)
+        gym_button = self.__get_gym_button(str(user.id), location.locationId)
+        
+        from .constant import LOCATION_DISPLAY_NAMES
+        location_name = LOCATION_DISPLAY_NAMES.get(location.name, location.name.replace('-', ' ').title())
+        
+        # Create embed
+        embed = discord.Embed(
+            title=f"{location_name}",
+            description=f"You are at {location_name}.",
+            color=discord.Color.blue()
+        )
+
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+        
+        # Load location sprite
+        try:
+            sprite_file = discord.File(location.spritePath, filename=f"{location.name}.png")
+            temp_message = await self.sendToLoggingChannel(f'{user.display_name} viewing map', sprite_file)
+            if temp_message and temp_message.attachments:
+                attachment = temp_message.attachments[0]
+                embed.set_image(url=attachment.url)
+        except Exception as e:
+            print(f"Error loading location sprite: {e}")
+            try:
+                sprite_url = f"https://pokesprites.joshkohut.com/sprites/locations/{location.name}.png"
+                embed.set_image(url=sprite_url)
+            except:
+                pass
+        
+        # Create navigation view
+        view = View()
+        
+        # ROW 0: North/South buttons
+        if location.north:
+            north_name = LOCATION_DISPLAY_NAMES.get(location.north, location.north)
+            north_btn = Button(style=ButtonStyle.gray, emoji='⬆️', label=f"{north_name[:15]}", custom_id='dir_north', row=0)
+            north_btn.callback = self.on_direction_click
+            view.add_item(north_btn)
+        else:
+            north_btn = Button(style=ButtonStyle.gray, emoji='⬆️', label="---", custom_id='dir_north_disabled', disabled=True, row=0)
+            view.add_item(north_btn)
+        
+        if location.south:
+            south_name = LOCATION_DISPLAY_NAMES.get(location.south, location.south)
+            south_btn = Button(style=ButtonStyle.gray, emoji='⬇️', label=f"{south_name[:15]}", custom_id='dir_south', row=0)
+            south_btn.callback = self.on_direction_click
+            view.add_item(south_btn)
+        else:
+            south_btn = Button(style=ButtonStyle.gray, emoji='⬇️', label="---", custom_id='dir_south_disabled', disabled=True, row=0)
+            view.add_item(south_btn)
+        
+        # ROW 1: East/West buttons
+        if location.west:
+            west_name = LOCATION_DISPLAY_NAMES.get(location.west, location.west)
+            west_btn = Button(style=ButtonStyle.gray, emoji='⬅️', label=f"{west_name[:15]}", custom_id='dir_west', row=1)
+            west_btn.callback = self.on_direction_click
+            view.add_item(west_btn)
+        else:
+            west_btn = Button(style=ButtonStyle.gray, emoji='⬅️', label="---", custom_id='dir_west_disabled', disabled=True, row=1)
+            view.add_item(west_btn)
+        
+        if location.east:
+            east_name = LOCATION_DISPLAY_NAMES.get(location.east, location.east)
+            east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label=f"{east_name[:15]}", custom_id='dir_east', row=1)
+            east_btn.callback = self.on_direction_click
+            view.add_item(east_btn)
+        else:
+            east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label="---", custom_id='dir_east_disabled', disabled=True, row=1)
+            view.add_item(east_btn)
+        
+        # ROW 2: Action buttons (Encounters, Quests, Gym)
+        if len(methods) > 0:
+            enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='nav_encounters', row=2)
+            enc_btn.callback = self.on_nav_encounters_click
+            view.add_item(enc_btn)
+        
+        if len(quest_buttons) > 0:
+            quest_btn = Button(style=ButtonStyle.blurple, label="📜 Quests", custom_id='nav_quests', row=2)
+            quest_btn.callback = self.on_nav_quests_click
+            view.add_item(quest_btn)
+        
+        if gym_button and not gym_button.disabled:
+            gym_btn = Button(style=ButtonStyle.red, label="🏛️ Gym", custom_id='nav_gym', row=2)
+            gym_btn.callback = self.on_gym_click
+            view.add_item(gym_btn)
+        
+        # ROW 3: Utility buttons
+        bag_btn = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_bag', row=3)
+        bag_btn.callback = self.on_nav_bag_click
+        view.add_item(bag_btn)
+        
+        # Add Mart button if location has a Pokemart
+        if self.__has_pokemart(location.locationId):
+            mart_btn = Button(style=ButtonStyle.blurple, label="🏪 Mart", custom_id='nav_mart', row=3)
+            mart_btn.callback = self.on_nav_mart_click
+            view.add_item(mart_btn)
+
+        if location.pokecenter:
+            heal_btn = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal', row=3)
+            heal_btn.callback = self.on_nav_heal_click
+            view.add_item(heal_btn)
+        
+        message = await interaction.message.edit(embed=embed, view=view)
+        
+        # Update action state
+        self.__useractions[str(user.id)] = ActionState(
+            str(user.id), message.channel.id, message.id, location, trainer.getActivePokemon(), None, ''
         )
 
 
