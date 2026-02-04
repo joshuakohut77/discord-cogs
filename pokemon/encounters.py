@@ -3447,17 +3447,28 @@ class EncountersMixin(MixinMeta):
     #     enemy_pokemon.create(enemy_level)
     #     return enemy_pokemon
 
-    def __create_enemy_pokemon(self, pokemon_data: dict):
-        """Create an enemy Pokemon from data dict like {"geodude": 12}"""
+    def __create_enemy_pokemon(self, pokemon_data: dict, player_discord_id: str):
+        """Create an enemy Pokemon from data dict like {"geodude": 12}
+        
+        Args:
+            pokemon_data: Dict with pokemon name as key and level as value, e.g. {"geodude": 12}
+            player_discord_id: The player's Discord ID (needed for dynamic Pokemon resolution)
+        """
         enemy_name = list(pokemon_data.keys())[0]
         enemy_level = pokemon_data[enemy_name]
         
         print(f"DEBUG: Creating enemy Pokemon: {enemy_name} at level {enemy_level}")
-        enemy_pokemon = PokemonClass(None, enemy_name)
-        print(f"DEBUG: Pokemon object created, pokedexId={enemy_pokemon.pokedexId}")
+        
+        # Pass player's Discord ID so dynamic Pokemon can resolve based on player's starter
+        enemy_pokemon = PokemonClass(player_discord_id, enemy_name)
+        print(f"DEBUG: Pokemon object created with player discordId={player_discord_id}, pokedexId={enemy_pokemon.pokedexId}")
         
         enemy_pokemon.create(enemy_level)
         print(f"DEBUG: After create - pokemonName={enemy_pokemon.pokemonName}, statuscode={enemy_pokemon.statuscode}")
+        
+        # IMPORTANT: Reset discordId to None after creation so enemy Pokemon don't save to player's database
+        enemy_pokemon.discordId = None
+        
         print(f"DEBUG: Stats objects - hp.base={enemy_pokemon.hp.base}, defense.base={enemy_pokemon.defense.base}")
         
         stats = enemy_pokemon.getPokeStats()
