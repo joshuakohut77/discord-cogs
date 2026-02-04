@@ -499,8 +499,13 @@ class EncountersMixin(MixinMeta):
         )
 
 
-    def __create_post_battle_buttons(self, user_id: str) -> View:
-        """Create navigation buttons to show after battle ends"""
+    def __create_post_battle_buttons(self, user_id: str, show_trainer_buttons: bool = True) -> View:
+        """Create navigation buttons to show after battle ends
+        
+        Args:
+            user_id: The user's Discord ID
+            show_trainer_buttons: Whether to show trainer battle buttons (False for wild Pokemon)
+        """
         view = View()
         
         trainer = TrainerClass(user_id)
@@ -515,8 +520,8 @@ class EncountersMixin(MixinMeta):
                 has_alive_pokemon = True
                 break
         
-        # Only show trainer battle buttons if player has alive Pokemon
-        if has_alive_pokemon:
+        # Only show trainer battle buttons if enabled AND player has alive Pokemon
+        if show_trainer_buttons and has_alive_pokemon:
             # Check for wild trainers
             battle_wild = BattleClass(user_id, location.locationId, enemyType="wild")
             remaining_wild = battle_wild.getRemainingTrainerCount()
@@ -589,7 +594,7 @@ class EncountersMixin(MixinMeta):
             )
         
         # KEY CHANGE: Use existing post battle buttons
-        view = self.__create_post_battle_buttons(battle_state.user_id)
+        view = self.__create_post_battle_buttons(battle_state.user_id, show_trainer_buttons=False)
         
         # KEY CHANGE: Clear content and use existing message
         await interaction.message.edit(content=None, embed=embed, view=view)
@@ -626,7 +631,7 @@ class EncountersMixin(MixinMeta):
             )
         
         # KEY CHANGE: Use existing post battle buttons
-        view = self.__create_post_battle_buttons(battle_state.user_id)
+        view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False)
         
         # KEY CHANGE: Clear content and use existing message
         await interaction.message.edit(content=None, embed=embed, view=view)
