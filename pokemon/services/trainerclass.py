@@ -810,30 +810,31 @@ class trainer:
         
         try:
             db = dbconn()
-            # do this check to see if trainer exists
-            # TODO uncomment this when all users have been created
-            # queryString = 'SELECT startdate FROM trainer WHERE "discord_id" = %(discordId)s'
-            # result = db.querySingle(queryString, { 'discordId': self.discordId })
-            # if result:
-            #     self.startdate = result[0]
-            #     return
+            # Check if trainer exists and load startdate
+            queryString = 'SELECT startdate FROM trainer WHERE "discord_id" = %(discordId)s'
+            result = db.querySingle(queryString, { 'discordId': self.discordId })
+            if result:
+                self.startdate = result[0]
+                self.trainerExists = True
+                return
         
+            # If trainer doesn't exist, create them
             db.executeWithoutCommit('INSERT INTO trainer (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
             db.executeWithoutCommit('INSERT INTO inventory (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
             db.executeWithoutCommit('INSERT INTO keyitems (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
             db.executeWithoutCommit('INSERT INTO leaderboard (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
-            db.executeWithoutCommit('INSERT INTO "unique-encounters" (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
             db.commit()
-            self.trainerExists = True
-            # Always use UTC time
-            self.startdate = datetime.utcnow().date()
+            
+            # After creating trainer, load the startdate (which will be today's date for new trainers)
+            queryString = 'SELECT startdate FROM trainer WHERE "discord_id" = %(discordId)s'
+            result = db.querySingle(queryString, { 'discordId': self.discordId })
+            if result:
+                self.startdate = result[0]
         except:
             self.statuscode = 96
-            db.rollback()
             logger.error(excInfo=sys.exc_info())
         finally:
-            # delete and close connection
-            del db   
+            del db
     
     def __getEncounter(self, method):
         """ gets a random encounter in the current area using the selected method """
