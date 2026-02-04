@@ -3850,6 +3850,7 @@ class EncountersMixin(MixinMeta):
         all_battle_logs = []
         defeated_enemies = []
         defeated_player = []
+        exp_messages = []  # Track experience gains
         
         # Battle loop - continue until one side has no Pokemon left
         battle_result = None
@@ -3872,6 +3873,10 @@ class EncountersMixin(MixinMeta):
             # Add this battle's logs
             if hasattr(enc, 'battle_log') and enc.battle_log:
                 all_battle_logs.extend(enc.battle_log)
+            
+            # Capture experience message
+            if enc.message:
+                exp_messages.append(f"{player_pokemon.pokemonName.capitalize()}: {enc.message}")
             
             # Process result
             if result.get('result') == 'victory':
@@ -3946,6 +3951,15 @@ class EncountersMixin(MixinMeta):
                 inline=False
             )
             
+            # Experience gains
+            if len(exp_messages) > 0:
+                exp_text = "\n".join(exp_messages[:5])  # Show up to 5 Pokemon's exp
+                embed.add_field(
+                    name="📈 Experience Gained",
+                    value=exp_text[:1024],
+                    inline=False
+                )
+            
             embed.add_field(
                 name="💰 Reward",
                 value=f"${next_trainer.money}",
@@ -4015,7 +4029,6 @@ class EncountersMixin(MixinMeta):
         
         view_nav = self.__create_post_battle_buttons(str(user.id))
         await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
-
 
     async def on_gym_battle_manual(self, interaction: discord.Interaction):
         """Handle MANUAL battle with gym trainer - supports multiple Pokemon with intro"""
@@ -4937,6 +4950,15 @@ class EncountersMixin(MixinMeta):
                 value=battle_log_text[:1024],
                 inline=False
             )
+            
+            # Experience gains
+            if len(exp_messages) > 0:
+                exp_text = "\n".join(exp_messages[:5])  # Show up to 5 Pokemon's exp
+                embed.add_field(
+                    name="📈 Experience Gained",
+                    value=exp_text[:1024],
+                    inline=False
+                )
             
             embed.add_field(
                 name="🎖️ Badge Earned",
