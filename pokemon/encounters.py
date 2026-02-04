@@ -4463,7 +4463,7 @@ class EncountersMixin(MixinMeta):
         """Base command to manage the trainer (user).
         """
     
-    @commands.command(name="play", aliases=['p'])
+    @commands.command(name="play", aliases=['p','m'])
     async def play(self, ctx: commands.Context):
         """Show the map with navigation buttons"""
         user = ctx.author
