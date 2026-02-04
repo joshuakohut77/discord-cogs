@@ -526,6 +526,68 @@ class EncountersMixin(MixinMeta):
             
             battle_state.battle_log = ["\n".join(log_lines)]
             
+            # Check if Pokemon evolved and show ephemeral evolution embed
+            if hasattr(battle_state.player_pokemon, 'evolvedInto') and battle_state.player_pokemon.evolvedInto:
+                evolved_pokemon = battle_state.player_pokemon.evolvedInto
+                
+                # Create evolution embed
+                evolution_embed = discord.Embed(
+                    title="✨ What's this?",
+                    description=f"Your **{battle_state.player_pokemon.pokemonName.capitalize()}** evolved into **{evolved_pokemon.pokemonName.capitalize()}**!",
+                    color=discord.Color.gold()
+                )
+                evolution_embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+                
+                # Add Pokemon sprite
+                sprite_file = None
+                try:
+                    sprite_path = f"/sprites/pokemon/{evolved_pokemon.pokemonName}.png"
+                    full_sprite_path = os.path.join(os.path.dirname(__file__), sprite_path.lstrip('/'))
+                    sprite_file = discord.File(full_sprite_path, filename=f"{evolved_pokemon.pokemonName}.png")
+                    evolution_embed.set_image(url=f"attachment://{evolved_pokemon.pokemonName}.png")
+                except Exception as e:
+                    print(f"Error loading evolution sprite: {e}")
+                
+                # Send ephemeral evolution message
+                if sprite_file:
+                    await interaction.followup.send(embed=evolution_embed, file=sprite_file, ephemeral=True)
+                else:
+                    await interaction.followup.send(embed=evolution_embed, ephemeral=True)
+                
+                # Update battle state to use evolved Pokemon
+                battle_state.player_pokemon = evolved_pokemon
+
+            # Check if Pokemon evolved and show ephemeral evolution embed
+            if hasattr(battle_state.player_pokemon, 'evolvedInto') and battle_state.player_pokemon.evolvedInto:
+                evolved_pokemon = battle_state.player_pokemon.evolvedInto
+                
+                # Create evolution embed
+                evolution_embed = discord.Embed(
+                    title="✨ What's this?",
+                    description=f"Your **{battle_state.player_pokemon.pokemonName.capitalize()}** evolved into **{evolved_pokemon.pokemonName.capitalize()}**!",
+                    color=discord.Color.gold()
+                )
+                evolution_embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+                
+                # Add Pokemon sprite
+                sprite_file = None
+                try:
+                    sprite_path = f"/sprites/pokemon/{evolved_pokemon.pokemonName}.png"
+                    full_sprite_path = os.path.join(os.path.dirname(__file__), sprite_path.lstrip('/'))
+                    sprite_file = discord.File(full_sprite_path, filename=f"{evolved_pokemon.pokemonName}.png")
+                    evolution_embed.set_image(url=f"attachment://{evolved_pokemon.pokemonName}.png")
+                except Exception as e:
+                    print(f"Error loading evolution sprite: {e}")
+                
+                # Send ephemeral evolution message
+                if sprite_file:
+                    await interaction.followup.send(embed=evolution_embed, file=sprite_file, ephemeral=True)
+                else:
+                    await interaction.followup.send(embed=evolution_embed, ephemeral=True)
+                
+                # Update battle state to use evolved Pokemon
+                battle_state.player_pokemon = evolved_pokemon
+
             # Show victory screen
             await self.__handle_wild_battle_victory(interaction, battle_state)
             del self.__wild_battle_states[user_id]
