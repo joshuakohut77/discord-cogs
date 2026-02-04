@@ -5303,14 +5303,12 @@ class EncountersMixin(MixinMeta):
             debug_info = []
             if trainer.statuscode == 420 and "received" in trainer.message.lower():
                 debug_info.append("Gift was successful")
-                # Get trainer's most recent pokemon to show sprite
-                trainer_obj = TrainerClass(str(user.id))
-                pokemon_list = trainer_obj.getPokemon()
-                debug_info.append(f"Found {len(pokemon_list)} pokemon")
-                if pokemon_list and len(pokemon_list) > 0:
-                    # The most recently added pokemon should be the last one
-                    received_pokemon = pokemon_list[-1]
+                # Get the pokemon directly from trainer
+                if hasattr(trainer, 'lastGiftPokemon') and trainer.lastGiftPokemon:
+                    received_pokemon = trainer.lastGiftPokemon
                     debug_info.append(f"Received pokemon: {received_pokemon.pokemonName}")
+                else:
+                    debug_info.append("No lastGiftPokemon attribute found")
             
             # Create embed for gift result
             sprite_file = None
