@@ -390,6 +390,7 @@ class trainer:
     def gift(self, method='gift'):
         """ handles a gift action """
         retMsg = ''
+        giftCompleted = False
         try:
             location = self.getLocation()
             locationId = location.locationId
