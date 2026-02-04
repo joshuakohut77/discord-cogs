@@ -55,6 +55,7 @@ class ActionState:
         self.activePokemon = activePokemon
         self.wildPokemon = wildPokemon
         self.descLog = descLog
+        self.__item_usage_states = {}
 
 class BattleState:
     """Track ongoing manual battle state with multiple Pokemon support"""
@@ -82,6 +83,12 @@ class BattleState:
         self.turn_number = 1
         self.defeated_enemies = []  # Track defeated enemy Pokemon
         self.is_wild_trainer: bool = False
+
+class ItemUsageState:
+    def __init__(self, discord_id: str, selected_pokemon_id: str = None, selected_item: str = None):
+        self.discord_id = discord_id
+        self.selected_pokemon_id = selected_pokemon_id
+        self.selected_item = selected_item
 class BagState:
     """State for bag menu navigation"""
     discord_id: str
@@ -1740,6 +1747,10 @@ class EncountersMixin(MixinMeta):
         view.add_item(set_active_btn)
         
         # ROW 2: Pokemon actions
+        use_items_btn = Button(style=ButtonStyle.blurple, label="💊 Use Items", custom_id='bag_party_use_items', row=2)
+        use_items_btn.callback = self.on_bag_party_use_items_click
+        view.add_item(use_items_btn)
+
         deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
         deposit_btn.callback = self.on_bag_party_deposit_click
         view.add_item(deposit_btn)
@@ -1758,6 +1769,323 @@ class EncountersMixin(MixinMeta):
         view.add_item(map_btn)
         
         await interaction.message.edit(embed=embed, view=view)
+
+    async def on_bag_party_use_items_click(self, interaction: discord.Interaction):
+        """Show item usage interface"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.followup.send('Session expired. Use ,trainer map to start.', ephemeral=True)
+            return
+        
+        bag_state = self.__bag_states[str(user.id)]
+        
+        # Create item usage state
+        self.__item_usage_states[str(user.id)] = ItemUsageState(str(user.id))
+        
+        # Show item usage interface
+        embed, view = self.__create_item_usage_view(user)
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    def __create_item_usage_view(self, user: discord.User) -> tuple[discord.Embed, View]:
+        """Create the item usage interface with Pokemon and Item dropdowns"""
+        from services.trainerclass import trainer as TrainerClass
+        from services.inventoryclass import inventory as InventoryClass
+        from discord.ui import Select
+        
+        trainer = TrainerClass(str(user.id))
+        inv = InventoryClass(str(user.id))
+        pokeList = trainer.getPokemon(party=True)
+        
+        item_state = self.__item_usage_states.get(str(user.id), ItemUsageState(str(user.id)))
+        
+        # Create embed
+        embed = discord.Embed(
+            title="💊 Use Items on Pokemon",
+            description="Select a Pokemon and an item to use.",
+            color=discord.Color.blue()
+        )
+        embed.set_author(name=user.display_name, icon_url=str(user.display_avatar.url))
+        
+        view = View()
+        
+        # ROW 0: Pokemon selector
+        pokemon_select = Select(placeholder="Choose a Pokemon", custom_id='item_usage_pokemon_select', row=0)
+        for poke in pokeList:
+            poke.load(pokemonId=poke.trainerId)
+            
+            label = f"{poke.pokemonName.capitalize()}"
+            if poke.nickName:
+                label = f"{poke.nickName} ({poke.pokemonName.capitalize()})"
+            label += f" Lv.{poke.currentLevel}"
+            
+            stats = poke.getPokeStats()
+            if poke.currentHP <= 0:
+                description = "💀 Fainted"
+            else:
+                description = f"HP: {poke.currentHP}/{stats['hp']}"
+            
+            pokemon_select.add_option(
+                label=label[:100],
+                value=str(poke.trainerId),
+                description=description[:100],
+                default=(str(poke.trainerId) == item_state.selected_pokemon_id)
+            )
+        
+        pokemon_select.callback = self.on_item_usage_pokemon_select
+        view.add_item(pokemon_select)
+        
+        # ROW 1: Item selector - only show items that can be used on Pokemon
+        item_select = Select(placeholder="Choose an Item", custom_id='item_usage_item_select', row=1)
+        
+        # Define usable items with their inventory attributes and display names
+        usable_items = [
+            ('potion', inv.potion, 'Potion', 'Restores 20 HP'),
+            ('super-potion', inv.superpotion, 'Super Potion', 'Restores 50 HP'),
+            ('hyper-potion', inv.hyperpotion, 'Hyper Potion', 'Restores 200 HP'),
+            ('max-potion', inv.maxpotion, 'Max Potion', 'Fully restores HP'),
+            ('revive', inv.revive, 'Revive', 'Revives fainted Pokemon (50% HP)'),
+            ('full-restore', inv.fullrestore, 'Full Restore', 'Fully restores HP'),
+        ]
+        
+        has_items = False
+        for item_key, quantity, display_name, description in usable_items:
+            if quantity > 0:
+                has_items = True
+                item_select.add_option(
+                    label=f"{display_name} (x{quantity})",
+                    value=item_key,
+                    description=description[:100],
+                    default=(item_key == item_state.selected_item)
+                )
+        
+        if not has_items:
+            embed.add_field(
+                name="❌ No Usable Items",
+                value="You don't have any healing items. Visit a Pokemart to buy some!",
+                inline=False
+            )
+        else:
+            item_select.callback = self.on_item_usage_item_select
+            view.add_item(item_select)
+            
+            # ROW 2: Action buttons
+            # Only enable Use button if both Pokemon and Item are selected
+            use_disabled = not (item_state.selected_pokemon_id and item_state.selected_item)
+            use_btn = Button(
+                style=ButtonStyle.green,
+                label="✅ Use Item",
+                custom_id='item_usage_use',
+                row=2,
+                disabled=use_disabled
+            )
+            use_btn.callback = self.on_item_usage_use_click
+            view.add_item(use_btn)
+        
+        # ROW 3: Back button (always available)
+        back_btn = Button(
+            style=ButtonStyle.gray,
+            label="← Back to Party",
+            custom_id='item_usage_back',
+            row=3
+        )
+        back_btn.callback = self.on_item_usage_back_click
+        view.add_item(back_btn)
+        
+        return embed, view
+
+
+    async def on_item_usage_pokemon_select(self, interaction: discord.Interaction):
+        """Handle Pokemon selection in item usage"""
+        user = interaction.user
+        
+        if str(user.id) not in self.__item_usage_states:
+            await interaction.response.send_message('Session expired.', ephemeral=True)
+            return
+        
+        # Update selected Pokemon
+        selected_value = interaction.data['values'][0]
+        self.__item_usage_states[str(user.id)].selected_pokemon_id = selected_value
+        
+        # Recreate view with updated selection
+        embed, view = self.__create_item_usage_view(user)
+        await interaction.response.edit_message(embed=embed, view=view)
+
+
+    async def on_item_usage_item_select(self, interaction: discord.Interaction):
+        """Handle item selection in item usage"""
+        user = interaction.user
+        
+        if str(user.id) not in self.__item_usage_states:
+            await interaction.response.send_message('Session expired.', ephemeral=True)
+            return
+        
+        # Update selected item
+        selected_value = interaction.data['values'][0]
+        self.__item_usage_states[str(user.id)].selected_item = selected_value
+        
+        # Recreate view with updated selection
+        embed, view = self.__create_item_usage_view(user)
+        await interaction.response.edit_message(embed=embed, view=view)
+
+
+    async def on_item_usage_use_click(self, interaction: discord.Interaction):
+        """Use the selected item on the selected Pokemon"""
+        user = interaction.user
+        await interaction.response.defer(ephemeral=True)
+        
+        if str(user.id) not in self.__item_usage_states:
+            await interaction.followup.send('Session expired.', ephemeral=True)
+            return
+        
+        item_state = self.__item_usage_states[str(user.id)]
+        
+        if not item_state.selected_pokemon_id or not item_state.selected_item:
+            await interaction.followup.send('Please select both a Pokemon and an item.', ephemeral=True)
+            return
+        
+        from services.trainerclass import trainer as TrainerClass
+        from services.pokeclass import pokemon as PokemonClass
+        
+        trainer = TrainerClass(str(user.id))
+        
+        # Use the item
+        trainer.useItem(item_state.selected_item, int(item_state.selected_pokemon_id))
+        
+        # Send result as ephemeral message
+        if trainer.statuscode == 420:  # Success or expected error
+            await interaction.followup.send(f'✅ {trainer.message}', ephemeral=True)
+        else:
+            await interaction.followup.send(f'❌ {trainer.message}', ephemeral=True)
+        
+        # Refresh the item usage view (to update quantities and HP)
+        embed, view = self.__create_item_usage_view(user)
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    async def on_item_usage_back_click(self, interaction: discord.Interaction):
+        """Return to party view from item usage"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.followup.send('Session expired. Use ,trainer map to start.', ephemeral=True)
+            return
+        
+        # Clean up item usage state
+        if str(user.id) in self.__item_usage_states:
+            del self.__item_usage_states[str(user.id)]
+        
+        # Return to party view - need to rebuild it
+        bag_state = self.__bag_states[str(user.id)]
+        bag_state.current_view = 'party'
+        
+        from services.trainerclass import trainer as TrainerClass
+        from discord.ui import Select
+        
+        trainer = TrainerClass(str(user.id))
+        pokeList = trainer.getPokemon(party=True)
+        active = trainer.getActivePokemon()
+        
+        if len(pokeList) == 0:
+            await interaction.followup.send('You do not have any Pokemon.', ephemeral=True)
+            return
+        
+        # Default to previously selected or active Pokemon
+        selected_trainer_id = bag_state.selected_pokemon_id or str(active.trainerId)
+        
+        # Find the selected Pokemon
+        selected_pokemon = None
+        for poke in pokeList:
+            if str(poke.trainerId) == selected_trainer_id:
+                selected_pokemon = poke
+                break
+        
+        if selected_pokemon is None:
+            selected_pokemon = pokeList[0]
+            selected_trainer_id = str(selected_pokemon.trainerId)
+            bag_state.selected_pokemon_id = selected_trainer_id
+        
+        selected_pokemon.load(pokemonId=selected_pokemon.trainerId)
+        
+        from .functions import createStatsEmbed
+        embed = createStatsEmbed(user, selected_pokemon)
+        
+        if selected_pokemon.trainerId == active.trainerId:
+            embed.title = f"⭐ {embed.title}"
+            embed.set_footer(text="This is your active Pokemon!")
+        
+        # Rebuild party view with all buttons
+        view = View()
+        
+        # ROW 0: Pokemon selector
+        select = Select(placeholder="Choose a Pokemon", custom_id='pokemon_select', row=0)
+        for poke in pokeList:
+            poke.load(pokemonId=poke.trainerId)
+            
+            label = f"{poke.pokemonName.capitalize()}"
+            if poke.nickName:
+                label = f"{poke.nickName} ({poke.pokemonName.capitalize()})"
+            label += f" Lv.{poke.currentLevel}"
+            
+            stats = poke.getPokeStats()
+            if poke.currentHP <= 0:
+                description = "💀 Fainted"
+            else:
+                description = f"HP: {poke.currentHP}/{stats['hp']}"
+            
+            select.add_option(
+                label=label[:100],
+                value=str(poke.trainerId),
+                description=description[:100],
+                default=(str(poke.trainerId) == selected_trainer_id)
+            )
+        
+        select.callback = self.on_bag_pokemon_select
+        view.add_item(select)
+        
+        # ROW 1: Party management actions
+        moves_btn = Button(style=ButtonStyle.blurple, label="🎯 Moves", custom_id='bag_party_moves', row=1)
+        moves_btn.callback = self.on_bag_party_moves_click
+        view.add_item(moves_btn)
+        
+        is_already_active = (selected_pokemon.trainerId == active.trainerId)
+        set_active_btn = Button(
+            style=ButtonStyle.green if not is_already_active else ButtonStyle.gray,
+            label="⭐ Set Active",
+            custom_id='bag_party_set_active',
+            row=1,
+            disabled=is_already_active
+        )
+        set_active_btn.callback = self.on_bag_party_set_active_click
+        view.add_item(set_active_btn)
+        
+        # ROW 2: Pokemon actions - INCLUDING USE ITEMS
+        use_items_btn = Button(style=ButtonStyle.blurple, label="💊 Use Items", custom_id='bag_party_use_items', row=2)
+        use_items_btn.callback = self.on_bag_party_use_items_click
+        view.add_item(use_items_btn)
+        
+        deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
+        deposit_btn.callback = self.on_bag_party_deposit_click
+        view.add_item(deposit_btn)
+        
+        release_btn = Button(style=ButtonStyle.red, label="🗑️ Release", custom_id='bag_party_release', row=2)
+        release_btn.callback = self.on_bag_party_release_click
+        view.add_item(release_btn)
+        
+        # ROW 3: Navigation
+        back_btn = Button(style=ButtonStyle.gray, label="← Back to Bag", custom_id='party_back_to_bag', row=3)
+        back_btn.callback = self.on_party_back_to_bag_click
+        view.add_item(back_btn)
+        
+        map_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='party_back_to_map', row=3)
+        map_btn.callback = self.on_bag_back_to_map_click
+        view.add_item(map_btn)
+        
+        await interaction.message.edit(embed=embed, view=view)
+
 
     async def on_bag_party_moves_click(self, interaction: discord.Interaction):
         """Show moves for selected Pokemon"""
@@ -1897,6 +2225,10 @@ class EncountersMixin(MixinMeta):
         view.add_item(set_active_btn)
         
         # ROW 2: Pokemon actions
+        use_items_btn = Button(style=ButtonStyle.blurple, label="💊 Use Items", custom_id='bag_party_use_items', row=2)
+        use_items_btn.callback = self.on_bag_party_use_items_click
+        view.add_item(use_items_btn)
+
         deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
         deposit_btn.callback = self.on_bag_party_deposit_click
         view.add_item(deposit_btn)
@@ -2036,6 +2368,10 @@ class EncountersMixin(MixinMeta):
         view.add_item(set_active_btn)
         
         # ROW 2: Pokemon actions
+        use_items_btn = Button(style=ButtonStyle.blurple, label="💊 Use Items", custom_id='bag_party_use_items', row=2)
+        use_items_btn.callback = self.on_bag_party_use_items_click
+        view.add_item(use_items_btn)
+
         deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
         deposit_btn.callback = self.on_bag_party_deposit_click
         view.add_item(deposit_btn)
@@ -2182,6 +2518,10 @@ class EncountersMixin(MixinMeta):
         view.add_item(set_active_btn)
         
         # ROW 2: Pokemon actions
+        use_items_btn = Button(style=ButtonStyle.blurple, label="💊 Use Items", custom_id='bag_party_use_items', row=2)
+        use_items_btn.callback = self.on_bag_party_use_items_click
+        view.add_item(use_items_btn)
+
         deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
         deposit_btn.callback = self.on_bag_party_deposit_click
         view.add_item(deposit_btn)
@@ -3105,6 +3445,10 @@ class EncountersMixin(MixinMeta):
         view.add_item(set_active_btn)
         
         # ROW 2: Pokemon actions
+        use_items_btn = Button(style=ButtonStyle.blurple, label="💊 Use Items", custom_id='bag_party_use_items', row=2)
+        use_items_btn.callback = self.on_bag_party_use_items_click
+        view.add_item(use_items_btn)
+
         deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='party_deposit', row=2)
         deposit_btn.callback = self.on_party_deposit_click
         view.add_item(deposit_btn)
