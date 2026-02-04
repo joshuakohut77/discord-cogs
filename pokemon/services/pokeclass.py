@@ -87,30 +87,30 @@ class Pokemon:
         
         try:
             # this section is for Gary/Blue to dynamically change the pokemon based on the trainers starter pokemon
-            if self.pokemonName == 'dynamic-1' or self.pokemonName == 'dynamic-2' or self.pokemonName == 'dynamic-3':
+            if self.pokedexId == 'dynamic-1' or self.pokedexId == 'dynamic-2' or self.pokedexId == 'dynamic-3':
                 # pokemon needs changed to fit the trainers playthru
                 starterName = self.__getStarterName()
                 if starterName == 'squirtle':
-                    if self.pokemonName == 'dynamic-1':
-                        self.pokemonName = 'bulbasaur'
-                    elif self.pokemonName == 'dynamic-2':
-                        self.pokemonName = 'ivysaur'
-                    elif self.pokemonName == 'dynamic-3':
-                        self.pokemonName = 'venusaur'
+                    if self.pokedexId == 'dynamic-1':
+                        self.pokedexId = 'bulbasaur'
+                    elif self.pokedexId == 'dynamic-2':
+                        self.pokedexId = 'ivysaur'
+                    elif self.pokedexId == 'dynamic-3':
+                        self.pokedexId = 'venusaur'
                 elif starterName == 'charmander':
-                    if self.pokemonName == 'dynamic-1':
-                        self.pokemonName = 'squirtle'
-                    elif self.pokemonName == 'dynamic-2':
-                        self.pokemonName = 'wartortle'
-                    elif self.pokemonName == 'dynamic-3':
-                        self.pokemonName = 'blastoise'
+                    if self.pokedexId == 'dynamic-1':
+                        self.pokedexId = 'squirtle'
+                    elif self.pokedexId == 'dynamic-2':
+                        self.pokedexId = 'wartortle'
+                    elif self.pokedexId == 'dynamic-3':
+                        self.pokedexId = 'blastoise'
                 elif starterName == 'bulbasaur' or starterName == 'rattata': # rattata is for trolling purposes 
-                    if self.pokemonName == 'dynamic-1':
-                        self.pokemonName = 'charmander'
-                    elif self.pokemonName == 'dynamic-2':
-                        self.pokemonName = 'charmeleon'
-                    elif self.pokemonName == 'dynamic-3':
-                        self.pokemonName = 'charizard'
+                    if self.pokedexId == 'dynamic-1':
+                        self.pokedexId = 'charmander'
+                    elif self.pokedexId == 'dynamic-2':
+                        self.pokedexId = 'charmeleon'
+                    elif self.pokedexId == 'dynamic-3':
+                        self.pokedexId = 'charizard'
 
             # this is the pokemon json object from the config file
             pokemon = self.__loadPokemonConfig()
