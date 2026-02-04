@@ -40,6 +40,7 @@ class trainer:
         self.discordId = str(discordId)
         self.trainerExists = False
         self.startdate = None
+        self.lastGiftPokemon = None
         # check create trainer if exists or not
         self.__checkCreateTrainer()
 
