@@ -1951,8 +1951,8 @@ class EncountersMixin(MixinMeta):
         
         trainer = TrainerClass(str(user.id))
         
-        # Use the item - trainerclass.useItem() handles everything
-        trainer.useItem(item_state.selected_item, int(item_state.selected_pokemon_id))
+        # Use the item - CORRECT ORDER: pokeTrainerId first, then item
+        trainer.useItem(int(item_state.selected_pokemon_id), item_state.selected_item)
         
         # Send result as ephemeral message
         if trainer.statuscode == 420:  # Success or expected error
