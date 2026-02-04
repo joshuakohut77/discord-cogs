@@ -504,30 +504,48 @@ class EncountersMixin(MixinMeta):
         trainer = TrainerClass(user_id)
         location = trainer.getLocation()
         
-        # Check for wild trainers
-        battle_wild = BattleClass(user_id, location.locationId, enemyType="wild")
-        remaining_wild = battle_wild.getRemainingTrainerCount()
+        # Check if player has any alive Pokemon
+        player_party = trainer.getPokemon(party=True)
+        has_alive_pokemon = False
+        for poke in player_party:
+            poke.load(pokemonId=poke.trainerId)
+            if poke.currentHP > 0:
+                has_alive_pokemon = True
+                break
         
-        if remaining_wild > 0:
-            wild_btn = Button(style=ButtonStyle.blurple, label=f"⚔️ Next Trainer ({remaining_wild})", custom_id='post_battle_wild')
-            wild_btn.callback = self.on_wild_trainers_click
-            view.add_item(wild_btn)
+        # Only show trainer battle buttons if player has alive Pokemon
+        if has_alive_pokemon:
+            # Check for wild trainers
+            battle_wild = BattleClass(user_id, location.locationId, enemyType="wild")
+            remaining_wild = battle_wild.getRemainingTrainerCount()
+            
+            if remaining_wild > 0:
+                wild_btn = Button(style=ButtonStyle.blurple, label=f"⚔️ Next Trainer ({remaining_wild})", custom_id='post_battle_wild')
+                wild_btn.callback = self.on_wild_trainers_click
+                view.add_item(wild_btn)
+            
+            # Check for gym trainers
+            battle_gym = BattleClass(user_id, location.locationId, enemyType="gym")
+            remaining_gym = battle_gym.getRemainingTrainerCount()
+            
+            if remaining_gym > 0:
+                gym_btn = Button(style=ButtonStyle.red, label=f"🏛️ Gym Trainer ({remaining_gym})", custom_id='post_battle_gym')
+                gym_btn.callback = self.on_gym_click
+                view.add_item(gym_btn)
 
-        # Map button
-        map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
+        # Always show map button
+        map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map', row=1)
         map_button.callback = self.on_nav_map_click
         view.add_item(map_button)
         
-        # Party button
-        party_button = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_party')
+        # Always show bag button
+        party_button = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_party', row=1)
         party_button.callback = self.on_nav_bag_click
         view.add_item(party_button)
         
-        # Check if at Pokemon Center for heal button
-        trainer = TrainerClass(user_id)
-        location = trainer.getLocation()
+        # Always show heal button if at Pokemon Center
         if location.pokecenter:
-            heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal')
+            heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal', row=1)
             heal_button.callback = self.on_nav_heal_click
             view.add_item(heal_button)
         
