@@ -172,8 +172,14 @@ class TrainerCardMixin(MixinMeta):
         badgeText = " ".join(badges) if len(badges) > 0 else "--"
         embed.add_field(name='Badges', value=badgeText, inline=False)
 
-        embed.add_field(name='Pokedex', value='0')
+        # FIX: Get actual Pokedex count
+        pokedex_list = trainer.getPokedex()
+        pokedex_count = len(pokedex_list) if pokedex_list else 0
+        embed.add_field(name='Pokédex', value=f'{pokedex_count}')
+        
+        # FIX: Show actual start date
         embed.add_field(name='Started', value=f'{trainer.startdate}')
+        
         return embed
 
 
