@@ -60,6 +60,7 @@ class Pokemon:
         self.currentHP = None
         self.uniqueEncounter = False
         self.ailments = ailment(None)
+        self.evolvedInto = None
 
     def load(self, pokemonId=None):
         """ populates the object with stats from pokeapi """
@@ -400,13 +401,14 @@ class Pokemon:
                                 # Save the evolved Pokemon first to get its trainerId
                                 evolvedPokemon.save()
                                 
+                                # Store evolved Pokemon for UI to access
+                                self.evolvedInto = evolvedPokemon
+                                
                                 # If old Pokemon was active, update trainer's activePokemon to new one
                                 if wasActivePokemon:
                                     self.__updateActivePokemon(evolvedPokemon.trainerId)
                                 
                                 # Now delete the old Pokemon using the stored trainerId
-                                # Don't call self.__delete() because self might be stale
-                                # Instead, delete directly using the trainerId we saved
                                 try:
                                     db = dbconn()
                                     milliString = str(int(time() * 1000))
