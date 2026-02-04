@@ -149,6 +149,319 @@ class EncountersMixin(MixinMeta):
     __bag_states: dict[str, BagState] = {}
     __enemy_trainers_data: dict = None
 
+    def __load_enemy_trainers_data(self):
+        """Load enemy trainers configuration"""
+        if self.__enemy_trainers_data is None:
+            import json
+            import os
+            p = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'configs/enemyTrainers.json')
+            self.__enemy_trainers_data = json.load(open(p, 'r'))
+        return self.__enemy_trainers_data
+
+
+    def __get_wild_trainers_button(self, user_id: str, location_id: int):
+        """
+        Check if location has wild trainers and return button if available.
+        Returns Button object or None.
+        """
+        from services.battleclass import battle as BattleClass
+        
+        # Load enemy trainers data
+        enemy_trainers_data = self.__load_enemy_trainers_data()
+        
+        # Check if location has wild trainers
+        if str(location_id) not in enemy_trainers_data:
+            return None
+        
+        # Check if there are any remaining trainers to battle
+        battle = BattleClass(user_id, location_id, enemyType="wild")
+        remaining = battle.getRemainingTrainerCount()
+        
+        if remaining == 0:
+            # All trainers defeated
+            return None
+        
+        # Create trainers button
+        button = Button(
+            style=ButtonStyle.blurple,
+            label=f"⚔️ Trainers ({remaining})",
+            custom_id='wild_trainers'
+        )
+        button.callback = self.on_wild_trainers_click
+        
+        return button
+
+    async def on_wild_trainers_click(self, interaction: discord.Interaction):
+        """Handle wild trainers button clicks - shows battle type choice"""
+        user = interaction.user
+        
+        if not self.__checkUserActionState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Get location
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+        
+        # Use battle class to check trainer progress
+        battle = BattleClass(str(user.id), location.locationId, enemyType="wild")
+        remaining_trainers = battle.getRemainingTrainerCount()
+        
+        if remaining_trainers > 0:
+            next_trainer = battle.getNextTrainer()
+            if next_trainer:
+                view = View()
+                
+                # Auto Battle button
+                auto_button = Button(style=ButtonStyle.gray, label="⚡ Auto Battle", custom_id='wild_battle_auto')
+                auto_button.callback = self.on_wild_battle_auto
+                view.add_item(auto_button)
+                
+                # Manual Battle button  
+                manual_button = Button(style=ButtonStyle.green, label="🎮 Manual Battle", custom_id='wild_battle_manual')
+                manual_button.callback = self.on_wild_battle_manual
+                view.add_item(manual_button)
+                
+                # Back button
+                back_btn = Button(style=ButtonStyle.primary, label="🗺️ Back", custom_id='wild_back', row=1)
+                back_btn.callback = self.on_wild_back_click
+                view.add_item(back_btn)
+                
+                message = await interaction.followup.send(
+                    f'**Wild Trainer Battle**\n\n'
+                    f'Trainers Remaining: {remaining_trainers}\n\n'
+                    f'**Next Opponent:** {next_trainer.name}\n'
+                    f'**Reward:** ${next_trainer.money}\n\n'
+                    f'Choose your battle mode:',
+                    view=view
+                )
+                self.__useractions[str(user.id)].messageId = message.id
+            else:
+                await interaction.followup.send('Error getting next trainer.', ephemeral=True)
+        else:
+            await interaction.followup.send('All trainers in this area have been defeated!', ephemeral=True)
+
+    async def on_wild_back_click(self, interaction: discord.Interaction):
+        """Handle back button from wild trainers menu"""
+        user = interaction.user
+        
+        if not self.__checkUserActionState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Return to map
+        await self.on_nav_map_click(interaction)
+
+    async def on_wild_battle_auto(self, interaction: discord.Interaction):
+        """Handle AUTO battle with wild trainer"""
+        user = interaction.user
+        
+        if not self.__checkUserActionState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+        
+        # Get player's full party
+        player_party = trainer.getPokemon(party=True)
+        alive_party = []
+        for poke in player_party:
+            poke.load(pokemonId=poke.trainerId)
+            if poke.currentHP > 0:
+                alive_party.append(poke)
+        
+        if len(alive_party) == 0:
+            await interaction.followup.send('All your party Pokemon have fainted! Heal at a Pokemon Center first.', ephemeral=True)
+            return
+        
+        battle = BattleClass(str(user.id), location.locationId, enemyType="wild")
+        next_trainer = battle.getNextTrainer()
+        
+        if not next_trainer:
+            await interaction.followup.send('No trainer to battle.', ephemeral=True)
+            return
+        
+        # Build battle log
+        battle_log = []
+        battle_log.append(f"⚔️ **Battle vs {next_trainer.name}**\n")
+        
+        # Create enemy Pokemon from trainer data
+        enemy_pokemon_list = next_trainer.pokemon
+        player_pokemon_index = 0
+        enemy_pokemon_index = 0
+        defeated_enemies = []
+        defeated_players = []
+        
+        max_turns = 100
+        turn = 0
+        
+        while turn < max_turns:
+            turn += 1
+            
+            # Check if battle is over
+            if player_pokemon_index >= len(alive_party):
+                # Player lost
+                battle_log.append("\n💀 **All your Pokemon have fainted! You lost!**")
+                break
+            
+            if enemy_pokemon_index >= len(enemy_pokemon_list):
+                # Player won!
+                battle_log.append(f"\n🏆 **Victory! You defeated {next_trainer.name}!**")
+                battle.battleVictory(next_trainer)
+                break
+            
+            # Get current Pokemon
+            player_pokemon = alive_party[player_pokemon_index]
+            current_enemy = enemy_pokemon_list[enemy_pokemon_index]
+            enemy_name = list(current_enemy.keys())[0]
+            enemy_level = current_enemy[enemy_name]
+            
+            # Create enemy Pokemon object
+            enemy_pokemon = PokemonClass(None, pokemonName=enemy_name)
+            enemy_pokemon.create(level=enemy_level)
+            
+            # Battle turn
+            enc = EncounterClass(player_pokemon, enemy_pokemon)
+            result = enc.fight(battleType='auto')
+            
+            battle_log.append(f"\n**Turn {turn}:**")
+            battle_log.append(f"• {player_pokemon.pokemonName.capitalize()} (HP: {player_pokemon.currentHP}) vs {enemy_name.capitalize()} (HP: {enemy_pokemon.currentHP})")
+            
+            # Check if enemy fainted
+            if enemy_pokemon.currentHP <= 0:
+                defeated_enemies.append(enemy_name)
+                battle_log.append(f"💥 Enemy {enemy_name.capitalize()} fainted!")
+                enemy_pokemon_index += 1
+                
+                # Level up check for player's Pokemon
+                if player_pokemon.currentLevel > player_pokemon.previousLevel:
+                    battle_log.append(f"✨ {player_pokemon.pokemonName.capitalize()} leveled up to {player_pokemon.currentLevel}!")
+            
+            # Check if player's Pokemon fainted
+            if player_pokemon.currentHP <= 0:
+                defeated_players.append(player_pokemon.pokemonName)
+                battle_log.append(f"💀 Your {player_pokemon.pokemonName.capitalize()} fainted!")
+                player_pokemon.save()  # Save fainted state
+                player_pokemon_index += 1
+        
+        # Save all Pokemon states
+        for poke in alive_party:
+            poke.save()
+        
+        # Create result embed
+        embed = discord.Embed(
+            title="⚔️ Battle Complete!",
+            description="\n".join(battle_log[:20]),  # Limit to prevent embed size issues
+            color=discord.Color.green() if enemy_pokemon_index >= len(enemy_pokemon_list) else discord.Color.red()
+        )
+        
+        embed.add_field(
+            name="💚 Your Team",
+            value=f"Active: {len(alive_party) - len(defeated_players)}/{len(alive_party)}",
+            inline=True
+        )
+        
+        embed.add_field(
+            name="🎯 Enemy Team",
+            value=f"Defeated: {len(defeated_enemies)}/{len(enemy_pokemon_list)}",
+            inline=True
+        )
+        
+        if enemy_pokemon_index >= len(enemy_pokemon_list):
+            embed.add_field(
+                name="💰 Reward",
+                value=f"${next_trainer.money}",
+                inline=False
+            )
+        
+        view_nav = self.__create_post_battle_buttons(str(user.id))
+        await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
+
+    async def on_wild_battle_manual(self, interaction: discord.Interaction):
+        """Handle MANUAL turn-by-turn battle with wild trainer"""
+        user = interaction.user
+        user_id = str(user.id)
+        
+        if not self.__checkUserActionState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        trainer = TrainerClass(user_id)
+        location = trainer.getLocation()
+        
+        # Get player's party
+        player_party = trainer.getPokemon(party=True)
+        alive_party = []
+        for poke in player_party:
+            poke.load(pokemonId=poke.trainerId)
+            if poke.currentHP > 0:
+                alive_party.append(poke)
+        
+        if len(alive_party) == 0:
+            await interaction.followup.send('All your party Pokemon have fainted! Heal at a Pokemon Center first.', ephemeral=True)
+            return
+        
+        # Get next trainer
+        battle_manager = BattleClass(user_id, location.locationId, enemyType="wild")
+        trainer_model = battle_manager.getNextTrainer()
+        
+        if not trainer_model:
+            await interaction.followup.send('No trainer to battle.', ephemeral=True)
+            return
+        
+        # Initialize battle state
+        player_pokemon = alive_party[0]
+        enemy_pokemon_list = trainer_model.pokemon
+        
+        # Create first enemy Pokemon
+        first_enemy = enemy_pokemon_list[0]
+        enemy_name = list(first_enemy.keys())[0]
+        enemy_level = first_enemy[enemy_name]
+        
+        enemy_pokemon = PokemonClass(None, pokemonName=enemy_name)
+        enemy_pokemon.create(level=enemy_level)
+        
+        # Store battle state
+        battle_state = BattleState(
+            user_id=user_id,
+            player_pokemon=player_pokemon,
+            enemy_pokemon=enemy_pokemon,
+            player_party=alive_party,
+            enemy_pokemon_list=enemy_pokemon_list,
+            player_current_index=0,
+            enemy_current_index=0,
+            turn_number=1,
+            battle_log=[],
+            defeated_enemies=[],
+            trainer_model=trainer_model,
+            battle_manager=battle_manager,
+            is_wild_trainer=True,  # Mark as wild trainer battle
+            enemy_name=trainer_model.name
+        )
+        
+        self.__battle_states[user_id] = battle_state
+        
+        # Create battle display
+        embed = self.__create_battle_embed(user, battle_state)
+        view = self.__create_move_buttons(battle_state)
+        
+        message = await interaction.followup.send(
+            embed=embed,
+            view=view
+        )
+        
+        self.__useractions[user_id].messageId = message.id
+
+
     def __create_post_battle_buttons(self, user_id: str) -> View:
         """Create navigation buttons to show after battle ends"""
         view = View()
