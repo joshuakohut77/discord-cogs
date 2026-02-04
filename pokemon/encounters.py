@@ -5585,7 +5585,7 @@ class EncountersMixin(MixinMeta):
         del self.__useractions[str(user.id)]
 
     async def on_wild_auto_fight_click(self, interaction: discord.Interaction):
-        """Handle AUTO fight with wild Pokemon - old auto-battle system"""
+        """Handle AUTO fight with wild Pokemon - old auto-battle system with nice embeds"""
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
@@ -5604,16 +5604,70 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send(trainer.message, ephemeral=True)
             return
 
-        # SAVE PLAYER POKEMON HP
+        # Get updated active pokemon
         active = trainer.getActivePokemon()
-
-        desc = state.descLog
-        desc += f'''{user.display_name} chose to auto fight!
-    {trainer.message}
-    '''
-
-        embed = self.__wildPokemonEncounter(user, state.wildPokemon, active, desc)
-
+        
+        # Determine if victory or defeat
+        is_victory = active.currentHP > 0
+        
+        # Create appropriate embed
+        if is_victory:
+            # VICTORY EMBED
+            player_stats = active.getPokeStats()
+            player_max_hp = player_stats['hp']
+            
+            embed = discord.Embed(
+                title="🎉 Victory!",
+                description=f"You defeated the wild {state.wildPokemon.pokemonName.capitalize()}!",
+                color=discord.Color.green()
+            )
+            
+            player_summary = []
+            player_summary.append(f"**{active.pokemonName.capitalize()}** (Lv.{active.currentLevel})")
+            player_summary.append(f"HP: {active.currentHP}/{player_max_hp}")
+            
+            embed.add_field(
+                name="💚 Your Pokemon",
+                value="\n".join(player_summary),
+                inline=True
+            )
+            
+            # Add battle result message
+            embed.add_field(
+                name="⚔️ Battle Result",
+                value=trainer.message,
+                inline=False
+            )
+        else:
+            # DEFEAT EMBED
+            player_stats = active.getPokeStats()
+            player_max_hp = player_stats['hp']
+            
+            embed = discord.Embed(
+                title="💀 DEFEAT",
+                description=f"You were defeated by the wild {state.wildPokemon.pokemonName.capitalize()}...",
+                color=discord.Color.dark_red()
+            )
+            
+            player_summary = []
+            player_summary.append(f"**{active.pokemonName.capitalize()}** (Lv.{active.currentLevel})")
+            player_summary.append(f"HP: 0/{player_max_hp} ❌")
+            
+            embed.add_field(
+                name="💚 Your Pokemon",
+                value="\n".join(player_summary),
+                inline=True
+            )
+            
+            # Add battle result message
+            embed.add_field(
+                name="⚔️ Battle Result",
+                value="Your Pokemon fainted!",
+                inline=False
+            )
+        
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+        
         # ADD NAVIGATION BUTTONS after battle
         view = View()
         
