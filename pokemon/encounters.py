@@ -5297,6 +5297,7 @@ class EncountersMixin(MixinMeta):
 
         if ActionType.GIFT.value == action.type.value:
             trainer.gift()
+    
             # Create embed for gift result
             if trainer.statuscode == 420:
                 # Check if it was successful or already completed
@@ -5308,12 +5309,22 @@ class EncountersMixin(MixinMeta):
                         color=discord.Color.red()
                     )
                 else:
-                    # Successfully received gift - show success embed
+                    # Successfully received gift - show success embed with sprite
                     embed = discord.Embed(
                         title="🎁 Gift Received!",
                         description=trainer.message,
                         color=discord.Color.green()
                     )
+                    
+                    # Get the pokemon that was just received to show its sprite
+                    # The pokemon should be the most recently added one
+                    trainer_obj = TrainerClass(str(user.id))
+                    pokemon_list = trainer_obj.getPokemon()
+                    if pokemon_list and len(pokemon_list) > 0:
+                        # The last pokemon in the list is the one we just received
+                        received_pokemon = pokemon_list[-1]
+                        # Use the front sprite URL from the pokemon object
+                        embed.set_thumbnail(url=received_pokemon.frontSpriteURL)
             else:
                 # Error occurred
                 embed = discord.Embed(
