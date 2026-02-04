@@ -212,11 +212,11 @@ class battle:
             # list is empty return error
             self.statuscode = 96
             self.message = "empty trainer list"
-            return
+            return []  # Return empty list instead of None
         elif trainerList == ['Missing Requirements']:
             self.statuscode = 420
             self.message = "You cannot do that yet!"
-            return
+            return []  # Return empty list instead of None
 
         for trainer in trainerList:
             trainerModelList.append(TrainerBattleModel(trainer))
