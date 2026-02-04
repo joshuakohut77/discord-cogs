@@ -49,29 +49,6 @@ class TrainerCardMixin(MixinMeta):
         """
         pass
 
-    @_trainer.command()
-    async def card(self, ctx: commands.Context, user: DiscordUser = None) -> None:
-        author: DiscordUser = ctx.author
-
-        if user is None:
-            user = ctx.author
-
-        #  # This will create the trainer if it doesn't exist
-        trainer = TrainerClass(str(user.id))
-        inventory = InventoryClass(trainer.discordId)
-        keyitems = KeyItemsClass(trainer.discordId)
-        
-        embed = self.__createAboutEmbed(user, trainer, inventory, keyitems)
-
-        view = View()
-        button = Button(style=ButtonStyle.green, label="Stats", custom_id='stats')
-        button.callback = self.on_stats_click_card
-        view.add_item(button)
-
-        message: discord.Message = await ctx.send(embed=embed, view=view)
-        self.__cards[str(author.id)] = CardState(user.id, message.id, message.channel.id)
-
-
     async def __on_stats_click(self, interaction: Interaction):
         user = interaction.user
         await interaction.response.defer()
