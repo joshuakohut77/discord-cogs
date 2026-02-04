@@ -758,5 +758,6 @@ class Pokemon:
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete object and close connection
-            del db
+            if db is not None:
+                del db
             return starterName
