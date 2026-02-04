@@ -250,25 +250,27 @@ class EncountersMixin(MixinMeta):
                 )
                 
                 # ADD TRAINER SPRITE - Try file first, then URL fallback
-                trainer_sprite_name = next_trainer.name.lower().replace(' ', '-')
                 sprite_loaded = False
+                sprite_file = None
                 
-                try:
-                    # Try to load from local file system first
-                    sprite_path = f"/sprites/trainers/{trainer_sprite_name}.png"
-                    full_sprite_path = os.path.join(os.path.dirname(__file__), sprite_path.lstrip('/'))
-                    
-                    # Check if file exists
-                    if os.path.exists(full_sprite_path):
-                        sprite_file = discord.File(full_sprite_path, filename=f"{trainer_sprite_name}.png")
-                        embed.set_image(url=f"attachment://{trainer_sprite_name}.png")
-                        sprite_loaded = True
-                    else:
-                        raise FileNotFoundError("Sprite file not found")
-                except Exception as e:
-                    print(f"Error loading trainer sprite from file: {e}")
-                    # Fallback to URL if file doesn't exist
-                    if next_trainer.spritePath:
+                if next_trainer.spritePath:
+                    try:
+                        # Try to load from local file system first
+                        # spritePath is like "/sprites/trainers/jrtrainer.png"
+                        full_sprite_path = os.path.join(os.path.dirname(__file__), next_trainer.spritePath.lstrip('/'))
+                        
+                        # Check if file exists
+                        if os.path.exists(full_sprite_path):
+                            # Extract filename for attachment
+                            filename = os.path.basename(next_trainer.spritePath)
+                            sprite_file = discord.File(full_sprite_path, filename=filename)
+                            embed.set_image(url=f"attachment://{filename}")
+                            sprite_loaded = True
+                        else:
+                            raise FileNotFoundError("Sprite file not found locally")
+                    except Exception as e:
+                        print(f"Error loading trainer sprite from file: {e}")
+                        # Fallback to URL
                         try:
                             sprite_url = f"https://pokesprites.joshkohut.com{next_trainer.spritePath}"
                             embed.set_image(url=sprite_url)
@@ -293,7 +295,7 @@ class EncountersMixin(MixinMeta):
                 back_btn.callback = self.on_wild_back_click
                 view.add_item(back_btn)
                 
-                # Edit the message - if sprite file was loaded, need to include it differently
+                # Edit the message - if sprite file was loaded, need to send new message
                 if sprite_loaded:
                     # When editing with a file attachment, use followup.send to replace the message
                     await interaction.followup.send(
