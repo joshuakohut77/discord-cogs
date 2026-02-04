@@ -2308,6 +2308,16 @@ class EncountersMixin(MixinMeta):
         hms_btn.callback = self.on_bag_hms_click
         view.add_item(hms_btn)
         
+        # Trainer button
+        trainer_btn = Button(
+            style=ButtonStyle.blurple if current_view == 'trainer' else ButtonStyle.gray,
+            label="Trainer",
+            custom_id='bag_trainer',
+            row=0
+        )
+        trainer_btn.callback = self.on_bag_trainer_card_click
+        view.add_item(trainer_btn)
+
         # ROW 1: Party, PC, Pokedex, and Trainer buttons  <-- MODIFIED
         party_btn = Button(
             style=ButtonStyle.blurple if current_view == 'party' else ButtonStyle.gray,
@@ -2336,15 +2346,6 @@ class EncountersMixin(MixinMeta):
         pokedex_btn.callback = self.on_bag_pokedex_click
         view.add_item(pokedex_btn)
         
-        # NEW: Trainer button
-        trainer_btn = Button(
-            style=ButtonStyle.blurple if current_view == 'trainer' else ButtonStyle.gray,
-            label="👤 Trainer",
-            custom_id='bag_trainer',
-            row=1
-        )
-        trainer_btn.callback = self.on_bag_trainer_card_click
-        view.add_item(trainer_btn)
         
         # ROW 2: Pokedex navigation (only show when in pokedex view)
         if current_view == 'pokedex':
