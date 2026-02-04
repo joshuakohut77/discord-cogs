@@ -81,7 +81,7 @@ class BattleState:
         self.battle_log = []
         self.turn_number = 1
         self.defeated_enemies = []  # Track defeated enemy Pokemon
-
+        self.is_wild_trainer: bool = False
 class BagState:
     """State for bag menu navigation"""
     discord_id: str
@@ -795,6 +795,7 @@ class EncountersMixin(MixinMeta):
         methods = location_obj.getMethods()
         quest_buttons = self.__get_available_quests(str(user.id), location.name)
         gym_button = self.__get_gym_button(str(user.id), location.locationId)
+        wild_trainers_button = self.__get_wild_trainers_button(str(user.id), location.locationId)
         
         from .constant import LOCATION_DISPLAY_NAMES
         location_name = LOCATION_DISPLAY_NAMES.get(location.name, location.name.replace('-', ' ').title())
@@ -884,6 +885,9 @@ class EncountersMixin(MixinMeta):
             gym_btn = Button(style=ButtonStyle.red, label="🏛️ Gym", custom_id='nav_gym', row=2)
             gym_btn.callback = self.on_gym_click
             view.add_item(gym_btn)
+        
+        if wild_trainers_button:
+            view.add_item(wild_trainers_button)
         
         # ROW 3: Utility buttons
         bag_btn = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_bag', row=3)
@@ -2694,6 +2698,13 @@ class EncountersMixin(MixinMeta):
             button.callback = self.on_action_encounter
             view.add_item(button)
         
+        trainer = TrainerClass(str(user.id))
+        location_model = trainer.getLocation()
+        wild_trainers_button = self.__get_wild_trainers_button(str(user.id), location_model.locationId)
+
+        if wild_trainers_button:
+            view.add_item(wild_trainers_button)
+
         # Back to map button
         back_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='nav_map', row=1)
         back_btn.callback = self.on_nav_map_click
@@ -2760,7 +2771,8 @@ class EncountersMixin(MixinMeta):
         methods = location_obj.getMethods()
         quest_buttons = self.__get_available_quests(str(user.id), location.name)
         gym_button = self.__get_gym_button(str(user.id), location.locationId)
-        
+        wild_trainers_button = self.__get_wild_trainers_button(str(user.id), location.locationId)
+
         from .constant import LOCATION_DISPLAY_NAMES
         location_name = LOCATION_DISPLAY_NAMES.get(location.name, location.name.replace('-', ' ').title())
         
@@ -3378,7 +3390,7 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
             
-        else:  # It's a trainer
+        else:  # It's a trainer (wild or gym trainer, not gym leader)
             battle_manager.battleVictory(trainer_model)
             
             embed = discord.Embed(
@@ -3428,7 +3440,7 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
         
-        # ADD NAVIGATION BUTTONS - This is the key change!
+        # ADD NAVIGATION BUTTONS
         view = self.__create_post_battle_buttons(battle_state.user_id)
         
         await interaction.message.edit(embed=embed, view=view)
@@ -3443,12 +3455,14 @@ class EncountersMixin(MixinMeta):
                 ephemeral=True
             )
         else:
-            gym_leader = battle_manager.getGymLeader()
-            if gym_leader and not hasattr(trainer_model, 'badge'):
-                await interaction.followup.send(
-                    f"All gym trainers defeated! You can now challenge Gym Leader {gym_leader.name}!",
-                    ephemeral=True
-                )
+            # Check if gym leader is available (only for gym battles, not wild trainers)
+            if not hasattr(battle_state, 'is_wild_trainer') or not battle_state.is_wild_trainer:
+                gym_leader = battle_manager.getGymLeader()
+                if gym_leader and not hasattr(trainer_model, 'badge'):
+                    await interaction.followup.send(
+                        f"All gym trainers defeated! You can now challenge Gym Leader {gym_leader.name}!",
+                        ephemeral=True
+                    )
 
     async def __handle_gym_battle_defeat(self, interaction: discord.Interaction, battle_state: BattleState):
         """Handle when player loses a gym battle - shows team info with navigation"""
@@ -3634,6 +3648,7 @@ class EncountersMixin(MixinMeta):
         methods = location_obj.getMethods()
         quest_buttons = self.__get_available_quests(str(user.id), location.name)
         gym_button = self.__get_gym_button(str(user.id), location.locationId)
+        wild_trainers_button = self.__get_wild_trainers_button(str(user.id), location.locationId)
         
         from .constant import LOCATION_DISPLAY_NAMES
         location_name = LOCATION_DISPLAY_NAMES.get(location.name, location.name.replace('-', ' ').title())
@@ -3722,6 +3737,9 @@ class EncountersMixin(MixinMeta):
             gym_btn.callback = self.on_gym_click
             view.add_item(gym_btn)
         
+        if wild_trainers_button:
+            view.add_item(wild_trainers_button)
+
         # ROW 3: Utility buttons
         bag_btn = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_bag', row=3)
         bag_btn.callback = self.on_nav_bag_click
@@ -3763,10 +3781,11 @@ class EncountersMixin(MixinMeta):
 
         # Get gym button if location has a gym
         gym_button = self.__get_gym_button(str(user.id), model.locationId)
+        wild_trainers_button = self.__get_wild_trainers_button(str(user.id), model.locationId)
 
         # If no encounters, quests, or gym, return early
-        if len(methods) == 0 and len(quest_buttons) == 0 and gym_button is None:
-            await ctx.send('No encounters, quests, or gyms available at your location.', ephemeral=True)
+        if len(methods) == 0 and len(quest_buttons) == 0 and gym_button is None and wild_trainers_button is None:
+            await ctx.send('No encounters, quests, gyms, or trainers available at your location.', ephemeral=True)
             return
 
         view = View()
@@ -3782,6 +3801,9 @@ class EncountersMixin(MixinMeta):
         # Add gym button
         if gym_button:
             view.add_item(gym_button)
+        
+        if wild_trainers_button:
+            view.add_item(wild_trainers_button)
 
         message: discord.Message = await ctx.send(
             content="What do you want to do?",
