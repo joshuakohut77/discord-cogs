@@ -391,6 +391,7 @@ class trainer:
         """ handles a gift action """
         retMsg = ''
         giftCompleted = False
+        pokemon = None  # Add this to track the pokemon
         try:
             location = self.getLocation()
             locationId = location.locationId
@@ -428,7 +429,7 @@ class trainer:
                 
                 # Set ownership and party status
                 pokemon.discordId = self.discordId
-                pokemon.party = party_count < 6  # True if party < 6, False otherwise
+                pokemon.party = party_count < 6
                 
                 # Save the pokemon
                 pokemon.save()
@@ -444,6 +445,7 @@ class trainer:
                 retMsg = 'You received %s!' % pokemon.pokemonName
                 self.statuscode = 420
                 self.message = retMsg
+                self.lastGiftPokemon = pokemon  # ADD THIS LINE to store the pokemon
         except:
             self.statuscode = 96
             self.message = 'error in receiving gift'
