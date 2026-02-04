@@ -3433,13 +3433,31 @@ class EncountersMixin(MixinMeta):
                 return pokemon, i
         return None, -1
 
+    # def __create_enemy_pokemon(self, pokemon_data: dict):
+    #     """Create an enemy Pokemon from data dict like {"geodude": 12}"""
+    #     enemy_name = list(pokemon_data.keys())[0]
+    #     enemy_level = pokemon_data[enemy_name]
+        
+    #     enemy_pokemon = PokemonClass(None, enemy_name)
+    #     enemy_pokemon.create(enemy_level)
+    #     return enemy_pokemon
+
     def __create_enemy_pokemon(self, pokemon_data: dict):
         """Create an enemy Pokemon from data dict like {"geodude": 12}"""
         enemy_name = list(pokemon_data.keys())[0]
         enemy_level = pokemon_data[enemy_name]
         
+        print(f"DEBUG: Creating enemy Pokemon: {enemy_name} at level {enemy_level}")
         enemy_pokemon = PokemonClass(None, enemy_name)
+        print(f"DEBUG: Pokemon object created, pokedexId={enemy_pokemon.pokedexId}")
+        
         enemy_pokemon.create(enemy_level)
+        print(f"DEBUG: After create - pokemonName={enemy_pokemon.pokemonName}, statuscode={enemy_pokemon.statuscode}")
+        print(f"DEBUG: Stats objects - hp.base={enemy_pokemon.hp.base}, defense.base={enemy_pokemon.defense.base}")
+        
+        stats = enemy_pokemon.getPokeStats()
+        print(f"DEBUG: getPokeStats returned: {stats}")
+        
         return enemy_pokemon
 
     async def __show_battle_intro(self, interaction: discord.Interaction, trainer_name: str, 
