@@ -5297,7 +5297,62 @@ class EncountersMixin(MixinMeta):
 
         if ActionType.GIFT.value == action.type.value:
             trainer.gift()
-            await interaction.followup.send(trainer.message, ephemeral=True)
+            # Create embed for gift result
+            if trainer.statuscode == 420:
+                # Check if it was successful or already completed
+                if "already received" in trainer.message.lower():
+                    # Already received gift - show error embed
+                    embed = discord.Embed(
+                        title="❌ Gift Already Received",
+                        description=trainer.message,
+                        color=discord.Color.red()
+                    )
+                else:
+                    # Successfully received gift - show success embed
+                    embed = discord.Embed(
+                        title="🎁 Gift Received!",
+                        description=trainer.message,
+                        color=discord.Color.green()
+                    )
+            else:
+                # Error occurred
+                embed = discord.Embed(
+                    title="❌ Error",
+                    description=trainer.message,
+                    color=discord.Color.red()
+                )
+            
+            embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+            
+            # Create navigation view
+            nav_view = View()
+            
+            map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
+            map_button.callback = self.on_nav_map_click
+            nav_view.add_item(map_button)
+            
+            party_button = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_party')
+            party_button.callback = self.on_nav_bag_click
+            nav_view.add_item(party_button)
+            
+            # Check if at Pokemon Center
+            location = trainer.getLocation()
+            if location.pokecenter:
+                heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal')
+                heal_button.callback = self.on_nav_heal_click
+                nav_view.add_item(heal_button)
+            
+            # Edit the message with embed and buttons
+            await interaction.message.edit(
+                content=None,
+                embed=embed,
+                view=nav_view
+            )
+            
+            # Clean up action state
+            if str(user.id) in self.__useractions:
+                del self.__useractions[str(user.id)]
+            
             return
         
         if ActionType.QUEST.value == action.type.value:
