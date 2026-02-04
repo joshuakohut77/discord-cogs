@@ -125,7 +125,7 @@ class battle:
             else:
                 self.statuscode = 96
                 self.message = 'invalid enemyType. use "wild" or "gym"'
-                return
+                return []  # Return empty list instead of None
 
             # Use absolute path relative to this file's location
             p = os.path.join(os.path.dirname(os.path.realpath(__file__)), configPath)
@@ -152,16 +152,20 @@ class battle:
                 trainerModelList.append(GymLeaderModel(trainerConfigList))
             else:
                 trainerModelList = self.__returnTrainerList(trainerConfigList)
-
+                
+                # FIX: Check if __returnTrainerList returned None or a valid list
+                if trainerModelList is None:
+                    return []  # Return empty list if there was an error
+                
                 # Filter out previously defeated trainers
                 # Using list comprehension to avoid modifying list during iteration
                 trainerModelList = [trainer for trainer in trainerModelList if trainer.enemy_uuid not in enemyUUIDs]
-            
 
         except Exception as e:
             self.statuscode = 96
             self.message = f'Error loading trainer list: {str(e)}'
             logger.error(excInfo=sys.exc_info())
+            return []  # Return empty list on error
         finally:
             # delete and close connection
             del db
