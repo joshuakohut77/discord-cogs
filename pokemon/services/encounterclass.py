@@ -690,22 +690,22 @@ class encounter:
             uEncObj.mewtwo = True
         elif name == 'snorlax':
             uEncObj.snorlax = True                
-        # elif name == 'magikarp':
-        #     uEncObj.magikarp = True
-        # elif name == 'charmander':
-        #     uEncObj.charmander = True
-        # elif name == 'squirtle':
-        #     uEncObj.squirtle = True
-        # elif name == 'bulbasaur':
-        #     uEncObj.bulbasaur = True
-        # elif name == 'lapras':
-        #     uEncObj.lapras = True
-        # elif name == 'hitmonchan':
-        #     uEncObj.hitmonchan = True
-        # elif name == 'hitmonlee':
-        #     uEncObj.hitmonlee = True                                                                                    
-        # elif name == 'eevee':
-        #     uEncObj.eevee = True
+        elif name == 'magikarp':
+            uEncObj.magikarp = True
+        elif name == 'charmander':
+            uEncObj.charmander = True
+        elif name == 'squirtle':
+            uEncObj.squirtle = True
+        elif name == 'bulbasaur':
+            uEncObj.bulbasaur = True
+        elif name == 'lapras':
+            uEncObj.lapras = True
+        elif name == 'hitmonchan':
+            uEncObj.hitmonchan = True
+        elif name == 'hitmonlee':
+            uEncObj.hitmonlee = True                                                                                    
+        elif name == 'eevee':
+            uEncObj.eevee = True
 
         uEncObj.save()      
 
