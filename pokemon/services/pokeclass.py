@@ -353,9 +353,17 @@ class Pokemon:
                                 lb.evolved()
                                 retMsg += 'Your pokemon is evolving......... Your pokemon evolved into %s!' % (
                                     evolvedForm)
-                                evolvedPokemon = Pokemon(evolvedForm)
+                                
+                                #  Pass discordId as first argument, pokemon name as second
+                                evolvedPokemon = Pokemon(self.discordId, evolvedForm)
                                 evolvedPokemon.create(self.currentLevel)
-                                evolvedPokemon.discordId = self.discordId
+                                
+                                #  Check party size and set party status before saving
+                                from trainerclass import trainer as trainer_import
+                                trainer = trainer_import(self.discordId)
+                                party_count = trainer.getPartySize()
+                                evolvedPokemon.party = party_count < 6  # True if party < 6, False to PC
+                                
                                 evolvedPokemon.save()
                                 self.__delete()
                             break
