@@ -250,16 +250,21 @@ class EncountersMixin(MixinMeta):
                 )
                 
                 # ADD TRAINER SPRITE - Try file first, then URL fallback
-                sprite_file = None
                 trainer_sprite_name = next_trainer.name.lower().replace(' ', '-')
+                sprite_loaded = False
                 
                 try:
                     # Try to load from local file system first
                     sprite_path = f"/sprites/trainers/{trainer_sprite_name}.png"
                     full_sprite_path = os.path.join(os.path.dirname(__file__), sprite_path.lstrip('/'))
                     
-                    sprite_file = discord.File(full_sprite_path, filename=f"{trainer_sprite_name}.png")
-                    embed.set_image(url=f"attachment://{trainer_sprite_name}.png")
+                    # Check if file exists
+                    if os.path.exists(full_sprite_path):
+                        sprite_file = discord.File(full_sprite_path, filename=f"{trainer_sprite_name}.png")
+                        embed.set_image(url=f"attachment://{trainer_sprite_name}.png")
+                        sprite_loaded = True
+                    else:
+                        raise FileNotFoundError("Sprite file not found")
                 except Exception as e:
                     print(f"Error loading trainer sprite from file: {e}")
                     # Fallback to URL if file doesn't exist
@@ -269,7 +274,6 @@ class EncountersMixin(MixinMeta):
                             embed.set_image(url=sprite_url)
                         except Exception as url_error:
                             print(f"Error loading trainer sprite from URL: {url_error}")
-                            # If both fail, just continue without sprite
                 
                 # Create view with battle mode buttons
                 view = View()
@@ -289,15 +293,21 @@ class EncountersMixin(MixinMeta):
                 back_btn.callback = self.on_wild_back_click
                 view.add_item(back_btn)
                 
-                # Edit the existing message - include file if it was loaded
-                if sprite_file:
-                    await interaction.message.edit(
-                        content=None,
+                # Edit the message - if sprite file was loaded, need to include it differently
+                if sprite_loaded:
+                    # When editing with a file attachment, use followup.send to replace the message
+                    await interaction.followup.send(
                         embed=embed,
                         view=view,
-                        attachments=[sprite_file]
+                        file=sprite_file
                     )
+                    # Delete the old message
+                    try:
+                        await interaction.message.delete()
+                    except:
+                        pass
                 else:
+                    # No file attachment, can use regular edit
                     await interaction.message.edit(
                         content=None,
                         embed=embed,
