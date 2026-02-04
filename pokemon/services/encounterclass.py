@@ -93,8 +93,13 @@ class encounter:
                 newPokemon = 'golem'
             elif pokemon.pokemonName == 'haunter':
                 newPokemon = 'gengar'
-            evolvedPokemon = PokemonClass(newPokemon)
+            
+            # ✅ FIX: Pass discordId as first argument
+            evolvedPokemon = PokemonClass(pokemon.discordId, newPokemon)
             evolvedPokemon.create(pokemon.currentLevel)
+            
+            # ✅ FIX: Set party status based on whether the original pokemon was in party
+            evolvedPokemon.party = pokemon.party
 
         return evolvedPokemon
 
