@@ -390,7 +390,7 @@ class trainer:
     def gift(self, method='gift'):
         """ handles a gift action """
         retMsg = ''
-        giftCompleted = False  # Initialize at the start
+        giftCompleted = False
         try:
             location = self.getLocation()
             locationId = location.locationId
@@ -415,17 +415,33 @@ class trainer:
                 if giftCompleted:
                     self.statuscode = 420
                     self.message = "You have already received the gift in this location"
-                    return  # Add return here to exit early
+                    return
 
             if not giftCompleted:
                 method = 'gift'
                 pokemon = self.__getEncounter(method)
-                if pokemon is None:  # Check if pokemon was actually created
+                if pokemon is None:
                     return
+                
+                # Check party size before saving (same as catch logic)
+                party_count = self.getPartySize()
+                
+                # Set ownership and party status
+                pokemon.discordId = self.discordId
+                pokemon.party = party_count < 6  # True if party < 6, False otherwise
+                
+                # Save the pokemon
                 pokemon.save()
+                
+                if pokemon.statuscode == 96:
+                    self.statuscode = 96
+                    self.message = "error occurred during pokemon.save()"
+                    return
+                
                 # Add to pokedex
                 pokedex(self.discordId, pokemon)
-                retMsg = 'You received %s!' % pokemon.pokemonName  # FIX: Add the pokemon name
+                
+                retMsg = 'You received %s!' % pokemon.pokemonName
                 self.statuscode = 420
                 self.message = retMsg
         except:
