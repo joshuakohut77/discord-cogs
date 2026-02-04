@@ -165,39 +165,20 @@ class EncountersMixin(MixinMeta):
         Returns Button object or None.
         """
         from services.battleclass import battle as BattleClass
-        import logging
-        logger = logging.getLogger("red.pokemon")
         
         try:
             # Load enemy trainers data
             enemy_trainers_data = self.__load_enemy_trainers_data()
             
-            # Debug: Log location being checked
-            logger.info(f"[WILD_TRAINERS] Checking location_id: {location_id}")
-            
             # Check if location has wild trainers
             if str(location_id) not in enemy_trainers_data:
-                logger.info(f"[WILD_TRAINERS] Location {location_id} NOT in enemyTrainers.json")
                 return None
             
-            logger.info(f"[WILD_TRAINERS] Location {location_id} HAS trainers in config")
-            
-            # Create battle manager and get remaining count
+            # Check if there are any remaining trainers to battle
             battle = BattleClass(user_id, location_id, enemyType="wild")
-            
-            # Debug the getTrainerList call
-            trainer_list = battle.getTrainerList()
-            logger.info(f"[WILD_TRAINERS] getTrainerList returned: {len(trainer_list) if trainer_list else 'None'} trainers")
-            
-            if trainer_list:
-                for i, trainer in enumerate(trainer_list):
-                    logger.info(f"[WILD_TRAINERS]   Trainer {i}: {trainer.name} (UUID: {trainer.enemy_uuid})")
-            
             remaining = battle.getRemainingTrainerCount()
-            logger.info(f"[WILD_TRAINERS] getRemainingTrainerCount returned: {remaining}")
             
             if remaining == 0:
-                logger.info(f"[WILD_TRAINERS] No remaining trainers - button not created")
                 return None
             
             # Create trainers button
@@ -205,16 +186,13 @@ class EncountersMixin(MixinMeta):
                 style=ButtonStyle.blurple,
                 label=f"⚔️ Trainers ({remaining})",
                 custom_id='wild_trainers',
-                row=2  # Put on row 2 with gym button
+                row=2
             )
             button.callback = self.on_wild_trainers_click
             
-            logger.info(f"[WILD_TRAINERS] ✅ CREATED button with {remaining} trainers")
-            
             return button
             
-        except Exception as e:
-            logger.error(f"[WILD_TRAINERS] ❌ ERROR: {e}", exc_info=True)
+        except:
             return None
 
     async def on_wild_trainers_click(self, interaction: discord.Interaction):
@@ -375,8 +353,8 @@ class EncountersMixin(MixinMeta):
             enemy_name = list(current_enemy.keys())[0]
             enemy_level = current_enemy[enemy_name]
             
-            # FIX: Use correct parameter
-            enemy_pokemon = PokemonClass(None, enemy_name)  # discordId, pokemonName
+            # Create enemy Pokemon - FIX: Use positional parameter
+            enemy_pokemon = PokemonClass(None, enemy_name)
             enemy_pokemon.create(level=enemy_level)
             
             # Battle turn
@@ -476,7 +454,7 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('No trainer to battle.', ephemeral=True)
             return
         
-        # Initialize battle state
+        # Initialize battle state with POSITIONAL arguments (not keyword)
         player_pokemon = alive_party[0]
         enemy_pokemon_list = trainer_model.pokemon
         
@@ -485,27 +463,25 @@ class EncountersMixin(MixinMeta):
         enemy_name = list(first_enemy.keys())[0]
         enemy_level = first_enemy[enemy_name]
         
-        # FIX: Use correct parameter - it's not pokemonName, it's the second positional parameter
-        enemy_pokemon = PokemonClass(None, enemy_name)  # discordId, pokemonName
+        enemy_pokemon = PokemonClass(None, enemy_name)
         enemy_pokemon.create(level=enemy_level)
         
-        # Store battle state
+        # BattleState uses POSITIONAL arguments - check the __init__ signature
         battle_state = BattleState(
-            user_id=user_id,
-            player_pokemon=player_pokemon,
-            enemy_pokemon=enemy_pokemon,
-            player_party=alive_party,
-            enemy_pokemon_list=enemy_pokemon_list,
-            player_current_index=0,
-            enemy_current_index=0,
-            turn_number=1,
-            battle_log=[],
-            defeated_enemies=[],
-            trainer_model=trainer_model,
-            battle_manager=battle_manager,
-            is_wild_trainer=True,  # Mark as wild trainer battle
-            enemy_name=trainer_model.name
+            user_id,              # user_id
+            interaction.channel_id,  # channel_id
+            interaction.message.id,  # message_id
+            alive_party,          # player_party
+            enemy_pokemon_list,   # enemy_pokemon_list
+            trainer_model.name,   # enemy_name
+            trainer_model,        # trainer_model
+            battle_manager        # battle_manager
         )
+        
+        # Set additional state properties after initialization
+        battle_state.player_pokemon = player_pokemon
+        battle_state.enemy_pokemon = enemy_pokemon
+        battle_state.is_wild_trainer = True
         
         self.__battle_states[user_id] = battle_state
         
@@ -3054,9 +3030,7 @@ class EncountersMixin(MixinMeta):
             'Deposit coming soon! Use `,trainer party` for full functionality.',
             ephemeral=True
         )
-# =============================================================================
-# SEPARATOR - NEXT METHOD
-# =============================================================================
+
 
     async def on_nav_encounters_click(self, interaction: discord.Interaction):
         """Handle Encounters button - show encounter options with back button"""
@@ -3080,7 +3054,8 @@ class EncountersMixin(MixinMeta):
             button.callback = self.on_action_encounter
             view.add_item(button)
         
-
+        # REMOVED: Wild trainers button code (it only shows on map now)
+        
         # Back to map button
         back_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='nav_map', row=1)
         back_btn.callback = self.on_nav_map_click
