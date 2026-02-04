@@ -2944,18 +2944,7 @@ class EncountersMixin(MixinMeta):
         
         from services.trainerclass import trainer as TrainerClass
         
-        trainer = TrainerClass(user_id)
-        
-        # Use the item
-        trainer.useItem(int(item_state.selected_pokemon_id), item_state.selected_item)
-        
-        # Send result as ephemeral message
-        if trainer.statuscode == 420:
-            await interaction.followup.send(f'✅ {trainer.message}', ephemeral=True)
-        else:
-            await interaction.followup.send(f'❌ {trainer.message}', ephemeral=True)
-        
-        # Get battle state to refresh
+        # Get battle state
         battle_state = None
         is_wild_battle = False
         if user_id in self.__battle_states:
@@ -2964,7 +2953,103 @@ class EncountersMixin(MixinMeta):
             battle_state = self.__wild_battle_states[user_id]
             is_wild_battle = True
         
-        # Refresh the item usage view
+        if not battle_state:
+            await interaction.followup.send('Battle state not found.', ephemeral=True)
+            return
+        
+        # Find the Pokemon in the battle state's party
+        target_pokemon = None
+        selected_trainer_id = int(item_state.selected_pokemon_id)
+        
+        if hasattr(battle_state, 'player_party'):
+            for poke in battle_state.player_party:
+                if poke.trainerId == selected_trainer_id:
+                    target_pokemon = poke
+                    break
+        elif battle_state.player_pokemon.trainerId == selected_trainer_id:
+            target_pokemon = battle_state.player_pokemon
+        
+        if not target_pokemon:
+            await interaction.followup.send('Pokemon not found in battle.', ephemeral=True)
+            return
+        
+        # Get Pokemon stats to calculate healing
+        stats = target_pokemon.getPokeStats()
+        max_hp = stats['hp']
+        current_hp = target_pokemon.currentHP
+        item = item_state.selected_item
+        
+        # Check inventory and calculate healing
+        from services.inventoryclass import inventory as InventoryClass
+        inv = InventoryClass(user_id)
+        
+        # Validate item usage
+        if item == 'revive' and current_hp > 0:
+            await interaction.followup.send('❌ You cannot use Revive on this Pokemon - it is not fainted!', ephemeral=True)
+            return
+        
+        if item != 'revive' and current_hp <= 0:
+            await interaction.followup.send('❌ You cannot use a potion on a fainted Pokemon!', ephemeral=True)
+            return
+        
+        # Check inventory quantity
+        has_item = False
+        if item == 'potion' and inv.potion > 0:
+            has_item = True
+            inv.potion -= 1
+        elif item == 'super-potion' and inv.superpotion > 0:
+            has_item = True
+            inv.superpotion -= 1
+        elif item == 'hyper-potion' and inv.hyperpotion > 0:
+            has_item = True
+            inv.hyperpotion -= 1
+        elif item == 'max-potion' and inv.maxpotion > 0:
+            has_item = True
+            inv.maxpotion -= 1
+        elif item == 'revive' and inv.revive > 0:
+            has_item = True
+            inv.revive -= 1
+        elif item == 'full-restore' and inv.fullrestore > 0:
+            has_item = True
+            inv.fullrestore -= 1
+        
+        if not has_item:
+            await interaction.followup.send('❌ You do not have that item!', ephemeral=True)
+            return
+        
+        # Calculate new HP based on item type
+        new_hp = current_hp
+        
+        if item == 'revive':
+            new_hp = max_hp // 2  # 50% HP
+        elif item == 'potion':
+            new_hp = min(current_hp + 20, max_hp)
+        elif item == 'super-potion':
+            new_hp = min(current_hp + 50, max_hp)
+        elif item == 'hyper-potion':
+            new_hp = min(current_hp + 200, max_hp)
+        elif item == 'max-potion' or item == 'full-restore':
+            new_hp = max_hp
+        
+        # Calculate HP restored
+        hp_restored = new_hp - current_hp
+        
+        # UPDATE THE BATTLE STATE POKEMON'S HP (THIS IS THE KEY FIX!)
+        target_pokemon.currentHP = new_hp
+        
+        # Save inventory changes
+        inv.save()
+        
+        # Send success message
+        item_display_name = item.replace('-', ' ').title()
+        poke_display_name = target_pokemon.nickName if target_pokemon.nickName else target_pokemon.pokemonName.capitalize()
+        
+        await interaction.followup.send(
+            f'✅ Used {item_display_name} on {poke_display_name}! Restored {hp_restored} HP! (Now at {new_hp}/{max_hp} HP)',
+            ephemeral=True
+        )
+        
+        # Refresh the item usage view to show updated HP
         embed, view = self.__create_battle_item_usage_view(user, battle_state, is_wild_battle)
         await interaction.message.edit(embed=embed, view=view)
 
