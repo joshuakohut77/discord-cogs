@@ -3648,10 +3648,6 @@ class EncountersMixin(MixinMeta):
             player_stats = battle_state.player_pokemon.getPokeStats()
             enemy_stats = battle_state.enemy_pokemon.getPokeStats()
             
-            print(f"DEBUG: Player stats: {player_stats}")
-            print(f"DEBUG: Enemy stats: {enemy_stats}")
-            print(f"DEBUG: Enemy Pokemon: {battle_state.enemy_pokemon.pokemonName}, Level: {battle_state.enemy_pokemon.currentLevel}")
-    
 
             if damage_class == 'physical':
                 attack = player_stats['attack']
