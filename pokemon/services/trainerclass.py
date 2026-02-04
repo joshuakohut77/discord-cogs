@@ -431,7 +431,6 @@ class trainer:
         except:
             self.statuscode = 96
             self.message = 'error in receiving gift'
-            self.message = str(sys.exc_info())
             logger.error(excInfo=sys.exc_info())
 
     def onlyone(self, method='only-one'):
@@ -819,6 +818,7 @@ class trainer:
     
     def __getEncounter(self, method):
         """ gets a random encounter in the current area using the selected method """
+        from .encounterclass import encounter
         pokemon = None
         activePokemon = self.getActivePokemon()
         if activePokemon is None:
