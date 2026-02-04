@@ -5300,13 +5300,17 @@ class EncountersMixin(MixinMeta):
     
             # Get the pokemon that was just received (if successful)
             received_pokemon = None
+            debug_info = []
             if trainer.statuscode == 420 and "received" in trainer.message.lower():
+                debug_info.append("Gift was successful")
                 # Get trainer's most recent pokemon to show sprite
                 trainer_obj = TrainerClass(str(user.id))
                 pokemon_list = trainer_obj.getPokemon()
+                debug_info.append(f"Found {len(pokemon_list)} pokemon")
                 if pokemon_list and len(pokemon_list) > 0:
                     # The most recently added pokemon should be the last one
                     received_pokemon = pokemon_list[-1]
+                    debug_info.append(f"Received pokemon: {received_pokemon.pokemonName}")
             
             # Create embed for gift result
             sprite_file = None
@@ -5330,25 +5334,33 @@ class EncountersMixin(MixinMeta):
                     # Add pokemon sprite if we got one
                     if received_pokemon:
                         try:
-                            # Load pokemon config to get sprite path
-                            import json
-                            p = os.path.join(os.path.dirname(__file__), 'configs/pokemon.json')
-                            pokemon_config = json.load(open(p, 'r'))
+                            # The sprite path is like "/sprites/pokemon/magikarp.png"
+                            sprite_path = f"/sprites/pokemon/{received_pokemon.pokemonName}.png"
+                            debug_info.append(f"Sprite path: {sprite_path}")
                             
-                            # Get the front sprite path for this pokemon
-                            # Assuming pokemon config has a frontSprite path
-                            pokemon_data = pokemon_config.get(received_pokemon.pokemonName)
-                            if pokemon_data:
-                                # The sprite path might be like "/sprites/pokemon/magikarp.png"
-                                # Convert to full file system path
-                                sprite_path = f"/sprites/pokemon/{received_pokemon.pokemonName}.png"
-                                full_sprite_path = os.path.join(os.path.dirname(__file__), sprite_path.lstrip('/'))
-                                
-                                sprite_file = discord.File(full_sprite_path, filename=f"{received_pokemon.pokemonName}.png")
-                                embed.set_image(url=f"attachment://{received_pokemon.pokemonName}.png")
+                            # Convert to full file system path
+                            full_sprite_path = os.path.join(os.path.dirname(__file__), sprite_path.lstrip('/'))
+                            debug_info.append(f"Full path: {full_sprite_path}")
+                            
+                            # Check if file exists
+                            import os as os_check
+                            if os_check.path.exists(full_sprite_path):
+                                debug_info.append("✅ File exists!")
+                            else:
+                                debug_info.append("❌ File NOT found!")
+                            
+                            sprite_file = discord.File(full_sprite_path, filename=f"{received_pokemon.pokemonName}.png")
+                            embed.set_image(url=f"attachment://{received_pokemon.pokemonName}.png")
+                            debug_info.append("✅ Sprite file created")
                         except Exception as e:
+                            debug_info.append(f"❌ Error: {str(e)}")
                             print(f"Error loading pokemon sprite: {e}")
-                            # Fallback - no sprite, just show the message
+                    else:
+                        debug_info.append("No received_pokemon found")
+                    
+                    # Add debug info to embed
+                    if debug_info:
+                        embed.add_field(name="Debug Info", value="\n".join(debug_info), inline=False)
             else:
                 # Error occurred
                 embed = discord.Embed(
