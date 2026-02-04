@@ -110,7 +110,7 @@ class battle:
     def getTrainerList(self, gymLeader=False):
         """ returns a list of TrainerBattleModel objects which have not been completed """
         trainerModelList = []
-        db = None  # Initialize db to None
+        db = None
         try:
             db = dbconn()
             queryString = 'SELECT enemy_uuid FROM trainer_battles WHERE "locationId" = %(locationId)s AND discord_id = %(discordId)s'
@@ -126,7 +126,7 @@ class battle:
             else:
                 self.statuscode = 96
                 self.message = 'invalid enemyType. use "wild" or "gym"'
-                return []  # Return empty list instead of None
+                return []
 
             # Use absolute path relative to this file's location
             p = os.path.join(os.path.dirname(os.path.realpath(__file__)), configPath)
@@ -154,21 +154,18 @@ class battle:
             else:
                 trainerModelList = self.__returnTrainerList(trainerConfigList)
                 
-                # Check if __returnTrainerList returned None or a valid list
                 if trainerModelList is None:
-                    return []  # Return empty list if there was an error
+                    return []
                 
                 # Filter out previously defeated trainers
-                # Using list comprehension to avoid modifying list during iteration
                 trainerModelList = [trainer for trainer in trainerModelList if trainer.enemy_uuid not in enemyUUIDs]
 
         except Exception as e:
             self.statuscode = 96
             self.message = f'Error loading trainer list: {str(e)}'
             logger.error(excInfo=sys.exc_info())
-            return []  # Return empty list on error
+            return []
         finally:
-            # delete and close connection - only if db was created
             if db is not None:
                 del db
             return trainerModelList
