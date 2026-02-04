@@ -299,6 +299,37 @@ class Pokemon:
         # return only 4 moves
         return moveList[0: 4]
 
+    def __isActivePokemon(self):
+        """ checks if this pokemon is the trainer's active pokemon """
+        isActive = False
+        try:
+            db = dbconn()
+            queryString = 'SELECT "activePokemon" FROM trainer WHERE "discord_id" = %(discordId)s'
+            result = db.querySingle(queryString, { 'discordId': self.discordId })
+            if result and result[0] == self.trainerId:
+                isActive = True
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            del db
+            return isActive
+
+    def __updateActivePokemon(self, newTrainerId):
+        """ updates the trainer's active pokemon to a new trainerId """
+        try:
+            db = dbconn()
+            updateString = 'UPDATE trainer SET "activePokemon"=%(trainerId)s WHERE "discord_id"=%(discordId)s'
+            db.execute(updateString, { 'trainerId': newTrainerId, 'discordId': self.discordId })
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            del db
+
+    
+
+
     def getNextLevelExperience(self):
         return self.__getBaseLevelExperience(level=self.currentLevel+1)
 
@@ -354,17 +385,26 @@ class Pokemon:
                                 retMsg += 'Your pokemon is evolving......... Your pokemon evolved into %s!' % (
                                     evolvedForm)
                                 
-                                #  Pass discordId as first argument, pokemon name as second
+                                # Store old Pokemon info before creating new one
+                                oldTrainerId = self.trainerId
+                                oldPartyStatus = self.party
+                                wasActivePokemon = self.__isActivePokemon()
+                                
+                                # Create evolved Pokemon with correct constructor arguments
                                 evolvedPokemon = Pokemon(self.discordId, evolvedForm)
                                 evolvedPokemon.create(self.currentLevel)
                                 
-                                #  Check party size and set party status before saving
-                                from trainerclass import trainer as trainer_import
-                                trainer = trainer_import(self.discordId)
-                                party_count = trainer.getPartySize()
-                                evolvedPokemon.party = party_count < 6  # True if party < 6, False to PC
+                                # Inherit party status from old Pokemon
+                                evolvedPokemon.party = oldPartyStatus
                                 
+                                # Save the evolved Pokemon first to get its trainerId
                                 evolvedPokemon.save()
+                                
+                                # If old Pokemon was active, update trainer's activePokemon to new one
+                                if wasActivePokemon:
+                                    self.__updateActivePokemon(evolvedPokemon.trainerId)
+                                
+                                # Now delete the old Pokemon (soft delete)
                                 self.__delete()
                             break
 
