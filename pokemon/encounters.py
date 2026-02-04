@@ -3726,7 +3726,7 @@ class EncountersMixin(MixinMeta):
                 # Enemy has more Pokemon - switch to next one
                 battle_state.enemy_current_index += 1
                 next_enemy_data = battle_state.enemy_pokemon_data[battle_state.enemy_current_index]
-                battle_state.enemy_pokemon = self.__create_enemy_pokemon(next_enemy_data)
+                battle_state.enemy_pokemon = self.__create_enemy_pokemon(next_enemy_data, battle_state.user_id)
                 
                 log_lines.append(f"⚡ {battle_state.enemy_name} sent out {battle_state.enemy_pokemon.pokemonName.capitalize()}!")
                 
@@ -4755,7 +4755,7 @@ class EncountersMixin(MixinMeta):
 
         # Create first enemy Pokemon
         try:
-            first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0])
+            first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0], battle_state.user_id)
         except Exception as e:
             await intro_message.edit(content=f'Error creating enemy Pokemon: {str(e)}')
             return
@@ -5919,7 +5919,7 @@ class EncountersMixin(MixinMeta):
 
         # Create first enemy Pokemon
         try:
-            first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0])
+            first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0], battle_state.user_id)
         except Exception as e:
             await intro_message.edit(content=f'Error creating gym leader Pokemon: {str(e)}')
             return
