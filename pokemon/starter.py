@@ -41,22 +41,6 @@ class StarterMixin(MixinMeta):
         pass
 
 
-    @_trainer.command(name='nickname', aliases=['nn'])
-    async def nickName(self, ctx: commands.Context, id: int, name: str):
-        user = ctx.author
-
-        trainer = TrainerClass(str(user.id))
-        pokemon = trainer.getPokemonById(id)
-
-        if pokemon is not None:
-            pokemon.nickName = name
-            pokemon.save()
-            await ctx.send(f'You changed {pokemon.pokemonName.capitalize()} nickname to {name}')
-        else:
-            await ctx.send(f'That pokemon does not exist')
-        
-
-
     @_trainer.command()
     async def active(self, ctx: commands.Context, user: DiscordUser = None) -> None:
         """Show the currect active pokemon for the trainer."""
