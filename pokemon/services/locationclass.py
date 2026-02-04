@@ -56,6 +56,7 @@ class location:
         return loc
 
 
+
     def getMethods(self):
         """ returns a list of methods available in that area """
         methodList = []
@@ -75,8 +76,33 @@ class location:
             # map each method name, then make a set.
             # A `set` removes duplicate values.
             methods = set(map(lambda x: x['method'], areaEncounters))
+            
+            # Load trainer's key items to filter out unavailable methods
+            keyitems = kitems(self.discordId)
+            
             for method in methods:
-                methodList.append(actions[method])
+                # Check if trainer owns required key item for this method
+                include_method = True
+                
+                if method == 'old-rod':
+                    if not keyitems.old_rod:
+                        include_method = False
+                elif method == 'good-rod':
+                    if not keyitems.good_rod:
+                        include_method = False
+                elif method == 'super-rod':
+                    if not keyitems.super_rod:
+                        include_method = False
+                elif method == 'surf':
+                    if not keyitems.HM03:
+                        include_method = False
+                elif method == 'pokeflute':
+                    if not keyitems.pokeflute:
+                        include_method = False
+                
+                # Only add method if trainer has the required item (or no item required)
+                if include_method:
+                    methodList.append(actions[method])
             
             
             # This next section checks if there's any valid quests in current area
