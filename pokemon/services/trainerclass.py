@@ -390,12 +390,11 @@ class trainer:
     def gift(self, method='gift'):
         """ handles a gift action """
         retMsg = ''
-        giftCompleted = False
+        giftCompleted = False  # Initialize at the start
         try:
             location = self.getLocation()
             locationId = location.locationId
             if locationId in [67, 86, 120, 234, 2347]:
-                giftCompleted = False
                 uEncObj = uEnc(str(self.discordId))
                 if locationId == 67:
                     if uEncObj.eevee:
@@ -416,14 +415,17 @@ class trainer:
                 if giftCompleted:
                     self.statuscode = 420
                     self.message = "You have already received the gift in this location"
+                    return  # Add return here to exit early
 
             if not giftCompleted:
                 method = 'gift'
                 pokemon = self.__getEncounter(method)
+                if pokemon is None:  # Check if pokemon was actually created
+                    return
                 pokemon.save()
                 # Add to pokedex
                 pokedex(self.discordId, pokemon)
-                retMsg = 'You received %s!' %pokemon.pokemonName
+                retMsg = 'You received %s!' % pokemon.pokemonName  # FIX: Add the pokemon name
                 self.statuscode = 420
                 self.message = retMsg
         except:
