@@ -747,8 +747,9 @@ class EncountersMixin(MixinMeta):
         
         # Load location sprite as file attachment (like ,trainer map does)
         try:
-            # Create file from sprite path
-            sprite_file = discord.File(location.spritePath, filename=f"{location.name}.png")
+            # Convert to full file system path
+            full_sprite_path = os.path.join(os.path.dirname(__file__), location.spritePath.lstrip('/'))
+            sprite_file = discord.File(full_sprite_path, filename=f"{location.name}.png")
             
             # Upload to logging channel to get URL
             temp_message = await self.sendToLoggingChannel(f'{user.display_name} viewing map', sprite_file)
@@ -2712,7 +2713,10 @@ class EncountersMixin(MixinMeta):
         
         # Load location sprite
         try:
-            sprite_file = discord.File(location.spritePath, filename=f"{location.name}.png")
+            # Convert to full file system path
+            full_sprite_path = os.path.join(os.path.dirname(__file__), location.spritePath.lstrip('/'))
+            sprite_file = discord.File(full_sprite_path, filename=f"{location.name}.png")
+
             temp_message = await self.sendToLoggingChannel(f'{user.display_name} viewing map', sprite_file)
             if temp_message and temp_message.attachments:
                 attachment = temp_message.attachments[0]
@@ -3583,7 +3587,10 @@ class EncountersMixin(MixinMeta):
         
         # Load location sprite
         try:
-            sprite_file = discord.File(location.spritePath, filename=f"{location.name}.png")
+            # Convert to full file system path
+            full_sprite_path = os.path.join(os.path.dirname(__file__), location.spritePath.lstrip('/'))
+            sprite_file = discord.File(full_sprite_path, filename=f"{location.name}.png")
+
             temp_message = await self.sendToLoggingChannel(f'{user.display_name} viewing map', sprite_file)
             if temp_message and temp_message.attachments:
                 attachment = temp_message.attachments[0]
