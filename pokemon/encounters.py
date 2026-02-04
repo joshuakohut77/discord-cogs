@@ -173,24 +173,31 @@ class EncountersMixin(MixinMeta):
             enemy_trainers_data = self.__load_enemy_trainers_data()
             
             # Debug: Log location being checked
-            logger.info(f"Checking wild trainers for location_id: {location_id}")
+            logger.info(f"[WILD_TRAINERS] Checking location_id: {location_id}")
             
             # Check if location has wild trainers
             if str(location_id) not in enemy_trainers_data:
-                logger.info(f"Location {location_id} not in enemyTrainers.json")
+                logger.info(f"[WILD_TRAINERS] Location {location_id} NOT in enemyTrainers.json")
                 return None
             
-            logger.info(f"Location {location_id} HAS wild trainers in config")
+            logger.info(f"[WILD_TRAINERS] Location {location_id} HAS trainers in config")
             
-            # Check if there are any remaining trainers to battle
+            # Create battle manager and get remaining count
             battle = BattleClass(user_id, location_id, enemyType="wild")
-            remaining = battle.getRemainingTrainerCount()
             
-            logger.info(f"Remaining trainers at location {location_id}: {remaining}")
+            # Debug the getTrainerList call
+            trainer_list = battle.getTrainerList()
+            logger.info(f"[WILD_TRAINERS] getTrainerList returned: {len(trainer_list) if trainer_list else 'None'} trainers")
+            
+            if trainer_list:
+                for i, trainer in enumerate(trainer_list):
+                    logger.info(f"[WILD_TRAINERS]   Trainer {i}: {trainer.name} (UUID: {trainer.enemy_uuid})")
+            
+            remaining = battle.getRemainingTrainerCount()
+            logger.info(f"[WILD_TRAINERS] getRemainingTrainerCount returned: {remaining}")
             
             if remaining == 0:
-                # All trainers defeated
-                logger.info(f"All trainers defeated at location {location_id}")
+                logger.info(f"[WILD_TRAINERS] No remaining trainers - button not created")
                 return None
             
             # Create trainers button
@@ -202,12 +209,12 @@ class EncountersMixin(MixinMeta):
             )
             button.callback = self.on_wild_trainers_click
             
-            logger.info(f"Created wild trainers button with {remaining} trainers")
+            logger.info(f"[WILD_TRAINERS] ✅ CREATED button with {remaining} trainers")
             
             return button
             
         except Exception as e:
-            logger.error(f"Error in __get_wild_trainers_button: {e}", exc_info=True)
+            logger.error(f"[WILD_TRAINERS] ❌ ERROR: {e}", exc_info=True)
             return None
 
     async def on_wild_trainers_click(self, interaction: discord.Interaction):
@@ -1155,8 +1162,22 @@ class EncountersMixin(MixinMeta):
         
         # Set sprite if available
         if location.spritePath:
-            sprite_url = f"https://pokesprites.joshkohut.com{location.spritePath}"
-            embed.set_image(url=sprite_url)
+            try:
+                # Convert to full file system path
+                full_sprite_path = os.path.join(os.path.dirname(__file__), location.spritePath.lstrip('/'))
+                sprite_file = discord.File(full_sprite_path, filename=f"{location.name}.png")
+
+                temp_message = await self.sendToLoggingChannel(f'{user.display_name} viewing map', sprite_file)
+                if temp_message and temp_message.attachments:
+                    attachment = temp_message.attachments[0]
+                    embed.set_image(url=attachment.url)
+            except Exception as e:
+                print(f"Error loading location sprite from file: {e}")
+                try:
+                    sprite_url = f"https://pokesprites.joshkohut.com/sprites/locations/{location.name}.png"
+                    embed.set_image(url=sprite_url)
+                except:
+                    pass
         
         # Create view with direction buttons
         view = View()
@@ -4073,11 +4094,27 @@ class EncountersMixin(MixinMeta):
             description=f"You are at {location_name}.",
             color=discord.Color.blue()
         )
+
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
         
-        # Set sprite if available
+        # Load location sprite - FIX APPLIED HERE
         if location.spritePath:
-            sprite_url = f"https://pokesprites.joshkohut.com{location.spritePath}"
-            embed.set_image(url=sprite_url)
+            try:
+                # Convert to full file system path
+                full_sprite_path = os.path.join(os.path.dirname(__file__), location.spritePath.lstrip('/'))
+                sprite_file = discord.File(full_sprite_path, filename=f"{location.name}.png")
+
+                temp_message = await self.sendToLoggingChannel(f'{user.display_name} viewing map', sprite_file)
+                if temp_message and temp_message.attachments:
+                    attachment = temp_message.attachments[0]
+                    embed.set_image(url=attachment.url)
+            except Exception as e:
+                print(f"Error loading location sprite from file: {e}")
+                try:
+                    sprite_url = f"https://pokesprites.joshkohut.com/sprites/locations/{location.name}.png"
+                    embed.set_image(url=sprite_url)
+                except:
+                    pass
         
         # Create view with direction buttons
         view = View()
