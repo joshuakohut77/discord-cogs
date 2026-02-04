@@ -497,7 +497,7 @@ class EncountersMixin(MixinMeta):
         
         # Create battle display
         embed = self.__create_battle_embed(user, battle_state)
-        view = self.__create_move_buttons(battle_state)
+        view = self.__create_battle_move_buttons_with_items(battle_state)
         
         # Edit the message instead of followup
         await interaction.message.edit(
@@ -692,7 +692,7 @@ class EncountersMixin(MixinMeta):
         
         # Restore battle interface
         embed = self.__create_wild_battle_embed(user, battle_state)
-        view = self.__create_wild_battle_move_buttons(battle_state)
+        view = self.__create_battle_move_buttons_with_items(battle_state)
         
         await interaction.message.edit(embed=embed, view=view)
 
@@ -1045,69 +1045,69 @@ class EncountersMixin(MixinMeta):
         
         # Update display
         embed = self.__create_wild_battle_embed(user, battle_state)
-        view = self.__create_wild_battle_move_buttons(battle_state)
+        view = self.__create_battle_move_buttons_with_items(battle_state)
         
         await interaction.message.edit(embed=embed, view=view)
     
-    def __create_wild_battle_move_buttons(self, battle_state: WildBattleState) -> View:
-        """Create buttons for moves, run away, and catch options"""
-        view = View()
-        moves = battle_state.player_pokemon.getMoves()
+    # def __create_wild_battle_move_buttons(self, battle_state: WildBattleState) -> View:
+    #     """Create buttons for moves, run away, and catch options"""
+    #     view = View()
+    #     moves = battle_state.player_pokemon.getMoves()
         
-        # Load move data to show power/type
-        try:
-            p = os.path.join(os.path.dirname(__file__), 'configs', 'moves.json')
-            with open(p, 'r') as f:
-                moves_config = json.load(f)
-        except:
-            moves_config = {}
+    #     # Load move data to show power/type
+    #     try:
+    #         p = os.path.join(os.path.dirname(__file__), 'configs', 'moves.json')
+    #         with open(p, 'r') as f:
+    #             moves_config = json.load(f)
+    #     except:
+    #         moves_config = {}
         
-        # Add move buttons (in a row)
-        move_buttons = []
-        for i, move_name in enumerate(moves):
-            if move_name and move_name.lower() != 'none':
-                move_data = moves_config.get(move_name, {})
-                power = move_data.get('power', 0)
-                move_type = move_data.get('moveType', '???')
+    #     # Add move buttons (in a row)
+    #     move_buttons = []
+    #     for i, move_name in enumerate(moves):
+    #         if move_name and move_name.lower() != 'none':
+    #             move_data = moves_config.get(move_name, {})
+    #             power = move_data.get('power', 0)
+    #             move_type = move_data.get('moveType', '???')
                 
-                if power and power > 0:
-                    label = f"{move_name.replace('-', ' ').title()} ({power})"
-                else:
-                    label = f"{move_name.replace('-', ' ').title()}"
+    #             if power and power > 0:
+    #                 label = f"{move_name.replace('-', ' ').title()} ({power})"
+    #             else:
+    #                 label = f"{move_name.replace('-', ' ').title()}"
                 
-                button = Button(
-                    style=ButtonStyle.primary, 
-                    label=label, 
-                    custom_id=f'wild_battle_move_{move_name}',
-                    row=0
-                )
-                button.callback = self.on_wild_battle_move_click
-                move_buttons.append(button)
+    #             button = Button(
+    #                 style=ButtonStyle.primary, 
+    #                 label=label, 
+    #                 custom_id=f'wild_battle_move_{move_name}',
+    #                 row=0
+    #             )
+    #             button.callback = self.on_wild_battle_move_click
+    #             move_buttons.append(button)
         
-        for btn in move_buttons[:4]:  # Max 4 moves
-            view.add_item(btn)
+    #     for btn in move_buttons[:4]:  # Max 4 moves
+    #         view.add_item(btn)
         
-        # Add Run Away button (second row)
-        run_button = Button(
-            style=ButtonStyle.danger, 
-            label="🏃 Run Away", 
-            custom_id='wild_battle_run',
-            row=1
-        )
-        run_button.callback = self.on_wild_battle_run_click
-        view.add_item(run_button)
+    #     # Add Run Away button (second row)
+    #     run_button = Button(
+    #         style=ButtonStyle.danger, 
+    #         label="🏃 Run Away", 
+    #         custom_id='wild_battle_run',
+    #         row=1
+    #     )
+    #     run_button.callback = self.on_wild_battle_run_click
+    #     view.add_item(run_button)
         
-        # Add Catch button (second row)
-        catch_button = Button(
-            style=ButtonStyle.success, 
-            label="Catch", 
-            custom_id='wild_battle_catch',
-            row=1
-        )
-        catch_button.callback = self.on_wild_battle_catch_click
-        view.add_item(catch_button)
+    #     # Add Catch button (second row)
+    #     catch_button = Button(
+    #         style=ButtonStyle.success, 
+    #         label="Catch", 
+    #         custom_id='wild_battle_catch',
+    #         row=1
+    #     )
+    #     catch_button.callback = self.on_wild_battle_catch_click
+    #     view.add_item(catch_button)
         
-        return view
+    #     return view
 
 
     def __create_wild_battle_embed(self, user: discord.User, battle_state: WildBattleState) -> discord.Embed:
@@ -2731,6 +2731,277 @@ class EncountersMixin(MixinMeta):
         
         return view
 
+    async def on_battle_use_items_click(self, interaction: discord.Interaction):
+        """Show item usage interface during battle"""
+        user = interaction.user
+        user_id = str(user.id)
+        await interaction.response.defer()
+        
+        # Check which battle state this user is in
+        battle_state = None
+        is_wild_battle = False
+        
+        if user_id in self.__battle_states:
+            battle_state = self.__battle_states[user_id]
+        elif user_id in self.__wild_battle_states:
+            battle_state = self.__wild_battle_states[user_id]
+            is_wild_battle = True
+        
+        if not battle_state:
+            await interaction.followup.send('Battle state not found.', ephemeral=True)
+            return
+        
+        # Create item usage state
+        self.__item_usage_states[user_id] = ItemUsageState(user_id)
+        
+        # Show item usage interface
+        embed, view = self.__create_battle_item_usage_view(user, battle_state, is_wild_battle)
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    def __create_battle_item_usage_view(self, user: discord.User, battle_state, is_wild_battle: bool) -> tuple[discord.Embed, View]:
+        """Create the item usage interface during battle"""
+        from services.trainerclass import trainer as TrainerClass
+        from services.inventoryclass import inventory as InventoryClass
+        from discord.ui import Select
+        
+        trainer = TrainerClass(str(user.id))
+        inv = InventoryClass(str(user.id))
+        
+        # Get party Pokemon from battle state
+        if hasattr(battle_state, 'player_party'):
+            pokeList = battle_state.player_party
+        else:
+            pokeList = [battle_state.player_pokemon]
+        
+        item_state = self.__item_usage_states.get(str(user.id), ItemUsageState(str(user.id)))
+        
+        # Create embed
+        embed = discord.Embed(
+            title="💊 Use Items in Battle",
+            description="Select a Pokemon and an item to use.",
+            color=discord.Color.blue()
+        )
+        embed.set_author(name=user.display_name, icon_url=str(user.display_avatar.url))
+        
+        view = View()
+        
+        # ROW 0: Pokemon selector
+        pokemon_select = Select(placeholder="Choose a Pokemon", custom_id='battle_item_pokemon_select', row=0)
+        for poke in pokeList:
+            # Make sure Pokemon is loaded
+            if not hasattr(poke, 'currentHP') or poke.currentHP is None:
+                poke.load(pokemonId=poke.trainerId)
+            
+            label = f"{poke.pokemonName.capitalize()}"
+            if poke.nickName:
+                label = f"{poke.nickName} ({poke.pokemonName.capitalize()})"
+            label += f" Lv.{poke.currentLevel}"
+            
+            stats = poke.getPokeStats()
+            if poke.currentHP <= 0:
+                description = "💀 Fainted"
+            else:
+                description = f"HP: {poke.currentHP}/{stats['hp']}"
+            
+            pokemon_select.add_option(
+                label=label[:100],
+                value=str(poke.trainerId),
+                description=description[:100],
+                default=(str(poke.trainerId) == item_state.selected_pokemon_id)
+            )
+        
+        pokemon_select.callback = self.on_battle_item_pokemon_select
+        view.add_item(pokemon_select)
+        
+        # ROW 1: Item selector
+        item_select = Select(placeholder="Choose an Item", custom_id='battle_item_item_select', row=1)
+        
+        usable_items = [
+            ('potion', inv.potion, 'Potion', 'Restores 20 HP'),
+            ('super-potion', inv.superpotion, 'Super Potion', 'Restores 50 HP'),
+            ('hyper-potion', inv.hyperpotion, 'Hyper Potion', 'Restores 200 HP'),
+            ('max-potion', inv.maxpotion, 'Max Potion', 'Fully restores HP'),
+            ('revive', inv.revive, 'Revive', 'Revives fainted Pokemon (50% HP)'),
+            ('full-restore', inv.fullrestore, 'Full Restore', 'Fully restores HP'),
+        ]
+        
+        has_items = False
+        for item_key, quantity, display_name, description in usable_items:
+            if quantity > 0:
+                has_items = True
+                item_select.add_option(
+                    label=f"{display_name} (x{quantity})",
+                    value=item_key,
+                    description=description[:100],
+                    default=(item_key == item_state.selected_item)
+                )
+        
+        if not has_items:
+            embed.add_field(
+                name="❌ No Usable Items",
+                value="You don't have any healing items!",
+                inline=False
+            )
+        else:
+            item_select.callback = self.on_battle_item_item_select
+            view.add_item(item_select)
+            
+            # ROW 2: Use button
+            use_disabled = not (item_state.selected_pokemon_id and item_state.selected_item)
+            use_btn = Button(
+                style=ButtonStyle.green,
+                label="✅ Use Item",
+                custom_id='battle_item_use',
+                row=2,
+                disabled=use_disabled
+            )
+            use_btn.callback = self.on_battle_item_use_click
+            view.add_item(use_btn)
+        
+        # ROW 3: Back to battle button
+        back_btn = Button(
+            style=ButtonStyle.gray,
+            label="← Back to Battle",
+            custom_id='battle_item_back',
+            row=3
+        )
+        back_btn.callback = self.on_battle_item_back_click
+        view.add_item(back_btn)
+        
+        return embed, view
+
+
+    async def on_battle_item_pokemon_select(self, interaction: discord.Interaction):
+        """Handle Pokemon selection during battle item usage"""
+        user = interaction.user
+        user_id = str(user.id)
+        
+        if user_id not in self.__item_usage_states:
+            await interaction.response.send_message('Session expired.', ephemeral=True)
+            return
+        
+        # Update selected Pokemon
+        selected_value = interaction.data['values'][0]
+        self.__item_usage_states[user_id].selected_pokemon_id = selected_value
+        
+        # Get battle state
+        battle_state = None
+        is_wild_battle = False
+        if user_id in self.__battle_states:
+            battle_state = self.__battle_states[user_id]
+        elif user_id in self.__wild_battle_states:
+            battle_state = self.__wild_battle_states[user_id]
+            is_wild_battle = True
+        
+        # Recreate view with updated selection
+        embed, view = self.__create_battle_item_usage_view(user, battle_state, is_wild_battle)
+        await interaction.response.edit_message(embed=embed, view=view)
+
+
+    async def on_battle_item_item_select(self, interaction: discord.Interaction):
+        """Handle item selection during battle item usage"""
+        user = interaction.user
+        user_id = str(user.id)
+        
+        if user_id not in self.__item_usage_states:
+            await interaction.response.send_message('Session expired.', ephemeral=True)
+            return
+        
+        # Update selected item
+        selected_value = interaction.data['values'][0]
+        self.__item_usage_states[user_id].selected_item = selected_value
+        
+        # Get battle state
+        battle_state = None
+        is_wild_battle = False
+        if user_id in self.__battle_states:
+            battle_state = self.__battle_states[user_id]
+        elif user_id in self.__wild_battle_states:
+            battle_state = self.__wild_battle_states[user_id]
+            is_wild_battle = True
+        
+        # Recreate view with updated selection
+        embed, view = self.__create_battle_item_usage_view(user, battle_state, is_wild_battle)
+        await interaction.response.edit_message(embed=embed, view=view)
+
+
+    async def on_battle_item_use_click(self, interaction: discord.Interaction):
+        """Use the selected item during battle"""
+        user = interaction.user
+        user_id = str(user.id)
+        await interaction.response.defer(ephemeral=True)
+        
+        if user_id not in self.__item_usage_states:
+            await interaction.followup.send('Session expired.', ephemeral=True)
+            return
+        
+        item_state = self.__item_usage_states[user_id]
+        
+        if not item_state.selected_pokemon_id or not item_state.selected_item:
+            await interaction.followup.send('Please select both a Pokemon and an item.', ephemeral=True)
+            return
+        
+        from services.trainerclass import trainer as TrainerClass
+        
+        trainer = TrainerClass(user_id)
+        
+        # Use the item
+        trainer.useItem(int(item_state.selected_pokemon_id), item_state.selected_item)
+        
+        # Send result as ephemeral message
+        if trainer.statuscode == 420:
+            await interaction.followup.send(f'✅ {trainer.message}', ephemeral=True)
+        else:
+            await interaction.followup.send(f'❌ {trainer.message}', ephemeral=True)
+        
+        # Get battle state to refresh
+        battle_state = None
+        is_wild_battle = False
+        if user_id in self.__battle_states:
+            battle_state = self.__battle_states[user_id]
+        elif user_id in self.__wild_battle_states:
+            battle_state = self.__wild_battle_states[user_id]
+            is_wild_battle = True
+        
+        # Refresh the item usage view
+        embed, view = self.__create_battle_item_usage_view(user, battle_state, is_wild_battle)
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    async def on_battle_item_back_click(self, interaction: discord.Interaction):
+        """Return to battle from item usage"""
+        user = interaction.user
+        user_id = str(user.id)
+        await interaction.response.defer()
+        
+        # Clean up item usage state
+        if user_id in self.__item_usage_states:
+            del self.__item_usage_states[user_id]
+        
+        # Get battle state
+        battle_state = None
+        is_wild_battle = False
+        
+        if user_id in self.__battle_states:
+            battle_state = self.__battle_states[user_id]
+        elif user_id in self.__wild_battle_states:
+            battle_state = self.__wild_battle_states[user_id]
+            is_wild_battle = True
+        
+        if not battle_state:
+            await interaction.followup.send('Battle state not found.', ephemeral=True)
+            return
+        
+        # Return to battle view
+        if is_wild_battle:
+            embed = self.__create_wild_battle_embed(user, battle_state)
+        else:
+            embed = self.__create_battle_embed(user, battle_state)
+        
+        view = self.__create_battle_move_buttons_with_items(battle_state)
+        await interaction.message.edit(embed=embed, view=view)
+
     async def on_pc_back_to_bag_click(self, interaction: discord.Interaction):
         """Return to bag items view from PC"""
         user = interaction.user
@@ -3907,40 +4178,40 @@ class EncountersMixin(MixinMeta):
         
         return embed
 
-    def __create_move_buttons(self, battle_state: BattleState) -> View:
-        """Create buttons for each of the player's Pokemon's moves"""
-        view = View()
-        moves = battle_state.player_pokemon.getMoves()
+    # def __create_move_buttons(self, battle_state: BattleState) -> View:
+    #     """Create buttons for each of the player's Pokemon's moves"""
+    #     view = View()
+    #     moves = battle_state.player_pokemon.getMoves()
         
-        # Load move data to show power/type
-        try:
-            p = os.path.join(os.path.dirname(__file__), 'configs', 'moves.json')
-            with open(p, 'r') as f:
-                moves_config = json.load(f)
-        except:
-            moves_config = {}
+    #     # Load move data to show power/type
+    #     try:
+    #         p = os.path.join(os.path.dirname(__file__), 'configs', 'moves.json')
+    #         with open(p, 'r') as f:
+    #             moves_config = json.load(f)
+    #     except:
+    #         moves_config = {}
         
-        for i, move_name in enumerate(moves):
-            if move_name and move_name.lower() != 'none':
-                move_data = moves_config.get(move_name, {})
-                power = move_data.get('power', 0)
-                move_type = move_data.get('moveType', '???')
+    #     for i, move_name in enumerate(moves):
+    #         if move_name and move_name.lower() != 'none':
+    #             move_data = moves_config.get(move_name, {})
+    #             power = move_data.get('power', 0)
+    #             move_type = move_data.get('moveType', '???')
                 
-                # Create button label with move info
-                if power and power > 0:
-                    label = f"{move_name.replace('-', ' ').title()} ({move_type.title()}, PWR:{power})"
-                else:
-                    label = f"{move_name.replace('-', ' ').title()} ({move_type.title()})"
+    #             # Create button label with move info
+    #             if power and power > 0:
+    #                 label = f"{move_name.replace('-', ' ').title()} ({move_type.title()}, PWR:{power})"
+    #             else:
+    #                 label = f"{move_name.replace('-', ' ').title()} ({move_type.title()})"
                 
-                button = Button(
-                    style=ButtonStyle.primary,
-                    label=label[:80],  # Discord label limit
-                    custom_id=f'battle_move_{move_name}'
-                )
-                button.callback = self.on_battle_move_click
-                view.add_item(button)
+    #             button = Button(
+    #                 style=ButtonStyle.primary,
+    #                 label=label[:80],  # Discord label limit
+    #                 custom_id=f'battle_move_{move_name}'
+    #             )
+    #             button.callback = self.on_battle_move_click
+    #             view.add_item(button)
         
-        return view
+    #     return view
 
     async def on_battle_move_click(self, interaction: discord.Interaction):
         """Handle when player selects a move during manual battle - with Pokemon switching"""
@@ -4060,7 +4331,7 @@ class EncountersMixin(MixinMeta):
                 
                 # Update display with new enemy Pokemon
                 embed = self.__create_battle_embed(user, battle_state)
-                view = self.__create_move_buttons(battle_state)
+                view = self.__create_battle_move_buttons_with_items(battle_state)
                 await interaction.message.edit(embed=embed, view=view)
                 return
             else:
@@ -4136,7 +4407,7 @@ class EncountersMixin(MixinMeta):
                 
                 # Update display with new player Pokemon
                 embed = self.__create_battle_embed(user, battle_state)
-                view = self.__create_move_buttons(battle_state)
+                view = self.__create_battle_move_buttons_with_items(battle_state)
                 await interaction.message.edit(embed=embed, view=view)
                 return
             else:
@@ -4153,7 +4424,7 @@ class EncountersMixin(MixinMeta):
         
         # Update display
         embed = self.__create_battle_embed(user, battle_state)
-        view = self.__create_move_buttons(battle_state)
+        view = self.__create_battle_move_buttons_with_items(battle_state)
         
         await interaction.message.edit(embed=embed, view=view)
 
@@ -4681,6 +4952,94 @@ class EncountersMixin(MixinMeta):
 
         await interaction.message.edit(view=view)
 
+    def __create_battle_move_buttons_with_items(self, battle_state) -> View:
+        """
+        Create move buttons plus Use Items button for battles.
+        Works with both BattleState and WildBattleState.
+        """
+        view = View()
+        
+        # Determine which Pokemon to get moves from based on battle state type
+        if hasattr(battle_state, 'player_pokemon'):
+            player_pokemon = battle_state.player_pokemon
+        else:
+            # Shouldn't happen, but fallback
+            return view
+        
+        moves = player_pokemon.getMoves()
+        
+        # Load move data to show power/type
+        try:
+            import os
+            import json
+            p = os.path.join(os.path.dirname(__file__), 'configs', 'moves.json')
+            with open(p, 'r') as f:
+                moves_config = json.load(f)
+        except:
+            moves_config = {}
+        
+        # ROW 0: Move buttons (up to 4 moves)
+        for i, move_name in enumerate(moves):
+            if move_name and move_name.lower() != 'none':
+                move_data = moves_config.get(move_name, {})
+                power = move_data.get('power', 0)
+                move_type = move_data.get('moveType', '???')
+                
+                # Create button label with move info
+                if power and power > 0:
+                    label = f"{move_name.replace('-', ' ').title()} ({move_type.title()}, PWR:{power})"
+                else:
+                    label = f"{move_name.replace('-', ' ').title()} ({move_type.title()})"
+                
+                # Determine callback based on battle type
+                if isinstance(battle_state, WildBattleState):
+                    custom_id = f'wild_battle_move_{move_name}'
+                    callback = self.on_wild_battle_move_click
+                else:  # BattleState (gym/trainer)
+                    custom_id = f'battle_move_{move_name}'
+                    callback = self.on_battle_move_click
+                
+                button = Button(
+                    style=ButtonStyle.primary,
+                    label=label[:80],  # Discord label limit
+                    custom_id=custom_id,
+                    row=0
+                )
+                button.callback = callback
+                view.add_item(button)
+        
+        # ROW 1: Action buttons (Use Items, and conditionally Run/Catch for wild battles)
+        use_items_btn = Button(
+            style=ButtonStyle.blurple,
+            label="💊 Use Items",
+            custom_id='battle_use_items',
+            row=1
+        )
+        use_items_btn.callback = self.on_battle_use_items_click
+        view.add_item(use_items_btn)
+        
+        # Add Run Away and Catch buttons ONLY for wild Pokemon battles
+        if isinstance(battle_state, WildBattleState):
+            run_button = Button(
+                style=ButtonStyle.danger,
+                label="🏃 Run Away",
+                custom_id='wild_battle_run',
+                row=1
+            )
+            run_button.callback = self.on_wild_battle_run_click
+            view.add_item(run_button)
+            
+            catch_button = Button(
+                style=ButtonStyle.success,
+                label="Catch",
+                custom_id='wild_battle_catch',
+                row=1
+            )
+            catch_button.callback = self.on_wild_battle_catch_click
+            view.add_item(catch_button)
+        
+        return view
+
     async def on_gym_battle_auto(self, interaction: discord.Interaction):
         """Handle AUTO battle with gym trainer - now supports multiple Pokemon"""
         user = interaction.user
@@ -4973,7 +5332,7 @@ class EncountersMixin(MixinMeta):
 
         # REPLACE intro screen with battle interface
         embed = self.__create_battle_embed(user, battle_state)
-        view = self.__create_move_buttons(battle_state)
+        view = self.__create_battle_move_buttons_with_items(battle_state)
 
         message = await intro_message.edit(
             content=f"**Manual Battle Started!**\n{next_trainer.name} has {len(enemy_pokemon_list)} Pokemon!",
@@ -6138,7 +6497,7 @@ class EncountersMixin(MixinMeta):
 
         # REPLACE intro screen with battle interface
         embed = self.__create_battle_embed(user, battle_state)
-        view = self.__create_move_buttons(battle_state)
+        view = self.__create_battle_move_buttons_with_items(battle_state)
 
         message = await intro_message.edit(
             content=f"**Gym Leader Battle Started!**\n{gym_leader.name} has {len(enemy_pokemon_list)} Pokemon!",
@@ -6499,7 +6858,7 @@ class EncountersMixin(MixinMeta):
         
         # Create battle embed and move buttons
         embed = self.__create_wild_battle_embed(user, wild_battle_state)
-        view = self.__create_wild_battle_move_buttons(wild_battle_state)
+        view = self.__create_battle_move_buttons_with_items(wild_battle_state)
         
         # Update the existing message with battle interface
         message = await interaction.message.edit(
