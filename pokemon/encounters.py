@@ -165,31 +165,50 @@ class EncountersMixin(MixinMeta):
         Returns Button object or None.
         """
         from services.battleclass import battle as BattleClass
+        import logging
+        logger = logging.getLogger("red.pokemon")
         
-        # Load enemy trainers data
-        enemy_trainers_data = self.__load_enemy_trainers_data()
-        
-        # Check if location has wild trainers
-        if str(location_id) not in enemy_trainers_data:
+        try:
+            # Load enemy trainers data
+            enemy_trainers_data = self.__load_enemy_trainers_data()
+            
+            # Debug: Log location being checked
+            logger.info(f"Checking wild trainers for location_id: {location_id}")
+            
+            # Check if location has wild trainers
+            if str(location_id) not in enemy_trainers_data:
+                logger.info(f"Location {location_id} not in enemyTrainers.json")
+                return None
+            
+            logger.info(f"Location {location_id} HAS wild trainers in config")
+            
+            # Check if there are any remaining trainers to battle
+            battle = BattleClass(user_id, location_id, enemyType="wild")
+            remaining = battle.getRemainingTrainerCount()
+            
+            logger.info(f"Remaining trainers at location {location_id}: {remaining}")
+            
+            if remaining == 0:
+                # All trainers defeated
+                logger.info(f"All trainers defeated at location {location_id}")
+                return None
+            
+            # Create trainers button
+            button = Button(
+                style=ButtonStyle.blurple,
+                label=f"⚔️ Trainers ({remaining})",
+                custom_id='wild_trainers',
+                row=2  # Put on row 2 with gym button
+            )
+            button.callback = self.on_wild_trainers_click
+            
+            logger.info(f"Created wild trainers button with {remaining} trainers")
+            
+            return button
+            
+        except Exception as e:
+            logger.error(f"Error in __get_wild_trainers_button: {e}", exc_info=True)
             return None
-        
-        # Check if there are any remaining trainers to battle
-        battle = BattleClass(user_id, location_id, enemyType="wild")
-        remaining = battle.getRemainingTrainerCount()
-        
-        if remaining == 0:
-            # All trainers defeated
-            return None
-        
-        # Create trainers button
-        button = Button(
-            style=ButtonStyle.blurple,
-            label=f"⚔️ Trainers ({remaining})",
-            custom_id='wild_trainers'
-        )
-        button.callback = self.on_wild_trainers_click
-        
-        return button
 
     async def on_wild_trainers_click(self, interaction: discord.Interaction):
         """Handle wild trainers button clicks - shows battle type choice"""
@@ -1104,6 +1123,7 @@ class EncountersMixin(MixinMeta):
         
         return embed
 
+    
 
     async def on_nav_map_click(self, interaction: discord.Interaction, already_deferred: bool = False):
         """Handle Map button click - show map with sprite and buttons"""
@@ -1132,29 +1152,13 @@ class EncountersMixin(MixinMeta):
             description=f"You are at {location_name}.",
             color=discord.Color.blue()
         )
-        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
         
-        # Load location sprite as file attachment (like ,trainer map does)
-        try:
-            # Convert to full file system path
-            full_sprite_path = os.path.join(os.path.dirname(__file__), location.spritePath.lstrip('/'))
-            sprite_file = discord.File(full_sprite_path, filename=f"{location.name}.png")
-            
-            # Upload to logging channel to get URL
-            temp_message = await self.sendToLoggingChannel(f'{user.display_name} viewing map', sprite_file)
-            if temp_message and temp_message.attachments:
-                attachment = temp_message.attachments[0]
-                embed.set_image(url=attachment.url)
-        except Exception as e:
-            print(f"Error loading location sprite: {e}")
-            # Try URL fallback
-            try:
-                sprite_url = f"https://pokesprites.joshkohut.com/sprites/locations/{location.name}.png"
-                embed.set_image(url=sprite_url)
-            except:
-                pass
+        # Set sprite if available
+        if location.spritePath:
+            sprite_url = f"https://pokesprites.joshkohut.com{location.spritePath}"
+            embed.set_image(url=sprite_url)
         
-        # Create navigation view with reorganized button rows
+        # Create view with direction buttons
         view = View()
         
         # ROW 0: North/South buttons
@@ -1195,8 +1199,7 @@ class EncountersMixin(MixinMeta):
             east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label="---", custom_id='dir_east_disabled', disabled=True, row=1)
             view.add_item(east_btn)
         
-
-        # ROW 2: Action buttons (Encounters, Quests, Gym)
+        # ROW 2: Action buttons (Encounters, Quests, Gym, Wild Trainers)
         if len(methods) > 0:
             enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='nav_encounters', row=2)
             enc_btn.callback = self.on_nav_encounters_click
@@ -1212,6 +1215,7 @@ class EncountersMixin(MixinMeta):
             gym_btn.callback = self.on_gym_click
             view.add_item(gym_btn)
         
+        # ADD WILD TRAINERS BUTTON
         if wild_trainers_button:
             view.add_item(wild_trainers_button)
         
@@ -1230,8 +1234,6 @@ class EncountersMixin(MixinMeta):
             heal_btn = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal', row=3)
             heal_btn.callback = self.on_nav_heal_click
             view.add_item(heal_btn)
-        
-
         
         message = await interaction.message.edit(embed=embed, view=view)
         
@@ -3963,6 +3965,89 @@ class EncountersMixin(MixinMeta):
         """Base command to manage the trainer (user).
         """
 
+    # Add this to the DebugMixin class in debug.py or add to encounters.py temporarily
+    @_trainer.command(name="checktrainers")
+    async def checktrainers(self, ctx: commands.Context):
+        """Debug: Check if current location has wild trainers"""
+        user = ctx.author
+        
+        trainer = TrainerClass(str(user.id))
+        location = trainer.getLocation()
+        
+        from services.battleclass import battle as BattleClass
+        
+        # Load enemy trainers data
+        enemy_trainers_data = self.__load_enemy_trainers_data()
+        
+        embed = discord.Embed(
+            title="Wild Trainers Debug",
+            color=discord.Color.blue()
+        )
+        
+        embed.add_field(
+            name="Current Location",
+            value=f"ID: {location.locationId}\nName: {location.name}",
+            inline=False
+        )
+        
+        # Check if location has trainers in config
+        if str(location.locationId) in enemy_trainers_data:
+            trainers_list = enemy_trainers_data[str(location.locationId)]
+            embed.add_field(
+                name="✅ Has Trainers in Config",
+                value=f"Total trainers: {len(trainers_list)}",
+                inline=False
+            )
+            
+            # Check how many remain
+            battle = BattleClass(str(user.id), location.locationId, enemyType="wild")
+            remaining = battle.getRemainingTrainerCount()
+            
+            embed.add_field(
+                name="Remaining Trainers",
+                value=f"{remaining} / {len(trainers_list)} undefeated",
+                inline=False
+            )
+            
+            # Show first 3 trainers
+            trainer_names = []
+            for i, t in enumerate(trainers_list[:3]):
+                trainer_names.append(f"{i+1}. {t['name']} (${t['money']})")
+            
+            if len(trainers_list) > 3:
+                trainer_names.append(f"... and {len(trainers_list) - 3} more")
+            
+            embed.add_field(
+                name="Trainers Here",
+                value="\n".join(trainer_names),
+                inline=False
+            )
+        else:
+            embed.add_field(
+                name="❌ No Trainers",
+                value="This location has no wild trainers in enemyTrainers.json",
+                inline=False
+            )
+            
+            # Suggest nearby locations with trainers
+            nearby_with_trainers = []
+            for direction in ['north', 'south', 'east', 'west']:
+                nearby_name = getattr(location, direction, None)
+                if nearby_name:
+                    from services.locationclass import location as LocationClass
+                    loc_obj = LocationClass()
+                    nearby_loc = loc_obj.getLocationByName(nearby_name)
+                    if str(nearby_loc.locationId) in enemy_trainers_data:
+                        nearby_with_trainers.append(f"• {nearby_name} ({direction})")
+            
+            if nearby_with_trainers:
+                embed.add_field(
+                    name="Nearby Locations with Trainers",
+                    value="\n".join(nearby_with_trainers),
+                    inline=False
+                )
+        
+        await ctx.send(embed=embed)
     
     @_trainer.command(name="map", aliases=['m'])
     async def map(self, ctx: commands.Context):
@@ -3988,28 +4073,13 @@ class EncountersMixin(MixinMeta):
             description=f"You are at {location_name}.",
             color=discord.Color.blue()
         )
-
-        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
         
-        # Load location sprite
-        try:
-            # Convert to full file system path
-            full_sprite_path = os.path.join(os.path.dirname(__file__), location.spritePath.lstrip('/'))
-            sprite_file = discord.File(full_sprite_path, filename=f"{location.name}.png")
-
-            temp_message = await self.sendToLoggingChannel(f'{user.display_name} viewing map', sprite_file)
-            if temp_message and temp_message.attachments:
-                attachment = temp_message.attachments[0]
-                embed.set_image(url=attachment.url)
-        except Exception as e:
-            print(f"Error loading location sprite: {e}")
-            try:
-                sprite_url = f"https://pokesprites.joshkohut.com/sprites/locations/{location.name}.png"
-                embed.set_image(url=sprite_url)
-            except:
-                pass
+        # Set sprite if available
+        if location.spritePath:
+            sprite_url = f"https://pokesprites.joshkohut.com{location.spritePath}"
+            embed.set_image(url=sprite_url)
         
-        # Create navigation view - SAME AS on_nav_map_click
+        # Create view with direction buttons
         view = View()
         
         # ROW 0: North/South buttons
@@ -4050,7 +4120,7 @@ class EncountersMixin(MixinMeta):
             east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label="---", custom_id='dir_east_disabled', disabled=True, row=1)
             view.add_item(east_btn)
         
-        # ROW 2: Action buttons (Encounters, Quests, Gym)
+        # ROW 2: Action buttons (Encounters, Quests, Gym, Wild Trainers)
         if len(methods) > 0:
             enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='nav_encounters', row=2)
             enc_btn.callback = self.on_nav_encounters_click
@@ -4066,9 +4136,10 @@ class EncountersMixin(MixinMeta):
             gym_btn.callback = self.on_gym_click
             view.add_item(gym_btn)
         
+        # ADD WILD TRAINERS BUTTON HERE ON ROW 2
         if wild_trainers_button:
             view.add_item(wild_trainers_button)
-
+        
         # ROW 3: Utility buttons
         bag_btn = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_bag', row=3)
         bag_btn.callback = self.on_nav_bag_click
@@ -4084,8 +4155,6 @@ class EncountersMixin(MixinMeta):
             heal_btn = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal', row=3)
             heal_btn.callback = self.on_nav_heal_click
             view.add_item(heal_btn)
-        
-
         
         message = await ctx.send(embed=embed, view=view)
         
