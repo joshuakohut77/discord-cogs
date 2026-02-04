@@ -55,7 +55,7 @@ class ActionState:
         self.activePokemon = activePokemon
         self.wildPokemon = wildPokemon
         self.descLog = descLog
-        self.__item_usage_states = {}
+        
 
 class BattleState:
     """Track ongoing manual battle state with multiple Pokemon support"""
@@ -154,6 +154,7 @@ class EncountersMixin(MixinMeta):
     __battle_states: dict[str, BattleState] = {}
     __wild_battle_states: Dict[str, WildBattleState] = {}
     __bag_states: dict[str, BagState] = {}
+    __item_usage_states: dict = {}
     __enemy_trainers_data: dict = None
 
     def __load_enemy_trainers_data(self):
