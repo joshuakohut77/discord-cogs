@@ -36,7 +36,7 @@
     "height": 7,
     "weight": 69,
     "description": "A strange seed was planted on its back at birth. The plant sprouts and grows with this POKÃ©MON.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/plant.png"
+    "partySprite": "/sprites/menu/party/plant.png"
   },
   "ivysaur": {
     "id": 2,
@@ -75,7 +75,7 @@
     "height": 10,
     "weight": 130,
     "description": "When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/plant.png"
+    "partySprite": "/sprites/menu/party/plant.png"
   },
   "venusaur": {
     "id": 3,
@@ -114,7 +114,7 @@
     "height": 20,
     "weight": 1000,
     "description": "The plant blooms when it is absorbing solar energy. It stays on the move to seek sunlight.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/plant.png"
+    "partySprite": "/sprites/menu/party/plant.png"
   },
   "charmander": {
     "id": 4,
@@ -152,7 +152,7 @@
     "height": 6,
     "weight": 85,
     "description": "Obviously prefers hot places. When it rains, steam is said to spout from the tip of its tail.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "charmeleon": {
     "id": 5,
@@ -190,7 +190,7 @@
     "height": 11,
     "weight": 190,
     "description": "When it swings its burning tail, it elevates the temperature to unbearably high levels.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "charizard": {
     "id": 6,
@@ -228,7 +228,7 @@
     "height": 17,
     "weight": 905,
     "description": "Spits fire that is hot enough to melt boulders. Known to cause forest fires unintentionally.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "squirtle": {
     "id": 7,
@@ -266,7 +266,7 @@
     "height": 5,
     "weight": 90,
     "description": "After birth, its back swells and hardens into a shell. Powerfully sprays foam from its mouth.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/aquatic.png"
+    "partySprite": "/sprites/menu/party/aquatic.png"
   },
   "wartortle": {
     "id": 8,
@@ -304,7 +304,7 @@
     "height": 10,
     "weight": 225,
     "description": "Often hides in water to stalk unwary prey. For swimming fast, it moves its ears to maintain balance.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/aquatic.png"
+    "partySprite": "/sprites/menu/party/aquatic.png"
   },
   "blastoise": {
     "id": 9,
@@ -342,7 +342,7 @@
     "height": 16,
     "weight": 855,
     "description": "A brutal POKÃ©MON with pressurized water jets on its shell. They are used for high speed tackles.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/aquatic.png"
+    "partySprite": "/sprites/menu/party/aquatic.png"
   },
   "caterpie": {
     "id": 10,
@@ -374,7 +374,7 @@
     "height": 3,
     "weight": 29,
     "description": "Its short feet are tipped with suction pads that enable it to tirelessly climb slopes and walls.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bug.png"
+    "partySprite": "/sprites/menu/party/bug.png"
   },
   "metapod": {
     "id": 11,
@@ -405,7 +405,7 @@
     "height": 7,
     "weight": 99,
     "description": "This POKÃ©MON is vulnerable to attack while its shell is soft, exposing its weak and tender body.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bug.png"
+    "partySprite": "/sprites/menu/party/bug.png"
   },
   "butterfree": {
     "id": 12,
@@ -442,7 +442,7 @@
     "height": 11,
     "weight": 320,
     "description": "In battle, it flaps its wings at high speed to release highly toxic dust into the air.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bug.png"
+    "partySprite": "/sprites/menu/party/bug.png"
   },
   "weedle": {
     "id": 13,
@@ -474,7 +474,7 @@
     "height": 3,
     "weight": 32,
     "description": "Often found in forests, eating leaves. It has a sharp venomous stinger on its head.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bug.png"
+    "partySprite": "/sprites/menu/party/bug.png"
   },
   "kakuna": {
     "id": 14,
@@ -505,7 +505,7 @@
     "height": 6,
     "weight": 100,
     "description": "Almost incapable of moving, this POKÃ©MON can only harden its shell to protect itself from predators.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bug.png"
+    "partySprite": "/sprites/menu/party/bug.png"
   },
   "beedrill": {
     "id": 15,
@@ -541,7 +541,7 @@
     "height": 10,
     "weight": 295,
     "description": "Flies at high speed and attacks using its large venomous stingers on its forelegs and tail.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bug.png"
+    "partySprite": "/sprites/menu/party/bug.png"
   },
   "pidgey": {
     "id": 16,
@@ -578,7 +578,7 @@
     "height": 3,
     "weight": 18,
     "description": "A common sight in forests and woods. It flaps its wings at ground level to kick up blinding sand.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bird.png"
+    "partySprite": "/sprites/menu/party/bird.png"
   },
   "pidgeotto": {
     "id": 17,
@@ -615,7 +615,7 @@
     "height": 11,
     "weight": 300,
     "description": "Very protective of its sprawling territorial area, this POKÃ©MON will fiercely peck at any intruder.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bird.png"
+    "partySprite": "/sprites/menu/party/bird.png"
   },
   "pidgeot": {
     "id": 18,
@@ -652,7 +652,7 @@
     "height": 15,
     "weight": 395,
     "description": "When hunting, it skims the surface of water at high speed to pick off unwary prey such as MAGIKARP.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bird.png"
+    "partySprite": "/sprites/menu/party/bird.png"
   },
   "rattata": {
     "id": 19,
@@ -688,7 +688,7 @@
     "height": 3,
     "weight": 35,
     "description": "Bites anything when it attacks. Small and very quick, it is a common sight in many places.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/quadruped.png"
+    "partySprite": "/sprites/menu/party/quadruped.png"
   },
   "raticate": {
     "id": 20,
@@ -724,7 +724,7 @@
     "height": 7,
     "weight": 185,
     "description": "It uses its whisÂ­ kers to maintain its balance. It apparently slows down if they are cut off.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/quadruped.png"
+    "partySprite": "/sprites/menu/party/quadruped.png"
   },
   "spearow": {
     "id": 21,
@@ -761,7 +761,7 @@
     "height": 3,
     "weight": 20,
     "description": "Eats bugs in grassy areas. It has to flap its short wings at high speed to stay airborne.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bird.png"
+    "partySprite": "/sprites/menu/party/bird.png"
   },
   "fearow": {
     "id": 22,
@@ -798,7 +798,7 @@
     "height": 12,
     "weight": 380,
     "description": "With its huge and magnificent wings, it can keep aloft without ever having to land for rest.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bird.png"
+    "partySprite": "/sprites/menu/party/bird.png"
   },
   "ekans": {
     "id": 23,
@@ -835,7 +835,7 @@
     "height": 20,
     "weight": 69,
     "description": "Moves silently and stealthily. Eats the eggs of birds, such as PIDGEY and SPEAROW, whole.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/snake.png"
+    "partySprite": "/sprites/menu/party/snake.png"
   },
   "arbok": {
     "id": 24,
@@ -872,7 +872,7 @@
     "height": 35,
     "weight": 650,
     "description": "It is rumored that the ferocious warning markings on its belly differ from area to area.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/snake.png"
+    "partySprite": "/sprites/menu/party/snake.png"
   },
   "pikachu": {
     "id": 25,
@@ -909,7 +909,7 @@
     "height": 4,
     "weight": 60,
     "description": "When several of these POKÃ©MON gather, their electricity could build and cause lightning storms.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/pikachu.png"
+    "partySprite": "/sprites/menu/party/pikachu.png"
   },
   "raichu": {
     "id": 26,
@@ -942,7 +942,7 @@
     "height": 8,
     "weight": 300,
     "description": "Its long tail serves as a ground to protect itself from its own high voltage power.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/clefairy.png"
+    "partySprite": "/sprites/menu/party/clefairy.png"
   },
   "sandshrew": {
     "id": 27,
@@ -978,7 +978,7 @@
     "height": 6,
     "weight": 120,
     "description": "Burrows deep underground in arid locations far from water. It only emerges to hunt for food.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "sandslash": {
     "id": 28,
@@ -1014,7 +1014,7 @@
     "height": 10,
     "weight": 295,
     "description": "Curls up into a spiny ball when threatened. It can roll while curled up to attack or escape.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "nidoran-f": {
     "id": 29,
@@ -1052,7 +1052,7 @@
     "height": 4,
     "weight": 70,
     "description": "Although small, its venomous barbs render this POKÃ©MON dangerous. The female has smaller horns.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "nidorina": {
     "id": 30,
@@ -1090,7 +1090,7 @@
     "height": 8,
     "weight": 200,
     "description": "The female's horn develops slowly. Prefers physical attacks such as clawing and biting.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "nidoqueen": {
     "id": 31,
@@ -1125,7 +1125,7 @@
     "height": 13,
     "weight": 600,
     "description": "Its hard scales provide strong protection. It uses its hefty bulk to execute powerful moves.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "nidoran-m": {
     "id": 32,
@@ -1163,7 +1163,7 @@
     "height": 5,
     "weight": 90,
     "description": "Stiffens its ears to sense danger. The larger its horns, the more powerful its secreted venom.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "nidorino": {
     "id": 33,
@@ -1201,7 +1201,7 @@
     "height": 9,
     "weight": 195,
     "description": "An aggressive POKÃ©MON that is quick to attack. The horn on its head secretes a powerful venom.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "nidoking": {
     "id": 34,
@@ -1235,7 +1235,7 @@
     "height": 14,
     "weight": 620,
     "description": "It uses its powerful tail in battle to smash, constrict, then break the prey's bones.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "clefairy": {
     "id": 35,
@@ -1273,7 +1273,7 @@
     "height": 6,
     "weight": 75,
     "description": "Its magical and cute appeal has many admirers. It is rare and found only in certain areas.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/clefairy.png"
+    "partySprite": "/sprites/menu/party/clefairy.png"
   },
   "clefable": {
     "id": 36,
@@ -1307,7 +1307,7 @@
     "height": 13,
     "weight": 400,
     "description": "A timid fairy POKÃ©MON that is rarely seen. It will run and hide the moment it senses people.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/clefairy.png"
+    "partySprite": "/sprites/menu/party/clefairy.png"
   },
   "vulpix": {
     "id": 37,
@@ -1344,7 +1344,7 @@
     "height": 6,
     "weight": 99,
     "description": "At the time of birth, it has just one tail. The tail splits from its tip as it grows older.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/quadruped.png"
+    "partySprite": "/sprites/menu/party/quadruped.png"
   },
   "ninetales": {
     "id": 38,
@@ -1378,7 +1378,7 @@
     "height": 11,
     "weight": 199,
     "description": "Very smart and very vengeful. Grabbing one of its many tails could result in a 1000-year curse.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/quadruped.png"
+    "partySprite": "/sprites/menu/party/quadruped.png"
   },
   "jigglypuff": {
     "id": 39,
@@ -1416,7 +1416,7 @@
     "height": 5,
     "weight": 55,
     "description": "When its huge eyes light up, it sings a mysteriously soothing melody that lulls its enemies to sleep.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/clefairy.png"
+    "partySprite": "/sprites/menu/party/clefairy.png"
   },
   "wigglytuff": {
     "id": 40,
@@ -1450,7 +1450,7 @@
     "height": 10,
     "weight": 120,
     "description": "The body is soft and rubbery. When angered, it will suck in air and inflate itself to an enormous size.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/clefairy.png"
+    "partySprite": "/sprites/menu/party/clefairy.png"
   },
   "zubat": {
     "id": 41,
@@ -1486,7 +1486,7 @@
     "height": 8,
     "weight": 75,
     "description": "Forms colonies in perpetually dark places. Uses ultrasonic waves to identify and approach targets.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "golbat": {
     "id": 42,
@@ -1523,7 +1523,7 @@
     "height": 16,
     "weight": 550,
     "description": "Once it strikes, it will not stop draining energy from the victim even if it gets too heavy to fly.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "oddish": {
     "id": 43,
@@ -1560,7 +1560,7 @@
     "height": 5,
     "weight": 54,
     "description": "During the day, it keeps its face buried in the ground. At night, it wanders around sowing its seeds.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/plant.png"
+    "partySprite": "/sprites/menu/party/plant.png"
   },
   "gloom": {
     "id": 44,
@@ -1597,7 +1597,7 @@
     "height": 8,
     "weight": 86,
     "description": "The fluid that oozes from its mouth isn't drool. It is a nectar that is used to attract prey.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/plant.png"
+    "partySprite": "/sprites/menu/party/plant.png"
   },
   "vileplume": {
     "id": 45,
@@ -1632,7 +1632,7 @@
     "height": 12,
     "weight": 186,
     "description": "The larger its petals, the more toxic pollen it contains. Its big head is heavy and hard to hold up.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/plant.png"
+    "partySprite": "/sprites/menu/party/plant.png"
   },
   "paras": {
     "id": 46,
@@ -1668,7 +1668,7 @@
     "height": 3,
     "weight": 54,
     "description": "Burrows to suck tree roots. The mushrooms on its back grow by drawÂ­ ing nutrients from the bug host.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bug.png"
+    "partySprite": "/sprites/menu/party/bug.png"
   },
   "parasect": {
     "id": 47,
@@ -1704,7 +1704,7 @@
     "height": 10,
     "weight": 295,
     "description": "A host-parasite pair in which the parasite mushroom has taken over the host bug. Prefers damp places.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bug.png"
+    "partySprite": "/sprites/menu/party/bug.png"
   },
   "venonat": {
     "id": 48,
@@ -1742,7 +1742,7 @@
     "height": 10,
     "weight": 300,
     "description": "Lives in the shadows of tall trees where it eats insects. It is attracted by light at night.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bug.png"
+    "partySprite": "/sprites/menu/party/bug.png"
   },
   "venomoth": {
     "id": 49,
@@ -1780,7 +1780,7 @@
     "height": 15,
     "weight": 125,
     "description": "The dust-like scales covering its wings are color coded to indicate the kinds of poison it has.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bug.png"
+    "partySprite": "/sprites/menu/party/bug.png"
   },
   "diglett": {
     "id": 50,
@@ -1816,7 +1816,7 @@
     "height": 2,
     "weight": 8,
     "description": "Lives about one yard underground where it feeds on plant roots. It sometimes appears above ground.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "dugtrio": {
     "id": 51,
@@ -1852,7 +1852,7 @@
     "height": 7,
     "weight": 333,
     "description": "A team of DIGLETT triplets. It triggers huge earthquakes by burrowing 60 miles underground.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "meowth": {
     "id": 52,
@@ -1889,7 +1889,7 @@
     "height": 4,
     "weight": 42,
     "description": "Adores circular objects. Wanders the streets on a nightly basis to look for dropped loose change.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "persian": {
     "id": 53,
@@ -1926,7 +1926,7 @@
     "height": 10,
     "weight": 320,
     "description": "Although its fur has many admirers, it is tough to raise as a pet because of its fickle meanness.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "psyduck": {
     "id": 54,
@@ -1962,7 +1962,7 @@
     "height": 8,
     "weight": 196,
     "description": "While lulling its enemies with its vacant look, this wily POKÃ©MON will use psychokinetic powers.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "golduck": {
     "id": 55,
@@ -1998,7 +1998,7 @@
     "height": 17,
     "weight": 766,
     "description": "Often seen swimÂ­ ming elegantly by lake shores. It is often mistaken for the Japanese monster, Kappa.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "mankey": {
     "id": 56,
@@ -2035,7 +2035,7 @@
     "height": 5,
     "weight": 280,
     "description": "Extremely quick to anger. It could be docile one moment then thrashing away the next instant.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "primeape": {
     "id": 57,
@@ -2072,7 +2072,7 @@
     "height": 10,
     "weight": 320,
     "description": "Always furious and tenacious to boot. It will not abandon chasing its quarry until it is caught.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "growlithe": {
     "id": 58,
@@ -2109,7 +2109,7 @@
     "height": 7,
     "weight": 190,
     "description": "Very protective of its territory. It will bark and bite to repel intruders from its space.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/quadruped.png"
+    "partySprite": "/sprites/menu/party/quadruped.png"
   },
   "arcanine": {
     "id": 59,
@@ -2143,7 +2143,7 @@
     "height": 19,
     "weight": 1550,
     "description": "A POKÃ©MON that has been admired since the past for its beauty. It runs agilely as if on wings.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/quadruped.png"
+    "partySprite": "/sprites/menu/party/quadruped.png"
   },
   "poliwag": {
     "id": 60,
@@ -2180,7 +2180,7 @@
     "height": 6,
     "weight": 124,
     "description": "Its newly grown legs prevent it from running. It appears to prefer swimming than trying to stand.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "poliwhirl": {
     "id": 61,
@@ -2217,7 +2217,7 @@
     "height": 10,
     "weight": 200,
     "description": "Capable of living in or out of water. When out of water, it sweats to keep its body slimy.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "poliwrath": {
     "id": 62,
@@ -2251,7 +2251,7 @@
     "height": 13,
     "weight": 540,
     "description": "An adept swimmer at both the front crawl and breast stroke. Easily overtakes the best human swimmers.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "abra": {
     "id": 63,
@@ -2282,7 +2282,7 @@
     "height": 9,
     "weight": 195,
     "description": "Using its ability to read minds, it will identify impending danger and TELEPORT to safety.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "kadabra": {
     "id": 64,
@@ -2319,7 +2319,7 @@
     "height": 13,
     "weight": 565,
     "description": "It emits special alpha waves from its body that induce headaches just by being close by.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "alakazam": {
     "id": 65,
@@ -2356,7 +2356,7 @@
     "height": 15,
     "weight": 480,
     "description": "Its brain can outÂ­ perform a superÂ­ computer. Its intelligence quotient is said to be 5,000.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "machop": {
     "id": 66,
@@ -2392,7 +2392,7 @@
     "height": 8,
     "weight": 195,
     "description": "Loves to build its muscles. It trains in all styles of martial arts to become even stronger.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "machoke": {
     "id": 67,
@@ -2428,7 +2428,7 @@
     "height": 15,
     "weight": 705,
     "description": "Its muscular body is so powerful, it must wear a power save belt to be able to regulate its motions.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "machamp": {
     "id": 68,
@@ -2464,7 +2464,7 @@
     "height": 16,
     "weight": 1300,
     "description": "Using its heavy muscles, it throws powerful punches that can send the victim clear over the horizon.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "bellsprout": {
     "id": 69,
@@ -2503,7 +2503,7 @@
     "height": 7,
     "weight": 40,
     "description": "A carnivorous POKÃ©MON that traps and eats bugs. It uses its root feet to soak up needed moisture.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/plant.png"
+    "partySprite": "/sprites/menu/party/plant.png"
   },
   "weepinbell": {
     "id": 70,
@@ -2542,7 +2542,7 @@
     "height": 10,
     "weight": 64,
     "description": "It spits out POISONPOWDER to immobilize the enemy and then finishes it with a spray of ACID.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/plant.png"
+    "partySprite": "/sprites/menu/party/plant.png"
   },
   "victreebel": {
     "id": 71,
@@ -2578,7 +2578,7 @@
     "height": 17,
     "weight": 155,
     "description": "Said to live in huge colonies deep in jungles, although no one has ever returned from there.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/plant.png"
+    "partySprite": "/sprites/menu/party/plant.png"
   },
   "tentacool": {
     "id": 72,
@@ -2617,7 +2617,7 @@
     "height": 9,
     "weight": 455,
     "description": "Drifts in shallow seas. Anglers who hook them by accident are often punished by its stinging acid.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/aquatic.png"
+    "partySprite": "/sprites/menu/party/aquatic.png"
   },
   "tentacruel": {
     "id": 73,
@@ -2656,7 +2656,7 @@
     "height": 16,
     "weight": 550,
     "description": "The tentacles are normally kept short. On hunts, they are extended to ensnare and immobilize prey.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/aquatic.png"
+    "partySprite": "/sprites/menu/party/aquatic.png"
   },
   "geodude": {
     "id": 74,
@@ -2693,7 +2693,7 @@
     "height": 4,
     "weight": 200,
     "description": "Found in fields and mountains. Mistaking them for boulders, people often step or trip on them.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "graveler": {
     "id": 75,
@@ -2730,7 +2730,7 @@
     "height": 10,
     "weight": 1050,
     "description": "Rolls down slopes to move. It rolls over any obstacle without slowing or changing its direction.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "golem": {
     "id": 76,
@@ -2767,7 +2767,7 @@
     "height": 14,
     "weight": 3000,
     "description": "Its boulder-like body is extremely hard. It can easily withstand dynamite blasts without damage.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "ponyta": {
     "id": 77,
@@ -2804,7 +2804,7 @@
     "height": 10,
     "weight": 300,
     "description": "Its hooves are 10 times harder than diamonds. It can trample anything completely flat in little time.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/quadruped.png"
+    "partySprite": "/sprites/menu/party/quadruped.png"
   },
   "rapidash": {
     "id": 78,
@@ -2841,7 +2841,7 @@
     "height": 17,
     "weight": 950,
     "description": "Very competitive, this POKÃ©MON will chase anything that moves fast in the hopes of racing it.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/quadruped.png"
+    "partySprite": "/sprites/menu/party/quadruped.png"
   },
   "slowpoke": {
     "id": 79,
@@ -2878,7 +2878,7 @@
     "height": 12,
     "weight": 360,
     "description": "Incredibly slow and dopey. It takes 5 seconds for it to feel pain when under attack.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/quadruped.png"
+    "partySprite": "/sprites/menu/party/quadruped.png"
   },
   "slowbro": {
     "id": 80,
@@ -2916,7 +2916,7 @@
     "height": 16,
     "weight": 785,
     "description": "The SHELLDER that is latched onto SLOWPOKE's tail is said to feed on the host's left over scraps.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "magnemite": {
     "id": 81,
@@ -2953,7 +2953,7 @@
     "height": 3,
     "weight": 60,
     "description": "Uses anti-gravity to stay suspended. Appears without warning and uses THUNDER WAVE and similar moves.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/ball.png"
+    "partySprite": "/sprites/menu/party/ball.png"
   },
   "magneton": {
     "id": 82,
@@ -2990,7 +2990,7 @@
     "height": 10,
     "weight": 600,
     "description": "Formed by several MAGNEMITEs linked together. They frequently appear when sunspots flare up.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/ball.png"
+    "partySprite": "/sprites/menu/party/ball.png"
   },
   "farfetchd": {
     "id": 83,
@@ -3027,7 +3027,7 @@
     "height": 8,
     "weight": 150,
     "description": "The sprig of green onions it holds is its weapon. It is used much like a metal sword.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bird.png"
+    "partySprite": "/sprites/menu/party/bird.png"
   },
   "doduo": {
     "id": 84,
@@ -3064,7 +3064,7 @@
     "height": 14,
     "weight": 392,
     "description": "A bird that makes up for its poor flying with its fast foot speed. Leaves giant footprints.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bird.png"
+    "partySprite": "/sprites/menu/party/bird.png"
   },
   "dodrio": {
     "id": 85,
@@ -3101,7 +3101,7 @@
     "height": 18,
     "weight": 852,
     "description": "Uses its three brains to execute complex plans. While two heads sleep, one head stays awake.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bird.png"
+    "partySprite": "/sprites/menu/party/bird.png"
   },
   "seel": {
     "id": 86,
@@ -3137,7 +3137,7 @@
     "height": 11,
     "weight": 900,
     "description": "The protruding horn on its head is very hard. It is used for bashing through thick ice.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/aquatic.png"
+    "partySprite": "/sprites/menu/party/aquatic.png"
   },
   "dewgong": {
     "id": 87,
@@ -3173,7 +3173,7 @@
     "height": 17,
     "weight": 1200,
     "description": "Stores thermal energy in its body. Swims at a steady 8 knots even in intensely cold waters.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/aquatic.png"
+    "partySprite": "/sprites/menu/party/aquatic.png"
   },
   "grimer": {
     "id": 88,
@@ -3211,7 +3211,7 @@
     "height": 9,
     "weight": 300,
     "description": "Appears in filthy areas. Thrives by sucking up polluted sludge that is pumped out of factories.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "muk": {
     "id": 89,
@@ -3249,7 +3249,7 @@
     "height": 12,
     "weight": 300,
     "description": "Thickly covered with a filthy, vile sludge. It is so toxic, even its footprints contain poison.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "shellder": {
     "id": 90,
@@ -3286,7 +3286,7 @@
     "height": 3,
     "weight": 40,
     "description": "Its hard shell repels any kind of attack. It is vulnerable only when its shell is open.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/fossil.png"
+    "partySprite": "/sprites/menu/party/fossil.png"
   },
   "cloyster": {
     "id": 91,
@@ -3321,7 +3321,7 @@
     "height": 15,
     "weight": 1325,
     "description": "When attacked, it launches its horns in quick volleys. Its innards have never been seen.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/fossil.png"
+    "partySprite": "/sprites/menu/party/fossil.png"
   },
   "gastly": {
     "id": 92,
@@ -3356,7 +3356,7 @@
     "height": 13,
     "weight": 1,
     "description": "Almost invisible, this gaseous POKÃ©MON cloaks the target and puts it to sleep without notice.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "haunter": {
     "id": 93,
@@ -3391,7 +3391,7 @@
     "height": 16,
     "weight": 1,
     "description": "Because of its ability to slip through block walls, it is said to be from anÂ­ other dimension.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "gengar": {
     "id": 94,
@@ -3426,7 +3426,7 @@
     "height": 15,
     "weight": 405,
     "description": "Under a full moon, this POKÃ©MON likes to mimic the shadows of people and laugh at their fright.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "onix": {
     "id": 95,
@@ -3463,7 +3463,7 @@
     "height": 88,
     "weight": 2100,
     "description": "As it grows, the stone portions of its body harden to become similar to a diamond, but colored black.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/snake.png"
+    "partySprite": "/sprites/menu/party/snake.png"
   },
   "drowzee": {
     "id": 96,
@@ -3501,7 +3501,7 @@
     "height": 10,
     "weight": 324,
     "description": "Puts enemies to sleep then eats their dreams. Occasionally gets sick from eating bad dreams.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "hypno": {
     "id": 97,
@@ -3539,7 +3539,7 @@
     "height": 16,
     "weight": 756,
     "description": "When it locks eyes with an enemy, it will use a mix of PSI moves such as HYPNOSIS and CONFUSION.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "krabby": {
     "id": 98,
@@ -3576,7 +3576,7 @@
     "height": 4,
     "weight": 65,
     "description": "Its pincers are not only powerful weapons, they are used for balance when walking sideways.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/aquatic.png"
+    "partySprite": "/sprites/menu/party/aquatic.png"
   },
   "kingler": {
     "id": 99,
@@ -3613,7 +3613,7 @@
     "height": 13,
     "weight": 600,
     "description": "The large pincer has 10000 hp of crushing power. However, its huge size makes it unwieldy to use.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/aquatic.png"
+    "partySprite": "/sprites/menu/party/aquatic.png"
   },
   "voltorb": {
     "id": 100,
@@ -3650,7 +3650,7 @@
     "height": 5,
     "weight": 104,
     "description": "Usually found in power plants. Easily mistaken for a POKÃ© BALL, they have zapped many people.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/ball.png"
+    "partySprite": "/sprites/menu/party/ball.png"
   },
   "electrode": {
     "id": 101,
@@ -3687,7 +3687,7 @@
     "height": 12,
     "weight": 666,
     "description": "It stores electric energy under very high pressure. It often explodes with little or no provocation.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/ball.png"
+    "partySprite": "/sprites/menu/party/ball.png"
   },
   "exeggcute": {
     "id": 102,
@@ -3725,7 +3725,7 @@
     "height": 4,
     "weight": 25,
     "description": "Often mistaken for eggs. When disturbed, they quickly gather and attack in swarms.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/plant.png"
+    "partySprite": "/sprites/menu/party/plant.png"
   },
   "exeggutor": {
     "id": 103,
@@ -3758,7 +3758,7 @@
     "height": 20,
     "weight": 1200,
     "description": "Legend has it that on rare occasions, one of its heads will drop off and continue on as an EXEGGCUTE.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/plant.png"
+    "partySprite": "/sprites/menu/party/plant.png"
   },
   "cubone": {
     "id": 104,
@@ -3795,7 +3795,7 @@
     "height": 4,
     "weight": 65,
     "description": "Because it never removes its skull helmet, no one has ever seen this POKÃ©MON's real face.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "marowak": {
     "id": 105,
@@ -3832,7 +3832,7 @@
     "height": 10,
     "weight": 450,
     "description": "The bone it holds is its key weapon. It throws the bone skillfully like a boomerang to KO targets.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "hitmonlee": {
     "id": 106,
@@ -3869,7 +3869,7 @@
     "height": 15,
     "weight": 498,
     "description": "When in a hurry, its legs lengthen progressively. It runs smoothly with extra long, loping strides.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "hitmonchan": {
     "id": 107,
@@ -3906,7 +3906,7 @@
     "height": 14,
     "weight": 502,
     "description": "While apparently doing nothing, it fires punches in lightning fast volleys that are impossible to see.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "lickitung": {
     "id": 108,
@@ -3943,7 +3943,7 @@
     "height": 12,
     "weight": 655,
     "description": "Its tongue can be extended like a chameleon's. It leaves a tingling sensation when it licks enemies.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/plarhydonnt.png"
+    "partySprite": "/sprites/menu/party/plarhydonnt.png"
   },
   "koffing": {
     "id": 109,
@@ -3980,7 +3980,7 @@
     "height": 6,
     "weight": 10,
     "description": "Because it stores several kinds of toxic gases in its body, it is prone to exploding without warning.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "weezing": {
     "id": 110,
@@ -4017,7 +4017,7 @@
     "height": 12,
     "weight": 95,
     "description": "Where two kinds of poison gases meet, 2 KOFFINGs can fuse into a WEEZING over many years.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "rhyhorn": {
     "id": 111,
@@ -4054,7 +4054,7 @@
     "height": 10,
     "weight": 1150,
     "description": "Its massive bones are 1000 times harder than human bones. It can easily knock a trailer flying.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/quadruped.png"
+    "partySprite": "/sprites/menu/party/quadruped.png"
   },
   "rhydon": {
     "id": 112,
@@ -4091,7 +4091,7 @@
     "height": 19,
     "weight": 1200,
     "description": "Protected by an armor-like hide, it is capable of living in molten lava of 3,600 degrees.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "chansey": {
     "id": 113,
@@ -4129,7 +4129,7 @@
     "height": 11,
     "weight": 346,
     "description": "A rare and elusive POKÃ©MON that is said to bring happiness to those who manage to get it.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/clefairy.png"
+    "partySprite": "/sprites/menu/party/clefairy.png"
   },
   "tangela": {
     "id": 114,
@@ -4167,7 +4167,7 @@
     "height": 10,
     "weight": 350,
     "description": "The whole body is swathed with wide vines that are similar to seaÂ­ weed. Its vines shake as it walks.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/plant.png"
+    "partySprite": "/sprites/menu/party/plant.png"
   },
   "kangaskhan": {
     "id": 115,
@@ -4204,7 +4204,7 @@
     "height": 22,
     "weight": 800,
     "description": "The infant rarely ventures out of its mother's protective pouch until it is 3 years old.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "horsea": {
     "id": 116,
@@ -4240,7 +4240,7 @@
     "height": 4,
     "weight": 80,
     "description": "Known to shoot down flying bugs with precision blasts of ink from the surface of the water.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/aquatic.png"
+    "partySprite": "/sprites/menu/party/aquatic.png"
   },
   "seadra": {
     "id": 117,
@@ -4276,7 +4276,7 @@
     "height": 12,
     "weight": 250,
     "description": "Capable of swimÂ­ ming backwards by rapidly flapping its wing-like pectoral fins and stout tail.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/aquatic.png"
+    "partySprite": "/sprites/menu/party/aquatic.png"
   },
   "goldeen": {
     "id": 118,
@@ -4314,7 +4314,7 @@
     "height": 6,
     "weight": 150,
     "description": "Its tail fin billows like an elegant ballroom dress, giving it the nickname of the Water Queen.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/aquatic.png"
+    "partySprite": "/sprites/menu/party/aquatic.png"
   },
   "seaking": {
     "id": 119,
@@ -4352,7 +4352,7 @@
     "height": 13,
     "weight": 390,
     "description": "In the autumn spawning season, they can be seen swimming powerÂ­ fully up rivers and creeks.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/aquatic.png"
+    "partySprite": "/sprites/menu/party/aquatic.png"
   },
   "staryu": {
     "id": 120,
@@ -4390,7 +4390,7 @@
     "height": 8,
     "weight": 345,
     "description": "An enigmatic POKÃ©MON that can effortlessly regenerate any appendage it loses in battle.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/fossil.png"
+    "partySprite": "/sprites/menu/party/fossil.png"
   },
   "starmie": {
     "id": 121,
@@ -4423,7 +4423,7 @@
     "height": 11,
     "weight": 800,
     "description": "Its central core glows with the seven colors of the rainbow. Some people value the core as a gem.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/fossil.png"
+    "partySprite": "/sprites/menu/party/fossil.png"
   },
   "mr-mime": {
     "id": 122,
@@ -4459,7 +4459,7 @@
     "height": 13,
     "weight": 545,
     "description": "If interrupted while it is miming, it will slap around the offender with its broad hands.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "scyther": {
     "id": 123,
@@ -4496,7 +4496,7 @@
     "height": 15,
     "weight": 560,
     "description": "With ninja-like agility and speed, it can create the illusion that there is more than one.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bug.png"
+    "partySprite": "/sprites/menu/party/bug.png"
   },
   "jynx": {
     "id": 124,
@@ -4534,7 +4534,7 @@
     "height": 14,
     "weight": 406,
     "description": "It seductively wiggles its hips as it walks. It can cause people to dance in unison with it.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "electabuzz": {
     "id": 125,
@@ -4571,7 +4571,7 @@
     "height": 11,
     "weight": 300,
     "description": "Normally found near power plants, they can wander away and cause major blackouts in cities.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "magmar": {
     "id": 126,
@@ -4608,7 +4608,7 @@
     "height": 13,
     "weight": 445,
     "description": "Its body always burns with an orange glow that enables it to hide perfectly among flames.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "pinsir": {
     "id": 127,
@@ -4645,7 +4645,7 @@
     "height": 15,
     "weight": 550,
     "description": "If it fails to crush the victim in its pincers, it will swing it around and toss it hard.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bug.png"
+    "partySprite": "/sprites/menu/party/bug.png"
   },
   "tauros": {
     "id": 128,
@@ -4681,7 +4681,7 @@
     "height": 14,
     "weight": 884,
     "description": "When it targets an enemy, it charges furiously while whipping its body with its long tails.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/quadruped.png"
+    "partySprite": "/sprites/menu/party/quadruped.png"
   },
   "magikarp": {
     "id": 129,
@@ -4713,7 +4713,7 @@
     "height": 9,
     "weight": 100,
     "description": "In the distant past, it was somewhat stronger than the horribly weak descendants that exist today.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/aquatic.png"
+    "partySprite": "/sprites/menu/party/aquatic.png"
   },
   "gyarados": {
     "id": 130,
@@ -4748,7 +4748,7 @@
     "height": 65,
     "weight": 2350,
     "description": "Rarely seen in the wild. Huge and vicious, it is capable of destroying entire cities in a rage.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/snake.png"
+    "partySprite": "/sprites/menu/party/snake.png"
   },
   "lapras": {
     "id": 131,
@@ -4786,7 +4786,7 @@
     "height": 25,
     "weight": 2200,
     "description": "A POKÃ©MON that has been overÂ­ hunted almost to extinction. It can ferry people across the water.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/aquatic.png"
+    "partySprite": "/sprites/menu/party/aquatic.png"
   },
   "ditto": {
     "id": 132,
@@ -4817,7 +4817,7 @@
     "height": 3,
     "weight": 40,
     "description": "Capable of copying an enemy's genetic code to instantly transform itself into a duplicate of the enemy.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "eevee": {
     "id": 133,
@@ -4853,7 +4853,7 @@
     "height": 3,
     "weight": 65,
     "description": "Its genetic code is irregular. It may mutate if it is exposed to radiation from element STONEs.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/quadruped.png"
+    "partySprite": "/sprites/menu/party/quadruped.png"
   },
   "vaporeon": {
     "id": 134,
@@ -4893,7 +4893,7 @@
     "height": 10,
     "weight": 290,
     "description": "Lives close to water. Its long tail is ridged with a fin which is often mistaken for a mermaid's.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/quadruped.png"
+    "partySprite": "/sprites/menu/party/quadruped.png"
   },
   "jolteon": {
     "id": 135,
@@ -4933,7 +4933,7 @@
     "height": 8,
     "weight": 245,
     "description": "It accumulates negative ions in the atmosphere to blast out 10000- volt lightning bolts.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/quadruped.png"
+    "partySprite": "/sprites/menu/party/quadruped.png"
   },
   "flareon": {
     "id": 136,
@@ -4973,7 +4973,7 @@
     "height": 9,
     "weight": 250,
     "description": "When storing thermal energy in its body, its temperature could soar to over 1600 degrees.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/quadruped.png"
+    "partySprite": "/sprites/menu/party/quadruped.png"
   },
   "porygon": {
     "id": 137,
@@ -5010,7 +5010,7 @@
     "height": 8,
     "weight": 365,
     "description": "A POKÃ©MON that consists entirely of programming code. Capable of moving freely in cyberspace.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "omanyte": {
     "id": 138,
@@ -5046,7 +5046,7 @@
     "height": 4,
     "weight": 75,
     "description": "Although long extinct, in rare cases, it can be genetically resurrected from fossils.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/fossil.png"
+    "partySprite": "/sprites/menu/party/fossil.png"
   },
   "omastar": {
     "id": 139,
@@ -5082,7 +5082,7 @@
     "height": 10,
     "weight": 350,
     "description": "A prehistoric POKÃ©MON that died out when its heavy shell made it impossible to catch prey.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/fossil.png"
+    "partySprite": "/sprites/menu/party/fossil.png"
   },
   "kabuto": {
     "id": 140,
@@ -5118,7 +5118,7 @@
     "height": 5,
     "weight": 115,
     "description": "A POKÃ©MON that was resurrected from a fossil found in what was once the ocean floor eons ago.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/fossil.png"
+    "partySprite": "/sprites/menu/party/fossil.png"
   },
   "kabutops": {
     "id": 141,
@@ -5154,7 +5154,7 @@
     "height": 13,
     "weight": 405,
     "description": "Its sleek shape is perfect for swimÂ­ ming. It slashes prey with its claws and drains the body fluids.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/fossil.png"
+    "partySprite": "/sprites/menu/party/fossil.png"
   },
   "aerodactyl": {
     "id": 142,
@@ -5190,7 +5190,7 @@
     "height": 18,
     "weight": 590,
     "description": "A ferocious, preÂ­ historic POKÃ©MON that goes for the enemy's throat with its serrated saw-like fangs.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bird.png"
+    "partySprite": "/sprites/menu/party/bird.png"
   },
   "snorlax": {
     "id": 143,
@@ -5227,7 +5227,7 @@
     "height": 21,
     "weight": 4600,
     "description": "Very lazy. Just eats and sleeps. As its rotund bulk builds, it becomes steadily more slothful.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   },
   "articuno": {
     "id": 144,
@@ -5262,7 +5262,7 @@
     "height": 17,
     "weight": 554,
     "description": "A legendary bird POKÃ©MON that is said to appear to doomed people who are lost in icy mountains.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bird.png"
+    "partySprite": "/sprites/menu/party/bird.png"
   },
   "zapdos": {
     "id": 145,
@@ -5297,7 +5297,7 @@
     "height": 16,
     "weight": 526,
     "description": "A legendary bird POKÃ©MON that is said to appear from clouds while dropping enormous lightning bolts.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bird.png"
+    "partySprite": "/sprites/menu/party/bird.png"
   },
   "moltres": {
     "id": 146,
@@ -5332,7 +5332,7 @@
     "height": 20,
     "weight": 600,
     "description": "Known as the legendary bird of fire. Every flap of its wings creates a dazzling flash of flames.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/bird.png"
+    "partySprite": "/sprites/menu/party/bird.png"
   },
   "dratini": {
     "id": 147,
@@ -5369,7 +5369,7 @@
     "height": 18,
     "weight": 33,
     "description": "Long considered a mythical POKÃ©MON until recently when a small colony was found living underwater.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/snake.png"
+    "partySprite": "/sprites/menu/party/snake.png"
   },
   "dragonair": {
     "id": 148,
@@ -5406,7 +5406,7 @@
     "height": 40,
     "weight": 165,
     "description": "A mystical POKÃ©MON that exudes a gentle aura. Has the ability to change climate conditions.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/snake.png"
+    "partySprite": "/sprites/menu/party/snake.png"
   },
   "dragonite": {
     "id": 149,
@@ -5443,7 +5443,7 @@
     "height": 22,
     "weight": 2100,
     "description": "An extremely rarely seen marine POKÃ©MON. Its intelligence is said to match that of humans.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/snake.png"
+    "partySprite": "/sprites/menu/party/snake.png"
   },
   "mewtwo": {
     "id": 150,
@@ -5481,6 +5481,6 @@
     "height": 20,
     "weight": 1220,
     "description": "It was created by a scientist after years of horrific gene splicing and DNA engineering experiments.",
-    "partySprite": "/data/cogs/CogManager/cogs/pokemon/sprites/menu/party/rhydon.png"
+    "partySprite": "/sprites/menu/party/rhydon.png"
   }
 }
