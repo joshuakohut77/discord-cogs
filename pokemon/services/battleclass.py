@@ -153,10 +153,9 @@ class battle:
             else:
                 trainerModelList = self.__returnTrainerList(trainerConfigList)
 
-                # check if trainer has previously beaten trainer and remove trainer from list. 
-                for trainer in trainerModelList:
-                    if trainer.enemy_uuid in enemyUUIDs:
-                        trainerModelList.remove(trainer)
+                # Filter out previously defeated trainers
+                # Using list comprehension to avoid modifying list during iteration
+                trainerModelList = [trainer for trainer in trainerModelList if trainer.enemy_uuid not in enemyUUIDs]
             
 
         except Exception as e:
