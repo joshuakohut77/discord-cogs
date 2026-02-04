@@ -893,7 +893,9 @@ class trainer:
             if method == 'gift' or method == 'only-one':
                 pokemon.uniqueEncounter = True
             if method == 'gift':
-                enc = encounter(pokemon, pokemon)
+                from .encounterclass import encounter
+                activePokemon = self.getActivePokemon()  # Get the trainer's active pokemon
+                enc = encounter(activePokemon, pokemon)  # Pass active pokemon as pokemon1, gift as pokemon2
                 enc.updateUniqueEncounters()
             if pokemon.statuscode == 96:
                 self.statuscode = 96
