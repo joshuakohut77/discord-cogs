@@ -2919,7 +2919,7 @@ class EncountersMixin(MixinMeta):
             else:
                 # Already at full HP
                 healing_details.append(f"{pokemon_emoji} {poke_name} - Lv.{poke.currentLevel}")
-                healing_details.append(f"   HP: {max_hp}/{max_hp} (Already healthy!)")
+                healing_details.append(f"   HP: {max_hp}/{max_hp} ")
         
         embed = discord.Embed(
             title="🏥 Pokemon Center",
