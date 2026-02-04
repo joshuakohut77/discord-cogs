@@ -298,7 +298,7 @@ class EncountersMixin(MixinMeta):
                 # Edit the message - if sprite file was loaded, need to send new message
                 if sprite_loaded:
                     # When editing with a file attachment, use followup.send to replace the message
-                    await interaction.followup.send(
+                    new_message = await interaction.followup.send(
                         embed=embed,
                         view=view,
                         file=sprite_file
@@ -308,6 +308,10 @@ class EncountersMixin(MixinMeta):
                         await interaction.message.delete()
                     except:
                         pass
+                    
+                    # CRITICAL: Update ActionState with new message ID
+                    if str(user.id) in self.__useractions:
+                        self.__useractions[str(user.id)].messageId = new_message.id
                 else:
                     # No file attachment, can use regular edit
                     await interaction.message.edit(
@@ -315,8 +319,7 @@ class EncountersMixin(MixinMeta):
                         embed=embed,
                         view=view
                     )
-                
-                # Don't update messageId since we're editing the same message
+                    # messageId stays the same, no need to update
             else:
                 await interaction.followup.send('Error getting next trainer.', ephemeral=True)
         else:
