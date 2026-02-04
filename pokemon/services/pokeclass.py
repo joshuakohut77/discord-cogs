@@ -404,8 +404,25 @@ class Pokemon:
                                 if wasActivePokemon:
                                     self.__updateActivePokemon(evolvedPokemon.trainerId)
                                 
-                                # Now delete the old Pokemon (soft delete)
-                                self.__delete()
+                                # Now delete the old Pokemon using the stored trainerId
+                                # Don't call self.__delete() because self might be stale
+                                # Instead, delete directly using the trainerId we saved
+                                try:
+                                    db = dbconn()
+                                    milliString = str(int(time() * 1000))
+                                    newDiscordId = self.discordId + '_' + milliString
+                                    pokemonUpdateQuery = 'UPDATE pokemon SET "discord_id" = %(newDiscordId)s WHERE "id" = %(trainerId)s'
+                                    db.execute(pokemonUpdateQuery, {
+                                        'newDiscordId': newDiscordId, 
+                                        'trainerId': oldTrainerId
+                                    })
+                                    del db
+                                except:
+                                    logger.error(f"Failed to delete old Pokemon trainerId={oldTrainerId}")
+                                    logger.error(excInfo=sys.exc_info())
+                                
+                                # Don't save self anymore since we evolved
+                                return levelUp, retMsg
                             break
 
             # save all above changes included the change in currentHP
@@ -415,7 +432,6 @@ class Pokemon:
             logger.error(excInfo=sys.exc_info())
         finally:
             return levelUp, retMsg
-
     ####
     # Private Class Methods
     ####
