@@ -199,7 +199,7 @@ class LeaderboardMixin(MixinMeta):
                 l.total_catch,
                 l.total_evolved,
                 CASE 
-                    WHEN l.total_battles > 0 THEN ROUND((l.total_victory::float / l.total_battles * 100), 1)
+                    WHEN l.total_battles > 0 THEN ROUND((l.total_victory::numeric / l.total_battles * 100)::numeric, 1)
                     ELSE 0
                 END as win_rate
             FROM trainer t
