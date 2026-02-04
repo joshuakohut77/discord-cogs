@@ -110,17 +110,14 @@ class battle:
     def getTrainerList(self, gymLeader=False):
         """ returns a list of TrainerBattleModel objects which have not been completed """
         trainerModelList = []
+        db = None  # Initialize db to None
         try:
-            logger.info(f"[BATTLE] getTrainerList called: locationId={self.locationId}, enemyType={self.enemyType}, gymLeader={gymLeader}")
-            
             db = dbconn()
             queryString = 'SELECT enemy_uuid FROM trainer_battles WHERE "locationId" = %(locationId)s AND discord_id = %(discordId)s'
             results = db.queryAll(queryString, { 'locationId': self.locationId, 'discordId': self.discordId })
             enemyUUIDs = []
             for row in results:
                 enemyUUIDs.append(row[0])
-            
-            logger.info(f"[BATTLE] Defeated enemy UUIDs from DB: {enemyUUIDs}")
             
             if self.enemyType == 'wild':
                 configPath = '../configs/enemyTrainers.json'
@@ -129,17 +126,14 @@ class battle:
             else:
                 self.statuscode = 96
                 self.message = 'invalid enemyType. use "wild" or "gym"'
-                logger.error(f"[BATTLE] Invalid enemyType: {self.enemyType}")
                 return []  # Return empty list instead of None
 
             # Use absolute path relative to this file's location
             p = os.path.join(os.path.dirname(os.path.realpath(__file__)), configPath)
-            logger.info(f"[BATTLE] Loading config from: {p}")
             loadedConfig = json.load(open(p, 'r'))
             
             if self.enemyType == 'wild':
                 trainerConfigList = loadedConfig.get(str(self.locationId), [])
-                logger.info(f"[BATTLE] Loaded {len(trainerConfigList)} trainers from enemyTrainers.json for location {self.locationId}")
             else:
                 baseConfig = loadedConfig[str(self.locationId)]
                 requirements = baseConfig['leader']['requirements']
@@ -156,41 +150,27 @@ class battle:
                         trainerConfigList = baseConfig['trainers']
             
             if gymLeader:
-                logger.info(f"[BATTLE] Creating gym leader model")
                 trainerModelList.append(GymLeaderModel(trainerConfigList))
             else:
-                logger.info(f"[BATTLE] Calling __returnTrainerList with {len(trainerConfigList) if isinstance(trainerConfigList, list) else 'non-list'} trainers")
                 trainerModelList = self.__returnTrainerList(trainerConfigList)
                 
-                logger.info(f"[BATTLE] __returnTrainerList returned: {trainerModelList}")
-                logger.info(f"[BATTLE] Type: {type(trainerModelList)}, Length: {len(trainerModelList) if trainerModelList else 'None/0'}")
-                
-                # FIX: Check if __returnTrainerList returned None or a valid list
+                # Check if __returnTrainerList returned None or a valid list
                 if trainerModelList is None:
-                    logger.error(f"[BATTLE] __returnTrainerList returned None!")
                     return []  # Return empty list if there was an error
-                
-                # Log each trainer before filtering
-                for i, trainer in enumerate(trainerModelList):
-                    logger.info(f"[BATTLE]   Trainer {i} BEFORE filter: {trainer.name} (UUID: {trainer.enemy_uuid})")
                 
                 # Filter out previously defeated trainers
                 # Using list comprehension to avoid modifying list during iteration
                 trainerModelList = [trainer for trainer in trainerModelList if trainer.enemy_uuid not in enemyUUIDs]
-                
-                logger.info(f"[BATTLE] AFTER filtering: {len(trainerModelList)} trainers remain")
-                for i, trainer in enumerate(trainerModelList):
-                    logger.info(f"[BATTLE]   Trainer {i} AFTER filter: {trainer.name} (UUID: {trainer.enemy_uuid})")
 
         except Exception as e:
             self.statuscode = 96
             self.message = f'Error loading trainer list: {str(e)}'
-            logger.error(f"[BATTLE] Exception in getTrainerList: {e}", exc_info=True)
+            logger.error(excInfo=sys.exc_info())
             return []  # Return empty list on error
         finally:
-            # delete and close connection
-            del db
-            logger.info(f"[BATTLE] getTrainerList returning {len(trainerModelList)} trainers")
+            # delete and close connection - only if db was created
+            if db is not None:
+                del db
             return trainerModelList
     
 
