@@ -6,7 +6,7 @@
     "east": "kanto-route-7",
     "south": "game-corner",
     "west": "kanto-route-16",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/celadon-city.png",
+    "spritePath": "/sprites/locations/celadon-city.png",
     "pokecenter": true,
     "gym": true,
     "displayName": "Celadon City"
@@ -18,7 +18,7 @@
     "east": "kanto-route-9",
     "south": "kanto-route-5",
     "west": "kanto-route-4",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/cerulean-city.png",
+    "spritePath": "/sprites/locations/cerulean-city.png",
     "pokecenter": true,
     "gym": true,
     "displayName": "Cerulean City"
@@ -30,7 +30,7 @@
     "east": "kanto-sea-route-20",
     "south": null,
     "west": "pokemon-mansion",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/cinnabar-island.png",
+    "spritePath": "/sprites/locations/cinnabar-island.png",
     "pokecenter": true,
     "gym": true,
     "displayName": "Cinnabar Island"
@@ -42,7 +42,7 @@
     "east": null,
     "south": "kanto-route-11",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/digletts-cave.png",
+    "spritePath": "/sprites/locations/digletts-cave.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Digletts Cave"
@@ -54,7 +54,7 @@
     "east": "kanto-route-15",
     "south": "kanto-sea-route-19",
     "west": "kanto-route-18",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/fuchsia-city.png",
+    "spritePath": "/sprites/locations/fuchsia-city.png",
     "pokecenter": true,
     "gym": true,
     "displayName": "Fuchsia City"
@@ -66,7 +66,7 @@
     "east": "mt-moon-BF1",
     "south": null,
     "west": "kanto-route-3",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/mt-moon.png",
+    "spritePath": "/sprites/locations/mt-moon.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Mt. Moon"
@@ -78,7 +78,7 @@
     "east": "professor-oak-lab",
     "south": "kanto-sea-route-21",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pallet-town.png",
+    "spritePath": "/sprites/locations/pallet-town.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Pallet Town"
@@ -90,7 +90,7 @@
     "east": null,
     "south": "rock-tunnel-BF1",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/rock-tunnel.png",
+    "spritePath": "/sprites/locations/rock-tunnel.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Rock Tunnel"
@@ -102,7 +102,7 @@
     "east": null,
     "south": "pallet-town",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-1.png",
+    "spritePath": "/sprites/locations/kanto-route-1.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 1"
@@ -114,7 +114,7 @@
     "east": "power-plant",
     "south": "rock-tunnel",
     "west": "kanto-route-9",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-10-N.png",
+    "spritePath": "/sprites/locations/kanto-route-10-N.png",
     "pokecenter": true,
     "gym": false,
     "displayName": "Route 10 North"
@@ -126,7 +126,7 @@
     "east": "kanto-route-12",
     "south": null,
     "west": "vermilion-city",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-11.png",
+    "spritePath": "/sprites/locations/kanto-route-11.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 11"
@@ -138,7 +138,7 @@
     "east": null,
     "south": "kanto-route-12-S",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-12-N.png",
+    "spritePath": "/sprites/locations/kanto-route-12-N.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 12 North"
@@ -150,7 +150,7 @@
     "east": null,
     "south": null,
     "west": "kanto-route-14",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-13.png",
+    "spritePath": "/sprites/locations/kanto-route-13.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 13"
@@ -162,7 +162,7 @@
     "east": null,
     "south": null,
     "west": "kanto-route-15",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-14.png",
+    "spritePath": "/sprites/locations/kanto-route-14.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 14"
@@ -174,7 +174,7 @@
     "east": "kanto-route-14",
     "south": null,
     "west": "fuchsia-city",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-15.png",
+    "spritePath": "/sprites/locations/kanto-route-15.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 15"
@@ -186,7 +186,7 @@
     "east": "celadon-city",
     "south": "kanto-route-17",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-16.png",
+    "spritePath": "/sprites/locations/kanto-route-16.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 16"
@@ -198,7 +198,7 @@
     "east": null,
     "south": "kanto-route-18",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-17.png",
+    "spritePath": "/sprites/locations/kanto-route-17.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 17"
@@ -210,7 +210,7 @@
     "east": "fuchsia-city",
     "south": null,
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-18.png",
+    "spritePath": "/sprites/locations/kanto-route-18.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 18"
@@ -222,7 +222,7 @@
     "east": null,
     "south": null,
     "west": "kanto-sea-route-20",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-sea-route-19.png",
+    "spritePath": "/sprites/locations/kanto-sea-route-19.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Sea Route 19"
@@ -234,7 +234,7 @@
     "east": "digletts-cave",
     "south": "viridian-city",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-2.png",
+    "spritePath": "/sprites/locations/kanto-route-2.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 2"
@@ -246,7 +246,7 @@
     "east": "kanto-sea-route-19",
     "south": null,
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-sea-route-20-E.png",
+    "spritePath": "/sprites/locations/kanto-sea-route-20-E.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Sea Route 20 East"
@@ -258,7 +258,7 @@
     "east": null,
     "south": "cinnabar-island",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-sea-route-21.png",
+    "spritePath": "/sprites/locations/kanto-sea-route-21.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Sea Route 21"
@@ -270,7 +270,7 @@
     "east": "viridian-city",
     "south": null,
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-22.png",
+    "spritePath": "/sprites/locations/kanto-route-22.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 22"
@@ -282,7 +282,7 @@
     "east": "kanto-route-25",
     "south": "cerulean-city",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-24.png",
+    "spritePath": "/sprites/locations/kanto-route-24.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 24"
@@ -294,7 +294,7 @@
     "east": null,
     "south": null,
     "west": "kanto-route-24",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-25.png",
+    "spritePath": "/sprites/locations/kanto-route-25.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 25"
@@ -306,7 +306,7 @@
     "east": "mt-moon",
     "south": null,
     "west": "pewter-city",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-3.png",
+    "spritePath": "/sprites/locations/kanto-route-3.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 3"
@@ -318,7 +318,7 @@
     "east": "cerulean-city",
     "south": null,
     "west": "mt-moon-BF2",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-4.png",
+    "spritePath": "/sprites/locations/kanto-route-4.png",
     "pokecenter": true,
     "gym": false,
     "displayName": "Route 4"
@@ -330,7 +330,7 @@
     "east": null,
     "south": "saffron-city",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-5.png",
+    "spritePath": "/sprites/locations/kanto-route-5.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 5"
@@ -342,7 +342,7 @@
     "east": null,
     "south": "vermilion-city",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-6.png",
+    "spritePath": "/sprites/locations/kanto-route-6.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 6"
@@ -354,7 +354,7 @@
     "east": "saffron-city",
     "south": "underground-path",
     "west": "celadon-city",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-7.png",
+    "spritePath": "/sprites/locations/kanto-route-7.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 7"
@@ -366,7 +366,7 @@
     "east": "lavender-town",
     "south": null,
     "west": "saffron-city",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-8.png",
+    "spritePath": "/sprites/locations/kanto-route-8.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 8"
@@ -378,7 +378,7 @@
     "east": "kanto-route-10-N",
     "south": null,
     "west": "cerulean-city",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-9.png",
+    "spritePath": "/sprites/locations/kanto-route-9.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 9"
@@ -390,7 +390,7 @@
     "east": "seafoam-islands-BF1",
     "south": "kanto-sea-route-20",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/seafoam-islands.png",
+    "spritePath": "/sprites/locations/seafoam-islands.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Seafoam Islands"
@@ -402,7 +402,7 @@
     "east": "cerulean-cave-2F",
     "south": "kanto-route-24",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/cerulean-cave-1F.png",
+    "spritePath": "/sprites/locations/cerulean-cave-1F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Cerulean Cave"
@@ -414,7 +414,7 @@
     "east": "kanto-route-11",
     "south": "ss-anne",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/vermilion-city.png",
+    "spritePath": "/sprites/locations/vermilion-city.png",
     "pokecenter": true,
     "gym": true,
     "displayName": "Vermilion City"
@@ -426,7 +426,7 @@
     "east": null,
     "south": "kanto-route-23-S",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-victory-road.png",
+    "spritePath": "/sprites/locations/kanto-victory-road.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Victory Road"
@@ -438,7 +438,7 @@
     "east": null,
     "south": "kanto-route-1",
     "west": "kanto-route-22",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/viridian-city.png",
+    "spritePath": "/sprites/locations/viridian-city.png",
     "pokecenter": true,
     "gym": true,
     "displayName": "Viridian City"
@@ -450,7 +450,7 @@
     "east": null,
     "south": null,
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/viridian-forest.png",
+    "spritePath": "/sprites/locations/viridian-forest.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Viridian Forest"
@@ -462,7 +462,7 @@
     "east": null,
     "south": "kanto-route-22",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-23-S.png",
+    "spritePath": "/sprites/locations/kanto-route-23-S.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 23 South"
@@ -474,7 +474,7 @@
     "east": null,
     "south": null,
     "west": "kanto-route-10-N",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/power-plant.png",
+    "spritePath": "/sprites/locations/power-plant.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Power Plant"
@@ -486,7 +486,7 @@
     "east": null,
     "south": "kanto-victory-road",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-victory-road-2F.png",
+    "spritePath": "/sprites/locations/kanto-victory-road-2F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Victory Road 2F"
@@ -498,7 +498,7 @@
     "east": null,
     "south": null,
     "west": "lavender-town",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-tower.png",
+    "spritePath": "/sprites/locations/pokemon-tower.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Pokémon Tower"
@@ -510,7 +510,7 @@
     "east": "cinnabar-island",
     "south": null,
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-mansion.png",
+    "spritePath": "/sprites/locations/pokemon-mansion.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Pokémon Mansion"
@@ -522,7 +522,7 @@
     "east": null,
     "south": "fuchsia-city",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/safari-zone.png",
+    "spritePath": "/sprites/locations/safari-zone.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Safari Zone"
@@ -534,7 +534,7 @@
     "east": "kanto-route-3",
     "south": "kanto-route-2",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pewter-city.png",
+    "spritePath": "/sprites/locations/pewter-city.png",
     "pokecenter": true,
     "gym": true,
     "displayName": "Pewter City"
@@ -546,7 +546,7 @@
     "east": "pokemon-tower",
     "south": "kanto-route-12",
     "west": "kanto-route-8",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/lavender-town.png",
+    "spritePath": "/sprites/locations/lavender-town.png",
     "pokecenter": true,
     "gym": false,
     "displayName": "Lavender Town"
@@ -558,7 +558,7 @@
     "east": null,
     "south": "kanto-victory-road-3F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/indigo-plateau.png",
+    "spritePath": "/sprites/locations/indigo-plateau.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Indigo Plateau"
@@ -570,7 +570,7 @@
     "east": "kanto-route-8",
     "south": "kanto-route-6",
     "west": "kanto-route-7",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/saffron-city.png",
+    "spritePath": "/sprites/locations/saffron-city.png",
     "pokecenter": true,
     "gym": true,
     "displayName": "Saffron City"
@@ -582,7 +582,7 @@
     "east": "ss-anne-truck",
     "south": "ss-anne-1F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne.png",
+    "spritePath": "/sprites/locations/ss-anne.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "S.S. Anne"
@@ -594,7 +594,7 @@
     "east": null,
     "south": "celadon-city",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/department-store.png",
+    "spritePath": "/sprites/locations/department-store.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Department Store"
@@ -606,7 +606,7 @@
     "east": null,
     "south": "department-store",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/department-store-2F.png",
+    "spritePath": "/sprites/locations/department-store-2F.png",
     "pokecenter": true,
     "gym": false,
     "displayName": "Department Store 2F"
@@ -618,7 +618,7 @@
     "east": null,
     "south": "department-store-2F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/department-store-3F.png",
+    "spritePath": "/sprites/locations/department-store-3F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Department Store 3F"
@@ -630,7 +630,7 @@
     "east": null,
     "south": "department-store-3F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/department-store-4F.png",
+    "spritePath": "/sprites/locations/department-store-4F.png",
     "pokecenter": true,
     "gym": false,
     "displayName": "Department Store 4F"
@@ -642,7 +642,7 @@
     "east": null,
     "south": "department-store-4F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/department-store-5F.png",
+    "spritePath": "/sprites/locations/department-store-5F.png",
     "pokecenter": true,
     "gym": false,
     "displayName": "Department Store 5F"
@@ -654,7 +654,7 @@
     "east": null,
     "south": "department-store-5F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/department-store-rooftop.png",
+    "spritePath": "/sprites/locations/department-store-rooftop.png",
     "pokecenter": true,
     "gym": false,
     "displayName": "Department Store Rooftop"
@@ -666,7 +666,7 @@
     "east": "mt-moon-BF2",
     "south": null,
     "west": "mt-moon",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/mt-moon-BF1.png",
+    "spritePath": "/sprites/locations/mt-moon-BF1.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Mt. Moon BF1"
@@ -678,7 +678,7 @@
     "east": "kanto-route-4",
     "south": null,
     "west": "mt-moon-BF1",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/mt-moon-BF2.png",
+    "spritePath": "/sprites/locations/mt-moon-BF2.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Mt. Moon BF2"
@@ -690,7 +690,7 @@
     "east": null,
     "south": "pallet-town",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/professor-oak-lab.png",
+    "spritePath": "/sprites/locations/professor-oak-lab.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Oak's Lab"
@@ -702,7 +702,7 @@
     "east": null,
     "south": "lkanto-route-10-S",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/rock-tunnel-BF1.png",
+    "spritePath": "/sprites/locations/rock-tunnel-BF1.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Rock Tunnel BF1"
@@ -714,7 +714,7 @@
     "east": null,
     "south": "lavender-town",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-10-S.png",
+    "spritePath": "/sprites/locations/kanto-route-10-S.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 10 South"
@@ -726,7 +726,7 @@
     "east": null,
     "south": "kanto-route-13",
     "west": "kanto-route-11",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-12-S.png",
+    "spritePath": "/sprites/locations/kanto-route-12-S.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 12 South"
@@ -738,7 +738,7 @@
     "east": null,
     "south": "kanto-route-8",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/underground-path.png",
+    "spritePath": "/sprites/locations/underground-path.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Underground Path"
@@ -750,7 +750,7 @@
     "east": null,
     "south": null,
     "west": "cinnabar-island",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-sea-route-20-W.png",
+    "spritePath": "/sprites/locations/kanto-sea-route-20-W.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Sea Route 20 West"
@@ -762,7 +762,7 @@
     "east": "seafoam-islands",
     "south": null,
     "west": "seafoam-islands-BF2",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/seafoam-islands-BF1.png",
+    "spritePath": "/sprites/locations/seafoam-islands-BF1.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Seafoam Islands BF1"
@@ -774,7 +774,7 @@
     "east": "seafoam-islands-BF3",
     "south": null,
     "west": "seafoam-islands-BF1",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/seafoam-islands-BF2.png",
+    "spritePath": "/sprites/locations/seafoam-islands-BF2.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Seafoam Islands BF2"
@@ -786,7 +786,7 @@
     "east": "seafoam-islands-BF4",
     "south": null,
     "west": "seafoam-islands-BF2",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/seafoam-islands-BF3.png",
+    "spritePath": "/sprites/locations/seafoam-islands-BF3.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Seafoam Islands BF3"
@@ -798,7 +798,7 @@
     "east": null,
     "south": null,
     "west": "seafoam-islands-BF3",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/seafoam-islands-BF4.png",
+    "spritePath": "/sprites/locations/seafoam-islands-BF4.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Seafoam Islands BF4"
@@ -810,7 +810,7 @@
     "east": null,
     "south": null,
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/cerulean-cave-B1F.png",
+    "spritePath": "/sprites/locations/cerulean-cave-B1F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Cerulean Cave BF1"
@@ -822,7 +822,7 @@
     "east": null,
     "south": "cerulean-cave-B1F",
     "west": "cerulean-cave",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/cerulean-cave-2F.png",
+    "spritePath": "/sprites/locations/cerulean-cave-2F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Cerulean Cave 2F"
@@ -834,7 +834,7 @@
     "east": null,
     "south": "kanto-victory-road-3F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-route-23-N.png",
+    "spritePath": "/sprites/locations/kanto-route-23-N.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Route 23 North"
@@ -846,7 +846,7 @@
     "east": null,
     "south": "kanto-victory-road-2F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/kanto-victory-road-3F.png",
+    "spritePath": "/sprites/locations/kanto-victory-road-3F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Victory Road 3F"
@@ -858,7 +858,7 @@
     "east": null,
     "south": "pokemon-tower",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-tower-2F.png",
+    "spritePath": "/sprites/locations/pokemon-tower-2F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Pokémon Tower 2F"
@@ -870,7 +870,7 @@
     "east": null,
     "south": "pokemon-tower-2F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-tower-3F.png",
+    "spritePath": "/sprites/locations/pokemon-tower-3F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Pokémon Tower 3F"
@@ -882,7 +882,7 @@
     "east": null,
     "south": "pokemon-tower-3F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-tower-4F.png",
+    "spritePath": "/sprites/locations/pokemon-tower-4F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Pokémon Tower 4F"
@@ -894,7 +894,7 @@
     "east": null,
     "south": "pokemon-tower-4F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-tower-5F.png",
+    "spritePath": "/sprites/locations/pokemon-tower-5F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Pokémon Tower 5F"
@@ -906,7 +906,7 @@
     "east": null,
     "south": "pokemon-tower-5F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-tower-6F.png",
+    "spritePath": "/sprites/locations/pokemon-tower-6F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Pokémon Tower 6F"
@@ -918,7 +918,7 @@
     "east": null,
     "south": "pokemon-tower-6F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-tower-7F.png",
+    "spritePath": "/sprites/locations/pokemon-tower-7F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Pokémon Tower 7F"
@@ -930,7 +930,7 @@
     "east": null,
     "south": "pokemon-mansion-3F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-mansion-BF1.png",
+    "spritePath": "/sprites/locations/pokemon-mansion-BF1.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Pokemon Mansion BF1"
@@ -942,7 +942,7 @@
     "east": null,
     "south": "pokemon-mansion",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-mansion-2F.png",
+    "spritePath": "/sprites/locations/pokemon-mansion-2F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Pokemon Mansion 2F"
@@ -954,7 +954,7 @@
     "east": null,
     "south": "pokemon-mansion-2F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/pokemon-mansion-3F.png",
+    "spritePath": "/sprites/locations/pokemon-mansion-3F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Pokemon Mansion 3F"
@@ -966,7 +966,7 @@
     "east": null,
     "south": "safari-zone",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/safari-zone-1.png",
+    "spritePath": "/sprites/locations/safari-zone-1.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Safari Zone 1"
@@ -978,7 +978,7 @@
     "east": null,
     "south": "safari-zone-1",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/safari-zone-2.png",
+    "spritePath": "/sprites/locations/safari-zone-2.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Safari Zone 2"
@@ -990,7 +990,7 @@
     "east": null,
     "south": "safari-zone-2",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/safari-zone-3.png",
+    "spritePath": "/sprites/locations/safari-zone-3.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Safari Zone 3"
@@ -1002,7 +1002,7 @@
     "east": null,
     "south": "celadon-city",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/game-corner.png",
+    "spritePath": "/sprites/locations/game-corner.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Game Corner"
@@ -1014,7 +1014,7 @@
     "east": null,
     "south": "rocket-hideout-B2F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/rocket-hideout.png",
+    "spritePath": "/sprites/locations/rocket-hideout.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Rocket Hideout"
@@ -1026,7 +1026,7 @@
     "east": null,
     "south": "rocket-hideout-B3F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/rocket-hideout-B2F.png",
+    "spritePath": "/sprites/locations/rocket-hideout-B2F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Rocket Hideout BF2"
@@ -1038,7 +1038,7 @@
     "east": null,
     "south": "rocket-hideout-B4F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/rocket-hideout-B3F.png",
+    "spritePath": "/sprites/locations/rocket-hideout-B3F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Rocket Hideout BF3"
@@ -1050,7 +1050,7 @@
     "east": null,
     "south": null,
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/rocket-hideout-B4F.png",
+    "spritePath": "/sprites/locations/rocket-hideout-B4F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Rocket Hideout BF4"
@@ -1062,7 +1062,7 @@
     "east": null,
     "south": "indigo-plateau",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/indigo-plateau-center.png",
+    "spritePath": "/sprites/locations/indigo-plateau-center.png",
     "pokecenter": true,
     "gym": false,
     "displayName": "Indigo Plateau Center"
@@ -1074,7 +1074,7 @@
     "east": null,
     "south": "indigo-plateau-center",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/lorelei-room.png",
+    "spritePath": "/sprites/locations/lorelei-room.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Lorelei's Room"
@@ -1086,7 +1086,7 @@
     "east": null,
     "south": "indigo-plateau-center",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/bruno-room.png",
+    "spritePath": "/sprites/locations/bruno-room.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Bruno's Room"
@@ -1098,7 +1098,7 @@
     "east": null,
     "south": "indigo-plateau-center",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/agatha-room.png",
+    "spritePath": "/sprites/locations/agatha-room.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Agatha's Room"
@@ -1110,7 +1110,7 @@
     "east": null,
     "south": "indigo-plateau-center",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/lance-room.png",
+    "spritePath": "/sprites/locations/lance-room.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Lance's Room"
@@ -1122,7 +1122,7 @@
     "east": null,
     "south": "indigo-plateau-center",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/champion-room.png",
+    "spritePath": "/sprites/locations/champion-room.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Champion Room"
@@ -1134,7 +1134,7 @@
     "east": null,
     "south": "saffron-city",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/silph-co.png",
+    "spritePath": "/sprites/locations/silph-co.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Silph Co."
@@ -1146,7 +1146,7 @@
     "east": null,
     "south": "silph-co",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/silph-co-2F.png",
+    "spritePath": "/sprites/locations/silph-co-2F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Silph Co. 2F"
@@ -1158,7 +1158,7 @@
     "east": null,
     "south": "silph-co-2F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/silph-co-3F.png",
+    "spritePath": "/sprites/locations/silph-co-3F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Silph Co. 3F"
@@ -1170,7 +1170,7 @@
     "east": null,
     "south": "silph-co-3F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/silph-co-4F.png",
+    "spritePath": "/sprites/locations/silph-co-4F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Silph Co. 4F"
@@ -1182,7 +1182,7 @@
     "east": null,
     "south": "silph-co-4F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/silph-co-5F.png",
+    "spritePath": "/sprites/locations/silph-co-5F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Silph Co. 5F"
@@ -1194,7 +1194,7 @@
     "east": null,
     "south": "silph-co-5F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/silph-co-6F.png",
+    "spritePath": "/sprites/locations/silph-co-6F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Silph Co. 6F"
@@ -1206,7 +1206,7 @@
     "east": null,
     "south": "silph-co-6F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/silph-co-7F.png",
+    "spritePath": "/sprites/locations/silph-co-7F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Silph Co. 7F"
@@ -1218,7 +1218,7 @@
     "east": null,
     "south": "silph-co-7F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/silph-co-8F.png",
+    "spritePath": "/sprites/locations/silph-co-8F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Silph Co. 8F"
@@ -1230,7 +1230,7 @@
     "east": null,
     "south": "sikph-co-8F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/silph-co-9F.png",
+    "spritePath": "/sprites/locations/silph-co-9F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Silph Co. 9F"
@@ -1242,7 +1242,7 @@
     "east": "ss-anne-basement",
     "south": "ss-anne-1F-rooms",
     "west": "ss-anne-2F",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-1F.png",
+    "spritePath": "/sprites/locations/ss-anne-1F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "S.S. Anne 1F"
@@ -1254,7 +1254,7 @@
     "east": null,
     "south": null,
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-1F-rooms.png",
+    "spritePath": "/sprites/locations/ss-anne-1F-rooms.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "S.S. Anne Rooms"
@@ -1266,7 +1266,7 @@
     "east": "ss-anne-1F",
     "south": null,
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-basement.png",
+    "spritePath": "/sprites/locations/ss-anne-basement.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "S.S. Anne Basement"
@@ -1278,7 +1278,7 @@
     "east": null,
     "south": "ss-anne-basement",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-basement-rooms.png",
+    "spritePath": "/sprites/locations/ss-anne-basement-rooms.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "S.S. Anne Rooms"
@@ -1290,7 +1290,7 @@
     "east": "captains-quarters",
     "south": "ss-anne-3F",
     "west": "ss-anne-1F",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-basement-2F.png",
+    "spritePath": "/sprites/locations/ss-anne-basement-2F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "S.S. Anne 2F"
@@ -1302,7 +1302,7 @@
     "east": "ss-anne-2F",
     "south": null,
     "west": "ss-anne-deck",
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-basement-3F.png",
+    "spritePath": "/sprites/locations/ss-anne-basement-3F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "S.S. Anne 3F"
@@ -1314,7 +1314,7 @@
     "east": null,
     "south": "ss-anne-2F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/captains-quarters.png",
+    "spritePath": "/sprites/locations/captains-quarters.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Captains Quarters"
@@ -1326,7 +1326,7 @@
     "east": null,
     "south": "ss-anne-2F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-2F-rooms.png",
+    "spritePath": "/sprites/locations/ss-anne-2F-rooms.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "S.S. Anne Rooms"
@@ -1338,7 +1338,7 @@
     "east": "ss-anne-3F",
     "south": null,
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne-deck.png",
+    "spritePath": "/sprites/locations/ss-anne-deck.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "S.S. Anne Deck"
@@ -1350,7 +1350,7 @@
     "east": null,
     "south": "ss-anne-1F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/ss-anne.png",
+    "spritePath": "/sprites/locations/ss-anne.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "--"
@@ -1362,7 +1362,7 @@
     "east": null,
     "south": "silph-co-9F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/silph-co-10F.png",
+    "spritePath": "/sprites/locations/silph-co-10F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Silph Co. 10F"
@@ -1374,7 +1374,7 @@
     "east": null,
     "south": "silph-co-10F",
     "west": null,
-    "spritePath": "/data/cogs/CogManager/cogs/pokemon/sprites/locations/silph-co-11F.png",
+    "spritePath": "/sprites/locations/silph-co-11F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Silph Co. 11F"
