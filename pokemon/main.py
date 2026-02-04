@@ -15,10 +15,10 @@ import asyncio
 
 from .starter import StarterMixin
 from .pokemart import PokemartMixin
-from .pokecenter import PokecenterMixin
-from .pc import PcMixin
-from .party import PartyMixin
-from .inventory import InventoryMixin
+# from .pokecenter import PokecenterMixin # DEPRECATED - functionality moved to EncountersMixin
+# from .pc import PcMixin # DEPRECATED - functionality moved to EncountersMixin
+# from .party import PartyMixin # DEPRECATED - functionality moved to EncountersMixin
+# from .inventory import InventoryMixin # DEPRECATED - functionality moved to EncountersMixin
 # from .map import MapMixin  # DEPRECATED - functionality moved to EncountersMixin
 from .encounters import EncountersMixin
 from .debug import DebugMixin
