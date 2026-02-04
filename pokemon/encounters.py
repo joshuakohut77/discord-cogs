@@ -5339,9 +5339,9 @@ class EncountersMixin(MixinMeta):
                             # Assuming pokemon config has a frontSprite path
                             pokemon_data = pokemon_config.get(received_pokemon.pokemonName)
                             if pokemon_data:
-                                # The sprite path might be like "/sprites/pokemon/front/magikarp.png"
+                                # The sprite path might be like "/sprites/pokemon/magikarp.png"
                                 # Convert to full file system path
-                                sprite_path = f"/sprites/pokemon/front/{received_pokemon.pokemonName}.png"
+                                sprite_path = f"/sprites/pokemon/{received_pokemon.pokemonName}.png"
                                 full_sprite_path = os.path.join(os.path.dirname(__file__), sprite_path.lstrip('/'))
                                 
                                 sprite_file = discord.File(full_sprite_path, filename=f"{received_pokemon.pokemonName}.png")
