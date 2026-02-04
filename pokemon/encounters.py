@@ -1503,6 +1503,83 @@ class EncountersMixin(MixinMeta):
         
         return embed
 
+    async def on_bag_trainer_card_click(self, interaction: discord.Interaction):
+        """Show trainer card from bag menu"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.followup.send('Session expired. Use ,trainer map to start.', ephemeral=True)
+            return
+        
+        from services.trainerclass import trainer as TrainerClass
+        from services.inventoryclass import inventory as InventoryClass
+        from services.keyitemsclass import keyitems as KeyItemsClass
+        import constant
+        
+        trainer = TrainerClass(str(user.id))
+        inventory = InventoryClass(trainer.discordId)
+        keyitems = KeyItemsClass(trainer.discordId)
+        
+        # Create the trainer card embed (same as ,trainer card command)
+        embed = discord.Embed(title=f"Trainer")
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+        
+        embed.add_field(name='Money', value=f'¥{inventory.money}', inline=False)
+        
+        badges = []
+        if keyitems.badge_boulder:
+            badges.append(constant.BADGE_BOULDER_01)
+        if keyitems.badge_cascade:
+            badges.append(constant.BADGE_CASCADE_02)
+        if keyitems.badge_thunder:
+            badges.append(constant.BADGE_THUNDER_03)
+        if keyitems.badge_rainbow:
+            badges.append(constant.BADGE_RAINBOW_04)
+        if keyitems.badge_soul:
+            badges.append(constant.BADGE_SOUL_05)
+        if keyitems.badge_marsh:
+            badges.append(constant.BADGE_MARSH_06)
+        if keyitems.badge_volcano:
+            badges.append(constant.BADGE_VOLCANO_07)
+        if keyitems.badge_earth:
+            badges.append(constant.BADGE_EARTH_08)
+        
+        badgeText = " ".join(badges) if len(badges) > 0 else "--"
+        embed.add_field(name='Badges', value=badgeText, inline=False)
+        
+        embed.add_field(name='Pokedex', value='0')
+        embed.add_field(name='Started', value=f'{trainer.startdate}')
+        
+        # Create view with "Back to Bag" button
+        view = View()
+        back_btn = Button(style=ButtonStyle.gray, label="← Back to Bag", custom_id='trainer_back_to_bag', row=0)
+        back_btn.callback = self.on_trainer_back_to_bag_click
+        view.add_item(back_btn)
+        
+        map_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='trainer_back_to_map', row=0)
+        map_btn.callback = self.on_bag_back_to_map_click
+        view.add_item(map_btn)
+        
+        await interaction.message.edit(embed=embed, view=view)
+
+    async def on_trainer_back_to_bag_click(self, interaction: discord.Interaction):
+        """Return to bag items view from trainer card"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.followup.send('Session expired.', ephemeral=True)
+            return
+        
+        bag_state = self.__bag_states[str(user.id)]
+        bag_state.current_view = 'items'
+        
+        embed = self.__create_items_embed(user)
+        view = self.__create_bag_navigation_view('items')
+        
+        await interaction.message.edit(embed=embed, view=view)
+
     async def on_bag_items_click(self, interaction: discord.Interaction):
         """Show items view"""
         user = interaction.user
@@ -2231,7 +2308,7 @@ class EncountersMixin(MixinMeta):
         hms_btn.callback = self.on_bag_hms_click
         view.add_item(hms_btn)
         
-        # ROW 1: Party, PC, and Pokedex buttons
+        # ROW 1: Party, PC, Pokedex, and Trainer buttons  <-- MODIFIED
         party_btn = Button(
             style=ButtonStyle.blurple if current_view == 'party' else ButtonStyle.gray,
             label="👥 Party",
@@ -2258,6 +2335,16 @@ class EncountersMixin(MixinMeta):
         )
         pokedex_btn.callback = self.on_bag_pokedex_click
         view.add_item(pokedex_btn)
+        
+        # NEW: Trainer button
+        trainer_btn = Button(
+            style=ButtonStyle.blurple if current_view == 'trainer' else ButtonStyle.gray,
+            label="👤 Trainer",
+            custom_id='bag_trainer',
+            row=1
+        )
+        trainer_btn.callback = self.on_bag_trainer_card_click
+        view.add_item(trainer_btn)
         
         # ROW 2: Pokedex navigation (only show when in pokedex view)
         if current_view == 'pokedex':

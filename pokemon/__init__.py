@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     from redbot.core.bot import Red
 
 # from .main import Pokemon
-
+from .leaderboard import LeaderboardMixin
 import sys
 import os
 
