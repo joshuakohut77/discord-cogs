@@ -354,8 +354,9 @@ class EncountersMixin(MixinMeta):
             enemy_level = current_enemy[enemy_name]
             
             # Create enemy Pokemon - FIX: Use positional parameter
-            enemy_pokemon = PokemonClass(None, enemy_name)
-            enemy_pokemon.create(level=enemy_level)
+            enemy_pokemon = PokemonClass(str(user.id), enemy_name)
+            enemy_pokemon.create(enemy_level)
+            enemy_pokemon.discordId = None 
             
             # Battle turn
             enc = EncounterClass(player_pokemon, enemy_pokemon)
@@ -463,8 +464,9 @@ class EncountersMixin(MixinMeta):
         enemy_name = list(first_enemy.keys())[0]
         enemy_level = first_enemy[enemy_name]
         
-        enemy_pokemon = PokemonClass(None, enemy_name)
-        enemy_pokemon.create(level=enemy_level)
+        enemy_pokemon = PokemonClass(str(user.id), enemy_name)
+        enemy_pokemon.create(enemy_level)
+        enemy_pokemon.discordId = None
         
         # BattleState uses POSITIONAL arguments - check the __init__ signature
         battle_state = BattleState(
@@ -4541,8 +4543,9 @@ class EncountersMixin(MixinMeta):
             # Create enemy Pokemon
             enemy_name = list(enemy_data.keys())[0]
             enemy_level = enemy_data[enemy_name]
-            enemy_pokemon = PokemonClass(None, enemy_name)
+            enemy_pokemon = PokemonClass(str(user.id), enemy_name)
             enemy_pokemon.create(enemy_level)
+            enemy_pokemon.discordId = None
             
             # Fight this matchup
             enc = EncounterClass(player_pokemon, enemy_pokemon)
@@ -4755,7 +4758,7 @@ class EncountersMixin(MixinMeta):
 
         # Create first enemy Pokemon
         try:
-            first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0], battle_state.user_id)
+            first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0], str(user.id))
         except Exception as e:
             await intro_message.edit(content=f'Error creating enemy Pokemon: {str(e)}')
             return
@@ -5545,8 +5548,9 @@ class EncountersMixin(MixinMeta):
             # Create enemy Pokemon
             enemy_name = list(enemy_data.keys())[0]
             enemy_level = enemy_data[enemy_name]
-            enemy_pokemon = PokemonClass(None, enemy_name)
+            enemy_pokemon = PokemonClass(str(user.id), enemy_name)
             enemy_pokemon.create(enemy_level)
+            enemy_pokemon.discordId = None
             
             # Fight this matchup
             enc = EncounterClass(player_pokemon, enemy_pokemon)
@@ -5919,7 +5923,7 @@ class EncountersMixin(MixinMeta):
 
         # Create first enemy Pokemon
         try:
-            first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0], battle_state.user_id)
+            first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0], str(user.id))
         except Exception as e:
             await intro_message.edit(content=f'Error creating gym leader Pokemon: {str(e)}')
             return
