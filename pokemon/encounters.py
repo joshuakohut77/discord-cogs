@@ -4203,8 +4203,8 @@ class EncountersMixin(MixinMeta):
         
         await ctx.send(embed=embed)
     
-    @_trainer.command(name="map", aliases=['m'])
-    async def map(self, ctx: commands.Context):
+    @commands.command(name="play", aliases=['p'])
+    async def play(self, ctx: commands.Context):
         """Show the map with navigation buttons"""
         user = ctx.author
         
