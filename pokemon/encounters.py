@@ -1948,11 +1948,10 @@ class EncountersMixin(MixinMeta):
             return
         
         from services.trainerclass import trainer as TrainerClass
-        from services.pokeclass import pokemon as PokemonClass
         
         trainer = TrainerClass(str(user.id))
         
-        # Use the item
+        # Use the item - trainerclass.useItem() handles everything
         trainer.useItem(item_state.selected_item, int(item_state.selected_pokemon_id))
         
         # Send result as ephemeral message
