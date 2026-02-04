@@ -5298,7 +5298,18 @@ class EncountersMixin(MixinMeta):
         if ActionType.GIFT.value == action.type.value:
             trainer.gift()
     
+            # Get the pokemon that was just received (if successful)
+            received_pokemon = None
+            if trainer.statuscode == 420 and "received" in trainer.message.lower():
+                # Get trainer's most recent pokemon to show sprite
+                trainer_obj = TrainerClass(str(user.id))
+                pokemon_list = trainer_obj.getPokemon()
+                if pokemon_list and len(pokemon_list) > 0:
+                    # The most recently added pokemon should be the last one
+                    received_pokemon = pokemon_list[-1]
+            
             # Create embed for gift result
+            sprite_file = None
             if trainer.statuscode == 420:
                 # Check if it was successful or already completed
                 if "already received" in trainer.message.lower():
@@ -5309,22 +5320,35 @@ class EncountersMixin(MixinMeta):
                         color=discord.Color.red()
                     )
                 else:
-                    # Successfully received gift - show success embed with sprite
+                    # Successfully received gift - show success embed
                     embed = discord.Embed(
                         title="🎁 Gift Received!",
                         description=trainer.message,
                         color=discord.Color.green()
                     )
                     
-                    # Get the pokemon that was just received to show its sprite
-                    # The pokemon should be the most recently added one
-                    trainer_obj = TrainerClass(str(user.id))
-                    pokemon_list = trainer_obj.getPokemon()
-                    if pokemon_list and len(pokemon_list) > 0:
-                        # The last pokemon in the list is the one we just received
-                        received_pokemon = pokemon_list[-1]
-                        # Use the front sprite URL from the pokemon object
-                        embed.set_thumbnail(url=received_pokemon.frontSpriteURL)
+                    # Add pokemon sprite if we got one
+                    if received_pokemon:
+                        try:
+                            # Load pokemon config to get sprite path
+                            import json
+                            p = os.path.join(os.path.dirname(__file__), 'configs/pokemon.json')
+                            pokemon_config = json.load(open(p, 'r'))
+                            
+                            # Get the front sprite path for this pokemon
+                            # Assuming pokemon config has a frontSprite path
+                            pokemon_data = pokemon_config.get(received_pokemon.pokemonName)
+                            if pokemon_data:
+                                # The sprite path might be like "/sprites/pokemon/front/magikarp.png"
+                                # Convert to full file system path
+                                sprite_path = f"/sprites/pokemon/front/{received_pokemon.pokemonName}.png"
+                                full_sprite_path = os.path.join(os.path.dirname(__file__), sprite_path.lstrip('/'))
+                                
+                                sprite_file = discord.File(full_sprite_path, filename=f"{received_pokemon.pokemonName}.png")
+                                embed.set_image(url=f"attachment://{received_pokemon.pokemonName}.png")
+                        except Exception as e:
+                            print(f"Error loading pokemon sprite: {e}")
+                            # Fallback - no sprite, just show the message
             else:
                 # Error occurred
                 embed = discord.Embed(
@@ -5353,12 +5377,20 @@ class EncountersMixin(MixinMeta):
                 heal_button.callback = self.on_nav_heal_click
                 nav_view.add_item(heal_button)
             
-            # Edit the message with embed and buttons
-            await interaction.message.edit(
-                content=None,
-                embed=embed,
-                view=nav_view
-            )
+            # Edit the message with embed and buttons (include sprite file if we have one)
+            if sprite_file:
+                await interaction.message.edit(
+                    content=None,
+                    embed=embed,
+                    view=nav_view,
+                    attachments=[sprite_file]
+                )
+            else:
+                await interaction.message.edit(
+                    content=None,
+                    embed=embed,
+                    view=nav_view
+                )
             
             # Clean up action state
             if str(user.id) in self.__useractions:
