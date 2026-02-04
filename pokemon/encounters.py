@@ -670,7 +670,7 @@ class EncountersMixin(MixinMeta):
         )
         
         # KEY CHANGE: Use existing post battle buttons
-        view = self.__create_post_battle_buttons(user_id)
+        view = self.__create_post_battle_buttons(user_id, show_trainer_buttons=False)
         
         # KEY CHANGE: Clear content and use existing message
         await interaction.message.edit(content=None, embed=embed, view=view)
