@@ -5300,15 +5300,10 @@ class EncountersMixin(MixinMeta):
     
             # Get the pokemon that was just received (if successful)
             received_pokemon = None
-            debug_info = []
             if trainer.statuscode == 420 and "received" in trainer.message.lower():
-                debug_info.append("Gift was successful")
                 # Get the pokemon directly from trainer
                 if hasattr(trainer, 'lastGiftPokemon') and trainer.lastGiftPokemon:
                     received_pokemon = trainer.lastGiftPokemon
-                    debug_info.append(f"Received pokemon: {received_pokemon.pokemonName}")
-                else:
-                    debug_info.append("No lastGiftPokemon attribute found")
             
             # Create embed for gift result
             sprite_file = None
@@ -5334,31 +5329,15 @@ class EncountersMixin(MixinMeta):
                         try:
                             # The sprite path is like "/sprites/pokemon/magikarp.png"
                             sprite_path = f"/sprites/pokemon/{received_pokemon.pokemonName}.png"
-                            debug_info.append(f"Sprite path: {sprite_path}")
                             
                             # Convert to full file system path
                             full_sprite_path = os.path.join(os.path.dirname(__file__), sprite_path.lstrip('/'))
-                            debug_info.append(f"Full path: {full_sprite_path}")
-                            
-                            # Check if file exists
-                            import os as os_check
-                            if os_check.path.exists(full_sprite_path):
-                                debug_info.append("✅ File exists!")
-                            else:
-                                debug_info.append("❌ File NOT found!")
                             
                             sprite_file = discord.File(full_sprite_path, filename=f"{received_pokemon.pokemonName}.png")
                             embed.set_image(url=f"attachment://{received_pokemon.pokemonName}.png")
-                            debug_info.append("✅ Sprite file created")
                         except Exception as e:
-                            debug_info.append(f"❌ Error: {str(e)}")
                             print(f"Error loading pokemon sprite: {e}")
-                    else:
-                        debug_info.append("No received_pokemon found")
-                    
-                    # Add debug info to embed
-                    if debug_info:
-                        embed.add_field(name="Debug Info", value="\n".join(debug_info), inline=False)
+                            # Fallback - no sprite, just show the message
             else:
                 # Error occurred
                 embed = discord.Embed(
