@@ -147,11 +147,24 @@ class EncountersMixin(MixinMeta):
     __battle_states: dict[str, BattleState] = {}
     __wild_battle_states: Dict[str, WildBattleState] = {}
     __bag_states: dict[str, BagState] = {}
+    __enemy_trainers_data: dict = None
 
     def __create_post_battle_buttons(self, user_id: str) -> View:
         """Create navigation buttons to show after battle ends"""
         view = View()
         
+        trainer = TrainerClass(user_id)
+        location = trainer.getLocation()
+        
+        # Check for wild trainers
+        battle_wild = BattleClass(user_id, location.locationId, enemyType="wild")
+        remaining_wild = battle_wild.getRemainingTrainerCount()
+        
+        if remaining_wild > 0:
+            wild_btn = Button(style=ButtonStyle.blurple, label=f"⚔️ Next Trainer ({remaining_wild})", custom_id='post_battle_wild')
+            wild_btn.callback = self.on_wild_trainers_click
+            view.add_item(wild_btn)
+
         # Map button
         map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
         map_button.callback = self.on_nav_map_click
@@ -2859,6 +2872,9 @@ class EncountersMixin(MixinMeta):
             gym_btn = Button(style=ButtonStyle.red, label="🏛️ Gym", custom_id='nav_gym', row=2)
             gym_btn.callback = self.on_gym_click
             view.add_item(gym_btn)
+        
+        if wild_trainers_button:
+            view.add_item(wild_trainers_button)
         
         # ROW 3: Utility buttons
         bag_btn = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_bag', row=3)
