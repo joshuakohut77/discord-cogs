@@ -79,6 +79,8 @@ class trainer:
         finally:
             # delete and close connection
             del db
+            excInfo=sys.exc_info()
+            return str(excInfo)
             return retMsg
 
     def setTrainerName(self, trainerName: str):
