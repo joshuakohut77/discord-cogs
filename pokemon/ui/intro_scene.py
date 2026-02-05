@@ -8,17 +8,10 @@ from discord.ui import Button, View, Modal, TextInput
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
-def get_sprite_path(relative_path: str) -> str:
-    """Convert relative sprite path to absolute path"""
-    # Remove leading slash if present
-    if relative_path.startswith('/'):
-        relative_path = relative_path[1:]
-    
-    # Get the directory of this file and go up to find the sprites folder
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    # Assuming sprites folder is at the root of the pokemon module
-    root_dir = os.path.dirname(os.path.dirname(current_dir))
-    return os.path.join(root_dir, relative_path)
+# Import the helper function from the correct location
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from helpers.pathhelpers import get_sprite_path
 
 
 class NameInputModal(Modal):
@@ -50,7 +43,6 @@ class IntroSceneView(View):
         self.sprite_path = sprite_path
         self.trainer_name = None
         self.message = None
-        self.sprite_file = None
         self.sprite_filename = None
         
         # Create next button
@@ -75,7 +67,7 @@ class IntroSceneView(View):
         
         # Add sprite if available and file was loaded
         if self.sprite_filename:
-            embed.set_thumbnail(url=f"attachment://{self.sprite_filename}")
+            embed.set_image(url=f"attachment://{self.sprite_filename}")
         
         # Add footer with progress
         embed.set_footer(text=f"Scene {self.current_index + 1}/{len(self.scenes)}")
@@ -147,7 +139,7 @@ async def start_intro_scene(ctx, user_id: int, scenes: List[Dict], on_complete: 
         user_id: Discord user ID
         scenes: List of scene dictionaries
         on_complete: Async callback function when scene completes
-        sprite_path: Optional path to character sprite image
+        sprite_path: Optional path to character sprite image (e.g., '/sprites/trainers/oak.png')
     
     Scene dictionary format:
     {
@@ -162,10 +154,10 @@ async def start_intro_scene(ctx, user_id: int, scenes: List[Dict], on_complete: 
     
     # If sprite path provided, try to load the file
     sprite_file = None
-    sprite_loaded = False
     if sprite_path:
         try:
             # Try to load from local file system first
+            # sprite_path is like "/sprites/trainers/oak.png"
             full_sprite_path = get_sprite_path(sprite_path)
             
             # Check if file exists
@@ -174,8 +166,7 @@ async def start_intro_scene(ctx, user_id: int, scenes: List[Dict], on_complete: 
                 filename = os.path.basename(sprite_path)
                 sprite_file = discord.File(full_sprite_path, filename=filename)
                 view.sprite_filename = filename
-                embed.set_thumbnail(url=f"attachment://{filename}")
-                sprite_loaded = True
+                embed.set_image(url=f"attachment://{filename}")
             else:
                 raise FileNotFoundError("Sprite file not found locally")
         except Exception as e:
@@ -183,7 +174,7 @@ async def start_intro_scene(ctx, user_id: int, scenes: List[Dict], on_complete: 
             # Fallback to URL
             try:
                 sprite_url = f"https://pokesprites.joshkohut.com{sprite_path}"
-                embed.set_thumbnail(url=sprite_url)
+                embed.set_image(url=sprite_url)
             except Exception as url_error:
                 print(f"Error loading trainer sprite from URL: {url_error}")
     
