@@ -130,7 +130,7 @@ class StarterMixin(MixinMeta):
                 'prompt_name': True  # This triggers the name input modal
             },
             {
-                'title': 'Nice to Meet You, {name}!',
+                'title': 'Nice to Meet You!',
                 'text': 'Excellent! Welcome, {name}!\n\nYour very own Pokémon adventure is about to unfold!',
                 'color': discord.Color.green()
             },
