@@ -91,7 +91,6 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [
-      "marsh_badge",
       "pokeflute"
     ],
     "name": "kanto-route-12-N"
@@ -323,9 +322,7 @@
   "160": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": [
-      "silph_scope"
-    ],
+    "blockers": [],
     "name": "pokemon-tower"
   },
   "161": {
@@ -468,7 +465,6 @@
       "Fishing Brother"
     ],
     "blockers": [
-      "marsh_badge",
       "pokeflute"
     ],
     "name": "kanto-route-12-S"
