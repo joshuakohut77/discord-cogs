@@ -330,11 +330,9 @@
     "name": "pokemon-mansion"
   },
   "162": {
-    "pre-requsites": [
-      "soul_badge"
-    ],
+    "pre-requsites": [],
     "quest": [],
-    "blockers": [],
+    "blockers": ["soul_badge"],
     "name": "kanto-safari-zone"
   },
   "231": {
@@ -590,7 +588,7 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [],
-    "name": "kanto-safari-zone"
+    "name": "kanto-safari-zone-1"
   },
   "1622": {
     "pre-requsites": [],
@@ -598,7 +596,7 @@
       "The Warden"
     ],
     "blockers": [],
-    "name": "kanto-safari-zone"
+    "name": "kanto-safari-zone-2"
   },
   "1623": {
     "pre-requsites": [
@@ -608,7 +606,7 @@
       "Lone House"
     ],
     "blockers": [],
-    "name": "kanto-safari-zone"
+    "name": "kanto-safari-zone-3"
   },
   "1880": {
     "pre-requsites": [],
