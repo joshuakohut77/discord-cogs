@@ -74,20 +74,27 @@ class StarterMixin(MixinMeta):
 
         # This will create the trainer if it doesn't exist
         trainer = TrainerClass(str(user.id))
-        
-        # Check if trainer already has a starter
+
+        # Check if trainer already has a starter (check database directly, don't call getStarterPokemon yet)
+        has_starter = False
         try:
-            pokemon = trainer.getStarterPokemon()
-            has_starter = pokemon is not None
+            from services.dbclass import db as dbconn
+            db = dbconn()
+            queryString = 'SELECT "starterId" FROM trainer WHERE discord_id = %(discordId)s'
+            result = db.querySingle(queryString, {'discordId': str(user.id)})
+            if result and result[0] is not None:
+                has_starter = True
+            del db
         except:
             has_starter = False
-        
+
         # If no starter yet, show intro scene
         if not has_starter:
             await self._show_intro_scene(ctx, user, trainer)
             return
-        
-        # If they have a starter, just display it
+
+        # If they have a starter, get it and display
+        pokemon = trainer.getStarterPokemon()
         active = trainer.getActivePokemon()
         state = PokemonState(str(user.id), None, DisplayCard.STATS, [pokemon], active.trainerId, None)
         authorIsTrainer = user.id == state.discordId
