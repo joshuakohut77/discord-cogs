@@ -149,6 +149,8 @@ class trainer:
                 # TODO: Make the all the queries part of one transaction that will rollback
                 #       if it fails.
                 
+                pokemon.party = True
+
                 # save starter into
                 pokemon.save()
                 if pokemon.statuscode == 96:
