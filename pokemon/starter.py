@@ -63,6 +63,43 @@ class StarterMixin(MixinMeta):
         message: discord.Message = await ctx.send(embed=embed, view=btns)
         self.setPokemonState(author, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
 
+    @_trainer.command()
+    async def delete(self, ctx: commands.Context) -> None:
+        """Delete your trainer and all associated data. This action cannot be undone!"""
+        user = ctx.author
+        
+        # Create confirmation embed
+        embed = discord.Embed(
+            title="⚠️ Delete Trainer Account",
+            description=f"**{user.display_name}**, are you sure you want to delete your trainer account?\n\n"
+                        f"This will permanently delete:\n"
+                        f"• All your Pokémon\n"
+                        f"• Your entire inventory\n"
+                        f"• Your Pokédex progress\n"
+                        f"• All trainer data\n\n"
+                        f"**This action CANNOT be undone!**",
+            color=discord.Color.red()
+        )
+        
+        # Create view with Yes/No buttons
+        view = View(timeout=60)  # 60 second timeout
+        
+        # Yes button (danger style)
+        yes_button = Button(style=ButtonStyle.danger, label="Yes, Delete Everything", custom_id="confirm_delete")
+        yes_button.callback = self._on_delete_confirm
+        view.add_item(yes_button)
+        
+        # No button (secondary style)
+        no_button = Button(style=ButtonStyle.secondary, label="No, Keep My Account", custom_id="cancel_delete")
+        no_button.callback = self._on_delete_cancel
+        view.add_item(no_button)
+        
+        # Send confirmation message
+        message = await ctx.send(embed=embed, view=view)
+        
+        # Store message info for callbacks
+        self._delete_confirmation_users = getattr(self, '_delete_confirmation_users', {})
+        self._delete_confirmation_users[user.id] = message.id
 
     @_trainer.command()
     async def starter(self, ctx: commands.Context, user: DiscordUser = None) -> None:
@@ -229,6 +266,72 @@ class StarterMixin(MixinMeta):
         message = await interaction.message.edit(embed=embed, view=btns)
         self.setPokemonState(user, PokemonState(state.discordId, message.id, DisplayCard.DEX, state.pokemon, state.active, None))
     
+    async def _on_delete_confirm(self, interaction: Interaction):
+        """Handle confirmation of trainer deletion"""
+        user = interaction.user
+        
+        # Check if this user has a pending deletion
+        if not hasattr(self, '_delete_confirmation_users') or user.id not in self._delete_confirmation_users:
+            await interaction.response.send_message("This confirmation is not for you or has expired.", ephemeral=True)
+            return
+        
+        # Check if this is the right message
+        if interaction.message.id != self._delete_confirmation_users[user.id]:
+            await interaction.response.send_message("This confirmation is not for you or has expired.", ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Delete the trainer
+        trainer = TrainerClass(str(user.id))
+        result_message = trainer.deleteTrainer()
+        
+        # Create result embed
+        if trainer.statuscode == 420:
+            embed = discord.Embed(
+                title="✅ Trainer Deleted",
+                description=f"{result_message}\n\nYou can start fresh anytime by using `,trainer starter`!",
+                color=discord.Color.green()
+            )
+        else:
+            embed = discord.Embed(
+                title="❌ Deletion Failed",
+                description=f"An error occurred: {result_message}",
+                color=discord.Color.red()
+            )
+        
+        # Update the message
+        await interaction.message.edit(embed=embed, view=None)
+        
+        # Clean up
+        del self._delete_confirmation_users[user.id]
+
+    async def _on_delete_cancel(self, interaction: Interaction):
+        """Handle cancellation of trainer deletion"""
+        user = interaction.user
+        
+        # Check if this user has a pending deletion
+        if not hasattr(self, '_delete_confirmation_users') or user.id not in self._delete_confirmation_users:
+            await interaction.response.send_message("This confirmation is not for you or has expired.", ephemeral=True)
+            return
+        
+        # Check if this is the right message
+        if interaction.message.id != self._delete_confirmation_users[user.id]:
+            await interaction.response.send_message("This confirmation is not for you or has expired.", ephemeral=True)
+            return
+        
+        # Create cancellation embed
+        embed = discord.Embed(
+            title="✅ Deletion Cancelled",
+            description=f"{user.display_name}, your trainer account is safe!",
+            color=discord.Color.blue()
+        )
+        
+        # Update the message
+        await interaction.response.edit_message(embed=embed, view=None)
+        
+        # Clean up
+        del self._delete_confirmation_users[user.id]
 
     async def __on_stats_click(self, interaction: Interaction):
         user = interaction.user
