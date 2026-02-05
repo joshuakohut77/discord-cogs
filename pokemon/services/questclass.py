@@ -681,10 +681,9 @@ class quests:
         self.keyitems.ss_ticket = True
         self.message = dedent("""\
                             Rummaging through someones mailbox you find an evelope. 
-                            Inside it says "For Tommy. Sincerely, The Make a Wish Foundation"
-                            You received an SS Anne Ticket""")
+                            Inside it says "For Tommy. Sincerely, The Make a Wish Foundation""")
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('S.S. Ticket')
 
     def thePokemonLeague(self):
         # start battle with Elite 4
@@ -709,8 +708,7 @@ class quests:
         uniqueEncounters.save()
         self.message = dedent("""\
                         You find an abandoned truck. Using your massive penis, you pushed
-                        it out of the way. Underneath you discover a pokeball."
-                        You received Mew!""")
+                        it out of the way. Underneath you discover a pokeball.""")
         return
 
 
