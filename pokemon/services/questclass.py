@@ -576,7 +576,7 @@ class quests:
     def rescueMrFuji(self):
         self.keyitems.mr_fujis_finger = True
         self.message = dedent("""\
-                            TODO - about resucing mr fuji""")
+                            TODO - about resucing mr fuji and him giving you his finger.""")
         self.keyitems.save()
         return
 
