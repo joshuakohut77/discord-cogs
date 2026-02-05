@@ -277,7 +277,7 @@ class quests:
             if self.keyitems.bicycle:
                 return True
         elif questName == 'Pokemon Fan Club':
-            if self.keyitems.bike_voucher:
+            if self.keyitems.bike_voucher or self.keyitems.bicycle:
                 return True
         
         # easter eggs
@@ -472,7 +472,7 @@ class quests:
         return self.create_key_item_embed('Old Rod')
 
     def pokemonFanClub(self):
-        self.keyitems.bicycle = True
+        self.keyitems.bike_voucher = True
         self.message = dedent("""\
                             You met a guy who found out his wife was cheating on him with some professor.
                             He gave you the bike voucher which was her birthday surprise.""")
@@ -480,7 +480,8 @@ class quests:
         return self.create_key_item_embed('Bike Voucher')
 
     def bikeVoucher(self):
-        self.keyitems.bike_voucher = True
+        self.keyitems.bike_voucher = False
+        self.keyitems.bicycle = True
         self.message = dedent("""\
                             A robbery distracted the bike shop clerk.
                             You stole a bicycle.
