@@ -1433,9 +1433,9 @@ class EncountersMixin(MixinMeta):
         if inv.gold_teeth:
             items.append(f'🦷 **Gold Teeth**')
         if inv.dome_fossil:
-            items.append(f'{constant.OLDAMBER} **Dome Fossil**')
+            items.append(f'{constant.DOMEFOSSIL} **Dome Fossil**')
         if inv.helix_fossil:
-            items.append(f'{constant.OLDAMBER} **Helix Fossil**')
+            items.append(f'{constant.HELIXFOSSIL} **Helix Fossil**')
         
         items_text = "\n".join(items) if len(items) > 0 else "No key items yet."
         embed.add_field(name="Key Items", value=items_text, inline=False)
