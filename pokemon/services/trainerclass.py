@@ -149,9 +149,11 @@ class trainer:
                 # TODO: Make the all the queries part of one transaction that will rollback
                 #       if it fails.
                 
+                # CRITICAL: Set party to True AFTER create() because create() sets it to None
+                pokemon.discordId = self.discordId
                 pokemon.party = True
-
-                # save starter into
+                
+                # save starter into database
                 pokemon.save()
                 if pokemon.statuscode == 96:
                     self.statuscode = 96
