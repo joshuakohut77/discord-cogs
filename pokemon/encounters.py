@@ -4042,12 +4042,13 @@ class EncountersMixin(MixinMeta):
 
 
     def __create_enemy_pokemon(self, pokemon_data: dict, player_discord_id: str):
-        """Create an enemy Pokemon from data dict like {"geodude": 12}
-        
-        Args:
-            pokemon_data: Dict with pokemon name as key and level as value, e.g. {"geodude": 12}
+        """
+        Create an enemy Pokemon from dictionary data like {"geodude": 12}
+            pokemon_data: Dictionary with single key-value pair like {"geodude": 12}
             player_discord_id: The player's Discord ID (needed for dynamic Pokemon resolution)
         """
+        from services.pokedexclass import pokedex as PokedexClass
+        
         enemy_name = list(pokemon_data.keys())[0]
         enemy_level = pokemon_data[enemy_name]
         
@@ -4058,6 +4059,9 @@ class EncountersMixin(MixinMeta):
         
         # IMPORTANT: Reset discordId to None after creation so enemy Pokemon don't save to player's database
         enemy_pokemon.discordId = None
+        
+        # Register enemy Pokemon to player's Pokedex
+        PokedexClass(player_discord_id, enemy_pokemon)
         
         return enemy_pokemon
 
@@ -5030,6 +5034,8 @@ class EncountersMixin(MixinMeta):
             player_pokemon = alive_party[player_pokemon_index]
             enemy_data = enemy_pokemon_list[enemy_pokemon_index]
             
+            from services.pokedexclass import pokedex as PokedexClass
+
             # Create enemy Pokemon
             enemy_name = list(enemy_data.keys())[0]
             enemy_level = enemy_data[enemy_name]
@@ -5037,6 +5043,8 @@ class EncountersMixin(MixinMeta):
             enemy_pokemon.create(enemy_level)
             enemy_pokemon.discordId = None
             
+            PokedexClass(str(user.id), enemy_pokemon)
+
             # Fight this matchup
             enc = EncounterClass(player_pokemon, enemy_pokemon)
             result = enc.fight(battleType='auto')
@@ -5246,9 +5254,12 @@ class EncountersMixin(MixinMeta):
         # Get enemy's full Pokemon list
         enemy_pokemon_list = next_trainer.pokemon
 
+        from services.pokedexclass import pokedex as PokedexClass
+
         # Create first enemy Pokemon
         try:
             first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0], str(user.id))
+            PokedexClass(str(user.id), first_enemy_pokemon)
         except Exception as e:
             await intro_message.edit(content=f'Error creating enemy Pokemon: {str(e)}')
             return
@@ -6411,9 +6422,12 @@ class EncountersMixin(MixinMeta):
         # Get enemy's full Pokemon list
         enemy_pokemon_list = gym_leader.pokemon
 
+        from services.pokedexclass import pokedex as PokedexClass
+
         # Create first enemy Pokemon
         try:
             first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0], str(user.id))
+            PokedexClass(str(user.id), first_enemy_pokemon)
         except Exception as e:
             await intro_message.edit(content=f'Error creating gym leader Pokemon: {str(e)}')
             return
