@@ -266,7 +266,7 @@ class quests:
             if self.keyitems.oaks_parcel_delivered:
                 return True
         elif questName == 'Super Nerd':
-            if self.keyitems.helixfossil != 0 or self.keyitems.domefossil != 0:
+            if self.keyitems.helix_fossil or self.keyitems.dome_fossil:
                 return True
         elif questName == 'Fishing Guru':
             if self.keyitems.old_rod:
