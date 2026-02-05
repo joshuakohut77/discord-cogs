@@ -84,6 +84,7 @@ class MartState:
     store: any  # StoreClass instance
     mode: str  # 'main', 'buy', 'sell'
     selected_item: Optional[str]
+    quantity: int
 
     def __init__(self, user_id: str, message_id: int, channel_id: int,
                  location, store, mode: str = 'main'):
@@ -94,3 +95,4 @@ class MartState:
         self.store = store  # StoreClass instance
         self.mode = mode  # 'main', 'buy', 'sell'
         self.selected_item = None
+        self.quantity = 1  # Default quantity for purchases
