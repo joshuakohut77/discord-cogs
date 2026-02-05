@@ -497,6 +497,50 @@
         "method": "old-rod"
       }
     ],
+    "91": [
+      {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "tentacool",
+        "chance": 25,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "snorlax",
+        "chance": 100,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "pokeflute"
+      }
+    ],
     "911": [
       {
         "name": "pidgey",
