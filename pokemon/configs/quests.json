@@ -43,10 +43,7 @@
       "Fishing Dude",
       "Return Teeth"
     ],
-    "blockers": [
-      "bicycle",
-      "marsh_badge"
-    ],
+    "blockers": [],
     "name": "fuchsia-city"
   },
   "80": {
