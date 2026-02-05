@@ -606,7 +606,7 @@ class quests:
                             He quickly became anxious for you to leave. He offered you a new rod in exchange for your silence.""")
         self.keyitems.save()
         return self.create_key_item_embed('Super Rod')
-    
+
     def fishingDude(self):
         self.keyitems.good_rod = True
         self.message = dedent("""\
@@ -616,13 +616,13 @@ class quests:
         self.keyitems.save()
         return
 
-    def theWarden(self):
-        self.keyitems.gold_teeth = True
-        self.message = dedent("""\
-                            Walking through the safari zone you find a set of gold teeth lying next to some dead pokemon.
-                            You received some Gold Teeth""")
-        self.keyitems.save()
-        return
+    # def theWarden(self):
+    #     self.keyitems.gold_teeth = True
+    #     self.message = dedent("""\
+    #                         Walking through the safari zone you find a set of gold teeth lying next to some dead pokemon.
+    #                         You received some Gold Teeth""")
+    #     self.keyitems.save()
+    #     return
 
     def theWarden(self):
         self.keyitems.gold_teeth = True
