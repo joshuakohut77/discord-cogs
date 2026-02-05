@@ -268,7 +268,7 @@ class quests:
             if self.keyitems.oaks_parcel_delivered:
                 return True
         elif questName == 'Super Nerd':
-            if self.keyitems.helix_fossil or self.keyitems.dome_fossil:
+            if self.keyitems.helixfossil != 0 or self.keyitems.domefossil != 0:
                 return True
         elif questName == 'Fishing Guru':
             if self.keyitems.old_rod:
@@ -276,54 +276,9 @@ class quests:
         elif questName == 'Bike Voucher':
             if self.keyitems.bicycle:
                 return True
-        elif questName == 'Speak to Captain':
-            if self.keyitems.HM01:
+        elif questName == 'Pokemon Fan Club':
+            if self.keyitems.bicycle:
                 return True
-        elif questName == 'Oaks Aide':
-            if self.keyitems.HM05:
-                return True
-        elif questName == 'Museum of Science':
-            if self.inventory.oldamber != 0:
-                return True
-        elif questName == 'Cafe':
-            if self.inventory.coincase != 0:
-                return True
-        elif questName == 'Rooftop Square':
-            if self.inventory.lemonade != 0:
-                return True
-        elif questName == 'Rocket Hideout':
-            if self.keyitems.silph_scope:
-                return True
-        elif questName == 'Free Spirits':
-            return False 
-        elif questName == 'Mr Fuji':
-            if self.keyitems.pokeflute:
-                return True
-        elif questName == 'Lone House':
-            if self.keyitems.HM03:
-                return True
-        elif questName == 'Secret Resort':
-            if self.keyitems.HM02:
-                return True
-        elif questName == 'Fishing Brother':
-            if self.keyitems.super_rod:
-                return True
-        elif questName == 'Fishing Dude':
-            if self.keyitems.good_rod:
-                return True
-        elif questName == 'The Warden':
-            if self.keyitems.gold_teeth or self.keyitems.HM04:
-                return True
-        elif questName == 'Return Teeth':
-            if not self.keyitems.gold_teeth and self.keyitems.HM04:
-                return True
-        elif questName == 'SS Anne':
-            if self.keyitems.ss_ticket:
-                return True
-        elif questName == 'The Pokemon League':
-            return False 
-        elif questName == 'Mysterious Cave':
-            return False
         
         # easter eggs
         elif questName == 'Check Truck':
@@ -417,6 +372,7 @@ class quests:
         if not questName:
             self.statuscode = 69
             self.message = "unknown quest name received"
+
         
         # all quests return a message
         self.statuscode = 420
@@ -459,6 +415,10 @@ class quests:
             return self.theWarden()
         elif questName == 'Return Teeth':
             return self.returnTeeth()
+        elif questName == 'Pokemon Fan Club':
+            return self.pokemonFanClub()
+        elif questName == 'Pokemon Lab':
+            return self.pokemonLab()
         elif questName == 'SS Anne':
             return self.ssAnne()
         elif questName == 'The Pokemon League':
