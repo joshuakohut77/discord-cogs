@@ -20,6 +20,8 @@ from redbot.core import commands
 import constant
 from models.location import LocationModel
 from models.actionmodel import ActionModel, ActionType
+from models.battlestate import BattleState, WildBattleState
+from models.sessionstate import ActionState, BagState, ItemUsageState, MartState
 from services.trainerclass import trainer as TrainerClass
 from services.locationclass import location as LocationClass
 from services.inventoryclass import inventory as InventoryClass
@@ -34,116 +36,6 @@ from .functions import (getTypeColor)
 from .helpers import (getTrainerGivenPokemonName)
 from .helpers.pathhelpers import (get_config_path, load_json_config, get_sprite_path)
 
-
-class ActionState:
-    discordId: str
-    location: LocationModel
-
-    channelId: int
-    messageId: int
-
-    activePokemon: PokemonClass
-    wildPokemon: PokemonClass
-    descLog: str
-
-    def __init__(self, discordId: str, channelId: int, messageId: int, location: LocationModel, activePokemon: PokemonClass, wildPokemon: PokemonClass, descLog: str) -> None:
-        self.discordId = discordId
-        self.location = location
-
-        self.channelId = channelId
-        self.messageId = messageId
-
-        self.activePokemon = activePokemon
-        self.wildPokemon = wildPokemon
-        self.descLog = descLog
-        
-
-class BattleState:
-    """Track ongoing manual battle state with multiple Pokemon support"""
-    def __init__(self, user_id: str, channel_id: int, message_id: int, 
-                 player_party: list, enemy_pokemon_list: list,
-                 enemy_name: str, trainer_model, battle_manager):
-        self.user_id = user_id
-        self.channel_id = channel_id
-        self.message_id = message_id
-        
-        # Player's full party
-        self.player_party = player_party  # List of PokemonClass objects
-        self.player_current_index = 0  # Index of current Pokemon
-        self.player_pokemon = player_party[0]  # Current Pokemon
-        
-        # Enemy's full team
-        self.enemy_pokemon_data = enemy_pokemon_list  # List of dicts like [{"geodude": 12}, {"onix": 14}]
-        self.enemy_current_index = 0  # Index of current Pokemon
-        self.enemy_pokemon = None  # Will be set after creating first Pokemon
-        
-        self.enemy_name = enemy_name
-        self.trainer_model = trainer_model
-        self.battle_manager = battle_manager
-        self.battle_log = []
-        self.turn_number = 1
-        self.defeated_enemies = []  # Track defeated enemy Pokemon
-        self.is_wild_trainer: bool = False
-
-class ItemUsageState:
-    def __init__(self, discord_id: str, selected_pokemon_id: str = None, selected_item: str = None):
-        self.discord_id = discord_id
-        self.selected_pokemon_id = selected_pokemon_id
-        self.selected_item = selected_item
-class BagState:
-    """State for bag menu navigation"""
-    discord_id: str
-    message_id: int
-    channel_id: int
-    current_view: str  # 'items', 'keyitems', 'hms', 'party', 'pc', 'pokedex'
-    pokedex_index: int  # For paginating through pokedex
-    selected_pokemon_id: str  # For party view
-    pc_selected_pokemon_id: str  # For PC view - ADDED
-    
-    def __init__(self, discord_id: str, message_id: int, channel_id: int, current_view: str = 'items'):
-        self.discord_id = discord_id
-        self.message_id = message_id
-        self.channel_id = channel_id
-        self.current_view = current_view
-        self.pokedex_index = 0
-        self.selected_pokemon_id = None
-        self.pc_selected_pokemon_id = None
-
-
-class WildBattleState:
-    """Track ongoing wild Pokemon battle state"""
-    user_id: str
-    channel_id: int
-    message_id: int
-    
-    player_pokemon: PokemonClass
-    wild_pokemon: PokemonClass
-    
-    turn_number: int
-    battle_log: list[str]
-    
-    def __init__(self, user_id: str, channel_id: int, message_id: int, 
-                 player_pokemon: PokemonClass, wild_pokemon: PokemonClass):
-        self.user_id = user_id
-        self.channel_id = channel_id
-        self.message_id = message_id
-        self.player_pokemon = player_pokemon
-        self.wild_pokemon = wild_pokemon
-        self.turn_number = 1
-        self.battle_log = []
-
-
-class MartState:
-    """Track Mart UI state"""
-    def __init__(self, user_id: str, message_id: int, channel_id: int, location, store, mode: str = 'main'):
-        self.user_id = user_id
-        self.message_id = message_id
-        self.channel_id = channel_id
-        self.location = location
-        self.store = store  # StoreClass instance
-        self.mode = mode  # 'main', 'buy', 'sell'
-        self.selected_item = None
-        self.quantity = 1
 
 class EncountersMixin(MixinMeta):
     """Encounters"""
