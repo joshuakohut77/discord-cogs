@@ -1397,8 +1397,9 @@ class EncountersMixin(MixinMeta):
         return embed
 
     def __create_keyitems_embed(self, user: discord.User) -> discord.Embed:
-        """Create embed showing trainer's key items"""
+        """Create embed showing trainer's key items (excluding HMs)"""
         from services.keyitemsclass import keyitems as KeyItemClass
+        import constant
         
         inv = KeyItemClass(str(user.id))
         
@@ -1408,6 +1409,7 @@ class EncountersMixin(MixinMeta):
         
         items = []
         
+        # Key items (excluding HMs which are shown in HMs tab)
         if inv.pokeflute:
             items.append(f'{constant.POKEFLUTE} **Poké Flute**')
         if inv.silph_scope:
@@ -1426,6 +1428,14 @@ class EncountersMixin(MixinMeta):
             items.append(f'{constant.SUPER_ROD} **Super Rod**')
         if inv.item_finder:
             items.append(f'{constant.ITEM_FINDER} **Item Finder**')
+        if inv.bike_voucher:
+            items.append(f'**Bike Voucher**')
+        if inv.gold_teeth:
+            items.append(f'**Gold Teeth**')
+        if inv.dome_fossil:
+            items.append(f'**Dome Fossil**')
+        if inv.helix_fossil:
+            items.append(f'**Helix Fossil**')
         
         items_text = "\n".join(items) if len(items) > 0 else "No key items yet."
         embed.add_field(name="Key Items", value=items_text, inline=False)
@@ -1441,76 +1451,11 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('Session expired. Use ,trainer map to start.', ephemeral=True)
             return
         
-        from services.trainerclass import trainer as TrainerClass
-        from services.inventoryclass import inventory as InventoryClass
-        from services.keyitemsclass import keyitems as KeyItemsClass
-        import constant
-        
-        trainer = self._get_trainer(str(user.id))
-        inventory = InventoryClass(trainer.discordId)
-        keyitems = KeyItemsClass(trainer.discordId)
-        
-        # Create the trainer card embed (same as ,trainer card command)
-        embed = discord.Embed(title=f"Trainer")
-        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
-        
-        embed.add_field(name='Money', value=f'¥{inventory.money}', inline=False)
-        
-        badges = []
-        if keyitems.badge_boulder:
-            badges.append(constant.BADGE_BOULDER_01)
-        if keyitems.badge_cascade:
-            badges.append(constant.BADGE_CASCADE_02)
-        if keyitems.badge_thunder:
-            badges.append(constant.BADGE_THUNDER_03)
-        if keyitems.badge_rainbow:
-            badges.append(constant.BADGE_RAINBOW_04)
-        if keyitems.badge_soul:
-            badges.append(constant.BADGE_SOUL_05)
-        if keyitems.badge_marsh:
-            badges.append(constant.BADGE_MARSH_06)
-        if keyitems.badge_volcano:
-            badges.append(constant.BADGE_VOLCANO_07)
-        if keyitems.badge_earth:
-            badges.append(constant.BADGE_EARTH_08)
-        
-        badgeText = " ".join(badges) if len(badges) > 0 else "--"
-        embed.add_field(name='Badges', value=badgeText, inline=False)
-        
-        # FIX: Get actual Pokedex count
-        pokedex_list = trainer.getPokedex()
-        pokedex_count = len(pokedex_list) if pokedex_list else 0
-        embed.add_field(name='Pokédex', value=f'{pokedex_count}')
-        
-        # FIX: Show actual start date
-        embed.add_field(name='Started', value=f'{trainer.startdate}')
-        
-        # Create view with "Back to Bag" button
-        view = View()
-        back_btn = Button(style=ButtonStyle.gray, label="← Back to Bag", custom_id='trainer_back_to_bag', row=0)
-        back_btn.callback = self.on_trainer_back_to_bag_click
-        view.add_item(back_btn)
-        
-        map_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='trainer_back_to_map', row=0)
-        map_btn.callback = self.on_bag_back_to_map_click
-        view.add_item(map_btn)
-        
-        await interaction.message.edit(embed=embed, view=view)
-
-    async def on_trainer_back_to_bag_click(self, interaction: discord.Interaction):
-        """Return to bag items view from trainer card"""
-        user = interaction.user
-        await interaction.response.defer()
-        
-        if str(user.id) not in self.__bag_states:
-            await interaction.followup.send('Session expired.', ephemeral=True)
-            return
-        
         bag_state = self.__bag_states[str(user.id)]
-        bag_state.current_view = 'items'
+        bag_state.current_view = 'trainer'
         
-        embed = self.__create_items_embed(user)
-        view = self.__create_bag_navigation_view('items')
+        embed = self.__create_trainer_embed(user)
+        view = self.__create_bag_navigation_view('trainer')
         
         await interaction.message.edit(embed=embed, view=view)
 
@@ -3554,9 +3499,55 @@ class EncountersMixin(MixinMeta):
         
         return embed
 
+    def __create_trainer_embed(self, user: discord.User) -> discord.Embed:
+        """Create embed showing trainer card"""
+        from services.trainerclass import trainer as TrainerClass
+        from services.inventoryclass import inventory as InventoryClass
+        from services.keyitemsclass import keyitems as KeyItemsClass
+        import constant
+        
+        trainer = self._get_trainer(str(user.id))
+        inventory = InventoryClass(trainer.discordId)
+        keyitems = KeyItemsClass(trainer.discordId)
+        
+        embed = discord.Embed(title="Bag - Trainer", color=discord.Color.blue())
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+        
+        embed.add_field(name='Money', value=f'¥{inventory.money}', inline=False)
+        
+        badges = []
+        if keyitems.badge_boulder:
+            badges.append(constant.BADGE_BOULDER_01)
+        if keyitems.badge_cascade:
+            badges.append(constant.BADGE_CASCADE_02)
+        if keyitems.badge_thunder:
+            badges.append(constant.BADGE_THUNDER_03)
+        if keyitems.badge_rainbow:
+            badges.append(constant.BADGE_RAINBOW_04)
+        if keyitems.badge_soul:
+            badges.append(constant.BADGE_SOUL_05)
+        if keyitems.badge_marsh:
+            badges.append(constant.BADGE_MARSH_06)
+        if keyitems.badge_volcano:
+            badges.append(constant.BADGE_VOLCANO_07)
+        if keyitems.badge_earth:
+            badges.append(constant.BADGE_EARTH_08)
+        
+        badgeText = " ".join(badges) if len(badges) > 0 else "--"
+        embed.add_field(name='Badges', value=badgeText, inline=False)
+        
+        pokedex_list = trainer.getPokedex()
+        pokedex_count = len(pokedex_list) if pokedex_list else 0
+        embed.add_field(name='Pokédex', value=f'{pokedex_count}')
+        
+        embed.add_field(name='Started', value=f'{trainer.startdate}')
+        
+        return embed
+
     def __create_hms_embed(self, user: discord.User) -> discord.Embed:
         """Create embed showing trainer's HMs"""
         from services.keyitemsclass import keyitems as KeyItemClass
+        import constant
         
         keyitems = KeyItemClass(str(user.id))
         
