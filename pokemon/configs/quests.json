@@ -13,8 +13,7 @@
       "HM01"
     ],
     "quest": [
-      "Bike Voucher",
-      "SS Anne"
+      "Bike Voucher"
     ],
     "blockers": [],
     "name": "cerulean-city"
@@ -195,7 +194,7 @@
   },
   "104": {
     "pre-requsites": [],
-    "quest": [],
+    "quest": ["SS Anne"],
     "blockers": [],
     "name": "kanto-route-25"
   },
