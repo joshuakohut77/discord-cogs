@@ -50,7 +50,7 @@
   "76": {
     "locationId": 76,
     "name": "fuchsia-city",
-    "north": "safari-zone",
+    "north": "kanto-safari-zone",
     "east": "kanto-route-15",
     "south": "kanto-sea-route-19",
     "west": "kanto-route-18",
@@ -529,7 +529,7 @@
   },
   "162": {
     "locationId": 162,
-    "name": "safari-zone",
+    "name": "kanto-safari-zone",
     "north": "kanto-safari-zone-1",
     "east": null,
     "south": "fuchsia-city",
@@ -976,7 +976,7 @@
     "name": "kanto-safari-zone-1",
     "north": "kanto-safari-zone-2",
     "east": null,
-    "south": "safari-zone",
+    "south": "kanto-safari-zone",
     "west": null,
     "spritePath": "/sprites/locations/kanto-safari-zone-1.png",
     "pokecenter": false,
