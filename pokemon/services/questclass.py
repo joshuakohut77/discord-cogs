@@ -277,7 +277,7 @@ class quests:
             if self.keyitems.bicycle:
                 return True
         elif questName == 'Pokemon Fan Club':
-            if self.keyitems.bicycle:
+            if self.keyitems.bike_voucher:
                 return True
         
         # easter eggs
