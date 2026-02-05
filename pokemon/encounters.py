@@ -32,6 +32,7 @@ from services.expclass import experiance as exp
 from .abcd import MixinMeta
 from .functions import (getTypeColor)
 from .helpers import (getTrainerGivenPokemonName)
+from .helpers.pathhelpers import (get_config_path, load_json_config, get_sprite_path)
 
 
 class ActionState:
@@ -160,10 +161,7 @@ class EncountersMixin(MixinMeta):
     def __load_enemy_trainers_data(self):
         """Load enemy trainers configuration"""
         if self.__enemy_trainers_data is None:
-            import json
-            import os
-            p = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'configs/enemyTrainers.json')
-            self.__enemy_trainers_data = json.load(open(p, 'r'))
+            self.__enemy_trainers_data = load_json_config('enemyTrainers.json')
         return self.__enemy_trainers_data
 
 
@@ -257,8 +255,8 @@ class EncountersMixin(MixinMeta):
                     try:
                         # Try to load from local file system first
                         # spritePath is like "/sprites/trainers/jrtrainer.png"
-                        full_sprite_path = os.path.join(os.path.dirname(__file__), next_trainer.spritePath.lstrip('/'))
-                        
+                        full_sprite_path = get_sprite_path(next_trainer.spritePath)
+
                         # Check if file exists
                         if os.path.exists(full_sprite_path):
                             # Extract filename for attachment
@@ -889,15 +887,9 @@ class EncountersMixin(MixinMeta):
         
         # Execute battle turn (same damage calculation as trainer battles)
         import random
-        import json
-        
-        moves_path = os.path.join(os.path.dirname(__file__), 'configs', 'moves.json')
-        with open(moves_path, 'r') as f:
-            moves_config = json.load(f)
-        
-        type_path = os.path.join(os.path.dirname(__file__), 'configs', 'typeEffectiveness.json')
-        with open(type_path, 'r') as f:
-            type_effectiveness = json.load(f)
+        # Load config files using helper (with caching)
+        moves_config = load_json_config('moves.json')
+        type_effectiveness = load_json_config('typeEffectiveness.json')
         
         # Player's move
         player_move = moves_config.get(move_name, {})
@@ -981,7 +973,7 @@ class EncountersMixin(MixinMeta):
                 sprite_file = None
                 try:
                     sprite_path = f"/sprites/pokemon/{evolved_pokemon.pokemonName}.png"
-                    full_sprite_path = os.path.join(os.path.dirname(__file__), sprite_path.lstrip('/'))
+                    full_sprite_path = get_sprite_path(sprite_path)
                     sprite_file = discord.File(full_sprite_path, filename=f"{evolved_pokemon.pokemonName}.png")
                     evolution_embed.set_image(url=f"attachment://{evolved_pokemon.pokemonName}.png")
                 except Exception as e:
@@ -1012,7 +1004,7 @@ class EncountersMixin(MixinMeta):
                 sprite_file = None
                 try:
                     sprite_path = f"/sprites/pokemon/{evolved_pokemon.pokemonName}.png"
-                    full_sprite_path = os.path.join(os.path.dirname(__file__), sprite_path.lstrip('/'))
+                    full_sprite_path = get_sprite_path(sprite_path)
                     sprite_file = discord.File(full_sprite_path, filename=f"{evolved_pokemon.pokemonName}.png")
                     evolution_embed.set_image(url=f"attachment://{evolved_pokemon.pokemonName}.png")
                 except Exception as e:
@@ -1251,7 +1243,7 @@ class EncountersMixin(MixinMeta):
         if location.spritePath:
             try:
                 # Convert to full file system path
-                full_sprite_path = os.path.join(os.path.dirname(__file__), location.spritePath.lstrip('/'))
+                full_sprite_path = get_sprite_path(location.spritePath)
                 sprite_file = discord.File(full_sprite_path, filename=f"{location.name}.png")
 
                 temp_message = await self.sendToLoggingChannel(f'{user.display_name} viewing map', sprite_file)
@@ -3631,12 +3623,7 @@ class EncountersMixin(MixinMeta):
         
         # Load the Pokemon config data (species info from pokemon.json)
         try:
-            import os
-            import json
-            p = os.path.join(os.path.dirname(__file__), 'configs/pokemon.json')
-            with open(p, 'r') as f:
-                pokemon_config = json.load(f)
-            
+            pokemon_config = load_json_config('pokemon.json')
             poke_data = pokemon_config.get(current_entry.pokemonName, {})
             
             # Get type info directly from config
@@ -4002,7 +3989,7 @@ class EncountersMixin(MixinMeta):
         # Load location sprite
         try:
             # Convert to full file system path
-            full_sprite_path = os.path.join(os.path.dirname(__file__), location.spritePath.lstrip('/'))
+            full_sprite_path = get_sprite_path(location.spritePath)
             sprite_file = discord.File(full_sprite_path, filename=f"{location.name}.png")
 
             temp_message = await self.sendToLoggingChannel(f'{user.display_name} viewing map', sprite_file)
@@ -4227,8 +4214,8 @@ class EncountersMixin(MixinMeta):
         try:
             # The sprite_path from gyms.json is like: "/sprites/trainers/brock.png"
             # Convert to full file system path
-            full_sprite_path = os.path.join(os.path.dirname(__file__), sprite_path.lstrip('/'))
-            
+            full_sprite_path = get_sprite_path(sprite_path)
+
             sprite_file = discord.File(full_sprite_path, filename=f"{trainer_name}.png")
             embed.set_image(url=f"attachment://{trainer_name}.png")
             
@@ -4369,15 +4356,9 @@ class EncountersMixin(MixinMeta):
         
         # Execute battle turn using our manual damage calculation
         import random
-        import json
-        
-        moves_path = os.path.join(os.path.dirname(__file__), 'configs', 'moves.json')
-        with open(moves_path, 'r') as f:
-            moves_config = json.load(f)
-        
-        type_path = os.path.join(os.path.dirname(__file__), 'configs', 'typeEffectiveness.json')
-        with open(type_path, 'r') as f:
-            type_effectiveness = json.load(f)
+        # Load config files using helper (with caching)
+        moves_config = load_json_config('moves.json')
+        type_effectiveness = load_json_config('typeEffectiveness.json')
         
         # Player's move
         player_move = moves_config.get(move_name, {})
@@ -4756,25 +4737,19 @@ class EncountersMixin(MixinMeta):
     def __load_quests_data(self):
         """Load quests.json file"""
         if self.__quests_data is None:
-            config_path = os.path.join(os.path.dirname(__file__), 'configs', 'quests.json')
-            with open(config_path, 'r') as f:
-                self.__quests_data = json.load(f)
+            self.__quests_data = load_json_config('quests.json')
         return self.__quests_data
 
     def __load_gyms_data(self):
         """Load gyms.json file"""
         if self.__gyms_data is None:
-            config_path = os.path.join(os.path.dirname(__file__), 'configs', 'gyms.json')
-            with open(config_path, 'r') as f:
-                self.__gyms_data = json.load(f)
+            self.__gyms_data = load_json_config('gyms.json')
         return self.__gyms_data
 
     def __load_locations_data(self):
         """Load locations.json file"""
         if self.__locations_data is None:
-            config_path = os.path.join(os.path.dirname(__file__), 'configs', 'locations.json')
-            with open(config_path, 'r') as f:
-                self.__locations_data = json.load(f)
+            self.__locations_data = load_json_config('locations.json')
         return self.__locations_data
 
     def __get_available_quests(self, user_id: str, location_name: str) -> list:
@@ -4895,7 +4870,7 @@ class EncountersMixin(MixinMeta):
         if location.spritePath:
             try:
                 # Convert to full file system path
-                full_sprite_path = os.path.join(os.path.dirname(__file__), location.spritePath.lstrip('/'))
+                full_sprite_path = get_sprite_path(location.spritePath)
                 sprite_file = discord.File(full_sprite_path, filename=f"{location.name}.png")
 
                 temp_message = await self.sendToLoggingChannel(f'{user.display_name} viewing map', sprite_file)
@@ -5100,11 +5075,7 @@ class EncountersMixin(MixinMeta):
         
         # Load move data to show power/type
         try:
-            import os
-            import json
-            p = os.path.join(os.path.dirname(__file__), 'configs', 'moves.json')
-            with open(p, 'r') as f:
-                moves_config = json.load(f)
+            moves_config = load_json_config('moves.json')
         except:
             moves_config = {}
         
@@ -6641,16 +6612,8 @@ class EncountersMixin(MixinMeta):
 
     def __has_pokemart(self, location_id: int) -> bool:
         """Check if the current location has a Pokemart"""
-        import json
-        import os
-        
         try:
-            # Use the same path logic as storeclass.py
-            store_path = os.path.join(os.path.dirname(__file__), 'configs/store.json')
-            
-            with open(store_path, 'r') as f:
-                store_data = json.load(f)
-            
+            store_data = load_json_config('store.json')
             # If locationId exists in store.json, there's a Pokemart
             return str(location_id) in store_data
         except Exception as e:
@@ -6756,7 +6719,7 @@ class EncountersMixin(MixinMeta):
                             sprite_path = f"/sprites/pokemon/{received_pokemon.pokemonName}.png"
                             
                             # Convert to full file system path
-                            full_sprite_path = os.path.join(os.path.dirname(__file__), sprite_path.lstrip('/'))
+                            full_sprite_path = get_sprite_path(sprite_path)
                             
                             sprite_file = discord.File(full_sprite_path, filename=f"{received_pokemon.pokemonName}.png")
                             embed.set_image(url=f"attachment://{received_pokemon.pokemonName}.png")

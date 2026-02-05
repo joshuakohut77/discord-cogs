@@ -376,3 +376,33 @@ LOCATION_DISPLAY_NAMES = {
     "lance-room": "Lance's Room",
     "champion-room": 'Champion Room'
 }
+
+# Battle Constants
+# Used in damage calculation formulas throughout battle system
+BATTLE_CONSTANTS = {
+    'RANDOM_DAMAGE_MIN': 217,
+    'RANDOM_DAMAGE_MAX': 256,
+    'RANDOM_DAMAGE_DIVISOR': 255,
+    'STAB_MULTIPLIER': 1.5,  # Same Type Attack Bonus
+    'MAX_BATTLE_TURNS': 50,
+}
+
+# Discord UI Limits
+DISCORD_LIMITS = {
+    'FIELD_CHAR_LIMIT': 1024,
+    'BUTTON_LABEL_LIMIT': 80,
+    'SELECT_LABEL_LIMIT': 100,
+    'SELECT_DESCRIPTION_LIMIT': 100,
+}
+
+# Item Healing Amounts
+ITEM_HEALING = {
+    'potion': 20,
+    'super-potion': 50,
+    'hyper-potion': 200,
+    'max-potion': 999,  # Full heal
+    'full-restore': 999,  # Full heal + status
+}
+
+# Battle Intro Delay
+BATTLE_INTRO_DELAY_SECONDS = 3
