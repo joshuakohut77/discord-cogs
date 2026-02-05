@@ -102,6 +102,8 @@ class trainer:
     # TODO: This needs to update the trainers pokedex
     def getStarterPokemon(self):
         """Returns a random starter pokemon dictionary {pokemon: id} """
+        from pokedexclass import pokedex as PokedexClass
+        
         if not self.trainerExists:
             self.statuscode = 96
             self.message = 'Trainer does not exist'
@@ -143,25 +145,16 @@ class trainer:
                 pokemon.create(STARTER_LEVEL)
                 if pokemon.statuscode == 96:
                     self.statuscode = 96
-                    return
 
                 # BUG:  It is possible for the pokemon to save to the db as one of the
                 #       trainers pokemon, but fail to update the trainer with the starter.
                 # TODO: Make the all the queries part of one transaction that will rollback
                 #       if it fails.
                 
-                pokemon.discordId = self.discordId
-                pokemon.party = True
-                
-                # save starter into database
+                # save starter into
                 pokemon.save()
                 if pokemon.statuscode == 96:
                     self.statuscode = 96
-                    return
-                
-                # Verify what was actually saved to the database
-                verifyQuery = 'SELECT party FROM pokemon WHERE id = %(trainerId)s'
-                verifyResult = db.querySingle(verifyQuery, {'trainerId': pokemon.trainerId})
 
                 starterId = pokemon.trainerId
                 starterName = pokemon.pokemonName
@@ -169,6 +162,9 @@ class trainer:
                 # set as starter
                 updateString = 'UPDATE trainer SET "starterName"=%(starterName)s, "starterId"=%(starterId)s, "activePokemon"=%(starterId)s WHERE "discord_id"=%(discordId)s'
                 db.execute(updateString, { 'starterName': starterName, 'starterId': starterId, 'discordId': self.discordId })
+                
+                # Register starter Pokemon to player's Pokedex
+                PokedexClass(self.discordId, pokemon)
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
