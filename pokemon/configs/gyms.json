@@ -449,7 +449,7 @@
       "keyitem": "thunder_badge",
       "money": 2376,
       "enemy_uuid": "8bf6bfd8",
-      "requirements": [],
+      "requirements": ["HM01"],
       "pokemon": [
         {
           "voltorb": 21
