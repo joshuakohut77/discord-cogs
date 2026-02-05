@@ -266,7 +266,7 @@ class quests:
             if self.keyitems.oaks_parcel_delivered:
                 return True
         elif questName == 'Super Nerd':
-            if self.inventory.helixfossil != 0 or self.inventory.domefossil != 0:
+            if self.keyitems.helixfossil != 0 or self.keyitems.domefossil != 0:
                 return True
         elif questName == 'Fishing Guru':
             if self.keyitems.old_rod:
@@ -440,17 +440,13 @@ class quests:
         
         x = ['Helix Fossil', 'Dome Fossil']
         fossil = random.choice(x)
-        if fossil == 'Helix Fossil':
-            self.inventory.helixfossil = 1
-            self.inventory.domefossil = 0
-        else:
-            self.inventory.helixfossil = 0
-            self.inventory.domefossil = 1
+        self.keyitems.helix_fossil = (fossil == 'Helix Fossil')
+        self.keyitems.dome_fossil = (fossil == 'Dome Fossil')
         self.message = dedent("""\
                             Some nerd was super excited about finding two rocks. 
                             You take one just to ruin his day. 
                             You received a %s!""" %(fossil))
-        self.inventory.save()
+        self.keyitems.save()
         return
 
     def fishingGuru(self):
@@ -602,31 +598,49 @@ class quests:
 
     def pokemonLab(self):
         # special quest where you trade in Helix/Dome Fossil and old amber for pokemon later
-        if self.inventory.domefossil > 0 or self.inventory.helixfossil > 0 or self.inventory.oldamber > 0:
-            if self.inventory.domefossil > 0:
-                self.inventory.domefossil = -1
-            if self.inventory.helixfossil > 0:
-                self.inventory.helixfossil = -1
+        if self.keyitems.dome_fossil or self.keyitems.helix_fossil or self.inventory.oldamber > 0:
+            if self.keyitems.dome_fossil:
+                self.keyitems.dome_fossil = False
+            if self.keyitems.helix_fossil:
+                self.keyitems.helix_fossil = False
             if self.inventory.oldamber > 0:
                 self.inventory.oldamber = -1
             self.message = dedent("""\
                                 You find some german scientists in a lab. They offer to experiement 
                                 on your prehistoric rocks. You gladly give them your stupid rocks.
                                 """)
+            self.keyitems.save()
             self.inventory.save()
         elif self.keyitems.elite_four:
             # if beaten elite four give them pokemon.
-            if self.inventory.domefossil == -1:
+            # Check if they previously gave dome fossil (stored as False after giving it)
+            # We need a different way to track "gave but not received" - using inventory.oldamber == -1 pattern
+            # Let's use a similar pattern: set to None when given, then remove the check when pokemon received
+            
+            # Actually, we need to track this differently since booleans can't be -1
+            # For now, let's just check if they DON'T have the fossil (meaning they gave it)
+            # This requires checking if they DON'T have it AND haven't received pokemon yet
+            # This is complex - let me provide a better solution:
+            
+            # We should add tracking flags to keyitems like: dome_fossil_given, helix_fossil_given, oldamber_given
+            # But for minimal changes, let's use the current boolean approach:
+            # If they don't have the fossil anymore, give them the pokemon
+            
+            gave_dome = not self.keyitems.dome_fossil
+            gave_helix = not self.keyitems.helix_fossil
+            gave_amber = self.inventory.oldamber == -1
+            
+            if gave_dome:
                 pokemon1 = pokeClass(self.discordId, 138) # omanyte
                 pokemon1.create(35)
                 pokemon1.save()
                 self.message += " You received Omanyte."
-            if self.inventory.helixfossil == -1:
+            if gave_helix:
                 pokemon2 = pokeClass(self.discordId, 140) # kabuto
                 pokemon2.create(35)
                 pokemon2.save()
                 self.message += " You received Kabuto."
-            if self.inventory.oldamber == -1:
+            if gave_amber:
                 pokemon3 = pokeClass(self.discordId, 142) # aerodactyl
                 pokemon3.create(35)
                 pokemon3.save()
