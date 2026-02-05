@@ -34,16 +34,14 @@ class NameInputModal(Modal):
 
 class IntroSceneView(View):
     """View for navigating through intro scenes"""
-    def __init__(self, user_id: int, scenes: List[Dict], on_complete: Callable, sprite_path: str = None):
+    def __init__(self, user_id: int, scenes: List[Dict], on_complete: Callable):
         super().__init__(timeout=300)  # 5 minute timeout
         self.user_id = user_id
         self.scenes = scenes
         self.current_index = 0
         self.on_complete = on_complete
-        self.sprite_path = sprite_path
         self.trainer_name = None
         self.message = None
-        self.sprite_filename = None
         
         # Create next button
         self.next_button = Button(style=ButtonStyle.primary, label="Next", custom_id="next")
@@ -65,14 +63,45 @@ class IntroSceneView(View):
             color=scene.get('color', discord.Color.blue())
         )
         
-        # Add sprite if available and file was loaded
-        if self.sprite_filename:
-            embed.set_image(url=f"attachment://{self.sprite_filename}")
-        
         # Add footer with progress
         embed.set_footer(text=f"Scene {self.current_index + 1}/{len(self.scenes)}")
         
         return embed
+    
+    def get_current_sprite_file(self) -> Optional[discord.File]:
+        """Get sprite file for current scene if available"""
+        scene = self.scenes[self.current_index]
+        sprite_path = scene.get('sprite_path')
+        
+        if not sprite_path:
+            return None
+        
+        try:
+            # Try to load from local file system first
+            full_sprite_path = get_sprite_path(sprite_path)
+            
+            # Check if file exists
+            if os.path.exists(full_sprite_path):
+                # Extract filename for attachment
+                filename = os.path.basename(sprite_path)
+                return discord.File(full_sprite_path, filename=filename)
+            else:
+                raise FileNotFoundError("Sprite file not found locally")
+        except Exception as e:
+            print(f"Error loading sprite from file: {e}")
+            return None
+    
+    def add_sprite_to_embed(self, embed: discord.Embed) -> None:
+        """Add sprite to embed (either as attachment or URL)"""
+        scene = self.scenes[self.current_index]
+        sprite_path = scene.get('sprite_path')
+        
+        if not sprite_path:
+            return
+        
+        # Check if we have a file attachment
+        filename = os.path.basename(sprite_path)
+        embed.set_image(url=f"attachment://{filename}")
     
     async def on_next_click(self, interaction: Interaction):
         """Handle next button click"""
@@ -100,12 +129,30 @@ class IntroSceneView(View):
         
         # Update embed with next scene
         embed = self.create_embed()
+        sprite_file = self.get_current_sprite_file()
+        
+        # Add sprite to embed if available
+        if sprite_file:
+            self.add_sprite_to_embed(embed)
         
         # Update button label if this is the last scene
         if self.current_index == len(self.scenes) - 1:
             self.next_button.label = "Finish"
         
-        await interaction.response.edit_message(embed=embed, view=self)
+        # Edit message with new sprite file if available
+        if sprite_file:
+            await interaction.response.edit_message(embed=embed, view=self, attachments=[sprite_file])
+        else:
+            # Fallback to URL if local file not available
+            scene = self.scenes[self.current_index]
+            sprite_path = scene.get('sprite_path')
+            if sprite_path:
+                try:
+                    sprite_url = f"https://pokesprites.joshkohut.com{sprite_path}"
+                    embed.set_image(url=sprite_url)
+                except:
+                    pass
+            await interaction.response.edit_message(embed=embed, view=self)
     
     async def on_name_submit(self, interaction: Interaction, name: str):
         """Handle name submission from modal"""
@@ -122,15 +169,33 @@ class IntroSceneView(View):
         
         # Update embed with next scene
         embed = self.create_embed()
+        sprite_file = self.get_current_sprite_file()
+        
+        # Add sprite to embed if available
+        if sprite_file:
+            self.add_sprite_to_embed(embed)
         
         # Update button label if this is the last scene
         if self.current_index == len(self.scenes) - 1:
             self.next_button.label = "Finish"
         
-        await interaction.response.edit_message(embed=embed, view=self)
+        # Edit message with new sprite file if available
+        if sprite_file:
+            await interaction.response.edit_message(embed=embed, view=self, attachments=[sprite_file])
+        else:
+            # Fallback to URL if local file not available
+            scene = self.scenes[self.current_index]
+            sprite_path = scene.get('sprite_path')
+            if sprite_path:
+                try:
+                    sprite_url = f"https://pokesprites.joshkohut.com{sprite_path}"
+                    embed.set_image(url=sprite_url)
+                except:
+                    pass
+            await interaction.response.edit_message(embed=embed, view=self)
 
 
-async def start_intro_scene(ctx, user_id: int, scenes: List[Dict], on_complete: Callable, sprite_path: str = None) -> discord.Message:
+async def start_intro_scene(ctx, user_id: int, scenes: List[Dict], on_complete: Callable) -> discord.Message:
     """
     Start an intro scene sequence
     
@@ -139,45 +204,36 @@ async def start_intro_scene(ctx, user_id: int, scenes: List[Dict], on_complete: 
         user_id: Discord user ID
         scenes: List of scene dictionaries
         on_complete: Async callback function when scene completes
-        sprite_path: Optional path to character sprite image (e.g., '/sprites/trainers/oak.png')
     
     Scene dictionary format:
     {
         'title': 'Scene Title',
         'text': 'Scene text content. Use {name} for trainer name placeholder.',
         'color': discord.Color.blue(),  # Optional, defaults to blue
-        'prompt_name': False  # Set to True to show name input modal after this scene
+        'prompt_name': False,  # Set to True to show name input modal after this scene
+        'sprite_path': 'sprites/trainers/oak.png'  # Optional, sprite for this specific scene
     }
     """
-    view = IntroSceneView(user_id, scenes, on_complete, sprite_path)
+    view = IntroSceneView(user_id, scenes, on_complete)
     embed = view.create_embed()
     
-    # If sprite path provided, try to load the file
-    sprite_file = None
-    if sprite_path:
-        try:
-            # Try to load from local file system first
-            # sprite_path is like "/sprites/trainers/oak.png"
-            full_sprite_path = get_sprite_path(sprite_path)
-            
-            # Check if file exists
-            if os.path.exists(full_sprite_path):
-                # Extract filename for attachment
-                filename = os.path.basename(sprite_path)
-                sprite_file = discord.File(full_sprite_path, filename=filename)
-                view.sprite_filename = filename
-                embed.set_image(url=f"attachment://{filename}")
-            else:
-                raise FileNotFoundError("Sprite file not found locally")
-        except Exception as e:
-            print(f"Error loading trainer sprite from file: {e}")
-            # Fallback to URL
+    # Get sprite for first scene if available
+    sprite_file = view.get_current_sprite_file()
+    
+    # Add sprite to embed if available
+    if sprite_file:
+        view.add_sprite_to_embed(embed)
+        message = await ctx.send(embed=embed, view=view, file=sprite_file)
+    else:
+        # Fallback to URL if local file not available
+        sprite_path = scenes[0].get('sprite_path')
+        if sprite_path:
             try:
                 sprite_url = f"https://pokesprites.joshkohut.com{sprite_path}"
                 embed.set_image(url=sprite_url)
-            except Exception as url_error:
-                print(f"Error loading trainer sprite from URL: {url_error}")
+            except:
+                pass
+        message = await ctx.send(embed=embed, view=view)
     
-    message = await ctx.send(embed=embed, view=view, file=sprite_file)
     view.message = message
     return message
