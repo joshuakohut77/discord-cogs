@@ -12,7 +12,9 @@ from textwrap import dedent
 
 # Class Logger
 logger = log()
-
+"""
+TODO Pokemon Lab, Mysterious Cave and The Pokemon league quests - these are all incomplete
+"""
 
 class quests:
     def __init__(self, discordId: str):
@@ -505,17 +507,26 @@ class quests:
         self.keyitems.old_rod = True
         self.message = dedent("""\
                             Some creepy guy gave you an old-rod with missing fishing line. 
-                            You notice bubbles coming from the lake near you.""")
+                            You notice bubbles coming from the water near you.""")
         self.keyitems.save()
         return self.create_key_item_embed('Old Rod')
 
-    def bikeVoucher(self):
-        self.keyitems.bike_voucher = True
+    def pokemonFanClub(self):
+        self.keyitems.bicycle = True
         self.message = dedent("""\
                             You met a guy who found out his wife was cheating on him with some professor.
                             He gave you the bike voucher which was her birthday surprise.""")
         self.keyitems.save()
         return self.create_key_item_embed('Bike Voucher')
+
+    def bikeVoucher(self):
+        self.keyitems.bike_voucher = True
+        self.message = dedent("""\
+                            A robbery distracted the bike shop clerk.
+                            You stole a bicycle.
+                            Your voucher fell out of your pocket in the process.""")
+        self.keyitems.save()
+        return self.create_key_item_embed('Bicycle')
 
     def speakToCaptain(self):
         self.keyitems.HM01 = True
