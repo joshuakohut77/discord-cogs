@@ -143,13 +143,15 @@ class trainer:
                 pokemon.create(STARTER_LEVEL)
                 if pokemon.statuscode == 96:
                     self.statuscode = 96
+                    return  # Return early if create failed
 
                 # BUG:  It is possible for the pokemon to save to the db as one of the
                 #       trainers pokemon, but fail to update the trainer with the starter.
                 # TODO: Make the all the queries part of one transaction that will rollback
                 #       if it fails.
                 
-                # CRITICAL: Set party to True AFTER create() because create() sets it to None
+                # CRITICAL: Set these AFTER create() because create() sets party to None
+                # Must set discordId again to ensure it's set
                 pokemon.discordId = self.discordId
                 pokemon.party = True
                 
@@ -157,6 +159,7 @@ class trainer:
                 pokemon.save()
                 if pokemon.statuscode == 96:
                     self.statuscode = 96
+                    return  # Return early if save failed
 
                 starterId = pokemon.trainerId
                 starterName = pokemon.pokemonName
