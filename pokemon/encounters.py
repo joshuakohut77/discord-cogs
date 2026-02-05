@@ -1429,13 +1429,13 @@ class EncountersMixin(MixinMeta):
         if inv.item_finder:
             items.append(f'{constant.ITEM_FINDER} **Item Finder**')
         if inv.bike_voucher:
-            items.append(f'**Bike Voucher**')
+            items.append(f'🎟️ **Bike Voucher**')
         if inv.gold_teeth:
-            items.append(f'**Gold Teeth**')
+            items.append(f'🦷 **Gold Teeth**')
         if inv.dome_fossil:
-            items.append(f'**Dome Fossil**')
+            items.append(f'{constant.OLDAMBER} **Dome Fossil**')
         if inv.helix_fossil:
-            items.append(f'**Helix Fossil**')
+            items.append(f'{constant.OLDAMBER} **Helix Fossil**')
         
         items_text = "\n".join(items) if len(items) > 0 else "No key items yet."
         embed.add_field(name="Key Items", value=items_text, inline=False)
@@ -3558,15 +3558,15 @@ class EncountersMixin(MixinMeta):
         hms = []
         
         if keyitems.HM01:
-            hms.append(f'{constant.HM01} **HM01 - Cut**')
+            hms.append(f'{constant.HM01} **HM01** - Cut')
         if keyitems.HM02:
-            hms.append(f'{constant.HM02} **HM02 - Fly**')
+            hms.append(f'{constant.HM02} **HM02** - Fly')
         if keyitems.HM03:
-            hms.append(f'{constant.HM03} **HM03 - Surf**')
+            hms.append(f'{constant.HM03} **HM03** - Surf')
         if keyitems.HM04:
-            hms.append(f'{constant.HM04} **HM04 - Strength**')
+            hms.append(f'{constant.HM04} **HM04** - Strength')
         if keyitems.HM05:
-            hms.append(f'{constant.HM05} **HM05 - Flash**')
+            hms.append(f'{constant.HM05} **HM05** - Flash')
         
         hms_text = "\n".join(hms) if len(hms) > 0 else "No HMs yet."
         embed.add_field(name="HMs", value=hms_text, inline=False)
