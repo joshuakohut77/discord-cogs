@@ -324,6 +324,7 @@ class quests:
             'S.S. Ticket': constant.SS_TICKET,
             'Gold Teeth': '🦷',  # Unicode emoji since no constant exists
             'Item Finder': constant.ITEM_FINDER,
+            'Mr. Fuji\'s Finger': constant.MR_FUJI_FINGER,
         }
         
         # Get emoji from map or use provided emoji
@@ -602,11 +603,10 @@ class quests:
         self.keyitems.super_rod = True
         self.message = dedent("""\
                             You met the brother of a previous fisherman. You shared the story about seeing the bubbles in the water.
-                            He quickly became anxious for you to leave. He offered you a new rod in exchange for your silence.
-                            You received a Super Rod!""")
+                            He quickly became anxious for you to leave. He offered you a new rod in exchange for your silence.""")
         self.keyitems.save()
-        return
-
+        return self.create_key_item_embed('Super Rod')
+    
     def fishingDude(self):
         self.keyitems.good_rod = True
         self.message = dedent("""\
