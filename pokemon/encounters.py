@@ -35,6 +35,8 @@ from .abcd import MixinMeta
 from .functions import (getTypeColor)
 from .helpers import (getTrainerGivenPokemonName)
 from .helpers.pathhelpers import (get_config_path, load_json_config, get_sprite_path)
+from .helpers.decorators import (require_action_state, require_battle_state,
+                                  require_wild_battle_state, require_bag_state)
 
 
 class EncountersMixin(MixinMeta):
@@ -579,21 +581,13 @@ class EncountersMixin(MixinMeta):
         # KEY CHANGE: Clear content and use existing message
         await interaction.message.edit(content=None, embed=embed, view=view)
 
+    @require_wild_battle_state()
     async def on_wild_battle_run_click(self, interaction: discord.Interaction):
         """Handle running away from wild battle"""
         user = interaction.user
         user_id = str(user.id)
-        
-        if user_id not in self.__wild_battle_states:
-            await interaction.response.send_message('No active wild battle found.', ephemeral=True)
-            return
-        
         battle_state = self.__wild_battle_states[user_id]
-        
-        if battle_state.message_id != interaction.message.id:
-            await interaction.response.send_message('This is not the current battle.', ephemeral=True)
-            return
-        
+
         await interaction.response.defer()
         
         battle_state.player_pokemon.save()
@@ -683,21 +677,13 @@ class EncountersMixin(MixinMeta):
             
             del self.__wild_battle_states[user_id]
 
+    @require_wild_battle_state()
     async def on_wild_battle_catch_click(self, interaction: discord.Interaction):
         """Handle attempting to catch Pokemon during battle"""
         user = interaction.user
         user_id = str(user.id)
-        
-        if user_id not in self.__wild_battle_states:
-            await interaction.response.send_message('No active wild battle found.', ephemeral=True)
-            return
-        
         battle_state = self.__wild_battle_states[user_id]
-        
-        if battle_state.message_id != interaction.message.id:
-            await interaction.response.send_message('This is not the current battle.', ephemeral=True)
-            return
-        
+
         await interaction.response.defer()
         
         # Show Pokeball selection (reuse existing logic)
@@ -757,21 +743,13 @@ class EncountersMixin(MixinMeta):
         await interaction.message.edit(embed=embed, view=view)
 
 
+    @require_wild_battle_state()
     async def on_wild_battle_move_click(self, interaction: discord.Interaction):
         """Handle move selection in wild battle"""
         user = interaction.user
         user_id = str(user.id)
-        
-        if user_id not in self.__wild_battle_states:
-            await interaction.response.send_message('No active wild battle found.', ephemeral=True)
-            return
-        
         battle_state = self.__wild_battle_states[user_id]
-        
-        if battle_state.message_id != interaction.message.id:
-            await interaction.response.send_message('This is not the current battle.', ephemeral=True)
-            return
-        
+
         await interaction.response.defer()
         
         # Extract move name from custom_id
