@@ -19,6 +19,7 @@ from services.pokeclass import Pokemon as PokemonClass
 from services.pokedexclass import pokedex as PokedexClass
 from services.inventoryclass import inventory as InventoryClass
 from models.state import PokemonState, DisplayCard
+from .ui.intro_scene import start_intro_scene
 
 from .abcd import MixinMeta
 from .functions import (createStatsEmbed, createPokedexEntryEmbed,
@@ -73,18 +74,108 @@ class StarterMixin(MixinMeta):
 
         # This will create the trainer if it doesn't exist
         trainer = TrainerClass(str(user.id))
-        pokemon = trainer.getStarterPokemon()
+        
+        # Check if trainer already has a starter
+        try:
+            pokemon = trainer.getStarterPokemon()
+            has_starter = pokemon is not None
+        except:
+            has_starter = False
+        
+        # If no starter yet, show intro scene
+        if not has_starter:
+            await self._show_intro_scene(ctx, user, trainer)
+            return
+        
+        # If they have a starter, just display it
         active = trainer.getActivePokemon()
-
         state = PokemonState(str(user.id), None, DisplayCard.STATS, [pokemon], active.trainerId, None)
-
         authorIsTrainer = user.id == state.discordId
 
         embed, btns = self.__pokemonSingleCard(user, state, state.card, authorIsTrainer)
-
         message: discord.Message = await ctx.send(embed=embed, view=btns)
         self.setPokemonState(author, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
 
+    async def _show_intro_scene(self, ctx: commands.Context, user: DiscordUser, trainer: TrainerClass):
+        """Show the intro scene for new trainers"""
+        
+        # Define intro scenes - you can edit this easily!
+        intro_scenes = [
+            {
+                'title': 'Welcome to the World of Pokémon!',
+                'text': 'Hello there! Welcome to the wonderful world of Pokémon!\n\nMy name is Oak. People call me the Pokémon Professor.',
+                'color': discord.Color.green()
+            },
+            {
+                'title': 'About Pokémon',
+                'text': 'This world is inhabited by creatures called Pokémon.\n\nFor some people, Pokémon are pets. Others use them for battles.',
+                'color': discord.Color.green()
+            },
+            {
+                'title': 'Your Journey Begins',
+                'text': 'As for myself, I study Pokémon as a profession.\n\nBut first, tell me a little about yourself.',
+                'color': discord.Color.green()
+            },
+            {
+                'title': 'What\'s Your Name?',
+                'text': 'Let\'s begin with your name.\n\nClick "Next" to enter your name!',
+                'color': discord.Color.green(),
+                'prompt_name': True  # This triggers the name input modal
+            },
+            {
+                'title': 'Nice to Meet You, {name}!',
+                'text': 'Excellent! Welcome, {name}!\n\nYour very own Pokémon adventure is about to unfold!',
+                'color': discord.Color.green()
+            },
+            {
+                'title': 'Your First Pokémon',
+                'text': 'A world of dreams and adventures with Pokémon awaits!\n\nLet\'s get you started with your very first Pokémon partner!',
+                'color': discord.Color.gold()
+            }
+        ]
+        
+        sprite_path = 'sprites/trainers/oak.png'
+        
+        # Start the intro scene
+        await start_intro_scene(
+            ctx, 
+            user.id, 
+            intro_scenes, 
+            self._on_intro_complete,
+            sprite_path
+        )
+
+    async def _on_intro_complete(self, interaction: Interaction, trainer_name: str):
+        """Called when intro scene is complete"""
+        user = interaction.user
+        
+        # Save trainer name to database
+        trainer = TrainerClass(str(user.id))
+        trainer.setTrainerName(trainer_name)
+        
+        # Get starter pokemon (this creates it if it doesn't exist)
+        pokemon = trainer.getStarterPokemon()
+        active = trainer.getActivePokemon()
+        
+        # Create the display state
+        state = PokemonState(str(user.id), None, DisplayCard.STATS, [pokemon], active.trainerId, None)
+        
+        # Create embed showing the starter
+        embed, btns = self.__pokemonSingleCard(user, state, state.card, True)
+        
+        # Add a special message for new trainers
+        completion_embed = discord.Embed(
+            title='🎉 You received your first Pokémon! 🎉',
+            description=f'Congratulations, {trainer_name}! You received a **{pokemon.pokemonName}**!\n\nType `,play` or `,m` to begin your adventure!',
+            color=discord.Color.gold()
+        )
+        
+        # Send completion message
+        await interaction.message.edit(embed=completion_embed, view=None)
+        
+        # Send pokemon card as new message
+        message = await interaction.channel.send(embed=embed, view=btns)
+        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
 
     async def __on_moves_click(self, interaction: Interaction):
         user = interaction.user
