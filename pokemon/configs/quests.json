@@ -21,7 +21,9 @@
   },
   "71": {
     "pre-requsites": [],
-    "quest": [],
+    "quest": [
+      "Pokemon Lab"
+    ],
     "blockers": [
       "HM03",
       "HM04"
