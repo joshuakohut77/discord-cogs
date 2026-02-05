@@ -618,13 +618,6 @@
         "max_level": 15,
         "min_level": 15,
         "method": "super-rod"
-      },
-      {
-        "name": "snorlax",
-        "chance": 100,
-        "max_level": 30,
-        "min_level": 30,
-        "method": "pokeflute"
       }
     ],
     "92": [
