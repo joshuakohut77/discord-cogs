@@ -1167,6 +1167,13 @@ class EncountersMixin(MixinMeta):
             east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label="---", custom_id='dir_east_disabled', disabled=True, row=1)
             view.add_item(east_btn)
         
+        # AUX button (if exists)
+        if hasattr(location, 'aux') and location.aux:
+            aux_name = LOCATION_DISPLAY_NAMES.get(location.aux, location.aux)
+            aux_btn = Button(style=ButtonStyle.gray, emoji='🔀', label=f"{aux_name[:15]}", custom_id='dir_aux', row=1)
+            aux_btn.callback = self.on_direction_click
+            view.add_item(aux_btn)
+
         # ROW 2: Action buttons (Encounters, Quests, Gym, Wild Trainers)
         if len(methods) > 0:
             enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='nav_encounters', row=2)
@@ -1242,7 +1249,9 @@ class EncountersMixin(MixinMeta):
             target_location_name = current_location.east
         elif direction == 'west':
             target_location_name = current_location.west
-        
+        elif direction == 'aux':
+            target_location_name = getattr(current_location, 'aux', None)
+
         if not target_location_name:
             await interaction.followup.send('Cannot go that direction.', ephemeral=True)
             return
@@ -3913,6 +3922,13 @@ class EncountersMixin(MixinMeta):
             east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label="---", custom_id='dir_east_disabled', disabled=True, row=1)
             view.add_item(east_btn)
         
+        # AUX button (if exists)
+        if hasattr(location, 'aux') and location.aux:
+            aux_name = LOCATION_DISPLAY_NAMES.get(location.aux, location.aux)
+            aux_btn = Button(style=ButtonStyle.gray, emoji='🔀', label=f"{aux_name[:15]}", custom_id='dir_aux', row=1)
+            aux_btn.callback = self.on_direction_click
+            view.add_item(aux_btn)
+
         # ROW 2: Action buttons (Encounters, Quests, Gym)
         if len(methods) > 0:
             enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='nav_encounters', row=2)
@@ -4768,6 +4784,13 @@ class EncountersMixin(MixinMeta):
             east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label="---", custom_id='dir_east_disabled', disabled=True, row=1)
             view.add_item(east_btn)
         
+        # AUX button (if exists)
+        if hasattr(location, 'aux') and location.aux:
+            aux_name = LOCATION_DISPLAY_NAMES.get(location.aux, location.aux)
+            aux_btn = Button(style=ButtonStyle.gray, emoji='🔀', label=f"{aux_name[:15]}", custom_id='dir_aux', row=1)
+            aux_btn.callback = self.on_direction_click
+            view.add_item(aux_btn)
+
         # ROW 2: Action buttons (Encounters, Quests, Gym, Wild Trainers)
         if len(methods) > 0:
             enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='nav_encounters', row=2)
