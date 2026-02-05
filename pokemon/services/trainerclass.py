@@ -143,7 +143,7 @@ class trainer:
                 pokemon.create(STARTER_LEVEL)
                 if pokemon.statuscode == 96:
                     self.statuscode = 96
-                    return  # Return early if create failed
+                    return
 
                 # BUG:  It is possible for the pokemon to save to the db as one of the
                 #       trainers pokemon, but fail to update the trainer with the starter.
@@ -151,15 +151,28 @@ class trainer:
                 #       if it fails.
                 
                 # CRITICAL: Set these AFTER create() because create() sets party to None
-                # Must set discordId again to ensure it's set
                 pokemon.discordId = self.discordId
                 pokemon.party = True
+                
+                # DEBUG: Print what we're about to save
+                print(f"DEBUG BEFORE SAVE: pokemon.party = {pokemon.party}, type = {type(pokemon.party)}")
+                print(f"DEBUG BEFORE SAVE: pokemon.discordId = {pokemon.discordId}")
+                print(f"DEBUG BEFORE SAVE: pokemon.trainerId = {pokemon.trainerId}")
                 
                 # save starter into database
                 pokemon.save()
                 if pokemon.statuscode == 96:
                     self.statuscode = 96
-                    return  # Return early if save failed
+                    return
+
+                # DEBUG: Check after save
+                print(f"DEBUG AFTER SAVE: pokemon.party = {pokemon.party}")
+                print(f"DEBUG AFTER SAVE: pokemon.trainerId = {pokemon.trainerId}")
+                
+                # Verify what was actually saved to the database
+                verifyQuery = 'SELECT party FROM pokemon WHERE id = %(trainerId)s'
+                verifyResult = db.querySingle(verifyQuery, {'trainerId': pokemon.trainerId})
+                print(f"DEBUG DATABASE CHECK: party value in DB = {verifyResult[0] if verifyResult else 'NOT FOUND'}")
 
                 starterId = pokemon.trainerId
                 starterName = pokemon.pokemonName
