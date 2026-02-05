@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
 from redbot.core import commands
 
+import os
 import constant
 from services.trainerclass import trainer as TrainerClass
 from services.pokeclass import Pokemon as PokemonClass
@@ -201,25 +202,42 @@ class StarterMixin(MixinMeta):
         pokemon = trainer.getStarterPokemon()
         active = trainer.getActivePokemon()
         
-        # Create the display state
-        state = PokemonState(str(user.id), None, DisplayCard.STATS, [pokemon], active.trainerId, None)
-        
-        # Create embed showing the starter
-        embed, btns = self.__pokemonSingleCard(user, state, state.card, True)
-        
-        # Add a special message for new trainers
+        # Create the completion embed with pokemon sprite
         completion_embed = discord.Embed(
             title='🎉 You received your first Pokémon! 🎉',
-            description=f'Congratulations, {trainer_name}! You received a **{pokemon.pokemonName}**!\n\nType `,play` or `,m` to begin your adventure!',
+            description=f'Congratulations, {trainer_name}! You received a **{pokemon.pokemonName.capitalize()}**!\n\nType `,play` or `,m` to begin your adventure!',
             color=discord.Color.gold()
         )
         
-        # Send completion message
-        await interaction.message.edit(embed=completion_embed, view=None)
+        # Add the pokemon sprite to the embed
+        sprite_file = None
+        try:
+            from helpers.pathhelpers import get_sprite_path
+            sprite_path = f"/sprites/pokemon/{pokemon.pokemonName}.png"
+            full_sprite_path = get_sprite_path(sprite_path)
+            
+            if os.path.exists(full_sprite_path):
+                filename = f"{pokemon.pokemonName}.png"
+                sprite_file = discord.File(full_sprite_path, filename=filename)
+                completion_embed.set_image(url=f"attachment://{filename}")
+            else:
+                # Fallback to URL
+                sprite_url = f"https://pokesprites.joshkohut.com/sprites/pokemon/{pokemon.pokemonName}.png"
+                completion_embed.set_image(url=sprite_url)
+        except Exception as e:
+            print(f"Error loading pokemon sprite: {e}")
+            # Fallback to URL
+            try:
+                sprite_url = f"https://pokesprites.joshkohut.com/sprites/pokemon/{pokemon.pokemonName}.png"
+                completion_embed.set_image(url=sprite_url)
+            except:
+                pass
         
-        # Send pokemon card as new message
-        message = await interaction.channel.send(embed=embed, view=btns)
-        self.setPokemonState(user, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
+        # Send completion message with sprite
+        if sprite_file:
+            await interaction.message.edit(embed=completion_embed, view=None, attachments=[sprite_file])
+        else:
+            await interaction.message.edit(embed=completion_embed, view=None)
 
     async def __on_moves_click(self, interaction: Interaction):
         user = interaction.user
