@@ -723,4 +723,79 @@ class encounter:
         # this is the pokemon move json object from the config file
         moveJson = movesConfig[move]
         return moveJson
-    
+
+
+# Module-level utility function for damage calculation
+def calculate_battle_damage(attacker: PokemonClass, defender: PokemonClass,
+                            move_name: str, moves_config: dict,
+                            type_effectiveness: dict) -> tuple:
+    """
+    Calculate battle damage using Pokemon battle formula.
+
+    This is a standalone function that can be called from UI code (encounters.py)
+    to calculate damage without needing an encounter class instance.
+
+    Args:
+        attacker: The attacking Pokemon
+        defender: The defending Pokemon
+        move_name: Name of the move being used
+        moves_config: Loaded moves.json configuration
+        type_effectiveness: Loaded typeEffectiveness.json configuration
+
+    Returns:
+        tuple: (damage_dealt: int, attack_hit: bool)
+
+    Example:
+        >>> from helpers.pathhelpers import load_json_config
+        >>> moves = load_json_config('moves.json')
+        >>> types = load_json_config('typeEffectiveness.json')
+        >>> damage, hit = calculate_battle_damage(pikachu, bulbasaur, 'thunderbolt', moves, types)
+    """
+    # Get move data
+    move_data = moves_config.get(move_name, {})
+    power = move_data.get('power', 0)
+    accuracy = move_data.get('accuracy', 100)
+    move_type = move_data.get('moveType', 'normal')
+    damage_class = move_data.get('damage_class', 'physical')
+
+    # Check if move hits
+    hit_roll = random.randint(1, 100)
+    if hit_roll > accuracy:
+        return 0, False
+
+    # Status moves don't deal damage
+    if power is None or power == 0:
+        return 0, True
+
+    # Get Pokemon stats
+    attacker_stats = attacker.getPokeStats()
+    defender_stats = defender.getPokeStats()
+
+    # Determine attack/defense stats based on damage class
+    if damage_class == 'physical':
+        attack = attacker_stats['attack']
+        defense = defender_stats['defense']
+    else:
+        attack = attacker_stats['special-attack']
+        defense = defender_stats['special-defense']
+
+    # Calculate base damage using Gen 1 formula
+    # Formula: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_I
+    level = attacker.currentLevel
+    base_damage = ((2 * level / 5 + 2) * power * (attack / defense) / 50 + 2)
+
+    # Random multiplier (217-255 / 255)
+    random_mult = random.randrange(217, 256) / 255
+
+    # STAB (Same Type Attack Bonus) - 1.5x if move type matches Pokemon type
+    stab = 1.5 if (move_type == attacker.type1 or move_type == attacker.type2) else 1.0
+
+    # Type effectiveness
+    defending_type = defender.type1
+    effectiveness = type_effectiveness.get(move_type, {}).get(defending_type, 1.0)
+
+    # Final damage calculation
+    damage = int(base_damage * random_mult * stab * effectiveness)
+
+    return damage, True
+
