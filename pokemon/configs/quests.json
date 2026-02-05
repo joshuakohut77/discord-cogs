@@ -322,7 +322,7 @@
   "160": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": [],
+    "blockers": ["silph_scope"],
     "name": "pokemon-tower"
   },
   "161": {
@@ -564,8 +564,8 @@
     "name": "pokemon-tower-6F"
   },
   "1607": {
-    "pre-requsites": [],
-    "quest": [],
+    "pre-requsites": ["silph_scope"],
+    "quest": ["Rescue Mr Fuji"],
     "blockers": [],
     "name": "pokemon-tower-7F"
   },
