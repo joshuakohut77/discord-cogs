@@ -47,38 +47,53 @@ class trainer:
     def deleteTrainer(self):
         """soft deletes a trainer and all of their pokemon """
         retMsg = ''
+        db = None
         try:
             db = dbconn()
             # use milliseconds as a way to get a unique number. used to soft delete a value and still retain original discordId
             milliString = str(int(time() * 1000))
             newDiscordId = self.discordId + '_' + milliString
+            
             pokemonUpdateQuery = 'UPDATE pokemon SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(pokemonUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            
             trainerUpdateQuery = 'UPDATE trainer SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(trainerUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            
             inventoryUpdateQuery = 'UPDATE inventory SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(inventoryUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            
             keyItemsUpdateQuery = 'UPDATE keyitems SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(keyItemsUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            
             leaderBoardUpdateQuery = 'UPDATE leaderboard SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(leaderBoardUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            
             pokedexUpdateQuery = 'UPDATE pokedex SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(pokedexUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            
             trainerBattlesUpdateQuery = 'UPDATE trainer_battles SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(trainerBattlesUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            
             uniqueEncountersUpdateQuery = 'UPDATE "unique-encounters" SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(uniqueEncountersUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            
             db.commit()
             retMsg = "Trainer deleted successfully!"
             self.statuscode = 420
-        except:
+        except Exception as e:
             self.statuscode = 96
-            retMsg = "Error occured while trying to delete trainer"
-            db.rollback()
+            retMsg = f"Error occurred while trying to delete trainer: {str(e)}"
+            if db:
+                db.rollback()
             logger.error(excInfo=sys.exc_info())
+            print(f"DELETE TRAINER ERROR: {e}")
+            import traceback
+            traceback.print_exc()
         finally:
             # delete and close connection
-            del db
+            if db:
+                del db
             return retMsg
 
     def setTrainerName(self, trainerName: str):
