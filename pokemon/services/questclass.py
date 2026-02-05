@@ -329,6 +329,58 @@ class quests:
             if uniqueEncounters.mew:
                 return True
 
+    # new code - add this method to the quests class
+    def create_key_item_embed(self, item_name: str, emoji: str = None) -> dict:
+        """
+        Create an embed for key item rewards
+        
+        Args:
+            item_name: Name of the item received (e.g., 'Helix Fossil', 'HM01', 'Old Rod')
+            emoji: Optional emoji to display. If None, will try to get from constant
+        
+        Returns:
+            dict with 'embed' key containing the discord.Embed object
+        """
+        import discord
+        import constant
+        
+        # Map item names to their emoji constants
+        emoji_map = {
+            'Helix Fossil': constant.HELIXFOSSIL,
+            'Dome Fossil': constant.DOMEFOSSIL,
+            'Old Rod': constant.OLD_ROD,
+            'Good Rod': constant.GOOD_ROD,
+            'Super Rod': constant.SUPER_ROD,
+            'Bike Voucher': '🎟️',  # Unicode emoji since no constant exists
+            'Bicycle': constant.BICYCLE,
+            'HM01': constant.HM01,
+            'HM02': constant.HM02,
+            'HM03': constant.HM03,
+            'HM04': constant.HM04,
+            'HM05': constant.HM05,
+            'Town Map': constant.TOWNMAP,
+            'Old Amber': constant.OLDAMBER,
+            'Coin Case': constant.COINCASE,
+            'Lemonade': constant.LEMONADE,
+            'Silph Scope': constant.SILPH_SCOPE,
+            'Poké Flute': constant.POKEFLUTE,
+            'S.S. Ticket': constant.SS_TICKET,
+            'Gold Teeth': '🦷',  # Unicode emoji since no constant exists
+            'Item Finder': constant.ITEM_FINDER,
+        }
+        
+        # Get emoji from map or use provided emoji
+        if emoji is None:
+            emoji = emoji_map.get(item_name, '✨')  # Default sparkle emoji if not found
+        
+        embed = discord.Embed(
+            title="Item Received!",
+            description=f"{emoji} **{item_name}**",
+            color=discord.Color.gold()
+        )
+        
+        return {'embed': embed}
+
     # List of quests 
     """
     Garys Sister - Get Town map
@@ -421,11 +473,12 @@ class quests:
     def garysSister(self):
         self.inventory.townmap = 1
         self.message = dedent("""\
-                    You decided to have one last quickie with Gary's sister
-                    before departing. She handed you her number on the back of
-                    a peice of paper.
-                    You received the Town Map!""")
+                        You ran into Garys sister outside of town. 
+                        You could feel the instant chemistry between you two. 
+                        She handed you her number on the back of
+                        a peice of paper.""")
         self.inventory.save()
+        return self.create_key_item_embed('Town Map')
 
     def professorOak(self):
         self.keyitems.oaks_parcel_delivered = True
@@ -444,56 +497,59 @@ class quests:
         self.keyitems.dome_fossil = (fossil == 'Dome Fossil')
         self.message = dedent("""\
                             Some nerd was super excited about finding two rocks. 
-                            You take one just to ruin his day. 
-                            You received a %s!""" %(fossil))
+                            You take one just to ruin his day.""")
         self.keyitems.save()
-        return
+        return self.create_key_item_embed(fossil)
 
     def fishingGuru(self):
         self.keyitems.old_rod = True
         self.message = dedent("""\
                             Some creepy guy gave you an old-rod with missing fishing line. 
-                            You notice bubbles comeing from the lake near you.
-                            You received an Old Rod!""")
+                            You notice bubbles coming from the lake near you.""")
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('Old Rod')
 
     def bikeVoucher(self):
         self.keyitems.bike_voucher = True
         self.message = dedent("""\
                             You met a guy who found out his wife was cheating on him with some professor.
-                            He gave you the bike voucher which was her birthday surprise. 
-                            You received a Bike Voucher!""")
+                            He gave you the bike voucher which was her birthday surprise.""")
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('Bike Voucher')
 
     def speakToCaptain(self):
         self.keyitems.HM01 = True
         self.message = dedent("""\
                         You caught the captain and his crew smuggling black tar heroine.
-                        The captin bribed you to keep quiet.  
-                        You received HM01!""")
+                        The captin bribed you to keep quiet.""")
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('HM01')
 
     def oaksAide(self):
         self.keyitems.HM05 = True
         self.message = dedent("""\
-                            You met Professor Oaks aide. She was jealous to hear about his relationship with your mother.
-                            She gave you a valuable item from Oaks collection. She seemed suspiciously young.
-                            You received HM05!""")
+                            You met Professor Oaks aide. She was jealous to hear about Oak's relationship with your mother.
+                            She gave you a valuable item from Oaks collection. She seemed suspiciously young.""")
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('HM05')
 
     def museumOfScience(self):
         self.inventory.oldamber = 1
         self.message = dedent("""\
                             You browsed the Museum of Science and found a cool looking stone. 
                             You placed the stone in your bag when no one was looking.
-                            The inscription said "Property of John Hammond"
-                            You received some Old Amber!""")
+                            The inscription said "Property of John Hammond""")
         self.inventory.save()
-        return
+        return self.create_key_item_embed('Old Amber')
+
+    def returnTeeth(self):
+        self.keyitems.HM04 = True
+        self.keyitems.gold_teeth = False
+        self.message = dedent("""\
+                            Speaking to the warden about the dead pokemon you found, he admired your bling bling grille. 
+                            He offered to trade you for the gold teeth. They fit perfectly...""")
+        self.keyitems.save()
+        return self.create_key_item_embed('HM04')
 
     def cafe(self):
         self.inventory.coincase = 1
@@ -586,15 +642,14 @@ class quests:
         self.keyitems.save()
         return
 
-    def returnTeeth(self):
-        self.keyitems.HM04 = True
-        self.keyitems.gold_teeth = False
+    def theWarden(self):
+        self.keyitems.gold_teeth = True
         self.message = dedent("""\
-                            Speaking to the warden about the dead pokemon you found, he admired your bling bling grille. 
-                            He offered to trade you for the gold teeth. They fit perfectly...
-                            You received HM04""")
+                            You walked into a house and found some old guy in pain. 
+                            He was unable to speak. You notice a corpse of a dead Marowak in the corner.
+                            You search the body for loot and found the skull with gold teeth still in it.""")
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('Gold Teeth')
 
     def pokemonLab(self):
         # special quest where you trade in Helix/Dome Fossil and old amber for pokemon later
