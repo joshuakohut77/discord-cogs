@@ -978,7 +978,7 @@
     "east": null,
     "south": "kanto-safari-zone",
     "west": null,
-    "spritePath": "/sprites/locations/kanto-safari-zone-1.png",
+    "spritePath": "/sprites/locations/safari-zone-1.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Safari Zone 1"
@@ -990,7 +990,7 @@
     "east": null,
     "south": "kanto-safari-zone-1",
     "west": null,
-    "spritePath": "/sprites/locations/kanto-safari-zone-2.png",
+    "spritePath": "/sprites/locations/safari-zone-2.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Safari Zone 2"
@@ -1002,7 +1002,7 @@
     "east": null,
     "south": "kanto-safari-zone-2",
     "west": null,
-    "spritePath": "/sprites/locations/kanto-safari-zone-3.png",
+    "spritePath": "/sprites/locations/safari-zone-3.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "Safari Zone 3"
