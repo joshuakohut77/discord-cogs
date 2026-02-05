@@ -332,11 +332,15 @@ class EncountersMixin(MixinMeta):
             enemy_name = list(current_enemy.keys())[0]
             enemy_level = current_enemy[enemy_name]
             
+            from services.pokedexclass import pokedex as PokedexClass
+
             # Create enemy Pokemon - FIX: Use positional parameter
             enemy_pokemon = PokemonClass(str(user.id), enemy_name)
             enemy_pokemon.create(enemy_level)
             enemy_pokemon.discordId = None 
             
+            PokedexClass(str(user.id), enemy_pokemon)
+
             # Battle turn
             enc = EncounterClass(player_pokemon, enemy_pokemon)
             result = enc.fight(battleType='auto')
@@ -443,10 +447,14 @@ class EncountersMixin(MixinMeta):
         enemy_name = list(first_enemy.keys())[0]
         enemy_level = first_enemy[enemy_name]
         
+        from services.pokedexclass import pokedex as PokedexClass
+
         enemy_pokemon = PokemonClass(str(user.id), enemy_name)
         enemy_pokemon.create(enemy_level)
         enemy_pokemon.discordId = None
         
+        PokedexClass(str(user.id), enemy_pokemon)
+
         # BattleState uses POSITIONAL arguments - check the __init__ signature
         battle_state = BattleState(
             user_id,              # user_id
