@@ -64,7 +64,7 @@ class trainer:
             db.executeWithoutCommit(leaderBoardUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             pokedexUpdateQuery = 'UPDATE pokedex SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(pokedexUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
-            uniqueEncountersUpdateQuery = 'UPDATE unique-encounters SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
+            uniqueEncountersUpdateQuery = 'UPDATE "unique-encounters" SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(uniqueEncountersUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             db.commit()
             retMsg = "Trainer deleted successfully!"
@@ -150,29 +150,18 @@ class trainer:
                 # TODO: Make the all the queries part of one transaction that will rollback
                 #       if it fails.
                 
-                # CRITICAL: Set these AFTER create() because create() sets party to None
                 pokemon.discordId = self.discordId
                 pokemon.party = True
-                
-                # DEBUG: Print what we're about to save
-                print(f"DEBUG BEFORE SAVE: pokemon.party = {pokemon.party}, type = {type(pokemon.party)}")
-                print(f"DEBUG BEFORE SAVE: pokemon.discordId = {pokemon.discordId}")
-                print(f"DEBUG BEFORE SAVE: pokemon.trainerId = {pokemon.trainerId}")
                 
                 # save starter into database
                 pokemon.save()
                 if pokemon.statuscode == 96:
                     self.statuscode = 96
                     return
-
-                # DEBUG: Check after save
-                print(f"DEBUG AFTER SAVE: pokemon.party = {pokemon.party}")
-                print(f"DEBUG AFTER SAVE: pokemon.trainerId = {pokemon.trainerId}")
                 
                 # Verify what was actually saved to the database
                 verifyQuery = 'SELECT party FROM pokemon WHERE id = %(trainerId)s'
                 verifyResult = db.querySingle(verifyQuery, {'trainerId': pokemon.trainerId})
-                print(f"DEBUG DATABASE CHECK: party value in DB = {verifyResult[0] if verifyResult else 'NOT FOUND'}")
 
                 starterId = pokemon.trainerId
                 starterName = pokemon.pokemonName
