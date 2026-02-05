@@ -149,45 +149,49 @@ class StarterMixin(MixinMeta):
             {
                 'title': 'Welcome to the World of Pokémon!',
                 'text': 'Hello there! Welcome to the wonderful world of Pokémon!\n\nMy name is Oak. People call me the Pokémon Professor.',
-                'color': discord.Color.green()
+                'color': discord.Color.green(),
+                'sprite_path': '/sprites/trainers/oak.png'
             },
             {
                 'title': 'About Pokémon',
                 'text': 'This world is inhabited by creatures called Pokémon.\n\nFor some people, Pokémon are pets. Others use them for battles.',
-                'color': discord.Color.green()
+                'color': discord.Color.green(),
+                'sprite_path': '/sprites/trainers/oak.png'
             },
             {
                 'title': 'Your Journey Begins',
-                'text': 'As for myself, I study Pokémon as a profession.\n\nBut first, tell me a little about yourself.',
-                'color': discord.Color.green()
-            },
-            {
-                'title': 'What\'s Your Name?',
-                'text': 'Let\'s begin with your name.\n\nClick "Next" to enter your name!',
+                'text': 'Certain Pokémon are of particular interest these days.\n\nYes. Vaporeon. No further questions.',
                 'color': discord.Color.green(),
-                'prompt_name': True  # This triggers the name input modal
+                'sprite_path': '/sprites/trainers/oak.png'
             },
             {
-                'title': 'Nice to Meet You!',
-                'text': 'Excellent! Welcome, {name}!\n\nYour very own Pokémon adventure is about to unfold!',
-                'color': discord.Color.green()
+                'title': 'First things first',
+                'text': 'What is your name?\n\nTry not to mess it up. This is permanent. Probably.',
+                'color': discord.Color.green(),
+                'prompt_name': True,
+                'sprite_path': '/sprites/trainers/oak.png'
             },
             {
-                'title': 'Your First Pokémon',
-                'text': 'A world of dreams and adventures with Pokémon awaits!\n\nLet\'s get you started with your very first Pokémon partner!',
-                'color': discord.Color.gold()
+                'title': 'Not this guy',
+                'text': 'This is your rival, Blue. He picked the starter\n\nthat\’s strong against yours. On purpose.',
+                'color': discord.Color.green(),
+                'sprite_path': '/sprites/trainers/blue.png'
+            },
+            {
+                'title': 'Your journey begins now!',
+                'text': 'Catch monsters. Beat your rival.\n\nDon\’t ask Oak about Vaporeon again.',
+                'color': discord.Color.gold(),
+                'sprite_path': '/sprites/trainers/oak.png'
             }
         ]
         
-        sprite_path = 'sprites/trainers/oak.png'
         
         # Start the intro scene
         await start_intro_scene(
             ctx, 
             user.id, 
             intro_scenes, 
-            self._on_intro_complete,
-            sprite_path
+            self._on_intro_complete
         )
 
     async def _on_intro_complete(self, interaction: Interaction, trainer_name: str):
