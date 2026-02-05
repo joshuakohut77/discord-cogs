@@ -51,6 +51,40 @@ class EncountersMixin(MixinMeta):
     __bag_states: dict[str, BagState] = {}
     __item_usage_states: dict = {}
     __enemy_trainers_data: dict = None
+    __trainer_cache: Dict[str, TrainerClass] = {}  # Cache for TrainerClass instances
+
+    def _get_trainer(self, user_id: str) -> TrainerClass:
+        """
+        Get TrainerClass instance with caching.
+
+        Caches trainer instances to reduce repeated instantiations.
+        Cache persists for the lifetime of the cog.
+
+        Args:
+            user_id: Discord user ID
+
+        Returns:
+            TrainerClass instance
+
+        Example:
+            >>> trainer = self._get_trainer(str(user.id))
+            >>> location = trainer.getLocation()
+        """
+        if user_id not in self.__trainer_cache:
+            self.__trainer_cache[user_id] = TrainerClass(user_id)
+        return self.__trainer_cache[user_id]
+
+    def _clear_trainer_cache(self, user_id: str = None):
+        """
+        Clear trainer cache for user or all users.
+
+        Args:
+            user_id: Specific user to clear, or None to clear all
+        """
+        if user_id:
+            self.__trainer_cache.pop(user_id, None)
+        else:
+            self.__trainer_cache.clear()
 
     def __load_enemy_trainers_data(self):
         """Load enemy trainers configuration"""
@@ -106,7 +140,7 @@ class EncountersMixin(MixinMeta):
         await interaction.response.defer()
         
         # Get location
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         
         # Use battle class to check trainer progress
@@ -241,7 +275,7 @@ class EncountersMixin(MixinMeta):
         
         await interaction.response.defer()
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         
         # Get player's full party
@@ -377,7 +411,7 @@ class EncountersMixin(MixinMeta):
         
         await interaction.response.defer()
         
-        trainer = TrainerClass(user_id)
+        trainer = self._get_trainer(user_id)
         location = trainer.getLocation()
         
         # Get player's party
@@ -453,7 +487,7 @@ class EncountersMixin(MixinMeta):
         """
         view = View()
         
-        trainer = TrainerClass(user_id)
+        trainer = self._get_trainer(user_id)
         location = trainer.getLocation()
         
         # Check if player has any alive Pokemon
@@ -638,7 +672,7 @@ class EncountersMixin(MixinMeta):
         await interaction.response.defer()
         
         battle_state = self.__wild_battle_states[user_id]
-        trainer = TrainerClass(user_id)
+        trainer = self._get_trainer(user_id)
         
         # Get ball type from custom_id
         ball_id = interaction.data['custom_id'].replace('wild_catch_', '')
@@ -687,7 +721,7 @@ class EncountersMixin(MixinMeta):
         await interaction.response.defer()
         
         # Show Pokeball selection (reuse existing logic)
-        trainer = TrainerClass(user_id)
+        trainer = self._get_trainer(user_id)
         items = InventoryClass(trainer.discordId)
         
         ctx = await self.bot.get_context(interaction.message)
@@ -1045,7 +1079,7 @@ class EncountersMixin(MixinMeta):
         if not already_deferred and not interaction.response.is_done():
             await interaction.response.defer()
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         
         # Get available actions at this location
@@ -1187,7 +1221,7 @@ class EncountersMixin(MixinMeta):
         # Get direction from custom_id (dir_north, dir_south, etc.)
         direction = interaction.data['custom_id'].replace('dir_', '')
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         current_location = trainer.getLocation()
         
         # Get target location ID based on direction
@@ -1395,7 +1429,7 @@ class EncountersMixin(MixinMeta):
         from services.keyitemsclass import keyitems as KeyItemsClass
         import constant
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         inventory = InventoryClass(trainer.discordId)
         keyitems = KeyItemsClass(trainer.discordId)
         
@@ -1535,7 +1569,7 @@ class EncountersMixin(MixinMeta):
         
         from services.trainerclass import trainer as TrainerClass
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         pokeList = trainer.getPokemon(party=True)
         active = trainer.getActivePokemon()
         
@@ -1659,7 +1693,7 @@ class EncountersMixin(MixinMeta):
         from services.inventoryclass import inventory as InventoryClass
         from discord.ui import Select
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         inv = InventoryClass(str(user.id))
         pokeList = trainer.getPokemon(party=True)
         
@@ -1812,7 +1846,7 @@ class EncountersMixin(MixinMeta):
         
         from services.trainerclass import trainer as TrainerClass
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         
         # Use the item - CORRECT ORDER: pokeTrainerId first, then item
         trainer.useItem(int(item_state.selected_pokemon_id), item_state.selected_item)
@@ -1848,7 +1882,7 @@ class EncountersMixin(MixinMeta):
         from services.trainerclass import trainer as TrainerClass
         from discord.ui import Select
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         pokeList = trainer.getPokemon(party=True)
         active = trainer.getActivePokemon()
         
@@ -1968,7 +2002,7 @@ class EncountersMixin(MixinMeta):
         
         from services.trainerclass import trainer as TrainerClass
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         pokemon = trainer.getPokemonById(int(selected_trainer_id))
         
         if not pokemon:
@@ -2003,7 +2037,7 @@ class EncountersMixin(MixinMeta):
         
         from services.trainerclass import trainer as TrainerClass
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         trainer.setActivePokemon(int(selected_trainer_id))
         
         # Refresh the party view - REBUILD IT HERE instead of calling on_bag_party_click
@@ -2130,7 +2164,7 @@ class EncountersMixin(MixinMeta):
         
         from services.trainerclass import trainer as TrainerClass
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         
         # Get Pokemon name before depositing
         pokemon = trainer.getPokemonById(int(selected_trainer_id))
@@ -2158,7 +2192,7 @@ class EncountersMixin(MixinMeta):
         from discord.ui import Select
         from discord import SelectOption
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         pokeList = trainer.getPokemon(party=True)
         active = trainer.getActivePokemon()
 
@@ -2298,7 +2332,7 @@ class EncountersMixin(MixinMeta):
         from discord.ui import Select
         from discord import SelectOption
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         pokeList = trainer.getPokemon(party=True)
         active = trainer.getActivePokemon()
 
@@ -2437,7 +2471,7 @@ class EncountersMixin(MixinMeta):
         
         # Get pokedex list to check bounds
         from services.trainerclass import trainer as TrainerClass
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         pokedex_list = trainer.getPokedex()
         
         if bag_state.pokedex_index > 0:
@@ -2465,7 +2499,7 @@ class EncountersMixin(MixinMeta):
         
         # Get pokedex list to check bounds
         from services.trainerclass import trainer as TrainerClass
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         pokedex_list = trainer.getPokedex()
         
         if bag_state.pokedex_index < len(pokedex_list) - 1:
@@ -2628,7 +2662,7 @@ class EncountersMixin(MixinMeta):
         from services.inventoryclass import inventory as InventoryClass
         from discord.ui import Select
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         inv = InventoryClass(str(user.id))
         
         # Get party Pokemon from battle state
@@ -2986,7 +3020,7 @@ class EncountersMixin(MixinMeta):
         
         from services.trainerclass import trainer as TrainerClass
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         
         # Get Pokemon info before releasing
         pokemon = trainer.getPokemonById(int(selected_trainer_id))
@@ -3033,7 +3067,7 @@ class EncountersMixin(MixinMeta):
         
         from services.trainerclass import trainer as TrainerClass
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         
         # Get Pokemon name before withdrawing
         pokemon = trainer.getPokemonById(int(selected_trainer_id))
@@ -3062,7 +3096,7 @@ class EncountersMixin(MixinMeta):
         from discord.ui import Select
         from discord import SelectOption
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         pc_list = trainer.getPokemon(pc=True)  # Get updated PC list
         
         if len(pc_list) == 0:
@@ -3175,7 +3209,7 @@ class EncountersMixin(MixinMeta):
         
         from services.trainerclass import trainer as TrainerClass
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         pokemon = trainer.getPokemonById(int(selected_trainer_id))
         
         if not pokemon:
@@ -3208,7 +3242,7 @@ class EncountersMixin(MixinMeta):
         
         from services.trainerclass import trainer as TrainerClass
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         pc_list = trainer.getPokemon(pc=True)
         
         # Find the selected Pokemon
@@ -3308,7 +3342,7 @@ class EncountersMixin(MixinMeta):
         from discord.ui import Select
         from discord import SelectOption
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         pc_list = trainer.getPokemon(pc=True)  # Get PC Pokemon
 
         if len(pc_list) == 0:
@@ -3428,7 +3462,7 @@ class EncountersMixin(MixinMeta):
         from services.pokedexclass import pokedex as PokedexClass
         from models.pokedex import PokedexModel
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         pokedex_list: List[PokedexModel] = trainer.getPokedex()
         
         if len(pokedex_list) == 0:
@@ -3538,7 +3572,7 @@ class EncountersMixin(MixinMeta):
         # Get selected Pokemon trainerId from dropdown value
         selected_trainer_id = interaction.data['values'][0]
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         pokeList = trainer.getPokemon(party=True)
         active = trainer.getActivePokemon()
         
@@ -3713,7 +3747,7 @@ class EncountersMixin(MixinMeta):
         user = interaction.user
         await interaction.response.defer()
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         location_model = trainer.getLocation()
         
         location = LocationClass(str(user.id))
@@ -3754,7 +3788,7 @@ class EncountersMixin(MixinMeta):
         user = interaction.user
         await interaction.response.defer()
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         
         quest_buttons = self.__get_available_quests(str(user.id), location.name)
@@ -3790,7 +3824,7 @@ class EncountersMixin(MixinMeta):
         await interaction.response.defer()
         
         # Call the main map navigation method
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         
         # Get available actions at this location
@@ -3919,7 +3953,7 @@ class EncountersMixin(MixinMeta):
         user = interaction.user
         await interaction.response.defer()
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         
         if not location.pokecenter:
@@ -4627,7 +4661,7 @@ class EncountersMixin(MixinMeta):
         """Show the map with navigation buttons"""
         user = ctx.author
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         
         # Get available actions at this location
@@ -4754,7 +4788,7 @@ class EncountersMixin(MixinMeta):
 
     async def get_encounters(self, interaction: Interaction):
         user = interaction.user
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         model = trainer.getLocation()
 
         location = LocationClass(str(user.id))
@@ -4787,7 +4821,7 @@ class EncountersMixin(MixinMeta):
         quest_name = interaction.data['custom_id'].replace('quest_', '')
 
         # Get location and pre-requisites
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
 
         quests_data = self.__load_quests_data()
@@ -4934,7 +4968,7 @@ class EncountersMixin(MixinMeta):
 
         await interaction.response.defer()
 
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         
         # Get player's full party
@@ -5156,7 +5190,7 @@ class EncountersMixin(MixinMeta):
 
         await interaction.response.defer()
 
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         
         # Get player's full party
@@ -5757,7 +5791,7 @@ class EncountersMixin(MixinMeta):
         if not already_deferred:
             await interaction.response.defer()
         
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         
         # Import StoreClass
@@ -5934,7 +5968,7 @@ class EncountersMixin(MixinMeta):
 
         await interaction.response.defer()
 
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         
         # Get player's full party
@@ -6147,7 +6181,7 @@ class EncountersMixin(MixinMeta):
         await interaction.response.defer()
 
         # Get location and gym data
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
 
         gyms_data = self.__load_gyms_data()
@@ -6314,7 +6348,7 @@ class EncountersMixin(MixinMeta):
 
         await interaction.response.defer()
 
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         
         # Get player's full party
@@ -6463,7 +6497,7 @@ class EncountersMixin(MixinMeta):
         method = interaction.data['custom_id']
 
         # if method == 'walk':
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
 
 
         if ActionType.GIFT.value == action.type.value:
@@ -6759,7 +6793,7 @@ class EncountersMixin(MixinMeta):
         await interaction.response.defer()
 
         state = self.__useractions[str(user.id)]
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
 
         # Use old auto-battle system
         trainer.fight(state.wildPokemon)
@@ -6873,7 +6907,7 @@ class EncountersMixin(MixinMeta):
 
         await interaction.response.defer()
         state = self.__useractions[str(user.id)]
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         trainer.runAway(state.wildPokemon)
 
         if trainer.statuscode == 96:
@@ -6922,7 +6956,7 @@ class EncountersMixin(MixinMeta):
 
         await interaction.response.defer()
         state = self.__useractions[str(user.id)]
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
         items = InventoryClass(trainer.discordId)
 
         ctx = await self.bot.get_context(interaction.message)
@@ -7042,7 +7076,7 @@ class EncountersMixin(MixinMeta):
         await interaction.response.defer()
 
         state = self.__useractions[str(user.id)]
-        trainer = TrainerClass(str(user.id))
+        trainer = self._get_trainer(str(user.id))
 
         # Determine which ball was thrown
         if interaction.data['custom_id'] == 'pokeball':
