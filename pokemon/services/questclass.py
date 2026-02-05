@@ -567,18 +567,19 @@ class quests:
     def mrFuji(self):
         self.keyitems.pokeflute = True
         self.message = dedent("""\
-                            You meet a feeble old man alone in his house. You notice a cool instrument haning on his wall. 
-                            You asked if you could have it. He declined. He was alone...
-                            You received the Pokeflute!""")
+                            You meet a feeble old Mr. Fuji alone in his house. You notice a cool instrument haning on his wall. 
+                            You asked if you could have it. He declined. He was alone...""")
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('Poké Flute')
 
     def rescueMrFuji(self):
         self.keyitems.mr_fujis_finger = True
         self.message = dedent("""\
-                            TODO - about resucing mr fuji and him giving you his finger.""")
+                            At the top of Pokemon Tower, you find Mr. Fuji being held captive by Team Rocket.
+                            Using your Silph Scope, you defeat the ghost Pokemon and rescue him.
+                            In the scuffle, Mr. Fuji loses a finger. You pocket it as a souvenir.""")
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('Mr. Fuji\'s Finger', '👆')
 
     def loneHouse(self):
         self.keyitems.HM03 = True
