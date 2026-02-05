@@ -105,17 +105,17 @@ class location:
                     methodList.append(actions[method])
             
             
-            # This next section checks if there's any valid quests in current area
-            # TODO replace this load with object in memory
-            p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/quests.json')
-            questsConfig = json.load(open(p, 'r'))
-            quest = QuestModel(questsConfig[str(locationId)])
-            if quest.questName != []:
-                questObj = qObj(self.discordId)
-                if questObj.prerequsitesValid(quest.prerequsites):
-                    for questMethod in quest.questName:
-                        if not questObj.questComplete(questMethod):
-                            methodList.append(ActionModel(questMethod, ActionType.QUEST, questMethod))
+            # # This next section checks if there's any valid quests in current area
+            # # TODO replace this load with object in memory
+            # p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/quests.json')
+            # questsConfig = json.load(open(p, 'r'))
+            # quest = QuestModel(questsConfig[str(locationId)])
+            # if quest.questName != []:
+            #     questObj = qObj(self.discordId)
+            #     if questObj.prerequsitesValid(quest.prerequsites):
+            #         for questMethod in quest.questName:
+            #             if not questObj.questComplete(questMethod):
+            #                 methodList.append(ActionModel(questMethod, ActionType.QUEST, questMethod))
 
         except:
             self.statuscode = 96
