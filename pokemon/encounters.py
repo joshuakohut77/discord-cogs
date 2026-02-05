@@ -1038,7 +1038,7 @@ class EncountersMixin(MixinMeta):
         
         embed.add_field(
             name=f"❤️ Wild {wild_poke.pokemonName.capitalize()} (Lv.{wild_poke.currentLevel})",
-            value=f"**HP:** {wild_poke.currentHP}/{wild_stats['hp']} {make_hp_bar(wild_hp_pct)}\n"
+            value=f"**HP:** {wild_poke.currentHP}/{wild_stats['hp']} {create_hp_bar(wild_hp_pct)}\n"
                 f"**Type:** {wild_types}",
             inline=False
         )
@@ -1050,7 +1050,7 @@ class EncountersMixin(MixinMeta):
         
         embed.add_field(
             name=f"💚 Your {player_poke.pokemonName.capitalize()} (Lv.{player_poke.currentLevel})",
-            value=f"**HP:** {player_poke.currentHP}/{player_stats['hp']} {make_hp_bar(player_hp_pct)}\n"
+            value=f"**HP:** {player_poke.currentHP}/{player_stats['hp']} {create_hp_bar(player_hp_pct)}\n"
                 f"**Type:** {player_types}",
             inline=False
         )
@@ -4120,7 +4120,7 @@ class EncountersMixin(MixinMeta):
         
         embed.add_field(
             name=f"❤️ Enemy {enemy_poke.pokemonName.capitalize()} (Lv.{enemy_poke.currentLevel})",
-            value=f"**HP:** {enemy_poke.currentHP}/{enemy_stats['hp']} {make_hp_bar(enemy_hp_pct)}\n"
+            value=f"**HP:** {enemy_poke.currentHP}/{enemy_stats['hp']} {create_hp_bar(enemy_hp_pct)}\n"
                   f"**Type:** {enemy_types}",
             inline=False
         )
@@ -4132,7 +4132,7 @@ class EncountersMixin(MixinMeta):
         
         embed.add_field(
             name=f"💚 Your {player_poke.pokemonName.capitalize()} (Lv.{player_poke.currentLevel})",
-            value=f"**HP:** {player_poke.currentHP}/{player_stats['hp']} {make_hp_bar(player_hp_pct)}\n"
+            value=f"**HP:** {player_poke.currentHP}/{player_stats['hp']} {create_hp_bar(player_hp_pct)}\n"
                   f"**Type:** {player_types}",
             inline=False
         )
