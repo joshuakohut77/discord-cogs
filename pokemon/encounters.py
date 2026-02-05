@@ -4473,6 +4473,19 @@ class EncountersMixin(MixinMeta):
         
         await interaction.message.edit(embed=embed, view=view)
         
+        user = interaction.user
+        trainer = self._get_trainer(str(user.id))
+        location = trainer.getLocation()
+        self.__useractions[str(user.id)] = ActionState(
+            str(user.id), 
+            interaction.message.channel.id, 
+            interaction.message.id, 
+            location, 
+            trainer.getActivePokemon(), 
+            None, 
+            ''
+        )
+
         # Check for more trainers and send as followup (not in embed)
         remaining = battle_manager.getRemainingTrainerCount()
         if remaining > 0:
