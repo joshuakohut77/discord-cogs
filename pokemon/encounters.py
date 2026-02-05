@@ -7244,45 +7244,6 @@ HP    : {wildPokemon.currentHP} / {stats['hp']}
         embed.set_footer(text=descLog)
         return embed
 
-
-#     def __wildPokemonEncounter(self, user: discord.User, pokemon: PokemonClass, active: PokemonClass, descLog: str):
-#         stats = pokemon.getPokeStats()
-#         color = getTypeColor(pokemon.type1)
-#         # Create the embed object
-#         embed = discord.Embed(
-#             title=f"Wild {pokemon.pokemonName.capitalize()}",
-#             description=descLog,
-#             color=color
-#         )
-#         embed.set_author(name=f"{user.display_name}",
-#                         icon_url=str(user.display_avatar.url))
-        
-#         types = pokemon.type1
-#         # Pokemon are not guaranteed to have a second type.
-#         # Check that the second type is not set to None and is not an empty string.
-#         if pokemon.type2 is not None and pokemon.type2:
-#             types += ', ' + pokemon.type2
-
-#         embed.add_field(
-#             name="Type", value=f"{types}", inline=False)
-#         embed.add_field(
-#             name="Level", value=f"{pokemon.currentLevel}", inline=True)
-#         embed.add_field(
-#             name="HP", value=f"{pokemon.currentHP} / {stats['hp']}", inline=True)
-
-#         embed.set_thumbnail(url=pokemon.frontSpriteURL)
-#         embed.set_image(url = active.backSpriteURL)
-        
-#         activeStats = active.getPokeStats()
-
-#         embed.set_footer(text=f'''
-# {active.pokemonName.capitalize()}
-# Level: {active.currentLevel}
-# HP: {active.currentHP} / {activeStats['hp']}
-#         ''')
-#         return embed
-
-
     def __checkUserActionState(self, user: discord.User, message: discord.Message):
         state: ActionState
         if str(user.id) not in self.__useractions.keys():
