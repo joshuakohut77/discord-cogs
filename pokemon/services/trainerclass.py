@@ -79,6 +79,26 @@ class trainer:
             del db
             return retMsg
 
+    def setTrainerName(self, trainerName: str):
+        """Set the trainer's name"""
+        if not self.trainerExists:
+            self.statuscode = 96
+            self.message = 'Trainer does not exist'
+            return
+        
+        try:
+            db = dbconn()
+            updateString = 'UPDATE trainer SET "trainerName"=%(trainerName)s WHERE "discord_id"=%(discordId)s'
+            db.execute(updateString, {'trainerName': trainerName, 'discordId': self.discordId})
+            self.statuscode = 420
+        except:
+            self.statuscode = 96
+            self.message = "Error occurred while setting trainer name"
+            logger.error(excInfo=sys.exc_info())
+            db.rollback()
+        finally:
+            del db
+
     # TODO: This needs to update the trainers pokedex
     def getStarterPokemon(self):
         """Returns a random starter pokemon dictionary {pokemon: id} """
