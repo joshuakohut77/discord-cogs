@@ -50,48 +50,36 @@ class trainer:
         db = None
         try:
             db = dbconn()
-            # use milliseconds as a way to get a unique number. used to soft delete a value and still retain original discordId
-            milliString = str(int(time() * 1000))
+            # use a shorter timestamp to avoid exceeding varchar limits
+            # Unix timestamp in seconds is only 10 digits
+            milliString = str(int(time()))
             newDiscordId = self.discordId + '_' + milliString
             
-            logger.info(f"DEBUG: Deleting trainer with discord_id: {self.discordId}")
-            logger.info(f"DEBUG: New discord_id will be: {newDiscordId} (length: {len(newDiscordId)})")
-            
-            logger.info("DEBUG: Updating pokemon table...")
             pokemonUpdateQuery = 'UPDATE pokemon SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(pokemonUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
-            logger.info("DEBUG: Updating trainer table...")
             trainerUpdateQuery = 'UPDATE trainer SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(trainerUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
-            logger.info("DEBUG: Updating inventory table...")
             inventoryUpdateQuery = 'UPDATE inventory SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(inventoryUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
-            logger.info("DEBUG: Updating keyitems table...")
             keyItemsUpdateQuery = 'UPDATE keyitems SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(keyItemsUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
-            logger.info("DEBUG: Updating leaderboard table...")
             leaderBoardUpdateQuery = 'UPDATE leaderboard SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(leaderBoardUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
-            logger.info("DEBUG: Updating pokedex table...")
             pokedexUpdateQuery = 'UPDATE pokedex SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(pokedexUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
-            logger.info("DEBUG: Updating trainer_battles table...")
             trainerBattlesUpdateQuery = 'UPDATE trainer_battles SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(trainerBattlesUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
-            logger.info("DEBUG: Updating unique-encounters table...")
             uniqueEncountersUpdateQuery = 'UPDATE "unique-encounters" SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(uniqueEncountersUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
-            logger.info("DEBUG: Committing changes...")
             db.commit()
-            logger.info("DEBUG: Deletion successful!")
             retMsg = "Trainer deleted successfully!"
             self.statuscode = 420
         except Exception as e:
@@ -99,7 +87,6 @@ class trainer:
             retMsg = f"Error occurred while trying to delete trainer: {str(e)}"
             if db:
                 db.rollback()
-            logger.error(f"DELETE TRAINER ERROR: {e}")
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
