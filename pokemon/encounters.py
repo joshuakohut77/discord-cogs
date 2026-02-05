@@ -28,7 +28,7 @@ from services.inventoryclass import inventory as InventoryClass
 from services.pokeclass import Pokemon as PokemonClass
 from services.questclass import quests as QuestsClass
 from services.battleclass import battle as BattleClass
-from services.encounterclass import encounter as EncounterClass
+from services.encounterclass import encounter as EncounterClass, calculate_battle_damage
 from services.expclass import experiance as exp
 
 from .abcd import MixinMeta
@@ -777,44 +777,26 @@ class EncountersMixin(MixinMeta):
         # Extract move name from custom_id
         move_name = interaction.data['custom_id'].replace('wild_battle_move_', '')
         
-        # Execute battle turn (same damage calculation as trainer battles)
+        # Execute battle turn using centralized damage calculation
         import random
         # Load config files using helper (with caching)
         moves_config = load_json_config('moves.json')
         type_effectiveness = load_json_config('typeEffectiveness.json')
-        
-        # Player's move
+
+        # Get move power for logging (0 indicates status move)
         player_move = moves_config.get(move_name, {})
         player_power = player_move.get('power', 0)
-        player_accuracy = player_move.get('accuracy', 100)
-        player_move_type = player_move.get('moveType', 'normal')
-        damage_class = player_move.get('damage_class', 'physical')
-        
-        player_hit = random.randint(1, 100) <= player_accuracy
-        player_damage = 0
-        
-        if player_hit and player_power and player_power > 0:
-            player_stats = battle_state.player_pokemon.getPokeStats()
-            wild_stats = battle_state.wild_pokemon.getPokeStats()
 
-            if damage_class == 'physical':
-                attack = player_stats['attack']
-                defense = wild_stats['defense']
-            else:
-                attack = player_stats['special-attack']
-                defense = wild_stats['special-defense']
-            
-            level = battle_state.player_pokemon.currentLevel
-            base_damage = ((2 * level / 5 + 2) * player_power * (attack / defense) / 50 + 2)
-            random_mult = random.randrange(217, 256) / 255
-            
-            stab = 1.5 if (player_move_type == battle_state.player_pokemon.type1 or 
-                        player_move_type == battle_state.player_pokemon.type2) else 1.0
-            
-            defending_type = battle_state.wild_pokemon.type1
-            effectiveness = type_effectiveness.get(player_move_type, {}).get(defending_type, 1.0)
-            
-            player_damage = int(base_damage * random_mult * stab * effectiveness)
+        # Calculate player's damage using centralized function
+        player_damage, player_hit = calculate_battle_damage(
+            battle_state.player_pokemon,
+            battle_state.wild_pokemon,
+            move_name,
+            moves_config,
+            type_effectiveness
+        )
+
+        if player_hit and player_damage > 0:
             new_wild_hp = max(0, battle_state.wild_pokemon.currentHP - player_damage)
             battle_state.wild_pokemon.currentHP = new_wild_hp
         
@@ -921,39 +903,19 @@ class EncountersMixin(MixinMeta):
         wild_moves = [m for m in battle_state.wild_pokemon.getMoves() if m and m.lower() != 'none']
         if wild_moves:
             wild_move_name = random.choice(wild_moves)
-            wild_move = moves_config.get(wild_move_name, {})
-            wild_power = wild_move.get('power', 0)
-            wild_accuracy = wild_move.get('accuracy', 100)
-            wild_move_type = wild_move.get('moveType', 'normal')
-            wild_damage_class = wild_move.get('damage_class', 'physical')
-            
-            wild_hit = random.randint(1, 100) <= wild_accuracy
-            
-            if wild_hit and wild_power and wild_power > 0:
-                wild_stats = battle_state.wild_pokemon.getPokeStats()
-                player_stats = battle_state.player_pokemon.getPokeStats()
-                
-                if wild_damage_class == 'physical':
-                    attack = wild_stats['attack']
-                    defense = player_stats['defense']
-                else:
-                    attack = wild_stats['special-attack']
-                    defense = player_stats['special-defense']
-                
-                level = battle_state.wild_pokemon.currentLevel
-                base_damage = ((2 * level / 5 + 2) * wild_power * (attack / defense) / 50 + 2)
-                random_mult = random.randrange(217, 256) / 255
-                
-                stab = 1.5 if (wild_move_type == battle_state.wild_pokemon.type1 or 
-                            wild_move_type == battle_state.wild_pokemon.type2) else 1.0
-                
-                defending_type = battle_state.player_pokemon.type1
-                effectiveness = type_effectiveness.get(wild_move_type, {}).get(defending_type, 1.0)
-                
-                wild_damage = int(base_damage * random_mult * stab * effectiveness)
+
+            # Calculate wild Pokemon's damage using centralized function
+            wild_damage, wild_hit = calculate_battle_damage(
+                battle_state.wild_pokemon,
+                battle_state.player_pokemon,
+                wild_move_name,
+                moves_config,
+                type_effectiveness
+            )
+
+            if wild_hit and wild_damage > 0:
                 new_player_hp = max(0, battle_state.player_pokemon.currentHP - wild_damage)
                 battle_state.player_pokemon.currentHP = new_player_hp
-                
                 log_lines.append(f"• Wild {battle_state.wild_pokemon.pokemonName.capitalize()} used {wild_move_name.replace('-', ' ').title()}! Dealt {wild_damage} damage!")
             else:
                 log_lines.append(f"• Wild {battle_state.wild_pokemon.pokemonName.capitalize()} attacked but missed!")
@@ -4246,45 +4208,26 @@ class EncountersMixin(MixinMeta):
         player_hp_before = battle_state.player_pokemon.currentHP
         enemy_hp_before = battle_state.enemy_pokemon.currentHP
         
-        # Execute battle turn using our manual damage calculation
+        # Execute battle turn using centralized damage calculation
         import random
         # Load config files using helper (with caching)
         moves_config = load_json_config('moves.json')
         type_effectiveness = load_json_config('typeEffectiveness.json')
-        
-        # Player's move
+
+        # Get move power for logging (0 indicates status move)
         player_move = moves_config.get(move_name, {})
         player_power = player_move.get('power', 0)
-        player_accuracy = player_move.get('accuracy', 100)
-        player_move_type = player_move.get('moveType', 'normal')
-        damage_class = player_move.get('damage_class', 'physical')
-        
-        player_hit = random.randint(1, 100) <= player_accuracy
-        player_damage = 0
-        
-        if player_hit and player_power and player_power > 0:
-            player_stats = battle_state.player_pokemon.getPokeStats()
-            enemy_stats = battle_state.enemy_pokemon.getPokeStats()
-            
 
-            if damage_class == 'physical':
-                attack = player_stats['attack']
-                defense = enemy_stats['defense']
-            else:
-                attack = player_stats['special-attack']
-                defense = enemy_stats['special-defense']
-            
-            level = battle_state.player_pokemon.currentLevel
-            base_damage = ((2 * level / 5 + 2) * player_power * (attack / defense) / 50 + 2)
-            random_mult = random.randrange(217, 256) / 255
-            
-            stab = 1.5 if (player_move_type == battle_state.player_pokemon.type1 or 
-                        player_move_type == battle_state.player_pokemon.type2) else 1.0
-            
-            defending_type = battle_state.enemy_pokemon.type1
-            effectiveness = type_effectiveness.get(player_move_type, {}).get(defending_type, 1.0)
-            
-            player_damage = int(base_damage * random_mult * stab * effectiveness)
+        # Calculate player's damage using centralized function
+        player_damage, player_hit = calculate_battle_damage(
+            battle_state.player_pokemon,
+            battle_state.enemy_pokemon,
+            move_name,
+            moves_config,
+            type_effectiveness
+        )
+
+        if player_hit and player_damage > 0:
             new_enemy_hp = max(0, battle_state.enemy_pokemon.currentHP - player_damage)
             battle_state.enemy_pokemon.currentHP = new_enemy_hp
         
@@ -4351,39 +4294,19 @@ class EncountersMixin(MixinMeta):
             enemy_moves = [m for m in battle_state.enemy_pokemon.getMoves() if m and m.lower() != 'none']
             if enemy_moves:
                 enemy_move_name = random.choice(enemy_moves)
-                enemy_move = moves_config.get(enemy_move_name, {})
-                enemy_power = enemy_move.get('power', 0)
-                enemy_accuracy = enemy_move.get('accuracy', 100)
-                enemy_move_type = enemy_move.get('moveType', 'normal')
-                enemy_damage_class = enemy_move.get('damage_class', 'physical')
-                
-                enemy_hit = random.randint(1, 100) <= enemy_accuracy
-                
-                if enemy_hit and enemy_power and enemy_power > 0:
-                    enemy_stats = battle_state.enemy_pokemon.getPokeStats()
-                    player_stats = battle_state.player_pokemon.getPokeStats()
-                    
-                    if enemy_damage_class == 'physical':
-                        attack = enemy_stats['attack']
-                        defense = player_stats['defense']
-                    else:
-                        attack = enemy_stats['special-attack']
-                        defense = player_stats['special-defense']
-                    
-                    level = battle_state.enemy_pokemon.currentLevel
-                    base_damage = ((2 * level / 5 + 2) * enemy_power * (attack / defense) / 50 + 2)
-                    random_mult = random.randrange(217, 256) / 255
-                    
-                    stab = 1.5 if (enemy_move_type == battle_state.enemy_pokemon.type1 or 
-                                enemy_move_type == battle_state.enemy_pokemon.type2) else 1.0
-                    
-                    defending_type = battle_state.player_pokemon.type1
-                    effectiveness = type_effectiveness.get(enemy_move_type, {}).get(defending_type, 1.0)
-                    
-                    enemy_damage = int(base_damage * random_mult * stab * effectiveness)
+
+                # Calculate enemy's damage using centralized function
+                enemy_damage, enemy_hit = calculate_battle_damage(
+                    battle_state.enemy_pokemon,
+                    battle_state.player_pokemon,
+                    enemy_move_name,
+                    moves_config,
+                    type_effectiveness
+                )
+
+                if enemy_hit and enemy_damage > 0:
                     new_player_hp = max(0, battle_state.player_pokemon.currentHP - enemy_damage)
                     battle_state.player_pokemon.currentHP = new_player_hp
-                    
                     log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} used {enemy_move_name.replace('-', ' ').title()}! Dealt {enemy_damage} damage!")
                 else:
                     log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} attacked but missed!")
