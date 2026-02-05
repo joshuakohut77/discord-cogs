@@ -4886,9 +4886,15 @@ class EncountersMixin(MixinMeta):
             return
 
         # Execute the quest
-        trainer.quest(quest_name)
+        from services.questclass import quests as QuestsClass
+        quest_obj = QuestsClass(str(user.id))
+        result = quest_obj.questHandler(quest_name)
 
-        await interaction.response.send_message(trainer.message, ephemeral=True)
+        # Send response with embed if available
+        if result and isinstance(result, dict) and 'embed' in result:
+            await interaction.response.send_message(quest_obj.message, embed=result['embed'], ephemeral=True)
+        else:
+            await interaction.response.send_message(quest_obj.message, ephemeral=True)
 
         # Disable the quest button after completion
         view = View()
@@ -4904,7 +4910,7 @@ class EncountersMixin(MixinMeta):
                 if button.custom_id == interaction.data['custom_id']:
                     new_button.callback = self.on_quest_click
                 elif button.custom_id == 'quest_back_to_map':
-                    new_button.callback = self.on_quest_back_to_map_click  # FIX: Set correct callback
+                    new_button.callback = self.on_quest_back_to_map_click
                 elif button.custom_id.startswith('quest_'):
                     new_button.callback = self.on_quest_click
                 else:
