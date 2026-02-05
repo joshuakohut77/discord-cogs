@@ -54,31 +54,44 @@ class trainer:
             milliString = str(int(time() * 1000))
             newDiscordId = self.discordId + '_' + milliString
             
+            print(f"DEBUG: Deleting trainer with discord_id: {self.discordId}")
+            print(f"DEBUG: New discord_id will be: {newDiscordId} (length: {len(newDiscordId)})")
+            
+            print("DEBUG: Updating pokemon table...")
             pokemonUpdateQuery = 'UPDATE pokemon SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(pokemonUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
+            print("DEBUG: Updating trainer table...")
             trainerUpdateQuery = 'UPDATE trainer SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(trainerUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
+            print("DEBUG: Updating inventory table...")
             inventoryUpdateQuery = 'UPDATE inventory SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(inventoryUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
+            print("DEBUG: Updating keyitems table...")
             keyItemsUpdateQuery = 'UPDATE keyitems SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(keyItemsUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
+            print("DEBUG: Updating leaderboard table...")
             leaderBoardUpdateQuery = 'UPDATE leaderboard SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(leaderBoardUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
+            print("DEBUG: Updating pokedex table...")
             pokedexUpdateQuery = 'UPDATE pokedex SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(pokedexUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
+            print("DEBUG: Updating trainer_battles table...")
             trainerBattlesUpdateQuery = 'UPDATE trainer_battles SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(trainerBattlesUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
+            print("DEBUG: Updating unique-encounters table...")
             uniqueEncountersUpdateQuery = 'UPDATE "unique-encounters" SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(uniqueEncountersUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
+            print("DEBUG: Committing changes...")
             db.commit()
+            print("DEBUG: Deletion successful!")
             retMsg = "Trainer deleted successfully!"
             self.statuscode = 420
         except Exception as e:
@@ -88,8 +101,6 @@ class trainer:
                 db.rollback()
             logger.error(excInfo=sys.exc_info())
             print(f"DELETE TRAINER ERROR: {e}")
-            import traceback
-            traceback.print_exc()
         finally:
             # delete and close connection
             if db:
