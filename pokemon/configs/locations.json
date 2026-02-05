@@ -1228,7 +1228,7 @@
     "name": "silph-co-9F",
     "north": "silph-co-10F",
     "east": null,
-    "south": "sikph-co-8F",
+    "south": "silph-co-8F",
     "west": null,
     "spritePath": "/sprites/locations/silph-co-9F.png",
     "pokecenter": false,
