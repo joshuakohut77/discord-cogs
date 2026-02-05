@@ -86,15 +86,15 @@ class ailment:
                                 "trap":self.trap, "confusion":self.confusion, "disable":self.disable, 
                                 "pokemonId":self.pokemonId}
             else:
-                query = '''INSERT INTO ailments ("mostRecent", sleep, poison, 
+                query = '''INSERT INTO ailments ("pokemonId", "mostRecent", sleep, poison,
                             burn, "freeze", paralysis, "trap", "confusion", "disable")
-                            VALUES(%(mostRecent)s, %(sleep)s, %(poison)s, 
+                            VALUES(%(pokemonId)s, %(mostRecent)s, %(sleep)s, %(poison)s,
                             %(burn)s, %(freeze)s, %(paralysis)s,
                             %(trap)s, %(confusion)s, %(disable)s)'''
-                            
-                values = { "mostRecent":self.mostRecent, "sleep":self.sleep, "poison":self.poison, 
-                            "burn":self.burn, "freeze":self.freeze, "paralysis":self.paralysis, 
-                            "trap":self.trap, "confusion":self.confusion, "disable":self.disable, 
+
+                values = { "mostRecent":self.mostRecent, "sleep":self.sleep, "poison":self.poison,
+                            "burn":self.burn, "freeze":self.freeze, "paralysis":self.paralysis,
+                            "trap":self.trap, "confusion":self.confusion, "disable":self.disable,
                             "pokemonId":self.pokemonId}
             db.execute(query, values)
         except:
