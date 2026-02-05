@@ -25,6 +25,9 @@ MAX_BATTLE_TURNS = 50
 # Class Logger
 logger = log()
 
+# Export list for module
+__all__ = ['encounter', 'calculate_battle_damage']
+
 # this class is to handle encounters with pokemon.
 class encounter:
     pokemon1: PokemonClass
