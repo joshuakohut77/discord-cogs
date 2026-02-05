@@ -117,7 +117,8 @@
     ],
     "blockers": [
       "HM01",
-      "bicycle"
+      "bicycle",
+      "pokeflute"
     ],
     "name": "kanto-route-16"
   },
