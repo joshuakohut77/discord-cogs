@@ -401,6 +401,8 @@ class quests:
             return self.rocketHideout()
         elif questName == 'Free Spirits':
             return self.freeSpirits()
+        elif questName == 'Rescue Mr Fuji':
+            return self.rescueMrFuji()
         elif questName == 'Mr Fuji':
             return self.mrFuji()
         elif questName == 'Lone House':
@@ -568,6 +570,13 @@ class quests:
                             You meet a feeble old man alone in his house. You notice a cool instrument haning on his wall. 
                             You asked if you could have it. He declined. He was alone...
                             You received the Pokeflute!""")
+        self.keyitems.save()
+        return
+
+    def rescueMrFuji(self):
+        self.keyitems.rescueMrFuji = True
+        self.message = dedent("""\
+                            TODO - about resucing mr fuji""")
         self.keyitems.save()
         return
 

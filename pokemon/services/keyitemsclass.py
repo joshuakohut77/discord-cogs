@@ -41,6 +41,7 @@ class keyitems:
         self.elite_four = False
         self.dome_fossil = False
         self.helix_fossil = False
+        self.mr_fujis_finger = False
         # populate keyitems object
         self.__loadKeyItems()
 
@@ -59,7 +60,7 @@ class keyitems:
                     ss_ticket, 
                     bicycle, "old_rod", "good_rod", "super_rod", 
                     item_finder, bike_voucher, gold_teeth, elite_four,
-                    dome_fossil, helix_fossil
+                    dome_fossil, helix_fossil, mr_fujis_finger
                     FROM keyitems WHERE discord_id=%(discordId)s
             '''
             result = db.querySingle(queryString, { 'discordId': self.discordId })
@@ -92,6 +93,7 @@ class keyitems:
                 self.elite_four = result[25]
                 self.dome_fossil = result[26]
                 self.helix_fossil = result[27]
+                self.mr_fujis_finger = result[28]
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
@@ -119,7 +121,7 @@ class keyitems:
                     "old_rod"=%(old_rod)s, "good_rod"=%(good_rod)s, "super_rod"=%(super_rod)s, 
                     item_finder=%(item_finder)s, bike_voucher=%(bike_voucher)s, gold_teeth=%(gold_teeth)s,
                     elite_four=%(elite_four)s,
-                    dome_fossil=%(dome_fossil)s, helix_fossil=%(helix_fossil)s
+                    dome_fossil=%(dome_fossil)s, helix_fossil=%(helix_fossil)s, mr_fujis_finger=%(mr_fujis_finger)s
 	                    WHERE discord_id=%(discordId)s;
                 '''
                 values = { 'HM01':self.HM01, 'HM02': self.HM02, 'HM03':self.HM03, 'HM04':self.HM04, 'HM05':self.HM05,
@@ -132,7 +134,7 @@ class keyitems:
                             'ss_ticket':self.ss_ticket, 'bicycle':self.bicycle, 
                             'item_finder':self.item_finder, 'bike_voucher':self.bike_voucher, 'gold_teeth':self.gold_teeth,
                             'old_rod':self.old_rod, 'good_rod':self.good_rod, 'super_rod':self.super_rod, 'elite_four':self.elite_four,
-                            'dome_fossil':self.dome_fossil, 'helix_fossil':self.helix_fossil,
+                            'dome_fossil':self.dome_fossil, 'helix_fossil':self.helix_fossil, 'mr_fujis_finger':self.mr_fujis_finger,
                             'discordId':self.discordId }
                 db.execute(updateString, values)
         except:
