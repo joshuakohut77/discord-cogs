@@ -64,8 +64,8 @@ class trainer:
             db.executeWithoutCommit(leaderBoardUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             pokedexUpdateQuery = 'UPDATE pokedex SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(pokedexUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
-            pokedexUpdateQuery = 'UPDATE trainer_battles SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
-            db.executeWithoutCommit(pokedexUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            trainerBattlesUpdateQuery = 'UPDATE trainer_battles SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
+            db.executeWithoutCommit(trainerBattlesUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             uniqueEncountersUpdateQuery = 'UPDATE "unique-encounters" SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(uniqueEncountersUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             db.commit()
@@ -79,8 +79,6 @@ class trainer:
         finally:
             # delete and close connection
             del db
-            excInfo=sys.exc_info()
-            return str(excInfo)
             return retMsg
 
     def setTrainerName(self, trainerName: str):
