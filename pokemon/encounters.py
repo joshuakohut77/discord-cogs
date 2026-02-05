@@ -32,7 +32,7 @@ from services.encounterclass import encounter as EncounterClass, calculate_battl
 from services.expclass import experiance as exp
 
 from .abcd import MixinMeta
-from .functions import (getTypeColor)
+from .functions import (getTypeColor, create_hp_bar)
 from .helpers import (getTrainerGivenPokemonName)
 from .helpers.pathhelpers import (get_config_path, load_json_config, get_sprite_path)
 from .helpers.decorators import (require_action_state, require_battle_state,
@@ -990,13 +990,7 @@ class EncountersMixin(MixinMeta):
         # Calculate HP percentages for visual bar
         player_hp_pct = (player_poke.currentHP / player_stats['hp']) * 100 if player_stats['hp'] > 0 else 0
         wild_hp_pct = (wild_poke.currentHP / wild_stats['hp']) * 100 if wild_stats['hp'] > 0 else 0
-        
-        # Create HP bar visualization
-        def make_hp_bar(percentage):
-            filled = int(percentage / 10)
-            empty = 10 - filled
-            return '█' * filled + '░' * empty
-        
+
         embed = discord.Embed(
             title=f"⚔️ Wild Battle: {user.display_name} vs Wild {wild_poke.pokemonName.capitalize()}",
             description=f"**Turn {battle_state.turn_number}**\nChoose your move!",
@@ -4078,10 +4072,6 @@ class EncountersMixin(MixinMeta):
         enemy_hp_pct = (enemy_poke.currentHP / enemy_stats['hp']) * 100 if enemy_stats['hp'] > 0 else 0
         
         # Create HP bar visualization
-        def make_hp_bar(percentage):
-            filled = int(percentage / 10)
-            empty = 10 - filled
-            return '█' * filled + '░' * empty
         
         embed = discord.Embed(
             title=f"⚔️ Battle: {user.display_name} vs {battle_state.enemy_name}",

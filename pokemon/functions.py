@@ -208,3 +208,25 @@ def createPokedexEntryEmbed(user: Member, pokemon: PokemonClass, dex: PokedexMod
 
     embed.set_thumbnail(url=pokemon.frontSpriteURL)
     return embed
+
+
+# Battle UI Helper Functions
+
+def create_hp_bar(hp_percent: float, bar_length: int = 10) -> str:
+    """
+    Create visual HP bar for battle displays.
+
+    Args:
+        hp_percent: HP percentage (0-100)
+        bar_length: Length of bar in characters (default: 10)
+
+    Returns:
+        String HP bar like "████░░░░░░"
+
+    Example:
+        >>> create_hp_bar(75.0)
+        '███████░░░'
+    """
+    filled = int((hp_percent / 100) * bar_length)
+    empty = bar_length - filled
+    return '█' * filled + '░' * empty
