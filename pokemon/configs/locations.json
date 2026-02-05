@@ -927,7 +927,7 @@
     "locationId": 1607,
     "name": "pokemon-tower-7F",
     "north": null,
-    "east": null,
+    "east": "lavender-town",
     "south": "pokemon-tower-6F",
     "west": null,
     "spritePath": "/sprites/locations/pokemon-tower-7F.png",
