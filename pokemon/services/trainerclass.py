@@ -496,48 +496,48 @@ class trainer:
             logger.error(excInfo=sys.exc_info())
 
     def onlyone(self, method='only-one'):
-        """ handles a gift action """
+        """ handles a onlyone gift action """
         pokemon = None
         try:
             location: LocationModel = self.getLocation()
             locationId = location.locationId
             
-            # DEBUG: Store this for error message
-            debug_info = f"LocationId={locationId}, DiscordId={self.discordId}"
-            
-            # Check if this is a tracked unique encounter location
             if locationId in [1364, 147, 158, 159, 91, 95]:
                 uEncObj = uEnc(self.discordId)
                 onlyoneCompleted = False
                 
-                # DEBUG: Check the values
-                debug_articuno = uEncObj.articuno if locationId == 136 else None
-                debug_info += f", Articuno={debug_articuno}"
+                # Build debug info
+                debug_vals = f"Loc={locationId}"
                 
-                if locationId == 136:
+                if locationId == 1364:
+                    debug_vals += f", Articuno={uEncObj.articuno}"
                     if uEncObj.articuno:
                         onlyoneCompleted = True
                 elif locationId == 158:
+                    debug_vals += f", Zapdos={uEncObj.zapdos}"
                     if uEncObj.zapdos:
                         onlyoneCompleted = True
                 elif locationId == 159:
+                    debug_vals += f", Moltres={uEncObj.moltres}"
                     if uEncObj.moltres:
                         onlyoneCompleted = True
                 elif locationId == 147:
+                    debug_vals += f", Mewtwo={uEncObj.mewtwo}"
                     if uEncObj.mewtwo:
                         onlyoneCompleted = True
                 elif locationId == 91 or locationId == 95:
+                    debug_vals += f", Snorlax={uEncObj.snorlax}"
                     if uEncObj.snorlax:
                         onlyoneCompleted = True
                 
-                debug_info += f", Completed={onlyoneCompleted}"
+                debug_vals += f", Completed={onlyoneCompleted}"
                 
                 if onlyoneCompleted:
                     self.statuscode = 420
-                    self.message = f"You have already completed that action in this location. DEBUG: {debug_info}"
-                    return pokemon  # Return early - don't continue!
+                    self.message = f"You have already completed that action in this location. [DEBUG: {debug_vals}]"
+                    return None  # CRITICAL: Return here to stop execution!
             
-            # Only reach here if not completed or not a tracked location
+            # Only execute if not completed
             method = 'only-one'
             pokemon = self.__getEncounter(method)
         except:
