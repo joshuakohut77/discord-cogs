@@ -2144,13 +2144,6 @@
         "max_level": 5,
         "min_level": 5,
         "method": "old-rod"
-      },
-      {
-        "name": "articuno",
-        "chance": 100,
-        "max_level": 50,
-        "min_level": 50,
-        "method": "only-one"
       }
     ],
     "1361": [
@@ -2552,13 +2545,6 @@
         "max_level": 5,
         "min_level": 5,
         "method": "old-rod"
-      },
-      {
-        "name": "articuno",
-        "chance": 100,
-        "max_level": 50,
-        "min_level": 50,
-        "method": "only-one"
       }
     ],
     "1362": [
@@ -2960,13 +2946,6 @@
         "max_level": 5,
         "min_level": 5,
         "method": "old-rod"
-      },
-      {
-        "name": "articuno",
-        "chance": 100,
-        "max_level": 50,
-        "min_level": 50,
-        "method": "only-one"
       }
     ],
     "1363": [
@@ -3368,13 +3347,6 @@
         "max_level": 5,
         "min_level": 5,
         "method": "old-rod"
-      },
-      {
-        "name": "articuno",
-        "chance": 100,
-        "max_level": 50,
-        "min_level": 50,
-        "method": "only-one"
       }
     ],
     "1364": [
