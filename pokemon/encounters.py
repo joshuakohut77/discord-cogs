@@ -4637,16 +4637,27 @@ class EncountersMixin(MixinMeta):
         if not pre_requisites:
             return True
 
+        from services.questclass import quests as QuestsClass
         quest_obj = QuestsClass(user_id)
+        
+        # Use the existing prerequsitesValid method which handles the name mapping correctly
+        return quest_obj.prerequsitesValid(pre_requisites)
 
-        for prereq in pre_requisites:
-            if hasattr(quest_obj.keyitems, prereq):
-                if not getattr(quest_obj.keyitems, prereq):
-                    return False
-            else:
-                return False
+    # def __check_prerequisites(self, user_id: str, pre_requisites: list) -> bool:
+    #     """Check if trainer has all pre-requisites for a quest"""
+    #     if not pre_requisites:
+    #         return True
 
-        return True
+    #     quest_obj = QuestsClass(user_id)
+
+    #     for prereq in pre_requisites:
+    #         if hasattr(quest_obj.keyitems, prereq):
+    #             if not getattr(quest_obj.keyitems, prereq):
+    #                 return False
+    #         else:
+    #             return False
+
+    #     return True
 
     def __get_gym_button(self, user_id: str, location_id: str) -> Button:
         """
