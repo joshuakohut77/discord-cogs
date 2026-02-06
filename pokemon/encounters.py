@@ -6287,33 +6287,22 @@ class EncountersMixin(MixinMeta):
                     inline=True
                 )
                 
-                # ADD GYM SPRITE - Try file first, then URL fallback
-                sprite_loaded = False
-                sprite_file = None
+                # ADD GYM SPRITE
                 gym_sprite_path = gym_info['leader'].get('gym_spritePath')
+                sprite_file = None
                 
                 if gym_sprite_path:
                     try:
-                        # Try to load from local file system first
                         full_sprite_path = get_sprite_path(gym_sprite_path)
-
-                        # Check if file exists
                         if os.path.exists(full_sprite_path):
-                            # Extract filename for attachment
                             filename = os.path.basename(gym_sprite_path)
                             sprite_file = discord.File(full_sprite_path, filename=filename)
                             embed.set_image(url=f"attachment://{filename}")
-                            sprite_loaded = True
-                        else:
-                            raise FileNotFoundError("Gym sprite file not found locally")
                     except Exception as e:
-                        print(f"Error loading gym sprite from file: {e}")
+                        print(f"Error loading gym sprite: {e}")
                         # Fallback to URL
-                        try:
-                            sprite_url = f"https://pokesprites.joshkohut.com{gym_sprite_path}"
-                            embed.set_image(url=sprite_url)
-                        except Exception as url_error:
-                            print(f"Error loading gym sprite from URL: {url_error}")
+                        sprite_url = f"https://pokesprites.joshkohut.com{gym_sprite_path}"
+                        embed.set_image(url=sprite_url)
 
                 view = View()
                 
