@@ -58,9 +58,18 @@ class DiscordPlaysPokemon(commands.Cog):
     # ------------------------------------------------------------------
 
     async def cog_load(self):
-        """Called when the cog is loaded. Auto-start any guilds that
-        were running before a reload/restart."""
-        await self.bot.wait_until_ready()
+        """Called when the cog is loaded. Kick off auto-start as a
+        background task so we don't block cog loading."""
+        self._autostart_task = self.bot.loop.create_task(self._autostart())
+
+    async def _autostart(self):
+        """Wait for the bot to be fully ready, then auto-start any guilds
+        that were running before a reload/restart."""
+        try:
+            await self.bot.wait_until_ready()
+        except asyncio.CancelledError:
+            return
+
         for guild in self.bot.guilds:
             try:
                 enabled = await self.config.guild(guild).enabled()
@@ -94,6 +103,8 @@ class DiscordPlaysPokemon(commands.Cog):
                 )
 
     def cog_unload(self):
+        if hasattr(self, '_autostart_task') and not self._autostart_task.done():
+            self._autostart_task.cancel()
         for task in self._game_loops.values():
             task.cancel()
         for task in self._log_loops.values():
