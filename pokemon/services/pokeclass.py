@@ -401,6 +401,10 @@ class Pokemon:
                                 # Save the evolved Pokemon first to get its trainerId
                                 evolvedPokemon.save()
                                 
+                                # Register evolved Pokemon to trainer's Pokedex
+                                from pokedexclass import pokedex as PokedexClass
+                                PokedexClass(self.discordId, evolvedPokemon)
+
                                 # Store evolved Pokemon for UI to access
                                 self.evolvedInto = evolvedPokemon
                                 
