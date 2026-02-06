@@ -497,6 +497,7 @@ class trainer:
 
     def onlyone(self, method='only-one'):
         """ handles a gift action """
+        onlyoneCompleted = self.data.get('onlyoneCompleted', False)
         pokemon = None
         try:
             location: LocationModel = self.getLocation()
@@ -523,7 +524,8 @@ class trainer:
                 if onlyoneCompleted:
                     self.statuscode = 420
                     self.message = "You have already completed that action in this location"
-
+            
+            onlyoneCompleted = self.data.get('onlyoneCompleted', False)
             if not onlyoneCompleted:
                 method = 'only-one'
                 pokemon = self.__getEncounter(method)
