@@ -693,10 +693,7 @@ class EncountersMixin(MixinMeta):
             'masterball': 'master-ball'
         }
         ball_type = ball_type_map.get(ball_id, 'poke-ball')
-        
-        # DEBUG: Check party before catch
-        party_count_before = trainer.getPartySize()
-        
+                
         # Call catch method
         trainer.catch(battle_state.wild_pokemon, ball_type)       
         
@@ -837,8 +834,8 @@ class EncountersMixin(MixinMeta):
             
             # Update unique encounters tracking
             enc = EncounterClass(battle_state.player_pokemon, battle_state.wild_pokemon)
-            debug_result = enc.updateUniqueEncounters()
-            log_lines.append(f"🔍 DEBUG: {debug_result}")
+            enc.updateUniqueEncounters()
+            
             
             # AWARD EXPERIENCE
             from services.expclass import experiance as exp

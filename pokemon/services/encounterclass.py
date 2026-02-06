@@ -534,9 +534,6 @@ class encounter:
             self.pokemon2.discordId = self.pokemon1.discordId
             self.pokemon2.party = party_count < 6  # True if party < 6, False otherwise
             
-            # DEBUG: Check what we're about to save
-            debug_party_value = self.pokemon2.party
-            debug_party_type = type(self.pokemon2.party).__name__
             
             # Save it to the trainers inventory
             self.pokemon2.save()
@@ -545,8 +542,6 @@ class encounter:
                 self.message = 'error occured during pokemon2 save()'
                 return self.message
             
-            # DEBUG: Check if it's still the same after save
-            debug_party_after = self.pokemon2.party
             
             self.statuscode = 420
             self.message = f"You successfully caught the pokemon!"
@@ -728,7 +723,7 @@ class encounter:
     
         return f"UpdateEncounter: {name}, before={before_value}, after={after_value}, saveStatus={save_status}, discordId={discordId}"
     
-    
+
     def __loadMovesConfig(self, move):
         """ loads and returns the evolutiononfig for the current pokemon """
         # TODO replace this load with object in memory
