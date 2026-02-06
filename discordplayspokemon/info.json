@@ -1,0 +1,12 @@
+{
+    "author": ["Josh"],
+    "install_msg": "Twitch Plays Pokemon cog installed! Use [p]tpp help to get started.",
+    "name": "TwitchPlaysPokemon",
+    "short": "Community-driven Pokemon gameplay through Discord messages.",
+    "description": "Allows Discord users to collectively control a Pokemon game by sending button inputs as chat messages. The game screen is periodically posted as screenshots.",
+    "tags": ["pokemon", "game", "emulator", "twitch plays"],
+    "requirements": ["pyboy", "Pillow"],
+    "min_bot_version": "3.5.0",
+    "min_python_version": [3, 11, 0],
+    "end_user_data_statement": "This cog does not store any end user data."
+}
