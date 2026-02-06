@@ -16,8 +16,8 @@ from pokeclass import Pokemon as PokemonClass
 from ailmentsclass import ailment 
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from .trainerclass import trainer as trainer_import
+# if TYPE_CHECKING:
+from .trainerclass import trainer as trainer_import
 
 # Global Config Variables
 MAX_BATTLE_TURNS = 50
