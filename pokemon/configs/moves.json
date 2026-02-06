@@ -346,7 +346,7 @@
   "bite": {
       "accuracy": 100,
       "power": 60,
-      "moveType": "dark",
+      "moveType": "normal",
       "damage_class": "physical",
       "ailment": "",
       "ailment_chance": 0
