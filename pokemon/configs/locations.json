@@ -221,7 +221,7 @@
     "north": "fuchsia-city",
     "east": null,
     "south": null,
-    "west": "kanto-sea-route-20",
+    "west": "kanto-sea-route-20-E",
     "spritePath": "/sprites/locations/kanto-sea-route-19.png",
     "pokecenter": false,
     "gym": false,
