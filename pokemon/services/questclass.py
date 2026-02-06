@@ -715,6 +715,13 @@ class quests:
         from trainerclass import trainer as trainerClass
         from pokedexclass import pokedex
         
+        # Check if trainer has already received Mew
+        uniqueEncounters = uEnc(self.discordId)
+        if uniqueEncounters.mew:
+            self.statuscode = 420
+            self.message = "You already found something here!"
+            return
+        
         # Create trainer object to check party size
         trainer = trainerClass(self.discordId)
         party_count = trainer.getPartySize()
@@ -723,7 +730,7 @@ class quests:
         pokemon = pokeClass(self.discordId, 'mew')
         pokemon.create(25)
         
-        # CRITICAL FIX: Set discordId and party status before saving
+        # CRITICAL: Set discordId and party status before saving
         pokemon.discordId = self.discordId
         pokemon.party = party_count < 6  # Add to party if there's space, otherwise to PC
         
@@ -738,12 +745,12 @@ class quests:
         
         # Register to Pokedex
         pokedex(self.discordId, pokemon)
-
-        # Update unique encounters
-        uniqueEncounters = uEnc(self.discordId)
+        
+        # Update unique encounters to mark Mew as received
         uniqueEncounters.mew = True
         uniqueEncounters.save()
-
+        
+        self.statuscode = 420
         self.message = dedent("""\
                         You find an abandoned truck. Using your massive penis, you pushed
                         it out of the way. Underneath you discover a pokeball.""")
