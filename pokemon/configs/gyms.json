@@ -75,7 +75,7 @@
       },
       {
         "name": "Jr. Trainer",
-        "spritePath": "/sprites/trainers/jrtainer.png",
+        "spritePath": "/sprites/trainers/jrtrainer.png",
         "money": 480,
         "enemy_uuid": "8bf6a94e",
         "pokemon": [
