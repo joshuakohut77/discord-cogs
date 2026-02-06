@@ -6535,7 +6535,9 @@ class EncountersMixin(MixinMeta):
             msg = 'Waiting to receive a gift...'
         elif action.value == 'pokeflute':
             msg = 'You played the Poké Flute!'
-
+        elif action.value == 'surf':
+            msg = 'Surfing on your pokemon...'
+        
         await interaction.message.edit(
             content=msg,
             view=view

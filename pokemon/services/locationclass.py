@@ -20,6 +20,7 @@ logger = log()
 
 actions = {
     'walk': ActionModel('Tall Grass', ActionType.ENCOUNTER, 'walk'),
+    'surf': ActionModel('Surf', ActionType.ENCOUNTER, 'surf'),
     'old-rod': ActionModel('Old Rod', ActionType.ENCOUNTER, 'old-rod'),
     'good-rod': ActionModel('Good Rod', ActionType.ENCOUNTER, 'good-rod'),
     'super-rod': ActionModel('Super Rod', ActionType.ENCOUNTER, 'super-rod'),
