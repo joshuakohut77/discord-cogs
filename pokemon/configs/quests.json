@@ -299,7 +299,13 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [
-      "earth_badge"
+      "earth_badge",
+      "volcano_badge",
+      "rainbow_badge",
+      "boulder_badge",
+      "thunder_badge",
+      "soul_badge",
+      "cascade_badge"
     ],
     "name": "kanto-route-23-S"
   },
