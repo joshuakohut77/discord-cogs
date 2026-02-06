@@ -695,7 +695,7 @@ class quests:
                 
                 # Add leaderboard tracking
                 lb = LeaderboardClass(str(self.discordId))
-                lb.quest_completed()
+                lb.completions()
                 
                 messages.append("The scientists return your Dome Fossil... but it's not a fossil anymore!")
                 embeds.append(self.create_key_item_embed('Kabuto'))
@@ -725,7 +725,7 @@ class quests:
                 
                 # Add leaderboard tracking
                 lb = LeaderboardClass(str(self.discordId))
-                lb.quest_completed()
+                lb.completions()
                 
                 messages.append("The scientists return your Helix Fossil... but it's not a fossil anymore!")
                 embeds.append(self.create_key_item_embed('Omanyte'))
@@ -755,7 +755,7 @@ class quests:
                 
                 # Add leaderboard tracking
                 lb = LeaderboardClass(str(self.discordId))
-                lb.quest_completed()
+                lb.completions()
                 
                 messages.append("The scientists return your Old Amber... but it's not amber anymore!")
                 embeds.append(self.create_key_item_embed('Aerodactyl'))
