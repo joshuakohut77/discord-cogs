@@ -1322,7 +1322,7 @@
   "4987": {
     "locationId": 4987,
     "name": "captains-quarters",
-    "north": null,
+    "north": "vermilion-city",
     "east": null,
     "south": "ss-anne-2F",
     "west": null,
