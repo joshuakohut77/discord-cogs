@@ -37,6 +37,8 @@ class DiscordPlaysPokemon(commands.Cog):
             "passive_enabled": True,         # server-wide passive harvesting on/off
             "enabled": False,
             "scale_factor": 3,               # screenshot upscale multiplier
+            "log_channel_id": None,          # channel for historical screenshot log
+            "log_interval_minutes": 60,      # how often to post to the log channel
         }
         self.config.register_guild(**default_guild)
 
@@ -48,6 +50,8 @@ class DiscordPlaysPokemon(commands.Cog):
         self._user_cooldowns: dict[tuple[int, int], datetime] = {}
         # Track the message we edit for the game screen (guild_id → Message)
         self._screen_messages: dict[int, discord.Message] = {}
+        # Historical log loop tasks (guild_id → Task)
+        self._log_loops: dict[int, asyncio.Task] = {}
 
     # ------------------------------------------------------------------
     # Cog lifecycle
@@ -55,6 +59,8 @@ class DiscordPlaysPokemon(commands.Cog):
 
     def cog_unload(self):
         for task in self._game_loops.values():
+            task.cancel()
+        for task in self._log_loops.values():
             task.cancel()
         for emu in self._emulators.values():
             asyncio.create_task(emu.stop())
@@ -130,6 +136,44 @@ class DiscordPlaysPokemon(commands.Cog):
         state = "enabled" if new_val else "disabled"
         await ctx.send(f"Passive input harvesting **{state}**.")
 
+    @dpp.command(name="setlogchannel")
+    @checks.admin_or_permissions(administrator=True)
+    async def set_log_channel(self, ctx: commands.Context, channel: discord.TextChannel):
+        """Set a channel for historical screenshot logs.
+
+        The bot will post a new screenshot at a set interval (see setloginterval)
+        so you have a scrollable timeline of game progress.
+        Use `[p]dpp clearlogchannel` to disable.
+        """
+        await self.config.guild(ctx.guild).log_channel_id.set(channel.id)
+        interval = await self.config.guild(ctx.guild).log_interval_minutes()
+        await ctx.send(
+            f"Log channel set to {channel.mention}. "
+            f"A screenshot will be posted every **{interval} minute(s)** while the game is running."
+        )
+        # If the game is already running, start the log loop immediately
+        await self._ensure_log_loop(ctx.guild)
+
+    @dpp.command(name="clearlogchannel")
+    @checks.admin_or_permissions(administrator=True)
+    async def clear_log_channel(self, ctx: commands.Context):
+        """Disable the historical screenshot log."""
+        await self.config.guild(ctx.guild).log_channel_id.set(None)
+        task = self._log_loops.pop(ctx.guild.id, None)
+        if task:
+            task.cancel()
+        await ctx.send("Log channel cleared. Historical logging disabled.")
+
+    @dpp.command(name="setloginterval")
+    @checks.admin_or_permissions(administrator=True)
+    async def set_log_interval(self, ctx: commands.Context, minutes: int):
+        """Set how often (in minutes) a screenshot is posted to the log channel (1–1440)."""
+        minutes = max(1, min(1440, minutes))
+        await self.config.guild(ctx.guild).log_interval_minutes.set(minutes)
+        await ctx.send(f"Log interval set to **{minutes} minute(s)**.")
+        # Restart the log loop so it picks up the new interval
+        await self._ensure_log_loop(ctx.guild)
+
     # ------------------------------------------------------------------
     # Game control
     # ------------------------------------------------------------------
@@ -176,6 +220,9 @@ class DiscordPlaysPokemon(commands.Cog):
             self._game_loop(guild)
         )
 
+        # Start log loop if a log channel is configured
+        await self._ensure_log_loop(guild)
+
         channel = guild.get_channel(channel_id)
         await status_msg.edit(content="🎮 **Game started!** Send inputs in " +
                               (channel.mention if channel else "the game channel") + ".")
@@ -192,6 +239,9 @@ class DiscordPlaysPokemon(commands.Cog):
 
         if guild.id in self._game_loops:
             self._game_loops.pop(guild.id).cancel()
+        task = self._log_loops.pop(guild.id, None)
+        if task:
+            task.cancel()
         emu = self._emulators.pop(guild.id, None)
         if emu:
             await emu.stop()
@@ -235,6 +285,8 @@ class DiscordPlaysPokemon(commands.Cog):
         interval = await self.config.guild(guild).screenshot_interval()
         cooldown = await self.config.guild(guild).input_cooldown()
         passive = await self.config.guild(guild).passive_enabled()
+        log_channel_id = await self.config.guild(guild).log_channel_id()
+        log_interval = await self.config.guild(guild).log_interval_minutes()
 
         embed = discord.Embed(
             title="📊 Discord Plays Pokemon — Status",
@@ -246,6 +298,8 @@ class DiscordPlaysPokemon(commands.Cog):
         embed.add_field(name="ROM", value=f"`{rom_path}`" if rom_path else "Not set", inline=False)
         embed.add_field(name="Screenshot Interval", value=f"{interval}s", inline=True)
         embed.add_field(name="Input Cooldown", value=f"{cooldown}s", inline=True)
+        log_val = f"<#{log_channel_id}> (every {log_interval}m)" if log_channel_id else "Not set"
+        embed.add_field(name="History Log", value=log_val, inline=True)
         if running:
             embed.add_field(name="Queued Inputs", value=str(emu.input_queue.qsize()), inline=True)
             embed.add_field(name="Total Inputs", value=f"{emu.total_inputs:,}", inline=True)
@@ -427,3 +481,64 @@ class DiscordPlaysPokemon(commands.Cog):
             self._screen_messages[guild_id] = msg
         except discord.HTTPException as e:
             log.warning(f"Failed to post screenshot: {e}")
+
+    # ------------------------------------------------------------------
+    # Historical log loop — posts new screenshots on a longer interval
+    # ------------------------------------------------------------------
+
+    async def _ensure_log_loop(self, guild: discord.Guild):
+        """Start (or restart) the log loop if a log channel is configured
+        and the emulator is running."""
+        # Cancel any existing loop first
+        task = self._log_loops.pop(guild.id, None)
+        if task:
+            task.cancel()
+
+        log_channel_id = await self.config.guild(guild).log_channel_id()
+        emu = self._emulators.get(guild.id)
+        if log_channel_id and emu and emu.running:
+            self._log_loops[guild.id] = self.bot.loop.create_task(
+                self._log_loop(guild)
+            )
+
+    async def _log_loop(self, guild: discord.Guild):
+        """Periodically posts a new screenshot to the log channel as a
+        permanent historical record. Each post is a new message (never edited)."""
+        guild_id = guild.id
+        try:
+            log_channel_id = await self.config.guild(guild).log_channel_id()
+            interval_min = await self.config.guild(guild).log_interval_minutes()
+            channel = guild.get_channel(log_channel_id)
+
+            if not channel:
+                log.error(f"Log channel {log_channel_id} not found in guild {guild_id}.")
+                return
+
+            # Wait the full interval before the first post
+            await asyncio.sleep(interval_min * 60)
+
+            while guild_id in self._emulators and self._emulators[guild_id].running:
+                screenshot = await self._emulators[guild_id].get_screenshot()
+                if screenshot:
+                    emu = self._emulators[guild_id]
+                    timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+                    embed = discord.Embed(
+                        title="📸 Game Progress Snapshot",
+                        description=f"🕐 {timestamp}\n🎮 Total inputs: {emu.total_inputs:,}",
+                        color=discord.Color.blue(),
+                    )
+                    embed.set_image(url="attachment://pokemon.png")
+                    try:
+                        await channel.send(
+                            embed=embed,
+                            file=discord.File(screenshot, "pokemon.png"),
+                        )
+                    except discord.HTTPException as e:
+                        log.warning(f"Failed to post to log channel: {e}")
+
+                await asyncio.sleep(interval_min * 60)
+
+        except asyncio.CancelledError:
+            log.info(f"Log loop cancelled for guild {guild_id}.")
+        except Exception as e:
+            log.error(f"Log loop crashed for guild {guild_id}: {e}", exc_info=True)
