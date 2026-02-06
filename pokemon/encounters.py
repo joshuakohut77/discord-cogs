@@ -30,6 +30,7 @@ from services.questclass import quests as QuestsClass
 from services.battleclass import battle as BattleClass
 from services.encounterclass import encounter as EncounterClass, calculate_battle_damage
 from services.expclass import experiance as exp
+from services.leaderboardclass import leaderboard as LeaderboardClass
 
 from .abcd import MixinMeta
 from .functions import (getTypeColor, create_hp_bar)
@@ -493,12 +494,23 @@ class EncountersMixin(MixinMeta):
             if player_pokemon_index >= len(alive_party):
                 # Player lost
                 battle_log.append("\n💀 **All your Pokemon have fainted! You lost!**")
+                    # LEADERBOARD TRACKING
+                from services.leaderboardclass import leaderboard as LeaderboardClass
+                lb = LeaderboardClass(str(user.id))
+                lb.defeat()
+                lb.actions()
                 break
             
             if enemy_pokemon_index >= len(enemy_pokemon_list):
                 # Player won!
                 battle_log.append(f"\n🏆 **Victory! You defeated {next_trainer.name}!**")
                 battle.battleVictory(next_trainer)
+
+                # LEADERBOARD TRACKING
+                from services.leaderboardclass import leaderboard as LeaderboardClass
+                lb = LeaderboardClass(str(user.id))
+                lb.victory()
+                lb.actions()
                 break
             
             # Get current Pokemon
@@ -728,6 +740,12 @@ class EncountersMixin(MixinMeta):
         """Handle when player defeats wild Pokemon"""
         user = interaction.user
         
+        # LEADERBOARD TRACKING
+        from services.leaderboardclass import leaderboard as LeaderboardClass
+        lb = LeaderboardClass(str(user.id))
+        lb.victory()
+        lb.actions()
+
         player_max_hp = battle_state.player_pokemon.getPokeStats()['hp']
         player_level = battle_state.player_pokemon.currentLevel
         
@@ -4454,6 +4472,12 @@ class EncountersMixin(MixinMeta):
         if battle_state.enemy_pokemon.currentHP <= 0:
             log_lines.append(f"💀 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} fainted!")
             
+            # LEADERBOARD TRACKING
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.victory()
+            lb.actions()
+
             # Update unique encounters tracking
             enc = EncounterClass(battle_state.player_pokemon, battle_state.enemy_pokemon)
             enc.updateUniqueEncounters()
@@ -4520,6 +4544,12 @@ class EncountersMixin(MixinMeta):
                 # Enemy has no more Pokemon - PLAYER WINS!
                 battle_state.battle_log = ["\n".join(log_lines)]
                 battle_state.player_pokemon.save()
+
+                # LEADERBOARD TRACKING
+                from services.leaderboardclass import leaderboard as LeaderboardClass
+                lb = LeaderboardClass(str(user.id))
+                lb.victory()
+                lb.actions()
 
                 # Show victory screen FIRST
                 await self.__handle_gym_battle_victory(interaction, battle_state)
@@ -4597,6 +4627,13 @@ class EncountersMixin(MixinMeta):
                 # Player has no more Pokemon - PLAYER LOSES!
                 battle_state.battle_log = ["\n".join(log_lines)]
                 battle_state.player_pokemon.save()
+                
+                # LEADERBOARD TRACKING
+                from services.leaderboardclass import leaderboard as LeaderboardClass
+                lb = LeaderboardClass(str(user.id))
+                lb.defeat()
+                lb.actions()
+                
                 await self.__handle_gym_battle_defeat(interaction, battle_state)
                 del self.__battle_states[user_id]
                 return
@@ -5333,9 +5370,19 @@ class EncountersMixin(MixinMeta):
             # Player won - defeated all enemy Pokemon
             battle_result = 'victory'
             battle.battleVictory(next_trainer)
+            # LEADERBOARD TRACKING
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.victory()
+            lb.actions()
         else:
             # Player lost - all player Pokemon fainted
             battle_result = 'defeat'
+            # LEADERBOARD TRACKING
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.defeat()
+            lb.actions()
         
         # Create summary embed
         battle_log_text = "\n".join(all_battle_logs[-20:])  # Last 20 lines
@@ -6337,9 +6384,19 @@ class EncountersMixin(MixinMeta):
             # Player won - defeated all enemy Pokemon
             battle_result = 'victory'
             battle.gymLeaderVictory(gym_leader)
+            # LEADERBOARD TRACKING
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.victory()
+            lb.actions()
         else:
             # Player lost - all player Pokemon fainted
             battle_result = 'defeat'
+            # LEADERBOARD TRACKING
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.defeat()
+            lb.actions()
         
         # Create summary embed
         battle_log_text = "\n".join(all_battle_logs[-20:])  # Last 20 lines
@@ -7158,6 +7215,12 @@ class EncountersMixin(MixinMeta):
         
         # Create appropriate embed
         if is_victory:
+            # LEADERBOARD TRACKING
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.victory()
+            lb.actions()
+
             # VICTORY EMBED
             player_stats = active.getPokeStats()
             player_max_hp = player_stats['hp']
@@ -7185,6 +7248,12 @@ class EncountersMixin(MixinMeta):
                 inline=False
             )
         else:
+            # LEADERBOARD TRACKING
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.defeat()
+            lb.actions()
+
             # DEFEAT EMBED
             player_stats = active.getPokeStats()
             player_max_hp = player_stats['hp']
