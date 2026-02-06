@@ -597,6 +597,7 @@ class quests:
                             
                             You received HM02!""")
         self.keyitems.save()
+        return self.create_key_item_embed('HM02')
         return
 
     def fishingBrother(self):
