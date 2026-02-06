@@ -57,6 +57,42 @@ class DiscordPlaysPokemon(commands.Cog):
     # Cog lifecycle
     # ------------------------------------------------------------------
 
+    async def cog_load(self):
+        """Called when the cog is loaded. Auto-start any guilds that
+        were running before a reload/restart."""
+        await self.bot.wait_until_ready()
+        for guild in self.bot.guilds:
+            try:
+                enabled = await self.config.guild(guild).enabled()
+                if not enabled:
+                    continue
+
+                rom_path = await self.config.guild(guild).rom_path()
+                channel_id = await self.config.guild(guild).channel_id()
+                scale = await self.config.guild(guild).scale_factor()
+
+                if not rom_path or not channel_id:
+                    continue
+
+                data_path = cog_data_path(self) / str(guild.id)
+                emu = EmulatorManager(rom_path, data_path, scale=scale)
+                await emu.start()
+
+                self._emulators[guild.id] = emu
+                self._screen_messages.pop(guild.id, None)
+
+                self._game_loops[guild.id] = self.bot.loop.create_task(
+                    self._game_loop(guild)
+                )
+                await self._ensure_log_loop(guild)
+
+                log.info(f"Auto-started emulator for guild {guild.name} ({guild.id})")
+            except Exception as e:
+                log.error(
+                    f"Failed to auto-start for guild {guild.name} ({guild.id}): {e}",
+                    exc_info=True,
+                )
+
     def cog_unload(self):
         for task in self._game_loops.values():
             task.cancel()
