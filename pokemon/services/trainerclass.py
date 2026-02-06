@@ -497,13 +497,12 @@ class trainer:
 
     def onlyone(self, method='only-one'):
         """ handles a gift action """
-        onlyoneCompleted = self.data.get('onlyoneCompleted', False)
         pokemon = None
         try:
             location: LocationModel = self.getLocation()
             locationId = location.locationId
-            if locationId in [136, 147, 158, 159, 91, 95]:
-                onlyoneCompleted = False
+            onlyoneCompleted = False
+            if locationId in [1364, 147, 158, 159, 91, 95]:
                 uEncObj = uEnc(self.discordId)
                 if locationId == 136:
                     if uEncObj.articuno:
@@ -525,7 +524,6 @@ class trainer:
                     self.statuscode = 420
                     self.message = "You have already completed that action in this location"
             
-            onlyoneCompleted = self.data.get('onlyoneCompleted', False)
             if not onlyoneCompleted:
                 method = 'only-one'
                 pokemon = self.__getEncounter(method)
