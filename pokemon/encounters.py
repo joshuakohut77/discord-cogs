@@ -826,6 +826,12 @@ class EncountersMixin(MixinMeta):
         await interaction.response.defer()
         
         battle_state.player_pokemon.save()
+
+        # LEADERBOARD TRACKING
+        from services.leaderboardclass import leaderboard as LeaderboardClass
+        lb = LeaderboardClass(str(user.id))
+        lb.run_away()
+        lb.actions()
         
         embed = discord.Embed(
             title="🏃 Ran Away!",
