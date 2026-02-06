@@ -1358,14 +1358,14 @@
   "10001": {
     "locationId": 10001,
     "name": "ss-anne-truck",
-    "north": "vermilion-city",
+    "north": null,
     "east": null,
-    "south": "ss-anne-1F",
-    "west": null,
+    "south": null,
+    "west": "ss-anne",
     "spritePath": "/sprites/locations/ss-anne.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": "--"
+    "displayName": "---"
   },
   "23410": {
     "locationId": 23410,

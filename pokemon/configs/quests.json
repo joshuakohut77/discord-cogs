@@ -794,7 +794,7 @@
     "quest": [
       "Check Truck"
     ],
-    "blockers": [],
+    "blockers": ["HM03"],
     "name": "ss-anne-truck"
   },
   "23410": {
