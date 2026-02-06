@@ -5362,13 +5362,6 @@
         "method": "walk"
       },
       {
-        "name": "moltres",
-        "chance": 100,
-        "max_level": 50,
-        "min_level": 50,
-        "method": "only-one"
-      },
-      {
         "name": "zubat",
         "chance": 15,
         "max_level": 22,
