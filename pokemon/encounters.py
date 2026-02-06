@@ -837,7 +837,8 @@ class EncountersMixin(MixinMeta):
             
             # Update unique encounters tracking
             enc = EncounterClass(battle_state.player_pokemon, battle_state.wild_pokemon)
-            enc.updateUniqueEncounters()
+            debug_result = enc.updateUniqueEncounters()
+            log_lines.append(f"🔍 DEBUG: {debug_result}")
             
             # AWARD EXPERIENCE
             from services.expclass import experiance as exp
