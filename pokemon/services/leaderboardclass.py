@@ -190,3 +190,53 @@ class leaderboard:
             # delete and close connection
             del db 
 
+    @commands.command()
+    async def testegg(self, ctx):
+        """Test easter egg tracking"""
+        user = ctx.author
+        discord_id = str(user.id)
+        
+        from services.leaderboardclass import leaderboard as LeaderboardClass
+        from services.dbclass import db as dbconn
+        
+        # Step 1: Check if leaderboard row exists
+        db = dbconn()
+        check_query = "SELECT total_easter_eggs FROM leaderboard WHERE discord_id = %(discordId)s"
+        result = db.querySingle(check_query, {'discordId': discord_id})
+        
+        if result is None:
+            await ctx.send(f"❌ **ERROR**: No leaderboard row exists for {user.display_name}!")
+            await ctx.send("Creating leaderboard row...")
+            
+            # Create the row
+            insert_query = "INSERT INTO leaderboard (discord_id) VALUES (%(discordId)s) ON CONFLICT DO NOTHING"
+            db.execute(insert_query, {'discordId': discord_id})
+            
+            await ctx.send("✅ Leaderboard row created!")
+            result = db.querySingle(check_query, {'discordId': discord_id})
+        
+        current_count = result[0] if result else 0
+        await ctx.send(f"📊 Current easter eggs: **{current_count}**")
+        
+        # Step 2: Try to increment
+        lb = LeaderboardClass(discord_id)
+        lb.easter_eggs()
+        
+        # Check if it worked
+        if lb.statuscode == 96:
+            await ctx.send(f"❌ **ERROR**: Failed to update! Status code: {lb.statuscode}")
+        else:
+            await ctx.send("✅ easter_eggs() called successfully!")
+        
+        # Step 3: Verify the increment
+        del db  # Close old connection
+        db = dbconn()
+        new_result = db.querySingle(check_query, {'discordId': discord_id})
+        new_count = new_result[0] if new_result else 0
+        
+        await ctx.send(f"📊 New easter eggs count: **{new_count}**")
+        
+        if new_count > current_count:
+            await ctx.send("🎉 **SUCCESS!** Easter egg was tracked!")
+        else:
+            await ctx.send("❌ **FAILED!** Count did not increment.")
