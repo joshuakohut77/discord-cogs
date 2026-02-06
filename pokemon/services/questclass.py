@@ -667,8 +667,8 @@ class quests:
             # Create trainer object to check party size
             trainer = trainerClass(self.discordId)
             
-            messages = []
-            embeds = []
+            # Track all received Pokemon for combined message
+            received_pokemon = []
             
             if gave_dome:
                 party_count = trainer.getPartySize()
@@ -697,8 +697,7 @@ class quests:
                 lb = LeaderboardClass(str(self.discordId))
                 lb.completions()
                 
-                messages.append("The scientists return your Dome Fossil... but it's not a fossil anymore!")
-                embeds.append(self.create_key_item_embed('Kabuto'))
+                received_pokemon.append(('Kabuto', "The scientists return your Dome Fossil... but it's not a fossil anymore!"))
             
             if gave_helix:
                 party_count = trainer.getPartySize()
@@ -727,8 +726,7 @@ class quests:
                 lb = LeaderboardClass(str(self.discordId))
                 lb.completions()
                 
-                messages.append("The scientists return your Helix Fossil... but it's not a fossil anymore!")
-                embeds.append(self.create_key_item_embed('Omanyte'))
+                received_pokemon.append(('Omanyte', "The scientists return your Helix Fossil... but it's not a fossil anymore!"))
             
             if gave_amber:
                 party_count = trainer.getPartySize()
@@ -757,13 +755,31 @@ class quests:
                 lb = LeaderboardClass(str(self.discordId))
                 lb.completions()
                 
-                messages.append("The scientists return your Old Amber... but it's not amber anymore!")
-                embeds.append(self.create_key_item_embed('Aerodactyl'))
+                received_pokemon.append(('Aerodactyl', "The scientists return your Old Amber... but it's not amber anymore!"))
             
-            if messages:
+            if received_pokemon:
+                # Build combined message with all Pokemon received
+                import discord
+                import constant
+                
+                # Get emojis for all received Pokemon
+                pokemon_emojis = []
+                for pokemon_name, _ in received_pokemon:
+                    emoji = constant.POKEMON_EMOJIS.get(pokemon_name.upper(), '✨')
+                    pokemon_emojis.append(f"{emoji} **{pokemon_name}**")
+                
+                # Create single embed with all Pokemon
+                embed = discord.Embed(
+                    title="Pokémon Received!",
+                    description="\n".join(pokemon_emojis),
+                    color=discord.Color.gold()
+                )
+                
+                # Combine all messages
+                messages = [msg for _, msg in received_pokemon]
                 self.message = "\n\n".join(messages)
-                # Return the embeds list so the caller can send multiple embeds
-                return {'embeds': embeds}
+                
+                return {'embed': embed}
         else:
             self.message = """The scientists begin to shout at you in german. You decide to leave"""
         
