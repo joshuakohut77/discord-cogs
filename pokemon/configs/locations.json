@@ -1302,7 +1302,7 @@
     "east": "captains-quarters",
     "south": "ss-anne-3F",
     "west": "ss-anne-1F",
-    "spritePath": "/sprites/locations/ss-anne-basement-2F.png",
+    "spritePath": "/sprites/locations/ss-anne-2F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "S.S. Anne 2F"
@@ -1314,7 +1314,7 @@
     "east": "ss-anne-2F",
     "south": null,
     "west": "ss-anne-deck",
-    "spritePath": "/sprites/locations/ss-anne-basement-3F.png",
+    "spritePath": "/sprites/locations/ss-anne-3F.png",
     "pokecenter": false,
     "gym": false,
     "displayName": "S.S. Anne 3F"
