@@ -1035,23 +1035,18 @@ class EncountersMixin(MixinMeta):
                 new_level = battle_state.player_pokemon.currentLevel
                 log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up to {new_level}!")
                 
-                # Show level-up embed with auto-learned moves (ephemeral)
-                level_up_embed = self.__create_level_up_embed(
-                    battle_state.player_pokemon,
-                    old_level,
-                    new_level,
-                    learned_moves=auto_learned_moves,
-                    evolution_name=battle_state.player_pokemon.evolvedInto if hasattr(battle_state.player_pokemon, 'evolvedInto') else None
-                )
-                
-                await interaction.followup.send(embed=level_up_embed, ephemeral=True)
+                # STORE level-up data to show AFTER victory screen
+                battle_state.level_up_data = {
+                    'pokemon': battle_state.player_pokemon,
+                    'old_level': old_level,
+                    'new_level': new_level,
+                    'auto_learned_moves': auto_learned_moves,
+                    'pending_moves': pendingMoves,
+                    'evolution_name': battle_state.player_pokemon.evolvedInto if hasattr(battle_state.player_pokemon, 'evolvedInto') else None
+                }
 
             if expMsg:
                 log_lines.append(f"📈 {expMsg}")
-
-            # Handle pending move learning (only for moves that need player choice)
-            if pendingMoves:
-                await self.__handle_move_learning(interaction, battle_state.player_pokemon, pendingMoves, battle_state)
 
             battle_state.battle_log = ["\n".join(log_lines)]
             
@@ -1086,8 +1081,27 @@ class EncountersMixin(MixinMeta):
                 # Update battle state to use evolved Pokemon
                 battle_state.player_pokemon = evolved_pokemon
 
-            # Show victory screen
+            # Show victory screen FIRST
             await self.__handle_wild_battle_victory(interaction, battle_state)
+
+            # THEN show level-up and move learning
+            if hasattr(battle_state, 'level_up_data') and battle_state.level_up_data:
+                data = battle_state.level_up_data
+                
+                # Show level-up embed (ephemeral)
+                level_up_embed = self.__create_level_up_embed(
+                    data['pokemon'],
+                    data['old_level'],
+                    data['new_level'],
+                    learned_moves=data['auto_learned_moves'],
+                    evolution_name=data['evolution_name']
+                )
+                await interaction.followup.send(embed=level_up_embed, ephemeral=True)
+                
+                # Handle pending move learning (moves that need player choice)
+                if data['pending_moves']:
+                    await self.__handle_move_learning(interaction, data['pokemon'], data['pending_moves'], battle_state)
+
             del self.__wild_battle_states[user_id]
             return
         
@@ -4469,24 +4483,18 @@ class EncountersMixin(MixinMeta):
                 new_level = battle_state.player_pokemon.currentLevel
                 log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up to {new_level}!")
                 
-                # Show level-up embed with auto-learned moves (ephemeral)
-                level_up_embed = self.__create_level_up_embed(
-                    battle_state.player_pokemon,
-                    old_level,
-                    new_level,
-                    learned_moves=auto_learned_moves,
-                    evolution_name=battle_state.player_pokemon.evolvedInto if hasattr(battle_state.player_pokemon, 'evolvedInto') else None
-                )
-                
-                await interaction.followup.send(embed=level_up_embed, ephemeral=True)
+                # STORE level-up data to show AFTER victory screen
+                battle_state.level_up_data = {
+                    'pokemon': battle_state.player_pokemon,
+                    'old_level': old_level,
+                    'new_level': new_level,
+                    'auto_learned_moves': auto_learned_moves,
+                    'pending_moves': pendingMoves,
+                    'evolution_name': battle_state.player_pokemon.evolvedInto if hasattr(battle_state.player_pokemon, 'evolvedInto') else None
+                }
 
             if expMsg:
                 log_lines.append(f"📈 {expMsg}")
-
-            # Handle pending move learning (only for moves that need player choice)
-            if pendingMoves:
-                await self.__handle_move_learning(interaction, battle_state.player_pokemon, pendingMoves, battle_state)
-
 
             
             battle_state.defeated_enemies.append(battle_state.enemy_pokemon.pokemonName)
@@ -4512,7 +4520,28 @@ class EncountersMixin(MixinMeta):
                 # Enemy has no more Pokemon - PLAYER WINS!
                 battle_state.battle_log = ["\n".join(log_lines)]
                 battle_state.player_pokemon.save()
+
+                # Show victory screen FIRST
                 await self.__handle_gym_battle_victory(interaction, battle_state)
+
+                # THEN show level-up and move learning
+                if hasattr(battle_state, 'level_up_data') and battle_state.level_up_data:
+                    data = battle_state.level_up_data
+                    
+                    # Show level-up embed (ephemeral)
+                    level_up_embed = self.__create_level_up_embed(
+                        data['pokemon'],
+                        data['old_level'],
+                        data['new_level'],
+                        learned_moves=data['auto_learned_moves'],
+                        evolution_name=data['evolution_name']
+                    )
+                    await interaction.followup.send(embed=level_up_embed, ephemeral=True)
+                    
+                    # Handle pending move learning (moves that need player choice)
+                    if data['pending_moves']:
+                        await self.__handle_move_learning(interaction, data['pokemon'], data['pending_moves'], battle_state)
+
                 del self.__battle_states[user_id]
                 return
         
