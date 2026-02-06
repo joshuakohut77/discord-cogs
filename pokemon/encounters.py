@@ -4267,6 +4267,10 @@ class EncountersMixin(MixinMeta):
         if battle_state.enemy_pokemon.currentHP <= 0:
             log_lines.append(f"💀 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} fainted!")
             
+            # Update unique encounters tracking
+            enc = EncounterClass(battle_state.player_pokemon, battle_state.enemy_pokemon)
+            enc.updateUniqueEncounters()
+
             # AWARD EXPERIENCE for defeating this Pokemon
             from expclass import experiance as exp
             expObj = exp(battle_state.enemy_pokemon)
