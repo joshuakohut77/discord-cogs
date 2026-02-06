@@ -4769,15 +4769,22 @@ class EncountersMixin(MixinMeta):
         # ADD NAVIGATION BUTTONS
         view = self.__create_post_battle_buttons(battle_state.user_id)
         
-        await interaction.message.edit(embed=embed, view=view)
+        # Send as NEW message, not edit
+        new_message = await interaction.followup.send(embed=embed, view=view, ephemeral=False)
+        
+        # Delete the old battle message
+        try:
+            await interaction.message.delete()
+        except:
+            pass
         
         user = interaction.user
         trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), 
-            interaction.message.channel.id, 
-            interaction.message.id, 
+            new_message.channel.id, 
+            new_message.id, 
             location, 
             trainer.getActivePokemon(), 
             None, 
