@@ -866,6 +866,7 @@ class trainer:
             db.executeWithoutCommit('INSERT INTO inventory (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
             db.executeWithoutCommit('INSERT INTO keyitems (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
             db.executeWithoutCommit('INSERT INTO leaderboard (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
+            db.executeWithoutCommit('INSERT INTO "unique-encounters" (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
             db.commit()
             
             # After creating trainer, load the startdate (which will be today's date for new trainers)
