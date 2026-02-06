@@ -14,11 +14,15 @@ from PIL import Image
 log = logging.getLogger("red.discordplayspokemon.emulator")
 
 # How many frames to hold a button press (Game Boy runs at ~60 fps)
-PRESS_FRAMES = 12
+PRESS_FRAMES = 8
 # Small gap between sequential presses so the game registers them individually
-GAP_FRAMES = 6
+GAP_FRAMES = 4
 # Target ticks-per-second in the background thread (approx real-time)
 TARGET_TPS = 60
+# How many idle frames to tick between checking the queue when no inputs
+IDLE_FRAMES = 10
+# Max inputs to process in a burst before ticking idle frames (prevents starvation)
+BURST_LIMIT = 10
 
 
 class EmulatorManager:
@@ -40,7 +44,7 @@ class EmulatorManager:
         self.running = False
 
         # Thread-safe communication
-        self.input_queue: queue.Queue[str] = queue.Queue(maxsize=200)
+        self.input_queue: queue.Queue[str] = queue.Queue(maxsize=1000)
         self._screen_lock = threading.Lock()
         self._latest_screen: bytes | None = None
         self._stop_event = threading.Event()
@@ -124,42 +128,63 @@ class EmulatorManager:
     # ------------------------------------------------------------------
 
     def _run(self) -> None:
-        """Emulator main loop — runs at ~60 tps in its own thread."""
+        """Emulator main loop — runs in its own thread.
+
+        When inputs are queued, they are processed in bursts (up to
+        BURST_LIMIT) with no artificial sleep between them so the game
+        catches up quickly.  When the queue is empty the loop ticks
+        IDLE_FRAMES at real-time pacing to keep the game alive without
+        burning CPU.
+        """
         frame_time = 1.0 / TARGET_TPS
         frames_since_screenshot = 0
         frames_since_save = 0
         screenshot_every = TARGET_TPS  # update screenshot buffer once/sec
 
         while not self._stop_event.is_set():
-            t0 = time.monotonic()
-
-            # --- process queued inputs ---
-            try:
-                button = self.input_queue.get_nowait()
+            # --- drain queued inputs in a burst ---
+            processed = 0
+            while processed < BURST_LIMIT:
+                try:
+                    button = self.input_queue.get_nowait()
+                except queue.Empty:
+                    break
                 self._press_button(button)
                 self.total_inputs += 1
-            except queue.Empty:
-                # No input; just tick one frame
-                self.pyboy.tick()
-                self.total_frames += 1
+                processed += 1
+                # Bookkeeping for periodic tasks
+                frames_done = PRESS_FRAMES + GAP_FRAMES
+                frames_since_screenshot += frames_done
+                frames_since_save += frames_done
+                # Screenshot mid-burst if needed
+                if frames_since_screenshot >= screenshot_every:
+                    self._capture_screen()
+                    frames_since_screenshot = 0
+
+            # --- idle ticks (real-time paced) when no inputs ---
+            if processed == 0:
+                for _ in range(IDLE_FRAMES):
+                    if self._stop_event.is_set():
+                        break
+                    t0 = time.monotonic()
+                    self.pyboy.tick()
+                    self.total_frames += 1
+                    frames_since_screenshot += 1
+                    frames_since_save += 1
+                    elapsed = time.monotonic() - t0
+                    sleep_for = frame_time - elapsed
+                    if sleep_for > 0:
+                        time.sleep(sleep_for)
 
             # --- periodic screenshot ---
-            frames_since_screenshot += 1
             if frames_since_screenshot >= screenshot_every:
                 self._capture_screen()
                 frames_since_screenshot = 0
 
             # --- periodic auto-save (every ~5 min) ---
-            frames_since_save += 1
             if frames_since_save >= TARGET_TPS * 300:
                 self._save_state_sync()
                 frames_since_save = 0
-
-            # --- frame pacing ---
-            elapsed = time.monotonic() - t0
-            sleep_for = frame_time - elapsed
-            if sleep_for > 0:
-                time.sleep(sleep_for)
 
     def _press_button(self, button: str) -> None:
         """Hold a button for PRESS_FRAMES then release, with a gap."""
