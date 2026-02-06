@@ -93,7 +93,7 @@ class EncountersMixin(MixinMeta):
         return self.__enemy_trainers_data
 
 
-    def __create_level_up_embed(self, pokemon, old_level, new_level, evolution_name=None):
+    def __create_level_up_embed(self, pokemon, old_level, new_level, learned_moves=None, evolution_name=None):
         """ Creates a dismissable level-up notification embed """
         if evolution_name:
             title = f"🌟 Evolution! {pokemon.pokemonName.capitalize()} → {evolution_name.capitalize()}!"
@@ -128,6 +128,15 @@ class EncountersMixin(MixinMeta):
             value=f"{current_hp}/{max_hp}",
             inline=True
         )
+        
+        # Add learned moves if any
+        if learned_moves and len(learned_moves) > 0:
+            moves_text = "\n".join([f"• {move.replace('-', ' ').title()}" for move in learned_moves])
+            embed.add_field(
+                name="📚 New Moves Learned",
+                value=moves_text,
+                inline=False
+            )
         
         return embed
 
@@ -1008,39 +1017,36 @@ class EncountersMixin(MixinMeta):
             # NEW: Get 3 return values including pendingMoves
             levelUp, expMsg, pendingMoves = battle_state.player_pokemon.processBattleOutcome(expGained, evGained, current_hp)
             
+            # Collect auto-learned moves from expMsg
+            auto_learned_moves = []
+            if expMsg and "learned" in expMsg.lower():
+                # Extract move names from expMsg (format: "Your pokemon learned move-name. ")
+                import re
+                learned_matches = re.findall(r'learned ([a-z\-]+)', expMsg.lower())
+                auto_learned_moves.extend(learned_matches)
+
             if levelUp:
                 new_level = battle_state.player_pokemon.currentLevel
                 log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up to {new_level}!")
                 
-                # Show level-up embed with dismissable button
+                # Show level-up embed with auto-learned moves (ephemeral)
                 level_up_embed = self.__create_level_up_embed(
                     battle_state.player_pokemon,
                     old_level,
                     new_level,
-                    battle_state.player_pokemon.evolvedInto if hasattr(battle_state.player_pokemon, 'evolvedInto') else None
+                    learned_moves=auto_learned_moves,
+                    evolution_name=battle_state.player_pokemon.evolvedInto if hasattr(battle_state.player_pokemon, 'evolvedInto') else None
                 )
                 
-                dismiss_view = discord.ui.View(timeout=60)
-                dismiss_button = discord.ui.Button(label="Continue", style=discord.ButtonStyle.green)
-                
-                async def dismiss_callback(inter: discord.Interaction):
-                    if inter.user.id != user.id:
-                        await inter.response.send_message("This is not for you!", ephemeral=True)
-                        return
-                    await inter.response.edit_message(view=None)
-                
-                dismiss_button.callback = dismiss_callback
-                dismiss_view.add_item(dismiss_button)
-                
-                await interaction.followup.send(embed=level_up_embed, view=dismiss_view)
-            
+                await interaction.followup.send(embed=level_up_embed, ephemeral=True)
+
             if expMsg:
                 log_lines.append(f"📈 {expMsg}")
-            
-            # Handle pending move learning
+
+            # Handle pending move learning (only for moves that need player choice)
             if pendingMoves:
                 await self.__handle_move_learning(interaction, battle_state.player_pokemon, pendingMoves, battle_state)
-            
+
             battle_state.battle_log = ["\n".join(log_lines)]
             
             # Check if Pokemon evolved
@@ -4445,38 +4451,37 @@ class EncountersMixin(MixinMeta):
             # NEW: Get 3 return values including pendingMoves
             levelUp, expMsg, pendingMoves = battle_state.player_pokemon.processBattleOutcome(expGained, evGained, current_hp)
             
+            # Collect auto-learned moves from expMsg
+            auto_learned_moves = []
+            if expMsg and "learned" in expMsg.lower():
+                # Extract move names from expMsg (format: "Your pokemon learned move-name. ")
+                import re
+                learned_matches = re.findall(r'learned ([a-z\-]+)', expMsg.lower())
+                auto_learned_moves.extend(learned_matches)
+
             if levelUp:
                 new_level = battle_state.player_pokemon.currentLevel
                 log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up to {new_level}!")
                 
-                # Show level-up embed with dismissable button
+                # Show level-up embed with auto-learned moves (ephemeral)
                 level_up_embed = self.__create_level_up_embed(
                     battle_state.player_pokemon,
                     old_level,
                     new_level,
-                    battle_state.player_pokemon.evolvedInto if hasattr(battle_state.player_pokemon, 'evolvedInto') else None
+                    learned_moves=auto_learned_moves,
+                    evolution_name=battle_state.player_pokemon.evolvedInto if hasattr(battle_state.player_pokemon, 'evolvedInto') else None
                 )
                 
-                dismiss_view = discord.ui.View(timeout=60)
-                dismiss_button = discord.ui.Button(label="Continue", style=discord.ButtonStyle.green)
-                
-                async def dismiss_callback(inter: discord.Interaction):
-                    if inter.user.id != user.id:
-                        await inter.response.send_message("This is not for you!", ephemeral=True)
-                        return
-                    await inter.response.edit_message(view=None)
-                
-                dismiss_button.callback = dismiss_callback
-                dismiss_view.add_item(dismiss_button)
-                
-                await interaction.followup.send(embed=level_up_embed, view=dismiss_view)
-            
+                await interaction.followup.send(embed=level_up_embed, ephemeral=True)
+
             if expMsg:
                 log_lines.append(f"📈 {expMsg}")
-            
-            # Handle pending move learning
+
+            # Handle pending move learning (only for moves that need player choice)
             if pendingMoves:
                 await self.__handle_move_learning(interaction, battle_state.player_pokemon, pendingMoves, battle_state)
+
+
             
             battle_state.defeated_enemies.append(battle_state.enemy_pokemon.pokemonName)
             
