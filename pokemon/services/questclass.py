@@ -551,11 +551,11 @@ class quests:
         self.message = dedent("""\
                             Deep inside Team Rockets hideout, you stumble upon a Free Mason sex ritual. Soon you were discovered.
                             You tried to use your escape-rope but instead were bound by it.
-                            For two days you were used as a sex slave in an endless train. In a comotose of post nut clarity, 
-                            you grab the Grand Masters scepter and escape. 
-                            You received the Silph Scope!""")
+                            For two days you were used as a sex slave in an endless train. 
+                            In a comotose of post nut clarity, you grab the Grand Masters scepter and escape. 
+                            """)
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('Silph Scope')
 
     def freeSpirits(self):
         self.message = dedent("""\
