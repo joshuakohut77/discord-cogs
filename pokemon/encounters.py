@@ -483,6 +483,7 @@ class EncountersMixin(MixinMeta):
         enemy_pokemon_index = 0
         defeated_enemies = []
         defeated_players = []
+        exp_messages = []
         
         max_turns = 100
         turn = 0
@@ -535,6 +536,10 @@ class EncountersMixin(MixinMeta):
             battle_log.append(f"\n**Turn {turn}:**")
             battle_log.append(f"• {player_pokemon.pokemonName.capitalize()} (HP: {player_pokemon.currentHP}) vs {enemy_name.capitalize()} (HP: {enemy_pokemon.currentHP})")
             
+            # Capture experience message
+            if enc.message:
+                exp_messages.append(f"{player_pokemon.pokemonName.capitalize()}: {enc.message}")
+
             # Check if enemy fainted
             if enemy_pokemon.currentHP <= 0:
                 defeated_enemies.append(enemy_name)
@@ -6362,6 +6367,7 @@ class EncountersMixin(MixinMeta):
         all_battle_logs = []
         defeated_enemies = []
         defeated_player = []
+        exp_messages = []  # Track experience gains
         
         # Battle loop - continue until one side has no Pokemon left
         battle_result = None
@@ -6386,6 +6392,10 @@ class EncountersMixin(MixinMeta):
             if hasattr(enc, 'battle_log') and enc.battle_log:
                 all_battle_logs.extend(enc.battle_log)
             
+            # Capture experience message
+            if enc.message:
+                exp_messages.append(f"{player_pokemon.pokemonName.capitalize()}: {enc.message}")
+
             # Process result
             if result.get('result') == 'victory':
                 # Player won this round - enemy Pokemon fainted
