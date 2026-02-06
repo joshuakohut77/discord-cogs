@@ -750,6 +750,11 @@ class quests:
         uniqueEncounters.mew = True
         uniqueEncounters.save()
         
+        from services.leaderboardclass import leaderboard as LeaderboardClass
+
+        lb = LeaderboardClass(str(self.discordId))
+        lb.easter_eggs()
+
         self.statuscode = 420
         self.message = dedent("""\
                         You find an abandoned truck. Using your massive penis, you pushed
