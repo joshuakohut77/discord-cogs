@@ -389,20 +389,37 @@ class DiscordPlaysPokemon(commands.Cog):
         screenshot,
     ):
         """Edit the existing screen message with a new screenshot.
-        If the message doesn't exist or can't be edited, send a new one."""
+
+        If a non-deletable message (bot command, command response, or
+        message posted while the cog was stopped) has appeared below
+        the screen message, send a fresh one so the screenshot stays
+        at the bottom of the channel.
+        """
         existing = self._screen_messages.get(guild_id)
 
-        # Try editing the existing message
         if existing is not None:
+            # Check if our message is still the latest in the channel
+            needs_new = False
             try:
-                # Discord requires a new File object each time
-                await existing.edit(
-                    attachments=[discord.File(screenshot, "pokemon.png")]
-                )
-                return
-            except (discord.NotFound, discord.HTTPException):
-                # Message was deleted or edit failed — fall through to send new
-                self._screen_messages.pop(guild_id, None)
+                async for msg in channel.history(limit=1, after=existing):
+                    # There's at least one message newer than ours
+                    needs_new = True
+                    break
+            except discord.HTTPException:
+                needs_new = True
+
+            if not needs_new:
+                # Still the latest — edit in place
+                try:
+                    await existing.edit(
+                        attachments=[discord.File(screenshot, "pokemon.png")]
+                    )
+                    return
+                except (discord.NotFound, discord.HTTPException):
+                    pass  # fall through to send new
+
+            # Old message is buried or gone — clean up reference
+            self._screen_messages.pop(guild_id, None)
 
         # Send a fresh message and track it
         try:
