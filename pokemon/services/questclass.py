@@ -654,39 +654,110 @@ class quests:
             self.keyitems.save()
             self.inventory.save()
         elif self.keyitems.elite_four:
-            # if beaten elite four give them pokemon.
-            # Check if they previously gave dome fossil (stored as False after giving it)
-            # We need a different way to track "gave but not received" - using inventory.oldamber == -1 pattern
-            # Let's use a similar pattern: set to None when given, then remove the check when pokemon received
-            
-            # Actually, we need to track this differently since booleans can't be -1
-            # For now, let's just check if they DON'T have the fossil (meaning they gave it)
-            # This requires checking if they DON'T have it AND haven't received pokemon yet
-            # This is complex - let me provide a better solution:
-            
-            # We should add tracking flags to keyitems like: dome_fossil_given, helix_fossil_given, oldamber_given
-            # But for minimal changes, let's use the current boolean approach:
-            # If they don't have the fossil anymore, give them the pokemon
-            
+            # Old code - determine which fossils were given
             gave_dome = not self.keyitems.dome_fossil
             gave_helix = not self.keyitems.helix_fossil
             gave_amber = self.inventory.oldamber == -1
             
+            # New code - create Pokemon with proper setup for each fossil
+            from trainerclass import trainer as trainerClass
+            from pokedexclass import pokedex
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            
+            # Create trainer object to check party size
+            trainer = trainerClass(self.discordId)
+            
+            messages = []
+            embeds = []
+            
             if gave_dome:
-                pokemon1 = pokeClass(self.discordId, 138) # omanyte
+                party_count = trainer.getPartySize()
+                pokemon1 = pokeClass(self.discordId, 138)  # Kabuto
                 pokemon1.create(35)
+                
+                # CRITICAL: Set discordId and party status before saving
+                pokemon1.discordId = self.discordId
+                pokemon1.party = party_count < 6  # Add to party if there's space, otherwise to PC
+                
+                # Save the Pokemon
                 pokemon1.save()
-                self.message += " You received Omanyte."
+                
+                # Check if save was successful
+                if pokemon1.statuscode == 96:
+                    self.statuscode = 96
+                    self.message = "Error occurred while creating Kabuto"
+                    return
+                
+                # Register to Pokedex
+                pokedex(self.discordId, pokemon1)
+                
+                # Add leaderboard tracking
+                lb = LeaderboardClass(str(self.discordId))
+                lb.quest_completed()
+                
+                messages.append("The scientists return your Dome Fossil... but it's not a fossil anymore!")
+                embeds.append(self.create_key_item_embed('Kabuto'))
+            
             if gave_helix:
-                pokemon2 = pokeClass(self.discordId, 140) # kabuto
+                party_count = trainer.getPartySize()
+                pokemon2 = pokeClass(self.discordId, 140)  # Omanyte
                 pokemon2.create(35)
+                
+                # CRITICAL: Set discordId and party status before saving
+                pokemon2.discordId = self.discordId
+                pokemon2.party = party_count < 6  # Add to party if there's space, otherwise to PC
+                
+                # Save the Pokemon
                 pokemon2.save()
-                self.message += " You received Kabuto."
+                
+                # Check if save was successful
+                if pokemon2.statuscode == 96:
+                    self.statuscode = 96
+                    self.message = "Error occurred while creating Omanyte"
+                    return
+                
+                # Register to Pokedex
+                pokedex(self.discordId, pokemon2)
+                
+                # Add leaderboard tracking
+                lb = LeaderboardClass(str(self.discordId))
+                lb.quest_completed()
+                
+                messages.append("The scientists return your Helix Fossil... but it's not a fossil anymore!")
+                embeds.append(self.create_key_item_embed('Omanyte'))
+            
             if gave_amber:
-                pokemon3 = pokeClass(self.discordId, 142) # aerodactyl
+                party_count = trainer.getPartySize()
+                pokemon3 = pokeClass(self.discordId, 142)  # Aerodactyl
                 pokemon3.create(35)
+                
+                # CRITICAL: Set discordId and party status before saving
+                pokemon3.discordId = self.discordId
+                pokemon3.party = party_count < 6  # Add to party if there's space, otherwise to PC
+                
+                # Save the Pokemon
                 pokemon3.save()
-                self.message += " You received Aerodactyl."
+                
+                # Check if save was successful
+                if pokemon3.statuscode == 96:
+                    self.statuscode = 96
+                    self.message = "Error occurred while creating Aerodactyl"
+                    return
+                
+                # Register to Pokedex
+                pokedex(self.discordId, pokemon3)
+                
+                # Add leaderboard tracking
+                lb = LeaderboardClass(str(self.discordId))
+                lb.quest_completed()
+                
+                messages.append("The scientists return your Old Amber... but it's not amber anymore!")
+                embeds.append(self.create_key_item_embed('Aerodactyl'))
+            
+            if messages:
+                self.message = "\n\n".join(messages)
+                # Return the embeds list so the caller can send multiple embeds
+                return {'embeds': embeds}
         else:
             self.message = """The scientists begin to shout at you in german. You decide to leave"""
         
