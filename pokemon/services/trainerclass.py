@@ -506,35 +506,26 @@ class trainer:
                 uEncObj = uEnc(self.discordId)
                 onlyoneCompleted = False
                 
-                # Build debug info
-                debug_vals = f"Loc={locationId}"
-                
                 if locationId == 1364:
-                    debug_vals += f", Articuno={uEncObj.articuno}"
                     if uEncObj.articuno:
                         onlyoneCompleted = True
                 elif locationId == 158:
-                    debug_vals += f", Zapdos={uEncObj.zapdos}"
                     if uEncObj.zapdos:
                         onlyoneCompleted = True
                 elif locationId == 159:
-                    debug_vals += f", Moltres={uEncObj.moltres}"
                     if uEncObj.moltres:
                         onlyoneCompleted = True
                 elif locationId == 147:
-                    debug_vals += f", Mewtwo={uEncObj.mewtwo}"
                     if uEncObj.mewtwo:
                         onlyoneCompleted = True
                 elif locationId == 91 or locationId == 95:
-                    debug_vals += f", Snorlax={uEncObj.snorlax}"
                     if uEncObj.snorlax:
                         onlyoneCompleted = True
                 
-                debug_vals += f", Completed={onlyoneCompleted}"
                 
                 if onlyoneCompleted:
                     self.statuscode = 420
-                    self.message = f"You have already completed that action in this location. [DEBUG: {debug_vals}]"
+                    self.message = f"You have already completed that action in this location."
                     return None  # CRITICAL: Return here to stop execution!
             
             # Only execute if not completed
