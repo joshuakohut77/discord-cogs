@@ -835,6 +835,11 @@ class EncountersMixin(MixinMeta):
         if battle_state.wild_pokemon.currentHP <= 0:
             log_lines.append(f"💀 Wild {battle_state.wild_pokemon.pokemonName.capitalize()} fainted!")
             
+            # Update unique encounters tracking
+            enc = EncounterClass(battle_state.player_pokemon, battle_state.wild_pokemon)
+            enc.updateUniqueEncounters()
+            log_lines.append(f"🔍 DEBUG: Called updateUniqueEncounters for {battle_state.wild_pokemon.pokemonName}, player={battle_state.player_pokemon.discordId}")
+            
             # AWARD EXPERIENCE
             from services.expclass import experiance as exp
             expObj = exp(battle_state.wild_pokemon)
