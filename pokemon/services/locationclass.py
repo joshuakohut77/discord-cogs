@@ -75,8 +75,14 @@ class location:
                     areaEncounters = encountersConfig[str(locationId)]
 
             # map each method name, then make a set.
-            # A `set` removes duplicate values.
+            # Extract unique methods
             methods = list(dict.fromkeys(x['method'] for x in areaEncounters))
+            
+            # Define desired method order
+            method_order = ['walk', 'surf', 'old-rod', 'good-rod', 'super-rod', 'pokeflute', 'gift', 'only-one']
+            
+            # Sort methods by the defined order
+            methods = sorted(methods, key=lambda m: method_order.index(m) if m in method_order else 999)
             
             # Load trainer's key items to filter out unavailable methods
             keyitems = kitems(self.discordId)
