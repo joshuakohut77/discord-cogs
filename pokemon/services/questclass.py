@@ -659,7 +659,7 @@ class quests:
             gave_helix = not self.keyitems.helix_fossil
             gave_amber = self.inventory.oldamber == -1
             
-            # New code - create Pokemon with proper setup for each fossil
+            # New code - follows the exact pattern from checkTruck method
             from trainerclass import trainer as trainerClass
             from pokedexclass import pokedex
             from services.leaderboardclass import leaderboard as LeaderboardClass
@@ -672,7 +672,9 @@ class quests:
             
             if gave_dome:
                 party_count = trainer.getPartySize()
-                pokemon1 = pokeClass(self.discordId, 138)  # Kabuto
+                
+                # Create Kabuto Pokemon - using string name like checkTruck does
+                pokemon1 = pokeClass(self.discordId, 'kabuto')
                 pokemon1.create(35)
                 
                 # CRITICAL: Set discordId and party status before saving
@@ -700,7 +702,9 @@ class quests:
             
             if gave_helix:
                 party_count = trainer.getPartySize()
-                pokemon2 = pokeClass(self.discordId, 140)  # Omanyte
+                
+                # Create Omanyte Pokemon - using string name like checkTruck does
+                pokemon2 = pokeClass(self.discordId, 'omanyte')
                 pokemon2.create(35)
                 
                 # CRITICAL: Set discordId and party status before saving
@@ -728,7 +732,9 @@ class quests:
             
             if gave_amber:
                 party_count = trainer.getPartySize()
-                pokemon3 = pokeClass(self.discordId, 142)  # Aerodactyl
+                
+                # Create Aerodactyl Pokemon - using string name like checkTruck does
+                pokemon3 = pokeClass(self.discordId, 'aerodactyl')
                 pokemon3.create(35)
                 
                 # CRITICAL: Set discordId and party status before saving
