@@ -223,10 +223,13 @@ class EncountersMixin(MixinMeta):
                     pokemon.learnMove(move_to_learn, replaceSlot=slot_num)
                     pokemon.save()
                     
-                    await inter.response.edit_message(
-                        content=f"✅ {pokemon.pokemonName.capitalize()} forgot {old_move.replace('-', ' ').title()} and learned {move_to_learn.replace('-', ' ').title()}!",
-                        embed=None,
-                        view=None
+                    # Delete the original message
+                    await inter.message.delete()
+                    
+                    # Send ephemeral confirmation
+                    await inter.response.send_message(
+                        f"✅ {pokemon.pokemonName.capitalize()} forgot {old_move.replace('-', ' ').title()} and learned {move_to_learn.replace('-', ' ').title()}!",
+                        ephemeral=True
                     )
                 
                 button.callback = button_callback
@@ -244,10 +247,13 @@ class EncountersMixin(MixinMeta):
                     await inter.response.send_message("This is not for you!", ephemeral=True)
                     return
                 
-                await inter.response.edit_message(
-                    content=f"❌ {pokemon.pokemonName.capitalize()} did not learn {move_to_learn.replace('-', ' ').title()}.",
-                    embed=None,
-                    view=None
+                # Delete the original message
+                await inter.message.delete()
+                
+                # Send ephemeral confirmation
+                await inter.response.send_message(
+                    f"❌ {pokemon.pokemonName.capitalize()} did not learn {move_to_learn.replace('-', ' ').title()}.",
+                    ephemeral=True
                 )
             
             dont_learn_button.callback = dont_learn_callback
