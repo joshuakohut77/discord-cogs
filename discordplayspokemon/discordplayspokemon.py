@@ -384,7 +384,8 @@ class DiscordPlaysPokemon(commands.Cog):
         self, message: discord.Message, emu: EmulatorManager, is_command: bool
     ):
         """Non-game channel: silently harvest individual letters as inputs.
-        Messages are NOT deleted."""
+        Messages are NOT deleted.  Harvests from message text, URLs,
+        attachment filenames, and any embed text already present."""
         if is_command:
             return
 
@@ -393,12 +394,78 @@ class DiscordPlaysPokemon(commands.Cog):
             return
 
         max_passive = await self.config.guild(message.guild).max_passive_inputs()
-        buttons = self.input_handler.harvest_letters(
-            message.content, max_inputs=max_passive
-        )
+        text = self._gather_message_text(message)
+        buttons = self.input_handler.harvest_letters(text, max_inputs=max_passive)
 
         for btn in buttons:
             await emu.queue_input(btn)
+
+    @commands.Cog.listener()
+    async def on_message_edit(self, before: discord.Message, after: discord.Message):
+        """Catch embed arrivals. When someone posts a URL, Discord fills in
+        the embed asynchronously which triggers an edit. Harvest any new
+        embed text that wasn't present in the original message."""
+        if after.author.bot or not after.guild:
+            return
+
+        emu = self._emulators.get(after.guild.id)
+        if not emu or not emu.running:
+            return
+
+        channel_id = await self.config.guild(after.guild).channel_id()
+        if after.channel.id == channel_id:
+            return  # game channel is handled differently
+
+        passive_on = await self.config.guild(after.guild).passive_enabled()
+        if not passive_on:
+            return
+
+        # Only care about new embeds appearing (not user text edits)
+        if len(after.embeds) <= len(before.embeds):
+            return
+
+        # Harvest only from the newly added embeds
+        new_embeds = after.embeds[len(before.embeds):]
+        parts: list[str] = []
+        for embed in new_embeds:
+            if embed.title:
+                parts.append(embed.title)
+            if embed.description:
+                parts.append(embed.description)
+            if embed.url:
+                parts.append(embed.url)
+
+        if not parts:
+            return
+
+        max_passive = await self.config.guild(after.guild).max_passive_inputs()
+        text = " ".join(parts)
+        buttons = self.input_handler.harvest_letters(text, max_inputs=max_passive)
+
+        for btn in buttons:
+            await emu.queue_input(btn)
+
+    @staticmethod
+    def _gather_message_text(message: discord.Message) -> str:
+        """Combine all harvestable text from a message: content, URLs,
+        attachment filenames, and any embeds already present."""
+        parts: list[str] = [message.content]
+
+        # Attachment filenames (e.g. "funny_dog.png")
+        for attachment in message.attachments:
+            if attachment.filename:
+                parts.append(attachment.filename)
+
+        # Embeds that arrived with the message (rare but possible)
+        for embed in message.embeds:
+            if embed.title:
+                parts.append(embed.title)
+            if embed.description:
+                parts.append(embed.description)
+            if embed.url:
+                parts.append(embed.url)
+
+        return " ".join(parts)
 
     # ------------------------------------------------------------------
     # Screenshot update loop — edits one message instead of spamming
