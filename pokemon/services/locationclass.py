@@ -76,7 +76,7 @@ class location:
 
             # map each method name, then make a set.
             # A `set` removes duplicate values.
-            methods = set(map(lambda x: x['method'], areaEncounters))
+            methods = list(dict.fromkeys(x['method'] for x in areaEncounters))
             
             # Load trainer's key items to filter out unavailable methods
             keyitems = kitems(self.discordId)
