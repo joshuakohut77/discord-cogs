@@ -366,7 +366,7 @@ LOCATION_DISPLAY_NAMES = {
     "ss-anne-3F": 'S.S. Anne 3F',
     "ss-anne-basement": 'Basement',
     "ss-anne-basement-rooms": 'Basement Rooms',
-    "ss-anne-truck": 'S.S. Anne Truck',
+    "ss-anne-truck": '---',
     "captains-quarters": "Cptn Quarters",
     "game-corner": 'Game Corner',
     "indigo-plateau-center": 'Indigo Plateau',
