@@ -15,7 +15,6 @@ INPUT_MAP: dict[str, str] = {
     "d":        "down",
     "l":        "left",
     "r":        "right",
-    "st":       "start",
 
     # Full words
     "up":       "up",
