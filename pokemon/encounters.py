@@ -1423,7 +1423,7 @@ class EncountersMixin(MixinMeta):
         if inv.old_rod:
             items.append(f'{constant.OLD_ROD} **Old Rod**')
         if inv.good_rod:
-            items.append(f'{constant.GOODROD} **Good Rod**')
+            items.append(f'{constant.GOOD_ROD} **Good Rod**')
         if inv.super_rod:
             items.append(f'{constant.SUPER_ROD} **Super Rod**')
         if inv.item_finder:
@@ -4642,22 +4642,6 @@ class EncountersMixin(MixinMeta):
         
         # Use the existing prerequsitesValid method which handles the name mapping correctly
         return quest_obj.prerequsitesValid(pre_requisites)
-
-    # def __check_prerequisites(self, user_id: str, pre_requisites: list) -> bool:
-    #     """Check if trainer has all pre-requisites for a quest"""
-    #     if not pre_requisites:
-    #         return True
-
-    #     quest_obj = QuestsClass(user_id)
-
-    #     for prereq in pre_requisites:
-    #         if hasattr(quest_obj.keyitems, prereq):
-    #             if not getattr(quest_obj.keyitems, prereq):
-    #                 return False
-    #         else:
-    #             return False
-
-    #     return True
 
     def __get_gym_button(self, user_id: str, location_id: str) -> Button:
         """
