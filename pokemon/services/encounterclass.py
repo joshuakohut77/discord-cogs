@@ -567,15 +567,17 @@ class encounter:
             return 
         newCurrentHP = self.pokemon1.currentHP
 
-        levelUp, retMsg = self.pokemon1.processBattleOutcome(
+        levelUp, retMsg, pendingMoves = self.pokemon1.processBattleOutcome(
             expGained, evGained, newCurrentHP)
 
         resultString = "Your Pokemon gained %s exp." % (expGained)
-        # if pokemon leved up
+        # if pokemon leveled up
         if levelUp:
             resultString = resultString + ' Your Pokemon leveled up!'
         if retMsg != '':
             resultString = resultString + ' ' + retMsg
+        if pendingMoves:
+            resultString = resultString + ' (Moves pending: %s)' % ', '.join(pendingMoves)
 
         # leaderboard stats
         lb = leaderboard(self.pokemon1.discordId)

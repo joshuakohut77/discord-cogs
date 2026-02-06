@@ -93,6 +93,166 @@ class EncountersMixin(MixinMeta):
         return self.__enemy_trainers_data
 
 
+    def __create_level_up_embed(self, pokemon, old_level, new_level, evolution_name=None):
+        """ Creates a dismissable level-up notification embed """
+        if evolution_name:
+            title = f"🌟 Evolution! {pokemon.pokemonName.capitalize()} → {evolution_name.capitalize()}!"
+            description = f"**{pokemon.pokemonName.capitalize()}** evolved into **{evolution_name.capitalize()}**!"
+            color = discord.Color.gold()
+        else:
+            title = f"⬆️ Level Up!"
+            description = f"**{pokemon.pokemonName.capitalize()}** grew to level **{new_level}**!"
+            color = discord.Color.green()
+        
+        embed = discord.Embed(
+            title=title,
+            description=description,
+            color=color
+        )
+        
+        # Add Pokemon sprite
+        sprite_url = pokemon.frontSpriteURL
+        if sprite_url:
+            embed.set_thumbnail(url=sprite_url)
+        
+        embed.add_field(
+            name="Level",
+            value=f"{old_level} → {new_level}",
+            inline=True
+        )
+        
+        current_hp = pokemon.currentHP
+        max_hp = pokemon.getPokeStats()['hp']
+        embed.add_field(
+            name="HP",
+            value=f"{current_hp}/{max_hp}",
+            inline=True
+        )
+        
+        return embed
+
+    def __create_move_learning_embed(self, pokemon, move_to_learn, moves_config):
+        """ Creates embed showing the new move being learned """
+        embed = discord.Embed(
+            title=f"📚 New Move Available!",
+            description=f"**{pokemon.pokemonName.capitalize()}** wants to learn **{move_to_learn.replace('-', ' ').title()}**!",
+            color=discord.Color.blue()
+        )
+        
+        # Add Pokemon sprite
+        if pokemon.frontSpriteURL:
+            embed.set_thumbnail(url=pokemon.frontSpriteURL)
+        
+        # Show new move details
+        move_data = moves_config.get(move_to_learn, {})
+        power = move_data.get('power', 'N/A')
+        accuracy = move_data.get('accuracy', 'N/A')
+        move_type = move_data.get('moveType', 'normal')
+        pp = move_data.get('pp', 'N/A')
+        
+        embed.add_field(
+            name=f"New Move: {move_to_learn.replace('-', ' ').title()}",
+            value=f"Type: {move_type.title()} | Power: {power} | Accuracy: {accuracy} | PP: {pp}",
+            inline=False
+        )
+        
+        embed.add_field(
+            name="Current Moves",
+            value="Choose which move to replace, or don't learn this move.",
+            inline=False
+        )
+        
+        return embed
+
+    async def __handle_move_learning(self, interaction: discord.Interaction, pokemon, pending_moves, battle_state=None):
+        """
+        Handles the UI for learning new moves when Pokemon has 4 moves.
+        
+        Args:
+            interaction: The interaction to respond to
+            pokemon: The Pokemon learning moves
+            pending_moves: List of move names to learn
+            battle_state: Optional BattleState if this is during a battle
+        """
+        from helpers.pathhelpers import load_json_config
+        moves_config = load_json_config('moves.json')
+        
+        for move_to_learn in pending_moves:
+            # Create the embed
+            embed = self.__create_move_learning_embed(pokemon, move_to_learn, moves_config)
+            
+            # Get current moves
+            current_moves = pokemon.getCurrentMovesList()
+            
+            # Add current move details to embed
+            for slot, move_name in current_moves:
+                move_data = moves_config.get(move_name, {})
+                power = move_data.get('power', 'N/A')
+                move_type = move_data.get('moveType', 'normal')
+                embed.add_field(
+                    name=f"Slot {slot}: {move_name.replace('-', ' ').title()}",
+                    value=f"Type: {move_type.title()} | Power: {power}",
+                    inline=True
+                )
+            
+            # Create buttons for each current move + Don't Learn
+            view = discord.ui.View(timeout=180)
+            
+            for slot, move_name in current_moves:
+                button = discord.ui.Button(
+                    label=f"Replace {move_name.replace('-', ' ').title()}",
+                    style=discord.ButtonStyle.primary,
+                    custom_id=f"replace_move_{slot}"
+                )
+                
+                async def button_callback(inter: discord.Interaction, slot_num=slot, old_move=move_name):
+                    if inter.user.id != interaction.user.id:
+                        await inter.response.send_message("This is not for you!", ephemeral=True)
+                        return
+                    
+                    # Learn the move in the selected slot
+                    pokemon.learnMove(move_to_learn, replaceSlot=slot_num)
+                    pokemon.save()
+                    
+                    await inter.response.edit_message(
+                        content=f"✅ {pokemon.pokemonName.capitalize()} forgot {old_move.replace('-', ' ').title()} and learned {move_to_learn.replace('-', ' ').title()}!",
+                        embed=None,
+                        view=None
+                    )
+                
+                button.callback = button_callback
+                view.add_item(button)
+            
+            # Add "Don't Learn" button
+            dont_learn_button = discord.ui.Button(
+                label="Don't Learn",
+                style=discord.ButtonStyle.secondary,
+                custom_id="dont_learn_move"
+            )
+            
+            async def dont_learn_callback(inter: discord.Interaction):
+                if inter.user.id != interaction.user.id:
+                    await inter.response.send_message("This is not for you!", ephemeral=True)
+                    return
+                
+                await inter.response.edit_message(
+                    content=f"❌ {pokemon.pokemonName.capitalize()} did not learn {move_to_learn.replace('-', ' ').title()}.",
+                    embed=None,
+                    view=None
+                )
+            
+            dont_learn_button.callback = dont_learn_callback
+            view.add_item(dont_learn_button)
+            
+            # Send as followup (works both during and after battle)
+            await interaction.followup.send(embed=embed, view=view, ephemeral=False)
+            
+            # Wait for button interaction
+            try:
+                await view.wait()
+            except:
+                pass  # Timeout or error
+
     def __get_wild_trainers_button(self, user_id: str, location_id: int):
         """
         Check if location has wild trainers and return button if available.
@@ -836,7 +996,6 @@ class EncountersMixin(MixinMeta):
             enc = EncounterClass(battle_state.player_pokemon, battle_state.wild_pokemon)
             enc.updateUniqueEncounters()
             
-            
             # AWARD EXPERIENCE
             from services.expclass import experiance as exp
             expObj = exp(battle_state.wild_pokemon)
@@ -844,47 +1003,47 @@ class EncountersMixin(MixinMeta):
             evGained = expObj.getEffortValue()
             
             current_hp = battle_state.player_pokemon.currentHP
-            levelUp, expMsg = battle_state.player_pokemon.processBattleOutcome(expGained, evGained, current_hp)
+            old_level = battle_state.player_pokemon.currentLevel
+            
+            # NEW: Get 3 return values including pendingMoves
+            levelUp, expMsg, pendingMoves = battle_state.player_pokemon.processBattleOutcome(expGained, evGained, current_hp)
             
             if levelUp:
-                log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up!")
+                new_level = battle_state.player_pokemon.currentLevel
+                log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up to {new_level}!")
+                
+                # Show level-up embed with dismissable button
+                level_up_embed = self.__create_level_up_embed(
+                    battle_state.player_pokemon,
+                    old_level,
+                    new_level,
+                    battle_state.player_pokemon.evolvedInto if hasattr(battle_state.player_pokemon, 'evolvedInto') else None
+                )
+                
+                dismiss_view = discord.ui.View(timeout=60)
+                dismiss_button = discord.ui.Button(label="Continue", style=discord.ButtonStyle.green)
+                
+                async def dismiss_callback(inter: discord.Interaction):
+                    if inter.user.id != user.id:
+                        await inter.response.send_message("This is not for you!", ephemeral=True)
+                        return
+                    await inter.response.edit_message(view=None)
+                
+                dismiss_button.callback = dismiss_callback
+                dismiss_view.add_item(dismiss_button)
+                
+                await interaction.followup.send(embed=level_up_embed, view=dismiss_view)
+            
             if expMsg:
                 log_lines.append(f"📈 {expMsg}")
             
+            # Handle pending move learning
+            if pendingMoves:
+                await self.__handle_move_learning(interaction, battle_state.player_pokemon, pendingMoves, battle_state)
+            
             battle_state.battle_log = ["\n".join(log_lines)]
             
-            # Check if Pokemon evolved and show ephemeral evolution embed
-            if hasattr(battle_state.player_pokemon, 'evolvedInto') and battle_state.player_pokemon.evolvedInto:
-                evolved_pokemon = battle_state.player_pokemon.evolvedInto
-                
-                # Create evolution embed
-                evolution_embed = discord.Embed(
-                    title="✨ What's this?",
-                    description=f"Your **{battle_state.player_pokemon.pokemonName.capitalize()}** evolved into **{evolved_pokemon.pokemonName.capitalize()}**!",
-                    color=discord.Color.gold()
-                )
-                evolution_embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
-                
-                # Add Pokemon sprite
-                sprite_file = None
-                try:
-                    sprite_path = f"/sprites/pokemon/{evolved_pokemon.pokemonName}.png"
-                    full_sprite_path = get_sprite_path(sprite_path)
-                    sprite_file = discord.File(full_sprite_path, filename=f"{evolved_pokemon.pokemonName}.png")
-                    evolution_embed.set_image(url=f"attachment://{evolved_pokemon.pokemonName}.png")
-                except Exception as e:
-                    print(f"Error loading evolution sprite: {e}")
-                
-                # Send ephemeral evolution message
-                if sprite_file:
-                    await interaction.followup.send(embed=evolution_embed, file=sprite_file, ephemeral=True)
-                else:
-                    await interaction.followup.send(embed=evolution_embed, ephemeral=True)
-                
-                # Update battle state to use evolved Pokemon
-                battle_state.player_pokemon = evolved_pokemon
-
-            # Check if Pokemon evolved and show ephemeral evolution embed
+            # Check if Pokemon evolved
             if hasattr(battle_state.player_pokemon, 'evolvedInto') and battle_state.player_pokemon.evolvedInto:
                 evolved_pokemon = battle_state.player_pokemon.evolvedInto
                 
@@ -961,7 +1120,7 @@ class EncountersMixin(MixinMeta):
         view = self.__create_battle_move_buttons_with_items(battle_state)
         
         await interaction.message.edit(embed=embed, view=view)
-    
+
     # def __create_wild_battle_move_buttons(self, battle_state: WildBattleState) -> View:
     #     """Create buttons for moves, run away, and catch options"""
     #     view = View()
@@ -4281,12 +4440,43 @@ class EncountersMixin(MixinMeta):
             
             # Apply experience to player's current Pokemon
             current_hp = battle_state.player_pokemon.currentHP
-            levelUp, expMsg = battle_state.player_pokemon.processBattleOutcome(expGained, evGained, current_hp)
+            old_level = battle_state.player_pokemon.currentLevel
+            
+            # NEW: Get 3 return values including pendingMoves
+            levelUp, expMsg, pendingMoves = battle_state.player_pokemon.processBattleOutcome(expGained, evGained, current_hp)
             
             if levelUp:
-                log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up!")
+                new_level = battle_state.player_pokemon.currentLevel
+                log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up to {new_level}!")
+                
+                # Show level-up embed with dismissable button
+                level_up_embed = self.__create_level_up_embed(
+                    battle_state.player_pokemon,
+                    old_level,
+                    new_level,
+                    battle_state.player_pokemon.evolvedInto if hasattr(battle_state.player_pokemon, 'evolvedInto') else None
+                )
+                
+                dismiss_view = discord.ui.View(timeout=60)
+                dismiss_button = discord.ui.Button(label="Continue", style=discord.ButtonStyle.green)
+                
+                async def dismiss_callback(inter: discord.Interaction):
+                    if inter.user.id != user.id:
+                        await inter.response.send_message("This is not for you!", ephemeral=True)
+                        return
+                    await inter.response.edit_message(view=None)
+                
+                dismiss_button.callback = dismiss_callback
+                dismiss_view.add_item(dismiss_button)
+                
+                await interaction.followup.send(embed=level_up_embed, view=dismiss_view)
+            
             if expMsg:
                 log_lines.append(f"📈 {expMsg}")
+            
+            # Handle pending move learning
+            if pendingMoves:
+                await self.__handle_move_learning(interaction, battle_state.player_pokemon, pendingMoves, battle_state)
             
             battle_state.defeated_enemies.append(battle_state.enemy_pokemon.pokemonName)
             
@@ -7333,3 +7523,4 @@ HP    : {wildPokemon.currentHP} / {stats['hp']}
     @discord.ui.button(custom_id='pokeball', label='Poke Ball', style=ButtonStyle.gray)
     async def on_throw_pokeball_encounter(self, interaction: discord.Interaction):
         await self.__on_throw_pokeball_encounter(interaction)
+

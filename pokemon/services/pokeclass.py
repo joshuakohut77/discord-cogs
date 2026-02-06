@@ -328,23 +328,28 @@ class Pokemon:
         finally:
             del db
 
-    
-
-
     def getNextLevelExperience(self):
         return self.__getBaseLevelExperience(level=self.currentLevel+1)
 
     def processBattleOutcome(self, expGained, evGained, newCurrentHP):
-        """ process victory updates and calculations """
-
+        """ 
+        Process victory updates and calculations.
+        
+        Returns:
+            tuple: (levelUp: bool, retMsg: str, pendingMoves: list of move names)
+            pendingMoves will contain moves that need player choice to learn
+        """
+        
         self.currentHP = newCurrentHP
         levelUp = False
         retMsg = ''
+        pendingMoves = []  # Moves that need player choice to learn
+        
         try:
             if newCurrentHP > 0:
                 self.currentExp = self.currentExp + expGained
 
-                # {'hp': 0, 'attack': 0, 'defense': 0, 'special-attack': 0, 'special-defense': 0, 'speed': 6}
+                # Apply Effort Values
                 if evGained is not None:
                     self.hp.EV = self.hp.EV + evGained['hp']
                     self.attack.EV = self.attack.EV + evGained['attack']
@@ -355,89 +360,80 @@ class Pokemon:
                     self.special_defense.EV = self.special_defense.EV + \
                         evGained['special-defense']
 
-                # get the base exp of the next level
+                # Check for level up
                 nextLevelBaseExp = self.getNextLevelExperience()
                 if self.currentExp >= nextLevelBaseExp:
-                    # pokemon leveled up. iteratively check exp thresholds to determine the new level
+                    # Store previous level before updating
+                    previousLevel = self.currentLevel
+                    
+                    # Calculate new level
                     for x in range(99):
                         tempLevelBaseExp = self.__getBaseLevelExperience(
                             level=self.currentLevel+x)
                         if tempLevelBaseExp > self.currentExp:
-                            self.currentLevel = self.currentLevel + x-1
-                            # if a pokemon gains multiple levels, notifications of moves learned will be skipped.
-                            # this next section is to handle that unique case
-                            moveList = self.getMoves()
-
-                            levelUp = True
-                            newMove = self.__getNewMoves()
-                            if newMove != '':
-                                retMsg += 'Your pokemon learned %s. ' % (
-                                    newMove)
-
-                            self.move_1 = moveList[3]
-                            self.move_2 = moveList[2]
-                            self.move_3 = moveList[1]
-                            self.move_4 = moveList[0]
-                            evolvedForm = self.__checkForEvolution()
-                            if evolvedForm is not None:
-                                # leaderboard stats
-                                lb = leaderboard(self.discordId)
-                                lb.evolved()
-                                retMsg += 'Your pokemon is evolving......... Your pokemon evolved into %s!' % (
-                                    evolvedForm)
-                                
-                                # Store old Pokemon info before creating new one
-                                oldTrainerId = self.trainerId
-                                oldPartyStatus = self.party
-                                wasActivePokemon = self.__isActivePokemon()
-                                
-                                # Create evolved Pokemon with correct constructor arguments
-                                evolvedPokemon = Pokemon(self.discordId, evolvedForm)
-                                evolvedPokemon.create(self.currentLevel)
-                                
-                                # Inherit party status from old Pokemon
-                                evolvedPokemon.party = oldPartyStatus
-                                
-                                # Save the evolved Pokemon first to get its trainerId
-                                evolvedPokemon.save()
-                                
-                                # Register evolved Pokemon to trainer's Pokedex
-                                from pokedexclass import pokedex as PokedexClass
-                                PokedexClass(self.discordId, evolvedPokemon)
-
-                                # Store evolved Pokemon for UI to access
-                                self.evolvedInto = evolvedPokemon
-                                
-                                # If old Pokemon was active, update trainer's activePokemon to new one
-                                if wasActivePokemon:
-                                    self.__updateActivePokemon(evolvedPokemon.trainerId)
-                                
-                                # Now delete the old Pokemon using the stored trainerId
-                                try:
-                                    db = dbconn()
-                                    milliString = str(int(time() * 1000))
-                                    newDiscordId = self.discordId + '_' + milliString
-                                    pokemonUpdateQuery = 'UPDATE pokemon SET "discord_id" = %(newDiscordId)s WHERE "id" = %(trainerId)s'
-                                    db.execute(pokemonUpdateQuery, {
-                                        'newDiscordId': newDiscordId, 
-                                        'trainerId': oldTrainerId
-                                    })
-                                    del db
-                                except:
-                                    logger.error(f"Failed to delete old Pokemon trainerId={oldTrainerId}")
-                                    logger.error(excInfo=sys.exc_info())
-                                
-                                # Don't save self anymore since we evolved
-                                return levelUp, retMsg
+                            self.currentLevel = self.currentLevel + x - 1
                             break
-
-            # save all above changes included the change in currentHP
+                    
+                    levelUp = True
+                    
+                    # Get all moves learned between levels
+                    movesLearned = self.getMovesLearnedBetweenLevels(previousLevel, self.currentLevel)
+                    
+                    # Process each move learned
+                    for moveName, moveLevel in movesLearned:
+                        currentMoveCount = self.getCurrentMoveCount()
+                        
+                        if currentMoveCount < 4:
+                            # Auto-learn if less than 4 moves
+                            if self.learnMove(moveName):
+                                retMsg += f'Your pokemon learned {moveName.replace("-", " ").title()}! '
+                        else:
+                            # Need player choice - add to pending list
+                            pendingMoves.append(moveName)
+                    
+                    # Check for evolution
+                    evolvedForm = self.__checkForEvolution()
+                    if evolvedForm is not None:
+                        # leaderboard stats
+                        lb = leaderboard(self.discordId)
+                        lb.evolved()
+                        retMsg += 'Your pokemon is evolving......... Your pokemon evolved into %s!' % (
+                            evolvedForm)
+                        
+                        # Store old Pokemon info before creating new one
+                        oldTrainerId = self.trainerId
+                        oldPartyStatus = self.party
+                        wasActivePokemon = self.__isActivePokemon()
+                        
+                        # Create evolved Pokemon with correct constructor arguments
+                        evolvedPokemon = Pokemon(self.discordId, evolvedForm)
+                        evolvedPokemon.create(self.currentLevel)
+                        
+                        # Inherit party status from old Pokemon
+                        evolvedPokemon.party = oldPartyStatus
+                        
+                        # Save the evolved Pokemon first to get its trainerId
+                        evolvedPokemon.save()
+                        
+                        # If this was the active Pokemon, update the trainer's active Pokemon
+                        if wasActivePokemon:
+                            self.__updateActivePokemon(evolvedPokemon.trainerId)
+                        
+                        # Release the old Pokemon (marks as released, doesn't delete)
+                        self.release()
+                        
+                        # Update self to point to the evolved Pokemon's data
+                        self.load(evolvedPokemon.trainerId)
+                        
+                        # ✅ Store evolution info for UI
+                        self.evolvedInto = evolvedForm
+            
             self.save()
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
-            return levelUp, retMsg
+            return levelUp, retMsg, pendingMoves
     ####
     # Private Class Methods
     ####
@@ -765,3 +761,92 @@ class Pokemon:
             if db is not None:
                 del db
             return starterName
+
+    def getMovesLearnedBetweenLevels(self, startLevel, endLevel):
+        """ Returns list of moves learned between two levels (exclusive start, inclusive end) """
+        movesLearned = []
+        try:
+            pokemon = self.__loadPokemonConfig()
+            moveDict = pokemon['moves']
+            
+            for moveName, moveLevel in moveDict.items():
+                if startLevel < moveLevel <= endLevel:
+                    movesLearned.append((moveName, moveLevel))
+            
+            # Sort by level so we process moves in order
+            movesLearned.sort(key=lambda x: x[1])
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            return movesLearned
+
+    def getCurrentMoveCount(self):
+        """ Returns the number of moves this Pokemon currently knows (not None) """
+        count = 0
+        if self.move_1 is not None:
+            count += 1
+        if self.move_2 is not None:
+            count += 1
+        if self.move_3 is not None:
+            count += 1
+        if self.move_4 is not None:
+            count += 1
+        return count
+
+    def getCurrentMovesList(self):
+        """ Returns list of current moves (non-None) with their slot numbers """
+        moves = []
+        if self.move_1 is not None:
+            moves.append((1, self.move_1))
+        if self.move_2 is not None:
+            moves.append((2, self.move_2))
+        if self.move_3 is not None:
+            moves.append((3, self.move_3))
+        if self.move_4 is not None:
+            moves.append((4, self.move_4))
+        return moves
+
+    def learnMove(self, moveName, replaceSlot=None):
+        """ 
+        Learns a new move. If replaceSlot is specified (1-4), replaces that move.
+        Otherwise adds to first empty slot.
+        
+        Args:
+            moveName: Name of move to learn
+            replaceSlot: Optional - 1, 2, 3, or 4 to replace that specific move slot
+        
+        Returns:
+            bool: True if move was learned, False if no slot available
+        """
+        try:
+            if replaceSlot is not None:
+                # Replace specific slot (1-4)
+                if replaceSlot == 1:
+                    self.move_1 = moveName
+                elif replaceSlot == 2:
+                    self.move_2 = moveName
+                elif replaceSlot == 3:
+                    self.move_3 = moveName
+                elif replaceSlot == 4:
+                    self.move_4 = moveName
+                return True
+            else:
+                # Add to first empty slot
+                if self.move_1 is None:
+                    self.move_1 = moveName
+                    return True
+                elif self.move_2 is None:
+                    self.move_2 = moveName
+                    return True
+                elif self.move_3 is None:
+                    self.move_3 = moveName
+                    return True
+                elif self.move_4 is None:
+                    self.move_4 = moveName
+                    return True
+                return False  # No empty slot
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+            return False
