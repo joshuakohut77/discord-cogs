@@ -5517,8 +5517,22 @@ class EncountersMixin(MixinMeta):
                 inline=False
             )
         
+        # new code
         view_nav = self.__create_post_battle_buttons(str(user.id))
-        await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
+        new_message = await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
+        
+        # CRITICAL: Update ActionState with new message ID so buttons work
+        trainer = self._get_trainer(str(user.id))
+        location = trainer.getLocation()
+        self.__useractions[str(user.id)] = ActionState(
+            str(user.id),
+            new_message.channel.id,
+            new_message.id,
+            location,
+            trainer.getActivePokemon(),
+            None,
+            ''
+        )
 
     async def on_gym_battle_manual(self, interaction: discord.Interaction):
         """Handle MANUAL battle with gym trainer - supports multiple Pokemon with intro"""
