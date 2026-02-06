@@ -525,7 +525,7 @@ class trainer:
                 
                 if onlyoneCompleted:
                     self.statuscode = 420
-                    self.message = f"Sorry, you can only do that one time!"
+                    self.message = f"Sorry, you can only do that one time! I hope you caught it the first time 😉"
                     return None  # CRITICAL: Return here to stop execution!
             
             # Only execute if not completed
