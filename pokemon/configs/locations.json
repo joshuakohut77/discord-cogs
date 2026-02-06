@@ -1070,7 +1070,7 @@
   "2331": {
     "locationId": 2331,
     "name": "indigo-plateau-center",
-    "north": null,
+    "north": "lorelei-room",
     "east": null,
     "south": "indigo-plateau",
     "west": null,
