@@ -502,10 +502,17 @@ class trainer:
             location: LocationModel = self.getLocation()
             locationId = location.locationId
             
+            # DEBUG: Store this for error message
+            debug_info = f"LocationId={locationId}, DiscordId={self.discordId}"
+            
             # Check if this is a tracked unique encounter location
             if locationId in [1364, 147, 158, 159, 91, 95]:
                 uEncObj = uEnc(self.discordId)
                 onlyoneCompleted = False
+                
+                # DEBUG: Check the values
+                debug_articuno = uEncObj.articuno if locationId == 136 else None
+                debug_info += f", Articuno={debug_articuno}"
                 
                 if locationId == 136:
                     if uEncObj.articuno:
@@ -523,9 +530,11 @@ class trainer:
                     if uEncObj.snorlax:
                         onlyoneCompleted = True
                 
+                debug_info += f", Completed={onlyoneCompleted}"
+                
                 if onlyoneCompleted:
                     self.statuscode = 420
-                    self.message = "You have already completed that action in this location"
+                    self.message = f"You have already completed that action in this location. DEBUG: {debug_info}"
                     return pokemon  # Return early - don't continue!
             
             # Only reach here if not completed or not a tracked location
