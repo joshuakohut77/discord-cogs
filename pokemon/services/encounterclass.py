@@ -686,9 +686,13 @@ class encounter:
     
     def updateUniqueEncounters(self):
         """ updates the unique encounters table """
-        uEncObj = uEnc(self.pokemon1.discordId)
         name = self.pokemon2.pokemonName
+        discordId = self.pokemon1.discordId
         
+        # Create encounter object and check before/after
+        uEncObj = uEnc(discordId)
+        before_value = uEncObj.articuno if name == 'articuno' else None
+
         if name == 'articuno':
             uEncObj.articuno = True
         elif name == 'zapdos':
@@ -716,8 +720,15 @@ class encounter:
         elif name == 'eevee':
             uEncObj.eevee = True
 
-        uEncObj.save()      
 
+        after_value = uEncObj.articuno if name == 'articuno' else None
+
+        uEncObj.save()      
+        save_status = uEncObj.statuscode
+    
+        return f"UpdateEncounter: {name}, before={before_value}, after={after_value}, saveStatus={save_status}, discordId={discordId}"
+    
+    
     def __loadMovesConfig(self, move):
         """ loads and returns the evolutiononfig for the current pokemon """
         # TODO replace this load with object in memory
