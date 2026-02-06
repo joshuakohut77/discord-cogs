@@ -712,12 +712,38 @@ class quests:
         # return
 
     def checkTruck(self):
+        from trainerclass import trainer as trainerClass
+        from pokedexclass import pokedex
+        
+        # Create trainer object to check party size
+        trainer = trainerClass(self.discordId)
+        party_count = trainer.getPartySize()
+        
+        # Create Mew Pokemon
         pokemon = pokeClass(self.discordId, 'mew')
         pokemon.create(25)
+        
+        # CRITICAL FIX: Set discordId and party status before saving
+        pokemon.discordId = self.discordId
+        pokemon.party = party_count < 6  # Add to party if there's space, otherwise to PC
+        
+        # Save the Pokemon
         pokemon.save()
+        
+        # Check if save was successful
+        if pokemon.statuscode == 96:
+            self.statuscode = 96
+            self.message = "Error occurred while creating Mew"
+            return
+        
+        # Register to Pokedex
+        pokedex(self.discordId, pokemon)
+
+        # Update unique encounters
         uniqueEncounters = uEnc(self.discordId)
         uniqueEncounters.mew = True
         uniqueEncounters.save()
+
         self.message = dedent("""\
                         You find an abandoned truck. Using your massive penis, you pushed
                         it out of the way. Underneath you discover a pokeball.""")
