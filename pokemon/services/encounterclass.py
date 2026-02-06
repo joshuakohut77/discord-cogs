@@ -686,8 +686,12 @@ class encounter:
     
     def updateUniqueEncounters(self):
         """ updates the unique encounters table """
+        # DEBUG logging
+        logger.info(f"updateUniqueEncounters called: pokemon1={self.pokemon1.pokemonName} (discordId={self.pokemon1.discordId}), pokemon2={self.pokemon2.pokemonName}")
+        
         uEncObj = uEnc(self.pokemon1.discordId)
         name = self.pokemon2.pokemonName
+        logger.info(f"Checking unique encounter for: {name}")
         if name == 'articuno':
             uEncObj.articuno = True
         elif name == 'zapdos':
