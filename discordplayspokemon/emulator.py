@@ -11,7 +11,7 @@ from pathlib import Path
 
 from PIL import Image
 
-log = logging.getLogger("red.twitchplayspokemon.emulator")
+log = logging.getLogger("red.discordplayspokemon.emulator")
 
 # How many frames to hold a button press (Game Boy runs at ~60 fps)
 PRESS_FRAMES = 12
