@@ -6303,7 +6303,7 @@ class EncountersMixin(MixinMeta):
                         # Fallback to URL
                         sprite_url = f"https://pokesprites.joshkohut.com{gym_sprite_path}"
                         embed.set_image(url=sprite_url)
-
+                
                 view = View()
                 
                 # Auto Battle button
@@ -6321,12 +6321,25 @@ class EncountersMixin(MixinMeta):
                 back_btn.callback = self.on_nav_map_click
                 view.add_item(back_btn)
 
-                # Edit message instead of followup
-                await interaction.message.edit(
-                    content=None,
-                    embed=embed,
-                    view=view
-                )
+                # Send message with sprite file if available
+                if sprite_file:
+                    new_message = await interaction.followup.send(
+                        embed=embed,
+                        view=view,
+                        file=sprite_file
+                    )
+                    try:
+                        await interaction.message.delete()
+                    except:
+                        pass
+                    if str(user.id) in self.__useractions:
+                        self.__useractions[str(user.id)].messageId = new_message.id
+                else:
+                    await interaction.message.edit(
+                        content=None,
+                        embed=embed,
+                        view=view
+                    )
             else:
                 await interaction.followup.send('Error getting next trainer.', ephemeral=True)
         else:
@@ -6365,76 +6378,78 @@ class EncountersMixin(MixinMeta):
                 description=f"All gym trainers defeated! You can now challenge the Gym Leader!",
                 color=discord.Color.gold()
             )
-            
+
             embed.add_field(
                 name="Gym Leader",
                 value=gym_leader.name,
                 inline=True
             )
-            
+
             embed.add_field(
                 name="Badge",
                 value=gym_leader.badge,
                 inline=True
             )
-            
+
             embed.add_field(
                 name="Prize Money",
                 value=f"${gym_leader.money}",
                 inline=True
             )
 
-            # ADD GYM SPRITE - Try file first, then URL fallback
-            sprite_loaded = False
-            sprite_file = None
+            # ADD GYM SPRITE
             gym_sprite_path = gym_info['leader'].get('gym_spritePath')
+            sprite_file = None
 
             if gym_sprite_path:
                 try:
-                    # Try to load from local file system first
                     full_sprite_path = get_sprite_path(gym_sprite_path)
-
-                    # Check if file exists
                     if os.path.exists(full_sprite_path):
-                        # Extract filename for attachment
                         filename = os.path.basename(gym_sprite_path)
                         sprite_file = discord.File(full_sprite_path, filename=filename)
                         embed.set_image(url=f"attachment://{filename}")
-                        sprite_loaded = True
-                    else:
-                        raise FileNotFoundError("Gym sprite file not found locally")
                 except Exception as e:
-                    print(f"Error loading gym sprite from file: {e}")
+                    print(f"Error loading gym sprite: {e}")
                     # Fallback to URL
-                    try:
-                        sprite_url = f"https://pokesprites.joshkohut.com{gym_sprite_path}"
-                        embed.set_image(url=sprite_url)
-                    except Exception as url_error:
-                        print(f"Error loading gym sprite from URL: {url_error}")
+                    sprite_url = f"https://pokesprites.joshkohut.com{gym_sprite_path}"
+                    embed.set_image(url=sprite_url)
 
             view = View()
-            
+
             # Auto battle button
             auto_button = Button(style=ButtonStyle.gray, label="⚡ Auto Battle Leader", custom_id='gym_leader_auto')
             auto_button.callback = self.on_gym_leader_battle_auto
             view.add_item(auto_button)
-            
+
             # Manual battle button
             manual_button = Button(style=ButtonStyle.green, label="🎮 Manual Battle Leader", custom_id='gym_leader_manual')
             manual_button.callback = self.on_gym_leader_battle_manual
             view.add_item(manual_button)
-            
+
             # Back button
             back_btn = Button(style=ButtonStyle.primary, label="🗺️ Back", custom_id='gym_back', row=1)
             back_btn.callback = self.on_nav_map_click
             view.add_item(back_btn)
 
-            # Edit message
-            await interaction.message.edit(
-                content=None,
-                embed=embed,
-                view=view
-            )
+            # Send message with sprite file if available
+            if sprite_file:
+                new_message = await interaction.followup.send(
+                    embed=embed,
+                    view=view,
+                    file=sprite_file
+                )
+                try:
+                    await interaction.message.delete()
+                except:
+                    pass
+                if str(user.id) in self.__useractions:
+                    self.__useractions[str(user.id)].messageId = new_message.id
+            else:
+                await interaction.message.edit(
+                    content=None,
+                    embed=embed,
+                    view=view
+                )
 
     async def on_gym_leader_battle_manual(self, interaction: discord.Interaction):
         """Handle MANUAL battle with gym leader - supports multiple Pokemon with intro"""
