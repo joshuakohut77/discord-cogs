@@ -600,7 +600,8 @@
   },
   "1623": {
     "pre-requsites": [
-      "soul_badge"
+      "soul_badge",
+      "HM03"
     ],
     "quest": [
       "Lone House"
