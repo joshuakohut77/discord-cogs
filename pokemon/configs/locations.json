@@ -566,7 +566,7 @@
   "233": {
     "locationId": 233,
     "name": "indigo-plateau",
-    "north": null,
+    "north": "indigo-plateau-center",
     "east": null,
     "south": "kanto-victory-road-3F",
     "west": null,
