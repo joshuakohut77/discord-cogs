@@ -593,7 +593,7 @@
     "north": "vermilion-city",
     "east": "ss-anne-truck",
     "south": "ss-anne-1F",
-    "west": null,
+    "west": "ss-anne-truck",
     "spritePath": "/sprites/locations/ss-anne.png",
     "pokecenter": false,
     "gym": false,
