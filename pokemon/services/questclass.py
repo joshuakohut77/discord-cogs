@@ -324,6 +324,7 @@ class quests:
             'S.S. Ticket': constant.SS_TICKET,
             'Gold Teeth': '🦷',  # Unicode emoji since no constant exists
             'Item Finder': constant.ITEM_FINDER,
+            'Mew': constant.POKEMON_EMOJIS['MEW'],
             'Mr. Fuji\'s Finger': constant.MR_FUJI_FINGER,
         }
         
@@ -532,9 +533,9 @@ class quests:
                             In a cafe you meet a man who was down on his gambling luck. 
                             He has bet and lost his wife in a bet. In an attempt to quit
                             he gives you his coin case.
-                            You received a Coin Case!""")
+                            """)
         self.inventory.save()
-        return
+        return self.create_key_item_embed('Coin Case')
 
     def rooftopSquare(self):
         self.inventory.lemonade = 1
@@ -542,9 +543,9 @@ class quests:
                             On the rooftop square you find a little girl flossing for a TikTok video. 
                             In a blinding rage you crush her body with a vending machine. In the process
                             a bottle was disloged. 
-                            You received a Lemonade!""")
+                            """)
         self.inventory.save()
-        return
+        return self.create_key_item_embed('Lemonade')
 
     def rocketHideout(self):
         self.keyitems.silph_scope = True
@@ -552,7 +553,7 @@ class quests:
                             Deep inside Team Rockets hideout, you stumble upon a Free Mason sex ritual. Soon you were discovered.
                             You tried to use your escape-rope but instead were bound by it.
                             For two days you were used as a sex slave in an endless train. 
-                            In a comotose of post nut clarity, you grab the Grand Masters scepter and escape. 
+                            In a comotose of post nut clarity, you grab the Grand Masters headdress and escape. 
                             """)
         self.keyitems.save()
         return self.create_key_item_embed('Silph Scope')
@@ -613,9 +614,9 @@ class quests:
         self.message = dedent("""\
                             Along the path you met a cool fishing dude. All day you spent drinking and fishing together. 
                             While he was taking a piss you stole his rod simply because it was nicer than yours.
-                            You received a Good Rod!""")
+                            """)
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('Good Rod')
 
     # def theWarden(self):
     #     self.keyitems.gold_teeth = True
@@ -720,7 +721,7 @@ class quests:
         self.message = dedent("""\
                         You find an abandoned truck. Using your massive penis, you pushed
                         it out of the way. Underneath you discover a pokeball.""")
-        return
+        return self.create_key_item_embed('Mew')
 
 
 
