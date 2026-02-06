@@ -64,7 +64,8 @@ class InputHandler:
     def parse(self, text: str, max_inputs: int = 5) -> list[str]:
         """Return up to *max_inputs* button names from a message.
 
-        Supports both single inputs ("a") and short combos ("up up a left").
+        Supports single inputs ("a"), short combos ("up up a left"),
+        and run-together letters ("aaalll" → a, a, a, left, left, left).
         The cap prevents someone from pasting a wall of inputs.
         """
         # Fast path: single token
@@ -78,6 +79,15 @@ class InputHandler:
             btn = INPUT_MAP.get(tok) or EMOJI_MAP.get(tok)
             if btn:
                 buttons.append(btn)
+            else:
+                # Token didn't match as a word — try character-by-character
+                # so "aaa" → a, a, a and "rrr" → right, right, right
+                for char in tok:
+                    btn = INPUT_MAP.get(char)
+                    if btn:
+                        buttons.append(btn)
+                    if len(buttons) >= max_inputs:
+                        break
             if len(buttons) >= max_inputs:
                 break
         return buttons
