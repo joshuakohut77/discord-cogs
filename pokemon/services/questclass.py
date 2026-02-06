@@ -587,9 +587,9 @@ class quests:
         self.message = dedent("""\
                             Deep inside the safari zone you find a lone house. Inside was a man who told you get off his property. 
                             You left and reported to the authories he has dirt on the Clintons. The next day you scavanged his house.
-                            You received HM03!""")
+                            """)
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('HM03')
 
     def secretResort(self):
         self.keyitems.HM02 = True
