@@ -6693,7 +6693,7 @@ class EncountersMixin(MixinMeta):
                     if str(user.id) in self.__useractions:
                         del self.__useractions[str(user.id)]
                 else:
-                    await interaction.channel.send('No pokemon encountered.', ephemeral=True)
+                    await interaction.followup.send('No pokemon encountered.', ephemeral=True)
                 return
 
 
@@ -6741,7 +6741,7 @@ class EncountersMixin(MixinMeta):
                     if str(user.id) in self.__useractions:
                         del self.__useractions[str(user.id)]
                 else:
-                    await interaction.channel.send('No pokemon encountered.', ephemeral=True)
+                    await interaction.followup.send('No pokemon encountered.', ephemeral=True)
                 return
 
         # active = trainer.getActivePokemon()
