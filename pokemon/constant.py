@@ -369,7 +369,7 @@ LOCATION_DISPLAY_NAMES = {
     "ss-anne-truck": '---',
     "captains-quarters": "Cptn Quarters",
     "game-corner": 'Game Corner',
-    "indigo-plateau-center": 'Indigo Plateau',
+    "indigo-plateau-center": 'Indigo Lobby',
     "lorelei-room": "Lorelei's Room",
     "bruno-room": "Bruno's Room",
     "agatha-room": "Agatha's Room",
