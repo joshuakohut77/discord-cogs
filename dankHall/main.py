@@ -618,41 +618,19 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
     ) -> discord.Message:
         """Send the hall of fame message with media."""
         try:
-            # Handle attachments first (images, videos, files)
-            if original_message.attachments:
-                attachment = original_message.attachments[0]
-                
-                # Check if it's an image (will be embedded)
-                if attachment.content_type and attachment.content_type.startswith('image/'):
-                    embed.set_image(url=attachment.url)
-                
-                # For ANY attachment, we'll post the direct link too
-                # This ensures videos/gifs play properly
-            
-            # Handle embeds (like when someone posts a link that auto-embeds)
-            elif original_message.embeds:
-                orig_embed = original_message.embeds[0]
-                
-                # Try to get image from the embed
-                if orig_embed.image:
-                    embed.set_image(url=orig_embed.image.url)
-                elif orig_embed.thumbnail:
-                    embed.set_image(url=orig_embed.thumbnail.url)
-            
-            # Send the embed first
+            # Send the embed with info
             hall_msg = await hall_channel.send(embed=embed)
             
-            # Send direct attachment link separately for videos/files to play properly
+            # If there's any media (attachments or embeds), post it separately
             if original_message.attachments:
-                attachment = original_message.attachments[0]
-                # Send the attachment URL so Discord renders it natively
-                await hall_channel.send(attachment.url)
+                # Post all attachments as separate messages for native Discord rendering
+                for attachment in original_message.attachments:
+                    await hall_channel.send(attachment.url)
             
-            # If the original message had embed content (like a YouTube link), send that too
-            elif original_message.embeds and original_message.embeds[0].url:
+            elif original_message.embeds:
+                # If the original message had an embed (like a link preview), send that URL
                 orig_embed = original_message.embeds[0]
-                # Only send if it's not just an image embed
-                if not orig_embed.image and not orig_embed.thumbnail:
+                if orig_embed.url:
                     await hall_channel.send(orig_embed.url)
             
             return hall_msg
