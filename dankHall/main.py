@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from abc import ABCMeta
+import re
+import sys
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -577,6 +579,284 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
             await ctx.send(f"❌ Error: {e}")
             print(f"Error registering certification: {e}", file=sys.stderr)
 
+    # ==================== Statistics Commands ====================
+
+    @dankhall.group(name="stats")
+    async def dh_stats(self, ctx: commands.Context):
+        """View Dank Hall statistics."""
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help(ctx.command)
+
+    @dh_stats.command(name="user")
+    async def dh_stats_user(
+        self, 
+        ctx: commands.Context, 
+        user: discord.Member = None
+    ):
+        """View certification stats for a user."""
+        user = user or ctx.author
+        
+        stats = await self.db.get_user_stats(ctx.guild.id, user.id)
+        
+        if stats["total"] == 0:
+            await ctx.send(f"{user.mention} hasn't been certified yet!")
+            return
+        
+        embed = discord.Embed(
+            title=f"🏆 {user.display_name}'s Dank Stats",
+            color=discord.Color.gold()
+        )
+        embed.set_thumbnail(url=user.display_avatar.url)
+        
+        embed.add_field(
+            name="Total Certifications",
+            value=f"**{stats['total']}**",
+            inline=True
+        )
+        
+        # Top emojis
+        if stats["by_emoji"]:
+            emoji_text = "\n".join(
+                f"{emoji}: {count}" for emoji, count in stats["by_emoji"][:5]
+            )
+            embed.add_field(name="Top Emojis", value=emoji_text, inline=True)
+        
+        # Server rank
+        rank = await self.db.get_user_rank(ctx.guild.id, user.id)
+        embed.add_field(name="Server Rank", value=f"#{rank}", inline=True)
+        
+        await ctx.send(embed=embed)
+
+    @dh_stats.command(name="leaderboard", aliases=["top", "lb"])
+    async def dh_stats_leaderboard(self, ctx: commands.Context, limit: int = 10):
+        """View the top certified users in this server."""
+        if limit < 1 or limit > 25:
+            await ctx.send("❌ Limit must be between 1 and 25.")
+            return
+        
+        leaders = await self.db.get_leaderboard(ctx.guild.id, limit)
+        
+        if not leaders:
+            await ctx.send("No certifications yet in this server!")
+            return
+        
+        embed = discord.Embed(
+            title="🏆 Dank Hall Leaderboard",
+            description="Top certified users",
+            color=discord.Color.gold()
+        )
+        
+        leaderboard_text = ""
+        for rank, (user_id, count) in enumerate(leaders, 1):
+            user = ctx.guild.get_member(user_id)
+            name = user.display_name if user else f"User {user_id}"
+            
+            medal = {1: "🥇", 2: "🥈", 3: "🥉"}.get(rank, "")
+            leaderboard_text += f"{medal} **#{rank}** {name}: {count}\n"
+        
+        embed.description = leaderboard_text
+        await ctx.send(embed=embed)
+
+    @dh_stats.command(name="channels")
+    async def dh_stats_channels(self, ctx: commands.Context, limit: int = 10):
+        """View the channels with the most certifications."""
+        if limit < 1 or limit > 25:
+            await ctx.send("❌ Limit must be between 1 and 25.")
+            return
+        
+        channels = await self.db.get_top_channels(ctx.guild.id, limit)
+        
+        if not channels:
+            await ctx.send("No certifications yet in this server!")
+            return
+        
+        embed = discord.Embed(
+            title="📊 Top Channels",
+            description="Channels with the most certified posts",
+            color=discord.Color.blue()
+        )
+        
+        channel_text = ""
+        for rank, (channel_id, count) in enumerate(channels, 1):
+            channel = ctx.guild.get_channel(channel_id)
+            name = channel.mention if channel else f"Channel {channel_id}"
+            channel_text += f"**#{rank}** {name}: {count}\n"
+        
+        embed.description = channel_text
+        await ctx.send(embed=embed)
+
+    @dh_stats.command(name="emojis")
+    async def dh_stats_emojis(self, ctx: commands.Context, limit: int = 10):
+        """View the most popular certification emojis."""
+        if limit < 1 or limit > 25:
+            await ctx.send("❌ Limit must be between 1 and 25.")
+            return
+        
+        emojis = await self.db.get_top_emojis(ctx.guild.id, limit)
+        
+        if not emojis:
+            await ctx.send("No certifications yet in this server!")
+            return
+        
+        embed = discord.Embed(
+            title="😀 Popular Emojis",
+            description="Most used certification emojis",
+            color=discord.Color.purple()
+        )
+        
+        emoji_text = ""
+        for rank, (emoji, count) in enumerate(emojis, 1):
+            emoji_text += f"**#{rank}** {emoji}: {count}\n"
+        
+        embed.description = emoji_text
+        await ctx.send(embed=embed)
+
+    @dh_stats.command(name="server")
+    async def dh_stats_server(self, ctx: commands.Context):
+        """View overall server statistics."""
+        total = await self.db.get_total_certifications(ctx.guild.id)
+        
+        if total == 0:
+            await ctx.send("No certifications yet in this server!")
+            return
+        
+        embed = discord.Embed(
+            title=f"📊 {ctx.guild.name} Dank Stats",
+            color=discord.Color.gold()
+        )
+        
+        embed.add_field(
+            name="Total Certifications",
+            value=f"**{total}**",
+            inline=True
+        )
+        
+        # Top user
+        leaders = await self.db.get_leaderboard(ctx.guild.id, 1)
+        if leaders:
+            top_user_id, top_count = leaders[0]
+            top_user = ctx.guild.get_member(top_user_id)
+            top_name = top_user.display_name if top_user else f"User {top_user_id}"
+            embed.add_field(
+                name="Top User",
+                value=f"{top_name} ({top_count})",
+                inline=True
+            )
+        
+        # Top emoji
+        emojis = await self.db.get_top_emojis(ctx.guild.id, 1)
+        if emojis:
+            top_emoji, emoji_count = emojis[0]
+            embed.add_field(
+                name="Top Emoji",
+                value=f"{top_emoji} ({emoji_count})",
+                inline=True
+            )
+        
+        await ctx.send(embed=embed)
+
+    # ==================== Helper Methods ====================
+
+    async def _get_threshold(self, channel: discord.TextChannel) -> int:
+        """Get the threshold for a channel (channel override or guild default)."""
+        channel_threshold = await self.config.channel(channel).threshold()
+        if channel_threshold is not None:
+            return channel_threshold
+        return await self.config.guild(channel.guild).default_threshold()
+
+    async def _get_hall_channel(self, channel: discord.TextChannel) -> int:
+        """Get the hall of fame channel ID for a channel."""
+        channel_hall = await self.config.channel(channel).hall_channel()
+        if channel_hall is not None:
+            return channel_hall
+        return await self.config.guild(channel.guild).default_hall_channel()
+
+    async def _create_hall_embed(
+        self, 
+        message: discord.Message, 
+        emoji: str,
+        reaction_count: int | str
+    ) -> discord.Embed:
+        """Create the embed for the hall of fame post."""
+        embed = discord.Embed(
+            title="🏆 Certified Dank",
+            color=discord.Color.gold(),
+            timestamp=message.created_at
+        )
+        
+        embed.set_author(
+            name=message.author.display_name,
+            icon_url=message.author.display_avatar.url
+        )
+        
+        embed.add_field(
+            name="Channel",
+            value=message.channel.mention,
+            inline=True
+        )
+        
+        embed.add_field(
+            name="Emoji",
+            value=emoji,
+            inline=True
+        )
+        
+        embed.add_field(
+            name="Reactions",
+            value=str(reaction_count),
+            inline=True
+        )
+        
+        embed.add_field(
+            name="Jump to Message",
+            value=f"[Click here]({message.jump_url})",
+            inline=False
+        )
+        
+        # Add message content if it's not too long
+        if message.content:
+            content = message.content[:1024]
+            if len(message.content) > 1024:
+                content += "..."
+            embed.add_field(
+                name="Content",
+                value=content,
+                inline=False
+            )
+        
+        return embed
+
+    async def _send_hall_message(
+        self,
+        hall_channel: discord.TextChannel,
+        original_message: discord.Message,
+        embed: discord.Embed
+    ) -> discord.Message:
+        """Send the hall of fame message with media."""
+        try:
+            # Send the embed with info
+            hall_msg = await hall_channel.send(embed=embed)
+            
+            # If there's any media (attachments or embeds), post it separately
+            if original_message.attachments:
+                # Post all attachments as separate messages for native Discord rendering
+                for attachment in original_message.attachments:
+                    await hall_channel.send(attachment.url)
+            
+            elif original_message.embeds:
+                # If the original message had an embed (like a link preview), send that URL
+                orig_embed = original_message.embeds[0]
+                if orig_embed.url:
+                    await hall_channel.send(orig_embed.url)
+            
+            return hall_msg
+        
+        except Exception as e:
+            print(f"Error sending hall message: {e}", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
+            return None
+
     async def _parse_hall_embed(
         self,
         hall_message: discord.Message,
@@ -626,287 +906,7 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                 if field.name == "Jump to Message" and field.value:
                     # Extract message ID from the link
                     # Format: [Click here](https://discord.com/channels/guild/channel/message)
-                    import re
-                    match = re.search(r'/(\d+)/?
-
-    # ==================== Statistics Commands ====================
-
-    @dankhall.group(name="stats")
-    async def dh_stats(self, ctx: commands.Context):
-        """View Dank Hall statistics."""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help(ctx.command)
-
-    @dh_stats.command(name="user")
-    async def dh_stats_user(
-        self, 
-        ctx: commands.Context, 
-        user: discord.Member = None
-    ):
-        """View certification stats for a user."""
-        user = user or ctx.author
-        
-        stats = await self.db.get_user_stats(ctx.guild.id, user.id)
-        
-        if stats["total"] == 0:
-            await ctx.send(f"{user.mention} hasn't been certified yet!")
-            return
-        
-        embed = discord.Embed(
-            title=f"🏆 {user.display_name}'s Dank Stats",
-            color=discord.Color.gold()
-        )
-        embed.set_thumbnail(url=user.display_avatar.url)
-        
-        embed.add_field(
-            name="Total Certifications",
-            value=f"**{stats['total']}**",
-            inline=True
-        )
-        
-        # Top emojis
-        if stats["by_emoji"]:
-            emoji_text = "\n".join(
-                f"{emoji}: {count}" for emoji, count in stats["by_emoji"][:5]
-            )
-            embed.add_field(name="Top Emojis", value=emoji_text, inline=True)
-        
-        # Server rank
-        rank = await self.db.get_user_rank(ctx.guild.id, user.id)
-        embed.add_field(name="Server Rank", value=f"#{rank}", inline=True)
-        
-        await ctx.send(embed=embed)
-
-    @dh_stats.command(name="leaderboard", aliases=["top", "lb"])
-    async def dh_stats_leaderboard(self, ctx: commands.Context, limit: int = 10):
-        """View the top certified users in this server."""
-        if limit < 1 or limit > 25:
-            await ctx.send("❌ Limit must be between 1 and 25.")
-            return
-        
-        leaders = await self.db.get_leaderboard(ctx.guild.id, limit)
-        
-        if not leaders:
-            await ctx.send("No certifications yet in this server!")
-            return
-        
-        embed = discord.Embed(
-            title="🏆 Dank Hall Leaderboard",
-            description="Top certified users",
-            color=discord.Color.gold()
-        )
-        
-        leaderboard_text = ""
-        for rank, (user_id, count) in enumerate(leaders, 1):
-            user = ctx.guild.get_member(user_id)
-            name = user.display_name if user else f"User {user_id}"
-            
-            medal = {1: "🥇", 2: "🥈", 3: "🥉"}.get(rank, "")
-            leaderboard_text += f"{medal} **#{rank}** {name}: {count}\n"
-        
-        embed.description = leaderboard_text
-        await ctx.send(embed=embed)
-
-    @dh_stats.command(name="channels")
-    async def dh_stats_channels(self, ctx: commands.Context, limit: int = 10):
-        """View the channels with the most certifications."""
-        if limit < 1 or limit > 25:
-            await ctx.send("❌ Limit must be between 1 and 25.")
-            return
-        
-        channels = await self.db.get_top_channels(ctx.guild.id, limit)
-        
-        if not channels:
-            await ctx.send("No certifications yet in this server!")
-            return
-        
-        embed = discord.Embed(
-            title="📊 Top Channels",
-            description="Channels with the most certified posts",
-            color=discord.Color.blue()
-        )
-        
-        channel_text = ""
-        for rank, (channel_id, count) in enumerate(channels, 1):
-            channel = ctx.guild.get_channel(channel_id)
-            name = channel.mention if channel else f"Channel {channel_id}"
-            channel_text += f"**#{rank}** {name}: {count}\n"
-        
-        embed.description = channel_text
-        await ctx.send(embed=embed)
-
-    @dh_stats.command(name="emojis")
-    async def dh_stats_emojis(self, ctx: commands.Context, limit: int = 10):
-        """View the most popular certification emojis."""
-        if limit < 1 or limit > 25:
-            await ctx.send("❌ Limit must be between 1 and 25.")
-            return
-        
-        emojis = await self.db.get_top_emojis(ctx.guild.id, limit)
-        
-        if not emojis:
-            await ctx.send("No certifications yet in this server!")
-            return
-        
-        embed = discord.Embed(
-            title="😀 Popular Emojis",
-            description="Most used certification emojis",
-            color=discord.Color.purple()
-        )
-        
-        emoji_text = ""
-        for rank, (emoji, count) in enumerate(emojis, 1):
-            emoji_text += f"**#{rank}** {emoji}: {count}\n"
-        
-        embed.description = emoji_text
-        await ctx.send(embed=embed)
-
-    @dh_stats.command(name="server")
-    async def dh_stats_server(self, ctx: commands.Context):
-        """View overall server statistics."""
-        total = await self.db.get_total_certifications(ctx.guild.id)
-        
-        if total == 0:
-            await ctx.send("No certifications yet in this server!")
-            return
-        
-        embed = discord.Embed(
-            title=f"📊 {ctx.guild.name} Dank Stats",
-            color=discord.Color.gold()
-        )
-        
-        embed.add_field(
-            name="Total Certifications",
-            value=f"**{total}**",
-            inline=True
-        )
-        
-        # Top user
-        leaders = await self.db.get_leaderboard(ctx.guild.id, 1)
-        if leaders:
-            top_user_id, top_count = leaders[0]
-            top_user = ctx.guild.get_member(top_user_id)
-            top_name = top_user.display_name if top_user else f"User {top_user_id}"
-            embed.add_field(
-                name="Top User",
-                value=f"{top_name} ({top_count})",
-                inline=True
-            )
-        
-        # Top emoji
-        emojis = await self.db.get_top_emojis(ctx.guild.id, 1)
-        if emojis:
-            top_emoji, emoji_count = emojis[0]
-            embed.add_field(
-                name="Top Emoji",
-                value=f"{top_emoji} ({emoji_count})",
-                inline=True
-            )
-        
-        await ctx.send(embed=embed)
-
-    # ==================== Helper Methods ====================
-
-    async def _get_threshold(self, channel: discord.TextChannel) -> int:
-        """Get the threshold for a channel (channel override or guild default)."""
-        channel_threshold = await self.config.channel(channel).threshold()
-        if channel_threshold is not None:
-            return channel_threshold
-        return await self.config.guild(channel.guild).default_threshold()
-
-    async def _get_hall_channel(self, channel: discord.TextChannel) -> int:
-        """Get the hall of fame channel ID for a channel."""
-        channel_hall = await self.config.channel(channel).hall_channel()
-        if channel_hall is not None:
-            return channel_hall
-        return await self.config.guild(channel.guild).default_hall_channel()
-
-    async def _create_hall_embed(
-        self, 
-        message: discord.Message, 
-        emoji: str,
-        reaction_count: int | str
-    ) -> discord.Embed:
-        """Create the embed for the hall of fame post."""
-        embed = discord.Embed(
-            title="🏆 Certified Dank",
-            color=discord.Color.gold(),
-            timestamp=message.created_at
-        )
-        
-        embed.set_author(
-            name=message.author.display_name,
-            icon_url=message.author.display_avatar.url
-        )
-        
-        embed.add_field(
-            name="Channel",
-            value=message.channel.mention,
-            inline=True
-        )
-        
-        embed.add_field(
-            name="Emoji",
-            value=emoji,
-            inline=True
-        )
-        
-        embed.add_field(
-            name="Reactions",
-            value=str(reaction_count),
-            inline=True
-        )
-        
-        embed.add_field(
-            name="Jump to Message",
-            value=f"[Click here]({message.jump_url})",
-            inline=False
-        )
-        
-        # Add message content if it's not too long
-        if message.content:
-            content = message.content[:1024]
-            if len(message.content) > 1024:
-                content += "..."
-            embed.add_field(
-                name="Content",
-                value=content,
-                inline=False
-            )
-        
-        return embed
-
-    async def _send_hall_message(
-        self,
-        hall_channel: discord.TextChannel,
-        original_message: discord.Message,
-        embed: discord.Embed
-    ) -> discord.Message:
-        """Send the hall of fame message with media."""
-        try:
-            # Send the embed with info
-            hall_msg = await hall_channel.send(embed=embed)
-            
-            # If there's any media (attachments or embeds), post it separately
-            if original_message.attachments:
-                # Post all attachments as separate messages for native Discord rendering
-                for attachment in original_message.attachments:
-                    await hall_channel.send(attachment.url)
-            
-            elif original_message.embeds:
-                # If the original message had an embed (like a link preview), send that URL
-                orig_embed = original_message.embeds[0]
-                if orig_embed.url:
-                    await hall_channel.send(orig_embed.url)
-            
-            return hall_msg
-        
-        except Exception as e:
-            print(f"Error sending hall message: {e}", file=sys.stderr)
-            import traceback
-            traceback.print_exc()
-            return None
-, field.value)
+                    match = re.search(r'/(\d+)/?$', field.value)
                     if match:
                         message_id = int(match.group(1))
             
@@ -925,284 +925,6 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         
         except Exception as e:
             print(f"Error parsing embed: {e}", file=sys.stderr)
-            import traceback
-            traceback.print_exc()
-            return None
-
-    # ==================== Statistics Commands ====================
-
-    @dankhall.group(name="stats")
-    async def dh_stats(self, ctx: commands.Context):
-        """View Dank Hall statistics."""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help(ctx.command)
-
-    @dh_stats.command(name="user")
-    async def dh_stats_user(
-        self, 
-        ctx: commands.Context, 
-        user: discord.Member = None
-    ):
-        """View certification stats for a user."""
-        user = user or ctx.author
-        
-        stats = await self.db.get_user_stats(ctx.guild.id, user.id)
-        
-        if stats["total"] == 0:
-            await ctx.send(f"{user.mention} hasn't been certified yet!")
-            return
-        
-        embed = discord.Embed(
-            title=f"🏆 {user.display_name}'s Dank Stats",
-            color=discord.Color.gold()
-        )
-        embed.set_thumbnail(url=user.display_avatar.url)
-        
-        embed.add_field(
-            name="Total Certifications",
-            value=f"**{stats['total']}**",
-            inline=True
-        )
-        
-        # Top emojis
-        if stats["by_emoji"]:
-            emoji_text = "\n".join(
-                f"{emoji}: {count}" for emoji, count in stats["by_emoji"][:5]
-            )
-            embed.add_field(name="Top Emojis", value=emoji_text, inline=True)
-        
-        # Server rank
-        rank = await self.db.get_user_rank(ctx.guild.id, user.id)
-        embed.add_field(name="Server Rank", value=f"#{rank}", inline=True)
-        
-        await ctx.send(embed=embed)
-
-    @dh_stats.command(name="leaderboard", aliases=["top", "lb"])
-    async def dh_stats_leaderboard(self, ctx: commands.Context, limit: int = 10):
-        """View the top certified users in this server."""
-        if limit < 1 or limit > 25:
-            await ctx.send("❌ Limit must be between 1 and 25.")
-            return
-        
-        leaders = await self.db.get_leaderboard(ctx.guild.id, limit)
-        
-        if not leaders:
-            await ctx.send("No certifications yet in this server!")
-            return
-        
-        embed = discord.Embed(
-            title="🏆 Dank Hall Leaderboard",
-            description="Top certified users",
-            color=discord.Color.gold()
-        )
-        
-        leaderboard_text = ""
-        for rank, (user_id, count) in enumerate(leaders, 1):
-            user = ctx.guild.get_member(user_id)
-            name = user.display_name if user else f"User {user_id}"
-            
-            medal = {1: "🥇", 2: "🥈", 3: "🥉"}.get(rank, "")
-            leaderboard_text += f"{medal} **#{rank}** {name}: {count}\n"
-        
-        embed.description = leaderboard_text
-        await ctx.send(embed=embed)
-
-    @dh_stats.command(name="channels")
-    async def dh_stats_channels(self, ctx: commands.Context, limit: int = 10):
-        """View the channels with the most certifications."""
-        if limit < 1 or limit > 25:
-            await ctx.send("❌ Limit must be between 1 and 25.")
-            return
-        
-        channels = await self.db.get_top_channels(ctx.guild.id, limit)
-        
-        if not channels:
-            await ctx.send("No certifications yet in this server!")
-            return
-        
-        embed = discord.Embed(
-            title="📊 Top Channels",
-            description="Channels with the most certified posts",
-            color=discord.Color.blue()
-        )
-        
-        channel_text = ""
-        for rank, (channel_id, count) in enumerate(channels, 1):
-            channel = ctx.guild.get_channel(channel_id)
-            name = channel.mention if channel else f"Channel {channel_id}"
-            channel_text += f"**#{rank}** {name}: {count}\n"
-        
-        embed.description = channel_text
-        await ctx.send(embed=embed)
-
-    @dh_stats.command(name="emojis")
-    async def dh_stats_emojis(self, ctx: commands.Context, limit: int = 10):
-        """View the most popular certification emojis."""
-        if limit < 1 or limit > 25:
-            await ctx.send("❌ Limit must be between 1 and 25.")
-            return
-        
-        emojis = await self.db.get_top_emojis(ctx.guild.id, limit)
-        
-        if not emojis:
-            await ctx.send("No certifications yet in this server!")
-            return
-        
-        embed = discord.Embed(
-            title="😀 Popular Emojis",
-            description="Most used certification emojis",
-            color=discord.Color.purple()
-        )
-        
-        emoji_text = ""
-        for rank, (emoji, count) in enumerate(emojis, 1):
-            emoji_text += f"**#{rank}** {emoji}: {count}\n"
-        
-        embed.description = emoji_text
-        await ctx.send(embed=embed)
-
-    @dh_stats.command(name="server")
-    async def dh_stats_server(self, ctx: commands.Context):
-        """View overall server statistics."""
-        total = await self.db.get_total_certifications(ctx.guild.id)
-        
-        if total == 0:
-            await ctx.send("No certifications yet in this server!")
-            return
-        
-        embed = discord.Embed(
-            title=f"📊 {ctx.guild.name} Dank Stats",
-            color=discord.Color.gold()
-        )
-        
-        embed.add_field(
-            name="Total Certifications",
-            value=f"**{total}**",
-            inline=True
-        )
-        
-        # Top user
-        leaders = await self.db.get_leaderboard(ctx.guild.id, 1)
-        if leaders:
-            top_user_id, top_count = leaders[0]
-            top_user = ctx.guild.get_member(top_user_id)
-            top_name = top_user.display_name if top_user else f"User {top_user_id}"
-            embed.add_field(
-                name="Top User",
-                value=f"{top_name} ({top_count})",
-                inline=True
-            )
-        
-        # Top emoji
-        emojis = await self.db.get_top_emojis(ctx.guild.id, 1)
-        if emojis:
-            top_emoji, emoji_count = emojis[0]
-            embed.add_field(
-                name="Top Emoji",
-                value=f"{top_emoji} ({emoji_count})",
-                inline=True
-            )
-        
-        await ctx.send(embed=embed)
-
-    # ==================== Helper Methods ====================
-
-    async def _get_threshold(self, channel: discord.TextChannel) -> int:
-        """Get the threshold for a channel (channel override or guild default)."""
-        channel_threshold = await self.config.channel(channel).threshold()
-        if channel_threshold is not None:
-            return channel_threshold
-        return await self.config.guild(channel.guild).default_threshold()
-
-    async def _get_hall_channel(self, channel: discord.TextChannel) -> int:
-        """Get the hall of fame channel ID for a channel."""
-        channel_hall = await self.config.channel(channel).hall_channel()
-        if channel_hall is not None:
-            return channel_hall
-        return await self.config.guild(channel.guild).default_hall_channel()
-
-    async def _create_hall_embed(
-        self, 
-        message: discord.Message, 
-        emoji: str,
-        reaction_count: int | str
-    ) -> discord.Embed:
-        """Create the embed for the hall of fame post."""
-        embed = discord.Embed(
-            title="🏆 Certified Dank",
-            color=discord.Color.gold(),
-            timestamp=message.created_at
-        )
-        
-        embed.set_author(
-            name=message.author.display_name,
-            icon_url=message.author.display_avatar.url
-        )
-        
-        embed.add_field(
-            name="Channel",
-            value=message.channel.mention,
-            inline=True
-        )
-        
-        embed.add_field(
-            name="Emoji",
-            value=emoji,
-            inline=True
-        )
-        
-        embed.add_field(
-            name="Reactions",
-            value=str(reaction_count),
-            inline=True
-        )
-        
-        embed.add_field(
-            name="Jump to Message",
-            value=f"[Click here]({message.jump_url})",
-            inline=False
-        )
-        
-        # Add message content if it's not too long
-        if message.content:
-            content = message.content[:1024]
-            if len(message.content) > 1024:
-                content += "..."
-            embed.add_field(
-                name="Content",
-                value=content,
-                inline=False
-            )
-        
-        return embed
-
-    async def _send_hall_message(
-        self,
-        hall_channel: discord.TextChannel,
-        original_message: discord.Message,
-        embed: discord.Embed
-    ) -> discord.Message:
-        """Send the hall of fame message with media."""
-        try:
-            # Send the embed with info
-            hall_msg = await hall_channel.send(embed=embed)
-            
-            # If there's any media (attachments or embeds), post it separately
-            if original_message.attachments:
-                # Post all attachments as separate messages for native Discord rendering
-                for attachment in original_message.attachments:
-                    await hall_channel.send(attachment.url)
-            
-            elif original_message.embeds:
-                # If the original message had an embed (like a link preview), send that URL
-                orig_embed = original_message.embeds[0]
-                if orig_embed.url:
-                    await hall_channel.send(orig_embed.url)
-            
-            return hall_msg
-        
-        except Exception as e:
-            print(f"Error sending hall message: {e}", file=sys.stderr)
             import traceback
             traceback.print_exc()
             return None
