@@ -294,6 +294,40 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         
         await ctx.send(embed=embed)
 
+    @dankhall.command(name="channelinfo")
+    async def dh_channel_info(self, ctx: commands.Context, channel: discord.TextChannel):
+        """View override settings for a specific channel."""
+        channel_config = await self.config.channel(channel).all()
+        guild_config = await self.config.guild(ctx.guild).all()
+        
+        embed = discord.Embed(
+            title=f"⚙️ Settings for {channel.name}",
+            color=discord.Color.blue()
+        )
+        
+        # Threshold
+        if channel_config["threshold"] is not None:
+            threshold_text = f"**{channel_config['threshold']}** reactions (Override)"
+        else:
+            threshold_text = f"{guild_config['default_threshold']} reactions (Using default)"
+        embed.add_field(name="Threshold", value=threshold_text, inline=False)
+        
+        # Hall Channel
+        if channel_config["hall_channel"] is not None:
+            hall_ch = ctx.guild.get_channel(channel_config["hall_channel"])
+            hall_text = f"{hall_ch.mention} (Override)" if hall_ch else "*Channel not found*"
+        else:
+            default_hall = ctx.guild.get_channel(guild_config["default_hall_channel"])
+            hall_text = f"{default_hall.mention} (Using default)" if default_hall else "*Not set*"
+        embed.add_field(name="Hall Channel", value=hall_text, inline=False)
+        
+        # Blacklisted?
+        is_blacklisted = channel.id in guild_config["blacklisted_channels"]
+        blacklist_text = "⚠️ **YES - This channel is blacklisted!**" if is_blacklisted else "No"
+        embed.add_field(name="Blacklisted", value=blacklist_text, inline=False)
+        
+        await ctx.send(embed=embed)
+
     # ==================== Manual Certification ====================
 
     @dankhall.command(name="certify")
