@@ -397,6 +397,538 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         else:
             await ctx.send("❌ Failed to post to hall of fame channel.")
 
+    @dankhall.command(name="backfill")
+    async def dh_backfill(
+        self,
+        ctx: commands.Context,
+        hall_channel: discord.TextChannel,
+        limit: int = 100
+    ):
+        """
+        Backfill the database from existing hall of fame messages.
+        
+        Scans the hall channel for old certification embeds and adds them to stats.
+        
+        Example: `[p]dankhall backfill #hall-of-fame 50`
+        """
+        if limit < 1 or limit > 500:
+            await ctx.send("❌ Limit must be between 1 and 500.")
+            return
+        
+        async with ctx.typing():
+            added = 0
+            skipped = 0
+            errors = 0
+            
+            status_msg = await ctx.send(f"🔄 Scanning {hall_channel.mention} for certifications...")
+            
+            # Fetch messages from the hall channel
+            async for message in hall_channel.history(limit=limit):
+                # Skip messages not from the bot
+                if message.author.id != self.bot.user.id:
+                    continue
+                
+                # Skip messages without embeds
+                if not message.embeds:
+                    continue
+                
+                embed = message.embeds[0]
+                
+                # Check if it's a certification embed (has "Certified Dank" title)
+                if not embed.title or "Certified Dank" not in embed.title:
+                    continue
+                
+                try:
+                    # Parse the embed to extract data
+                    result = await self._parse_hall_embed(message, embed)
+                    
+                    if not result:
+                        errors += 1
+                        continue
+                    
+                    # Check if already in database
+                    if await self.db.is_certified(result["message_id"]):
+                        skipped += 1
+                        continue
+                    
+                    # Add to database
+                    success = await self.db.add_certified_message(
+                        message_id=result["message_id"],
+                        guild_id=ctx.guild.id,
+                        channel_id=result["channel_id"],
+                        user_id=result["user_id"],
+                        emoji=result["emoji"],
+                        hall_message_id=message.id,
+                        reaction_count=result["reaction_count"]
+                    )
+                    
+                    if success:
+                        added += 1
+                    else:
+                        errors += 1
+                
+                except Exception as e:
+                    print(f"Error parsing hall message {message.id}: {e}", file=sys.stderr)
+                    errors += 1
+                    continue
+            
+            # Send results
+            embed = discord.Embed(
+                title="✅ Backfill Complete",
+                color=discord.Color.green()
+            )
+            embed.add_field(name="Added to Database", value=str(added), inline=True)
+            embed.add_field(name="Already Existed", value=str(skipped), inline=True)
+            embed.add_field(name="Errors", value=str(errors), inline=True)
+            
+            await status_msg.edit(content=None, embed=embed)
+
+    @dankhall.command(name="register")
+    async def dh_register(
+        self,
+        ctx: commands.Context,
+        hall_message_link: str
+    ):
+        """
+        Register a single hall of fame message to the database for stats.
+        
+        Provide the message link from the hall of fame channel.
+        
+        Example: `[p]dankhall register https://discord.com/channels/123/456/789`
+        """
+        # Parse the message link
+        try:
+            # Expected format: https://discord.com/channels/guild_id/channel_id/message_id
+            parts = hall_message_link.split('/')
+            if len(parts) < 3:
+                await ctx.send("❌ Invalid message link format.")
+                return
+            
+            message_id = int(parts[-1])
+            channel_id = int(parts[-2])
+            guild_id = int(parts[-3])
+            
+            if guild_id != ctx.guild.id:
+                await ctx.send("❌ That message is from a different server.")
+                return
+            
+            hall_channel = ctx.guild.get_channel(channel_id)
+            if not hall_channel:
+                await ctx.send("❌ Hall channel not found.")
+                return
+            
+            # Fetch the message
+            try:
+                message = await hall_channel.fetch_message(message_id)
+            except discord.NotFound:
+                await ctx.send("❌ Message not found.")
+                return
+            except discord.Forbidden:
+                await ctx.send("❌ I don't have permission to access that channel.")
+                return
+            
+            # Check if message is from the bot and has an embed
+            if message.author.id != self.bot.user.id:
+                await ctx.send("❌ That message isn't a certification from me.")
+                return
+            
+            if not message.embeds:
+                await ctx.send("❌ That message doesn't have an embed.")
+                return
+            
+            embed = message.embeds[0]
+            
+            # Check if it's a certification embed
+            if not embed.title or "Certified Dank" not in embed.title:
+                await ctx.send("❌ That doesn't look like a certification embed.")
+                return
+            
+            # Parse the embed
+            result = await self._parse_hall_embed(message, embed)
+            
+            if not result:
+                await ctx.send("❌ Failed to parse the certification embed.")
+                return
+            
+            # Check if already registered
+            if await self.db.is_certified(result["message_id"]):
+                await ctx.send("❌ This certification is already registered in the database.")
+                return
+            
+            # Add to database
+            success = await self.db.add_certified_message(
+                message_id=result["message_id"],
+                guild_id=ctx.guild.id,
+                channel_id=result["channel_id"],
+                user_id=result["user_id"],
+                emoji=result["emoji"],
+                hall_message_id=message.id,
+                reaction_count=result["reaction_count"]
+            )
+            
+            if success:
+                await ctx.send("✅ Certification registered successfully! Stats have been updated.")
+            else:
+                await ctx.send("❌ Failed to register certification to database.")
+        
+        except (ValueError, IndexError):
+            await ctx.send("❌ Invalid message link format. Use a Discord message link.")
+        except Exception as e:
+            await ctx.send(f"❌ Error: {e}")
+            print(f"Error registering certification: {e}", file=sys.stderr)
+
+    async def _parse_hall_embed(
+        self,
+        hall_message: discord.Message,
+        embed: discord.Embed
+    ) -> dict:
+        """
+        Parse a hall of fame embed to extract certification data.
+        
+        Returns dict with: message_id, channel_id, user_id, emoji, reaction_count
+        """
+        try:
+            # Extract user ID from embed author icon URL or author name
+            user_id = None
+            if embed.author and embed.author.icon_url:
+                # Icon URL format: https://cdn.discordapp.com/avatars/USER_ID/hash.png
+                parts = str(embed.author.icon_url).split('/')
+                for i, part in enumerate(parts):
+                    if part == 'avatars' and i + 1 < len(parts):
+                        user_id = int(parts[i + 1])
+                        break
+            
+            # Extract channel ID from embed fields
+            channel_id = None
+            emoji = None
+            reaction_count = 0
+            message_id = None
+            
+            for field in embed.fields:
+                # Channel field contains channel mention
+                if field.name == "Channel" and field.value:
+                    # Format: <#CHANNEL_ID>
+                    if '<#' in field.value:
+                        channel_id = int(field.value.strip('<#>'))
+                
+                # Emoji field
+                if field.name == "Emoji" and field.value:
+                    emoji = field.value.strip()
+                
+                # Reactions field
+                if field.name == "Reactions" and field.value:
+                    try:
+                        reaction_count = int(field.value) if field.value != "Manual" else 0
+                    except ValueError:
+                        reaction_count = 0
+                
+                # Jump to Message field contains the original message link
+                if field.name == "Jump to Message" and field.value:
+                    # Extract message ID from the link
+                    # Format: [Click here](https://discord.com/channels/guild/channel/message)
+                    import re
+                    match = re.search(r'/(\d+)/?
+
+    # ==================== Statistics Commands ====================
+
+    @dankhall.group(name="stats")
+    async def dh_stats(self, ctx: commands.Context):
+        """View Dank Hall statistics."""
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help(ctx.command)
+
+    @dh_stats.command(name="user")
+    async def dh_stats_user(
+        self, 
+        ctx: commands.Context, 
+        user: discord.Member = None
+    ):
+        """View certification stats for a user."""
+        user = user or ctx.author
+        
+        stats = await self.db.get_user_stats(ctx.guild.id, user.id)
+        
+        if stats["total"] == 0:
+            await ctx.send(f"{user.mention} hasn't been certified yet!")
+            return
+        
+        embed = discord.Embed(
+            title=f"🏆 {user.display_name}'s Dank Stats",
+            color=discord.Color.gold()
+        )
+        embed.set_thumbnail(url=user.display_avatar.url)
+        
+        embed.add_field(
+            name="Total Certifications",
+            value=f"**{stats['total']}**",
+            inline=True
+        )
+        
+        # Top emojis
+        if stats["by_emoji"]:
+            emoji_text = "\n".join(
+                f"{emoji}: {count}" for emoji, count in stats["by_emoji"][:5]
+            )
+            embed.add_field(name="Top Emojis", value=emoji_text, inline=True)
+        
+        # Server rank
+        rank = await self.db.get_user_rank(ctx.guild.id, user.id)
+        embed.add_field(name="Server Rank", value=f"#{rank}", inline=True)
+        
+        await ctx.send(embed=embed)
+
+    @dh_stats.command(name="leaderboard", aliases=["top", "lb"])
+    async def dh_stats_leaderboard(self, ctx: commands.Context, limit: int = 10):
+        """View the top certified users in this server."""
+        if limit < 1 or limit > 25:
+            await ctx.send("❌ Limit must be between 1 and 25.")
+            return
+        
+        leaders = await self.db.get_leaderboard(ctx.guild.id, limit)
+        
+        if not leaders:
+            await ctx.send("No certifications yet in this server!")
+            return
+        
+        embed = discord.Embed(
+            title="🏆 Dank Hall Leaderboard",
+            description="Top certified users",
+            color=discord.Color.gold()
+        )
+        
+        leaderboard_text = ""
+        for rank, (user_id, count) in enumerate(leaders, 1):
+            user = ctx.guild.get_member(user_id)
+            name = user.display_name if user else f"User {user_id}"
+            
+            medal = {1: "🥇", 2: "🥈", 3: "🥉"}.get(rank, "")
+            leaderboard_text += f"{medal} **#{rank}** {name}: {count}\n"
+        
+        embed.description = leaderboard_text
+        await ctx.send(embed=embed)
+
+    @dh_stats.command(name="channels")
+    async def dh_stats_channels(self, ctx: commands.Context, limit: int = 10):
+        """View the channels with the most certifications."""
+        if limit < 1 or limit > 25:
+            await ctx.send("❌ Limit must be between 1 and 25.")
+            return
+        
+        channels = await self.db.get_top_channels(ctx.guild.id, limit)
+        
+        if not channels:
+            await ctx.send("No certifications yet in this server!")
+            return
+        
+        embed = discord.Embed(
+            title="📊 Top Channels",
+            description="Channels with the most certified posts",
+            color=discord.Color.blue()
+        )
+        
+        channel_text = ""
+        for rank, (channel_id, count) in enumerate(channels, 1):
+            channel = ctx.guild.get_channel(channel_id)
+            name = channel.mention if channel else f"Channel {channel_id}"
+            channel_text += f"**#{rank}** {name}: {count}\n"
+        
+        embed.description = channel_text
+        await ctx.send(embed=embed)
+
+    @dh_stats.command(name="emojis")
+    async def dh_stats_emojis(self, ctx: commands.Context, limit: int = 10):
+        """View the most popular certification emojis."""
+        if limit < 1 or limit > 25:
+            await ctx.send("❌ Limit must be between 1 and 25.")
+            return
+        
+        emojis = await self.db.get_top_emojis(ctx.guild.id, limit)
+        
+        if not emojis:
+            await ctx.send("No certifications yet in this server!")
+            return
+        
+        embed = discord.Embed(
+            title="😀 Popular Emojis",
+            description="Most used certification emojis",
+            color=discord.Color.purple()
+        )
+        
+        emoji_text = ""
+        for rank, (emoji, count) in enumerate(emojis, 1):
+            emoji_text += f"**#{rank}** {emoji}: {count}\n"
+        
+        embed.description = emoji_text
+        await ctx.send(embed=embed)
+
+    @dh_stats.command(name="server")
+    async def dh_stats_server(self, ctx: commands.Context):
+        """View overall server statistics."""
+        total = await self.db.get_total_certifications(ctx.guild.id)
+        
+        if total == 0:
+            await ctx.send("No certifications yet in this server!")
+            return
+        
+        embed = discord.Embed(
+            title=f"📊 {ctx.guild.name} Dank Stats",
+            color=discord.Color.gold()
+        )
+        
+        embed.add_field(
+            name="Total Certifications",
+            value=f"**{total}**",
+            inline=True
+        )
+        
+        # Top user
+        leaders = await self.db.get_leaderboard(ctx.guild.id, 1)
+        if leaders:
+            top_user_id, top_count = leaders[0]
+            top_user = ctx.guild.get_member(top_user_id)
+            top_name = top_user.display_name if top_user else f"User {top_user_id}"
+            embed.add_field(
+                name="Top User",
+                value=f"{top_name} ({top_count})",
+                inline=True
+            )
+        
+        # Top emoji
+        emojis = await self.db.get_top_emojis(ctx.guild.id, 1)
+        if emojis:
+            top_emoji, emoji_count = emojis[0]
+            embed.add_field(
+                name="Top Emoji",
+                value=f"{top_emoji} ({emoji_count})",
+                inline=True
+            )
+        
+        await ctx.send(embed=embed)
+
+    # ==================== Helper Methods ====================
+
+    async def _get_threshold(self, channel: discord.TextChannel) -> int:
+        """Get the threshold for a channel (channel override or guild default)."""
+        channel_threshold = await self.config.channel(channel).threshold()
+        if channel_threshold is not None:
+            return channel_threshold
+        return await self.config.guild(channel.guild).default_threshold()
+
+    async def _get_hall_channel(self, channel: discord.TextChannel) -> int:
+        """Get the hall of fame channel ID for a channel."""
+        channel_hall = await self.config.channel(channel).hall_channel()
+        if channel_hall is not None:
+            return channel_hall
+        return await self.config.guild(channel.guild).default_hall_channel()
+
+    async def _create_hall_embed(
+        self, 
+        message: discord.Message, 
+        emoji: str,
+        reaction_count: int | str
+    ) -> discord.Embed:
+        """Create the embed for the hall of fame post."""
+        embed = discord.Embed(
+            title="🏆 Certified Dank",
+            color=discord.Color.gold(),
+            timestamp=message.created_at
+        )
+        
+        embed.set_author(
+            name=message.author.display_name,
+            icon_url=message.author.display_avatar.url
+        )
+        
+        embed.add_field(
+            name="Channel",
+            value=message.channel.mention,
+            inline=True
+        )
+        
+        embed.add_field(
+            name="Emoji",
+            value=emoji,
+            inline=True
+        )
+        
+        embed.add_field(
+            name="Reactions",
+            value=str(reaction_count),
+            inline=True
+        )
+        
+        embed.add_field(
+            name="Jump to Message",
+            value=f"[Click here]({message.jump_url})",
+            inline=False
+        )
+        
+        # Add message content if it's not too long
+        if message.content:
+            content = message.content[:1024]
+            if len(message.content) > 1024:
+                content += "..."
+            embed.add_field(
+                name="Content",
+                value=content,
+                inline=False
+            )
+        
+        return embed
+
+    async def _send_hall_message(
+        self,
+        hall_channel: discord.TextChannel,
+        original_message: discord.Message,
+        embed: discord.Embed
+    ) -> discord.Message:
+        """Send the hall of fame message with media."""
+        try:
+            # Send the embed with info
+            hall_msg = await hall_channel.send(embed=embed)
+            
+            # If there's any media (attachments or embeds), post it separately
+            if original_message.attachments:
+                # Post all attachments as separate messages for native Discord rendering
+                for attachment in original_message.attachments:
+                    await hall_channel.send(attachment.url)
+            
+            elif original_message.embeds:
+                # If the original message had an embed (like a link preview), send that URL
+                orig_embed = original_message.embeds[0]
+                if orig_embed.url:
+                    await hall_channel.send(orig_embed.url)
+            
+            return hall_msg
+        
+        except Exception as e:
+            print(f"Error sending hall message: {e}", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
+            return None
+, field.value)
+                    if match:
+                        message_id = int(match.group(1))
+            
+            # Validate we got all required data
+            if not all([user_id, channel_id, emoji, message_id]):
+                print(f"Missing data - user_id: {user_id}, channel_id: {channel_id}, emoji: {emoji}, message_id: {message_id}", file=sys.stderr)
+                return None
+            
+            return {
+                "message_id": message_id,
+                "channel_id": channel_id,
+                "user_id": user_id,
+                "emoji": emoji,
+                "reaction_count": reaction_count
+            }
+        
+        except Exception as e:
+            print(f"Error parsing embed: {e}", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
+            return None
+
     # ==================== Statistics Commands ====================
 
     @dankhall.group(name="stats")
