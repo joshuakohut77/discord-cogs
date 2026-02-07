@@ -40,6 +40,7 @@ class BattleState:
         self.turn_number = 1
         self.defeated_enemies: List = []  # Track defeated enemy Pokemon
         self.is_wild_trainer: bool = False
+        self.level_up_data = None  # Will store (pokemon, old_level, new_level, auto_learned_moves, pendingMoves)
 
 
 class WildBattleState:

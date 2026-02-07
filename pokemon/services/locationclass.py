@@ -20,6 +20,7 @@ logger = log()
 
 actions = {
     'walk': ActionModel('Tall Grass', ActionType.ENCOUNTER, 'walk'),
+    'surf': ActionModel('Surf', ActionType.ENCOUNTER, 'surf'),
     'old-rod': ActionModel('Old Rod', ActionType.ENCOUNTER, 'old-rod'),
     'good-rod': ActionModel('Good Rod', ActionType.ENCOUNTER, 'good-rod'),
     'super-rod': ActionModel('Super Rod', ActionType.ENCOUNTER, 'super-rod'),
@@ -74,8 +75,14 @@ class location:
                     areaEncounters = encountersConfig[str(locationId)]
 
             # map each method name, then make a set.
-            # A `set` removes duplicate values.
-            methods = set(map(lambda x: x['method'], areaEncounters))
+            # Extract unique methods
+            methods = list(dict.fromkeys(x['method'] for x in areaEncounters))
+            
+            # Define desired method order
+            method_order = ['walk', 'surf', 'old-rod', 'good-rod', 'super-rod', 'pokeflute', 'gift', 'only-one']
+            
+            # Sort methods by the defined order
+            methods = sorted(methods, key=lambda m: method_order.index(m) if m in method_order else 999)
             
             # Load trainer's key items to filter out unavailable methods
             keyitems = kitems(self.discordId)
@@ -105,17 +112,17 @@ class location:
                     methodList.append(actions[method])
             
             
-            # This next section checks if there's any valid quests in current area
-            # TODO replace this load with object in memory
-            p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/quests.json')
-            questsConfig = json.load(open(p, 'r'))
-            quest = QuestModel(questsConfig[str(locationId)])
-            if quest.questName != []:
-                questObj = qObj(self.discordId)
-                if questObj.prerequsitesValid(quest.prerequsites):
-                    for questMethod in quest.questName:
-                        if not questObj.questComplete(questMethod):
-                            methodList.append(ActionModel(questMethod, ActionType.QUEST, questMethod))
+            # # This next section checks if there's any valid quests in current area
+            # # TODO replace this load with object in memory
+            # p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/quests.json')
+            # questsConfig = json.load(open(p, 'r'))
+            # quest = QuestModel(questsConfig[str(locationId)])
+            # if quest.questName != []:
+            #     questObj = qObj(self.discordId)
+            #     if questObj.prerequsitesValid(quest.prerequsites):
+            #         for questMethod in quest.questName:
+            #             if not questObj.questComplete(questMethod):
+            #                 methodList.append(ActionModel(questMethod, ActionType.QUEST, questMethod))
 
         except:
             self.statuscode = 96

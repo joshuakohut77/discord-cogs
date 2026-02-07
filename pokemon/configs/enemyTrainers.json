@@ -3435,7 +3435,7 @@
       "name": "Lorelei",
       "filename": "/sprites/trainers/lorelei.png",
       "money": 10400,
-      "enemy_uuid": "elite-4",
+      "enemy_uuid": "elite-4-1",
       "pokemon": [
         {
           "dewgong": 54
@@ -3460,7 +3460,7 @@
       "name": "Bruno",
       "filename": "/sprites/trainers/bruno.png",
       "money": 10600,
-      "enemy_uuid": "elite-4",
+      "enemy_uuid": "elite-4-2",
       "pokemon": [
         {
           "onix": 53
@@ -3485,7 +3485,7 @@
       "name": "Agatha",
       "filename": "/sprites/trainers/agatha.png",
       "money": 10800,
-      "enemy_uuid": "elite-4",
+      "enemy_uuid": "elite-4-3",
       "pokemon": [
         {
           "gengar": 56
@@ -3510,7 +3510,7 @@
       "name": "Lance",
       "filename": "/sprites/trainers/lance.png",
       "money": 11000,
-      "enemy_uuid": "elite-4",
+      "enemy_uuid": "elite-4-4",
       "pokemon": [
         {
           "gyarados": 58
@@ -3535,7 +3535,7 @@
       "name": "Blue",
       "filename": "/sprites/trainers/blue.png",
       "money": 12500,
-      "enemy_uuid": "elite-4",
+      "enemy_uuid": "elite-4-5",
       "pokemon": [
         {
           "pidgeot": 61

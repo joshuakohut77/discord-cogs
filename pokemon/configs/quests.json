@@ -13,15 +13,16 @@
       "HM01"
     ],
     "quest": [
-      "Bike Voucher",
-      "SS Anne"
+      "Bike Voucher"
     ],
     "blockers": [],
     "name": "cerulean-city"
   },
   "71": {
     "pre-requsites": [],
-    "quest": [],
+    "quest": [
+      "Pokemon Lab"
+    ],
     "blockers": [
       "HM03",
       "HM04"
@@ -42,10 +43,7 @@
       "Fishing Dude",
       "Return Teeth"
     ],
-    "blockers": [
-      "bicycle",
-      "marsh_badge"
-    ],
+    "blockers": [],
     "name": "fuchsia-city"
   },
   "80": {
@@ -90,7 +88,7 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [
-      "marsh_badge"
+      "pokeflute"
     ],
     "name": "kanto-route-12-N"
   },
@@ -119,7 +117,8 @@
     ],
     "blockers": [
       "HM01",
-      "bicycle"
+      "bicycle",
+      "pokeflute"
     ],
     "name": "kanto-route-16"
   },
@@ -193,7 +192,7 @@
   },
   "104": {
     "pre-requsites": [],
-    "quest": [],
+    "quest": ["SS Anne"],
     "blockers": [],
     "name": "kanto-route-25"
   },
@@ -269,6 +268,12 @@
     "blockers": [],
     "name": "vermilion-city"
   },
+  "1511": {
+    "pre-requsites": [],
+    "quest": [],
+    "blockers": [],
+    "name": "underground-path-5-6"
+  },
   "152": {
     "pre-requsites": [],
     "quest": [],
@@ -294,7 +299,13 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [
-      "earth_badge"
+      "earth_badge",
+      "volcano_badge",
+      "rainbow_badge",
+      "boulder_badge",
+      "thunder_badge",
+      "soul_badge",
+      "cascade_badge"
     ],
     "name": "kanto-route-23-S"
   },
@@ -315,9 +326,7 @@
   "160": {
     "pre-requsites": [],
     "quest": [],
-    "blockers": [
-      "silph_scope"
-    ],
+    "blockers": ["silph_scope"],
     "name": "pokemon-tower"
   },
   "161": {
@@ -327,11 +336,9 @@
     "name": "pokemon-mansion"
   },
   "162": {
-    "pre-requsites": [
-      "soul_badge"
-    ],
+    "pre-requsites": [],
     "quest": [],
-    "blockers": [],
+    "blockers": ["soul_badge"],
     "name": "kanto-safari-zone"
   },
   "231": {
@@ -346,7 +353,8 @@
   },
   "232": {
     "pre-requsites": [
-      "silph_scope"
+      "silph_scope",
+      "mr_fujis_finger"
     ],
     "quest": [
       "Mr Fuji"
@@ -460,7 +468,6 @@
       "Fishing Brother"
     ],
     "blockers": [
-      "marsh_badge",
       "pokeflute"
     ],
     "name": "kanto-route-12-S"
@@ -560,8 +567,8 @@
     "name": "pokemon-tower-6F"
   },
   "1607": {
-    "pre-requsites": [],
-    "quest": [],
+    "pre-requsites": ["silph_scope"],
+    "quest": ["Rescue Mr Fuji"],
     "blockers": [],
     "name": "pokemon-tower-7F"
   },
@@ -587,7 +594,7 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [],
-    "name": "kanto-safari-zone"
+    "name": "kanto-safari-zone-1"
   },
   "1622": {
     "pre-requsites": [],
@@ -595,17 +602,18 @@
       "The Warden"
     ],
     "blockers": [],
-    "name": "kanto-safari-zone"
+    "name": "kanto-safari-zone-2"
   },
   "1623": {
     "pre-requsites": [
-      "soul_badge"
+      "soul_badge",
+      "HM03"
     ],
     "quest": [
       "Lone House"
     ],
     "blockers": [],
-    "name": "kanto-safari-zone"
+    "name": "kanto-safari-zone-3"
   },
   "1880": {
     "pre-requsites": [],
@@ -673,7 +681,7 @@
     "pre-requsites": [],
     "quest": [],
     "blockers": [],
-    "name": "chamption-room"
+    "name": "champion-room"
   },
   "2341": {
     "pre-requsites": [],
@@ -792,7 +800,7 @@
     "quest": [
       "Check Truck"
     ],
-    "blockers": [],
+    "blockers": ["HM03"],
     "name": "ss-anne-truck"
   },
   "23410": {

@@ -190,3 +190,4 @@ class leaderboard:
             # delete and close connection
             del db 
 
+    

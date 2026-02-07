@@ -12,7 +12,9 @@ from textwrap import dedent
 
 # Class Logger
 logger = log()
-
+"""
+TODO Pokemon Lab, Mysterious Cave and The Pokemon league quests - these are all incomplete
+"""
 
 class quests:
     def __init__(self, discordId: str):
@@ -266,7 +268,7 @@ class quests:
             if self.keyitems.oaks_parcel_delivered:
                 return True
         elif questName == 'Super Nerd':
-            if self.inventory.helixfossil != 0 or self.inventory.domefossil != 0:
+            if self.keyitems.helixfossil != 0 or self.keyitems.domefossil != 0:
                 return True
         elif questName == 'Fishing Guru':
             if self.keyitems.old_rod:
@@ -274,60 +276,72 @@ class quests:
         elif questName == 'Bike Voucher':
             if self.keyitems.bicycle:
                 return True
-        elif questName == 'Speak to Captain':
-            if self.keyitems.HM01:
+        elif questName == 'Pokemon Fan Club':
+            if self.keyitems.bike_voucher or self.keyitems.bicycle:
                 return True
-        elif questName == 'Oaks Aide':
-            if self.keyitems.HM05:
-                return True
-        elif questName == 'Museum of Science':
-            if self.inventory.oldamber != 0:
-                return True
-        elif questName == 'Cafe':
-            if self.inventory.coincase != 0:
-                return True
-        elif questName == 'Rooftop Square':
-            if self.inventory.lemonade != 0:
-                return True
-        elif questName == 'Rocket Hideout':
-            if self.keyitems.silph_scope:
-                return True
-        elif questName == 'Free Spirits':
-            return False 
-        elif questName == 'Mr Fuji':
-            if self.keyitems.pokeflute:
-                return True
-        elif questName == 'Lone House':
-            if self.keyitems.HM03:
-                return True
-        elif questName == 'Secret Resort':
-            if self.keyitems.HM02:
-                return True
-        elif questName == 'Fishing Brother':
-            if self.keyitems.super_rod:
-                return True
-        elif questName == 'Fishing Dude':
-            if self.keyitems.good_rod:
-                return True
-        elif questName == 'The Warden':
-            if self.keyitems.gold_teeth or self.keyitems.HM04:
-                return True
-        elif questName == 'Return Teeth':
-            if not self.keyitems.gold_teeth and self.keyitems.HM04:
-                return True
-        elif questName == 'SS Anne':
-            if self.keyitems.ss_ticket:
-                return True
-        elif questName == 'The Pokemon League':
-            return False 
-        elif questName == 'Mysterious Cave':
-            return False
         
         # easter eggs
         elif questName == 'Check Truck':
             uniqueEncounters = uEnc(self.discordId)
             if uniqueEncounters.mew:
                 return True
+
+    # new code - add this method to the quests class
+    def create_key_item_embed(self, item_name: str, emoji: str = None) -> dict:
+        """
+        Create an embed for key item rewards
+        
+        Args:
+            item_name: Name of the item received (e.g., 'Helix Fossil', 'HM01', 'Old Rod')
+            emoji: Optional emoji to display. If None, will try to get from constant
+        
+        Returns:
+            dict with 'embed' key containing the discord.Embed object
+        """
+        import discord
+        import constant
+        
+        # Map item names to their emoji constants
+        emoji_map = {
+            'Helix Fossil': constant.HELIXFOSSIL,
+            'Dome Fossil': constant.DOMEFOSSIL,
+            'Old Rod': constant.OLD_ROD,
+            'Good Rod': constant.GOOD_ROD,
+            'Super Rod': constant.SUPER_ROD,
+            'Bike Voucher': '🎟️',  # Unicode emoji since no constant exists
+            'Bicycle': constant.BICYCLE,
+            'HM01': constant.HM01,
+            'HM02': constant.HM02,
+            'HM03': constant.HM03,
+            'HM04': constant.HM04,
+            'HM05': constant.HM05,
+            'Town Map': constant.TOWNMAP,
+            'Old Amber': constant.OLDAMBER,
+            'Coin Case': constant.COINCASE,
+            'Lemonade': constant.LEMONADE,
+            'Silph Scope': constant.SILPH_SCOPE,
+            'Poké Flute': constant.POKEFLUTE,
+            'S.S. Ticket': constant.SS_TICKET,
+            'Gold Teeth': '🦷',  # Unicode emoji since no constant exists
+            'Item Finder': constant.ITEM_FINDER,
+            'Mew': constant.POKEMON_EMOJIS['MEW'],
+            'Aerodactyl': constant.POKEMON_EMOJIS['AERODACTYL'],
+            'Kabuto': constant.POKEMON_EMOJIS['KABUTO'],
+            'Omanyte': constant.POKEMON_EMOJIS['OMANYTE'],
+            'Mr. Fuji\'s Finger': constant.MR_FUJI_FINGER,
+        }
+        
+        # Get emoji from map or use provided emoji
+        if emoji is None:
+            emoji = emoji_map.get(item_name, '✨')  # Default sparkle emoji if not found
+        
+        embed = discord.Embed(
+            title="Item Received!",
+            description=f"{emoji} **{item_name}**",
+            color=discord.Color.gold()
+        )
+        
+        return {'embed': embed}
 
     # List of quests 
     """
@@ -363,6 +377,7 @@ class quests:
         if not questName:
             self.statuscode = 69
             self.message = "unknown quest name received"
+
         
         # all quests return a message
         self.statuscode = 420
@@ -391,6 +406,8 @@ class quests:
             return self.rocketHideout()
         elif questName == 'Free Spirits':
             return self.freeSpirits()
+        elif questName == 'Rescue Mr Fuji':
+            return self.rescueMrFuji()
         elif questName == 'Mr Fuji':
             return self.mrFuji()
         elif questName == 'Lone House':
@@ -405,6 +422,10 @@ class quests:
             return self.theWarden()
         elif questName == 'Return Teeth':
             return self.returnTeeth()
+        elif questName == 'Pokemon Fan Club':
+            return self.pokemonFanClub()
+        elif questName == 'Pokemon Lab':
+            return self.pokemonLab()
         elif questName == 'SS Anne':
             return self.ssAnne()
         elif questName == 'The Pokemon League':
@@ -421,11 +442,12 @@ class quests:
     def garysSister(self):
         self.inventory.townmap = 1
         self.message = dedent("""\
-                    You decided to have one last quickie with Gary's sister
-                    before departing. She handed you her number on the back of
-                    a peice of paper.
-                    You received the Town Map!""")
+                        You ran into Garys sister outside of town. 
+                        You could feel the instant chemistry between you two. 
+                        She handed you her number on the back of
+                        a peice of paper.""")
         self.inventory.save()
+        return self.create_key_item_embed('Town Map')
 
     def professorOak(self):
         self.keyitems.oaks_parcel_delivered = True
@@ -440,64 +462,73 @@ class quests:
         
         x = ['Helix Fossil', 'Dome Fossil']
         fossil = random.choice(x)
-        if fossil == 'Helix Fossil':
-            self.inventory.helixfossil = 1
-            self.inventory.domefossil = 0
-        else:
-            self.inventory.helixfossil = 0
-            self.inventory.domefossil = 1
+        self.keyitems.helix_fossil = (fossil == 'Helix Fossil')
+        self.keyitems.dome_fossil = (fossil == 'Dome Fossil')
         self.message = dedent("""\
                             Some nerd was super excited about finding two rocks. 
-                            You take one just to ruin his day. 
-                            You received a %s!""" %(fossil))
-        self.inventory.save()
-        return
+                            You take one just to ruin his day.""")
+        self.keyitems.save()
+        return self.create_key_item_embed(fossil)
 
     def fishingGuru(self):
         self.keyitems.old_rod = True
         self.message = dedent("""\
                             Some creepy guy gave you an old-rod with missing fishing line. 
-                            You notice bubbles comeing from the lake near you.
-                            You received an Old Rod!""")
+                            You notice bubbles coming from the water near you.""")
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('Old Rod')
 
-    def bikeVoucher(self):
+    def pokemonFanClub(self):
         self.keyitems.bike_voucher = True
         self.message = dedent("""\
                             You met a guy who found out his wife was cheating on him with some professor.
-                            He gave you the bike voucher which was her birthday surprise. 
-                            You received a Bike Voucher!""")
+                            He gave you the bike voucher which was her birthday surprise.""")
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('Bike Voucher')
+
+    def bikeVoucher(self):
+        self.keyitems.bike_voucher = False
+        self.keyitems.bicycle = True
+        self.message = dedent("""\
+                            A robbery distracted the bike shop clerk.
+                            You stole a bicycle.
+                            Your voucher fell out of your pocket in the process.""")
+        self.keyitems.save()
+        return self.create_key_item_embed('Bicycle')
 
     def speakToCaptain(self):
         self.keyitems.HM01 = True
         self.message = dedent("""\
                         You caught the captain and his crew smuggling black tar heroine.
-                        The captin bribed you to keep quiet.  
-                        You received HM01!""")
+                        The captin bribed you to keep quiet.""")
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('HM01')
 
     def oaksAide(self):
         self.keyitems.HM05 = True
         self.message = dedent("""\
-                            You met Professor Oaks aide. She was jealous to hear about his relationship with your mother.
-                            She gave you a valuable item from Oaks collection. She seemed suspiciously young.
-                            You received HM05!""")
+                            You met Professor Oaks aide. She was jealous to hear about Oak's relationship with your mother.
+                            She gave you a valuable item from Oaks collection. She seemed suspiciously young.""")
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('HM05')
 
     def museumOfScience(self):
         self.inventory.oldamber = 1
         self.message = dedent("""\
                             You browsed the Museum of Science and found a cool looking stone. 
                             You placed the stone in your bag when no one was looking.
-                            The inscription said "Property of John Hammond"
-                            You received some Old Amber!""")
+                            The inscription said "Property of John Hammond""")
         self.inventory.save()
-        return
+        return self.create_key_item_embed('Old Amber')
+
+    def returnTeeth(self):
+        self.keyitems.HM04 = True
+        self.keyitems.gold_teeth = False
+        self.message = dedent("""\
+                            Speaking to the warden about the dead pokemon you found, he admired your bling bling grille. 
+                            He offered to trade you for the gold teeth. They fit perfectly...""")
+        self.keyitems.save()
+        return self.create_key_item_embed('HM04')
 
     def cafe(self):
         self.inventory.coincase = 1
@@ -505,9 +536,9 @@ class quests:
                             In a cafe you meet a man who was down on his gambling luck. 
                             He has bet and lost his wife in a bet. In an attempt to quit
                             he gives you his coin case.
-                            You received a Coin Case!""")
+                            """)
         self.inventory.save()
-        return
+        return self.create_key_item_embed('Coin Case')
 
     def rooftopSquare(self):
         self.inventory.lemonade = 1
@@ -515,20 +546,20 @@ class quests:
                             On the rooftop square you find a little girl flossing for a TikTok video. 
                             In a blinding rage you crush her body with a vending machine. In the process
                             a bottle was disloged. 
-                            You received a Lemonade!""")
+                            """)
         self.inventory.save()
-        return
+        return self.create_key_item_embed('Lemonade')
 
     def rocketHideout(self):
         self.keyitems.silph_scope = True
         self.message = dedent("""\
                             Deep inside Team Rockets hideout, you stumble upon a Free Mason sex ritual. Soon you were discovered.
                             You tried to use your escape-rope but instead were bound by it.
-                            For two days you were used as a sex slave in an endless train. In a comotose of post nut clarity, 
-                            you grab the Grand Masters scepter and escape. 
-                            You received the Silph Scope!""")
+                            For two days you were used as a sex slave in an endless train. 
+                            In a comotose of post nut clarity, you grab the Grand Masters headdress and escape. 
+                            """)
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('Silph Scope')
 
     def freeSpirits(self):
         self.message = dedent("""\
@@ -541,20 +572,28 @@ class quests:
     def mrFuji(self):
         self.keyitems.pokeflute = True
         self.message = dedent("""\
-                            You meet a feeble old man alone in his house. You notice a cool instrument haning on his wall. 
-                            You asked if you could have it. He declined. He was alone...
-                            You received the Pokeflute!""")
+                            You meet a feeble old Mr. Fuji alone in his house. You notice a cool instrument haning on his wall. 
+                            You asked if you could have it. He declined. He was alone...""")
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('Poké Flute')
+
+    def rescueMrFuji(self):
+        self.keyitems.mr_fujis_finger = True
+        self.message = dedent("""\
+                            At the top of Pokemon Tower, you find Mr. Fuji being held captive by Team Rocket.
+                            Using your Silph Scope, you defeat the ghost Pokemon and rescue him.
+                            In the scuffle, Mr. Fuji loses a finger. You pocket it as a souvenir.""")
+        self.keyitems.save()
+        return self.create_key_item_embed('Mr. Fuji\'s Finger', '👆')
 
     def loneHouse(self):
         self.keyitems.HM03 = True
         self.message = dedent("""\
                             Deep inside the safari zone you find a lone house. Inside was a man who told you get off his property. 
                             You left and reported to the authories he has dirt on the Clintons. The next day you scavanged his house.
-                            You received HM03!""")
+                            """)
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('HM03')
 
     def secretResort(self):
         self.keyitems.HM02 = True
@@ -562,75 +601,185 @@ class quests:
                             
                             You received HM02!""")
         self.keyitems.save()
+        return self.create_key_item_embed('HM02')
         return
 
     def fishingBrother(self):
         self.keyitems.super_rod = True
         self.message = dedent("""\
                             You met the brother of a previous fisherman. You shared the story about seeing the bubbles in the water.
-                            He quickly became anxious for you to leave. He offered you a new rod in exchange for your silence.
-                            You received a Super Rod!""")
+                            He quickly became anxious for you to leave. He offered you a new rod in exchange for your silence.""")
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('Super Rod')
 
     def fishingDude(self):
         self.keyitems.good_rod = True
         self.message = dedent("""\
                             Along the path you met a cool fishing dude. All day you spent drinking and fishing together. 
                             While he was taking a piss you stole his rod simply because it was nicer than yours.
-                            You received a Good Rod!""")
+                            """)
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('Good Rod')
+
+    # def theWarden(self):
+    #     self.keyitems.gold_teeth = True
+    #     self.message = dedent("""\
+    #                         Walking through the safari zone you find a set of gold teeth lying next to some dead pokemon.
+    #                         You received some Gold Teeth""")
+    #     self.keyitems.save()
+    #     return
 
     def theWarden(self):
         self.keyitems.gold_teeth = True
         self.message = dedent("""\
-                            Walking through the safari zone you find a set of gold teeth lying next to some dead pokemon.
-                            You received some Gold Teeth""")
+                            You walked into a house and found some old guy in pain. 
+                            He was unable to speak. You notice a corpse of a dead Marowak in the corner.
+                            You search the body for loot and found the skull with gold teeth still in it.""")
         self.keyitems.save()
-        return
-
-    def returnTeeth(self):
-        self.keyitems.HM04 = True
-        self.keyitems.gold_teeth = False
-        self.message = dedent("""\
-                            Speaking to the warden about the dead pokemon you found, he admired your bling bling grille. 
-                            He offered to trade you for the gold teeth. They fit perfectly...
-                            You received HM04""")
-        self.keyitems.save()
-        return
+        return self.create_key_item_embed('Gold Teeth')
 
     def pokemonLab(self):
         # special quest where you trade in Helix/Dome Fossil and old amber for pokemon later
-        if self.inventory.domefossil > 0 or self.inventory.helixfossil > 0 or self.inventory.oldamber > 0:
-            if self.inventory.domefossil > 0:
-                self.inventory.domefossil = -1
-            if self.inventory.helixfossil > 0:
-                self.inventory.helixfossil = -1
+        if self.keyitems.dome_fossil or self.keyitems.helix_fossil or self.inventory.oldamber > 0:
+            if self.keyitems.dome_fossil:
+                self.keyitems.dome_fossil = False
+            if self.keyitems.helix_fossil:
+                self.keyitems.helix_fossil = False
             if self.inventory.oldamber > 0:
                 self.inventory.oldamber = -1
             self.message = dedent("""\
                                 You find some german scientists in a lab. They offer to experiement 
                                 on your prehistoric rocks. You gladly give them your stupid rocks.
                                 """)
+            self.keyitems.save()
             self.inventory.save()
         elif self.keyitems.elite_four:
-            # if beaten elite four give them pokemon.
-            if self.inventory.domefossil == -1:
-                pokemon1 = pokeClass(self.discordId, 138) # omanyte
+            # Old code - determine which fossils were given
+            gave_dome = not self.keyitems.dome_fossil
+            gave_helix = not self.keyitems.helix_fossil
+            gave_amber = self.inventory.oldamber == -1
+            
+            # New code - follows the exact pattern from checkTruck method
+            from trainerclass import trainer as trainerClass
+            from pokedexclass import pokedex
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            
+            # Create trainer object to check party size
+            trainer = trainerClass(self.discordId)
+            
+            # Track all received Pokemon for combined message
+            received_pokemon = []
+            
+            if gave_dome:
+                party_count = trainer.getPartySize()
+                
+                # Create Kabuto Pokemon - using string name like checkTruck does
+                pokemon1 = pokeClass(self.discordId, 'kabuto')
                 pokemon1.create(35)
+                
+                # CRITICAL: Set discordId and party status before saving
+                pokemon1.discordId = self.discordId
+                pokemon1.party = party_count < 6  # Add to party if there's space, otherwise to PC
+                
+                # Save the Pokemon
                 pokemon1.save()
-                self.message += " You received Omanyte."
-            if self.inventory.helixfossil == -1:
-                pokemon2 = pokeClass(self.discordId, 140) # kabuto
+                
+                # Check if save was successful
+                if pokemon1.statuscode == 96:
+                    self.statuscode = 96
+                    self.message = "Error occurred while creating Kabuto"
+                    return
+                
+                # Register to Pokedex
+                pokedex(self.discordId, pokemon1)
+                
+                # Add leaderboard tracking
+                lb = LeaderboardClass(str(self.discordId))
+                lb.completions()
+                
+                received_pokemon.append(('Kabuto', "The scientists return your Dome Fossil... but it's not a fossil anymore!"))
+            
+            if gave_helix:
+                party_count = trainer.getPartySize()
+                
+                # Create Omanyte Pokemon - using string name like checkTruck does
+                pokemon2 = pokeClass(self.discordId, 'omanyte')
                 pokemon2.create(35)
+                
+                # CRITICAL: Set discordId and party status before saving
+                pokemon2.discordId = self.discordId
+                pokemon2.party = party_count < 6  # Add to party if there's space, otherwise to PC
+                
+                # Save the Pokemon
                 pokemon2.save()
-                self.message += " You received Kabuto."
-            if self.inventory.oldamber == -1:
-                pokemon3 = pokeClass(self.discordId, 142) # aerodactyl
+                
+                # Check if save was successful
+                if pokemon2.statuscode == 96:
+                    self.statuscode = 96
+                    self.message = "Error occurred while creating Omanyte"
+                    return
+                
+                # Register to Pokedex
+                pokedex(self.discordId, pokemon2)
+                
+                # Add leaderboard tracking
+                lb = LeaderboardClass(str(self.discordId))
+                lb.completions()
+                
+                received_pokemon.append(('Omanyte', "The scientists return your Helix Fossil... but it's not a fossil anymore!"))
+            
+            if gave_amber:
+                party_count = trainer.getPartySize()
+                
+                # Create Aerodactyl Pokemon - using string name like checkTruck does
+                pokemon3 = pokeClass(self.discordId, 'aerodactyl')
                 pokemon3.create(35)
+                
+                # CRITICAL: Set discordId and party status before saving
+                pokemon3.discordId = self.discordId
+                pokemon3.party = party_count < 6  # Add to party if there's space, otherwise to PC
+                
+                # Save the Pokemon
                 pokemon3.save()
-                self.message += " You received Aerodactyl."
+                
+                # Check if save was successful
+                if pokemon3.statuscode == 96:
+                    self.statuscode = 96
+                    self.message = "Error occurred while creating Aerodactyl"
+                    return
+                
+                # Register to Pokedex
+                pokedex(self.discordId, pokemon3)
+                
+                # Add leaderboard tracking
+                lb = LeaderboardClass(str(self.discordId))
+                lb.completions()
+                
+                received_pokemon.append(('Aerodactyl', "The scientists return your Old Amber... but it's not amber anymore!"))
+            
+            if received_pokemon:
+                # Build combined message with all Pokemon received
+                import discord
+                import constant
+                
+                # Get emojis for all received Pokemon
+                pokemon_emojis = []
+                for pokemon_name, _ in received_pokemon:
+                    emoji = constant.POKEMON_EMOJIS.get(pokemon_name.upper(), '✨')
+                    pokemon_emojis.append(f"{emoji} **{pokemon_name}**")
+                
+                # Create single embed with all Pokemon
+                embed = discord.Embed(
+                    title="Pokémon Received!",
+                    description="\n".join(pokemon_emojis),
+                    color=discord.Color.gold()
+                )
+                
+                # Combine all messages
+                messages = [msg for _, msg in received_pokemon]
+                self.message = "\n\n".join(messages)
+                
+                return {'embed': embed}
         else:
             self.message = """The scientists begin to shout at you in german. You decide to leave"""
         
@@ -640,10 +789,9 @@ class quests:
         self.keyitems.ss_ticket = True
         self.message = dedent("""\
                             Rummaging through someones mailbox you find an evelope. 
-                            Inside it says "For Tommy. Sincerely, The Make a Wish Foundation"
-                            You received an SS Anne Ticket""")
+                            Inside it says "For Tommy. Sincerely, The Make a Wish Foundation""")
         self.keyitems.save()
-        return
+        return self.create_key_item_embed('S.S. Ticket')
 
     def thePokemonLeague(self):
         # start battle with Elite 4
@@ -660,17 +808,54 @@ class quests:
         # return
 
     def checkTruck(self):
+        from trainerclass import trainer as trainerClass
+        from pokedexclass import pokedex
+        
+        # Check if trainer has already received Mew
+        uniqueEncounters = uEnc(self.discordId)
+        if uniqueEncounters.mew:
+            self.statuscode = 420
+            self.message = "You already found something here!"
+            return
+        
+        # Create trainer object to check party size
+        trainer = trainerClass(self.discordId)
+        party_count = trainer.getPartySize()
+        
+        # Create Mew Pokemon
         pokemon = pokeClass(self.discordId, 'mew')
         pokemon.create(25)
+        
+        # CRITICAL: Set discordId and party status before saving
+        pokemon.discordId = self.discordId
+        pokemon.party = party_count < 6  # Add to party if there's space, otherwise to PC
+        
+        # Save the Pokemon
         pokemon.save()
-        uniqueEncounters = uEnc(self.discordId)
+        
+        # Check if save was successful
+        if pokemon.statuscode == 96:
+            self.statuscode = 96
+            self.message = "Error occurred while creating Mew"
+            return
+        
+        # Register to Pokedex
+        pokedex(self.discordId, pokemon)
+        
+        # Update unique encounters to mark Mew as received
         uniqueEncounters.mew = True
         uniqueEncounters.save()
+        
+        from services.leaderboardclass import leaderboard as LeaderboardClass
+
+        lb = LeaderboardClass(str(self.discordId))
+        lb.easter_eggs()
+
+        self.statuscode = 420
         self.message = dedent("""\
                         You find an abandoned truck. Using your massive penis, you pushed
-                        it out of the way. Underneath you discover a pokeball."
-                        You received Mew!""")
-        return
+                        it out of the way. Underneath you discover a pokeball.""")
+        return self.create_key_item_embed('Mew')
 
 
 
