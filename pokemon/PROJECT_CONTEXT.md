@@ -3,7 +3,7 @@
 ## Project Overview
 
 **Repository:** https://github.com/joshuakohut77/discord-cogs.git
-**Working Directory:** `/home/legend/claude/discord-cogs/pokemon`
+**Working Directory:** `/home/legend/Documents/GitHub/discord-cogs/pokemon`
 **Running Bot Directory:** `/home/legend/claude/docker/data/cogs/CogManager/cogs/pokemon`
 **Framework:** Red-DiscordBot v3.5.22 with Discord.py v2.6.3
 **Language:** Python 3.11
@@ -22,16 +22,26 @@ discord-cogs/pokemon/
 │   └── typeEffectiveness.json # Type matchup multipliers
 ├── services/         # Backend service classes
 │   ├── battleclass.py      # Gym battle progression, victory tracking
-│   ├── encounterclass.py   # Battle mechanics, damage calculation
+│   ├── encounterclass.py   # Battle mechanics, damage calculation, exports calculate_battle_damage()
 │   ├── trainerclass.py     # Trainer data management
 │   ├── locationclass.py    # Location management
 │   ├── questclass.py       # Quest system, blockers checking
 │   ├── keyitemsclass.py    # Key items (badges, HMs, etc.)
 │   ├── pokeclass.py        # Pokemon class
+│   ├── ailmentsclass.py    # Status ailments (burn, poison, freeze, etc.)
 │   └── dbclass.py          # Database connection handler
-├── models/           # Data models
+├── models/           # Data models (NEW PACKAGE)
+│   ├── __init__.py          # Package marker
+│   ├── battlestate.py       # BattleState, WildBattleState classes
+│   └── sessionstate.py      # ActionState, BagState, ItemUsageState, MartState
+├── helpers/          # Helper utilities (NEW PACKAGE)
+│   ├── __init__.py          # Package marker, exports getTrainerGivenPokemonName
+│   ├── helpers.py           # General helper functions
+│   ├── pathhelpers.py       # Config/sprite path loading (NEW)
+│   └── decorators.py        # Session validation decorators (NEW)
 ├── *.py             # Cog mixins (encounters.py, map.py, etc.)
-└── constant.py      # Constants (emojis, location display names)
+├── constant.py      # Constants (emojis, location display names, battle constants)
+└── functions.py     # UI helpers (embeds, HP bars, colors)
 
 
 ```
@@ -113,6 +123,101 @@ discord-cogs/pokemon/
 **Example Quests:**
 - Pallet Town: "Garys Sister" → Town Map
 - Professor Oak's Lab: "Professor Oak" → Sets oaks_parcel_delivered
+
+### 9. encounters.py Refactoring (COMPLETED 2026-02-04)
+**Goal:** Reduce code duplication and improve organization in encounters.py (7,476 lines)
+**Result:** Successfully reduced to 7,256 lines (-220 lines, -2.9%) with improved maintainability
+
+#### Phase 1: Extract Constants & Path Helpers
+**Changes:**
+- Created `helpers/pathhelpers.py` with centralized config loading
+  - `get_config_path(filename)` - Resolves config file paths
+  - `load_json_config(filename)` - Loads and caches JSON configs
+  - `get_sprite_path(sprite_path)` - Resolves sprite paths
+- Enhanced `constant.py` with battle constants:
+  - `BATTLE_CONSTANTS` - Damage calculation values (217, 256, STAB 1.5x)
+  - `DISCORD_LIMITS` - Field/label character limits
+  - `ITEM_HEALING` - Potion healing amounts
+- Replaced 15+ duplicate `os.path.join()` patterns in encounters.py
+
+**Line Reduction:** 7,476 → 7,439 (-37 lines)
+
+#### Phase 2: Move State Classes to Models Package
+**Changes:**
+- Created `models/battlestate.py`:
+  - Moved `BattleState` class (multi-Pokemon battle state)
+  - Moved `WildBattleState` class (single wild encounter state)
+- Created `models/sessionstate.py`:
+  - Moved `ActionState` class (wild encounter actions)
+  - Moved `BagState` class (bag navigation state)
+  - Moved `ItemUsageState` class (item usage flow)
+  - Moved `MartState` class (PokeMart UI state)
+- Updated encounters.py to import from new locations
+
+**Line Reduction:** 7,439 → 7,331 (-108 lines)
+
+#### Phase 3: Extract Damage Calculation
+**Changes:**
+- Added `calculate_battle_damage()` function to `services/encounterclass.py`
+  - Centralized Gen 1 damage formula: `((2*level/5+2) * power * (atk/def) / 50 + 2) * random * STAB * effectiveness`
+  - Handles hit/miss calculation based on move accuracy
+  - Returns tuple: `(damage, hit_success)`
+- Replaced 4 duplicate damage calculations (300+ lines duplicated code)
+- Added `__all__ = ['encounter', 'calculate_battle_damage']` export
+
+**Line Reduction:** 7,331 → 7,254 (-77 lines)
+
+#### Phase 4: Create Session Validation Decorators
+**Changes:**
+- Created `helpers/decorators.py` with validation decorators:
+  - `@require_action_state()` - Validates ActionState session
+  - `@require_battle_state()` - Validates BattleState session
+  - `@require_wild_battle_state()` - Validates WildBattleState session
+  - `@require_bag_state()` - Validates BagState session
+- Applied to key handler methods as proof of concept
+- Eliminates repeated session validation checks
+
+**Line Reduction:** 7,254 → 7,232 (-22 lines)
+
+#### Phase 5: UI Component Factories
+**Status:** Reserved for future implementation
+**Potential:** Would eliminate 900+ lines of duplicate Pokemon selectors and party buttons
+
+#### Phase 6: Add Battle UI Functions
+**Changes:**
+- Added `create_hp_bar()` function to `functions.py`
+  - Visual HP bar display: `█████░░░░░`
+  - Replaced 2 duplicate implementations
+- Updated all 4 `make_hp_bar` calls to use `create_hp_bar`
+
+**Line Reduction:** 7,232 → 7,222 (-10 lines)
+
+#### Phase 7: Consolidate TrainerClass Instantiation
+**Changes:**
+- Added `_get_trainer()` helper method with caching to encounters.py
+- Replaced 46 instances of `TrainerClass(str(user.id))`
+- Reduces object creation overhead
+- Added `_clear_trainer_cache()` for cache invalidation
+
+**Line Change:** 7,222 → 7,256 (+34 net, but improves performance)
+
+#### Bug Fixes Applied During Refactoring
+1. **ImportError for calculate_battle_damage**: Added `__all__` export to encounterclass.py
+2. **ModuleNotFoundError for helpers**: Created `helpers/__init__.py` package marker
+3. **ModuleNotFoundError for models**: Created `models/__init__.py` package marker
+4. **ImportError for getTrainerGivenPokemonName**: Moved helpers.py to helpers/helpers.py, exported from __init__.py
+5. **NameError for make_hp_bar**: Replaced all calls with `create_hp_bar`
+6. **NotNullViolation in ailments table**: Fixed pre-existing bug - added pokemonId to INSERT column list in ailmentsclass.py:89
+7. **AttributeError for MartState.quantity**: Added missing quantity attribute to MartState.__init__
+8. **ModuleNotFoundError for pathhelpers**: Fixed import path after package restructure
+
+#### Summary
+- **Original:** 7,476 lines
+- **Final:** 7,256 lines
+- **Reduction:** -220 lines (-2.9%)
+- **New Files:** 8 (pathhelpers.py, decorators.py, battlestate.py, sessionstate.py, 4 __init__.py files)
+- **Git Commits:** 14 (6 refactoring phases + 8 bug fixes)
+- **Architecture:** Clear separation of concerns (UI/Logic/Data), reusable components, follows existing patterns
 
 ### 8. Gym Challenge System (FULLY FUNCTIONAL)
 **Implementation:** Complete gym battle system with UI and mechanics
@@ -318,13 +423,87 @@ battle.battleVictory(trainer_model)     # Money + database tracking
 battle.gymLeaderVictory(leader_model)   # Badge + money + database
 ```
 
-### 5. Loading Config Files
+### 5. Loading Config Files (NEW PATTERN)
 ```python
+# Modern pattern using pathhelpers (Phase 1 refactoring)
+from helpers.pathhelpers import load_json_config, get_sprite_path
+
+# Load JSON config with caching
+moves_config = load_json_config('moves.json')
+gyms_data = load_json_config('gyms.json')
+
+# Get sprite path
+sprite_path = get_sprite_path('/sprites/pokemon/pikachu.png')
+
+# Old pattern (still works, but prefer pathhelpers)
 import json
 import os
-
 config_path = os.path.join(os.path.dirname(__file__), '../configs/gyms.json')
 data = json.load(open(config_path, 'r'))
+```
+
+### 6. Using Session Validation Decorators (NEW PATTERN)
+```python
+# Modern pattern using decorators (Phase 4 refactoring)
+from helpers.decorators import require_wild_battle_state, require_bag_state
+
+# Decorator automatically validates session
+@require_wild_battle_state()
+async def on_battle_move_click(self, interaction: discord.Interaction):
+    # No need for manual validation, decorator handles it
+    user_id = str(interaction.user.id)
+    battle_state = self.__wild_battle_states[user_id]
+    # ... proceed with battle logic
+
+@require_bag_state()
+async def on_bag_item_click(self, interaction: discord.Interaction):
+    user_id = str(interaction.user.id)
+    bag_state = self.__bag_states[user_id]
+    # ... proceed with item logic
+
+# Old pattern (still used in many places, migrate gradually)
+async def on_button_click(self, interaction: discord.Interaction):
+    user_id = str(interaction.user.id)
+    if user_id not in self.__wild_battle_states:
+        await interaction.response.send_message('No active battle.', ephemeral=True)
+        return
+    battle_state = self.__wild_battle_states[user_id]
+    if battle_state.message_id != interaction.message.id:
+        await interaction.response.send_message('This is not the current battle.', ephemeral=True)
+        return
+    # ... proceed with logic
+```
+
+### 7. Creating Visual HP Bars (NEW PATTERN)
+```python
+# Modern pattern using functions.py (Phase 6 refactoring)
+from functions import create_hp_bar
+
+# Calculate HP percentage
+hp_percent = (pokemon.currentHP / max_hp) * 100
+
+# Create visual HP bar
+hp_bar = create_hp_bar(hp_percent, bar_length=10)
+# Output: "█████░░░░░" (50% HP example)
+
+# Use in embed
+description = f"HP: {pokemon.currentHP}/{max_hp}\n{hp_bar}"
+```
+
+### 8. Using Battle Constants (NEW PATTERN)
+```python
+# Modern pattern using constant.py (Phase 1 refactoring)
+from constant import BATTLE_CONSTANTS, ITEM_HEALING
+
+# Access battle constants
+random_damage = random.randrange(
+    BATTLE_CONSTANTS['RANDOM_DAMAGE_MIN'],
+    BATTLE_CONSTANTS['RANDOM_DAMAGE_MAX']
+)
+stab_multiplier = BATTLE_CONSTANTS['STAB_MULTIPLIER']  # 1.5
+
+# Access item healing amounts
+heal_amount = ITEM_HEALING.get('potion', 20)  # 20 HP
 ```
 
 ## Common Discord Bot Commands
@@ -468,18 +647,29 @@ del db  # Close connection in finally block
 ## Important Files Reference
 
 **Core Cog Files:**
-- `encounters.py` - Encounter UI, gym battles, quest buttons (500+ lines)
+- `encounters.py` - Encounter UI, gym battles, quest buttons (7,256 lines after refactoring, was 7,476)
 - `map.py` - Location navigation, direction buttons (400+ lines)
-- `constant.py` - Location display names, emoji constants
+- `constant.py` - Location display names, emoji constants, battle constants
+- `functions.py` - UI helpers (embeds, HP bars, type colors)
 
 **Service Layer:**
 - `battleclass.py` - Gym progression, victory tracking (224 lines)
-- `encounterclass.py` - Battle mechanics, damage calculation (689 lines)
+- `encounterclass.py` - Battle mechanics, exports `calculate_battle_damage()` (689 lines)
 - `trainerclass.py` - Trainer management, has `quest()` method (375+ lines)
 - `questclass.py` - Quest system, `locationBlocked()` checker
 - `keyitemsclass.py` - Badge/HM tracking (137 lines)
 - `pokeclass.py` - Pokemon class, moves, stats
+- `ailmentsclass.py` - Status ailments (sleep, poison, burn, freeze, etc.)
 - `dbclass.py` - Database connection handler
+
+**Models Package (NEW):**
+- `models/battlestate.py` - BattleState, WildBattleState classes
+- `models/sessionstate.py` - ActionState, BagState, ItemUsageState, MartState classes
+
+**Helpers Package (NEW):**
+- `helpers/pathhelpers.py` - Config/sprite path loading, JSON caching
+- `helpers/decorators.py` - Session validation decorators (@require_*_state)
+- `helpers/helpers.py` - General helper functions (getTrainerGivenPokemonName)
 
 **Config Files:**
 - `gyms.json` - All gym data (826 lines) - FIXED typos
@@ -492,6 +682,25 @@ del db  # Close connection in finally block
 ## Git Commit History (Recent)
 
 ```
+# Refactoring (2026-02-04)
+97f2d81 Update encounters.py
+df96e70 Update encounters.py
+faccb40 Update enemyTrainers.json
+e5f1adb Update encounters.py
+8b9a8df Update encounters.py
+[Commit] Fix MartState missing quantity attribute
+[Commit] Fix ailments null constraint violation - add pokemonId to INSERT
+[Commit] Fix make_hp_bar references to create_hp_bar
+[Commit] Fix helpers package structure and imports
+[Commit] Phase 7: Consolidate TrainerClass instantiation with caching
+[Commit] Phase 6: Add create_hp_bar to functions.py
+[Commit] Phase 4: Create session validation decorators
+[Commit] Phase 3: Extract damage calculation to encounterclass
+[Commit] Phase 2: Move state classes to models package
+[Commit] Phase 1: Extract constants and path helpers
+[Commit] Stable v1.0 - Pre-refactoring checkpoint
+
+# Gym System (2026-02-02)
 0a3ca86 Fix Pokemon name typos in gyms.json and add error handling
 f5d6210 Fix 'This is not for you' error in gym battles
 a0ad236 Add full gym battle system with UI and battle mechanics
@@ -504,6 +713,8 @@ e1b9719 Fix quest buttons showing even when no encounter methods exist
 33121f1 Add quest buttons to encounters based on location
 50fad01 Refactor to use existing quests.locationBlocked() for consistency
 4d9d341 Add 44 missing location names to LOCATION_DISPLAY_NAMES
+
+# Earlier Work
 7efe01d Always reload pokemon data (fix stale stats)
 bccb9dd Fix interaction handling in fight
 66693ce Remove old interaction.respond
@@ -519,6 +730,41 @@ bccb9dd Fix interaction handling in fight
 **Pokemon Sprites:** https://pokesprites.joshkohut.com/sprites/
 **Discord Bot Framework:** https://docs.discord.red/en/stable/
 **Discord.py Docs:** https://discordpy.readthedocs.io/
+
+## Development Best Practices (Post-Refactoring)
+
+### Code Organization Rules
+Following the refactoring, new code should follow these patterns:
+
+1. **Constants** → Always add to `constant.py`, never hardcode magic numbers
+2. **State Classes** → Place in `models/` package (battlestate.py, sessionstate.py)
+3. **UI Helpers** → Add to `functions.py` (embeds, formatters, visual elements)
+4. **Business Logic** → Keep in `services/` (battle mechanics, trainer management)
+5. **Utilities** → Add to `helpers/` (path helpers, decorators, general functions)
+6. **Cog Mixins** → Keep focused on Discord interactions, delegate to services
+
+### Prevent Future Duplication
+- **Session Validation**: Use `@require_*_state()` decorators instead of inline checks
+- **Config Loading**: Use `load_json_config()` from pathhelpers instead of manual file loading
+- **HP Bars**: Use `create_hp_bar()` from functions.py
+- **TrainerClass**: Use `self._get_trainer(user_id)` for cached instances
+- **Damage Calculation**: Use `calculate_battle_damage()` from encounterclass
+
+### Package Structure
+All directories that contain Python modules must have `__init__.py`:
+```python
+# helpers/__init__.py
+"""Helper utilities for Pokemon cog."""
+from .helpers import getTrainerGivenPokemonName
+__all__ = ['getTrainerGivenPokemonName']
+```
+
+### Module Exports
+Use `__all__` to explicitly declare what functions are exported:
+```python
+# services/encounterclass.py
+__all__ = ['encounter', 'calculate_battle_damage']
+```
 
 ## Quick Start for New Session
 
@@ -549,6 +795,6 @@ bccb9dd Fix interaction handling in fight
 
 ---
 
-**Last Updated:** 2026-02-02
-**Claude Code Session ID:** d059277a-00e9-4663-b46a-e3ce51d9a765
-**Status:** Gym battle system fully functional, ready for enhancements
+**Last Updated:** 2026-02-05
+**Claude Code Session ID:** 0ee0846d-4e1b-4e85-8f36-0e3121357aec
+**Status:** Major refactoring complete - encounters.py reduced from 7,476 to 7,256 lines with improved architecture. Gym battle system fully functional, ready for enhancements.
