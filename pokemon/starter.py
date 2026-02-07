@@ -13,12 +13,14 @@ if TYPE_CHECKING:
 
 from redbot.core import commands
 
+import os
 import constant
 from services.trainerclass import trainer as TrainerClass
 from services.pokeclass import Pokemon as PokemonClass
 from services.pokedexclass import pokedex as PokedexClass
 from services.inventoryclass import inventory as InventoryClass
 from models.state import PokemonState, DisplayCard
+from .ui.intro_scene import start_intro_scene
 
 from .abcd import MixinMeta
 from .functions import (createStatsEmbed, createPokedexEntryEmbed,
@@ -62,6 +64,43 @@ class StarterMixin(MixinMeta):
         message: discord.Message = await ctx.send(embed=embed, view=btns)
         self.setPokemonState(author, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
 
+    @_trainer.command()
+    async def delete(self, ctx: commands.Context) -> None:
+        """Delete your trainer and all associated data. This action cannot be undone!"""
+        user = ctx.author
+        
+        # Create confirmation embed
+        embed = discord.Embed(
+            title="⚠️ Delete Trainer Account",
+            description=f"**{user.display_name}**, are you sure you want to delete your trainer account?\n\n"
+                        f"This will permanently delete:\n"
+                        f"• All your Pokémon\n"
+                        f"• Your entire inventory\n"
+                        f"• Your Pokédex progress\n"
+                        f"• All trainer data\n\n"
+                        f"**This action CANNOT be undone!**",
+            color=discord.Color.red()
+        )
+        
+        # Create view with Yes/No buttons
+        view = View(timeout=60)  # 60 second timeout
+        
+        # Yes button (danger style)
+        yes_button = Button(style=ButtonStyle.danger, label="Yes, Delete Everything", custom_id="confirm_delete")
+        yes_button.callback = self._on_delete_confirm
+        view.add_item(yes_button)
+        
+        # No button (secondary style)
+        no_button = Button(style=ButtonStyle.secondary, label="No, Keep My Account", custom_id="cancel_delete")
+        no_button.callback = self._on_delete_cancel
+        view.add_item(no_button)
+        
+        # Send confirmation message
+        message = await ctx.send(embed=embed, view=view)
+        
+        # Store message info for callbacks
+        self._delete_confirmation_users = getattr(self, '_delete_confirmation_users', {})
+        self._delete_confirmation_users[user.id] = message.id
 
     @_trainer.command()
     async def starter(self, ctx: commands.Context, user: DiscordUser = None) -> None:
@@ -73,18 +112,136 @@ class StarterMixin(MixinMeta):
 
         # This will create the trainer if it doesn't exist
         trainer = TrainerClass(str(user.id))
+
+        # Check if trainer already has a starter (check database directly, don't call getStarterPokemon yet)
+        has_starter = False
+        try:
+            from services.dbclass import db as dbconn
+            db = dbconn()
+            queryString = 'SELECT "starterId" FROM trainer WHERE discord_id = %(discordId)s'
+            result = db.querySingle(queryString, {'discordId': str(user.id)})
+            if result and result[0] is not None:
+                has_starter = True
+            del db
+        except:
+            has_starter = False
+
+        # If no starter yet, show intro scene
+        if not has_starter:
+            await self._show_intro_scene(ctx, user, trainer)
+            return
+
+        # If they have a starter, get it and display
         pokemon = trainer.getStarterPokemon()
         active = trainer.getActivePokemon()
-
         state = PokemonState(str(user.id), None, DisplayCard.STATS, [pokemon], active.trainerId, None)
-
         authorIsTrainer = user.id == state.discordId
 
         embed, btns = self.__pokemonSingleCard(user, state, state.card, authorIsTrainer)
-
         message: discord.Message = await ctx.send(embed=embed, view=btns)
         self.setPokemonState(author, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
 
+    async def _show_intro_scene(self, ctx: commands.Context, user: DiscordUser, trainer: TrainerClass):
+        """Show the intro scene for new trainers"""
+        
+        # Define intro scenes - you can edit this easily!
+        intro_scenes = [
+            {
+                'title': 'Welcome to the World of Pokémon!',
+                'text': 'Hello there! Welcome to the wonderful world of Pokémon!\n\nMy name is Oak. People call me the Pokémon Professor.',
+                'color': discord.Color.green(),
+                'sprite_path': '/sprites/trainers/oak.png'
+            },
+            {
+                'title': 'About Pokémon',
+                'text': 'This world is inhabited by creatures called Pokémon.\n\nFor some people, Pokémon are pets. Others use them for battles.',
+                'color': discord.Color.green(),
+                'sprite_path': '/sprites/trainers/oak.png'
+            },
+            {
+                'title': 'Your Journey Begins',
+                'text': 'Certain Pokémon are of particular interest these days.\n\nYes. Vaporeon. No further questions.',
+                'color': discord.Color.green(),
+                'sprite_path': '/sprites/trainers/oak.png'
+            },
+            {
+                'title': 'First things first',
+                'text': 'What is your name?\n\nTry not to mess it up. This is permanent. Probably.',
+                'color': discord.Color.green(),
+                'prompt_name': True,
+                'sprite_path': '/sprites/trainers/oak.png'
+            },
+            {
+                'title': 'Not this guy',
+                'text': 'This is your rival, Blue. He picked the starter\n\nthat\’s strong against yours. On purpose.',
+                'color': discord.Color.green(),
+                'sprite_path': '/sprites/trainers/blue.png'
+            },
+            {
+                'title': 'Your journey begins now!',
+                'text': 'Catch monsters. Beat your rival.\n\nDon\’t ask Oak about Vaporeon again.',
+                'color': discord.Color.gold(),
+                'sprite_path': '/sprites/trainers/oak.png'
+            }
+        ]
+        
+        
+        # Start the intro scene
+        await start_intro_scene(
+            ctx, 
+            user.id, 
+            intro_scenes, 
+            self._on_intro_complete
+        )
+
+    async def _on_intro_complete(self, interaction: Interaction, trainer_name: str):
+        """Called when intro scene is complete"""
+        user = interaction.user
+        
+        # Save trainer name to database
+        trainer = TrainerClass(str(user.id))
+        trainer.setTrainerName(trainer_name)
+        
+        # Get starter pokemon (this creates it if it doesn't exist)
+        pokemon = trainer.getStarterPokemon()
+        active = trainer.getActivePokemon()
+        
+        # Create the completion embed with pokemon sprite
+        completion_embed = discord.Embed(
+            title='🎉 You received your first Pokémon! 🎉',
+            description=f'Congratulations, {trainer_name}! You received a **{pokemon.pokemonName.capitalize()}**!\n\nType `,play` or `,m` to begin your adventure!',
+            color=discord.Color.gold()
+        )
+        
+        # Add the pokemon sprite to the embed
+        sprite_file = None
+        try:
+            from helpers.pathhelpers import get_sprite_path
+            sprite_path = f"/sprites/pokemon/{pokemon.pokemonName}.png"
+            full_sprite_path = get_sprite_path(sprite_path)
+            
+            if os.path.exists(full_sprite_path):
+                filename = f"{pokemon.pokemonName}.png"
+                sprite_file = discord.File(full_sprite_path, filename=filename)
+                completion_embed.set_image(url=f"attachment://{filename}")
+            else:
+                # Fallback to URL
+                sprite_url = f"https://pokesprites.joshkohut.com/sprites/pokemon/{pokemon.pokemonName}.png"
+                completion_embed.set_image(url=sprite_url)
+        except Exception as e:
+            print(f"Error loading pokemon sprite: {e}")
+            # Fallback to URL
+            try:
+                sprite_url = f"https://pokesprites.joshkohut.com/sprites/pokemon/{pokemon.pokemonName}.png"
+                completion_embed.set_image(url=sprite_url)
+            except:
+                pass
+        
+        # Send completion message with sprite
+        if sprite_file:
+            await interaction.message.edit(embed=completion_embed, view=None, attachments=[sprite_file])
+        else:
+            await interaction.message.edit(embed=completion_embed, view=None)
 
     async def __on_moves_click(self, interaction: Interaction):
         user = interaction.user
@@ -131,6 +288,72 @@ class StarterMixin(MixinMeta):
         message = await interaction.message.edit(embed=embed, view=btns)
         self.setPokemonState(user, PokemonState(state.discordId, message.id, DisplayCard.DEX, state.pokemon, state.active, None))
     
+    async def _on_delete_confirm(self, interaction: Interaction):
+        """Handle confirmation of trainer deletion"""
+        user = interaction.user
+        
+        # Check if this user has a pending deletion
+        if not hasattr(self, '_delete_confirmation_users') or user.id not in self._delete_confirmation_users:
+            await interaction.response.send_message("This confirmation is not for you or has expired.", ephemeral=True)
+            return
+        
+        # Check if this is the right message
+        if interaction.message.id != self._delete_confirmation_users[user.id]:
+            await interaction.response.send_message("This confirmation is not for you or has expired.", ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Delete the trainer
+        trainer = TrainerClass(str(user.id))
+        result_message = trainer.deleteTrainer()
+        
+        # Create result embed
+        if trainer.statuscode == 420:
+            embed = discord.Embed(
+                title="✅ Trainer Deleted",
+                description=f"{result_message}\n\nYou can start fresh anytime by using `,trainer starter`!",
+                color=discord.Color.green()
+            )
+        else:
+            embed = discord.Embed(
+                title="❌ Deletion Failed",
+                description=f"An error occurred: {result_message}",
+                color=discord.Color.red()
+            )
+        
+        # Update the message
+        await interaction.message.edit(embed=embed, view=None)
+        
+        # Clean up
+        del self._delete_confirmation_users[user.id]
+
+    async def _on_delete_cancel(self, interaction: Interaction):
+        """Handle cancellation of trainer deletion"""
+        user = interaction.user
+        
+        # Check if this user has a pending deletion
+        if not hasattr(self, '_delete_confirmation_users') or user.id not in self._delete_confirmation_users:
+            await interaction.response.send_message("This confirmation is not for you or has expired.", ephemeral=True)
+            return
+        
+        # Check if this is the right message
+        if interaction.message.id != self._delete_confirmation_users[user.id]:
+            await interaction.response.send_message("This confirmation is not for you or has expired.", ephemeral=True)
+            return
+        
+        # Create cancellation embed
+        embed = discord.Embed(
+            title="✅ Deletion Cancelled",
+            description=f"{user.display_name}, your trainer account is safe!",
+            color=discord.Color.blue()
+        )
+        
+        # Update the message
+        await interaction.response.edit_message(embed=embed, view=None)
+        
+        # Clean up
+        del self._delete_confirmation_users[user.id]
 
     async def __on_stats_click(self, interaction: Interaction):
         user = interaction.user

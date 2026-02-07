@@ -195,7 +195,7 @@ PROTEIN = '<:protein:980313748961132565>'
 COINCASE = '<:coincase:974516706678562866>'
 DIREHIT = '<:direhit:974516730430910524>'
 DOMEFOSSIL = '<:domefossil:974516755672215562>'
-HELIXFOSSIL = '<:domefossil:974516755672215562>'
+HELIXFOSSIL = '<:domefossil:974516778220798003>'
 FRESHWATER = '<:freshwater:974517845117530172>'
 LEMONADE = '<:lemonade:974517900855607336>'
 HPUP = '<:hpup:974517875060650025>'
@@ -236,7 +236,7 @@ BADGE_MARSH_06 = '<:badge_marsh:974547060198096896>'
 BADGE_VOLCANO_07 = '<:badge_volcano:974547060340715540>'
 BADGE_EARTH_08 = '<:badge_earth:974547060172927016>'
 BICYCLE = '<:bicycle:974547059963203625>'
-GOODROD = '<:goodrod:974547059984175174>'
+GOOD_ROD = '<:goodrod:974547059984175174>'
 HM01 = '<:hm01:974547059673808918>'
 HM02 = '<:hm02:974547059845787649>'
 HM03 = '<:hm03:974547059988377630>'
@@ -249,7 +249,7 @@ POKEFLUTE = '<:pokeflute:974547060680429578>'
 SILPH_SCOPE = '<:silph_scope:974547061884211230>'
 SS_TICKET = '<:ss_ticket:974547060894347294>'
 SUPER_ROD = '<:super_rod:974547060101632031>'
-
+MR_FUJI_FINGER = '<:silph_scope:974547061884211230>'
 
 
 LOCATION_DISPLAY_NAMES = {
@@ -284,8 +284,8 @@ LOCATION_DISPLAY_NAMES = {
     "kanto-route-9": 'Route 9',
     "seafoam-islands": 'Seafoam Islands',
     "cerulean-cave": 'Cerulean Cave',
-    "kanto-victory-road": 'Victory Road Start',
-    "kanto-victory-road-1": 'Victory Road 1',
+    "kanto-victory-road": 'Victory Rd Start',
+    "kanto-victory-road-1": 'Victory Rd 1',
     "viridian-forest": 'Viridian Forest',
     "kanto-route-23": 'Route 23',
     "kanto-route-23-N": 'Route 23 North',
@@ -293,25 +293,25 @@ LOCATION_DISPLAY_NAMES = {
     "power-plant": 'Power Plant',
     "kanto-victory-road-2": 'Victory Road 2',
     "pokemon-tower": 'Pokémon Tower',
-    "pokemon-tower-2F": 'Pokémon Tower 2F',
-    "pokemon-tower-3F": 'Pokémon Tower 3F',
-    "pokemon-tower-4F": 'Pokémon Tower 4F',
-    "pokemon-tower-5F": 'Pokémon Tower 5F',
-    "pokemon-tower-6F": 'Pokémon Tower 6F',
-    "pokemon-tower-7F": 'Pokémon Tower 7F',
+    "pokemon-tower-2F": 'Tower 2F',
+    "pokemon-tower-3F": 'Tower 3F',
+    "pokemon-tower-4F": 'Tower 4F',
+    "pokemon-tower-5F": 'Tower 5F',
+    "pokemon-tower-6F": 'Tower 6F',
+    "pokemon-tower-7F": 'Tower 7F',
     "pokemon-mansion": 'Pokémon Mansion',
-    "pokemon-mansion-2F": 'Pokemon Mansion 2F',
-    "pokemon-mansion-3F": 'Pokemon Mansion 3F',
-    "pokemon-mansion-BF1": 'Pokemon Mansion BF1',
+    "pokemon-mansion-2F": 'Mansion 2F',
+    "pokemon-mansion-3F": 'Mansion 3F',
+    "pokemon-mansion-BF1": 'Mansion BF1',
     "kanto-safari-zone": 'Safari Zone',
     "ss-anne": 'S.S. Anne',
     "celadon-city": 'Celadon City',
     "department-store": "Department Store",
-    "department-store-2F": "Department Store 2F",
-    "department-store-3F": "Department Store 3F",
-    "department-store-4F": "Department Store 4F",
-    "department-store-5F": "Department Store 5F",
-    "department-store-rooftop": "Department Store Rooftop",
+    "department-store-2F": "Store 2F",
+    "department-store-3F": "Store 3F",
+    "department-store-4F": "Store 4F",
+    "department-store-5F": "Store 5F",
+    "department-store-rooftop": "Rooftop",
     "kanto-route-10": 'Route 10',
     "kanto-route-10-N": 'Route 10 North',
     "kanto-route-10-S": 'Route 10 South',
@@ -326,27 +326,27 @@ LOCATION_DISPLAY_NAMES = {
     "saffron-city": 'Saffron City',
     "viridian-city": 'Viridian City',
     "underground-path": 'Underground Path',
-    "safari-zone": 'Safari Zone',
-    "safari-zone-1": 'Safari Zone 1',
-    "safari-zone-2": 'Safari Zone 2',
-    "safari-zone-3": 'Safari Zone 3',
-    "professor-oak-lab": "Profesor Oak's Lab",
+    "kanto-safari-zone": 'Safari Zone',
+    "kanto-safari-zone-1": 'Safari Zone 1',
+    "kanto-safari-zone-2": 'Safari Zone 2',
+    "kanto-safari-zone-3": 'Safari Zone 3',
+    "professor-oak-lab": "Oak's Lab",
     "mt-moon-BF1": 'Mt. Moon BF1',
     "mt-moon-BF2": 'Mt. Moon BF2',
     "cerulean-cave-2F": 'Cerulean Cave 2F',
     "cerulean-cave-B1F": 'Cerulean Cave B1F',
-    "kanto-sea-route-20-E": 'Sea Route 20 East',
-    "kanto-sea-route-20-W": 'Sea Route 20 West',
-    "kanto-victory-road-2F": 'Victory Road 2F',
-    "kanto-victory-road-3F": 'Victory Road 3F',
-    "seafoam-islands-BF1": 'Seafoam Islands BF1',
-    "seafoam-islands-BF2": 'Seafoam Islands BF2',
-    "seafoam-islands-BF3": 'Seafoam Islands BF3',
-    "seafoam-islands-BF4": 'Seafoam Islands BF4',
+    "kanto-sea-route-20-E": 'Sea Rt. 20 East',
+    "kanto-sea-route-20-W": 'Sea Rt. 20 West',
+    "kanto-victory-road-2F": 'Victory Rd 2F',
+    "kanto-victory-road-3F": 'Victory Rd 3F',
+    "seafoam-islands-BF1": 'Seafoam BF1',
+    "seafoam-islands-BF2": 'Seafoam BF2',
+    "seafoam-islands-BF3": 'Seafoam BF3',
+    "seafoam-islands-BF4": 'Seafoam BF4',
     "rocket-hideout": 'Rocket Hideout',
-    "rocket-hideout-B2F": 'Rocket Hideout B2F',
-    "rocket-hideout-B3F": 'Rocket Hideout B3F',
-    "rocket-hideout-B4F": 'Rocket Hideout B4F',
+    "rocket-hideout-B2F": 'Hideout B2F',
+    "rocket-hideout-B3F": 'Hideout B3F',
+    "rocket-hideout-B4F": 'Hideout B4F',
     "silph-co": 'Silph Co.',
     "silph-co-2F": 'Silph Co. 2F',
     "silph-co-3F": 'Silph Co. 3F',
@@ -360,21 +360,22 @@ LOCATION_DISPLAY_NAMES = {
     "silph-co-11F": 'Silph Co. 11F',
     "ss-anne-deck": 'S.S. Anne Deck',
     "ss-anne-1F": 'S.S. Anne 1F',
-    "ss-anne-1F-rooms": 'S.S. Anne 1F Rooms',
+    "ss-anne-1F-rooms": '1F Rooms',
     "ss-anne-2F": 'S.S. Anne 2F',
-    "ss-anne-2F-rooms": 'S.S. Anne 2F Rooms',
+    "ss-anne-2F-rooms": '2F Rooms',
     "ss-anne-3F": 'S.S. Anne 3F',
-    "ss-anne-basement": 'S.S. Anne Basement',
-    "ss-anne-basement-rooms": 'S.S. Anne Basement Rooms',
-    "ss-anne-truck": 'S.S. Anne Truck',
-    "captains-quarters": "Captain's Quarters",
+    "ss-anne-basement": 'Basement',
+    "ss-anne-basement-rooms": 'Basement Rooms',
+    "ss-anne-truck": '---',
+    "captains-quarters": "Cptn Quarters",
     "game-corner": 'Game Corner',
-    "indigo-plateau-center": 'Indigo Plateau Center',
+    "indigo-plateau-center": 'Indigo Lobby',
     "lorelei-room": "Lorelei's Room",
     "bruno-room": "Bruno's Room",
     "agatha-room": "Agatha's Room",
     "lance-room": "Lance's Room",
-    "champion-room": 'Champion Room'
+    "champion-room": 'Champion Room',
+    "underground-path-5-6": 'Underground Path'
 }
 
 # Battle Constants

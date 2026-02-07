@@ -47,41 +47,78 @@ class trainer:
     def deleteTrainer(self):
         """soft deletes a trainer and all of their pokemon """
         retMsg = ''
+        db = None
         try:
             db = dbconn()
-            # use milliseconds as a way to get a unique number. used to soft delete a value and still retain original discordId
-            milliString = str(int(time() * 1000))
+            # use a shorter timestamp to avoid exceeding varchar limits
+            # Unix timestamp in seconds is only 10 digits
+            milliString = str(int(time()))
             newDiscordId = self.discordId + '_' + milliString
+            
             pokemonUpdateQuery = 'UPDATE pokemon SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(pokemonUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            
             trainerUpdateQuery = 'UPDATE trainer SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(trainerUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            
             inventoryUpdateQuery = 'UPDATE inventory SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(inventoryUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            
             keyItemsUpdateQuery = 'UPDATE keyitems SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(keyItemsUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            
             leaderBoardUpdateQuery = 'UPDATE leaderboard SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(leaderBoardUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            
             pokedexUpdateQuery = 'UPDATE pokedex SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(pokedexUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
-            uniqueEncountersUpdateQuery = 'UPDATE unique-encounters SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
+            
+            trainerBattlesUpdateQuery = 'UPDATE trainer_battles SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
+            db.executeWithoutCommit(trainerBattlesUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            
+            uniqueEncountersUpdateQuery = 'UPDATE "unique-encounters" SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(uniqueEncountersUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            
             db.commit()
             retMsg = "Trainer deleted successfully!"
             self.statuscode = 420
-        except:
+        except Exception as e:
             self.statuscode = 96
-            retMsg = "Error occured while trying to delete trainer"
-            db.rollback()
+            retMsg = f"Error occurred while trying to delete trainer: {str(e)}"
+            if db:
+                db.rollback()
             logger.error(excInfo=sys.exc_info())
         finally:
             # delete and close connection
-            del db
+            if db:
+                del db
             return retMsg
+
+    def setTrainerName(self, trainerName: str):
+        """Set the trainer's name"""
+        if not self.trainerExists:
+            self.statuscode = 96
+            self.message = 'Trainer does not exist'
+            return
+        
+        try:
+            db = dbconn()
+            updateString = 'UPDATE trainer SET "trainerName"=%(trainerName)s WHERE "discord_id"=%(discordId)s'
+            db.execute(updateString, {'trainerName': trainerName, 'discordId': self.discordId})
+            self.statuscode = 420
+        except:
+            self.statuscode = 96
+            self.message = "Error occurred while setting trainer name"
+            logger.error(excInfo=sys.exc_info())
+            db.rollback()
+        finally:
+            del db
 
     # TODO: This needs to update the trainers pokedex
     def getStarterPokemon(self):
         """Returns a random starter pokemon dictionary {pokemon: id} """
+        from pokedexclass import pokedex as PokedexClass
+        
         if not self.trainerExists:
             self.statuscode = 96
             self.message = 'Trainer does not exist'
@@ -128,7 +165,10 @@ class trainer:
                 #       trainers pokemon, but fail to update the trainer with the starter.
                 # TODO: Make the all the queries part of one transaction that will rollback
                 #       if it fails.
-                
+
+                pokemon.discordId = self.discordId
+                pokemon.party = True
+
                 # save starter into
                 pokemon.save()
                 if pokemon.statuscode == 96:
@@ -140,6 +180,9 @@ class trainer:
                 # set as starter
                 updateString = 'UPDATE trainer SET "starterName"=%(starterName)s, "starterId"=%(starterId)s, "activePokemon"=%(starterId)s WHERE "discord_id"=%(discordId)s'
                 db.execute(updateString, { 'starterName': starterName, 'starterId': starterId, 'discordId': self.discordId })
+                
+                # Register starter Pokemon to player's Pokedex
+                PokedexClass(self.discordId, pokemon)
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
@@ -453,15 +496,17 @@ class trainer:
             logger.error(excInfo=sys.exc_info())
 
     def onlyone(self, method='only-one'):
-        """ handles a gift action """
+        """ handles a onlyone gift action """
         pokemon = None
         try:
             location: LocationModel = self.getLocation()
             locationId = location.locationId
-            if locationId in [136, 147, 158, 159, 91, 95]:
-                onlyoneCompleted = False
+            
+            if locationId in [1364, 147, 158, 159, 91, 95]:
                 uEncObj = uEnc(self.discordId)
-                if locationId == 136:
+                onlyoneCompleted = False
+                
+                if locationId == 1364:
                     if uEncObj.articuno:
                         onlyoneCompleted = True
                 elif locationId == 158:
@@ -477,13 +522,15 @@ class trainer:
                     if uEncObj.snorlax:
                         onlyoneCompleted = True
                 
+                
                 if onlyoneCompleted:
                     self.statuscode = 420
-                    self.message = "You have already completed that action in this location"
-
-            if not onlyoneCompleted:
-                method = 'only-one'
-                pokemon = self.__getEncounter(method)
+                    self.message = f"Sorry, you can only do that one time! I hope you caught it the first time 😉"
+                    return None  # CRITICAL: Return here to stop execution!
+            
+            # Only execute if not completed
+            method = 'only-one'
+            pokemon = self.__getEncounter(method)
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
@@ -823,6 +870,7 @@ class trainer:
             db.executeWithoutCommit('INSERT INTO inventory (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
             db.executeWithoutCommit('INSERT INTO keyitems (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
             db.executeWithoutCommit('INSERT INTO leaderboard (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
+            db.executeWithoutCommit('INSERT INTO "unique-encounters" (discord_id) VALUES(%(discordId)s) ON CONFLICT DO NOTHING;', { 'discordId': self.discordId })
             db.commit()
             
             # After creating trainer, load the startdate (which will be today's date for new trainers)

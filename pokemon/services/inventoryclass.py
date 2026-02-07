@@ -39,9 +39,7 @@ class inventory:
         self.protein = None
         self.coincase = None
         self.direhit = None
-        self.domefossil = None
         self.freshwater = None
-        self.helixfossil = None
         self.hpup = None
         self.lemonade = None
         self.elixir = None
@@ -83,8 +81,8 @@ class inventory:
                                 "max-potion"=%(maxpotion)s, "antidote"=%(antidote)s, "super-repel"=%(superrepel)s,
                                 "calcium"=%(calcium)s, "carbos"=%(carbos)s, "coin-case"=%(coincase)s,
                                 "iron"=%(iron)s, "protein"=%(protein)s,
-                                "dire-hit"=%(direhit)s, "dome-fossil"=%(domefossil)s, "fresh-water"=%(freshwater)s,
-                                "helix-fossil"=%(helixfossil)s, "hp-up"=%(hpup)s, "lemonade"=%(lemonade)s, 
+                                "dire-hit"=%(direhit)s, "fresh-water"=%(freshwater)s,
+                                "hp-up"=%(hpup)s, "lemonade"=%(lemonade)s, 
                                 "elixir"=%(elixir)s, "max-elixir"=%(maxelixir)s, "max-ether"=%(maxether)s, 
                                 "ether"=%(ether)s, "nugget"=%(nugget)s, "old-amber"=%(oldamber)s, 
                                 "poke-doll"=%(pokedoll)s, "pp-up"=%(ppup)s, "soda-pop"=%(sodapop)s, 
@@ -104,8 +102,8 @@ class inventory:
                             'paralyzeheal': self.paralyzeheal, 'maxpotion': self.maxpotion, 'antidote': self.antidote, 
                             'superrepel': self.superrepel, 'calcium': self.calcium, 'carbos': self.carbos, 
                             'iron': self.iron, 'protein': self.protein, 
-                            'coincase': self.coincase, 'direhit': self.direhit, 'domefossil': self.domefossil, 
-                            'freshwater': self.freshwater, 'helixfossil': self.helixfossil,
+                            'coincase': self.coincase, 'direhit': self.direhit,
+                            'freshwater': self.freshwater,
                             'hpup': self.hpup, 'lemonade': self.lemonade, 
                             'elixir': self.elixir, 'maxelixir': self.maxelixir, 'maxether': self.maxether, 
                             'ether': self.ether, 'nugget': self.nugget, 'oldamber': self.oldamber, 
@@ -135,8 +133,8 @@ class inventory:
                             "full-restore", "repel", "awakening", "escape-rope", "full-heal",
                             "ice-heal", "max-repel", "burn-heal", "paralyze-heal", 
                             "max-potion", "antidote", "super-repel", calcium, carbos, 
-                            "coin-case", "dire-hit", "dome-fossil", "fresh-water", 
-                            "helix-fossil", "hp-up", lemonade, elixir, "max-elixir", 
+                            "coin-case", "dire-hit", "fresh-water", 
+                            "hp-up", lemonade, elixir, "max-elixir", 
                             "max-ether", ether, nugget, "old-amber", "poke-doll", 
                             "pp-up", "soda-pop", "town-map", "x-accuracy", "x-defense", 
                             "x-attack", "x-sp-atk", "x-sp-def", "x-speed", 
@@ -171,37 +169,36 @@ class inventory:
                 self.carbos = result[22]
                 self.coincase = result[23]
                 self.direhit = result[24]
-                self.domefossil = result[25]
-                self.freshwater = result[26]
-                self.helixfossil = result[27]
-                self.hpup = result[28]
-                self.lemonade = result[29]
-                self.elixir = result[30]
-                self.maxelixir = result[31]
-                self.maxether = result[32]
-                self.ether = result[33]
-                self.nugget = result[34]
-                self.oldamber = result[35]
-                self.pokedoll = result[36]
-                self.ppup = result[37]
-                self.sodapop = result[38]
-                self.townmap = result[39]
-                self.xaccuracy = result[40]
-                self.xdefense = result[41]
-                self.xattack = result[42]
-                self.xspatk = result[43]
-                self.xspdef = result[44]
-                self.xspeed = result[45]
-                self.firestone = result[46]
-                self.waterstone = result[47]
-                self.thunderstone = result[48]
-                self.leafstone = result[49]
-                self.moonstone = result[50]
-                self.iron = result[51]
-                self.protein = result[52]
+                self.direhit = result[24]
+                self.freshwater = result[25]
+                self.hpup = result[26]
+                self.lemonade = result[27]
+                self.elixir = result[28]
+                self.maxelixir = result[29]
+                self.maxether = result[30]
+                self.ether = result[31]
+                self.nugget = result[32]
+                self.oldamber = result[33]
+                self.pokedoll = result[34]
+                self.ppup = result[35]
+                self.sodapop = result[36]
+                self.townmap = result[37]
+                self.xaccuracy = result[38]
+                self.xdefense = result[39]
+                self.xattack = result[40]
+                self.xspatk = result[41]
+                self.xspdef = result[42]
+                self.xspeed = result[43]
+                self.firestone = result[44]
+                self.waterstone = result[45]
+                self.thunderstone = result[46]
+                self.leafstone = result[47]
+                self.moonstone = result[48]
+                self.iron = result[49]
+                self.protein = result[50]
                 # Special Items
-                self.linkcable = result[53]
-                self.gameshark = result[54]
+                self.linkcable = result[51]
+                self.gameshark = result[52]
 
         except:
             self.statuscode = 96

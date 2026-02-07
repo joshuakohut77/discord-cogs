@@ -499,6 +499,50 @@
     ],
     "91": [
       {
+        "name": "poliwag",
+        "chance": 50,
+        "max_level": 10,
+        "min_level": 10,
+        "method": "good-rod"
+      },
+      {
+        "name": "tentacool",
+        "chance": 25,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "super-rod"
+      },
+      {
+        "name": "krabby",
+        "chance": 17,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "goldeen",
+        "chance": 8,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "magikarp",
+        "chance": 25,
+        "max_level": 15,
+        "min_level": 15,
+        "method": "super-rod"
+      },
+      {
+        "name": "snorlax",
+        "chance": 100,
+        "max_level": 30,
+        "min_level": 30,
+        "method": "pokeflute"
+      }
+    ],
+    "911": [
+      {
         "name": "pidgey",
         "chance": 5,
         "max_level": 27,
@@ -574,13 +618,6 @@
         "max_level": 15,
         "min_level": 15,
         "method": "super-rod"
-      },
-      {
-        "name": "snorlax",
-        "chance": 100,
-        "max_level": 30,
-        "min_level": 30,
-        "method": "pokeflute"
       }
     ],
     "92": [
@@ -2107,13 +2144,6 @@
         "max_level": 5,
         "min_level": 5,
         "method": "old-rod"
-      },
-      {
-        "name": "articuno",
-        "chance": 100,
-        "max_level": 50,
-        "min_level": 50,
-        "method": "only-one"
       }
     ],
     "1361": [
@@ -2515,13 +2545,6 @@
         "max_level": 5,
         "min_level": 5,
         "method": "old-rod"
-      },
-      {
-        "name": "articuno",
-        "chance": 100,
-        "max_level": 50,
-        "min_level": 50,
-        "method": "only-one"
       }
     ],
     "1362": [
@@ -2923,13 +2946,6 @@
         "max_level": 5,
         "min_level": 5,
         "method": "old-rod"
-      },
-      {
-        "name": "articuno",
-        "chance": 100,
-        "max_level": 50,
-        "min_level": 50,
-        "method": "only-one"
       }
     ],
     "1363": [
@@ -3331,13 +3347,6 @@
         "max_level": 5,
         "min_level": 5,
         "method": "old-rod"
-      },
-      {
-        "name": "articuno",
-        "chance": 100,
-        "max_level": 50,
-        "min_level": 50,
-        "method": "only-one"
       }
     ],
     "1364": [
@@ -5353,13 +5362,6 @@
         "method": "walk"
       },
       {
-        "name": "moltres",
-        "chance": 100,
-        "max_level": 50,
-        "min_level": 50,
-        "method": "only-one"
-      },
-      {
         "name": "zubat",
         "chance": 15,
         "max_level": 22,
@@ -5417,111 +5419,7 @@
       }
     ],
     "160": [
-      {
-        "name": "gastly",
-        "chance": 5,
-        "max_level": 24,
-        "min_level": 24,
-        "method": "walk"
-      },
-      {
-        "name": "haunter",
-        "chance": 1,
-        "max_level": 25,
-        "min_level": 25,
-        "method": "walk"
-      },
-      {
-        "name": "cubone",
-        "chance": 4,
-        "max_level": 22,
-        "min_level": 22,
-        "method": "walk"
-      },
-      {
-        "name": "gastly",
-        "chance": 1,
-        "max_level": 24,
-        "min_level": 24,
-        "method": "walk"
-      },
-      {
-        "name": "haunter",
-        "chance": 5,
-        "max_level": 25,
-        "min_level": 25,
-        "method": "walk"
-      },
-      {
-        "name": "cubone",
-        "chance": 4,
-        "max_level": 22,
-        "min_level": 22,
-        "method": "walk"
-      },
-      {
-        "name": "gastly",
-        "chance": 1,
-        "max_level": 24,
-        "min_level": 24,
-        "method": "walk"
-      },
-      {
-        "name": "haunter",
-        "chance": 5,
-        "max_level": 25,
-        "min_level": 25,
-        "method": "walk"
-      },
-      {
-        "name": "cubone",
-        "chance": 4,
-        "max_level": 22,
-        "min_level": 22,
-        "method": "walk"
-      },
-      {
-        "name": "gastly",
-        "chance": 10,
-        "max_level": 19,
-        "min_level": 19,
-        "method": "walk"
-      },
-      {
-        "name": "haunter",
-        "chance": 1,
-        "max_level": 28,
-        "min_level": 28,
-        "method": "walk"
-      },
-      {
-        "name": "cubone",
-        "chance": 4,
-        "max_level": 24,
-        "min_level": 24,
-        "method": "walk"
-      },
-      {
-        "name": "gastly",
-        "chance": 10,
-        "max_level": 20,
-        "min_level": 20,
-        "method": "walk"
-      },
-      {
-        "name": "haunter",
-        "chance": 1,
-        "max_level": 30,
-        "min_level": 30,
-        "method": "walk"
-      },
-      {
-        "name": "cubone",
-        "chance": 5,
-        "max_level": 24,
-        "min_level": 24,
-        "method": "walk"
-      }
+
     ],
     "1602": [
       {

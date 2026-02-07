@@ -30,6 +30,7 @@ from services.questclass import quests as QuestsClass
 from services.battleclass import battle as BattleClass
 from services.encounterclass import encounter as EncounterClass, calculate_battle_damage
 from services.expclass import experiance as exp
+from services.leaderboardclass import leaderboard as LeaderboardClass
 
 from .abcd import MixinMeta
 from .functions import (getTypeColor, create_hp_bar)
@@ -92,6 +93,181 @@ class EncountersMixin(MixinMeta):
             self.__enemy_trainers_data = load_json_config('enemyTrainers.json')
         return self.__enemy_trainers_data
 
+
+    def __create_level_up_embed(self, pokemon, old_level, new_level, learned_moves=None, evolution_name=None):
+        """ Creates a dismissable level-up notification embed """
+        if evolution_name:
+            title = f"🌟 Evolution! {pokemon.pokemonName.capitalize()} → {evolution_name.capitalize()}!"
+            description = f"**{pokemon.pokemonName.capitalize()}** evolved into **{evolution_name.capitalize()}**!"
+            color = discord.Color.gold()
+        else:
+            title = f"⬆️ Level Up!"
+            description = f"**{pokemon.pokemonName.capitalize()}** grew to level **{new_level}**!"
+            color = discord.Color.green()
+        
+        embed = discord.Embed(
+            title=title,
+            description=description,
+            color=color
+        )
+        
+        # Add Pokemon sprite
+        sprite_url = pokemon.frontSpriteURL
+        if sprite_url:
+            embed.set_thumbnail(url=sprite_url)
+        
+        embed.add_field(
+            name="Level",
+            value=f"{old_level} → {new_level}",
+            inline=True
+        )
+        
+        current_hp = pokemon.currentHP
+        max_hp = pokemon.getPokeStats()['hp']
+        embed.add_field(
+            name="HP",
+            value=f"{current_hp}/{max_hp}",
+            inline=True
+        )
+        
+        # Add learned moves if any
+        if learned_moves and len(learned_moves) > 0:
+            moves_text = "\n".join([f"• {move.replace('-', ' ').title()}" for move in learned_moves])
+            embed.add_field(
+                name="📚 New Moves Learned",
+                value=moves_text,
+                inline=False
+            )
+        
+        return embed
+
+    def __create_move_learning_embed(self, pokemon, move_to_learn, moves_config):
+        """ Creates embed showing the new move being learned """
+        embed = discord.Embed(
+            title=f"📚 New Move Available!",
+            description=f"**{pokemon.pokemonName.capitalize()}** wants to learn **{move_to_learn.replace('-', ' ').title()}**!",
+            color=discord.Color.blue()
+        )
+        
+        # Add Pokemon sprite
+        if pokemon.frontSpriteURL:
+            embed.set_thumbnail(url=pokemon.frontSpriteURL)
+        
+        # Show new move details
+        move_data = moves_config.get(move_to_learn, {})
+        power = move_data.get('power', 'N/A')
+        accuracy = move_data.get('accuracy', 'N/A')
+        move_type = move_data.get('moveType', 'normal')
+        pp = move_data.get('pp', 'N/A')
+        
+        embed.add_field(
+            name=f"New Move: {move_to_learn.replace('-', ' ').title()}",
+            value=f"Type: {move_type.title()} | Power: {power} | Accuracy: {accuracy} | PP: {pp}",
+            inline=False
+        )
+        
+        embed.add_field(
+            name="Current Moves",
+            value="Choose which move to replace, or don't learn this move.",
+            inline=False
+        )
+        
+        return embed
+
+    async def __handle_move_learning(self, interaction: discord.Interaction, pokemon, pending_moves, battle_state=None):
+        """
+        Handles the UI for learning new moves when Pokemon has 4 moves.
+        
+        Args:
+            interaction: The interaction to respond to
+            pokemon: The Pokemon learning moves
+            pending_moves: List of move names to learn
+            battle_state: Optional BattleState if this is during a battle
+        """
+        from helpers.pathhelpers import load_json_config
+        moves_config = load_json_config('moves.json')
+        
+        for move_to_learn in pending_moves:
+            # Create the embed
+            embed = self.__create_move_learning_embed(pokemon, move_to_learn, moves_config)
+            
+            # Get current moves
+            current_moves = pokemon.getCurrentMovesList()
+            
+            # Add current move details to embed
+            for slot, move_name in current_moves:
+                move_data = moves_config.get(move_name, {})
+                power = move_data.get('power', 'N/A')
+                move_type = move_data.get('moveType', 'normal')
+                embed.add_field(
+                    name=f"Slot {slot}: {move_name.replace('-', ' ').title()}",
+                    value=f"Type: {move_type.title()} | Power: {power}",
+                    inline=True
+                )
+            
+            # Create buttons for each current move + Don't Learn
+            view = discord.ui.View(timeout=180)
+            
+            for slot, move_name in current_moves:
+                button = discord.ui.Button(
+                    label=f"Replace {move_name.replace('-', ' ').title()}",
+                    style=discord.ButtonStyle.primary,
+                    custom_id=f"replace_move_{slot}"
+                )
+                
+                async def button_callback(inter: discord.Interaction, slot_num=slot, old_move=move_name):
+                    if inter.user.id != interaction.user.id:
+                        await inter.response.send_message("This is not for you!", ephemeral=True)
+                        return
+                    
+                    # Learn the move in the selected slot
+                    pokemon.learnMove(move_to_learn, replaceSlot=slot_num)
+                    pokemon.save()
+                    
+                    # Delete the original message
+                    await inter.message.delete()
+                    
+                    # Send ephemeral confirmation
+                    await inter.response.send_message(
+                        f"✅ {pokemon.pokemonName.capitalize()} forgot {old_move.replace('-', ' ').title()} and learned {move_to_learn.replace('-', ' ').title()}!",
+                        ephemeral=True
+                    )
+                
+                button.callback = button_callback
+                view.add_item(button)
+            
+            # Add "Don't Learn" button
+            dont_learn_button = discord.ui.Button(
+                label="Don't Learn",
+                style=discord.ButtonStyle.secondary,
+                custom_id="dont_learn_move"
+            )
+            
+            async def dont_learn_callback(inter: discord.Interaction):
+                if inter.user.id != interaction.user.id:
+                    await inter.response.send_message("This is not for you!", ephemeral=True)
+                    return
+                
+                # Delete the original message
+                await inter.message.delete()
+                
+                # Send ephemeral confirmation
+                await inter.response.send_message(
+                    f"❌ {pokemon.pokemonName.capitalize()} did not learn {move_to_learn.replace('-', ' ').title()}.",
+                    ephemeral=True
+                )
+            
+            dont_learn_button.callback = dont_learn_callback
+            view.add_item(dont_learn_button)
+            
+            # Send as followup (works both during and after battle)
+            await interaction.followup.send(embed=embed, view=view, ephemeral=False)
+            
+            # Wait for button interaction
+            try:
+                await view.wait()
+            except:
+                pass  # Timeout or error
 
     def __get_wild_trainers_button(self, user_id: str, location_id: int):
         """
@@ -307,6 +483,7 @@ class EncountersMixin(MixinMeta):
         enemy_pokemon_index = 0
         defeated_enemies = []
         defeated_players = []
+        exp_messages = []
         
         max_turns = 100
         turn = 0
@@ -318,12 +495,23 @@ class EncountersMixin(MixinMeta):
             if player_pokemon_index >= len(alive_party):
                 # Player lost
                 battle_log.append("\n💀 **All your Pokemon have fainted! You lost!**")
+                    # LEADERBOARD TRACKING
+                from services.leaderboardclass import leaderboard as LeaderboardClass
+                lb = LeaderboardClass(str(user.id))
+                lb.defeat()
+                lb.actions()
                 break
             
             if enemy_pokemon_index >= len(enemy_pokemon_list):
                 # Player won!
                 battle_log.append(f"\n🏆 **Victory! You defeated {next_trainer.name}!**")
                 battle.battleVictory(next_trainer)
+
+                # LEADERBOARD TRACKING
+                from services.leaderboardclass import leaderboard as LeaderboardClass
+                lb = LeaderboardClass(str(user.id))
+                lb.victory()
+                lb.actions()
                 break
             
             # Get current Pokemon
@@ -332,11 +520,15 @@ class EncountersMixin(MixinMeta):
             enemy_name = list(current_enemy.keys())[0]
             enemy_level = current_enemy[enemy_name]
             
+            from services.pokedexclass import pokedex as PokedexClass
+
             # Create enemy Pokemon - FIX: Use positional parameter
             enemy_pokemon = PokemonClass(str(user.id), enemy_name)
             enemy_pokemon.create(enemy_level)
             enemy_pokemon.discordId = None 
             
+            PokedexClass(str(user.id), enemy_pokemon)
+
             # Battle turn
             enc = EncounterClass(player_pokemon, enemy_pokemon)
             result = enc.fight(battleType='auto')
@@ -344,6 +536,10 @@ class EncountersMixin(MixinMeta):
             battle_log.append(f"\n**Turn {turn}:**")
             battle_log.append(f"• {player_pokemon.pokemonName.capitalize()} (HP: {player_pokemon.currentHP}) vs {enemy_name.capitalize()} (HP: {enemy_pokemon.currentHP})")
             
+            # Capture experience message
+            if enc.message:
+                exp_messages.append(f"{player_pokemon.pokemonName.capitalize()}: {enc.message}")
+
             # Check if enemy fainted
             if enemy_pokemon.currentHP <= 0:
                 defeated_enemies.append(enemy_name)
@@ -443,10 +639,14 @@ class EncountersMixin(MixinMeta):
         enemy_name = list(first_enemy.keys())[0]
         enemy_level = first_enemy[enemy_name]
         
+        from services.pokedexclass import pokedex as PokedexClass
+
         enemy_pokemon = PokemonClass(str(user.id), enemy_name)
         enemy_pokemon.create(enemy_level)
         enemy_pokemon.discordId = None
         
+        PokedexClass(str(user.id), enemy_pokemon)
+
         # BattleState uses POSITIONAL arguments - check the __init__ signature
         battle_state = BattleState(
             user_id,              # user_id
@@ -545,6 +745,12 @@ class EncountersMixin(MixinMeta):
         """Handle when player defeats wild Pokemon"""
         user = interaction.user
         
+        # LEADERBOARD TRACKING
+        from services.leaderboardclass import leaderboard as LeaderboardClass
+        lb = LeaderboardClass(str(user.id))
+        lb.victory()
+        lb.actions()
+
         player_max_hp = battle_state.player_pokemon.getPokeStats()['hp']
         player_level = battle_state.player_pokemon.currentLevel
         
@@ -625,6 +831,12 @@ class EncountersMixin(MixinMeta):
         await interaction.response.defer()
         
         battle_state.player_pokemon.save()
+
+        # LEADERBOARD TRACKING
+        from services.leaderboardclass import leaderboard as LeaderboardClass
+        lb = LeaderboardClass(str(user.id))
+        lb.run_away()
+        lb.actions()
         
         embed = discord.Embed(
             title="🏃 Ran Away!",
@@ -685,10 +897,7 @@ class EncountersMixin(MixinMeta):
             'masterball': 'master-ball'
         }
         ball_type = ball_type_map.get(ball_id, 'poke-ball')
-        
-        # DEBUG: Check party before catch
-        party_count_before = trainer.getPartySize()
-        
+                
         # Call catch method
         trainer.catch(battle_state.wild_pokemon, ball_type)       
         
@@ -827,6 +1036,10 @@ class EncountersMixin(MixinMeta):
         if battle_state.wild_pokemon.currentHP <= 0:
             log_lines.append(f"💀 Wild {battle_state.wild_pokemon.pokemonName.capitalize()} fainted!")
             
+            # Update unique encounters tracking
+            enc = EncounterClass(battle_state.player_pokemon, battle_state.wild_pokemon)
+            enc.updateUniqueEncounters()
+            
             # AWARD EXPERIENCE
             from services.expclass import experiance as exp
             expObj = exp(battle_state.wild_pokemon)
@@ -834,16 +1047,39 @@ class EncountersMixin(MixinMeta):
             evGained = expObj.getEffortValue()
             
             current_hp = battle_state.player_pokemon.currentHP
-            levelUp, expMsg = battle_state.player_pokemon.processBattleOutcome(expGained, evGained, current_hp)
+            old_level = battle_state.player_pokemon.currentLevel
             
+            # NEW: Get 3 return values including pendingMoves
+            levelUp, expMsg, pendingMoves = battle_state.player_pokemon.processBattleOutcome(expGained, evGained, current_hp)
+            
+            # Collect auto-learned moves from expMsg
+            auto_learned_moves = []
+            if expMsg and "learned" in expMsg.lower():
+                # Extract move names from expMsg (format: "Your pokemon learned move-name. ")
+                import re
+                learned_matches = re.findall(r'learned ([a-z\-]+)', expMsg.lower())
+                auto_learned_moves.extend(learned_matches)
+
             if levelUp:
-                log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up!")
+                new_level = battle_state.player_pokemon.currentLevel
+                log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up to {new_level}!")
+                
+                # STORE level-up data to show AFTER victory screen
+                battle_state.level_up_data = {
+                    'pokemon': battle_state.player_pokemon,
+                    'old_level': old_level,
+                    'new_level': new_level,
+                    'auto_learned_moves': auto_learned_moves,
+                    'pending_moves': pendingMoves,
+                    'evolution_name': battle_state.player_pokemon.evolvedInto if hasattr(battle_state.player_pokemon, 'evolvedInto') else None
+                }
+
             if expMsg:
                 log_lines.append(f"📈 {expMsg}")
-            
+
             battle_state.battle_log = ["\n".join(log_lines)]
             
-            # Check if Pokemon evolved and show ephemeral evolution embed
+            # Check if Pokemon evolved
             if hasattr(battle_state.player_pokemon, 'evolvedInto') and battle_state.player_pokemon.evolvedInto:
                 evolved_pokemon = battle_state.player_pokemon.evolvedInto
                 
@@ -874,39 +1110,27 @@ class EncountersMixin(MixinMeta):
                 # Update battle state to use evolved Pokemon
                 battle_state.player_pokemon = evolved_pokemon
 
-            # Check if Pokemon evolved and show ephemeral evolution embed
-            if hasattr(battle_state.player_pokemon, 'evolvedInto') and battle_state.player_pokemon.evolvedInto:
-                evolved_pokemon = battle_state.player_pokemon.evolvedInto
-                
-                # Create evolution embed
-                evolution_embed = discord.Embed(
-                    title="✨ What's this?",
-                    description=f"Your **{battle_state.player_pokemon.pokemonName.capitalize()}** evolved into **{evolved_pokemon.pokemonName.capitalize()}**!",
-                    color=discord.Color.gold()
-                )
-                evolution_embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
-                
-                # Add Pokemon sprite
-                sprite_file = None
-                try:
-                    sprite_path = f"/sprites/pokemon/{evolved_pokemon.pokemonName}.png"
-                    full_sprite_path = get_sprite_path(sprite_path)
-                    sprite_file = discord.File(full_sprite_path, filename=f"{evolved_pokemon.pokemonName}.png")
-                    evolution_embed.set_image(url=f"attachment://{evolved_pokemon.pokemonName}.png")
-                except Exception as e:
-                    print(f"Error loading evolution sprite: {e}")
-                
-                # Send ephemeral evolution message
-                if sprite_file:
-                    await interaction.followup.send(embed=evolution_embed, file=sprite_file, ephemeral=True)
-                else:
-                    await interaction.followup.send(embed=evolution_embed, ephemeral=True)
-                
-                # Update battle state to use evolved Pokemon
-                battle_state.player_pokemon = evolved_pokemon
-
-            # Show victory screen
+            # Show victory screen FIRST
             await self.__handle_wild_battle_victory(interaction, battle_state)
+
+            # THEN show level-up and move learning
+            if hasattr(battle_state, 'level_up_data') and battle_state.level_up_data:
+                data = battle_state.level_up_data
+                
+                # Show level-up embed (ephemeral)
+                level_up_embed = self.__create_level_up_embed(
+                    data['pokemon'],
+                    data['old_level'],
+                    data['new_level'],
+                    learned_moves=data['auto_learned_moves'],
+                    evolution_name=data['evolution_name']
+                )
+                await interaction.followup.send(embed=level_up_embed, ephemeral=True)
+                
+                # Handle pending move learning (moves that need player choice)
+                if data['pending_moves']:
+                    await self.__handle_move_learning(interaction, data['pokemon'], data['pending_moves'], battle_state)
+
             del self.__wild_battle_states[user_id]
             return
         
@@ -951,7 +1175,7 @@ class EncountersMixin(MixinMeta):
         view = self.__create_battle_move_buttons_with_items(battle_state)
         
         await interaction.message.edit(embed=embed, view=view)
-    
+
     # def __create_wild_battle_move_buttons(self, battle_state: WildBattleState) -> View:
     #     """Create buttons for moves, run away, and catch options"""
     #     view = View()
@@ -1159,6 +1383,13 @@ class EncountersMixin(MixinMeta):
             east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label="---", custom_id='dir_east_disabled', disabled=True, row=1)
             view.add_item(east_btn)
         
+        # AUX button (if exists)
+        if hasattr(location, 'aux') and location.aux:
+            aux_name = LOCATION_DISPLAY_NAMES.get(location.aux, location.aux)
+            aux_btn = Button(style=ButtonStyle.gray, emoji='🔀', label=f"{aux_name[:15]}", custom_id='dir_aux', row=1)
+            aux_btn.callback = self.on_direction_click
+            view.add_item(aux_btn)
+
         # ROW 2: Action buttons (Encounters, Quests, Gym, Wild Trainers)
         if len(methods) > 0:
             enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='nav_encounters', row=2)
@@ -1234,7 +1465,9 @@ class EncountersMixin(MixinMeta):
             target_location_name = current_location.east
         elif direction == 'west':
             target_location_name = current_location.west
-        
+        elif direction == 'aux':
+            target_location_name = getattr(current_location, 'aux', None)
+
         if not target_location_name:
             await interaction.followup.send('Cannot go that direction.', ephemeral=True)
             return
@@ -1380,8 +1613,9 @@ class EncountersMixin(MixinMeta):
         return embed
 
     def __create_keyitems_embed(self, user: discord.User) -> discord.Embed:
-        """Create embed showing trainer's key items"""
+        """Create embed showing trainer's key items (excluding HMs)"""
         from services.keyitemsclass import keyitems as KeyItemClass
+        import constant
         
         inv = KeyItemClass(str(user.id))
         
@@ -1391,6 +1625,7 @@ class EncountersMixin(MixinMeta):
         
         items = []
         
+        # Key items (excluding HMs which are shown in HMs tab)
         if inv.pokeflute:
             items.append(f'{constant.POKEFLUTE} **Poké Flute**')
         if inv.silph_scope:
@@ -1404,11 +1639,19 @@ class EncountersMixin(MixinMeta):
         if inv.old_rod:
             items.append(f'{constant.OLD_ROD} **Old Rod**')
         if inv.good_rod:
-            items.append(f'{constant.GOODROD} **Good Rod**')
+            items.append(f'{constant.GOOD_ROD} **Good Rod**')
         if inv.super_rod:
             items.append(f'{constant.SUPER_ROD} **Super Rod**')
         if inv.item_finder:
             items.append(f'{constant.ITEM_FINDER} **Item Finder**')
+        if inv.bike_voucher:
+            items.append(f'🎟️ **Bike Voucher**')
+        if inv.gold_teeth:
+            items.append(f'🦷 **Gold Teeth**')
+        if inv.dome_fossil:
+            items.append(f'{constant.DOMEFOSSIL} **Dome Fossil**')
+        if inv.helix_fossil:
+            items.append(f'{constant.HELIXFOSSIL} **Helix Fossil**')
         
         items_text = "\n".join(items) if len(items) > 0 else "No key items yet."
         embed.add_field(name="Key Items", value=items_text, inline=False)
@@ -1424,76 +1667,11 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('Session expired. Use ,trainer map to start.', ephemeral=True)
             return
         
-        from services.trainerclass import trainer as TrainerClass
-        from services.inventoryclass import inventory as InventoryClass
-        from services.keyitemsclass import keyitems as KeyItemsClass
-        import constant
-        
-        trainer = self._get_trainer(str(user.id))
-        inventory = InventoryClass(trainer.discordId)
-        keyitems = KeyItemsClass(trainer.discordId)
-        
-        # Create the trainer card embed (same as ,trainer card command)
-        embed = discord.Embed(title=f"Trainer")
-        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
-        
-        embed.add_field(name='Money', value=f'¥{inventory.money}', inline=False)
-        
-        badges = []
-        if keyitems.badge_boulder:
-            badges.append(constant.BADGE_BOULDER_01)
-        if keyitems.badge_cascade:
-            badges.append(constant.BADGE_CASCADE_02)
-        if keyitems.badge_thunder:
-            badges.append(constant.BADGE_THUNDER_03)
-        if keyitems.badge_rainbow:
-            badges.append(constant.BADGE_RAINBOW_04)
-        if keyitems.badge_soul:
-            badges.append(constant.BADGE_SOUL_05)
-        if keyitems.badge_marsh:
-            badges.append(constant.BADGE_MARSH_06)
-        if keyitems.badge_volcano:
-            badges.append(constant.BADGE_VOLCANO_07)
-        if keyitems.badge_earth:
-            badges.append(constant.BADGE_EARTH_08)
-        
-        badgeText = " ".join(badges) if len(badges) > 0 else "--"
-        embed.add_field(name='Badges', value=badgeText, inline=False)
-        
-        # FIX: Get actual Pokedex count
-        pokedex_list = trainer.getPokedex()
-        pokedex_count = len(pokedex_list) if pokedex_list else 0
-        embed.add_field(name='Pokédex', value=f'{pokedex_count}')
-        
-        # FIX: Show actual start date
-        embed.add_field(name='Started', value=f'{trainer.startdate}')
-        
-        # Create view with "Back to Bag" button
-        view = View()
-        back_btn = Button(style=ButtonStyle.gray, label="← Back to Bag", custom_id='trainer_back_to_bag', row=0)
-        back_btn.callback = self.on_trainer_back_to_bag_click
-        view.add_item(back_btn)
-        
-        map_btn = Button(style=ButtonStyle.primary, label="🗺️ Back to Map", custom_id='trainer_back_to_map', row=0)
-        map_btn.callback = self.on_bag_back_to_map_click
-        view.add_item(map_btn)
-        
-        await interaction.message.edit(embed=embed, view=view)
-
-    async def on_trainer_back_to_bag_click(self, interaction: discord.Interaction):
-        """Return to bag items view from trainer card"""
-        user = interaction.user
-        await interaction.response.defer()
-        
-        if str(user.id) not in self.__bag_states:
-            await interaction.followup.send('Session expired.', ephemeral=True)
-            return
-        
         bag_state = self.__bag_states[str(user.id)]
-        bag_state.current_view = 'items'
+        bag_state.current_view = 'trainer'
         
-        embed = self.__create_items_embed(user)
-        view = self.__create_bag_navigation_view('items')
+        embed = self.__create_trainer_embed(user)
+        view = self.__create_bag_navigation_view('trainer')
         
         await interaction.message.edit(embed=embed, view=view)
 
@@ -3537,9 +3715,55 @@ class EncountersMixin(MixinMeta):
         
         return embed
 
+    def __create_trainer_embed(self, user: discord.User) -> discord.Embed:
+        """Create embed showing trainer card"""
+        from services.trainerclass import trainer as TrainerClass
+        from services.inventoryclass import inventory as InventoryClass
+        from services.keyitemsclass import keyitems as KeyItemsClass
+        import constant
+        
+        trainer = self._get_trainer(str(user.id))
+        inventory = InventoryClass(trainer.discordId)
+        keyitems = KeyItemsClass(trainer.discordId)
+        
+        embed = discord.Embed(title="Bag - Trainer", color=discord.Color.blue())
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+        
+        embed.add_field(name='Money', value=f'¥{inventory.money}', inline=False)
+        
+        badges = []
+        if keyitems.badge_boulder:
+            badges.append(constant.BADGE_BOULDER_01)
+        if keyitems.badge_cascade:
+            badges.append(constant.BADGE_CASCADE_02)
+        if keyitems.badge_thunder:
+            badges.append(constant.BADGE_THUNDER_03)
+        if keyitems.badge_rainbow:
+            badges.append(constant.BADGE_RAINBOW_04)
+        if keyitems.badge_soul:
+            badges.append(constant.BADGE_SOUL_05)
+        if keyitems.badge_marsh:
+            badges.append(constant.BADGE_MARSH_06)
+        if keyitems.badge_volcano:
+            badges.append(constant.BADGE_VOLCANO_07)
+        if keyitems.badge_earth:
+            badges.append(constant.BADGE_EARTH_08)
+        
+        badgeText = " ".join(badges) if len(badges) > 0 else "--"
+        embed.add_field(name='Badges', value=badgeText, inline=False)
+        
+        pokedex_list = trainer.getPokedex()
+        pokedex_count = len(pokedex_list) if pokedex_list else 0
+        embed.add_field(name='Pokédex', value=f'{pokedex_count}')
+        
+        embed.add_field(name='Started', value=f'{trainer.startdate}')
+        
+        return embed
+
     def __create_hms_embed(self, user: discord.User) -> discord.Embed:
         """Create embed showing trainer's HMs"""
         from services.keyitemsclass import keyitems as KeyItemClass
+        import constant
         
         keyitems = KeyItemClass(str(user.id))
         
@@ -3550,15 +3774,15 @@ class EncountersMixin(MixinMeta):
         hms = []
         
         if keyitems.HM01:
-            hms.append(f'{constant.HM01} **HM01 - Cut**')
+            hms.append(f'{constant.HM01} **HM01** - Cut')
         if keyitems.HM02:
-            hms.append(f'{constant.HM02} **HM02 - Fly**')
+            hms.append(f'{constant.HM02} **HM02** - Fly')
         if keyitems.HM03:
-            hms.append(f'{constant.HM03} **HM03 - Surf**')
+            hms.append(f'{constant.HM03} **HM03** - Surf')
         if keyitems.HM04:
-            hms.append(f'{constant.HM04} **HM04 - Strength**')
+            hms.append(f'{constant.HM04} **HM04** - Strength')
         if keyitems.HM05:
-            hms.append(f'{constant.HM05} **HM05 - Flash**')
+            hms.append(f'{constant.HM05} **HM05** - Flash')
         
         hms_text = "\n".join(hms) if len(hms) > 0 else "No HMs yet."
         embed.add_field(name="HMs", value=hms_text, inline=False)
@@ -3905,6 +4129,13 @@ class EncountersMixin(MixinMeta):
             east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label="---", custom_id='dir_east_disabled', disabled=True, row=1)
             view.add_item(east_btn)
         
+        # AUX button (if exists)
+        if hasattr(location, 'aux') and location.aux:
+            aux_name = LOCATION_DISPLAY_NAMES.get(location.aux, location.aux)
+            aux_btn = Button(style=ButtonStyle.gray, emoji='🔀', label=f"{aux_name[:15]}", custom_id='dir_aux', row=1)
+            aux_btn.callback = self.on_direction_click
+            view.add_item(aux_btn)
+
         # ROW 2: Action buttons (Encounters, Quests, Gym)
         if len(methods) > 0:
             enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='nav_encounters', row=2)
@@ -4034,12 +4265,13 @@ class EncountersMixin(MixinMeta):
 
 
     def __create_enemy_pokemon(self, pokemon_data: dict, player_discord_id: str):
-        """Create an enemy Pokemon from data dict like {"geodude": 12}
-        
-        Args:
-            pokemon_data: Dict with pokemon name as key and level as value, e.g. {"geodude": 12}
+        """
+        Create an enemy Pokemon from dictionary data like {"geodude": 12}
+            pokemon_data: Dictionary with single key-value pair like {"geodude": 12}
             player_discord_id: The player's Discord ID (needed for dynamic Pokemon resolution)
         """
+        from services.pokedexclass import pokedex as PokedexClass
+        
         enemy_name = list(pokemon_data.keys())[0]
         enemy_level = pokemon_data[enemy_name]
         
@@ -4050,6 +4282,9 @@ class EncountersMixin(MixinMeta):
         
         # IMPORTANT: Reset discordId to None after creation so enemy Pokemon don't save to player's database
         enemy_pokemon.discordId = None
+        
+        # Register enemy Pokemon to player's Pokedex
+        PokedexClass(player_discord_id, enemy_pokemon)
         
         return enemy_pokemon
 
@@ -4248,6 +4483,16 @@ class EncountersMixin(MixinMeta):
         if battle_state.enemy_pokemon.currentHP <= 0:
             log_lines.append(f"💀 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} fainted!")
             
+            # LEADERBOARD TRACKING
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.victory()
+            lb.actions()
+
+            # Update unique encounters tracking
+            enc = EncounterClass(battle_state.player_pokemon, battle_state.enemy_pokemon)
+            enc.updateUniqueEncounters()
+
             # AWARD EXPERIENCE for defeating this Pokemon
             from expclass import experiance as exp
             expObj = exp(battle_state.enemy_pokemon)
@@ -4256,12 +4501,36 @@ class EncountersMixin(MixinMeta):
             
             # Apply experience to player's current Pokemon
             current_hp = battle_state.player_pokemon.currentHP
-            levelUp, expMsg = battle_state.player_pokemon.processBattleOutcome(expGained, evGained, current_hp)
+            old_level = battle_state.player_pokemon.currentLevel
             
+            # NEW: Get 3 return values including pendingMoves
+            levelUp, expMsg, pendingMoves = battle_state.player_pokemon.processBattleOutcome(expGained, evGained, current_hp)
+            
+            # Collect auto-learned moves from expMsg
+            auto_learned_moves = []
+            if expMsg and "learned" in expMsg.lower():
+                # Extract move names from expMsg (format: "Your pokemon learned move-name. ")
+                import re
+                learned_matches = re.findall(r'learned ([a-z\-]+)', expMsg.lower())
+                auto_learned_moves.extend(learned_matches)
+
             if levelUp:
-                log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up!")
+                new_level = battle_state.player_pokemon.currentLevel
+                log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up to {new_level}!")
+                
+                # STORE level-up data to show AFTER victory screen
+                battle_state.level_up_data = {
+                    'pokemon': battle_state.player_pokemon,
+                    'old_level': old_level,
+                    'new_level': new_level,
+                    'auto_learned_moves': auto_learned_moves,
+                    'pending_moves': pendingMoves,
+                    'evolution_name': battle_state.player_pokemon.evolvedInto if hasattr(battle_state.player_pokemon, 'evolvedInto') else None
+                }
+
             if expMsg:
                 log_lines.append(f"📈 {expMsg}")
+
             
             battle_state.defeated_enemies.append(battle_state.enemy_pokemon.pokemonName)
             
@@ -4286,7 +4555,34 @@ class EncountersMixin(MixinMeta):
                 # Enemy has no more Pokemon - PLAYER WINS!
                 battle_state.battle_log = ["\n".join(log_lines)]
                 battle_state.player_pokemon.save()
+
+                # LEADERBOARD TRACKING
+                from services.leaderboardclass import leaderboard as LeaderboardClass
+                lb = LeaderboardClass(str(user.id))
+                lb.victory()
+                lb.actions()
+
+                # Show victory screen FIRST
                 await self.__handle_gym_battle_victory(interaction, battle_state)
+
+                # THEN show level-up and move learning
+                if hasattr(battle_state, 'level_up_data') and battle_state.level_up_data:
+                    data = battle_state.level_up_data
+                    
+                    # Show level-up embed (ephemeral)
+                    level_up_embed = self.__create_level_up_embed(
+                        data['pokemon'],
+                        data['old_level'],
+                        data['new_level'],
+                        learned_moves=data['auto_learned_moves'],
+                        evolution_name=data['evolution_name']
+                    )
+                    await interaction.followup.send(embed=level_up_embed, ephemeral=True)
+                    
+                    # Handle pending move learning (moves that need player choice)
+                    if data['pending_moves']:
+                        await self.__handle_move_learning(interaction, data['pokemon'], data['pending_moves'], battle_state)
+
                 del self.__battle_states[user_id]
                 return
         
@@ -4342,6 +4638,13 @@ class EncountersMixin(MixinMeta):
                 # Player has no more Pokemon - PLAYER LOSES!
                 battle_state.battle_log = ["\n".join(log_lines)]
                 battle_state.player_pokemon.save()
+                
+                # LEADERBOARD TRACKING
+                from services.leaderboardclass import leaderboard as LeaderboardClass
+                lb = LeaderboardClass(str(user.id))
+                lb.defeat()
+                lb.actions()
+                
                 await self.__handle_gym_battle_defeat(interaction, battle_state)
                 del self.__battle_states[user_id]
                 return
@@ -4471,8 +4774,28 @@ class EncountersMixin(MixinMeta):
         # ADD NAVIGATION BUTTONS
         view = self.__create_post_battle_buttons(battle_state.user_id)
         
-        await interaction.message.edit(embed=embed, view=view)
+        # Send as NEW message, not edit
+        new_message = await interaction.followup.send(embed=embed, view=view, ephemeral=False)
         
+        # Delete the old battle message
+        try:
+            await interaction.message.delete()
+        except:
+            pass
+        
+        user = interaction.user
+        trainer = self._get_trainer(str(user.id))
+        location = trainer.getLocation()
+        self.__useractions[str(user.id)] = ActionState(
+            str(user.id), 
+            new_message.channel.id, 
+            new_message.id, 
+            location, 
+            trainer.getActivePokemon(), 
+            None, 
+            ''
+        )
+
         # Check for more trainers and send as followup (not in embed)
         remaining = battle_manager.getRemainingTrainerCount()
         if remaining > 0:
@@ -4605,16 +4928,11 @@ class EncountersMixin(MixinMeta):
         if not pre_requisites:
             return True
 
+        from services.questclass import quests as QuestsClass
         quest_obj = QuestsClass(user_id)
-
-        for prereq in pre_requisites:
-            if hasattr(quest_obj.keyitems, prereq):
-                if not getattr(quest_obj.keyitems, prereq):
-                    return False
-            else:
-                return False
-
-        return True
+        
+        # Use the existing prerequsitesValid method which handles the name mapping correctly
+        return quest_obj.prerequsitesValid(pre_requisites)
 
     def __get_gym_button(self, user_id: str, location_id: str) -> Button:
         """
@@ -4743,6 +5061,13 @@ class EncountersMixin(MixinMeta):
             east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label="---", custom_id='dir_east_disabled', disabled=True, row=1)
             view.add_item(east_btn)
         
+        # AUX button (if exists)
+        if hasattr(location, 'aux') and location.aux:
+            aux_name = LOCATION_DISPLAY_NAMES.get(location.aux, location.aux)
+            aux_btn = Button(style=ButtonStyle.gray, emoji='🔀', label=f"{aux_name[:15]}", custom_id='dir_aux', row=1)
+            aux_btn.callback = self.on_direction_click
+            view.add_item(aux_btn)
+
         # ROW 2: Action buttons (Encounters, Quests, Gym, Wild Trainers)
         if len(methods) > 0:
             enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='nav_encounters', row=2)
@@ -4847,9 +5172,15 @@ class EncountersMixin(MixinMeta):
             return
 
         # Execute the quest
-        trainer.quest(quest_name)
+        from services.questclass import quests as QuestsClass
+        quest_obj = QuestsClass(str(user.id))
+        result = quest_obj.questHandler(quest_name)
 
-        await interaction.response.send_message(trainer.message, ephemeral=True)
+        # Send response with embed if available
+        if result and isinstance(result, dict) and 'embed' in result:
+            await interaction.response.send_message(quest_obj.message, embed=result['embed'], ephemeral=True)
+        else:
+            await interaction.response.send_message(quest_obj.message, ephemeral=True)
 
         # Disable the quest button after completion
         view = View()
@@ -4865,7 +5196,7 @@ class EncountersMixin(MixinMeta):
                 if button.custom_id == interaction.data['custom_id']:
                     new_button.callback = self.on_quest_click
                 elif button.custom_id == 'quest_back_to_map':
-                    new_button.callback = self.on_quest_back_to_map_click  # FIX: Set correct callback
+                    new_button.callback = self.on_quest_back_to_map_click
                 elif button.custom_id.startswith('quest_'):
                     new_button.callback = self.on_quest_click
                 else:
@@ -5009,6 +5340,8 @@ class EncountersMixin(MixinMeta):
             player_pokemon = alive_party[player_pokemon_index]
             enemy_data = enemy_pokemon_list[enemy_pokemon_index]
             
+            from services.pokedexclass import pokedex as PokedexClass
+
             # Create enemy Pokemon
             enemy_name = list(enemy_data.keys())[0]
             enemy_level = enemy_data[enemy_name]
@@ -5016,6 +5349,8 @@ class EncountersMixin(MixinMeta):
             enemy_pokemon.create(enemy_level)
             enemy_pokemon.discordId = None
             
+            PokedexClass(str(user.id), enemy_pokemon)
+
             # Fight this matchup
             enc = EncounterClass(player_pokemon, enemy_pokemon)
             result = enc.fight(battleType='auto')
@@ -5053,9 +5388,19 @@ class EncountersMixin(MixinMeta):
             # Player won - defeated all enemy Pokemon
             battle_result = 'victory'
             battle.battleVictory(next_trainer)
+            # LEADERBOARD TRACKING
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.victory()
+            lb.actions()
         else:
             # Player lost - all player Pokemon fainted
             battle_result = 'defeat'
+            # LEADERBOARD TRACKING
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.defeat()
+            lb.actions()
         
         # Create summary embed
         battle_log_text = "\n".join(all_battle_logs[-20:])  # Last 20 lines
@@ -5177,8 +5522,22 @@ class EncountersMixin(MixinMeta):
                 inline=False
             )
         
+        # new code
         view_nav = self.__create_post_battle_buttons(str(user.id))
-        await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
+        new_message = await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
+        
+        # CRITICAL: Update ActionState with new message ID so buttons work
+        trainer = self._get_trainer(str(user.id))
+        location = trainer.getLocation()
+        self.__useractions[str(user.id)] = ActionState(
+            str(user.id),
+            new_message.channel.id,
+            new_message.id,
+            location,
+            trainer.getActivePokemon(),
+            None,
+            ''
+        )
 
     async def on_gym_battle_manual(self, interaction: discord.Interaction):
         """Handle MANUAL battle with gym trainer - supports multiple Pokemon with intro"""
@@ -5225,9 +5584,12 @@ class EncountersMixin(MixinMeta):
         # Get enemy's full Pokemon list
         enemy_pokemon_list = next_trainer.pokemon
 
+        from services.pokedexclass import pokedex as PokedexClass
+
         # Create first enemy Pokemon
         try:
             first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0], str(user.id))
+            PokedexClass(str(user.id), first_enemy_pokemon)
         except Exception as e:
             await intro_message.edit(content=f'Error creating enemy Pokemon: {str(e)}')
             return
@@ -6005,6 +6367,7 @@ class EncountersMixin(MixinMeta):
         all_battle_logs = []
         defeated_enemies = []
         defeated_player = []
+        exp_messages = []  # Track experience gains
         
         # Battle loop - continue until one side has no Pokemon left
         battle_result = None
@@ -6029,6 +6392,10 @@ class EncountersMixin(MixinMeta):
             if hasattr(enc, 'battle_log') and enc.battle_log:
                 all_battle_logs.extend(enc.battle_log)
             
+            # Capture experience message
+            if enc.message:
+                exp_messages.append(f"{player_pokemon.pokemonName.capitalize()}: {enc.message}")
+
             # Process result
             if result.get('result') == 'victory':
                 # Player won this round - enemy Pokemon fainted
@@ -6054,9 +6421,19 @@ class EncountersMixin(MixinMeta):
             # Player won - defeated all enemy Pokemon
             battle_result = 'victory'
             battle.gymLeaderVictory(gym_leader)
+            # LEADERBOARD TRACKING
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.victory()
+            lb.actions()
         else:
             # Player lost - all player Pokemon fainted
             battle_result = 'defeat'
+            # LEADERBOARD TRACKING
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.defeat()
+            lb.actions()
         
         # Create summary embed
         battle_log_text = "\n".join(all_battle_logs[-20:])  # Last 20 lines
@@ -6234,6 +6611,23 @@ class EncountersMixin(MixinMeta):
                     inline=True
                 )
                 
+                # ADD GYM SPRITE
+                gym_sprite_path = gym_info['leader'].get('gym_spritePath')
+                sprite_file = None
+                
+                if gym_sprite_path:
+                    try:
+                        full_sprite_path = get_sprite_path(gym_sprite_path)
+                        if os.path.exists(full_sprite_path):
+                            filename = os.path.basename(gym_sprite_path)
+                            sprite_file = discord.File(full_sprite_path, filename=filename)
+                            embed.set_image(url=f"attachment://{filename}")
+                    except Exception as e:
+                        print(f"Error loading gym sprite: {e}")
+                        # Fallback to URL
+                        sprite_url = f"https://pokesprites.joshkohut.com{gym_sprite_path}"
+                        embed.set_image(url=sprite_url)
+                
                 view = View()
                 
                 # Auto Battle button
@@ -6251,12 +6645,25 @@ class EncountersMixin(MixinMeta):
                 back_btn.callback = self.on_nav_map_click
                 view.add_item(back_btn)
 
-                # Edit message instead of followup
-                await interaction.message.edit(
-                    content=None,
-                    embed=embed,
-                    view=view
-                )
+                # Send message with sprite file if available
+                if sprite_file:
+                    new_message = await interaction.followup.send(
+                        embed=embed,
+                        view=view,
+                        file=sprite_file
+                    )
+                    try:
+                        await interaction.message.delete()
+                    except:
+                        pass
+                    if str(user.id) in self.__useractions:
+                        self.__useractions[str(user.id)].messageId = new_message.id
+                else:
+                    await interaction.message.edit(
+                        content=None,
+                        embed=embed,
+                        view=view
+                    )
             else:
                 await interaction.followup.send('Error getting next trainer.', ephemeral=True)
         else:
@@ -6295,48 +6702,78 @@ class EncountersMixin(MixinMeta):
                 description=f"All gym trainers defeated! You can now challenge the Gym Leader!",
                 color=discord.Color.gold()
             )
-            
+
             embed.add_field(
                 name="Gym Leader",
                 value=gym_leader.name,
                 inline=True
             )
-            
+
             embed.add_field(
                 name="Badge",
                 value=gym_leader.badge,
                 inline=True
             )
-            
+
             embed.add_field(
                 name="Prize Money",
                 value=f"${gym_leader.money}",
                 inline=True
             )
 
+            # ADD GYM SPRITE
+            gym_sprite_path = gym_info['leader'].get('gym_spritePath')
+            sprite_file = None
+
+            if gym_sprite_path:
+                try:
+                    full_sprite_path = get_sprite_path(gym_sprite_path)
+                    if os.path.exists(full_sprite_path):
+                        filename = os.path.basename(gym_sprite_path)
+                        sprite_file = discord.File(full_sprite_path, filename=filename)
+                        embed.set_image(url=f"attachment://{filename}")
+                except Exception as e:
+                    print(f"Error loading gym sprite: {e}")
+                    # Fallback to URL
+                    sprite_url = f"https://pokesprites.joshkohut.com{gym_sprite_path}"
+                    embed.set_image(url=sprite_url)
+
             view = View()
-            
+
             # Auto battle button
             auto_button = Button(style=ButtonStyle.gray, label="⚡ Auto Battle Leader", custom_id='gym_leader_auto')
             auto_button.callback = self.on_gym_leader_battle_auto
             view.add_item(auto_button)
-            
+
             # Manual battle button
             manual_button = Button(style=ButtonStyle.green, label="🎮 Manual Battle Leader", custom_id='gym_leader_manual')
             manual_button.callback = self.on_gym_leader_battle_manual
             view.add_item(manual_button)
-            
+
             # Back button
             back_btn = Button(style=ButtonStyle.primary, label="🗺️ Back", custom_id='gym_back', row=1)
             back_btn.callback = self.on_nav_map_click
             view.add_item(back_btn)
 
-            # Edit message
-            await interaction.message.edit(
-                content=None,
-                embed=embed,
-                view=view
-            )
+            # Send message with sprite file if available
+            if sprite_file:
+                new_message = await interaction.followup.send(
+                    embed=embed,
+                    view=view,
+                    file=sprite_file
+                )
+                try:
+                    await interaction.message.delete()
+                except:
+                    pass
+                if str(user.id) in self.__useractions:
+                    self.__useractions[str(user.id)].messageId = new_message.id
+            else:
+                await interaction.message.edit(
+                    content=None,
+                    embed=embed,
+                    view=view
+                )
 
     async def on_gym_leader_battle_manual(self, interaction: discord.Interaction):
         """Handle MANUAL battle with gym leader - supports multiple Pokemon with intro"""
@@ -6390,9 +6827,12 @@ class EncountersMixin(MixinMeta):
         # Get enemy's full Pokemon list
         enemy_pokemon_list = gym_leader.pokemon
 
+        from services.pokedexclass import pokedex as PokedexClass
+
         # Create first enemy Pokemon
         try:
             first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0], str(user.id))
+            PokedexClass(str(user.id), first_enemy_pokemon)
         except Exception as e:
             await intro_message.edit(content=f'Error creating gym leader Pokemon: {str(e)}')
             return
@@ -6485,7 +6925,9 @@ class EncountersMixin(MixinMeta):
             msg = 'Waiting to receive a gift...'
         elif action.value == 'pokeflute':
             msg = 'You played the Poké Flute!'
-
+        elif action.value == 'surf':
+            msg = 'Surfing on your pokemon...'
+        
         await interaction.message.edit(
             content=msg,
             view=view
@@ -6641,7 +7083,7 @@ class EncountersMixin(MixinMeta):
                     if str(user.id) in self.__useractions:
                         del self.__useractions[str(user.id)]
                 else:
-                    await interaction.channel.send('No pokemon encountered.', ephemeral=True)
+                    await interaction.followup.send('No pokemon encountered.', ephemeral=True)
                 return
 
 
@@ -6689,7 +7131,7 @@ class EncountersMixin(MixinMeta):
                     if str(user.id) in self.__useractions:
                         del self.__useractions[str(user.id)]
                 else:
-                    await interaction.channel.send('No pokemon encountered.', ephemeral=True)
+                    await interaction.followup.send('No pokemon encountered.', ephemeral=True)
                 return
 
         # active = trainer.getActivePokemon()
@@ -6810,6 +7252,12 @@ class EncountersMixin(MixinMeta):
         
         # Create appropriate embed
         if is_victory:
+            # LEADERBOARD TRACKING
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.victory()
+            lb.actions()
+
             # VICTORY EMBED
             player_stats = active.getPokeStats()
             player_max_hp = player_stats['hp']
@@ -6837,6 +7285,12 @@ class EncountersMixin(MixinMeta):
                 inline=False
             )
         else:
+            # LEADERBOARD TRACKING
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.defeat()
+            lb.actions()
+
             # DEFEAT EMBED
             player_stats = active.getPokeStats()
             player_max_hp = player_stats['hp']
@@ -7185,45 +7639,6 @@ HP    : {wildPokemon.currentHP} / {stats['hp']}
 
         embed.set_footer(text=descLog)
         return embed
-
-
-#     def __wildPokemonEncounter(self, user: discord.User, pokemon: PokemonClass, active: PokemonClass, descLog: str):
-#         stats = pokemon.getPokeStats()
-#         color = getTypeColor(pokemon.type1)
-#         # Create the embed object
-#         embed = discord.Embed(
-#             title=f"Wild {pokemon.pokemonName.capitalize()}",
-#             description=descLog,
-#             color=color
-#         )
-#         embed.set_author(name=f"{user.display_name}",
-#                         icon_url=str(user.display_avatar.url))
-        
-#         types = pokemon.type1
-#         # Pokemon are not guaranteed to have a second type.
-#         # Check that the second type is not set to None and is not an empty string.
-#         if pokemon.type2 is not None and pokemon.type2:
-#             types += ', ' + pokemon.type2
-
-#         embed.add_field(
-#             name="Type", value=f"{types}", inline=False)
-#         embed.add_field(
-#             name="Level", value=f"{pokemon.currentLevel}", inline=True)
-#         embed.add_field(
-#             name="HP", value=f"{pokemon.currentHP} / {stats['hp']}", inline=True)
-
-#         embed.set_thumbnail(url=pokemon.frontSpriteURL)
-#         embed.set_image(url = active.backSpriteURL)
-        
-#         activeStats = active.getPokeStats()
-
-#         embed.set_footer(text=f'''
-# {active.pokemonName.capitalize()}
-# Level: {active.currentLevel}
-# HP: {active.currentHP} / {activeStats['hp']}
-#         ''')
-#         return embed
-
 
     def __checkUserActionState(self, user: discord.User, message: discord.Message):
         state: ActionState

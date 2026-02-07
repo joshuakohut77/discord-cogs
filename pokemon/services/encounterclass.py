@@ -16,8 +16,8 @@ from pokeclass import Pokemon as PokemonClass
 from ailmentsclass import ailment 
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from .trainerclass import trainer as trainer_import
+# if TYPE_CHECKING:
+from .trainerclass import trainer as trainer_import
 
 # Global Config Variables
 MAX_BATTLE_TURNS = 50
@@ -534,9 +534,6 @@ class encounter:
             self.pokemon2.discordId = self.pokemon1.discordId
             self.pokemon2.party = party_count < 6  # True if party < 6, False otherwise
             
-            # DEBUG: Check what we're about to save
-            debug_party_value = self.pokemon2.party
-            debug_party_type = type(self.pokemon2.party).__name__
             
             # Save it to the trainers inventory
             self.pokemon2.save()
@@ -545,8 +542,6 @@ class encounter:
                 self.message = 'error occured during pokemon2 save()'
                 return self.message
             
-            # DEBUG: Check if it's still the same after save
-            debug_party_after = self.pokemon2.party
             
             self.statuscode = 420
             self.message = f"You successfully caught the pokemon!"
@@ -572,15 +567,17 @@ class encounter:
             return 
         newCurrentHP = self.pokemon1.currentHP
 
-        levelUp, retMsg = self.pokemon1.processBattleOutcome(
+        levelUp, retMsg, pendingMoves = self.pokemon1.processBattleOutcome(
             expGained, evGained, newCurrentHP)
 
         resultString = "Your Pokemon gained %s exp." % (expGained)
-        # if pokemon leved up
+        # if pokemon leveled up
         if levelUp:
             resultString = resultString + ' Your Pokemon leveled up!'
         if retMsg != '':
             resultString = resultString + ' ' + retMsg
+        if pendingMoves:
+            resultString = resultString + ' (Moves pending: %s)' % ', '.join(pendingMoves)
 
         # leaderboard stats
         lb = leaderboard(self.pokemon1.discordId)
@@ -686,8 +683,13 @@ class encounter:
     
     def updateUniqueEncounters(self):
         """ updates the unique encounters table """
-        uEncObj = uEnc(self.pokemon1.discordId)
         name = self.pokemon2.pokemonName
+        discordId = self.pokemon1.discordId
+        
+        # Create encounter object and check before/after
+        uEncObj = uEnc(discordId)
+        before_value = uEncObj.articuno if name == 'articuno' else None
+
         if name == 'articuno':
             uEncObj.articuno = True
         elif name == 'zapdos':
@@ -715,7 +717,14 @@ class encounter:
         elif name == 'eevee':
             uEncObj.eevee = True
 
+
+        after_value = uEncObj.articuno if name == 'articuno' else None
+
         uEncObj.save()      
+        save_status = uEncObj.statuscode
+    
+        return f"UpdateEncounter: {name}, before={before_value}, after={after_value}, saveStatus={save_status}, discordId={discordId}"
+    
 
     def __loadMovesConfig(self, move):
         """ loads and returns the evolutiononfig for the current pokemon """

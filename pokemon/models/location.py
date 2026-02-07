@@ -9,6 +9,7 @@ class LocationModel:
         self.east = results['east']
         self.south = results['south']
         self.west = results['west']
+        self.aux = results.get('aux')  # Use .get() so it returns None if key doesn't exist
         self.spritePath = results['spritePath']
         self.pokecenter = results['pokecenter']
         self.gym = results['gym']

@@ -10,27 +10,20 @@ CREATE TABLE IF NOT EXISTS public.trainer
     "locationId" integer DEFAULT 86,
     "legacySprites" boolean DEFAULT false,
     startdate date DEFAULT CURRENT_DATE,
-    CONSTRAINT trainer_pkey PRIMARY KEY (discord_id)
+    "starterName" character varying COLLATE pg_catalog."default",
+    "trainerName" character varying COLLATE pg_catalog."default",
+    CONSTRAINT trainer_pkey PRIMARY KEY (discord_id),
+    CONSTRAINT "trainer_activePokemon_pokemon_id" FOREIGN KEY ("activePokemon")
+        REFERENCES public.pokemon (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "trainer_starterId_pokemon_id" FOREIGN KEY ("starterId")
+        REFERENCES public.pokemon (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
 )
 
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.trainer
     OWNER to redbot;
-
-
-
-ALTER TABLE
-  "public"."trainer"
-ADD
-  CONSTRAINT "trainer_starterId_pokemon_id" FOREIGN KEY ("starterId") REFERENCES "public"."pokemon" ("id") ON
-UPDATE
-  NO ACTION ON DELETE NO ACTION;
-
-
-ALTER TABLE
-  "public"."trainer"
-ADD
-  CONSTRAINT "trainer_activePokemon_pokemon_id" FOREIGN KEY ("activePokemon") REFERENCES "public"."pokemon" ("id") ON
-UPDATE
-  NO ACTION ON DELETE NO ACTION

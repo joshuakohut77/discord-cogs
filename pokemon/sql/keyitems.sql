@@ -31,6 +31,8 @@ CREATE TABLE IF NOT EXISTS public.keyitems
     bike_voucher boolean DEFAULT false,
     gold_teeth boolean DEFAULT false,
     elite_four boolean DEFAULT false,
+    helix_fossil boolean DEFAULT false,
+    dome_fossil boolean DEFAULT false,
     CONSTRAINT keyitems_pkey PRIMARY KEY (discord_id)
 )
 
