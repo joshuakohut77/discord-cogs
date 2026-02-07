@@ -3,42 +3,102 @@ from typing import List, Tuple, Dict, Any
 from datetime import datetime
 import sys
 
-# Import the existing database class
-# Adjust the import path based on where db.py is located relative to this cog
 try:
-    from ...dbclass import db
-except:
-    # Fallback if the path is different
-    try:
-        from dbclass import db
-    except:
-        print("WARNING: Could not import database class. Stats will not work.", file=sys.stderr)
-        db = None
+    import psycopg as pg
+except ImportError:
+    print("ERROR: psycopg library not found. Install with: pip install psycopg", file=sys.stderr)
+    pg = None
 
 
 class DankDatabase:
     """
     Database wrapper for Dank Hall statistics and tracking.
     
-    Uses the existing db.py class to interface with PostgreSQL.
+    Uses psycopg to connect directly to PostgreSQL.
     """
+    
+    # Database connection configuration
+    # Modify these values to match your database setup
+    DB_CONFIG = {
+        "host": "postgres_container",
+        "dbname": "discord",  # Change this to your desired database name
+        "user": "redbot",
+        "password": "REDACTED",
+        "port": 5432
+    }
     
     def __init__(self):
         """Initialize database connection."""
-        if db is None:
+        if pg is None:
             self.conn = None
-            print("Database connection unavailable", file=sys.stderr)
-        else:
-            try:
-                self.conn = db()
-            except Exception as e:
-                self.conn = None
-                print(f"Database connection failed: {e}", file=sys.stderr)
+            print("Database connection unavailable - psycopg not installed", file=sys.stderr)
+            return
+        
+        try:
+            self.conn = pg.connect(**self.DB_CONFIG)
+            print(f"Connected to database: {self.DB_CONFIG['dbname']}", file=sys.stderr)
+        except Exception as e:
+            self.conn = None
+            print(f"Database connection failed: {e}", file=sys.stderr)
     
     def close(self):
         """Close the database connection."""
         if self.conn:
-            del self.conn
+            self.conn.close()
+    
+    def _execute(self, query: str, params: list = None):
+        """Execute a query without returning results."""
+        if not self.conn:
+            return
+        
+        try:
+            cur = self.conn.cursor()
+            if params:
+                cur.execute(query, params)
+            else:
+                cur.execute(query)
+            self.conn.commit()
+            cur.close()
+        except Exception as e:
+            print(f"Database execute error: {e}", file=sys.stderr)
+            self.conn.rollback()
+            raise
+    
+    def _query_one(self, query: str, params: list = None):
+        """Execute a query and return one result."""
+        if not self.conn:
+            return None
+        
+        try:
+            cur = self.conn.cursor()
+            if params:
+                cur.execute(query, params)
+            else:
+                cur.execute(query)
+            result = cur.fetchone()
+            cur.close()
+            return result
+        except Exception as e:
+            print(f"Database query error: {e}", file=sys.stderr)
+            return None
+    
+    def _query_all(self, query: str, params: list = None):
+        """Execute a query and return all results."""
+        if not self.conn:
+            return []
+        
+        try:
+            cur = self.conn.cursor()
+            if params:
+                cur.execute(query, params)
+            else:
+                cur.execute(query)
+            results = cur.fetchall()
+            cur.close()
+            return results
+        except Exception as e:
+            print(f"Database query error: {e}", file=sys.stderr)
+            return []
     
     async def create_tables(self):
         """
@@ -50,11 +110,12 @@ class DankDatabase:
         - Stores stats for leaderboards
         """
         if not self.conn:
+            print("Cannot create tables - no database connection", file=sys.stderr)
             return
         
         try:
             # Main table for certified messages
-            self.conn.execute("""
+            self._execute("""
                 CREATE TABLE IF NOT EXISTS dank_certified_messages (
                     message_id BIGINT PRIMARY KEY,
                     guild_id BIGINT NOT NULL,
@@ -68,12 +129,12 @@ class DankDatabase:
             """)
             
             # Create indexes separately
-            self.conn.execute("""
+            self._execute("""
                 CREATE INDEX IF NOT EXISTS idx_guild_user 
                 ON dank_certified_messages(guild_id, user_id)
             """)
             
-            self.conn.execute("""
+            self._execute("""
                 CREATE INDEX IF NOT EXISTS idx_guild_channel 
                 ON dank_certified_messages(guild_id, channel_id)
             """)
@@ -90,7 +151,7 @@ class DankDatabase:
             return False
         
         try:
-            result = self.conn.querySingle(
+            result = self._query_one(
                 "SELECT 1 FROM dank_certified_messages WHERE message_id = %s",
                 [message_id]
             )
@@ -114,7 +175,7 @@ class DankDatabase:
             return False
         
         try:
-            self.conn.execute(
+            self._execute(
                 """
                 INSERT INTO dank_certified_messages 
                 (message_id, guild_id, channel_id, user_id, emoji, hall_message_id, reaction_count)
@@ -142,7 +203,7 @@ class DankDatabase:
         
         try:
             # Total certifications
-            total_result = self.conn.querySingle(
+            total_result = self._query_one(
                 """
                 SELECT COUNT(*) 
                 FROM dank_certified_messages 
@@ -153,7 +214,7 @@ class DankDatabase:
             total = total_result[0] if total_result else 0
             
             # By emoji
-            emoji_results = self.conn.queryAll(
+            emoji_results = self._query_all(
                 """
                 SELECT emoji, COUNT(*) as count
                 FROM dank_certified_messages
@@ -179,7 +240,7 @@ class DankDatabase:
             return 0
         
         try:
-            result = self.conn.querySingle(
+            result = self._query_one(
                 """
                 SELECT COUNT(*) + 1
                 FROM (
@@ -211,7 +272,7 @@ class DankDatabase:
             return []
         
         try:
-            results = self.conn.queryAll(
+            results = self._query_all(
                 """
                 SELECT user_id, COUNT(*) as cert_count
                 FROM dank_certified_messages
@@ -237,7 +298,7 @@ class DankDatabase:
             return []
         
         try:
-            results = self.conn.queryAll(
+            results = self._query_all(
                 """
                 SELECT channel_id, COUNT(*) as cert_count
                 FROM dank_certified_messages
@@ -263,7 +324,7 @@ class DankDatabase:
             return []
         
         try:
-            results = self.conn.queryAll(
+            results = self._query_all(
                 """
                 SELECT emoji, COUNT(*) as cert_count
                 FROM dank_certified_messages
@@ -285,7 +346,7 @@ class DankDatabase:
             return 0
         
         try:
-            result = self.conn.querySingle(
+            result = self._query_one(
                 "SELECT COUNT(*) FROM dank_certified_messages WHERE guild_id = %s",
                 [guild_id]
             )
