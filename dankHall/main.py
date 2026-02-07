@@ -883,13 +883,20 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
             emoji = None
             reaction_count = 0
             message_id = None
+            message_url = None
             
             for field in embed.fields:
                 # Channel field contains channel mention
                 if field.name == "Channel" and field.value:
-                    # Format: <#CHANNEL_ID>
-                    if '<#' in field.value:
-                        channel_id = int(field.value.strip('<#>'))
+                    # Try multiple formats
+                    # Format 1: <#CHANNEL_ID>
+                    channel_match = re.search(r'<#(\d+)>', field.value)
+                    if channel_match:
+                        channel_id = int(channel_match.group(1))
+                    else:
+                        # Format 2: Plain channel name (fallback, won't work but let's try)
+                        # We'll try to extract from the message URL later
+                        pass
                 
                 # Emoji field
                 if field.name == "Emoji" and field.value:
@@ -902,17 +909,32 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                     except ValueError:
                         reaction_count = 0
                 
-                # Jump to Message field contains the original message link
-                if field.name == "Jump to Message" and field.value:
-                    # Extract message ID from the link
-                    # Format: [Click here](https://discord.com/channels/guild/channel/message)
-                    match = re.search(r'/(\d+)/?$', field.value)
-                    if match:
-                        message_id = int(match.group(1))
+                # Jump to Message / Content field contains the original message link
+                if field.name in ["Jump to Message", "Content"] and field.value:
+                    # Extract full URL from markdown link or plain URL
+                    # Format: [Click here](URL) or just URL
+                    url_match = re.search(r'https://(?:discord\.com|discordapp\.com)/channels/(\d+)/(\d+)/(\d+)', field.value)
+                    if url_match:
+                        message_url = url_match.group(0)
+                        # Extract IDs from URL
+                        guild_id = int(url_match.group(1))
+                        url_channel_id = int(url_match.group(2))
+                        message_id = int(url_match.group(3))
+                        
+                        # Use channel_id from URL if we didn't get it from Channel field
+                        if not channel_id:
+                            channel_id = url_channel_id
+            
+            # If we still don't have channel_id but have message_url, try one more time
+            if not channel_id and message_url:
+                url_match = re.search(r'/channels/\d+/(\d+)/\d+', message_url)
+                if url_match:
+                    channel_id = int(url_match.group(1))
             
             # Validate we got all required data
             if not all([user_id, channel_id, emoji, message_id]):
                 print(f"Missing data - user_id: {user_id}, channel_id: {channel_id}, emoji: {emoji}, message_id: {message_id}", file=sys.stderr)
+                print(f"Embed fields: {[(f.name, f.value) for f in embed.fields]}", file=sys.stderr)
                 return None
             
             return {
