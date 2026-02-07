@@ -536,9 +536,12 @@ class DiscordPlaysPokemon(commands.Cog):
             await asyncio.sleep(2)
 
             while guild_id in self._emulators and self._emulators[guild_id].running:
-                screenshot = await self._emulators[guild_id].get_screenshot()
-                if screenshot:
-                    await self._update_screen_message(guild_id, channel, screenshot)
+                try:
+                    screenshot = await self._emulators[guild_id].get_screenshot()
+                    if screenshot:
+                        await self._update_screen_message(guild_id, channel, screenshot)
+                except (discord.HTTPException, asyncio.TimeoutError) as e:
+                    log.warning(f"Screenshot update failed (will retry): {e}")
 
                 await asyncio.sleep(interval)
 
@@ -573,7 +576,7 @@ class DiscordPlaysPokemon(commands.Cog):
                     # There's at least one message newer than ours
                     needs_new = True
                     break
-            except discord.HTTPException:
+            except (discord.HTTPException, asyncio.TimeoutError):
                 needs_new = True
 
             if not needs_new:
