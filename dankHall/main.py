@@ -617,30 +617,52 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         embed: discord.Embed
     ) -> discord.Message:
         """Send the hall of fame message with media."""
-        hall_msg = None
-        
         try:
-            # Send embed first
-            hall_msg = await hall_channel.send(embed=embed)
-            
-            # Handle attachments
+            # Handle attachments first (images, videos, files)
             if original_message.attachments:
                 attachment = original_message.attachments[0]
-                embed.set_image(url=attachment.url)
-                await hall_msg.edit(embed=embed)
+                
+                # Check if it's an image
+                if attachment.content_type and attachment.content_type.startswith('image/'):
+                    embed.set_image(url=attachment.url)
+                else:
+                    # For non-images (videos, files), add as a field
+                    embed.add_field(
+                        name="Attachment",
+                        value=f"[{attachment.filename}]({attachment.url})",
+                        inline=False
+                    )
             
-            # Handle embeds (like image links)
+            # Handle embeds (like when someone posts a link that auto-embeds)
             elif original_message.embeds:
                 orig_embed = original_message.embeds[0]
+                
+                # Try to get image from the embed
                 if orig_embed.image:
                     embed.set_image(url=orig_embed.image.url)
-                    await hall_msg.edit(embed=embed)
                 elif orig_embed.thumbnail:
                     embed.set_image(url=orig_embed.thumbnail.url)
-                    await hall_msg.edit(embed=embed)
+                elif orig_embed.url:
+                    # If it's a link embed without image, just reference it
+                    embed.add_field(
+                        name="Link",
+                        value=f"[{orig_embed.title or 'View Content'}]({orig_embed.url})",
+                        inline=False
+                    )
+            
+            # Send the embed
+            hall_msg = await hall_channel.send(embed=embed)
+            
+            # For videos or large attachments, also send the direct link
+            if original_message.attachments:
+                attachment = original_message.attachments[0]
+                if attachment.content_type and not attachment.content_type.startswith('image/'):
+                    await hall_channel.send(attachment.url)
             
             return hall_msg
         
         except Exception as e:
-            print(f"Error sending hall message: {e}")
+            print(f"Error sending hall message: {e}", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
             return None
