@@ -1,0 +1,11 @@
+{
+    "author": ["Josh"],
+    "install_msg": "Thanks for installing Dank Hall! Use `[p]dankhall settings` to get started with configuration.",
+    "name": "DankHall",
+    "short": "Hall of Fame system for Discord messages",
+    "description": "A comprehensive Hall of Fame system that tracks and celebrates the dankest messages in your server. Features include reaction-based certification, customizable thresholds per channel, blacklisting, detailed statistics, leaderboards, and manual certification options.",
+    "tags": ["fun", "reactions", "hall of fame", "leaderboard", "statistics"],
+    "requirements": ["psycopg"],
+    "hidden": false,
+    "end_user_data_statement": "This cog stores message IDs, user IDs, channel IDs, and guild IDs for certified messages. This data is used for statistics and preventing duplicate certifications."
+}
