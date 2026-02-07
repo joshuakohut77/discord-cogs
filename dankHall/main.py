@@ -622,16 +622,12 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
             if original_message.attachments:
                 attachment = original_message.attachments[0]
                 
-                # Check if it's an image
+                # Check if it's an image (will be embedded)
                 if attachment.content_type and attachment.content_type.startswith('image/'):
                     embed.set_image(url=attachment.url)
-                else:
-                    # For non-images (videos, files), add as a field
-                    embed.add_field(
-                        name="Attachment",
-                        value=f"[{attachment.filename}]({attachment.url})",
-                        inline=False
-                    )
+                
+                # For ANY attachment, we'll post the direct link too
+                # This ensures videos/gifs play properly
             
             # Handle embeds (like when someone posts a link that auto-embeds)
             elif original_message.embeds:
@@ -642,22 +638,22 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                     embed.set_image(url=orig_embed.image.url)
                 elif orig_embed.thumbnail:
                     embed.set_image(url=orig_embed.thumbnail.url)
-                elif orig_embed.url:
-                    # If it's a link embed without image, just reference it
-                    embed.add_field(
-                        name="Link",
-                        value=f"[{orig_embed.title or 'View Content'}]({orig_embed.url})",
-                        inline=False
-                    )
             
-            # Send the embed
+            # Send the embed first
             hall_msg = await hall_channel.send(embed=embed)
             
-            # For videos or large attachments, also send the direct link
+            # Send direct attachment link separately for videos/files to play properly
             if original_message.attachments:
                 attachment = original_message.attachments[0]
-                if attachment.content_type and not attachment.content_type.startswith('image/'):
-                    await hall_channel.send(attachment.url)
+                # Send the attachment URL so Discord renders it natively
+                await hall_channel.send(attachment.url)
+            
+            # If the original message had embed content (like a YouTube link), send that too
+            elif original_message.embeds and original_message.embeds[0].url:
+                orig_embed = original_message.embeds[0]
+                # Only send if it's not just an image embed
+                if not orig_embed.image and not orig_embed.thumbnail:
+                    await hall_channel.send(orig_embed.url)
             
             return hall_msg
         
