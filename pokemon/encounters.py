@@ -2197,17 +2197,24 @@ class EncountersMixin(MixinMeta):
         pokemon_select.callback = self.on_item_usage_pokemon_select
         view.add_item(pokemon_select)
         
-        # ROW 1: Item selector - only show items that can be used on Pokemon
+        # ROW 1: Item selector - now includes healing items AND evolution stones
         item_select = Select(placeholder="Choose an Item", custom_id='item_usage_item_select', row=1)
         
         # Define usable items with their inventory attributes and display names
         usable_items = [
+            # Healing items
             ('potion', inv.potion, 'Potion', 'Restores 20 HP'),
             ('super-potion', inv.superpotion, 'Super Potion', 'Restores 50 HP'),
             ('hyper-potion', inv.hyperpotion, 'Hyper Potion', 'Restores 200 HP'),
             ('max-potion', inv.maxpotion, 'Max Potion', 'Fully restores HP'),
             ('revive', inv.revive, 'Revive', 'Revives fainted Pokemon (50% HP)'),
             ('full-restore', inv.fullrestore, 'Full Restore', 'Fully restores HP'),
+            # Evolution stones
+            ('fire-stone', inv.firestone, 'Fire Stone', 'Evolves certain Pokemon'),
+            ('water-stone', inv.waterstone, 'Water Stone', 'Evolves certain Pokemon'),
+            ('thunder-stone', inv.thunderstone, 'Thunder Stone', 'Evolves certain Pokemon'),
+            ('leaf-stone', inv.leafstone, 'Leaf Stone', 'Evolves certain Pokemon'),
+            ('moon-stone', inv.moonstone, 'Moon Stone', 'Evolves certain Pokemon'),
         ]
         
         has_items = False
@@ -2224,7 +2231,7 @@ class EncountersMixin(MixinMeta):
         if not has_items:
             embed.add_field(
                 name="❌ No Usable Items",
-                value="You don't have any healing items. Visit a Pokemart to buy some!",
+                value="You don't have any items to use on Pokemon. Visit a Pokemart to buy some!",
                 inline=False
             )
         else:
