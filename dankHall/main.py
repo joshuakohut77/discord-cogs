@@ -791,30 +791,35 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
             await ctx.send("No certifications yet in this server!")
             return
         
-        # Get user info
-        user = ctx.guild.get_member(random_cert["user_id"])
-        user_name = user.display_name if user else f"User {random_cert['user_id']}"
-        user_avatar = user.display_avatar.url if user else None
-        
-        # Get channel info
+        # Try to fetch the original message to get all the content
         channel = ctx.guild.get_channel(random_cert["channel_id"])
-        channel_mention = channel.mention if channel else f"Channel {random_cert['channel_id']}"
+        original_message = None
         
-        # Create embed
+        if channel:
+            try:
+                original_message = await channel.fetch_message(random_cert["message_id"])
+            except (discord.NotFound, discord.Forbidden):
+                pass
+        
+        if not original_message:
+            await ctx.send("❌ Could not find the original message. It may have been deleted.")
+            return
+        
+        # Create the hall of fame style embed
         embed = discord.Embed(
             title="🎲 Random Certified Dank",
             color=discord.Color.gold(),
             timestamp=random_cert["certified_at"]
         )
         
-        if user_avatar:
-            embed.set_author(name=user_name, icon_url=user_avatar)
-        else:
-            embed.set_author(name=user_name)
+        embed.set_author(
+            name=original_message.author.display_name,
+            icon_url=original_message.author.display_avatar.url
+        )
         
         embed.add_field(
             name="Channel",
-            value=channel_mention,
+            value=channel.mention if channel else f"Channel {random_cert['channel_id']}",
             inline=True
         )
         
@@ -830,47 +835,37 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
             inline=True
         )
         
-        # Try to get the original message link
-        try:
-            if channel:
-                original_message = await channel.fetch_message(random_cert["message_id"])
-                embed.add_field(
-                    name="Jump to Message",
-                    value=f"[Click here]({original_message.jump_url})",
-                    inline=False
-                )
-                
-                # Add message content if available
-                if original_message.content:
-                    content = original_message.content[:1024]
-                    if len(original_message.content) > 1024:
-                        content += "..."
-                    embed.add_field(
-                        name="Content",
-                        value=content,
-                        inline=False
-                    )
-        except (discord.NotFound, discord.Forbidden):
+        embed.add_field(
+            name="Jump to Message",
+            value=f"[Click here]({original_message.jump_url})",
+            inline=False
+        )
+        
+        # Add message content if available
+        if original_message.content:
+            content = original_message.content[:1024]
+            if len(original_message.content) > 1024:
+                content += "..."
             embed.add_field(
-                name="Original Message",
-                value="*Message no longer available*",
+                name="Content",
+                value=content,
                 inline=False
             )
         
-        # Try to link to the hall post
-        if random_cert["hall_message_id"]:
-            # Try to find which hall channel this was posted to
-            hall_channel_id = await self._get_hall_channel(channel) if channel else None
-            if hall_channel_id:
-                hall_channel = ctx.guild.get_channel(hall_channel_id)
-                if hall_channel:
-                    embed.add_field(
-                        name="Hall of Fame Post",
-                        value=f"[View in {hall_channel.mention}](https://discord.com/channels/{ctx.guild.id}/{hall_channel_id}/{random_cert['hall_message_id']})",
-                        inline=False
-                    )
-        
+        # Send the embed first
         await ctx.send(embed=embed)
+        
+        # Then post the media separately (just like in the hall of fame)
+        if original_message.attachments:
+            # Post all attachments
+            for attachment in original_message.attachments:
+                await ctx.send(attachment.url)
+        
+        elif original_message.embeds:
+            # If the original message had an embed (like a link preview), send that URL
+            orig_embed = original_message.embeds[0]
+            if orig_embed.url:
+                await ctx.send(orig_embed.url)
 
     # ==================== Helper Methods ====================
 
