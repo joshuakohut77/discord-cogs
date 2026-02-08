@@ -51,6 +51,7 @@ class EncountersMixin(MixinMeta):
     __wild_battle_states: Dict[str, WildBattleState] = {}
     __bag_states: dict[str, BagState] = {}
     __item_usage_states: dict = {}
+    __flight_states: dict = {}
     __enemy_trainers_data: dict = None
     __trainer_cache: Dict[str, TrainerClass] = {}  # Cache for TrainerClass instances
 
@@ -1542,6 +1543,7 @@ class EncountersMixin(MixinMeta):
     async def on_nav_bag_click(self, interaction: discord.Interaction):
         """Handle Bag button click - show bag with items"""
         user = interaction.user
+        self._current_user_id = str(user.id)
         await interaction.response.defer()
         
         # Create bag state
@@ -1558,6 +1560,252 @@ class EncountersMixin(MixinMeta):
         view = self.__create_bag_navigation_view('items')
         
         await interaction.message.edit(embed=embed, view=view)
+
+    async def on_flight_map_click(self, interaction: discord.Interaction):
+        """Handle Flight Map button click"""
+        user = interaction.user
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.response.send_message('Session expired. Use ,trainer map to start.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Check if they have HM02
+        from services.keyitemsclass import keyitems as KeyItemClass
+        keyitems = KeyItemClass(str(user.id))
+        
+        if not keyitems.HM02:
+            await interaction.followup.send('You need HM02 (Fly) to use the Flight Map!', ephemeral=True)
+            return
+        
+        # Check if they have a Pokemon that can fly
+        from helpers.helpers import check_hm_usable
+        can_use, compatible_pokemon = check_hm_usable(str(user.id), 'HM02')
+        
+        if not can_use:
+            await interaction.followup.send(
+                'None of your party Pokemon can use Fly! You need a Pokemon that knows Fly.',
+                ephemeral=True
+            )
+            return
+        
+        # Get current location
+        from services.trainerclass import trainer as TrainerClass
+        trainer = self._get_trainer(str(user.id))
+        current_location = trainer.getLocation()
+        
+        # Create flight state
+        from models.sessionstate import FlightState
+        self.__flight_states[str(user.id)] = FlightState(str(user.id), current_location.name)
+        
+        # Show flight interface
+        embed, view = self.__create_flight_interface(user, current_location.name, None)
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    def __create_flight_interface(self, user: discord.User, current_location_name: str, selected_destination: str = None) -> tuple[discord.Embed, View]:
+        """Create the flight map interface"""
+        from helpers.pathhelpers import get_sprite_path
+        from .constant import LOCATION_DISPLAY_NAMES
+        from discord.ui import Select
+        
+        # Map of cities that can be flown to (matching the PNG filenames in sprites/town_map/)
+        flyable_cities = {
+            'pallet-town': 'Pallet Town',
+            'viridian-city': 'Viridian City',
+            'pewter-city': 'Pewter City',
+            'cerulean-city': 'Cerulean City',
+            'lavender-town': 'Lavender Town',
+            'vermilion-city': 'Vermilion City',
+            'celadon-city': 'Celadon City',
+            'saffron-city': 'Saffron City',
+            'fuchsia-city': 'Fuchsia City',
+            'cinnabar-island': 'Cinnabar Island',
+            'indigo-plateau': 'Indigo Plateau'
+        }
+        
+        current_display = LOCATION_DISPLAY_NAMES.get(current_location_name, current_location_name.replace('-', ' ').title())
+        
+        # Create embed
+        embed = discord.Embed(
+            title="🕊️ Flight Map",
+            description=f"**Current Location:** {current_display}\n\nSelect a destination to fly to:",
+            color=discord.Color.green()
+        )
+        embed.set_author(name=user.display_name, icon_url=str(user.display_avatar.url))
+        
+        # Set image based on selected destination or show base map
+        if selected_destination and selected_destination in flyable_cities:
+            image_name = f"{selected_destination}.png"
+        else:
+            image_name = "town_map.png"
+        
+        try:
+            full_sprite_path = get_sprite_path(f"/sprites/town_map/{image_name}")
+            sprite_file = discord.File(full_sprite_path, filename=image_name)
+            # Upload to logging channel to get URL
+            temp_message = None
+            # if hasattr(self, 'sendToLoggingChannel'):
+            #     temp_message = await self.sendToLoggingChannel(f'{user.display_name} flight map', sprite_file)
+            if temp_message and temp_message.attachments:
+                attachment = temp_message.attachments[0]
+                embed.set_image(url=attachment.url)
+        except Exception as e:
+            print(f"Error loading flight map sprite: {e}")
+        
+        # Create view
+        view = View()
+        
+        # ROW 0: City selector dropdown
+        city_select = Select(
+            placeholder="Choose destination city",
+            custom_id='flight_city_select',
+            row=0
+        )
+        
+        for city_key, city_name in flyable_cities.items():
+            # Don't show current location in dropdown
+            if city_key != current_location_name:
+                city_select.add_option(
+                    label=city_name,
+                    value=city_key,
+                    default=(city_key == selected_destination)
+                )
+        
+        city_select.callback = self.on_flight_city_select
+        view.add_item(city_select)
+        
+        # ROW 1: Action buttons
+        fly_btn = Button(
+            style=ButtonStyle.green,
+            label="✈️ Fly",
+            custom_id='flight_fly',
+            row=1,
+            disabled=(selected_destination is None)
+        )
+        fly_btn.callback = self.on_fly_action_click
+        view.add_item(fly_btn)
+        
+        back_btn = Button(
+            style=ButtonStyle.gray,
+            label="← Back to Bag",
+            custom_id='flight_back_to_bag',
+            row=1
+        )
+        back_btn.callback = self.on_flight_back_to_bag_click
+        view.add_item(back_btn)
+        
+        return embed, view
+
+
+    async def on_flight_city_select(self, interaction: discord.Interaction):
+        """Handle city selection from dropdown"""
+        user = interaction.user
+        
+        if str(user.id) not in self.__flight_states:
+            await interaction.response.send_message('Session expired.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        flight_state = self.__flight_states[str(user.id)]
+        
+        # Get selected city from dropdown
+        selected_city = interaction.data['values'][0]
+        flight_state.selected_destination = selected_city
+        
+        # Update interface with new city map
+        embed, view = self.__create_flight_interface(user, flight_state.current_location_name, selected_city)
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    async def on_fly_action_click(self, interaction: discord.Interaction):
+        """Execute the flight to selected destination"""
+        user = interaction.user
+        
+        if str(user.id) not in self.__flight_states:
+            await interaction.response.send_message('Session expired.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        flight_state = self.__flight_states[str(user.id)]
+        
+        if not flight_state.selected_destination:
+            await interaction.followup.send('Please select a destination first!', ephemeral=True)
+            return
+        
+        # Check location blocking
+        from services.questclass import quests as QuestsClass
+        from services.locationclass import location as LocationClass
+        from helpers.pathhelpers import load_json_config
+        
+        quest_obj = QuestsClass(str(user.id))
+        
+        # Get destination location ID
+        location_names = load_json_config('locationNames.json')
+        destination_location_id = location_names.get(flight_state.selected_destination)
+        
+        if not destination_location_id:
+            await interaction.followup.send('Invalid destination!', ephemeral=True)
+            return
+        
+        # Check if destination is blocked by quest requirements
+        quests_data = load_json_config('quests.json')
+        
+        if str(destination_location_id) in quests_data:
+            quest_data = quests_data[str(destination_location_id)]
+            blockers = quest_data.get('blockers', [])
+            
+            if blockers and quest_obj.locationBlocked(blockers):
+                # Build error message about missing requirements
+                from helpers.helpers import check_hm_usable
+                missing_items = []
+                
+                for blocker in blockers:
+                    if blocker in ['HM01', 'HM02', 'HM03', 'HM04', 'HM05']:
+                        hm_attr = getattr(quest_obj.keyitems, blocker, False)
+                        if not hm_attr:
+                            missing_items.append(blocker.replace('_', ' ').title())
+                            continue
+                        can_use, _ = check_hm_usable(str(user.id), blocker)
+                        if not can_use:
+                            missing_items.append(f"{blocker} (no compatible Pokemon)")
+                    else:
+                        if quest_obj.locationBlocked([blocker]):
+                            missing_items.append(blocker.replace('_', ' ').title())
+                
+                if missing_items:
+                    missing_text = ", ".join(missing_items)
+                    await interaction.followup.send(
+                        f'You cannot fly to this location yet! Missing: {missing_text}',
+                        ephemeral=True
+                    )
+                    return
+        
+        # Execute the flight - update trainer location
+        loc_obj = LocationClass(str(user.id))
+        loc_obj.setLocation(destination_location_id)
+        
+        # Clean up flight state
+        if str(user.id) in self.__flight_states:
+            del self.__flight_states[str(user.id)]
+        
+        # Return to map at new location
+        await self.on_nav_map_click(interaction)
+
+
+    async def on_flight_back_to_bag_click(self, interaction: discord.Interaction):
+        """Return to bag from flight interface"""
+        user = interaction.user
+        
+        # Clean up flight state
+        if str(user.id) in self.__flight_states:
+            del self.__flight_states[str(user.id)]
+        
+        # Return to bag items view
+        await self.on_bag_items_click(interaction)
 
     def __create_items_embed(self, user: discord.User) -> discord.Embed:
         """Create embed showing trainer's items"""
@@ -2779,7 +3027,7 @@ class EncountersMixin(MixinMeta):
         trainer_btn.callback = self.on_bag_trainer_card_click
         view.add_item(trainer_btn)
 
-        # ROW 1: Party, PC, Pokedex, and Trainer buttons  <-- MODIFIED
+        # ROW 1: Party, PC, Pokedex buttons
         party_btn = Button(
             style=ButtonStyle.blurple if current_view == 'party' else ButtonStyle.gray,
             label="👥 Party",
@@ -2807,7 +3055,6 @@ class EncountersMixin(MixinMeta):
         pokedex_btn.callback = self.on_bag_pokedex_click
         view.add_item(pokedex_btn)
         
-        
         # ROW 2: Pokedex navigation (only show when in pokedex view)
         if current_view == 'pokedex':
             prev_btn = Button(
@@ -2828,7 +3075,7 @@ class EncountersMixin(MixinMeta):
             next_btn.callback = self.on_pokedex_next_click
             view.add_item(next_btn)
         
-        # ROW 3: Back to Map button (always available)
+        # ROW 3: Back to Map and Flight Map buttons
         map_btn = Button(
             style=ButtonStyle.primary,
             label="🗺️ Back to Map",
@@ -2837,6 +3084,24 @@ class EncountersMixin(MixinMeta):
         )
         map_btn.callback = self.on_bag_back_to_map_click
         view.add_item(map_btn)
+        
+        # Check if user has HM02 for Flight Map button
+        from services.keyitemsclass import keyitems as KeyItemClass
+        user_id = None
+        if hasattr(self, '_current_user_id'):
+            user_id = self._current_user_id
+        
+        if user_id:
+            keyitems = KeyItemClass(user_id)
+            if keyitems.HM02:
+                flight_btn = Button(
+                    style=ButtonStyle.green,
+                    label="🕊️ Flight Map",
+                    custom_id='bag_flight_map',
+                    row=3
+                )
+                flight_btn.callback = self.on_flight_map_click
+                view.add_item(flight_btn)
         
         return view
 
