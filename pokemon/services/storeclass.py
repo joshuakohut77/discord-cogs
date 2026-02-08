@@ -136,7 +136,7 @@ class store:
             elif name == 'escape-rope':
                 inventory.escaperope += quantity
             elif name == 'full-heal':
-                inventory.greatball += quantity
+                inventory.fullheal += quantity
             elif name == 'ice-heal':
                 inventory.iceheal += quantity
             elif name == 'max-repel':
@@ -149,6 +149,67 @@ class store:
                 inventory.antidote += quantity
             elif name == 'max-potion':
                 inventory.maxpotion += quantity
+            elif name == 'super-repel':
+                inventory.superrepel += quantity
+            # Evolution Stones
+            elif name == 'fire-stone':
+                inventory.firestone += quantity
+            elif name == 'water-stone':
+                inventory.waterstone += quantity
+            elif name == 'thunder-stone':
+                inventory.thunderstone += quantity
+            elif name == 'leaf-stone':
+                inventory.leafstone += quantity
+            elif name == 'moon-stone':
+                inventory.moonstone += quantity
+            # Vitamins and Battle Items
+            elif name == 'calcium':
+                inventory.calcium += quantity
+            elif name == 'carbos':
+                inventory.carbos += quantity
+            elif name == 'iron':
+                inventory.iron += quantity
+            elif name == 'protein':
+                inventory.protein += quantity
+            elif name == 'hp-up':
+                inventory.hpup += quantity
+            elif name == 'x-accuracy':
+                inventory.xaccuracy += quantity
+            elif name == 'x-attack':
+                inventory.xattack += quantity
+            elif name == 'x-defense':
+                inventory.xdefense += quantity
+            elif name == 'x-sp-atk':
+                inventory.xspatk += quantity
+            elif name == 'x-sp-def':
+                inventory.xspdef += quantity
+            elif name == 'x-speed':
+                inventory.xspeed += quantity
+            elif name == 'dire-hit':
+                inventory.direhit += quantity
+            # Drinks and Misc Items
+            elif name == 'fresh-water':
+                inventory.freshwater += quantity
+            elif name == 'lemonade':
+                inventory.lemonade += quantity
+            elif name == 'soda-pop':
+                inventory.sodapop += quantity
+            elif name == 'poke-doll':
+                inventory.pokedoll += quantity
+            elif name == 'nugget':
+                inventory.nugget += quantity
+            elif name == 'pp-up':
+                inventory.ppup += quantity
+            elif name == 'elixir':
+                inventory.elixir += quantity
+            elif name == 'max-elixir':
+                inventory.maxelixir += quantity
+            elif name == 'ether':
+                inventory.ether += quantity
+            elif name == 'max-ether':
+                inventory.maxether += quantity
+            elif name == 'old-amber':
+                inventory.oldamber += quantity
             # Special Items
             elif name == 'link-cable':
                 inventory.linkcable += quantity
