@@ -1,22 +1,25 @@
 from __future__ import annotations
-from typing import Any, Dict, List, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from abc import ABCMeta
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
-import discord
-from redbot.core import Config, commands
-
+from redbot.core import commands
 from .event import EventMixin
 
+
 class CompositeClass(commands.CogMeta, ABCMeta):
+    """Metaclass combining CogMeta and ABCMeta."""
     __slots__: tuple = ()
-    pass
+
 
 class Alphabetical(EventMixin, commands.Cog, metaclass=CompositeClass):
-    """alphabetical"""
-	
+    """A cog that detects and celebrates alphabetically ordered messages."""
+    
     def __init__(self, bot: Red):
         self.bot: Red = bot
-
+    
+    def cog_unload(self):
+        """Cleanup when cog is unloaded."""
+        pass

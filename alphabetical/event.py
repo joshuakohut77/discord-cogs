@@ -1,31 +1,37 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from discord import embeds
-import discord
+import logging
 
+from redbot.core import commands
 from .abc import MixinMeta
+from .alphabeticalclass import AlphabeticalChecker
 
 if TYPE_CHECKING:
     import discord
 
-from redbot.core import commands
-from .alphabeticalclass import Alphabetical
-import re
+log = logging.getLogger("red.alphabetical")
+
 
 class EventMixin(MixinMeta):
+    """Event handler for detecting alphabetically ordered messages."""
+    
     __slots__: tuple = ()
-
+    
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
+        """Respond to messages with words in alphabetical order."""
+        # Ignore bot messages
         if message.author.bot:
             return
-		
-        msg: str = message.content.lower()
-        if Alphabetical.are_words_alphabetical_order(msg):
-            if Alphabetical.check_sentence(msg):
-
-                embed = discord.Embed()
-                embed=discord.Embed(title="Alphabet Soup!", description="All your words are in alphabetical order.", color=0x0b1bf4)            
-
+        
+        # Ignore empty messages
+        if not message.content.strip():
+            return
+        
+        # Check if message meets alphabetical criteria
+        try:
+            if AlphabeticalChecker.check_message(message.content):
+                embed = AlphabeticalChecker.create_embed()
                 await message.reply(embed=embed)
-
+        except Exception as e:
+            log.error(f"Error checking alphabetical order: {e}")
