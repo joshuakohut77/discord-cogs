@@ -96,3 +96,15 @@ class MartState:
         self.mode = mode  # 'main', 'buy', 'sell'
         self.selected_item = None
         self.quantity = 1  # Default quantity for purchases
+
+
+class FlightState:
+    """State for flight interface"""
+    discordId: str
+    current_location_name: str
+    selected_destination: str | None
+    
+    def __init__(self, discordId: str, current_location_name: str):
+        self.discordId = discordId
+        self.current_location_name = current_location_name
+        self.selected_destination = None
