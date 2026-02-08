@@ -4,7 +4,9 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
-from .main import owenWilson as wow
+from .main import OwenWilson
+
 
 async def setup(bot: Red):
-    await bot.add_cog(wow(bot))
+    """Load the OwenWilson cog."""
+    await bot.add_cog(OwenWilson(bot))
