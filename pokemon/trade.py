@@ -95,7 +95,7 @@ class TradeMixin(MixinMeta):
         user = interaction.user
 
         if not self.__checkTradeState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
             return
 
         state = self.__tradeState[str(user.id)]
@@ -104,16 +104,21 @@ class TradeMixin(MixinMeta):
         if channel is None:
             await interaction.response.send_message('Error: Channel not found. The original message may have been deleted.', ephemeral=True)
             return
-        message: discord.Message = await channel.fetch_message(state.messageId)
+        
+        try:
+            message: discord.Message = await channel.fetch_message(state.messageId)
+        except discord.NotFound:
+            await interaction.response.send_message('Error: Original message not found.', ephemeral=True)
+            return
 
         ctx: Context = await self.bot.get_context(interaction.message)
         sender = await ctx.guild.fetch_member(int(state.senderDiscordId))
-        # sender: discord.User = ctx.message.server.get_member(int(state.senderDiscordId))
-        # sender: discord.User = self.bot.get_user(int(state.senderDiscordId))
         
-
-        if interaction.custom_id == 'accept':
-            await interaction.response.send_message('You accepted this trade.')
+        # Check which button was pressed by looking at the component's custom_id
+        custom_id = interaction.data.get('custom_id', '')
+        
+        if custom_id == 'accept':
+            await interaction.response.send_message('You accepted this trade.', ephemeral=True)
 
             trainer = TrainerClass(str(user.id))
             pokemonList = trainer.getPokemon(False, True)
@@ -130,8 +135,8 @@ class TradeMixin(MixinMeta):
             )
             state.messageId = message.id
             self.__tradeState[str(user.id)] = state
-        else:
-            await interaction.response.send_message('You declined this trade.')
+        else:  # decline
+            await interaction.response.send_message('You declined this trade.', ephemeral=True)
 
             trader = TrainerClass(state.senderDiscordId)
             pokemon = trader.getPokemonById(state.senderPokemonId)
@@ -164,11 +169,11 @@ class TradeMixin(MixinMeta):
         view = View()
 
         button = Button(style=ButtonStyle.green, label="Accept Trade", custom_id='accept')
-        button.callback = self.on_trade_click_trade
+        button.callback = self.__on_accept_trade  # Changed from on_trade_click_trade
         view.add_item(button)
 
         button = Button(style=ButtonStyle.red, label="Decline Trade", custom_id='decline')
-        button.callback = self.on_trade_click_trade
+        button.callback = self.__on_decline_trade  # Changed from on_trade_click_trade
         view.add_item(button)
 
         return embed, view
@@ -289,9 +294,88 @@ class TradeMixin(MixinMeta):
 
         return embed, view
 
-    @discord.ui.button(custom_id='accept', label='Accept Trade', style=ButtonStyle.green)
-    async def on_trade_click_trade(self, interaction: discord.Interaction):
-        await self.__on_trade_click(interaction)
+    async def __on_accept_trade(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.__checkTradeState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+
+        state = self.__tradeState[str(user.id)]
+
+        channel: discord.TextChannel = self.bot.get_channel(state.channelId)
+        if channel is None:
+            await interaction.response.send_message('Error: Channel not found. The original message may have been deleted.', ephemeral=True)
+            return
+        
+        try:
+            message: discord.Message = await channel.fetch_message(state.messageId)
+        except discord.NotFound:
+            await interaction.response.send_message('Error: Original message not found.', ephemeral=True)
+            return
+
+        ctx: Context = await self.bot.get_context(interaction.message)
+        sender = await ctx.guild.fetch_member(int(state.senderDiscordId))
+
+        await interaction.response.send_message('You accepted this trade.', ephemeral=True)
+
+        trainer = TrainerClass(str(user.id))
+        pokemonList = trainer.getPokemon(False, True)
+
+        state.pokemonList = pokemonList
+        state.idx = 0
+
+        embed, btns = self.__pokemonPcTradeCard(user, pokemonList, 0)
+
+        message: discord.Message = await message.edit(
+            content=f'{user.display_name} is choosing a pokemon to offer {sender.display_name}.',
+            embed=embed,
+            view=btns
+        )
+        state.messageId = message.id
+        self.__tradeState[str(user.id)] = state
+
+
+    async def __on_decline_trade(self, interaction: Interaction):
+        user = interaction.user
+
+        if not self.__checkTradeState(user, interaction.message):
+            await interaction.response.send_message('This is not for you.', ephemeral=True)
+            return
+
+        state = self.__tradeState[str(user.id)]
+
+        channel: discord.TextChannel = self.bot.get_channel(state.channelId)
+        if channel is None:
+            await interaction.response.send_message('Error: Channel not found. The original message may have been deleted.', ephemeral=True)
+            return
+        
+        try:
+            message: discord.Message = await channel.fetch_message(state.messageId)
+        except discord.NotFound:
+            await interaction.response.send_message('Error: Original message not found.', ephemeral=True)
+            return
+
+        ctx: Context = await self.bot.get_context(interaction.message)
+        sender = await ctx.guild.fetch_member(int(state.senderDiscordId))
+
+        await interaction.response.send_message('You declined this trade.', ephemeral=True)
+
+        trader = TrainerClass(state.senderDiscordId)
+        pokemon = trader.getPokemonById(state.senderPokemonId)
+
+        embed, btns = self.__pokemonSingleCard(user, pokemon)
+
+        message: discord.Message = await message.edit(
+            content=f'{user.display_name} declined {sender.display_name}\'s trade.',
+            embed=embed,
+            view=btns
+        )
+        del self.__tradeState[str(user.id)]
+
+    # @discord.ui.button(custom_id='accept', label='Accept Trade', style=ButtonStyle.green)
+    # async def on_trade_click_trade(self, interaction: discord.Interaction):
+    #     await self.__on_trade_click(interaction)
 
     @discord.ui.button(custom_id='next', label='Next', style=ButtonStyle.gray)
     async def on_next_click_trade(self, interaction: discord.Interaction):
