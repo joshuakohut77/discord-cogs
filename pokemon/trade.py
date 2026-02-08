@@ -74,8 +74,7 @@ class TradeMixin(MixinMeta):
         # Check if user already has active trade
         if self.trade_service.has_active_trade(str(user.id)):
             await interaction.followup.send(
-                "You already have an active trade request. Please complete or cancel it first.",
-                ephemeral=True
+                "You already have an active trade request. Please complete or cancel it first."
             )
             return
         
@@ -90,8 +89,7 @@ class TradeMixin(MixinMeta):
         
         if not online_members:
             await interaction.followup.send(
-                "No other users are currently online to trade with.",
-                ephemeral=True
+                "No other users are currently online to trade with."
             )
             return
         
@@ -108,8 +106,7 @@ class TradeMixin(MixinMeta):
         
         if not tradeable_pokemon:
             await interaction.followup.send(
-                "You don't have any Pokemon available to trade (excluding your active Pokemon).",
-                ephemeral=True
+                "You don't have any Pokemon available to trade (excluding your active Pokemon)."
             )
             return
         
@@ -122,7 +119,7 @@ class TradeMixin(MixinMeta):
             color=discord.Color.blue()
         )
         
-        await interaction.followup.send(embed=embed, view=view, ephemeral=True)
+        await interaction.followup.send(embed=embed, view=view)  # REMOVED ephemeral=True
     
     # ==================== Step 2: Receiver Views Request ====================
     
@@ -441,7 +438,6 @@ class TradeInitiateView(View):
             await interaction.response.send_message("This is not for you.", ephemeral=True)
             return
         
-        # Defer FIRST before doing anything else
         await interaction.response.defer()
         
         selected_id = int(interaction.data['values'][0])
@@ -453,15 +449,13 @@ class TradeInitiateView(View):
                 if item.custom_id == "send_request":
                     item.disabled = False
         
-        # Edit the original message to update the view
-        await interaction.edit_original_response(view=self)
-    
+        await interaction.message.edit(view=self)
+
     async def pokemon_selected(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
             await interaction.response.send_message("This is not for you.", ephemeral=True)
             return
         
-        # Defer FIRST before doing anything else
         await interaction.response.defer()
         
         selected_id = int(interaction.data['values'][0])
@@ -478,8 +472,7 @@ class TradeInitiateView(View):
                 if item.custom_id == "send_request":
                     item.disabled = False
         
-        # Edit the original message to update the view
-        await interaction.edit_original_response(view=self)
+        await interaction.message.edit(view=self)
     
     async def send_request(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
