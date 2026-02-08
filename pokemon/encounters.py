@@ -2951,7 +2951,8 @@ class EncountersMixin(MixinMeta):
         release_btn.callback = self.on_bag_party_release_click
         view.add_item(release_btn)
 
-        trade_button, trade_id = self.get_trade_button_for_pc(str(user.id))
+        # Trade button
+        trade_button, _ = self.get_trade_button_for_pc(str(user.id))
         view.add_item(trade_button)
         
         # ROW 3: Navigation back
@@ -3592,6 +3593,7 @@ class EncountersMixin(MixinMeta):
         
         # Refresh PC view
         await self.on_bag_pc_click(interaction)
+        
 
     async def on_bag_pc_withdraw_click(self, interaction: discord.Interaction):
         """Withdraw Pokemon from PC to party"""
@@ -3858,6 +3860,10 @@ class EncountersMixin(MixinMeta):
         release_btn = Button(style=ButtonStyle.red, label="🗑️ Release", custom_id='bag_pc_release', row=2)
         release_btn.callback = self.on_bag_pc_release_click
         view.add_item(release_btn)
+
+        # TRADE BUTTON
+        trade_button, _ = self.get_trade_button_for_pc(str(user.id))
+        view.add_item(trade_button)
         
         # ROW 3: Navigation
         back_btn = Button(style=ButtonStyle.gray, label="← Back to Bag", custom_id='pc_back_to_bag', row=3)
@@ -3988,6 +3994,10 @@ class EncountersMixin(MixinMeta):
         release_btn.callback = self.on_bag_pc_release_click
         view.add_item(release_btn)
         
+        # TRADE BUTTON 
+        trade_button, _ = self.get_trade_button_for_pc(str(user.id))
+        view.add_item(trade_button)
+
         # ROW 3: Navigation
         back_btn = Button(style=ButtonStyle.gray, label="← Back to Bag", custom_id='pc_back_to_bag', row=3)
         back_btn.callback = self.on_pc_back_to_bag_click
