@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 from abc import ABC
 
 class MixinMeta(ABC):
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.bot: Red
         self.config: Config
