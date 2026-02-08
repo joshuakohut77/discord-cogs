@@ -35,7 +35,7 @@ def check_hm_usable(discord_id: str, hm_name: str) -> tuple[bool, list[str]]:
     
     # Get trainer's party
     trainer = TrainerClass(discord_id)
-    party = trainer.getParty()
+    party = trainer.getPokemon(party=True)
     
     # Check if any party Pokemon can use this HM
     usable_pokemon = []
