@@ -9,7 +9,6 @@ if TYPE_CHECKING:
 
 import discord
 from redbot.core import Config, commands
-from discord.ext import tasks
 
 from .event import EventMixin
 
@@ -26,27 +25,12 @@ class Duplicates(EventMixin, commands.Cog, metaclass=CompositeClass):
         self.db_pool = DatabasePool()
 
     async def initialize(self):
-        """Initialize database pool and start cleanup task"""
+        """Initialize database pool"""
         self.db_pool.initialize()
-        self.cleanup_old_messages.start()
 
     def cog_unload(self):
         """Clean up when cog is unloaded"""
-        self.cleanup_old_messages.cancel()
         self.db_pool.close()
-
-    @tasks.loop(hours=168)  # Run once a week
-    async def cleanup_old_messages(self):
-        """Remove messages older than 180 days to keep database size manageable"""
-        try:
-            DupeCls.cleanup_old_messages(days=180)
-        except Exception as e:
-            print(f"Error during cleanup: {e}")
-
-    @cleanup_old_messages.before_loop
-    async def before_cleanup(self):
-        """Wait for bot to be ready before starting cleanup task"""
-        await self.bot.wait_until_ready()
 
     @commands.group()
     @commands.guild_only()
@@ -74,17 +58,3 @@ class Duplicates(EventMixin, commands.Cog, metaclass=CompositeClass):
         time = DupeCls.get_query_time()
         await ctx.send("%s" %(str(time)))
         return
-
-    @duplicates.command()
-    @commands.is_owner()
-    async def cleanup(self, ctx: commands.Context, days: int = 180) -> None:
-        """Manually trigger cleanup of old messages (owner only)
-        
-        Args:
-            days: Number of days to keep (default: 180)
-        """
-        try:
-            deleted = DupeCls.cleanup_old_messages(days)
-            await ctx.send(f"Cleaned up messages older than {days} days. Deleted {deleted} messages.")
-        except Exception as e:
-            await ctx.send(f"Error during cleanup: {e}")
