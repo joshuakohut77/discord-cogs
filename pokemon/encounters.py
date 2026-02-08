@@ -1474,6 +1474,8 @@ class EncountersMixin(MixinMeta):
         
         # Check for location blockers using quests.json
         from services.questclass import quests as QuestsClass
+        from helpers.helpers import check_hm_usable
+        
         quest_obj = QuestsClass(str(user.id))
         
         quests_data = self.__load_quests_data()
@@ -1483,11 +1485,43 @@ class EncountersMixin(MixinMeta):
         for quest_id, quest_data in quests_data.items():
             if quest_data.get('name') == target_location_name:
                 blockers = quest_data.get('blockers', [])
-                if blockers and quest_obj.locationBlocked(blockers):
-                    location_blocked = True
-                    missing_items = [item.replace('_', ' ').title() for item in blockers]
-                    blocker_message = f'You cannot travel there yet. You need: {", ".join(missing_items)}'
-                    break
+                if blockers:
+                    # Check each blocker individually for better error messages
+                    missing_items = []
+                    missing_pokemon = []
+                    
+                    for blocker in blockers:
+                        # Check if it's an HM blocker
+                        if blocker in ['HM01', 'HM02', 'HM03', 'HM04', 'HM05']:
+                            # Check if they have the HM item
+                            hm_attr = getattr(quest_obj.keyitems, blocker, False)
+                            if not hm_attr:
+                                missing_items.append(blocker.replace('_', ' ').title())
+                                continue
+                            
+                            # Check if they have a Pokemon that can use it
+                            can_use, compatible_pokemon = check_hm_usable(str(user.id), blocker)
+                            if not can_use:
+                                missing_pokemon.append(blocker)
+                        else:
+                            # Non-HM blocker, check normally
+                            if quest_obj.locationBlocked([blocker]):
+                                missing_items.append(blocker.replace('_', ' ').title())
+                    
+                    # Build error message
+                    if missing_items or missing_pokemon:
+                        location_blocked = True
+                        error_parts = []
+                        
+                        if missing_items:
+                            error_parts.append(f"Items: {', '.join(missing_items)}")
+                        
+                        if missing_pokemon:
+                            hm_names = ', '.join(missing_pokemon)
+                            error_parts.append(f"You need a Pokemon that can use {hm_names}")
+                        
+                        blocker_message = f'You cannot travel there yet.\n' + '\n'.join(error_parts)
+                        break
         
         if location_blocked:
             await interaction.followup.send(blocker_message, ephemeral=True)

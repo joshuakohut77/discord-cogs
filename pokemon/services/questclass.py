@@ -36,20 +36,46 @@ class quests:
                 if not self.keyitems.HM01:
                     locationBlocked = True
                     break
+                # Also check if they have a Pokemon that can use HM01
+                from helpers.helpers import check_hm_usable
+                can_use, _ = check_hm_usable(self.discordId, 'HM01')
+                if not can_use:
+                    locationBlocked = True
+                    break
             if item == 'HM02':
                 if not self.keyitems.HM02:
+                    locationBlocked = True
+                    break
+                from helpers.helpers import check_hm_usable
+                can_use, _ = check_hm_usable(self.discordId, 'HM02')
+                if not can_use:
                     locationBlocked = True
                     break
             if item == 'HM03':
                 if not self.keyitems.HM03:
                     locationBlocked = True
                     break
+                from helpers.helpers import check_hm_usable
+                can_use, _ = check_hm_usable(self.discordId, 'HM03')
+                if not can_use:
+                    locationBlocked = True
+                    break
             if item == 'HM04':
                 if not self.keyitems.HM04:
                     locationBlocked = True
                     break
+                from helpers.helpers import check_hm_usable
+                can_use, _ = check_hm_usable(self.discordId, 'HM04')
+                if not can_use:
+                    locationBlocked = True
+                    break
             if item == 'HM05':
                 if not self.keyitems.HM05:
+                    locationBlocked = True
+                    break
+                from helpers.helpers import check_hm_usable
+                can_use, _ = check_hm_usable(self.discordId, 'HM05')
+                if not can_use:
                     locationBlocked = True
                     break
             if item == 'boulder_badge':
