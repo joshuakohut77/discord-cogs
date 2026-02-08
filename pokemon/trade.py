@@ -100,6 +100,10 @@ class TradeMixin(MixinMeta):
         active_pokemon = trainer.getActivePokemon()
         all_pokemon = trainer.getPokemon(False, True)  # party=False, pc=True gets all
         
+        # LOAD each Pokemon's data
+        for p in all_pokemon:
+            p.load(pokemonId=p.trainerId)
+        
         tradeable_pokemon = [p for p in all_pokemon if p.trainerId != active_pokemon.trainerId]
         
         if not tradeable_pokemon:
@@ -386,6 +390,7 @@ class TradeInitiateView(View):
         super().__init__(timeout=180)
         self.user = user
         self.mixin = mixin
+        self.pokemon = pokemon  # ADD THIS - store the list
         self.selected_member: Optional[discord.Member] = None
         self.selected_pokemon: Optional[PokemonClass] = None
         
@@ -445,7 +450,9 @@ class TradeInitiateView(View):
                 if item.custom_id == "send_request":
                     item.disabled = False
         
-        await interaction.response.edit_message(view=self)
+        # IMPORTANT: Use defer to acknowledge the interaction without sending a message
+        await interaction.response.defer()
+        await interaction.edit_original_response(view=self)
     
     async def pokemon_selected(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
@@ -615,52 +622,22 @@ class TradeReceiverResponseView(View):
             await interaction.response.send_message("This is not for you.", ephemeral=True)
             return
         
+        selected_id = int(interaction.data['values'][0])
+        # Find the Pokemon in our list
+        for p in self.pokemon:
+            if p.trainerId == selected_id:
+                self.selected_pokemon = p
+                break
+        
+        # Enable send button if both selections made
+        if self.selected_member and self.selected_pokemon:
+            for item in self.children:
+                if item.custom_id == "send_request":
+                    item.disabled = False
+        
+        # IMPORTANT: Use defer to acknowledge the interaction without sending a message
         await interaction.response.defer()
-        
-        selected_pokemon_id = int(interaction.data['values'][0])
-        
-        # Update trade with receiver's Pokemon
-        success = self.mixin.trade_service.update_receiver_pokemon(self.trade_id, selected_pokemon_id)
-        
-        if not success:
-            await interaction.followup.send("Failed to update trade request.", ephemeral=True)
-            return
-        
-        # Get trade details for notification
-        trade = self.mixin.trade_service.get_trade_by_id(self.trade_id)
-        
-        # Notify sender via DM
-        try:
-            sender = await self.mixin.bot.fetch_user(int(trade['sender_discord_id']))
-            
-            dm_embed = discord.Embed(
-                title="✉️ Trade Response Received!",
-                description=f"**{self.user.display_name}** has responded to your trade!",
-                color=discord.Color.green()
-            )
-            dm_embed.add_field(
-                name="Next Step",
-                value="Go to a PC and click **View Trade Response** to accept or decline!",
-                inline=False
-            )
-            
-            await sender.send(embed=dm_embed)
-            
-        except discord.Forbidden:
-            pass
-        except Exception as e:
-            print(f"Error sending response notification: {e}")
-        
-        # Confirm to receiver
-        await interaction.followup.send(
-            "✅ Your Pokemon has been selected! Waiting for the other trainer to accept.",
-            ephemeral=True
-        )
-        
-        # Disable all controls
-        for item in self.children:
-            item.disabled = True
-        await interaction.message.edit(view=self)
+        await interaction.edit_original_response(view=self)
     
     async def decline_trade(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
