@@ -1,48 +1,91 @@
 import requests
-import json
-from discord import embeds
 import discord
+from typing import Tuple, Optional
+import logging
 
-"""
-Utilizes the Wow api found here: https://owen-wilson-wow-api.onrender.com/
-"""
+log = logging.getLogger("red.owenWilson")
 
-class Wow(): 
-
-    # will return the full api response. Needs parse in a separate function to return only desired link
-    def getRandomWow(self):
-        url = "https://owen-wilson-wow-api.onrender.com/wows/random"
-        headers = {"Accept": "application/json"}
-        response = requests.get(url, headers=headers)
-        jsonResponse = json.loads(response.text)[0]
-        return(jsonResponse)
-
-    def getWowVideo(self):
-        # Call the function to get the JSON response, then return the video link for the highest quality URL
-        jsonResponse = Wow.getRandomWow()
-        highestQuality = list(jsonResponse['video'].keys())[0]
-        videoLink = jsonResponse['video'][highestQuality]
-        return videoLink
-
-    def getWow(self):
-        url = "https://owen-wilson-wow-api.onrender.com/wows/random"
-        headers = {"Accept": "application/json"}
-        response = requests.get(url, headers=headers)
-        jsonResponse = json.loads(response.text)[0]
-        highestQuality = list(jsonResponse['video'].keys())[0]
-        videoLink = jsonResponse['video'][highestQuality]
+class Wow:
+    """Handles fetching and processing Owen Wilson 'Wow' clips from the API."""
+    
+    API_URL = "https://owen-wilson-wow-api.onrender.com/wows/random"
+    TEMP_FILE_PATH = "/tempfiles/wowclip.mp4"
+    TIMEOUT = 10  # seconds
+    
+    def __init__(self):
+        self.session = requests.Session()
+        self.session.headers.update({"Accept": "application/json"})
+    
+    def _fetch_random_wow(self) -> Optional[dict]:
+        """Fetch a random wow from the API."""
+        try:
+            response = self.session.get(self.API_URL, timeout=self.TIMEOUT)
+            response.raise_for_status()
+            return response.json()[0]
+        except (requests.RequestException, IndexError, KeyError) as e:
+            log.error(f"Failed to fetch wow data: {e}")
+            return None
+    
+    def _download_video(self, video_url: str) -> bool:
+        """Download video file to temporary location."""
+        try:
+            response = self.session.get(video_url, timeout=self.TIMEOUT)
+            response.raise_for_status()
+            with open(self.TEMP_FILE_PATH, 'wb') as f:
+                f.write(response.content)
+            return True
+        except (requests.RequestException, IOError) as e:
+            log.error(f"Failed to download video: {e}")
+            return False
+    
+    def _create_embed(self, data: dict) -> discord.Embed:
+        """Create Discord embed from wow data."""
+        embed = discord.Embed(
+            title="Owen Wilson",
+            url="https://www.tomorrowtides.com/owen-wilson-movies.html",
+            color=0x0b1bf4
+        )
+        embed.set_thumbnail(url=data.get("poster", ""))
+        embed.add_field(name="Movie", value=data.get("movie", "Unknown"), inline=True)
+        embed.add_field(name="Year", value=str(data.get("year", "N/A")), inline=True)
+        embed.add_field(name="Character", value=data.get("character", "Unknown"), inline=True)
+        embed.add_field(
+            name="Wow in Movie",
+            value=f"{data.get('current_wow_in_movie', 0)}/{data.get('total_wows_in_movie', 0)}",
+            inline=True
+        )
+        embed.add_field(name="Full Line", value=data.get("full_line", "..."), inline=False)
+        return embed
+    
+    def get_wow(self) -> Optional[Tuple[discord.Embed, discord.File]]:
+        """
+        Fetch a random Owen Wilson 'Wow' clip and return embed with video file.
         
-        r = requests.get(videoLink)
-        with open("/tempfiles/wowclip.mp4", 'wb') as f:
-            f.write(r.content) 
-        file = discord.File('/tempfiles/wowclip.mp4')
-
-        embed = discord.Embed()
-        embed=discord.Embed(title="Owen Wilson", url="https://www.tomorrowtides.com/owen-wilson-movies.html", color=0x0b1bf4)
-        embed.set_thumbnail(url=jsonResponse["poster"])
-        embed.add_field(name="Movie", value=jsonResponse["movie"], inline=True)
-        embed.add_field(name="Year", value=str(jsonResponse['year']), inline=True)
-        embed.add_field(name="Character", value=jsonResponse['character'], inline=True)
-        embed.add_field(name="Wow in Movie", value=str(jsonResponse['current_wow_in_movie']) + "/" + str(jsonResponse['total_wows_in_movie']), inline=True)
-        embed.add_field(name="Full Line", value=jsonResponse['full_line'], inline=False)
+        Returns:
+            Tuple of (embed, file) or None if failed
+        """
+        data = self._fetch_random_wow()
+        if not data:
+            return None
+        
+        # Get highest quality video URL
+        video_dict = data.get("video", {})
+        if not video_dict:
+            log.error("No video URLs in API response")
+            return None
+        
+        video_url = next(iter(video_dict.values()))
+        
+        # Download video
+        if not self._download_video(video_url):
+            return None
+        
+        # Create embed and file objects
+        embed = self._create_embed(data)
+        file = discord.File(self.TEMP_FILE_PATH)
+        
         return embed, file
+    
+    def close(self):
+        """Close the requests session."""
+        self.session.close()
