@@ -390,6 +390,10 @@
       {
         "item": "water-stone",
         "price": 2100
+      },
+      {
+        "item": "moon-stone",
+        "price": 2100
       }
     ]
   ],
