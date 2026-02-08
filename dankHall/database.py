@@ -409,3 +409,37 @@ class DankDatabase:
         except Exception as e:
             print(f"Error getting total certifications: {e}", file=sys.stderr)
             return 0
+    
+    async def get_random_certification(self, guild_id: int) -> dict:
+        """Get a random certified message from the guild."""
+        if not self.conn:
+            return None
+        
+        try:
+            result = self._query_one(
+                """
+                SELECT message_id, guild_id, channel_id, user_id, emoji, 
+                       hall_message_id, reaction_count, certified_at
+                FROM dank_certified_messages
+                WHERE guild_id = %s
+                ORDER BY RANDOM()
+                LIMIT 1
+                """,
+                [guild_id]
+            )
+            
+            if result:
+                return {
+                    "message_id": result[0],
+                    "guild_id": result[1],
+                    "channel_id": result[2],
+                    "user_id": result[3],
+                    "emoji": result[4],
+                    "hall_message_id": result[5],
+                    "reaction_count": result[6],
+                    "certified_at": result[7]
+                }
+            return None
+        except Exception as e:
+            print(f"Error getting random certification: {e}", file=sys.stderr)
+            return None
