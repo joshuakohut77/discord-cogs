@@ -781,6 +781,97 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         
         await ctx.send(embed=embed)
 
+    @dankhall.command(name="random")
+    async def dh_random(self, ctx: commands.Context):
+        """Show a random certified dank post from this server."""
+        # Get a random certification from the database
+        random_cert = await self.db.get_random_certification(ctx.guild.id)
+        
+        if not random_cert:
+            await ctx.send("No certifications yet in this server!")
+            return
+        
+        # Get user info
+        user = ctx.guild.get_member(random_cert["user_id"])
+        user_name = user.display_name if user else f"User {random_cert['user_id']}"
+        user_avatar = user.display_avatar.url if user else None
+        
+        # Get channel info
+        channel = ctx.guild.get_channel(random_cert["channel_id"])
+        channel_mention = channel.mention if channel else f"Channel {random_cert['channel_id']}"
+        
+        # Create embed
+        embed = discord.Embed(
+            title="🎲 Random Certified Dank",
+            color=discord.Color.gold(),
+            timestamp=random_cert["certified_at"]
+        )
+        
+        if user_avatar:
+            embed.set_author(name=user_name, icon_url=user_avatar)
+        else:
+            embed.set_author(name=user_name)
+        
+        embed.add_field(
+            name="Channel",
+            value=channel_mention,
+            inline=True
+        )
+        
+        embed.add_field(
+            name="Emoji",
+            value=random_cert["emoji"],
+            inline=True
+        )
+        
+        embed.add_field(
+            name="Reactions",
+            value=str(random_cert["reaction_count"]),
+            inline=True
+        )
+        
+        # Try to get the original message link
+        try:
+            if channel:
+                original_message = await channel.fetch_message(random_cert["message_id"])
+                embed.add_field(
+                    name="Jump to Message",
+                    value=f"[Click here]({original_message.jump_url})",
+                    inline=False
+                )
+                
+                # Add message content if available
+                if original_message.content:
+                    content = original_message.content[:1024]
+                    if len(original_message.content) > 1024:
+                        content += "..."
+                    embed.add_field(
+                        name="Content",
+                        value=content,
+                        inline=False
+                    )
+        except (discord.NotFound, discord.Forbidden):
+            embed.add_field(
+                name="Original Message",
+                value="*Message no longer available*",
+                inline=False
+            )
+        
+        # Try to link to the hall post
+        if random_cert["hall_message_id"]:
+            # Try to find which hall channel this was posted to
+            hall_channel_id = await self._get_hall_channel(channel) if channel else None
+            if hall_channel_id:
+                hall_channel = ctx.guild.get_channel(hall_channel_id)
+                if hall_channel:
+                    embed.add_field(
+                        name="Hall of Fame Post",
+                        value=f"[View in {hall_channel.mention}](https://discord.com/channels/{ctx.guild.id}/{hall_channel_id}/{random_cert['hall_message_id']})",
+                        inline=False
+                    )
+        
+        await ctx.send(embed=embed)
+
     # ==================== Helper Methods ====================
 
     async def _get_threshold(self, channel: discord.TextChannel) -> int:
