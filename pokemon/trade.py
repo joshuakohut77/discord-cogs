@@ -441,6 +441,9 @@ class TradeInitiateView(View):
             await interaction.response.send_message("This is not for you.", ephemeral=True)
             return
         
+        # Defer FIRST before doing anything else
+        await interaction.response.defer()
+        
         selected_id = int(interaction.data['values'][0])
         self.selected_member = interaction.guild.get_member(selected_id)
         
@@ -450,8 +453,7 @@ class TradeInitiateView(View):
                 if item.custom_id == "send_request":
                     item.disabled = False
         
-        # IMPORTANT: Use defer to acknowledge the interaction without sending a message
-        await interaction.response.defer()
+        # Edit the original message to update the view
         await interaction.edit_original_response(view=self)
     
     async def pokemon_selected(self, interaction: Interaction):
@@ -459,9 +461,16 @@ class TradeInitiateView(View):
             await interaction.response.send_message("This is not for you.", ephemeral=True)
             return
         
+        # Defer FIRST before doing anything else
+        await interaction.response.defer()
+        
         selected_id = int(interaction.data['values'][0])
-        trainer = TrainerClass(str(self.user.id))
-        self.selected_pokemon = trainer.getPokemonById(selected_id)
+        # Find the Pokemon in our list
+        self.selected_pokemon = None
+        for p in self.pokemon:
+            if p.trainerId == selected_id:
+                self.selected_pokemon = p
+                break
         
         # Enable send button if both selections made
         if self.selected_member and self.selected_pokemon:
@@ -469,7 +478,8 @@ class TradeInitiateView(View):
                 if item.custom_id == "send_request":
                     item.disabled = False
         
-        await interaction.response.edit_message(view=self)
+        # Edit the original message to update the view
+        await interaction.edit_original_response(view=self)
     
     async def send_request(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
