@@ -1,11 +1,10 @@
+# pokemon/trade.py
 from __future__ import annotations
-from typing import Any, Dict, List, Union, TYPE_CHECKING
-
+from typing import Any, Dict, List, Union, TYPE_CHECKING, Optional
 
 import discord
-# from discord_components import (ButtonStyle, Button, Interaction, interaction)
-from discord import ButtonStyle, Interaction
-from discord.ui import Button, View
+from discord import ButtonStyle, Interaction, SelectOption
+from discord.ui import Button, View, Select
 
 from redbot.core.commands.context import Context
 
@@ -17,374 +16,726 @@ from redbot.core import commands
 from services.trainerclass import trainer as TrainerClass
 from services.pokeclass import Pokemon as PokemonClass
 from services.encounterclass import encounter as EncounterClass
+from services.traderequestclass import TradeRequest
 
 from .abcd import MixinMeta
-from .functions import (createStatsEmbed)
-
-
-class TradeState:
-    senderDiscordId: str
-    receiverDiscordId: str
-    senderPokemonId: int
-    receiverPokemonId: int
-
-    messageId: int
-    channelId: int
-
-    pokemonList: List[PokemonClass]
-    idx: int
-
-
-    def __init__(self, messageId: int, channelId: int) -> None:
-        self.messageId = messageId
-        self.channelId = channelId
-
+from .functions import createStatsEmbed
 
 
 class TradeMixin(MixinMeta):
-    """Pokecenter"""
+    """Async Pokemon Trading System"""
     
-    __tradeState: dict[str, TradeState] = {}
-
-    @commands.group(name="pokecenter", aliases=['pmc'])
-    @commands.guild_only()
-    async def _pokecenter(self, ctx: commands.Context) -> None:
-        """Base command to manage the pokecenter (heal)
+    def __init__(self):
+        super().__init__()
+        self.trade_service = TradeRequest()
+    
+    # ==================== PC Integration ====================
+    
+    def get_trade_button_for_pc(self, user_id: str) -> tuple[Button, Optional[int]]:
         """
-        pass
-
-
-    @_pokecenter.command()
-    async def trade(self, ctx: commands.Context, trainerUser: Union[discord.Member,discord.User], pokemonId: str):
-        user: discord.User = ctx.author
-
-        trader = TrainerClass(user.id)
-        pokemon = trader.getPokemonById(pokemonId)
-
-        if trader.statuscode == 96:
-            await ctx.send(f'{user.display_name}\'s trade failed.')
-            return
-
-        # Don't allow trades of your current active starter pokemon
-        active = trader.getActivePokemon()
-        if active.trainerId == pokemon.trainerId:
-            await ctx.send(f'{user.mention} you cannot trade your active Pokemon. Change your active Pokemon or select a different Pokemon.')
-            return
-
-        # await ctx.send('Other trainer has to accept your trade request')
-
-        embed, btns = self.__pokemonSingleCard(user, pokemon)
-
-        message: discord.Message = await ctx.send(
-            content=f'{trainerUser.mention} {user.display_name} wants to trade with you.',
-            embed=embed,
-            view=btns
-
-        )
-
-        state = TradeState(message.id, message.channel.id)
-        state.senderDiscordId = str(user.id)
-        state.receiverDiscordId = str(trainerUser.id)
-        state.senderPokemonId = pokemon.trainerId
-
-        self.__tradeState[state.receiverDiscordId] = state
-
-
-
-    async def __on_trade_click(self, interaction: Interaction):
-        user = interaction.user
-
-        if not self.__checkTradeState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.', ephemeral=True)
-            return
-
-        state = self.__tradeState[str(user.id)]
-
-        channel: discord.TextChannel = self.bot.get_channel(state.channelId)
-        if channel is None:
-            await interaction.response.send_message('Error: Channel not found. The original message may have been deleted.', ephemeral=True)
-            return
+        Returns (button, trade_id) for PC menu.
+        Button changes based on trade state.
+        """
+        trade = self.trade_service.get_active_trade(user_id)
         
-        try:
-            message: discord.Message = await channel.fetch_message(state.messageId)
-        except discord.NotFound:
-            await interaction.response.send_message('Error: Original message not found.', ephemeral=True)
-            return
-
-        ctx: Context = await self.bot.get_context(interaction.message)
-        sender = await ctx.guild.fetch_member(int(state.senderDiscordId))
+        if not trade:
+            # No active trade - show normal Trade button
+            button = Button(style=ButtonStyle.green, label="Trade", custom_id='trade_initiate')
+            button.callback = self._on_trade_initiate
+            return button, None
         
-        # Check which button was pressed by looking at the component's custom_id
-        custom_id = interaction.data.get('custom_id', '')
+        trade_id = trade['trade_id']
         
-        if custom_id == 'accept':
-            await interaction.response.send_message('You accepted this trade.', ephemeral=True)
-
-            trainer = TrainerClass(str(user.id))
-            pokemonList = trainer.getPokemon(False, True)
-
-            state.pokemonList = pokemonList
-            state.idx = 0
-
-            embed, btns = self.__pokemonPcTradeCard(user, pokemonList, 0)
-
-            message: discord.Message = await message.edit(
-                content=f'{user.display_name} is choosing a pokemon to offer {sender.display_name}.',
-                embed=embed,
-                view=btns
-            )
-            state.messageId = message.id
-            self.__tradeState[str(user.id)] = state
-        else:  # decline
-            await interaction.response.send_message('You declined this trade.', ephemeral=True)
-
-            trader = TrainerClass(state.senderDiscordId)
-            pokemon = trader.getPokemonById(state.senderPokemonId)
-
-            embed, btns = self.__pokemonSingleCard(user, pokemon)
-
-            message: discord.Message = await message.edit(
-                content=f'{user.display_name} declined {sender.display_name}\'s trade.',
-                embed=embed,
-                view=btns
-            )
-            del self.__tradeState[str(user.id)]
-
-
-    def __checkTradeState(self, user: discord.User, message: discord.Message):
-        state: TradeState
-        if str(user.id) not in self.__tradeState.keys():
-            return False
-        else:
-            state = self.__tradeState[str(user.id)]
-            if state.messageId != message.id:
-                return False
-        return True
+        # Receiver needs to respond
+        if (trade['status'] == TradeRequest.STATUS_PENDING_RECEIVER and 
+            trade['receiver_discord_id'] == user_id):
+            button = Button(style=ButtonStyle.blurple, label="View Trade Request", custom_id=f'view_request_{trade_id}')
+            button.callback = self._on_view_request_receiver
+            return button, trade_id
+        
+        # Sender needs to accept counter-offer
+        if (trade['status'] == TradeRequest.STATUS_PENDING_SENDER and 
+            trade['sender_discord_id'] == user_id):
+            button = Button(style=ButtonStyle.blurple, label="View Trade Response", custom_id=f'view_response_{trade_id}')
+            button.callback = self._on_view_response_sender
+            return button, trade_id
+        
+        # Waiting on other person
+        button = Button(style=ButtonStyle.gray, label="Trade Pending...", custom_id='trade_pending', disabled=True)
+        return button, trade_id
     
-
-    def __pokemonSingleCard(self, user: discord.User, pokemon: PokemonClass):
-
-        embed = createStatsEmbed(user, pokemon)
-
-        view = View()
-
-        button = Button(style=ButtonStyle.green, label="Accept Trade", custom_id='accept')
-        button.callback = self.__on_accept_trade  # Changed from on_trade_click_trade
-        view.add_item(button)
-
-        button = Button(style=ButtonStyle.red, label="Decline Trade", custom_id='decline')
-        button.callback = self.__on_decline_trade  # Changed from on_trade_click_trade
-        view.add_item(button)
-
-        return embed, view
-
-
-    async def __on_offer_trade(self, interaction: Interaction):
+    # ==================== Step 1: Initiate Trade ====================
+    
+    async def _on_trade_initiate(self, interaction: Interaction):
+        """Step 1: User clicks Trade button in PC"""
         user = interaction.user
-
-        if not self.__checkTradeState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.')
+        await interaction.response.defer()
+        
+        # Check if user already has active trade
+        if self.trade_service.has_active_trade(str(user.id)):
+            await interaction.followup.send(
+                "You already have an active trade request. Please complete or cancel it first.",
+                ephemeral=True
+            )
             return
         
-        state = self.__tradeState[str(user.id)]
+        # Get list of online guild members (excluding self)
+        guild = interaction.guild
+        online_members = [
+            m for m in guild.members 
+            if not m.bot 
+            and m.id != user.id 
+            and m.status != discord.Status.offline
+        ]
         
-        # Validate channel exists BEFORE responding
-        channel: discord.TextChannel = self.bot.get_channel(state.channelId)
-        if channel is None:
-            await interaction.response.send_message('Error: Channel not found. The original message may have been deleted.', ephemeral=True)
+        if not online_members:
+            await interaction.followup.send(
+                "No other users are currently online to trade with.",
+                ephemeral=True
+            )
             return
         
-        try:
-            message: discord.Message = await channel.fetch_message(state.messageId)
-        except discord.NotFound:
-            await interaction.response.send_message('Error: Original message not found.', ephemeral=True)
+        # Get user's Pokemon (excluding active)
+        trainer = TrainerClass(str(user.id))
+        active_pokemon = trainer.getActivePokemon()
+        all_pokemon = trainer.getPokemon(False, True)  # party=False, pc=True gets all
+        
+        tradeable_pokemon = [p for p in all_pokemon if p.trainerId != active_pokemon.trainerId]
+        
+        if not tradeable_pokemon:
+            await interaction.followup.send(
+                "You don't have any Pokemon available to trade (excluding your active Pokemon).",
+                ephemeral=True
+            )
             return
         
-        receiverPokemon = state.pokemonList[state.idx]
-        sender = TrainerClass(state.senderDiscordId)
-        senderPokemon = sender.getPokemonById(state.senderPokemonId)
+        # Create the selection view
+        view = TradeInitiateView(user, online_members, tradeable_pokemon, self)
         
-        # Execute the trade
-        enc = EncounterClass(senderPokemon, receiverPokemon)
-        enc.trade()
-        
-        # Get sender's Discord user for completion message
-        ctx: Context = await self.bot.get_context(interaction.message)
-        senderDiscord = await ctx.guild.fetch_member(int(state.senderDiscordId))
-        
-        # Create completion embed
         embed = discord.Embed(
-            title="Trade Complete!",
-            description=f"{user.display_name} traded their **{receiverPokemon.pokemonName}** for {senderDiscord.display_name}'s **{senderPokemon.pokemonName}**!",
+            title="🔄 Initiate Trade",
+            description="Select a user and Pokemon to start a trade request.",
+            color=discord.Color.blue()
+        )
+        
+        await interaction.followup.send(embed=embed, view=view, ephemeral=True)
+    
+    # ==================== Step 2: Receiver Views Request ====================
+    
+    async def _on_view_request_receiver(self, interaction: Interaction):
+        """Step 2: Receiver views incoming trade request"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        trade = self.trade_service.get_active_trade(str(user.id))
+        if not trade:
+            await interaction.followup.send("Trade request not found.", ephemeral=True)
+            return
+        
+        if trade['receiver_discord_id'] != str(user.id):
+            await interaction.followup.send("This trade request is not for you.", ephemeral=True)
+            return
+        
+        # Get sender's info
+        sender = await self.bot.fetch_user(int(trade['sender_discord_id']))
+        
+        # Create embed showing offered Pokemon
+        pokemon_name = trade['sender_pokemon_nickname'] or trade['sender_pokemon_name']
+        
+        embed = discord.Embed(
+            title="📬 Trade Request",
+            description=f"**{sender.display_name}** wants to trade with you!",
+            color=discord.Color.blue()
+        )
+        
+        embed.add_field(
+            name="Offering",
+            value=f"**{pokemon_name}** ({trade['sender_pokemon_name']})\nLevel {trade['sender_pokemon_level']}",
+            inline=False
+        )
+        
+        if trade['sender_type_2']:
+            types = f"{trade['sender_type_1']}/{trade['sender_type_2']}"
+        else:
+            types = trade['sender_type_1']
+        embed.add_field(name="Type", value=types, inline=True)
+        
+        # Create accept/decline view
+        view = TradeReceiverResponseView(user, trade['trade_id'], self)
+        
+        await interaction.followup.send(embed=embed, view=view, ephemeral=True)
+    
+    # ==================== Step 3: Sender Views Counter-Offer ====================
+    
+    async def _on_view_response_sender(self, interaction: Interaction):
+        """Step 3: Sender views receiver's counter-offer"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        trade = self.trade_service.get_active_trade(str(user.id))
+        if not trade:
+            await interaction.followup.send("Trade request not found.", ephemeral=True)
+            return
+        
+        if trade['sender_discord_id'] != str(user.id):
+            await interaction.followup.send("This trade request is not yours.", ephemeral=True)
+            return
+        
+        # Get receiver's info
+        receiver = await self.bot.fetch_user(int(trade['receiver_discord_id']))
+        
+        # Create embed showing both Pokemon
+        embed = discord.Embed(
+            title="🔄 Trade Response",
+            description=f"**{receiver.display_name}** has responded to your trade!",
             color=discord.Color.green()
         )
         
-        # Update message with completion (no buttons)
-        await message.edit(
-            content='',
-            embed=embed,
-            view=None
+        # Your Pokemon
+        your_pokemon_name = trade['sender_pokemon_nickname'] or trade['sender_pokemon_name']
+        embed.add_field(
+            name="You're Trading",
+            value=f"**{your_pokemon_name}** ({trade['sender_pokemon_name']})\nLevel {trade['sender_pokemon_level']}",
+            inline=True
         )
         
-        # Respond to interaction
-        await interaction.response.send_message('Trade complete!', ephemeral=True)
+        # Their Pokemon
+        their_pokemon_name = trade['receiver_pokemon_nickname'] or trade['receiver_pokemon_name']
+        embed.add_field(
+            name="For Their",
+            value=f"**{their_pokemon_name}** ({trade['receiver_pokemon_name']})\nLevel {trade['receiver_pokemon_level']}",
+            inline=True
+        )
         
-        # Clean up state
-        del self.__tradeState[str(user.id)]
-
-
-    async def __on_next_click(self, interaction: Interaction):
-        user = interaction.user
-        await interaction.response.defer()
-
-        if not self.__checkTradeState(user, interaction.message):
-            await interaction.followup.send('This is not for you.', ephemeral=True)
-            return
-
-        state = self.__tradeState[str(user.id)]
-        state.idx = state.idx + 1
-
-        embed, btns = self.__pokemonPcTradeCard(user, state.pokemonList, state.idx)
-        message = await interaction.message.edit(embed=embed, view=btns)
-        state.messageId = message.id
-        self.__tradeState[str(user.id)] = state
+        # Create accept/decline view
+        view = TradeSenderAcceptView(user, trade['trade_id'], self)
+        
+        await interaction.followup.send(embed=embed, view=view, ephemeral=True)
     
-
-    async def __on_prev_click(self, interaction: Interaction):
-        user = interaction.user
-        await interaction.response.defer()
-
-        if not self.__checkTradeState(user, interaction.message):
-            await interaction.followup.send('This is not for you.', ephemeral=True)
-            return
-
-        state = self.__tradeState[str(user.id)]
-        state.idx = state.idx - 1
-
-        embed, btns = self.__pokemonPcTradeCard(user, state.pokemonList, state.idx)
-        message = await interaction.message.edit(embed=embed, view=btns)
-        state.messageId = message.id
-        self.__tradeState[str(user.id)] = state
-
+    # ==================== Trade Execution ====================
     
-    def __pokemonPcTradeCard(self, user: discord.User, pokemonList: List[PokemonClass], idx: int):
-        pokemon = pokemonList[idx]
-
-        # Always reload pokemon data to ensure we have the latest stats from database
-        pokemon.load(pokemonId=pokemon.trainerId)
-
-
-        embed = createStatsEmbed(user, pokemon)
-
-        view = View()
-
-        if idx > 0:
-            button = Button(style=ButtonStyle.gray, label='Previous', custom_id='previous')
-            button.callback = self.on_prev_click_trade
-            view.add_item(button)
-
-        if idx < len(pokemonList) - 1:
-            button = Button(style=ButtonStyle.gray, label="Next", custom_id='next')
-            button.callback = self.on_next_click_trade
-            view.add_item(button)
-
-        button = Button(style=ButtonStyle.green, label="Offer to trade", custom_id='offer')
-        button.callback = self.on_offer_trade_trade
-        view.add_item(button)
-
-        return embed, view
-
-    async def __on_accept_trade(self, interaction: Interaction):
-        user = interaction.user
-
-        if not self.__checkTradeState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.', ephemeral=True)
-            return
-
-        state = self.__tradeState[str(user.id)]
-
-        channel: discord.TextChannel = self.bot.get_channel(state.channelId)
-        if channel is None:
-            await interaction.response.send_message('Error: Channel not found. The original message may have been deleted.', ephemeral=True)
+    async def execute_trade(self, trade_id: int) -> tuple[bool, str]:
+        """
+        Execute the actual Pokemon trade.
+        Returns (success, message)
+        """
+        # Validate trade can be executed
+        is_valid, error_msg = self.trade_service.validate_trade_execution(trade_id)
+        if not is_valid:
+            self.trade_service.invalidate_trade(trade_id)
+            return False, error_msg
+        
+        # Get trade details
+        trade = self.trade_service.get_trade_by_id(trade_id)
+        
+        # Load both Pokemon
+        sender_pokemon = PokemonClass()
+        sender_pokemon.load(pokemonId=trade['sender_pokemon_id'])
+        
+        receiver_pokemon = PokemonClass()
+        receiver_pokemon.load(pokemonId=trade['receiver_pokemon_id'])
+        
+        # Execute trade via EncounterClass (handles evolution, leaderboard, etc.)
+        enc = EncounterClass(sender_pokemon, receiver_pokemon)
+        retVal1, retVal2 = enc.trade()
+        
+        # Mark trade as completed
+        self.trade_service.complete_trade(trade_id)
+        
+        # Send DMs to both users
+        try:
+            sender = await self.bot.fetch_user(int(trade['sender_discord_id']))
+            receiver = await self.bot.fetch_user(int(trade['receiver_discord_id']))
+            
+            # DM to sender
+            sender_embed = discord.Embed(
+                title="✅ Trade Complete!",
+                description=f"Your trade with **{receiver.display_name}** is complete!",
+                color=discord.Color.green()
+            )
+            sender_embed.add_field(
+                name="You Received",
+                value=f"**{trade['receiver_pokemon_name']}** (Level {trade['receiver_pokemon_level']})",
+                inline=False
+            )
+            if "evolved" in retVal1.lower():
+                sender_embed.add_field(name="Bonus!", value=retVal1, inline=False)
+            
+            await sender.send(embed=sender_embed)
+            
+            # DM to receiver
+            receiver_embed = discord.Embed(
+                title="✅ Trade Complete!",
+                description=f"Your trade with **{sender.display_name}** is complete!",
+                color=discord.Color.green()
+            )
+            receiver_embed.add_field(
+                name="You Received",
+                value=f"**{trade['sender_pokemon_name']}** (Level {trade['sender_pokemon_level']})",
+                inline=False
+            )
+            if "evolved" in retVal2.lower():
+                receiver_embed.add_field(name="Bonus!", value=retVal2, inline=False)
+            
+            await receiver.send(embed=receiver_embed)
+            
+        except discord.Forbidden:
+            pass  # User has DMs disabled
+        except Exception as e:
+            print(f"Error sending trade completion DMs: {e}")
+        
+        return True, "Trade completed successfully!"
+    
+    async def cancel_trade_notify(self, trade_id: int, cancelled_by_discord_id: str):
+        """Cancel trade and notify both users"""
+        trade = self.trade_service.get_trade_by_id(trade_id)
+        if not trade:
             return
         
+        # Cancel in database
+        self.trade_service.cancel_trade(trade_id, cancelled_by_discord_id)
+        
+        # Determine who cancelled
+        canceller = await self.bot.fetch_user(int(cancelled_by_discord_id))
+        
+        if cancelled_by_discord_id == trade['sender_discord_id']:
+            other_user_id = trade['receiver_discord_id']
+        else:
+            other_user_id = trade['sender_discord_id']
+        
+        other_user = await self.bot.fetch_user(int(other_user_id))
+        
+        # Send DMs
         try:
-            message: discord.Message = await channel.fetch_message(state.messageId)
-        except discord.NotFound:
-            await interaction.response.send_message('Error: Original message not found.', ephemeral=True)
-            return
-
-        ctx: Context = await self.bot.get_context(interaction.message)
-        sender = await ctx.guild.fetch_member(int(state.senderDiscordId))
-
-        await interaction.response.send_message('You accepted this trade.', ephemeral=True)
-
-        trainer = TrainerClass(str(user.id))
-        pokemonList = trainer.getPokemon(False, True)
-
-        state.pokemonList = pokemonList
-        state.idx = 0
-
-        embed, btns = self.__pokemonPcTradeCard(user, pokemonList, 0)
-
-        message: discord.Message = await message.edit(
-            content=f'{user.display_name} is choosing a pokemon to offer {sender.display_name}.',
-            embed=embed,
-            view=btns
-        )
-        state.messageId = message.id
-        self.__tradeState[str(user.id)] = state
-
-
-    async def __on_decline_trade(self, interaction: Interaction):
-        user = interaction.user
-
-        if not self.__checkTradeState(user, interaction.message):
-            await interaction.response.send_message('This is not for you.', ephemeral=True)
-            return
-
-        state = self.__tradeState[str(user.id)]
-
-        channel: discord.TextChannel = self.bot.get_channel(state.channelId)
-        if channel is None:
-            await interaction.response.send_message('Error: Channel not found. The original message may have been deleted.', ephemeral=True)
+            cancel_embed = discord.Embed(
+                title="❌ Trade Cancelled",
+                description=f"**{canceller.display_name}** has cancelled the trade request.",
+                color=discord.Color.red()
+            )
+            
+            await canceller.send("You cancelled the trade request.")
+            await other_user.send(embed=cancel_embed)
+            
+        except discord.Forbidden:
+            pass  # User has DMs disabled
+        except Exception as e:
+            print(f"Error sending cancellation DMs: {e}")
+    
+    # ==================== Commands ====================
+    
+    @commands.group(name="pokecenter", aliases=['pmc'])
+    @commands.guild_only()
+    async def _pokecenter(self, ctx: commands.Context) -> None:
+        """Base command to manage the pokecenter"""
+        pass
+    
+    @_pokecenter.command()
+    async def tradehistory(self, ctx: commands.Context, limit: int = 10):
+        """View your recent completed trades"""
+        user = ctx.author
+        
+        if limit > 20:
+            limit = 20
+        
+        trades = self.trade_service.get_trade_history(str(user.id), limit)
+        
+        if not trades:
+            await ctx.send("You haven't completed any trades yet.")
             return
         
-        try:
-            message: discord.Message = await channel.fetch_message(state.messageId)
-        except discord.NotFound:
-            await interaction.response.send_message('Error: Original message not found.', ephemeral=True)
-            return
-
-        ctx: Context = await self.bot.get_context(interaction.message)
-        sender = await ctx.guild.fetch_member(int(state.senderDiscordId))
-
-        await interaction.response.send_message('You declined this trade.', ephemeral=True)
-
-        trader = TrainerClass(state.senderDiscordId)
-        pokemon = trader.getPokemonById(state.senderPokemonId)
-
-        embed, btns = self.__pokemonSingleCard(user, pokemon)
-
-        message: discord.Message = await message.edit(
-            content=f'{user.display_name} declined {sender.display_name}\'s trade.',
-            embed=embed,
-            view=btns
+        embed = discord.Embed(
+            title=f"📜 {user.display_name}'s Trade History",
+            description=f"Your last {len(trades)} completed trades:",
+            color=discord.Color.blue()
         )
-        del self.__tradeState[str(user.id)]
+        
+        for trade in trades:
+            # Determine which Pokemon the user gave/received
+            if trade['sender_discord_id'] == str(user.id):
+                gave = trade['sender_pokemon_name']
+                received = trade['receiver_pokemon_name']
+                partner_id = trade['receiver_discord_id']
+            else:
+                gave = trade['receiver_pokemon_name']
+                received = trade['sender_pokemon_name']
+                partner_id = trade['sender_discord_id']
+            
+            try:
+                partner = await self.bot.fetch_user(int(partner_id))
+                partner_name = partner.display_name
+            except:
+                partner_name = "Unknown User"
+            
+            completed = trade['completed_at'].strftime('%Y-%m-%d %H:%M')
+            
+            embed.add_field(
+                name=f"Trade with {partner_name}",
+                value=f"Gave: **{gave}**\nReceived: **{received}**\n{completed}",
+                inline=False
+            )
+        
+        await ctx.send(embed=embed)
 
-    # @discord.ui.button(custom_id='accept', label='Accept Trade', style=ButtonStyle.green)
-    # async def on_trade_click_trade(self, interaction: discord.Interaction):
-    #     await self.__on_trade_click(interaction)
 
-    @discord.ui.button(custom_id='next', label='Next', style=ButtonStyle.gray)
-    async def on_next_click_trade(self, interaction: discord.Interaction):
-        await self.__on_next_click(interaction)
+# ==================== UI Views ====================
 
-    @discord.ui.button(custom_id='previous', label='Previous', style=ButtonStyle.gray)
-    async def on_prev_click_trade(self, interaction: discord.Interaction):
-        await self.__on_prev_click(interaction)
+class TradeInitiateView(View):
+    """View for selecting user and Pokemon to trade"""
+    
+    def __init__(self, user: discord.User, members: List[discord.Member], pokemon: List[PokemonClass], mixin: TradeMixin):
+        super().__init__(timeout=180)
+        self.user = user
+        self.mixin = mixin
+        self.selected_member: Optional[discord.Member] = None
+        self.selected_pokemon: Optional[PokemonClass] = None
+        
+        # User dropdown
+        user_options = [
+            SelectOption(label=m.display_name, value=str(m.id), description=f"Trade with {m.name}")
+            for m in members[:25]  # Discord limit
+        ]
+        
+        user_select = Select(
+            placeholder="Select a user to trade with...",
+            options=user_options,
+            custom_id="user_select"
+        )
+        user_select.callback = self.user_selected
+        self.add_item(user_select)
+        
+        # Pokemon dropdown
+        pokemon_options = [
+            SelectOption(
+                label=f"{p.nickName or p.pokemonName} (Lv.{p.currentLevel})",
+                value=str(p.trainerId),
+                description=f"{p.pokemonName} - {p.type_1}" + (f"/{p.type_2}" if p.type_2 else "")
+            )
+            for p in pokemon[:25]  # Discord limit
+        ]
+        
+        pokemon_select = Select(
+            placeholder="Select a Pokemon to offer...",
+            options=pokemon_options,
+            custom_id="pokemon_select"
+        )
+        pokemon_select.callback = self.pokemon_selected
+        self.add_item(pokemon_select)
+        
+        # Send request button (initially disabled)
+        send_button = Button(label="Send Trade Request", style=ButtonStyle.green, custom_id="send_request", disabled=True)
+        send_button.callback = self.send_request
+        self.add_item(send_button)
+        
+        # Cancel button
+        cancel_button = Button(label="Cancel", style=ButtonStyle.red, custom_id="cancel")
+        cancel_button.callback = self.cancel
+        self.add_item(cancel_button)
+    
+    async def user_selected(self, interaction: Interaction):
+        if interaction.user.id != self.user.id:
+            await interaction.response.send_message("This is not for you.", ephemeral=True)
+            return
+        
+        selected_id = int(interaction.data['values'][0])
+        self.selected_member = interaction.guild.get_member(selected_id)
+        
+        # Enable send button if both selections made
+        if self.selected_member and self.selected_pokemon:
+            for item in self.children:
+                if item.custom_id == "send_request":
+                    item.disabled = False
+        
+        await interaction.response.edit_message(view=self)
+    
+    async def pokemon_selected(self, interaction: Interaction):
+        if interaction.user.id != self.user.id:
+            await interaction.response.send_message("This is not for you.", ephemeral=True)
+            return
+        
+        selected_id = int(interaction.data['values'][0])
+        trainer = TrainerClass(str(self.user.id))
+        self.selected_pokemon = trainer.getPokemonById(selected_id)
+        
+        # Enable send button if both selections made
+        if self.selected_member and self.selected_pokemon:
+            for item in self.children:
+                if item.custom_id == "send_request":
+                    item.disabled = False
+        
+        await interaction.response.edit_message(view=self)
+    
+    async def send_request(self, interaction: Interaction):
+        if interaction.user.id != self.user.id:
+            await interaction.response.send_message("This is not for you.", ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Create trade request in database
+        trade_id = self.mixin.trade_service.create_trade_request(
+            str(self.user.id),
+            str(self.selected_member.id),
+            self.selected_pokemon.trainerId
+        )
+        
+        if not trade_id:
+            await interaction.followup.send("Failed to create trade request.", ephemeral=True)
+            return
+        
+        # Send DM to receiver
+        try:
+            pokemon_name = self.selected_pokemon.nickName or self.selected_pokemon.pokemonName
+            
+            dm_embed = discord.Embed(
+                title="📬 New Trade Request!",
+                description=f"**{self.user.display_name}** wants to trade with you!",
+                color=discord.Color.blue()
+            )
+            dm_embed.add_field(
+                name="They're Offering",
+                value=f"**{pokemon_name}** ({self.selected_pokemon.pokemonName})\nLevel {self.selected_pokemon.currentLevel}",
+                inline=False
+            )
+            dm_embed.add_field(
+                name="Next Step",
+                value="Go to a PC and click **View Trade Request** to respond!",
+                inline=False
+            )
+            
+            dm_message = await self.selected_member.send(embed=dm_embed)
+            
+            # Store message ID for potential editing later
+            self.mixin.trade_service.update_notification_message_id(trade_id, str(dm_message.id))
+            
+        except discord.Forbidden:
+            await interaction.followup.send(
+                f"Trade request sent, but {self.selected_member.display_name} has DMs disabled. They'll see it when they visit a PC.",
+                ephemeral=True
+            )
+        except Exception as e:
+            print(f"Error sending trade DM: {e}")
+        
+        # Confirm to sender
+        await interaction.followup.send(
+            f"✅ Trade request sent to **{self.selected_member.display_name}**!\nThey'll be notified to check their PC.",
+            ephemeral=True
+        )
+        
+        # Disable all controls
+        for item in self.children:
+            item.disabled = True
+        await interaction.message.edit(view=self)
+    
+    async def cancel(self, interaction: Interaction):
+        if interaction.user.id != self.user.id:
+            await interaction.response.send_message("This is not for you.", ephemeral=True)
+            return
+        
+        await interaction.response.send_message("Trade cancelled.", ephemeral=True)
+        
+        for item in self.children:
+            item.disabled = True
+        await interaction.message.edit(view=self)
 
-    @discord.ui.button(custom_id='offer', label='Offer to trade', style=ButtonStyle.green)
-    async def on_offer_trade_trade(self, interaction: discord.Interaction):
-        await self.__on_offer_trade(interaction)
+
+class TradeReceiverResponseView(View):
+    """View for receiver to accept/decline or select Pokemon"""
+    
+    def __init__(self, user: discord.User, trade_id: int, mixin: TradeMixin):
+        super().__init__(timeout=300)
+        self.user = user
+        self.trade_id = trade_id
+        self.mixin = mixin
+        self.showing_selection = False
+        
+        # Accept button
+        accept_button = Button(label="Accept & Choose Pokemon", style=ButtonStyle.green, custom_id="accept")
+        accept_button.callback = self.accept_trade
+        self.add_item(accept_button)
+        
+        # Decline button
+        decline_button = Button(label="Decline", style=ButtonStyle.red, custom_id="decline")
+        decline_button.callback = self.decline_trade
+        self.add_item(decline_button)
+    
+    async def accept_trade(self, interaction: Interaction):
+        if interaction.user.id != self.user.id:
+            await interaction.response.send_message("This is not for you.", ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Get user's Pokemon (excluding active)
+        trainer = TrainerClass(str(self.user.id))
+        active_pokemon = trainer.getActivePokemon()
+        all_pokemon = trainer.getPokemon(False, True)
+        
+        tradeable_pokemon = [p for p in all_pokemon if p.trainerId != active_pokemon.trainerId]
+        
+        if not tradeable_pokemon:
+            await interaction.followup.send(
+                "You don't have any Pokemon available to trade (excluding your active Pokemon).",
+                ephemeral=True
+            )
+            return
+        
+        # Show Pokemon selection
+        self.clear_items()
+        self.showing_selection = True
+        
+        pokemon_options = [
+            SelectOption(
+                label=f"{p.nickName or p.pokemonName} (Lv.{p.currentLevel})",
+                value=str(p.trainerId),
+                description=f"{p.pokemonName} - {p.type_1}" + (f"/{p.type_2}" if p.type_2 else "")
+            )
+            for p in tradeable_pokemon[:25]
+        ]
+        
+        pokemon_select = Select(
+            placeholder="Select your Pokemon to trade...",
+            options=pokemon_options,
+            custom_id="pokemon_select"
+        )
+        pokemon_select.callback = self.pokemon_selected
+        self.add_item(pokemon_select)
+        
+        cancel_button = Button(label="Cancel", style=ButtonStyle.red, custom_id="cancel")
+        cancel_button.callback = self.decline_trade
+        self.add_item(cancel_button)
+        
+        await interaction.followup.edit_message(
+            message_id=interaction.message.id,
+            content="Select a Pokemon to offer in return:",
+            view=self
+        )
+    
+    async def pokemon_selected(self, interaction: Interaction):
+        if interaction.user.id != self.user.id:
+            await interaction.response.send_message("This is not for you.", ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        selected_pokemon_id = int(interaction.data['values'][0])
+        
+        # Update trade with receiver's Pokemon
+        success = self.mixin.trade_service.update_receiver_pokemon(self.trade_id, selected_pokemon_id)
+        
+        if not success:
+            await interaction.followup.send("Failed to update trade request.", ephemeral=True)
+            return
+        
+        # Get trade details for notification
+        trade = self.mixin.trade_service.get_trade_by_id(self.trade_id)
+        
+        # Notify sender via DM
+        try:
+            sender = await self.mixin.bot.fetch_user(int(trade['sender_discord_id']))
+            
+            dm_embed = discord.Embed(
+                title="✉️ Trade Response Received!",
+                description=f"**{self.user.display_name}** has responded to your trade!",
+                color=discord.Color.green()
+            )
+            dm_embed.add_field(
+                name="Next Step",
+                value="Go to a PC and click **View Trade Response** to accept or decline!",
+                inline=False
+            )
+            
+            await sender.send(embed=dm_embed)
+            
+        except discord.Forbidden:
+            pass
+        except Exception as e:
+            print(f"Error sending response notification: {e}")
+        
+        # Confirm to receiver
+        await interaction.followup.send(
+            "✅ Your Pokemon has been selected! Waiting for the other trainer to accept.",
+            ephemeral=True
+        )
+        
+        # Disable all controls
+        for item in self.children:
+            item.disabled = True
+        await interaction.message.edit(view=self)
+    
+    async def decline_trade(self, interaction: Interaction):
+        if interaction.user.id != self.user.id:
+            await interaction.response.send_message("This is not for you.", ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Cancel trade
+        await self.mixin.cancel_trade_notify(self.trade_id, str(self.user.id))
+        
+        await interaction.followup.send("Trade request declined.", ephemeral=True)
+        
+        for item in self.children:
+            item.disabled = True
+        await interaction.message.edit(view=self)
+
+
+class TradeSenderAcceptView(View):
+    """View for sender to accept/decline receiver's counter-offer"""
+    
+    def __init__(self, user: discord.User, trade_id: int, mixin: TradeMixin):
+        super().__init__(timeout=300)
+        self.user = user
+        self.trade_id = trade_id
+        self.mixin = mixin
+        
+        # Accept button
+        accept_button = Button(label="Accept Trade", style=ButtonStyle.green, custom_id="accept")
+        accept_button.callback = self.accept_trade
+        self.add_item(accept_button)
+        
+        # Decline button
+        decline_button = Button(label="Decline", style=ButtonStyle.red, custom_id="decline")
+        decline_button.callback = self.decline_trade
+        self.add_item(decline_button)
+    
+    async def accept_trade(self, interaction: Interaction):
+        if interaction.user.id != self.user.id:
+            await interaction.response.send_message("This is not for you.", ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Execute the trade
+        success, message = await self.mixin.execute_trade(self.trade_id)
+        
+        if success:
+            await interaction.followup.send(
+                "✅ Trade completed! Check your DMs for details.",
+                ephemeral=True
+            )
+        else:
+            await interaction.followup.send(
+                f"❌ Trade failed: {message}",
+                ephemeral=True
+            )
+        
+        # Disable all controls
+        for item in self.children:
+            item.disabled = True
+        await interaction.message.edit(view=self)
+    
+    async def decline_trade(self, interaction: Interaction):
+        if interaction.user.id != self.user.id:
+            await interaction.response.send_message("This is not for you.", ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Cancel trade
+        await self.mixin.cancel_trade_notify(self.trade_id, str(self.user.id))
+        
+        await interaction.followup.send("Trade request declined.", ephemeral=True)
+        
+        for item in self.children:
+            item.disabled = True
+        await interaction.message.edit(view=self)

@@ -2950,6 +2950,9 @@ class EncountersMixin(MixinMeta):
         release_btn = Button(style=ButtonStyle.red, label="🗑️ Release", custom_id='bag_party_release', row=2)
         release_btn.callback = self.on_bag_party_release_click
         view.add_item(release_btn)
+
+        trade_button, trade_id = self.get_trade_button_for_pc(str(user.id))
+        view.add_item(trade_button)
         
         # ROW 3: Navigation back
         back_btn = Button(style=ButtonStyle.gray, label="← Back to Bag", custom_id='party_back_to_bag', row=3)
