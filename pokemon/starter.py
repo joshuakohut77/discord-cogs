@@ -131,15 +131,37 @@ class StarterMixin(MixinMeta):
             await self._show_intro_scene(ctx, user, trainer)
             return
 
-        # If they have a starter, get it and display
+        # If they have a starter, get it and display with simple embed
         pokemon = trainer.getStarterPokemon()
-        active = trainer.getActivePokemon()
-        state = PokemonState(str(user.id), None, DisplayCard.STATS, [pokemon], active.trainerId, None)
-        authorIsTrainer = user.id == state.discordId
-
-        embed, btns = self.__pokemonSingleCard(user, state, state.card, authorIsTrainer)
-        message: discord.Message = await ctx.send(embed=embed, view=btns)
-        self.setPokemonState(author, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
+        stats = pokemon.getPokeStats()
+        
+        # Get type colors for embed
+        from .functions import getTypeColor
+        color = getTypeColor(pokemon.type1)
+        
+        # Create simple embed
+        embed = discord.Embed(
+            title=f"#{pokemon.pokedexId} {pokemon.pokemonName.capitalize()}",
+            description=f"**{user.display_name}'s Starter Pokémon**",
+            color=color
+        )
+        
+        # Type field
+        types = pokemon.type1
+        if pokemon.type2 is not None:
+            types += f", {pokemon.type2}"
+        embed.add_field(name="Type", value=types, inline=True)
+        
+        # Level field
+        embed.add_field(name="Level", value=f"{pokemon.currentLevel}", inline=True)
+        
+        # HP field
+        embed.add_field(name="HP", value=f"{pokemon.currentHP}/{stats['hp']}", inline=True)
+        
+        # Set the Pokemon sprite as the main image
+        embed.set_image(url=pokemon.frontSpriteURL)
+        
+        await ctx.send(embed=embed)
 
     async def _show_intro_scene(self, ctx: commands.Context, user: DiscordUser, trainer: TrainerClass):
         """Show the intro scene for new trainers"""
