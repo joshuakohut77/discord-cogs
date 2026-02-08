@@ -1,47 +1,129 @@
-from __future__ import annotations
-from typing import Any, Dict, List, TYPE_CHECKING
-from abc import ABCMeta
-from .duplicatesclass import Duplicates as DupeCls
-
-if TYPE_CHECKING:
-    from redbot.core.bot import Red
-
+from discord import embeds
 import discord
-from redbot.core import Config, commands
+import hashlib
+from .dbclass import db as dbconn
 
-from .event import EventMixin
+"""
+Saves and checks to see if a message is a duplicate and will respond with when those exact messages have been sent and by whom. 
+"""
 
-class CompositeClass(commands.CogMeta, ABCMeta):
-    __slots__: tuple = ()
-    pass
+class Duplicates(): 
 
-class Duplicates(EventMixin, commands.Cog, metaclass=CompositeClass):
-    """Duplicates"""
-	
-    def __init__(self, bot: Red):
-        self.bot: Red = bot
+    @staticmethod
+    def has_extension(file_name):
+        """Check if the message contains common media file extensions"""
+        extensions = ('.gif', '.png', '.jpg', '.jpeg', '.mp4', '.webm', '.com')
+        return file_name.lower().endswith(extensions)
 
+    @staticmethod
+    def hash_string(input_string):
+        """Create SHA256 hash of the input string"""
+        # Create a new sha256 hash object
+        sha256 = hashlib.sha256()
+        
+        # Update the hash object with the bytes of the string
+        sha256.update(input_string.encode('utf-8'))
+        
+        # Get the hexadecimal representation of the hash
+        hex_hash = sha256.hexdigest()
+        
+        return hex_hash
 
-    @commands.group()
-    @commands.guild_only()
-    async def duplicates(self, ctx: commands.Context) -> None:
-        """Gets the admin commands for react emojis cog."""
-        pass
+    @staticmethod
+    def insert_message(msgHash, username):
+        """Insert a new message hash into the database"""
+        db = dbconn()
+        
+        queryString = """INSERT INTO "duplicate_message"("MessageHash", "Username") VALUES (%(msgHash)s, %(username)s)""" 
+        values = {'msgHash': msgHash, 'username': str(username) }
+        db.execute(queryString, values)
+        return
+
+    @staticmethod
+    def select_duplicates(msgHash):
+        """Select all duplicate messages for a given hash"""
+        db = dbconn()
+        
+        queryString = '''
+        SELECT * 
+            FROM public."duplicate_message"
+            WHERE "MessageHash" = %(msgHash)s
+            ORDER BY "Timestamp" ASC'''
+        result = db.queryAll(queryString, {'msgHash': msgHash})
+        
+        duplicateList = []
+        
+        for row in result:
+            username = row[2]
+            timestamp = row[3]
+            duplicateList.append({'username': username, 'timestamp': timestamp})
+        
+        return duplicateList
+
+    @staticmethod
+    def get_table_size():
+        """Get the total size of the duplicate_message table"""
+        db = dbconn()
+        queryString = '''
+            SELECT pg_size_pretty(
+                pg_total_relation_size('duplicate_message')) 
+                    AS total_size;'''
+        result = db.querySingle(queryString)
+
+        return result[0]
     
-    @duplicates.command()
-    async def size(self, ctx: commands.Context) -> None:
-        size = DupeCls.get_table_size()
-        await ctx.send("Table Size: %s" %(str(size)))
-        return
+    @staticmethod
+    def get_message_count():
+        """Get the total count of messages in the database"""
+        db = dbconn()
+        queryString = '''
+            SELECT COUNT(*) 
+                FROM duplicate_message;'''
+        result = db.querySingle(queryString)
 
-    @duplicates.command()
-    async def count(self, ctx: commands.Context) -> None:
-        count = DupeCls.get_message_count()
-        await ctx.send("Message Count: %s" %(str(count)))
-        return
+        return result[0]
     
-    @duplicates.command()
-    async def time(self, ctx: commands.Context) -> None:
-        time = DupeCls.get_query_time()
-        await ctx.send("%s" %(str(time)))
-        return
+    @staticmethod
+    def get_query_time():
+        """Get the execution time for a sample duplicate query"""
+        db = dbconn()
+        queryString = '''
+            EXPLAIN ANALYZE 
+                SELECT * 
+                    FROM duplicate_message 
+                        WHERE "MessageHash" = 'e8d3572ceef0e6b188ba8e84205e5a248afe4c5374cba769d392f9ba99021cd1';'''
+        result = db.queryAll(queryString)
+        for value in result:
+            if 'Execution Time' in value[0]:
+                return value[0]
+        return "Query time not found"
+
+    @staticmethod
+    def cleanup_old_messages(days=180):
+        """Delete messages older than the specified number of days
+        
+        Args:
+            days: Number of days to keep (default: 180)
+            
+        Returns:
+            Number of rows deleted
+        """
+        db = dbconn()
+        
+        # First get the count of rows that will be deleted
+        count_query = '''
+            SELECT COUNT(*) 
+                FROM duplicate_message 
+                WHERE "Timestamp" < NOW() - INTERVAL '%s days'
+        '''
+        count_result = db.querySingle(count_query % days)
+        rows_to_delete = count_result[0] if count_result else 0
+        
+        # Delete old messages
+        delete_query = '''
+            DELETE FROM duplicate_message 
+            WHERE "Timestamp" < NOW() - INTERVAL '%s days'
+        '''
+        db.execute(delete_query % days)
+        
+        return rows_to_delete

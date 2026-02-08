@@ -1,110 +1,113 @@
 # database class
 
 import psycopg as pg
+from psycopg_pool import ConnectionPool
+from contextlib import contextmanager
 
 
+class DatabasePool:
+    """Singleton connection pool for the database"""
+    _instance = None
+    _pool = None
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(DatabasePool, cls).__new__(cls)
+        return cls._instance
+    
+    def initialize(self):
+        """Initialize the connection pool"""
+        if self._pool is None:
+            self._pool = ConnectionPool(
+                conninfo="host=postgres_container dbname=discord user=redbot password=REDACTED port=5432",
+                min_size=2,
+                max_size=10,
+                timeout=30
+            )
+    
+    def close(self):
+        """Close the connection pool"""
+        if self._pool is not None:
+            self._pool.close()
+            self._pool = None
+    
+    @contextmanager
+    def get_connection(self):
+        """Get a connection from the pool"""
+        if self._pool is None:
+            self.initialize()
+        
+        conn = self._pool.getconn()
+        try:
+            yield conn
+        finally:
+            self._pool.putconn(conn)
 
-
-# The python equivalent of dotnets IDisposable pattern is their Context Managers
-# https://book.pythontips.com/en/latest/context_managers.html
-#
-# dotnet:
-# using (var db = new DBConnection()) { ... }
-#
-# python
-# with database as db: ...
-#
-# The connection cursor object implements this kind of pattern
-# https://www.psycopg.org/docs/cursor.html
-#
-# According to their best practices, creating lots of cursors should not be a problem:
-# https://www.psycopg.org/docs/faq.html#best-practices
 
 class db:
-    def __init__(self, params=None):
+    """Database wrapper class using connection pooling"""
+    
+    def __init__(self):
+        self.pool = DatabasePool()
         self.faulted = False
-        # TODO: need a better way to pass in db configs through all the objects.
-        # self.conn = pg.connect(
-        #     host=(
-        #         params and params.host) or "REDACTED_HOST",
-        #     dbname=(params and params.dbname) or "pokemon_db",
-        #     user=(params and params.user) or "redbot",
-        #     # todo remove password from source control
-        #     password=(params and params.password) or "REDACTED_PASSWORD",
-        #     port=(params and params.port) or REDACTED_PORT)
-
-        self.conn = pg.connect(
-            host="postgres_container",
-            dbname="pokemon_db",
-            user="redbot",
-            # todo remove password from source control
-            password="REDACTED",
-            port=5432)
-
-    def __del__(self):
-        self.conn.close()
 
     def queryAll(self, queryString, params=None):
-        """ takes a select query and runs it returning all rows. params is a sequence of values to pass into the queryString"""
-        cur = self.conn.cursor()
-        if params:
-            cur.execute(queryString, (params) if type(params) is list else params)
-        else:
-            cur.execute(queryString)
-        results = cur.fetchall()
-        cur.close()
-        return results
+        """Takes a select query and runs it returning all rows. params is a dict of values to pass into the queryString"""
+        with self.pool.get_connection() as conn:
+            with conn.cursor() as cur:
+                if params:
+                    cur.execute(queryString, params)
+                else:
+                    cur.execute(queryString)
+                results = cur.fetchall()
+                return results
 
     def querySingle(self, queryString, params=None):
-        """ takes a select query and runs it returning the first row. params is a sequence of values to pass into the queryString"""
-        cur = self.conn.cursor()
-        if params:
-            cur.execute(queryString, (params) if type(params) is list else params)
-        else:
-            cur.execute(queryString)
+        """Takes a select query and runs it returning the first row. params is a dict of values to pass into the queryString"""
+        with self.pool.get_connection() as conn:
+            with conn.cursor() as cur:
+                if params:
+                    cur.execute(queryString, params)
+                else:
+                    cur.execute(queryString)
+                result = cur.fetchone()
+                return result
 
-        # # If you ask for something that should be a single row,
-        # # anything more than a single row is an error.
-        # if cur.rowcount > 1:
-        #     raise AssertionError('Expected 1, returned more than 1')
-
-        result = cur.fetchone()
-        cur.close()
-        return result
-
-    # TODO: clean all these up, switch to the python `with` pattern
     def execute(self, queryString, params=None):
-        """ takes a update/insert statement, runs it, and committing if no errors. params is a sequence of values to pass into the queryString"""
-        cur = self.conn.cursor()
-        if params:
-            cur.execute(queryString, (params) if type(params) is list else params)
-        else:
-            cur.execute(queryString)
-        self.conn.commit()
-        cur.close()
+        """Takes a update/insert statement, runs it, and commits if no errors. params is a dict of values to pass into the queryString"""
+        with self.pool.get_connection() as conn:
+            with conn.cursor() as cur:
+                if params:
+                    cur.execute(queryString, params)
+                else:
+                    cur.execute(queryString)
+                conn.commit()
 
     def executeAndReturn(self, queryString, params=None):
-        """ takes a update/insert statement, runs it, and committing if no errors. params is a sequence of values to pass into the queryString"""
-        cur = self.conn.cursor()
-        if params:
-            cur.execute(queryString, (params) if type(params) is list else params)
-        else:
-            cur.execute(queryString)
-        self.conn.commit()
-        result = cur.fetchone()
-        cur.close()
-        return result
+        """Takes a update/insert statement, runs it, commits if no errors, and returns result. params is a dict of values to pass into the queryString"""
+        with self.pool.get_connection() as conn:
+            with conn.cursor() as cur:
+                if params:
+                    cur.execute(queryString, params)
+                else:
+                    cur.execute(queryString)
+                conn.commit()
+                result = cur.fetchone()
+                return result
 
     def executeWithoutCommit(self, queryString, params=None):
-        """ takes a update/insert statement, runs it, and committing if no errors. params is a sequence of values to pass into the queryString"""
-        with self.conn.cursor() as cur:
-            if params:
-                cur.execute(queryString, (params) if type(params) is list else params)
-            else:
-                cur.execute(queryString)
+        """Takes a update/insert statement and runs it without committing. params is a dict of values to pass into the queryString"""
+        with self.pool.get_connection() as conn:
+            with conn.cursor() as cur:
+                if params:
+                    cur.execute(queryString, params)
+                else:
+                    cur.execute(queryString)
 
     def commit(self):
-        self.conn.commit()
+        """Note: This method is deprecated when using connection pooling. Each execute() commits automatically."""
+        pass
     
     def rollback(self):
-        self.conn.rollback()
+        """Note: Rollback should be handled at the connection level when using pooling"""
+        pass

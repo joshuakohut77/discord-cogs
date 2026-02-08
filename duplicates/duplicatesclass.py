@@ -9,11 +9,27 @@ Saves and checks to see if a message is a duplicate and will respond with when t
 
 class Duplicates(): 
 
+    @staticmethod
     def has_extension(file_name):
-        extensions = ('.gif', '.png', '.jpg', '.jpeg', '.mp4', '.webm', '.com')
-        return file_name.lower().endswith(extensions)
+        """Check if the message contains common media file extensions or media links"""
+        extensions = ('.gif', '.png', '.jpg', '.jpeg', '.mp4', '.webm')
+        media_domains = ('tenor.com', 'giphy.com', 'imgur.com', 'gfycat.com')
+        
+        file_lower = file_name.lower()
+        
+        # Check for file extensions
+        if any(file_lower.endswith(ext) for ext in extensions):
+            return True
+        
+        # Check for media domain links
+        if any(domain in file_lower for domain in media_domains):
+            return True
+        
+        return False
 
+    @staticmethod
     def hash_string(input_string):
+        """Create SHA256 hash of the input string"""
         # Create a new sha256 hash object
         sha256 = hashlib.sha256()
         
@@ -25,8 +41,9 @@ class Duplicates():
         
         return hex_hash
 
+    @staticmethod
     def insert_message(msgHash, username):
-        
+        """Insert a new message hash into the database"""
         db = dbconn()
         
         queryString = """INSERT INTO "duplicate_message"("MessageHash", "Username") VALUES (%(msgHash)s, %(username)s)""" 
@@ -34,14 +51,16 @@ class Duplicates():
         db.execute(queryString, values)
         return
 
+    @staticmethod
     def select_duplicates(msgHash):
-        
+        """Select all duplicate messages for a given hash"""
         db = dbconn()
         
         queryString = '''
         SELECT * 
             FROM public."duplicate_message"
-            WHERE "MessageHash" = %(msgHash)s'''
+            WHERE "MessageHash" = %(msgHash)s
+            ORDER BY "Timestamp" ASC'''
         result = db.queryAll(queryString, {'msgHash': msgHash})
         
         duplicateList = []
@@ -53,7 +72,9 @@ class Duplicates():
         
         return duplicateList
 
+    @staticmethod
     def get_table_size():
+        """Get the total size of the duplicate_message table"""
         db = dbconn()
         queryString = '''
             SELECT pg_size_pretty(
@@ -63,7 +84,9 @@ class Duplicates():
 
         return result[0]
     
+    @staticmethod
     def get_message_count():
+        """Get the total count of messages in the database"""
         db = dbconn()
         queryString = '''
             SELECT COUNT(*) 
@@ -72,8 +95,9 @@ class Duplicates():
 
         return result[0]
     
-    
+    @staticmethod
     def get_query_time():
+        """Get the execution time for a sample duplicate query"""
         db = dbconn()
         queryString = '''
             EXPLAIN ANALYZE 
@@ -83,4 +107,35 @@ class Duplicates():
         result = db.queryAll(queryString)
         for value in result:
             if 'Execution Time' in value[0]:
-                return value[0] 
+                return value[0]
+        return "Query time not found"
+
+    @staticmethod
+    def cleanup_old_messages(days=180):
+        """Delete messages older than the specified number of days
+        
+        Args:
+            days: Number of days to keep (default: 180)
+            
+        Returns:
+            Number of rows deleted
+        """
+        db = dbconn()
+        
+        # First get the count of rows that will be deleted
+        count_query = '''
+            SELECT COUNT(*) 
+                FROM duplicate_message 
+                WHERE "Timestamp" < NOW() - INTERVAL '%s days'
+        '''
+        count_result = db.querySingle(count_query % days)
+        rows_to_delete = count_result[0] if count_result else 0
+        
+        # Delete old messages
+        delete_query = '''
+            DELETE FROM duplicate_message 
+            WHERE "Timestamp" < NOW() - INTERVAL '%s days'
+        '''
+        db.execute(delete_query % days)
+        
+        return rows_to_delete
