@@ -40,7 +40,7 @@ class TradeRequest:
             if result:
                 self.statuscode = 0
                 self.message = 'Trade request created successfully'
-                return result['trade_id']
+                return result[0]  # Changed from result['trade_id'] to result[0]
             else:
                 self.statuscode = 1
                 self.message = 'Failed to create trade request'
@@ -61,7 +61,9 @@ class TradeRequest:
             db = dbconn()
             query = """
                 SELECT 
-                    t.*,
+                    t.trade_id, t.sender_discord_id, t.receiver_discord_id, 
+                    t.sender_pokemon_id, t.receiver_pokemon_id, t.status,
+                    t.created_at, t.updated_at, t.completed_at, t.notification_message_id,
                     sp."pokemonName" as sender_pokemon_name,
                     sp."nickName" as sender_pokemon_nickname,
                     sp."currentLevel" as sender_pokemon_level,
@@ -83,7 +85,27 @@ class TradeRequest:
                 self.STATUS_PENDING_SENDER
             ])
             
-            return result
+            if result:
+                # Convert tuple to dictionary
+                return {
+                    'trade_id': result[0],
+                    'sender_discord_id': result[1],
+                    'receiver_discord_id': result[2],
+                    'sender_pokemon_id': result[3],
+                    'receiver_pokemon_id': result[4],
+                    'status': result[5],
+                    'created_at': result[6],
+                    'updated_at': result[7],
+                    'completed_at': result[8],
+                    'notification_message_id': result[9],
+                    'sender_pokemon_name': result[10],
+                    'sender_pokemon_nickname': result[11],
+                    'sender_pokemon_level': result[12],
+                    'receiver_pokemon_name': result[13],
+                    'receiver_pokemon_nickname': result[14],
+                    'receiver_pokemon_level': result[15]
+                }
+            return None
             
         except Exception as e:
             self.statuscode = 1
