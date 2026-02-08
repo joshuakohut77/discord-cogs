@@ -641,8 +641,9 @@ class trainer:
         return
     
     def evolveItem(self, pokemon, item):
-        """ handles use of the *-stone tiems for evolving pokemon"""
-
+        """ handles use of the *-stone items for evolving pokemon"""
+        from pokedexclass import pokedex
+        
         inventory = inv(self.discordId)
         invalidQty = False
         if item == 'water-stone':
@@ -675,6 +676,11 @@ class trainer:
             self.message = 'Invalid item passed to evolveItem method (%s)' %item
             return 
 
+        if invalidQty:
+            self.statuscode = 420
+            self.message = "You do not have enough of that item"
+            return
+
         newPokemon = ''
         if item == 'water-stone' and pokemon.pokemonName in ['poliwhirl', 'shellder', 'staryu', 'eevee']:
             if pokemon.pokemonName == 'poliwhirl':
@@ -705,32 +711,83 @@ class trainer:
             elif pokemon.pokemonName == 'clefairy':
                 newPokemon = 'clefable'
             elif pokemon.pokemonName == 'jigglypuff':
-                newPokemon = 'wifflytuff'
+                newPokemon = 'wigglytuff'
         elif item == 'leaf-stone' and pokemon.pokemonName in ['gloom', 'weepinbell', 'exeggcute']:
             if pokemon.pokemonName == 'gloom':
                 newPokemon = 'vileplume'
             elif pokemon.pokemonName == 'weepinbell':
-                newPokemon = 'victreebell'
+                newPokemon = 'victreebel'
             elif pokemon.pokemonName == 'exeggcute':
                 newPokemon = 'exeggutor'
         else:
             self.statuscode = 420
             self.message = 'You cannot use %s on that pokemon' %item
+            # Save inventory to deduct the stone even though it didn't work
+            inventory.save()
             return
 
-        # check if pokemon evolved
-        if newPokemon != '' and not invalidQty:
-            evolvedPokemon = pokeClass(newPokemon)
+        # Check if pokemon can evolve
+        if newPokemon != '':
+            # Store old Pokemon info before creating new one
+            oldPartyStatus = pokemon.party
+            wasActivePokemon = (pokemon.trainerId == self.getActivePokemon().trainerId)
+            
+            # Create evolved Pokemon with correct constructor (discordId, pokemonName)
+            evolvedPokemon = pokeClass(self.discordId, newPokemon)
             evolvedPokemon.create(pokemon.currentLevel)
+            
+            # Set critical attributes
             evolvedPokemon.discordId = self.discordId
-            pokemon.release()
+            evolvedPokemon.party = oldPartyStatus
+            
+            # Save the evolved Pokemon first to get its trainerId
             evolvedPokemon.save()
-        
-        self.message = "Someting's happening... Your pokemon evolved into %s!" %pokemon.pokemonName
+            
+            if evolvedPokemon.statuscode == 96:
+                self.statuscode = 96
+                self.message = "Error occurred while creating evolved Pokemon"
+                return
+            
+            # Register to Pokedex
+            pokedex(self.discordId, evolvedPokemon)
+            
+            # Update active Pokemon if this was the active one
+            if wasActivePokemon:
+                db = dbconn()
+                try:
+                    updateString = 'UPDATE trainer SET "activePokemon" = %(trainerId)s WHERE discord_id = %(discordId)s'
+                    db.execute(updateString, {'trainerId': evolvedPokemon.trainerId, 'discordId': self.discordId})
+                except:
+                    self.statuscode = 96
+                    self.message = "Error updating active Pokemon"
+                    logger.error(excInfo=sys.exc_info())
+                    return
+                finally:
+                    del db
+            
+            # Release the old Pokemon (marks as released, doesn't delete)
+            pokemon.release()
+            
+            # Add leaderboard stat for evolution
+            lb = leaderboard(self.discordId)
+            lb.evolved()
+            
+            # Save inventory to deduct the stone
+            inventory.save()
+            
+            if inventory.statuscode == 96:
+                self.statuscode = 96
+                self.message = "Error occurred during inventory updates"
+                return
+            
+            self.statuscode = 420
+            self.message = "Something's happening... Your pokemon evolved into %s!" % newPokemon.capitalize()
+        else:
+            # Should never reach here due to earlier check, but just in case
+            self.statuscode = 420
+            self.message = 'You cannot use %s on that pokemon' % item
+            inventory.save()
 
-        # save new inventory
-        inventory.save()
-        return 
 
     def getLocation(self):
         try:
