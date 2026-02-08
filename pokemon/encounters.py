@@ -6180,7 +6180,7 @@ class EncountersMixin(MixinMeta):
         # Add back buttons
         view = View()
         back_btn = Button(style=ButtonStyle.primary, label="← Back to Mart", custom_id='mart_main')
-        back_btn.callback = lambda i: self.on_nav_mart_click(i, already_deferred=True)
+        back_btn.callback = self.on_mart_back_to_mart_after_purchase
         view.add_item(back_btn)
         
         map_btn = Button(style=ButtonStyle.secondary, label="🗺️ Map", custom_id='nav_map')
@@ -6193,6 +6193,14 @@ class EncountersMixin(MixinMeta):
         
         await interaction.message.edit(embed=embed, view=view)
         await self.sendToLoggingChannel(state.store.message)
+
+    async def on_mart_back_to_mart_after_purchase(self, interaction: discord.Interaction):
+        """Handle Back to Mart button after purchase/sell completion"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        # Call the main mart navigation method
+        await self.on_nav_mart_click(interaction, already_deferred=True)
 
     async def on_mart_item_selected(self, interaction: discord.Interaction):
         """Handle item selection from dropdown"""
@@ -6366,7 +6374,7 @@ class EncountersMixin(MixinMeta):
         # Add back to mart button
         view = View()
         back_btn = Button(style=ButtonStyle.primary, label="← Back to Mart", custom_id='mart_main', row=0)
-        back_btn.callback = lambda i: self.on_nav_mart_click(i, already_deferred=True)
+        back_btn.callback = self.on_mart_back_to_mart_after_purchase
         view.add_item(back_btn)
         
         map_btn = Button(style=ButtonStyle.secondary, label="🗺️ Map", custom_id='nav_map', row=0)
