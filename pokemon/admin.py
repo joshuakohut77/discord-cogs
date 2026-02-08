@@ -62,11 +62,12 @@ class AdminMixin(MixinMeta):
         # Validate Pokemon exists in config
         try:
             pokemon_config = load_json_config('pokemon.json')
-            valid_pokemon = {p['name'].lower(): p for p in pokemon_config}
             
-            if pokemon_name not in valid_pokemon:
+            # pokemon.json is structured as: {"pokemon_name": {data}, ...}
+            if pokemon_name not in pokemon_config:
                 await ctx.send(f"❌ Pokemon '{pokemon_name}' not found in database.")
                 return
+                
         except Exception as e:
             await ctx.send(f"❌ Error loading Pokemon data: {str(e)}")
             return
