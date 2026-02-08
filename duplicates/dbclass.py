@@ -60,7 +60,8 @@ class db:
                 else:
                     cur.execute(queryString)
                 results = cur.fetchall()
-                return results
+            conn.commit()  # Commit even for selects to clear transaction state
+            return results
 
     def querySingle(self, queryString, params=None):
         """Takes a select query and runs it returning the first row. params is a dict of values to pass into the queryString"""
@@ -71,7 +72,8 @@ class db:
                 else:
                     cur.execute(queryString)
                 result = cur.fetchone()
-                return result
+            conn.commit()  # Commit even for selects to clear transaction state
+            return result
 
     def execute(self, queryString, params=None):
         """Takes a update/insert statement, runs it, and commits if no errors. params is a dict of values to pass into the queryString"""
