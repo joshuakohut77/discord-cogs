@@ -408,7 +408,7 @@ class TradeInitiateView(View):
             SelectOption(
                 label=f"{p.nickName or p.pokemonName} (Lv.{p.currentLevel})",
                 value=str(p.trainerId),
-                description=f"{p.pokemonName} - {p.type_1}" + (f"/{p.type_2}" if p.type_2 else "")
+                description=f"{p.pokemonName} - {p.type1}" + (f"/{p.type2}" if p.type2 else "")
             )
             for p in pokemon[:25]  # Discord limit
         ]
