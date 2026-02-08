@@ -387,14 +387,26 @@ class TradeInitiateView(View):
         super().__init__(timeout=180)
         self.user = user
         self.mixin = mixin
-        self.pokemon = pokemon  # ADD THIS - store the list
+        self.members = members
+        self.pokemon = pokemon
         self.selected_member: Optional[discord.Member] = None
         self.selected_pokemon: Optional[PokemonClass] = None
         
+        self._build_view()
+    
+    def _build_view(self):
+        """Build/rebuild the view with current selections"""
+        self.clear_items()
+        
         # User dropdown
         user_options = [
-            SelectOption(label=m.display_name, value=str(m.id), description=f"Trade with {m.name}")
-            for m in members[:25]  # Discord limit
+            SelectOption(
+                label=m.display_name, 
+                value=str(m.id), 
+                description=f"Trade with {m.name}",
+                default=(self.selected_member and m.id == self.selected_member.id)
+            )
+            for m in self.members[:25]  # Discord limit
         ]
         
         user_select = Select(
@@ -410,9 +422,10 @@ class TradeInitiateView(View):
             SelectOption(
                 label=f"{p.nickName or p.pokemonName} (Lv.{p.currentLevel})",
                 value=str(p.trainerId),
-                description=f"{p.pokemonName} - {p.type1}" + (f"/{p.type2}" if p.type2 else "")
+                description=f"{p.pokemonName} - {p.type1}" + (f"/{p.type2}" if p.type2 else ""),
+                default=(self.selected_pokemon and p.trainerId == self.selected_pokemon.trainerId)
             )
-            for p in pokemon[:25]  # Discord limit
+            for p in self.pokemon[:25]  # Discord limit
         ]
         
         pokemon_select = Select(
@@ -423,8 +436,14 @@ class TradeInitiateView(View):
         pokemon_select.callback = self.pokemon_selected
         self.add_item(pokemon_select)
         
-        # Send request button (initially disabled)
-        send_button = Button(label="Send Trade Request", style=ButtonStyle.green, custom_id="send_request", disabled=True)
+        # Send request button (disabled until both selections made)
+        send_enabled = self.selected_member is not None and self.selected_pokemon is not None
+        send_button = Button(
+            label="Send Trade Request", 
+            style=ButtonStyle.green, 
+            custom_id="send_request", 
+            disabled=not send_enabled
+        )
         send_button.callback = self.send_request
         self.add_item(send_button)
         
@@ -443,14 +462,10 @@ class TradeInitiateView(View):
         selected_id = int(interaction.data['values'][0])
         self.selected_member = interaction.guild.get_member(selected_id)
         
-        # Enable send button if both selections made
-        if self.selected_member and self.selected_pokemon:
-            for item in self.children:
-                if item.custom_id == "send_request":
-                    item.disabled = False
-        
+        # Rebuild view with new selection
+        self._build_view()
         await interaction.message.edit(view=self)
-
+    
     async def pokemon_selected(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
             await interaction.response.send_message("This is not for you.", ephemeral=True)
@@ -466,12 +481,8 @@ class TradeInitiateView(View):
                 self.selected_pokemon = p
                 break
         
-        # Enable send button if both selections made
-        if self.selected_member and self.selected_pokemon:
-            for item in self.children:
-                if item.custom_id == "send_request":
-                    item.disabled = False
-        
+        # Rebuild view with new selection
+        self._build_view()
         await interaction.message.edit(view=self)
     
     async def send_request(self, interaction: Interaction):
@@ -489,7 +500,7 @@ class TradeInitiateView(View):
         )
         
         if not trade_id:
-            await interaction.followup.send("Failed to create trade request.", ephemeral=True)
+            await interaction.followup.send("Failed to create trade request.")
             return
         
         # Send DM to receiver
@@ -519,16 +530,14 @@ class TradeInitiateView(View):
             
         except discord.Forbidden:
             await interaction.followup.send(
-                f"Trade request sent, but {self.selected_member.display_name} has DMs disabled. They'll see it when they visit a PC.",
-                ephemeral=True
+                f"Trade request sent, but {self.selected_member.display_name} has DMs disabled. They'll see it when they visit a PC."
             )
         except Exception as e:
             print(f"Error sending trade DM: {e}")
         
         # Confirm to sender
         await interaction.followup.send(
-            f"✅ Trade request sent to **{self.selected_member.display_name}**!\nThey'll be notified to check their PC.",
-            ephemeral=True
+            f"✅ Trade request sent to **{self.selected_member.display_name}**!\nThey'll be notified to check their PC."
         )
         
         # Disable all controls
@@ -541,7 +550,7 @@ class TradeInitiateView(View):
             await interaction.response.send_message("This is not for you.", ephemeral=True)
             return
         
-        await interaction.response.send_message("Trade cancelled.", ephemeral=True)
+        await interaction.response.send_message("Trade cancelled.")
         
         for item in self.children:
             item.disabled = True
