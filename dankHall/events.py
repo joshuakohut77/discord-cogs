@@ -22,6 +22,7 @@ class EventMixin(MixinMeta):
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent) -> None:
         """
         Listen for reactions and certify messages when they hit the threshold.
+        Also updates reaction counts for already certified messages.
         """
         # Ignore DMs
         if not payload.guild_id:
@@ -52,10 +53,6 @@ class EventMixin(MixinMeta):
         
         # Don't certify bot messages
         if message.author.bot:
-            return
-        
-        # Check if already certified
-        if await self.db.is_certified(message.id):
             return
         
         # Get the emoji that was added
@@ -91,7 +88,49 @@ class EventMixin(MixinMeta):
         if not matching_reaction:
             return
         
-        # Check if threshold is met
+        # Check if already certified
+        is_certified = await self.db.is_certified(message.id)
+        
+        if is_certified:
+            # Message is already certified, update the count and edit the hall embed
+            cert_data = await self.db.get_certified_message(message.id)
+            
+            if cert_data and matching_reaction.count > cert_data["reaction_count"]:
+                # Update database
+                await self.db.update_reaction_count(message.id, matching_reaction.count)
+                
+                # Update the hall embed
+                hall_message_id = cert_data["hall_message_id"]
+                hall_channel_id = await self._get_hall_channel(channel)
+                
+                if hall_channel_id and hall_message_id:
+                    hall_channel = guild.get_channel(hall_channel_id)
+                    if hall_channel:
+                        try:
+                            hall_message = await hall_channel.fetch_message(hall_message_id)
+                            
+                            # Get the existing embed and update the Reactions field
+                            if hall_message.embeds:
+                                embed = hall_message.embeds[0]
+                                
+                                # Find and update the Reactions field
+                                for i, field in enumerate(embed.fields):
+                                    if field.name == "Reactions":
+                                        embed.set_field_at(
+                                            i,
+                                            name="Reactions",
+                                            value=str(matching_reaction.count),
+                                            inline=True
+                                        )
+                                        break
+                                
+                                await hall_message.edit(embed=embed)
+                        except (discord.NotFound, discord.Forbidden):
+                            pass  # Hall message deleted or no permission
+            
+            return
+        
+        # Check if threshold is met for new certification
         threshold = await self._get_threshold(channel)
         if matching_reaction.count < threshold:
             return
