@@ -1637,17 +1637,19 @@ class EncountersMixin(MixinMeta):
         
         # Set image based on selected destination or show base map
         if selected_destination and selected_destination in flyable_cities:
-            image_name = f"{selected_destination}.png"
+            # Convert from "pallet-town" to "town_map_pallet_town.png"
+            location_part = selected_destination.replace('-', '_')
+            image_name = f"town_map_{location_part}.png"
         else:
             image_name = "town_map.png"
         
         try:
             full_sprite_path = get_sprite_path(f"/sprites/town_map/{image_name}")
             sprite_file = discord.File(full_sprite_path, filename=image_name)
+            
             # Upload to logging channel to get URL
-            temp_message = None
-            if hasattr(self, 'sendToLoggingChannel'):
-                temp_message = await self.sendToLoggingChannel(f'{user.display_name} flight map', sprite_file)
+            temp_message = await self.sendToLoggingChannel(f'{user.display_name} flight map - {image_name}', sprite_file)
+            
             if temp_message and temp_message.attachments:
                 attachment = temp_message.attachments[0]
                 embed.set_image(url=attachment.url)
