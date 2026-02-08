@@ -499,8 +499,10 @@ class TradeInitiateView(View):
             self.selected_pokemon.trainerId
         )
         
+        # Check for error and show details
         if not trade_id:
-            await interaction.followup.send("Failed to create trade request.")
+            error_msg = f"Failed to create trade request.\nError: {self.mixin.trade_service.message}\nStatus: {self.mixin.trade_service.statuscode}"
+            await interaction.followup.send(error_msg)
             return
         
         # Send DM to receiver
