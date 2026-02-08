@@ -1,7 +1,7 @@
 # services/traderequestclass.py
 from datetime import datetime
 from typing import Optional, List, Dict, Any
-from .dbclass import dbconn
+from dbclass import db as dbconn
 
 class TradeRequest:
     """Service class for managing async Pokemon trade requests"""
