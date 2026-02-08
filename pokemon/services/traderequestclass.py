@@ -40,7 +40,7 @@ class TradeRequest:
             if result:
                 self.statuscode = 0
                 self.message = 'Trade request created successfully'
-                return result[0]  # Changed from result['trade_id'] to result[0]
+                return result[0]  # First column is trade_id
             else:
                 self.statuscode = 1
                 self.message = 'Failed to create trade request'
@@ -64,12 +64,8 @@ class TradeRequest:
                     t.trade_id, t.sender_discord_id, t.receiver_discord_id, 
                     t.sender_pokemon_id, t.receiver_pokemon_id, t.status,
                     t.created_at, t.updated_at, t.completed_at, t.notification_message_id,
-                    sp."pokemonName" as sender_pokemon_name,
-                    sp."nickName" as sender_pokemon_nickname,
-                    sp."currentLevel" as sender_pokemon_level,
-                    rp."pokemonName" as receiver_pokemon_name,
-                    rp."nickName" as receiver_pokemon_nickname,
-                    rp."currentLevel" as receiver_pokemon_level
+                    sp."pokemonName", sp."nickName", sp."currentLevel", sp.type_1, sp.type_2,
+                    rp."pokemonName", rp."nickName", rp."currentLevel", rp.type_1, rp.type_2
                 FROM trade_requests t
                 LEFT JOIN pokemon sp ON t.sender_pokemon_id = sp.id
                 LEFT JOIN pokemon rp ON t.receiver_pokemon_id = rp.id
@@ -86,7 +82,6 @@ class TradeRequest:
             ])
             
             if result:
-                # Convert tuple to dictionary
                 return {
                     'trade_id': result[0],
                     'sender_discord_id': result[1],
@@ -101,9 +96,13 @@ class TradeRequest:
                     'sender_pokemon_name': result[10],
                     'sender_pokemon_nickname': result[11],
                     'sender_pokemon_level': result[12],
-                    'receiver_pokemon_name': result[13],
-                    'receiver_pokemon_nickname': result[14],
-                    'receiver_pokemon_level': result[15]
+                    'sender_type_1': result[13],
+                    'sender_type_2': result[14],
+                    'receiver_pokemon_name': result[15],
+                    'receiver_pokemon_nickname': result[16],
+                    'receiver_pokemon_level': result[17],
+                    'receiver_type_1': result[18],
+                    'receiver_type_2': result[19]
                 }
             return None
             
@@ -126,17 +125,11 @@ class TradeRequest:
             db = dbconn()
             query = """
                 SELECT 
-                    t.*,
-                    sp."pokemonName" as sender_pokemon_name,
-                    sp."nickName" as sender_pokemon_nickname,
-                    sp."currentLevel" as sender_pokemon_level,
-                    sp.type_1 as sender_type_1,
-                    sp.type_2 as sender_type_2,
-                    rp."pokemonName" as receiver_pokemon_name,
-                    rp."nickName" as receiver_pokemon_nickname,
-                    rp."currentLevel" as receiver_pokemon_level,
-                    rp.type_1 as receiver_type_1,
-                    rp.type_2 as receiver_type_2
+                    t.trade_id, t.sender_discord_id, t.receiver_discord_id,
+                    t.sender_pokemon_id, t.receiver_pokemon_id, t.status,
+                    t.created_at, t.updated_at, t.completed_at, t.notification_message_id,
+                    sp."pokemonName", sp."nickName", sp."currentLevel", sp.type_1, sp.type_2,
+                    rp."pokemonName", rp."nickName", rp."currentLevel", rp.type_1, rp.type_2
                 FROM trade_requests t
                 LEFT JOIN pokemon sp ON t.sender_pokemon_id = sp.id
                 LEFT JOIN pokemon rp ON t.receiver_pokemon_id = rp.id
@@ -144,7 +137,30 @@ class TradeRequest:
             """
             result = db.querySingle(query, [trade_id])
             
-            return result
+            if result:
+                return {
+                    'trade_id': result[0],
+                    'sender_discord_id': result[1],
+                    'receiver_discord_id': result[2],
+                    'sender_pokemon_id': result[3],
+                    'receiver_pokemon_id': result[4],
+                    'status': result[5],
+                    'created_at': result[6],
+                    'updated_at': result[7],
+                    'completed_at': result[8],
+                    'notification_message_id': result[9],
+                    'sender_pokemon_name': result[10],
+                    'sender_pokemon_nickname': result[11],
+                    'sender_pokemon_level': result[12],
+                    'sender_type_1': result[13],
+                    'sender_type_2': result[14],
+                    'receiver_pokemon_name': result[15],
+                    'receiver_pokemon_nickname': result[16],
+                    'receiver_pokemon_level': result[17],
+                    'receiver_type_1': result[18],
+                    'receiver_type_2': result[19]
+                }
+            return None
             
         except Exception as e:
             self.statuscode = 1
@@ -293,14 +309,40 @@ class TradeRequest:
         try:
             db = dbconn()
             query = """
-                SELECT * FROM trade_history
-                WHERE sender_discord_id = %s OR receiver_discord_id = %s
-                ORDER BY completed_at DESC
+                SELECT 
+                    t.trade_id, t.sender_discord_id, t.receiver_discord_id,
+                    t.sender_pokemon_id, t.receiver_pokemon_id, t.status,
+                    t.completed_at,
+                    sp."pokemonName", rp."pokemonName"
+                FROM trade_requests t
+                LEFT JOIN pokemon sp ON t.sender_pokemon_id = sp.id
+                LEFT JOIN pokemon rp ON t.receiver_pokemon_id = rp.id
+                WHERE (t.sender_discord_id = %s OR t.receiver_discord_id = %s)
+                AND t.status = %s
+                ORDER BY t.completed_at DESC
                 LIMIT %s
             """
-            results = db.queryAll(query, [discord_id, discord_id, limit])
+            results = db.queryAll(query, [discord_id, discord_id, self.STATUS_COMPLETED, limit])
             
-            return results if results else []
+            if not results:
+                return []
+            
+            # Convert tuples to dictionaries
+            history = []
+            for r in results:
+                history.append({
+                    'trade_id': r[0],
+                    'sender_discord_id': r[1],
+                    'receiver_discord_id': r[2],
+                    'sender_pokemon_id': r[3],
+                    'receiver_pokemon_id': r[4],
+                    'status': r[5],
+                    'completed_at': r[6],
+                    'sender_pokemon_name': r[7],
+                    'receiver_pokemon_name': r[8]
+                })
+            
+            return history
             
         except Exception as e:
             self.statuscode = 1
@@ -354,14 +396,14 @@ class TradeRequest:
             sender_poke = db.querySingle(query, [trade['sender_pokemon_id']])
             if not sender_poke:
                 return False, "Sender's Pokemon no longer exists"
-            if sender_poke['discord_id'] != trade['sender_discord_id']:
+            if sender_poke[1] != trade['sender_discord_id']:
                 return False, "Sender no longer owns their Pokemon"
             
             # Validate receiver's Pokemon
             receiver_poke = db.querySingle(query, [trade['receiver_pokemon_id']])
             if not receiver_poke:
                 return False, "Receiver's Pokemon no longer exists"
-            if receiver_poke['discord_id'] != trade['receiver_discord_id']:
+            if receiver_poke[1] != trade['receiver_discord_id']:
                 return False, "Receiver no longer owns their Pokemon"
             
             return True, None
