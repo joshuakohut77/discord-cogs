@@ -22,7 +22,8 @@ class DatabasePool:
                 conninfo="host=postgres_container dbname=discord user=redbot password=REDACTED port=5432",
                 min_size=2,
                 max_size=10,
-                timeout=30
+                timeout=30,
+                open=True
             )
     
     def close(self):
