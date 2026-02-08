@@ -2314,17 +2314,72 @@ class EncountersMixin(MixinMeta):
             return
         
         from services.trainerclass import trainer as TrainerClass
+        from services.pokeclass import Pokemon as PokemonClass
         
         trainer = self._get_trainer(str(user.id))
+        
+        # Load the Pokemon before evolution to get its name
+        old_pokemon = PokemonClass(str(user.id))
+        old_pokemon.load(int(item_state.selected_pokemon_id))
+        old_pokemon_name = old_pokemon.pokemonName
+        
+        # Check if this is an evolution stone
+        evolution_stones = ['fire-stone', 'water-stone', 'thunder-stone', 'leaf-stone', 'moon-stone']
+        is_evolution_stone = item_state.selected_item in evolution_stones
         
         # Use the item - CORRECT ORDER: pokeTrainerId first, then item
         trainer.useItem(int(item_state.selected_pokemon_id), item_state.selected_item)
         
-        # Send result as ephemeral message
-        if trainer.statuscode == 420:  # Success or expected error
-            await interaction.followup.send(f'✅ {trainer.message}', ephemeral=True)
+        # Check if evolution happened by looking at the message
+        did_evolve = is_evolution_stone and trainer.statuscode == 420 and "evolved into" in trainer.message.lower()
+        
+        if did_evolve:
+            # Extract the evolved Pokemon name from the message
+            # Message format: "Something's happening... Your pokemon evolved into [NAME]!"
+            import re
+            match = re.search(r'evolved into (.+?)!', trainer.message, re.IGNORECASE)
+            if match:
+                evolved_name = match.group(1).strip().lower()
+                
+                # Load the evolved Pokemon to get its data
+                evolved_pokemon = PokemonClass(str(user.id))
+                # Find the new Pokemon by name
+                pokeList = trainer.getPokemon(party=True)
+                for poke in pokeList:
+                    poke.load(pokemonId=poke.trainerId)
+                    if poke.pokemonName == evolved_name:
+                        evolved_pokemon = poke
+                        break
+                
+                # Create evolution embed
+                evolution_embed = discord.Embed(
+                    title="✨ What's this?",
+                    description=f"Your **{old_pokemon_name.capitalize()}** evolved into **{evolved_name.capitalize()}**!",
+                    color=discord.Color.gold()
+                )
+                evolution_embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+                
+                # Add Pokemon sprite
+                sprite_file = None
+                try:
+                    sprite_path = f"/sprites/pokemon/{evolved_name}.png"
+                    full_sprite_path = get_sprite_path(sprite_path)
+                    sprite_file = discord.File(full_sprite_path, filename=f"{evolved_name}.png")
+                    evolution_embed.set_image(url=f"attachment://{evolved_name}.png")
+                except Exception as e:
+                    print(f"Error loading evolution sprite: {e}")
+                
+                # Send evolution embed as ephemeral message
+                if sprite_file:
+                    await interaction.followup.send(embed=evolution_embed, file=sprite_file, ephemeral=True)
+                else:
+                    await interaction.followup.send(embed=evolution_embed, ephemeral=True)
         else:
-            await interaction.followup.send(f'❌ {trainer.message}', ephemeral=True)
+            # Send result as ephemeral message (healing items or failed evolution)
+            if trainer.statuscode == 420:  # Success or expected error
+                await interaction.followup.send(f'✅ {trainer.message}', ephemeral=True)
+            else:
+                await interaction.followup.send(f'❌ {trainer.message}', ephemeral=True)
         
         # Refresh the item usage view (to update quantities and HP)
         embed, view = self.__create_item_usage_view(user)
