@@ -188,6 +188,61 @@ class DankDatabase:
             print(f"Error adding certified message: {e}", file=sys.stderr)
             return False
     
+    async def update_reaction_count(
+        self,
+        message_id: int,
+        new_count: int
+    ) -> bool:
+        """Update the reaction count for a certified message if it's higher."""
+        if not self.conn:
+            return False
+        
+        try:
+            self._execute(
+                """
+                UPDATE dank_certified_messages 
+                SET reaction_count = %s
+                WHERE message_id = %s AND reaction_count < %s
+                """,
+                [new_count, message_id, new_count]
+            )
+            return True
+        except Exception as e:
+            print(f"Error updating reaction count: {e}", file=sys.stderr)
+            return False
+    
+    async def get_certified_message(self, message_id: int) -> dict:
+        """Get details about a certified message."""
+        if not self.conn:
+            return None
+        
+        try:
+            result = self._query_one(
+                """
+                SELECT message_id, guild_id, channel_id, user_id, emoji, 
+                       hall_message_id, reaction_count, certified_at
+                FROM dank_certified_messages 
+                WHERE message_id = %s
+                """,
+                [message_id]
+            )
+            
+            if result:
+                return {
+                    "message_id": result[0],
+                    "guild_id": result[1],
+                    "channel_id": result[2],
+                    "user_id": result[3],
+                    "emoji": result[4],
+                    "hall_message_id": result[5],
+                    "reaction_count": result[6],
+                    "certified_at": result[7]
+                }
+            return None
+        except Exception as e:
+            print(f"Error getting certified message: {e}", file=sys.stderr)
+            return None
+    
     # ==================== Statistics Queries ====================
     
     async def get_user_stats(self, guild_id: int, user_id: int) -> Dict[str, Any]:
