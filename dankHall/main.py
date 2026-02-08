@@ -404,17 +404,23 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         self,
         ctx: commands.Context,
         hall_channel: discord.TextChannel,
-        limit: int = 100
+        limit: int = 100,
+        after_message_id: int = None
     ):
         """
         Backfill the database from existing hall of fame messages.
         
         Scans the hall channel for old certification embeds and adds them to stats.
         
-        Example: `[p]dankhall backfill #hall-of-fame 50`
+        Examples:
+        - `[p]dankhall backfill #hall-of-fame 100` - Scan last 100 messages
+        - `[p]dankhall backfill #hall-of-fame 1000` - Scan last 1000 messages
+        - `[p]dankhall backfill #hall-of-fame 500 123456789` - Scan 500 messages after message ID
+        
+        To scan everything: use a very large limit like 10000
         """
-        if limit < 1 or limit > 500:
-            await ctx.send("❌ Limit must be between 1 and 500.")
+        if limit < 1:
+            await ctx.send("❌ Limit must be at least 1.")
             return
         
         async with ctx.typing():
@@ -422,57 +428,77 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
             skipped = 0
             errors = 0
             
-            status_msg = await ctx.send(f"🔄 Scanning {hall_channel.mention} for certifications...")
+            if after_message_id:
+                status_msg = await ctx.send(f"🔄 Scanning {hall_channel.mention} for certifications after message {after_message_id}...")
+            else:
+                status_msg = await ctx.send(f"🔄 Scanning {hall_channel.mention} for certifications (last {limit} messages)...")
             
             # Fetch messages from the hall channel
-            async for message in hall_channel.history(limit=limit):
-                # Skip messages not from the bot
-                if message.author.id != self.bot.user.id:
-                    continue
+            try:
+                if after_message_id:
+                    # Get a message object to use as 'after' parameter
+                    try:
+                        after_msg = await hall_channel.fetch_message(after_message_id)
+                        history = hall_channel.history(limit=limit, after=after_msg, oldest_first=True)
+                    except discord.NotFound:
+                        await status_msg.edit(content="❌ Starting message not found.")
+                        return
+                else:
+                    # Default: get most recent messages
+                    history = hall_channel.history(limit=limit)
                 
-                # Skip messages without embeds
-                if not message.embeds:
-                    continue
-                
-                embed = message.embeds[0]
-                
-                # Check if it's a certification embed (has "Certified Dank" title)
-                if not embed.title or "Certified Dank" not in embed.title:
-                    continue
-                
-                try:
-                    # Parse the embed to extract data
-                    result = await self._parse_hall_embed(message, embed)
-                    
-                    if not result:
-                        errors += 1
+                async for message in history:
+                    # Skip messages not from the bot
+                    if message.author.id != self.bot.user.id:
                         continue
                     
-                    # Check if already in database
-                    if await self.db.is_certified(result["message_id"]):
-                        skipped += 1
+                    # Skip messages without embeds
+                    if not message.embeds:
                         continue
                     
-                    # Add to database
-                    success = await self.db.add_certified_message(
-                        message_id=result["message_id"],
-                        guild_id=ctx.guild.id,
-                        channel_id=result["channel_id"],
-                        user_id=result["user_id"],
-                        emoji=result["emoji"],
-                        hall_message_id=message.id,
-                        reaction_count=result["reaction_count"]
-                    )
+                    embed = message.embeds[0]
                     
-                    if success:
-                        added += 1
-                    else:
+                    # Check if it's a certification embed (has "Certified Dank" title)
+                    if not embed.title or "Certified Dank" not in embed.title:
+                        continue
+                    
+                    try:
+                        # Parse the embed to extract data
+                        result = await self._parse_hall_embed(message, embed)
+                        
+                        if not result:
+                            errors += 1
+                            continue
+                        
+                        # Check if already in database
+                        if await self.db.is_certified(result["message_id"]):
+                            skipped += 1
+                            continue
+                        
+                        # Add to database
+                        success = await self.db.add_certified_message(
+                            message_id=result["message_id"],
+                            guild_id=ctx.guild.id,
+                            channel_id=result["channel_id"],
+                            user_id=result["user_id"],
+                            emoji=result["emoji"],
+                            hall_message_id=message.id,
+                            reaction_count=result["reaction_count"]
+                        )
+                        
+                        if success:
+                            added += 1
+                        else:
+                            errors += 1
+                    
+                    except Exception as e:
+                        print(f"Error parsing hall message {message.id}: {e}", file=sys.stderr)
                         errors += 1
-                
-                except Exception as e:
-                    print(f"Error parsing hall message {message.id}: {e}", file=sys.stderr)
-                    errors += 1
-                    continue
+                        continue
+            
+            except Exception as e:
+                await status_msg.edit(content=f"❌ Error during backfill: {e}")
+                return
             
             # Send results
             embed = discord.Embed(
