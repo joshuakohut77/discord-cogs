@@ -182,33 +182,49 @@ class TradeMixin(MixinMeta):
             return
         
         state = self.__tradeState[str(user.id)]
-
-        receiverPokemon = state.pokemonList[state.idx]
-
-        sender = TrainerClass(state.senderDiscordId)
-        senderPokemon = sender.getPokemonById(state.senderPokemonId)
         
-        enc = EncounterClass(senderPokemon, receiverPokemon)
-        enc.trade()
-
-        await interaction.response.send_message('Trade complete')
-
-        embed, btns = self.__pokemonPcTradeCard(user, state.pokemonList, state.idx)
-
+        # Validate channel exists BEFORE responding
         channel: discord.TextChannel = self.bot.get_channel(state.channelId)
         if channel is None:
             await interaction.response.send_message('Error: Channel not found. The original message may have been deleted.', ephemeral=True)
             return
-        message: discord.Message = await channel.fetch_message(state.messageId)
-
+        
+        try:
+            message: discord.Message = await channel.fetch_message(state.messageId)
+        except discord.NotFound:
+            await interaction.response.send_message('Error: Original message not found.', ephemeral=True)
+            return
+        
+        receiverPokemon = state.pokemonList[state.idx]
+        sender = TrainerClass(state.senderDiscordId)
+        senderPokemon = sender.getPokemonById(state.senderPokemonId)
+        
+        # Execute the trade
+        enc = EncounterClass(senderPokemon, receiverPokemon)
+        enc.trade()
+        
+        # Get sender's Discord user for completion message
         ctx: Context = await self.bot.get_context(interaction.message)
         senderDiscord = await ctx.guild.fetch_member(int(state.senderDiscordId))
-
-        message: discord.Message = await message.edit(
-            content=f'{user.display_name} traded his {receiverPokemon.pokemonName} for {senderDiscord.display_name}\'s {senderPokemon.pokemonName}!',
-            embed=embed,
-            view=[]
+        
+        # Create completion embed
+        embed = discord.Embed(
+            title="Trade Complete!",
+            description=f"{user.display_name} traded their **{receiverPokemon.pokemonName}** for {senderDiscord.display_name}'s **{senderPokemon.pokemonName}**!",
+            color=discord.Color.green()
         )
+        
+        # Update message with completion (no buttons)
+        await message.edit(
+            content='',
+            embed=embed,
+            view=None
+        )
+        
+        # Respond to interaction
+        await interaction.response.send_message('Trade complete!', ephemeral=True)
+        
+        # Clean up state
         del self.__tradeState[str(user.id)]
 
 
