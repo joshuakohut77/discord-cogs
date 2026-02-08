@@ -1600,11 +1600,11 @@ class EncountersMixin(MixinMeta):
         self.__flight_states[str(user.id)] = FlightState(str(user.id), current_location.name)
         
         # Show flight interface
-        embed, view = self.__create_flight_interface(user, current_location.name, None)
+        embed, view = await self.__create_flight_interface(user, current_location.name, None)
         await interaction.message.edit(embed=embed, view=view)
 
 
-    def __create_flight_interface(self, user: discord.User, current_location_name: str, selected_destination: str = None) -> tuple[discord.Embed, View]:
+    async def __create_flight_interface(self, user: discord.User, current_location_name: str, selected_destination: str = None) -> tuple[discord.Embed, View]:
         """Create the flight map interface"""
         from helpers.pathhelpers import get_sprite_path
         from .constant import LOCATION_DISPLAY_NAMES
@@ -1646,8 +1646,8 @@ class EncountersMixin(MixinMeta):
             sprite_file = discord.File(full_sprite_path, filename=image_name)
             # Upload to logging channel to get URL
             temp_message = None
-            # if hasattr(self, 'sendToLoggingChannel'):
-            #     temp_message = await self.sendToLoggingChannel(f'{user.display_name} flight map', sprite_file)
+            if hasattr(self, 'sendToLoggingChannel'):
+                temp_message = await self.sendToLoggingChannel(f'{user.display_name} flight map', sprite_file)
             if temp_message and temp_message.attachments:
                 attachment = temp_message.attachments[0]
                 embed.set_image(url=attachment.url)
@@ -1716,7 +1716,7 @@ class EncountersMixin(MixinMeta):
         flight_state.selected_destination = selected_city
         
         # Update interface with new city map
-        embed, view = self.__create_flight_interface(user, flight_state.current_location_name, selected_city)
+        embed, view = await self.__create_flight_interface(user, flight_state.current_location_name, selected_city)
         await interaction.message.edit(embed=embed, view=view)
 
 
