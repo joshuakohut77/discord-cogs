@@ -1,0 +1,22 @@
+{
+    "thunder_stone": [
+        {"name":"pikachu", "evolved": "raichu"},
+        {"name":"eevee", "evolved": "jolteon"}
+    ],
+    "leaf_stone":[
+        {"name":"gloom", "evolved": "vileplume"},
+        {"name":"weepinbell", "evolved": "victreebel"},
+        {"name":"exeggcute", "evolved": "exeggutor"}
+    ],
+    "water_stone": [
+        {"name":"eevee", "evolved": "vaporeon"},
+        {"name":"staryu", "evolved": "starmie"},
+        {"name":"shellder", "evolved": "cloyster"},
+        {"name":"poliwhirl", "evolved": "poliwrath"}
+    ],
+    "fire_stone": [
+        {"name":"vulpix", "evolved": "ninetales"},
+        {"name":"growlithe", "evolved": "arcanine"},
+        {"name":"eevee", "evolved": "flareon"}
+    ]
+}
