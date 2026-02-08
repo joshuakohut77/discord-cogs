@@ -132,22 +132,6 @@ class AdminMixin(MixinMeta):
         embed.set_footer(text=f"Gifted by {ctx.author.display_name}")
         
         await ctx.send(embed=embed)
-        
-        # Send notification to the user
-        try:
-            dm_embed = discord.Embed(
-                title="🎁 You received a Pokemon!",
-                description=f"You have been gifted a **{display_name}** (Level {level})!\n\nCheck your {location} to see your new Pokemon!",
-                color=discord.Color.gold()
-            )
-            
-            if pokemon.frontSpriteURL:
-                dm_embed.set_thumbnail(url=pokemon.frontSpriteURL)
-            
-            await user.send(embed=dm_embed)
-        except discord.Forbidden:
-            # User has DMs disabled, that's okay
-            pass
 
     @_trainer.command(name="setlevel")
     @commands.is_owner()
