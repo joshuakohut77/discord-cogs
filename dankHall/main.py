@@ -894,15 +894,29 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         Returns dict with: message_id, channel_id, user_id, emoji, reaction_count
         """
         try:
-            # Extract user ID from embed author icon URL or author name
+            # Extract user ID from embed author icon URL
             user_id = None
             if embed.author and embed.author.icon_url:
                 # Icon URL format: https://cdn.discordapp.com/avatars/USER_ID/hash.png
-                parts = str(embed.author.icon_url).split('/')
-                for i, part in enumerate(parts):
-                    if part == 'avatars' and i + 1 < len(parts):
-                        user_id = int(parts[i + 1])
-                        break
+                # Try to extract user ID from the URL
+                icon_url = str(embed.author.icon_url)
+                
+                # Pattern 1: Custom avatar - /avatars/USER_ID/hash.png
+                match = re.search(r'/avatars/(\d+)/', icon_url)
+                if match:
+                    user_id = int(match.group(1))
+                
+                # Pattern 2: If that fails, try embed-/avatars/USER_ID/hash
+                if not user_id:
+                    match = re.search(r'avatars/(\d+)/', icon_url)
+                    if match:
+                        try:
+                            user_id = int(match.group(1))
+                        except ValueError:
+                            pass
+            
+            # If we still don't have user_id, we'll need to get it from the original message
+            # We'll set it to None and try to get it later from fetching the original message
             
             # Extract channel ID from embed fields
             channel_id = None
@@ -957,10 +971,22 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                 if url_match:
                     channel_id = int(url_match.group(1))
             
+            # If we don't have user_id, try to fetch the original message to get it
+            if not user_id and message_id and channel_id:
+                try:
+                    channel = hall_message.guild.get_channel(channel_id)
+                    if channel:
+                        original_msg = await channel.fetch_message(message_id)
+                        user_id = original_msg.author.id
+                except:
+                    pass  # If we can't fetch, we'll fail validation below
+            
             # Validate we got all required data
             if not all([user_id, channel_id, emoji, message_id]):
                 print(f"Missing data - user_id: {user_id}, channel_id: {channel_id}, emoji: {emoji}, message_id: {message_id}", file=sys.stderr)
                 print(f"Embed fields: {[(f.name, f.value) for f in embed.fields]}", file=sys.stderr)
+                if embed.author:
+                    print(f"Author icon URL: {embed.author.icon_url}", file=sys.stderr)
                 return None
             
             return {
