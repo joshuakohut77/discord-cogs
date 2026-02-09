@@ -476,6 +476,8 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                             skipped += 1
                             continue
                         
+                        print(f"DEBUG: About to add to DB - hall_channel_id={hall_channel.id}, reaction_count={current_reaction_count}", file=sys.stderr)
+
                         # Add to database
                         success = await self.db.add_certified_message(
                             message_id=result["message_id"],
