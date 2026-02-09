@@ -798,6 +798,54 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         
         await ctx.send(embed=embed)
 
+    @dh_stats.command(name="godtier")
+    async def dh_stats_godtier(self, ctx: commands.Context):
+        """View the highest rated posts of all time (god tier)."""
+        god_tier_posts = await self.db.get_god_tier_posts(ctx.guild.id)
+        
+        if not god_tier_posts:
+            await ctx.send("No certifications yet in this server!")
+            return
+        
+        max_reactions = god_tier_posts[0]["reaction_count"]
+        
+        embed = discord.Embed(
+            title=f"👑 God Tier Posts ({max_reactions} reactions)",
+            description=f"The most popular posts with {max_reactions} reactions each",
+            color=discord.Color.purple()
+        )
+        
+        for post in god_tier_posts[:25]:  # Limit to 25 to not hit embed limits
+            # Get user info
+            user = ctx.guild.get_member(post["user_id"])
+            user_name = user.display_name if user else f"User {post['user_id']}"
+            
+            # Get channel info
+            channel = ctx.guild.get_channel(post["channel_id"])
+            channel_mention = channel.mention if channel else f"Channel {post['channel_id']}"
+            
+            # Create message link
+            message_link = f"https://discord.com/channels/{ctx.guild.id}/{post['channel_id']}/{post['message_id']}"
+            
+            # Format date
+            date_str = post["certified_at"].strftime("%b %d, %Y")
+            
+            # Add field for this post
+            field_value = f"**Author:** {user_name}\n**Channel:** {channel_mention}\n**Emoji:** {post['emoji']}\n**Date:** {date_str}\n[Jump to Message]({message_link})"
+            
+            embed.add_field(
+                name=f"━━━━━━━━━━━━━━",
+                value=field_value,
+                inline=False
+            )
+        
+        if len(god_tier_posts) > 25:
+            embed.set_footer(text=f"Showing 25 of {len(god_tier_posts)} god tier posts")
+        else:
+            embed.set_footer(text=f"{len(god_tier_posts)} god tier posts total")
+        
+        await ctx.send(embed=embed)
+
     @dankhall.command(name="random")
     async def dh_random(self, ctx: commands.Context):
         """Show a random certified dank post from any hall of fame."""
