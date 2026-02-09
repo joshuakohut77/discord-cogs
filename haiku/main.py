@@ -142,3 +142,134 @@ class Haiku(EventMixin, commands.Cog, metaclass=CompositeClass):
         
         status = "enabled" if not current else "disabled"
         await ctx.send(f"Haiku detection has been **{status}** for this server.")
+    
+    @haiku.command()
+    @commands.admin_or_permissions(manage_guild=True)
+    async def backfill(self, ctx: commands.Context, limit: int = None) -> None:
+        """Backfill the database with old haiku embeds from the bot
+        
+        This will search through all channels for messages from the bot
+        with the title "Accidental Haiku?" and add them to the database.
+        
+        Args:
+            limit: Optional limit on messages to check per channel (default: all)
+        """
+        await ctx.send("Starting backfill process... This may take a while.")
+        
+        total_found = 0
+        total_added = 0
+        total_skipped = 0
+        channels_processed = 0
+        
+        # Get all text channels in the guild
+        text_channels = [c for c in ctx.guild.channels if isinstance(c, discord.TextChannel)]
+        
+        status_msg = await ctx.send(f"Processing 0/{len(text_channels)} channels...")
+        
+        for channel in text_channels:
+            try:
+                # Check if bot has permission to read history
+                if not channel.permissions_for(ctx.guild.me).read_message_history:
+                    continue
+                
+                channels_processed += 1
+                
+                # Search through channel history
+                async for message in channel.history(limit=limit, oldest_first=False):
+                    # Check if message is from the bot and has embeds
+                    if message.author.id != self.bot.user.id:
+                        continue
+                    
+                    if not message.embeds:
+                        continue
+                    
+                    embed = message.embeds[0]
+                    
+                    # Check if it's an old haiku embed
+                    if embed.title and "Accidental Haiku?" in embed.title:
+                        total_found += 1
+                        
+                        # Get the previous message to find the original author
+                        try:
+                            # Fetch messages before this one
+                            messages_before = [m async for m in channel.history(
+                                limit=10, 
+                                before=message.created_at
+                            )]
+                            
+                            # Find the first non-bot message
+                            original_author = None
+                            original_message = None
+                            for prev_msg in messages_before:
+                                if not prev_msg.author.bot:
+                                    original_author = prev_msg.author
+                                    original_message = prev_msg
+                                    break
+                            
+                            if not original_author:
+                                total_skipped += 1
+                                continue
+                            
+                            # Extract haiku text from embed
+                            haiku_text = embed.description
+                            
+                            if not haiku_text:
+                                total_skipped += 1
+                                continue
+                            
+                            # Check if this haiku already exists in database
+                            from .dbclass import db
+                            database = db()
+                            check_query = 'SELECT COUNT(*) FROM haiku WHERE "MessageId" = %(msg_id)s;'
+                            result = database.querySingle(check_query, {'msg_id': str(message.id)})
+                            
+                            if result and result[0] > 0:
+                                total_skipped += 1
+                                continue
+                            
+                            # Split haiku back into lines
+                            haiku_lines = haiku_text.strip().split('\n')
+                            
+                            # Insert into database
+                            HaikuDetector.insert_haiku(
+                                user_id=original_author.id,
+                                username=original_author.name,
+                                guild_id=ctx.guild.id,
+                                channel_id=channel.id,
+                                message_id=message.id,  # Use the haiku bot message ID
+                                original_text=original_message.content if original_message else haiku_text,
+                                formatted_haiku=haiku_lines
+                            )
+                            
+                            total_added += 1
+                            
+                        except Exception as e:
+                            print(f"Error processing haiku message {message.id}: {e}")
+                            total_skipped += 1
+                            continue
+                
+                # Update status every few channels
+                if channels_processed % 5 == 0:
+                    await status_msg.edit(
+                        content=f"Processing {channels_processed}/{len(text_channels)} channels... "
+                                f"Found: {total_found}, Added: {total_added}, Skipped: {total_skipped}"
+                    )
+                    
+            except discord.Forbidden:
+                # Skip channels we can't access
+                continue
+            except Exception as e:
+                print(f"Error processing channel {channel.name}: {e}")
+                continue
+        
+        # Final summary
+        embed = discord.Embed(
+            title="🍃 Backfill Complete 🍃",
+            color=0x90EE90
+        )
+        embed.add_field(name="Channels Processed", value=str(channels_processed), inline=True)
+        embed.add_field(name="Haikus Found", value=str(total_found), inline=True)
+        embed.add_field(name="Added to Database", value=str(total_added), inline=True)
+        embed.add_field(name="Skipped/Duplicates", value=str(total_skipped), inline=True)
+        
+        await status_msg.edit(content="Backfill process complete!", embed=embed)
