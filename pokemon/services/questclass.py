@@ -371,6 +371,7 @@ class quests:
             'Kabuto': constant.POKEMON_EMOJIS['KABUTO'],
             'Omanyte': constant.POKEMON_EMOJIS['OMANYTE'],
             'Mr. Fuji\'s Finger': constant.MR_FUJI_FINGER,
+            'Eevee\'s Tail': constant.EEVEE_TAIL,
         }
         
         # Get emoji from map or use provided emoji
@@ -389,6 +390,7 @@ class quests:
     """
     Garys Sister - Get Town map
     Play SNES - Fun canon quest
+    Search Room - Fun non-canon quest of finding Ash's Mom's toy
     Professor Oak - deliver parcel
     Super Nerd - Get Helix Fossil item
     Fishing Guru - get old-rod item
@@ -477,7 +479,8 @@ class quests:
             return self.mysteriousCave()
         elif questName ==  "Play SNES":
             return self.playSNES()
-        
+        elif questName ==  "Search Room":
+            return self.searchRoom()
         # easter eggs
         elif questName == 'Check Truck':
             return self.checkTruck()
@@ -494,6 +497,38 @@ class quests:
         self.inventory.save()
         return self.create_key_item_embed('Town Map')
 
+    def searchRoom(self):
+        if not self.keyitems.oaks_parcel_delivered:
+            # Before delivering Oak's parcel - find nothing
+            self.message = dedent("""\
+                                You rummage through the room looking for anything interesting.
+                                Nothing but dusty old furniture and outdated magazines.
+                                What a waste of time.""")
+            return None  # No embed, just message
+        else:
+            # After delivering Oak's parcel - check if already received Eevee's Tail
+            if self.keyitems.eevee_tail:
+                # Already have Eevee's Tail - just show message
+                self.message = dedent("""\
+                                    You search the room again, but there's nothing left to find.
+                                    You already took the mysterious tail you found earlier.""")
+                return None
+            else:
+                # First time - receive Eevee's Tail
+                self.keyitems.eevee_tail = True
+                self.message = dedent("""\
+                                    You rummage through the room more carefully this time.
+                                    Hidden under the bed, you discover a soft, fluffy tail.
+                                    It seems oddly familiar... You pocket it for later.""")
+                self.keyitems.save()
+                
+                # Track easter egg completion
+                from services.leaderboardclass import leaderboard as LeaderboardClass
+                lb = LeaderboardClass(str(self.discordId))
+                lb.easter_eggs()
+                
+                return self.create_key_item_embed('Eevee\'s Tail')
+            
     def playSNES(self):
         if not self.keyitems.elite_four:
             # Before Elite Four - just play the game
