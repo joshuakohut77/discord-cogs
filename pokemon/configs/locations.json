@@ -84,6 +84,30 @@
     "gym": false,
     "displayName": "Pallet Town"
   },
+  "868": {
+    "locationId": 868,
+    "name": "ash-house",
+    "north": "ash-room",
+    "east": null,
+    "south": "pallet-town",
+    "west": null,
+    "spritePath": "/sprites/locations/ash-house.png",
+    "pokecenter": false,
+    "gym": false,
+    "displayName": "Ash's House"
+  },
+  "869": {
+    "locationId": 869,
+    "name": "ash-room",
+    "north": null,
+    "east": null,
+    "south": "ash-house",
+    "west": null,
+    "spritePath": "/sprites/locations/ash-room.png",
+    "pokecenter": false,
+    "gym": false,
+    "displayName": "Ash's Room"
+  },
   "87": {
     "locationId": 87,
     "name": "rock-tunnel",
