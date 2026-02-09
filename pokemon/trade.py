@@ -140,11 +140,11 @@ class TradeMixin(MixinMeta):
         
         trade = self.trade_service.get_active_trade(str(user.id))
         if not trade:
-            await interaction.followup.send("Trade request not found.", ephemeral=True)
+            await interaction.followup.send("Trade request not found.")
             return
         
         if trade['receiver_discord_id'] != str(user.id):
-            await interaction.followup.send("This trade request is not for you.", ephemeral=True)
+            await interaction.followup.send("This trade request is not for you.")
             return
         
         # Get sender's info
@@ -191,11 +191,11 @@ class TradeMixin(MixinMeta):
         # Create accept/decline view
         view = TradeReceiverResponseView(user, trade['trade_id'], self)
         
-        # Send with or without sprite
+        # Send with or without sprite - REMOVED ephemeral=True
         if sprite_file:
-            await interaction.followup.send(embed=embed, view=view, ephemeral=True, file=sprite_file)
+            await interaction.followup.send(embed=embed, view=view, file=sprite_file)
         else:
-            await interaction.followup.send(embed=embed, view=view, ephemeral=True)
+            await interaction.followup.send(embed=embed, view=view)
 
     # ==================== Step 3: Sender Views Counter-Offer ====================
     
@@ -270,6 +270,15 @@ class TradeMixin(MixinMeta):
         # Execute trade via EncounterClass (handles evolution, leaderboard, etc.)
         enc = EncounterClass(sender_pokemon, receiver_pokemon)
         retVal1, retVal2 = enc.trade()
+        
+        # Register both Pokemon to their new owners' Pokedex
+        from services.pokedexclass import pokedex as PokedexClass
+        
+        # Sender receives receiver's Pokemon
+        PokedexClass(trade['sender_discord_id'], receiver_pokemon)
+        
+        # Receiver receives sender's Pokemon
+        PokedexClass(trade['receiver_discord_id'], sender_pokemon)
         
         # Mark trade as completed
         self.trade_service.complete_trade(trade_id)
