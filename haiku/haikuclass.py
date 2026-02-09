@@ -90,8 +90,9 @@ class HaikuDetector:
     @staticmethod
     def detect_haiku(text):
         """
-        Detect if the text contains a haiku (5-7-5 syllable pattern).
+        Detect if the text is exactly a haiku (5-7-5 syllable pattern).
         Returns formatted haiku lines or None if not a haiku.
+        The ENTIRE text must form the haiku - no partial matches.
         """
         # Clean and split text into words
         text = text.strip()
@@ -104,10 +105,16 @@ class HaikuDetector:
         # Try to find a 5-7-5 pattern
         lines = HaikuDetector.split_into_lines(words)
         
+        # Must use ALL words - if lines were found, check that we used everything
         if lines and len(lines) == 3:
-            # Format as haiku with line breaks
-            formatted_lines = [' '.join(line) for line in lines]
-            return formatted_lines
+            # Count total words used in the haiku
+            words_used = sum(len(line) for line in lines)
+            
+            # Only return if we used ALL the words in the message
+            if words_used == len(words):
+                # Format as haiku with line breaks
+                formatted_lines = [' '.join(line) for line in lines]
+                return formatted_lines
         
         return None
     
