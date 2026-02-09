@@ -11,7 +11,7 @@ starterLevel = 5 # level of starter pokemon
 version_group_name = 'red-blue'
 version_details_list = ['red', 'blue']
 
-total_pokemon = 150
+total_pokemon = 151
 
 max_battle_turns = 50
 
