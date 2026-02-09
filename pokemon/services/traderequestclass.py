@@ -23,11 +23,17 @@ class TradeRequest:
         """Create a new trade request. Returns trade_id or None on failure."""
         db = None
         try:
+            self.statuscode = 0
+            self.message = 'Starting create_trade_request'
+            
             db = dbconn()
+            self.message = 'Database connection established'
             
             # First, validate the Pokemon exists and belongs to the sender
             check_query = "SELECT id, discord_id FROM pokemon WHERE id = %(pokemon_id)s"
             pokemon_check = db.querySingle(check_query, {'pokemon_id': sender_pokemon_id})
+            
+            self.message = f'Pokemon check result: {pokemon_check}'
             
             if not pokemon_check:
                 self.statuscode = 1
@@ -39,6 +45,8 @@ class TradeRequest:
                 self.message = f'Pokemon {sender_pokemon_id} does not belong to sender {sender_discord_id}, belongs to {pokemon_check[1]}'
                 return None
             
+            self.message = 'Pokemon validation passed, attempting insert'
+            
             # Now insert the trade request
             query = """
                 INSERT INTO trade_requests 
@@ -46,6 +54,9 @@ class TradeRequest:
                 VALUES (%(sender_discord_id)s, %(receiver_discord_id)s, %(sender_pokemon_id)s, %(status)s, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
                 RETURNING trade_id
             """
+            
+            self.message = f'About to execute query with params: sender={sender_discord_id}, receiver={receiver_discord_id}, pokemon={sender_pokemon_id}, status={self.STATUS_PENDING_RECEIVER}'
+            
             result = db.executeAndReturn(query, {
                 'sender_discord_id': sender_discord_id,
                 'receiver_discord_id': receiver_discord_id,
@@ -53,20 +64,22 @@ class TradeRequest:
                 'status': self.STATUS_PENDING_RECEIVER
             })
             
+            self.message = f'executeAndReturn result: {result}'
+            
             if result:
                 self.statuscode = 0
                 self.message = f'Trade request created successfully with ID {result[0]}'
                 return result[0]  # First column is trade_id
             else:
                 self.statuscode = 1
-                self.message = 'executeAndReturn returned no result'
+                self.message = 'executeAndReturn returned None or empty result'
                 return None
                 
         except Exception as e:
             self.statuscode = 1
-            self.message = f'Error creating trade request: {str(e)}'
+            self.message = f'Exception caught: {str(e)}'
             import traceback
-            self.message += f'\n{traceback.format_exc()}'
+            self.message += f'\nTraceback: {traceback.format_exc()}'
             return None
         finally:
             if db:
