@@ -151,6 +151,11 @@ class quests:
                     locationBlocked = True
                     break
             
+            if item == 'game_shark':
+                if not self.keyitems.game_shark:
+                    locationBlocked = True
+                    break
+
             if item == 'bike_voucher':
                 if not self.keyitems.bike_voucher:
                     locationBlocked = True
@@ -268,6 +273,12 @@ class quests:
                 if not self.keyitems.item_finder:
                     requirementsMet = False
                     break
+
+            if item == 'game_shark':
+                if not self.keyitems.game_shark:
+                    requirementsMet = False
+                    break
+            
             if item == 'bike_voucher':
                 if not self.keyitems.bike_voucher:
                     requirementsMet = False
@@ -305,8 +316,13 @@ class quests:
         elif questName == 'Pokemon Fan Club':
             if self.keyitems.bike_voucher or self.keyitems.bicycle:
                 return True
-        
         # easter eggs
+        elif questName == 'Play SNES':
+            if self.keyitems.elite_four and self.keyitems.game_shark:
+                return True
+            elif not self.keyitems.elite_four:
+                return True  # Quest is "complete" before Elite Four (no reward)
+
         elif questName == 'Check Truck':
             uniqueEncounters = uEnc(self.discordId)
             if uniqueEncounters.mew:
@@ -479,9 +495,27 @@ class quests:
         return self.create_key_item_embed('Town Map')
 
     def playSNES(self):
+        if not self.keyitems.elite_four:
+            # Before Elite Four - just play the game
+            self.message = dedent("""\
+                                You boot up the dusty old SNES and pop in a cartridge.
+                                After hours of gaming, you realize you've accomplished nothing productive.
+                                Time well spent.""")
+            return
+        else:
+            # After Elite Four - receive Game Shark
+            self.keyitems.game_shark = True
+            self.message = dedent("""\
+                                You boot up the dusty old SNES and pop in a cartridge.
+                                Hidden behind the console, you discover an ancient Game Shark device.
+                                With this, you could unlock the true potential of your Pokemon...""")
+            self.keyitems.save()
+            from services.leaderboardclass import leaderboard as LeaderboardClass
 
+            lb = LeaderboardClass(str(self.discordId))
+            lb.easter_eggs()
 
-        return
+            return self.create_key_item_embed('Game Shark', '🎮')
 
     def professorOak(self):
         self.keyitems.oaks_parcel_delivered = True
