@@ -501,7 +501,7 @@ class quests:
                                 You boot up the dusty old SNES and pop in a cartridge.
                                 After hours of gaming, you realize you've accomplished nothing productive.
                                 Time well spent.""")
-            return
+            return None  # No embed, just message
         else:
             # After Elite Four - receive Game Shark
             self.keyitems.game_shark = True
@@ -514,7 +514,6 @@ class quests:
 
             lb = LeaderboardClass(str(self.discordId))
             lb.easter_eggs()
-
             return self.create_key_item_embed('Game Shark', '🎮')
 
     def professorOak(self):
