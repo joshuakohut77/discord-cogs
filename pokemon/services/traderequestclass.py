@@ -27,15 +27,15 @@ class TradeRequest:
             query = """
                 INSERT INTO trade_requests 
                 (sender_discord_id, receiver_discord_id, sender_pokemon_id, status, created_at, updated_at)
-                VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+                VALUES (%(sender_discord_id)s, %(receiver_discord_id)s, %(sender_pokemon_id)s, %(status)s, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
                 RETURNING trade_id
             """
-            result = db.querySingle(query, [
-                sender_discord_id, 
-                receiver_discord_id, 
-                sender_pokemon_id,
-                self.STATUS_PENDING_RECEIVER
-            ])
+            result = db.executeAndReturn(query, {
+                'sender_discord_id': sender_discord_id,
+                'receiver_discord_id': receiver_discord_id,
+                'sender_pokemon_id': sender_pokemon_id,
+                'status': self.STATUS_PENDING_RECEIVER
+            })
             
             if result:
                 self.statuscode = 0
@@ -53,7 +53,7 @@ class TradeRequest:
         finally:
             if db:
                 del db
-    
+
     def get_active_trade(self, discord_id: str) -> Optional[Dict[str, Any]]:
         """Get any active trade involving this user. Returns trade data or None."""
         db = None
