@@ -468,6 +468,7 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                         result = await self._parse_hall_embed(message, embed)
                         
                         if not result:
+                            print(f"ERROR: Failed to parse hall message {message.id}", file=sys.stderr)
                             errors += 1
                             continue
                         
@@ -476,9 +477,33 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                             skipped += 1
                             continue
                         
-                        print(f"DEBUG: About to add to DB - hall_channel_id={hall_channel.id}, reaction_count={current_reaction_count}", file=sys.stderr)
-
-                        # Add to database
+                        # Try to fetch the original message to get current reaction count
+                        current_reaction_count = result["reaction_count"]  # Default from embed (usually 0 for old embeds)
+                        
+                        try:
+                            orig_channel = ctx.guild.get_channel(result["channel_id"])
+                            if orig_channel:
+                                print(f"DEBUG: Fetching original message {result['message_id']} from channel {result['channel_id']}", file=sys.stderr)
+                                orig_message = await orig_channel.fetch_message(result["message_id"])
+                                
+                                # Find the highest reaction count on the message
+                                if orig_message.reactions:
+                                    max_count = max(reaction.count for reaction in orig_message.reactions)
+                                    current_reaction_count = max_count
+                                    print(f"DEBUG: Found max reaction count: {max_count}", file=sys.stderr)
+                                else:
+                                    print(f"DEBUG: Original message has no reactions", file=sys.stderr)
+                            else:
+                                print(f"DEBUG: Could not find channel {result['channel_id']}", file=sys.stderr)
+                        except (discord.NotFound, discord.Forbidden) as e:
+                            print(f"DEBUG: Could not fetch original message {result['message_id']}: {e}", file=sys.stderr)
+                        except Exception as e:
+                            print(f"DEBUG: Unexpected error fetching original message: {e}", file=sys.stderr)
+                        
+                        # Debug what we're about to insert
+                        print(f"DEBUG: Adding to DB - message_id={result['message_id']}, hall_channel_id={hall_channel.id}, reaction_count={current_reaction_count}", file=sys.stderr)
+                        
+                        # Add to database with the hall_channel.id we're scanning
                         success = await self.db.add_certified_message(
                             message_id=result["message_id"],
                             guild_id=ctx.guild.id,
@@ -486,33 +511,40 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                             user_id=result["user_id"],
                             emoji=result["emoji"],
                             hall_message_id=message.id,
-                            reaction_count=result["reaction_count"]
+                            reaction_count=current_reaction_count,
+                            hall_channel_id=hall_channel.id  # Use the hall channel parameter
                         )
                         
                         if success:
                             added += 1
+                            print(f"DEBUG: Successfully added message {result['message_id']} to database", file=sys.stderr)
                         else:
                             errors += 1
+                            print(f"ERROR: Failed to add message {result['message_id']} to database", file=sys.stderr)
                     
                     except Exception as e:
-                        print(f"Error parsing hall message {message.id}: {e}", file=sys.stderr)
+                        print(f"ERROR: Exception processing hall message {message.id}: {e}", file=sys.stderr)
+                        import traceback
+                        traceback.print_exc()
                         errors += 1
                         continue
             
             except Exception as e:
                 await status_msg.edit(content=f"❌ Error during backfill: {e}")
+                import traceback
+                traceback.print_exc()
                 return
             
             # Send results
-            embed = discord.Embed(
+            result_embed = discord.Embed(
                 title="✅ Backfill Complete",
                 color=discord.Color.green()
             )
-            embed.add_field(name="Added to Database", value=str(added), inline=True)
-            embed.add_field(name="Already Existed", value=str(skipped), inline=True)
-            embed.add_field(name="Errors", value=str(errors), inline=True)
+            result_embed.add_field(name="Added to Database", value=str(added), inline=True)
+            result_embed.add_field(name="Already Existed", value=str(skipped), inline=True)
+            result_embed.add_field(name="Errors", value=str(errors), inline=True)
             
-            await status_msg.edit(content=None, embed=embed)
+            await status_msg.edit(content=None, embed=result_embed)
 
     @dankhall.command(name="register")
     async def dh_register(
