@@ -690,7 +690,61 @@ class TradeReceiverResponseView(View):
         decline_button = Button(label="Decline", style=ButtonStyle.red, custom_id="decline")
         decline_button.callback = self.decline_trade
         self.add_item(decline_button)
+    
+    async def confirm_pokemon(self, interaction: Interaction):
+        if interaction.user.id != self.user.id:
+            await interaction.response.send_message("This is not for you.", ephemeral=True)
+            return
         
+        await interaction.response.defer()
+        
+        if not self.selected_pokemon:
+            await interaction.followup.send("No Pokemon selected.", ephemeral=True)
+            return
+        
+        # Update trade with receiver's Pokemon
+        success = self.mixin.trade_service.update_receiver_pokemon(self.trade_id, self.selected_pokemon.trainerId)
+        
+        if not success:
+            await interaction.followup.send("Failed to update trade request.", ephemeral=True)
+            return
+        
+        # Get trade details for notification
+        trade = self.mixin.trade_service.get_trade_by_id(self.trade_id)
+        
+        # Notify sender via DM
+        try:
+            sender = await self.mixin.bot.fetch_user(int(trade['sender_discord_id']))
+            
+            dm_embed = discord.Embed(
+                title="✉️ Trade Response Received!",
+                description=f"**{self.user.display_name}** has responded to your trade!",
+                color=discord.Color.green()
+            )
+            dm_embed.add_field(
+                name="Next Step",
+                value="Go to a PC and click **View Trade Response** to accept or decline!",
+                inline=False
+            )
+            
+            await sender.send(embed=dm_embed)
+            
+        except discord.Forbidden:
+            pass
+        except Exception as e:
+            print(f"Error sending response notification: {e}")
+        
+        # Confirm to receiver
+        await interaction.followup.send(
+            "✅ Your Pokemon has been selected! Waiting for the other trainer to accept.",
+            ephemeral=True
+        )
+        
+        # Disable all controls
+        for item in self.children:
+            item.disabled = True
+        await interaction.message.edit(view=self)
+
     async def accept_trade(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
             await interaction.response.send_message("This is not for you.", ephemeral=True)
@@ -757,49 +811,56 @@ class TradeReceiverResponseView(View):
         
         selected_pokemon_id = int(interaction.data['values'][0])
         
-        # Update trade with receiver's Pokemon
-        success = self.mixin.trade_service.update_receiver_pokemon(self.trade_id, selected_pokemon_id)
+        # Find and store the selected Pokemon
+        self.selected_pokemon = None
+        for p in self.pokemon:
+            if p.trainerId == selected_pokemon_id:
+                self.selected_pokemon = p
+                break
         
-        if not success:
-            await interaction.followup.send("Failed to update trade request.", ephemeral=True)
+        if not self.selected_pokemon:
+            await interaction.followup.send("Pokemon not found.", ephemeral=True)
             return
         
-        # Get trade details for notification
-        trade = self.mixin.trade_service.get_trade_by_id(self.trade_id)
+        # Rebuild the view with the selected Pokemon and add Confirm button
+        self.clear_items()
         
-        # Notify sender via DM
-        try:
-            sender = await self.mixin.bot.fetch_user(int(trade['sender_discord_id']))
-            
-            dm_embed = discord.Embed(
-                title="✉️ Trade Response Received!",
-                description=f"**{self.user.display_name}** has responded to your trade!",
-                color=discord.Color.green()
+        # Recreate the dropdown with the selected Pokemon marked as default
+        pokemon_options = [
+            SelectOption(
+                label=f"{p.nickName or p.pokemonName} (Lv.{p.currentLevel})",
+                value=str(p.trainerId),
+                description=f"{p.pokemonName} - {p.type1}" + (f"/{p.type2}" if p.type2 else ""),
+                default=(p.trainerId == selected_pokemon_id)
             )
-            dm_embed.add_field(
-                name="Next Step",
-                value="Go to a PC and click **View Trade Response** to accept or decline!",
-                inline=False
-            )
-            
-            await sender.send(embed=dm_embed)
-            
-        except discord.Forbidden:
-            pass
-        except Exception as e:
-            print(f"Error sending response notification: {e}")
+            for p in self.pokemon[:25]
+        ]
         
-        # Confirm to receiver
-        await interaction.followup.send(
-            "✅ Your Pokemon has been selected! Waiting for the other trainer to accept.",
-            ephemeral=True
+        pokemon_select = Select(
+            placeholder="Select your Pokemon to trade...",
+            options=pokemon_options,
+            custom_id="pokemon_select"
         )
+        pokemon_select.callback = self.pokemon_selected
+        self.add_item(pokemon_select)
         
-        # Disable all controls
-        for item in self.children:
-            item.disabled = True
-        await interaction.message.edit(view=self)
-    
+        # Add Confirm Trade button
+        confirm_button = Button(label="Confirm Trade", style=ButtonStyle.green, custom_id="confirm")
+        confirm_button.callback = self.confirm_pokemon
+        self.add_item(confirm_button)
+        
+        # Add Cancel button
+        cancel_button = Button(label="Cancel", style=ButtonStyle.red, custom_id="cancel")
+        cancel_button.callback = self.decline_trade
+        self.add_item(cancel_button)
+        
+        # Update the message
+        pokemon_name = self.selected_pokemon.nickName or self.selected_pokemon.pokemonName
+        await interaction.message.edit(
+            content=f"Selected: **{pokemon_name}** (Level {self.selected_pokemon.currentLevel})\n\nClick **Confirm Trade** to proceed.",
+            view=self
+        )
+
     async def decline_trade(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
             await interaction.response.send_message("This is not for you.", ephemeral=True)
