@@ -224,7 +224,7 @@ MOONSTONE = '<:moonstone:974525917789560853>'
 
 # Special Items
 LINKCABLE = '<:linkingcord:979583753527631913>'
-GAMESHARK = '🎮'
+GAMESHARK = '<:game_shark:1470511521598804199>'
 EEVEE_TAIL = '<:eevee_tail:1470504255591809261>'
 
 # Key Item Emojis
