@@ -171,11 +171,32 @@ class TradeMixin(MixinMeta):
             types = trade['sender_type_1']
         embed.add_field(name="Type", value=types, inline=True)
         
+        # Add Pokemon sprite as file attachment
+        sprite_file = None
+        try:
+            import os
+            from helpers.pathhelpers import get_sprite_path
+            
+            sprite_path = f"/sprites/pokemon/{trade['sender_pokemon_name']}.png"
+            full_sprite_path = get_sprite_path(sprite_path)
+            
+            if os.path.exists(full_sprite_path):
+                filename = f"{trade['sender_pokemon_name']}.png"
+                sprite_file = discord.File(full_sprite_path, filename=filename)
+                embed.set_thumbnail(url=f"attachment://{filename}")
+        except Exception as e:
+            # Sprite loading failed, continue without sprite
+            pass
+        
         # Create accept/decline view
         view = TradeReceiverResponseView(user, trade['trade_id'], self)
         
-        await interaction.followup.send(embed=embed, view=view, ephemeral=True)
-    
+        # Send with or without sprite
+        if sprite_file:
+            await interaction.followup.send(embed=embed, view=view, ephemeral=True, file=sprite_file)
+        else:
+            await interaction.followup.send(embed=embed, view=view, ephemeral=True)
+
     # ==================== Step 3: Sender Views Counter-Offer ====================
     
     async def _on_view_response_sender(self, interaction: Interaction):
@@ -653,6 +674,10 @@ class TradeReceiverResponseView(View):
         active_pokemon = trainer.getActivePokemon()
         all_pokemon = trainer.getPokemon(False, True)
         
+        # LOAD each Pokemon's data
+        for p in all_pokemon:
+            p.load(pokemonId=p.trainerId)
+        
         tradeable_pokemon = [p for p in all_pokemon if p.trainerId != active_pokemon.trainerId]
         
         if not tradeable_pokemon:
@@ -670,7 +695,7 @@ class TradeReceiverResponseView(View):
             SelectOption(
                 label=f"{p.nickName or p.pokemonName} (Lv.{p.currentLevel})",
                 value=str(p.trainerId),
-                description=f"{p.pokemonName} - {p.type_1}" + (f"/{p.type_2}" if p.type_2 else "")
+                description=f"{p.pokemonName} - {p.type1}" + (f"/{p.type2}" if p.type2 else "")  # FIXED: type1 not type_1
             )
             for p in tradeable_pokemon[:25]
         ]
@@ -692,7 +717,8 @@ class TradeReceiverResponseView(View):
             content="Select a Pokemon to offer in return:",
             view=self
         )
-    
+
+
     async def pokemon_selected(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
             await interaction.response.send_message("This is not for you.", ephemeral=True)
