@@ -372,6 +372,7 @@ class quests:
     # List of quests 
     """
     Garys Sister - Get Town map
+    Play SNES - Fun canon quest
     Professor Oak - deliver parcel
     Super Nerd - Get Helix Fossil item
     Fishing Guru - get old-rod item
@@ -458,6 +459,8 @@ class quests:
             return self.thePokemonLeague()
         elif questName == 'Mysterious Cave':
             return self.mysteriousCave()
+        elif questName ==  "Play SNES":
+            return self.playSNES()
         
         # easter eggs
         elif questName == 'Check Truck':
@@ -474,6 +477,11 @@ class quests:
                         a peice of paper.""")
         self.inventory.save()
         return self.create_key_item_embed('Town Map')
+
+    def playSNES(self):
+
+
+        return
 
     def professorOak(self):
         self.keyitems.oaks_parcel_delivered = True

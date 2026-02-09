@@ -60,6 +60,22 @@
     "blockers": [],
     "name": "pallet-town"
   },
+  "868": {
+    "pre-requsites": [],
+    "quest": [
+      
+    ],
+    "blockers": [],
+    "name": "ash-house"
+  },
+  "869": {
+    "pre-requsites": [],
+    "quest": [
+      "Play SNES"
+    ],
+    "blockers": [],
+    "name": "ash-room"
+  },
   "87": {
     "pre-requsites": [],
     "quest": [],
