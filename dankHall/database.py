@@ -21,7 +21,7 @@ class DankDatabase:
     # Modify these values to match your database setup
     DB_CONFIG = {
         "host": "postgres_container",
-        "dbname": "discord",  # Change this to your desired database name
+        "dbname": "discord",  
         "user": "redbot",
         "password": "REDACTED",
         "port": 5432
