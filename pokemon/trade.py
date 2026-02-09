@@ -38,6 +38,13 @@ class TradeMixin(MixinMeta):
         """
         trade = self.trade_service.get_active_trade(user_id)
         
+        # DEBUG
+        print(f"[TRADE DEBUG] get_trade_button_for_pc called for user {user_id}")
+        print(f"[TRADE DEBUG] Active trade found: {trade is not None}")
+        if trade:
+            print(f"[TRADE DEBUG] Trade ID: {trade['trade_id']}, Status: {trade['status']}")
+            print(f"[TRADE DEBUG] Sender: {trade['sender_discord_id']}, Receiver: {trade['receiver_discord_id']}")
+        
         if not trade:
             # No active trade - show normal Trade button
             button = Button(style=ButtonStyle.green, label="Trade", custom_id='trade_initiate')
@@ -49,6 +56,7 @@ class TradeMixin(MixinMeta):
         # Receiver needs to respond
         if (trade['status'] == TradeRequest.STATUS_PENDING_RECEIVER and 
             trade['receiver_discord_id'] == user_id):
+            print(f"[TRADE DEBUG] Returning 'View Trade Request' button for receiver")
             button = Button(style=ButtonStyle.blurple, label="View Trade Request", custom_id=f'view_request_{trade_id}')
             button.callback = self._on_view_request_receiver
             return button, trade_id
@@ -56,11 +64,13 @@ class TradeMixin(MixinMeta):
         # Sender needs to accept counter-offer
         if (trade['status'] == TradeRequest.STATUS_PENDING_SENDER and 
             trade['sender_discord_id'] == user_id):
+            print(f"[TRADE DEBUG] Returning 'View Trade Response' button for sender")
             button = Button(style=ButtonStyle.blurple, label="View Trade Response", custom_id=f'view_response_{trade_id}')
             button.callback = self._on_view_response_sender
             return button, trade_id
         
         # Waiting on other person
+        print(f"[TRADE DEBUG] Returning 'Trade Pending...' button (waiting on other person)")
         button = Button(style=ButtonStyle.gray, label="Trade Pending...", custom_id='trade_pending', disabled=True)
         return button, trade_id
     
@@ -78,8 +88,16 @@ class TradeMixin(MixinMeta):
             )
             return
         
-        # Get list of online guild members (excluding self)
-        guild = interaction.guild
+        # Get guild from the message's channel
+        if not interaction.message or not interaction.message.guild:
+            await interaction.followup.send(
+                "Error: This command must be used in a server channel."
+            )
+            return
+        
+        guild = interaction.message.guild
+        
+        # Get list of online guild members (excluding self and bots)
         online_members = [
             m for m in guild.members 
             if not m.bot 
@@ -119,8 +137,8 @@ class TradeMixin(MixinMeta):
             color=discord.Color.blue()
         )
         
-        await interaction.followup.send(embed=embed, view=view)  # REMOVED ephemeral=True
-    
+        await interaction.followup.send(embed=embed, view=view)
+
     # ==================== Step 2: Receiver Views Request ====================
     
     async def _on_view_request_receiver(self, interaction: Interaction):
@@ -130,11 +148,11 @@ class TradeMixin(MixinMeta):
         
         trade = self.trade_service.get_active_trade(str(user.id))
         if not trade:
-            await interaction.followup.send("Trade request not found.", ephemeral=True)
+            await interaction.followup.send("Trade request not found.")
             return
         
         if trade['receiver_discord_id'] != str(user.id):
-            await interaction.followup.send("This trade request is not for you.", ephemeral=True)
+            await interaction.followup.send("This trade request is not for you.")
             return
         
         # Get sender's info
@@ -161,11 +179,32 @@ class TradeMixin(MixinMeta):
             types = trade['sender_type_1']
         embed.add_field(name="Type", value=types, inline=True)
         
+        # Add Pokemon sprite as file attachment
+        sprite_file = None
+        try:
+            import os
+            from helpers.pathhelpers import get_sprite_path
+            
+            sprite_path = f"/sprites/pokemon/{trade['sender_pokemon_name']}.png"
+            full_sprite_path = get_sprite_path(sprite_path)
+            
+            if os.path.exists(full_sprite_path):
+                filename = f"{trade['sender_pokemon_name']}.png"
+                sprite_file = discord.File(full_sprite_path, filename=filename)
+                embed.set_thumbnail(url=f"attachment://{filename}")
+        except Exception as e:
+            # Sprite loading failed, continue without sprite
+            pass
+        
         # Create accept/decline view
         view = TradeReceiverResponseView(user, trade['trade_id'], self)
         
-        await interaction.followup.send(embed=embed, view=view, ephemeral=True)
-    
+        # Send with or without sprite - REMOVED ephemeral=True
+        if sprite_file:
+            await interaction.followup.send(embed=embed, view=view, file=sprite_file)
+        else:
+            await interaction.followup.send(embed=embed, view=view)
+
     # ==================== Step 3: Sender Views Counter-Offer ====================
     
     async def _on_view_response_sender(self, interaction: Interaction):
@@ -229,26 +268,38 @@ class TradeMixin(MixinMeta):
         # Get trade details
         trade = self.trade_service.get_trade_by_id(trade_id)
         
-        # Load both Pokemon
-        sender_pokemon = PokemonClass()
+        # Load both Pokemon - need to pass discordId to constructor
+        sender_pokemon = PokemonClass(trade['sender_discord_id'])
         sender_pokemon.load(pokemonId=trade['sender_pokemon_id'])
         
-        receiver_pokemon = PokemonClass()
+        receiver_pokemon = PokemonClass(trade['receiver_discord_id'])
         receiver_pokemon.load(pokemonId=trade['receiver_pokemon_id'])
         
         # Execute trade via EncounterClass (handles evolution, leaderboard, etc.)
         enc = EncounterClass(sender_pokemon, receiver_pokemon)
         retVal1, retVal2 = enc.trade()
         
+        # Register both Pokemon to their new owners' Pokedex
+        from services.pokedexclass import pokedex as PokedexClass
+        
+        # Sender receives receiver's Pokemon
+        PokedexClass(trade['sender_discord_id'], receiver_pokemon)
+        
+        # Receiver receives sender's Pokemon
+        PokedexClass(trade['receiver_discord_id'], sender_pokemon)
+        
         # Mark trade as completed
         self.trade_service.complete_trade(trade_id)
         
         # Send DMs to both users
         try:
+            import os
+            from helpers.pathhelpers import get_sprite_path
+            
             sender = await self.bot.fetch_user(int(trade['sender_discord_id']))
             receiver = await self.bot.fetch_user(int(trade['receiver_discord_id']))
             
-            # DM to sender
+            # DM to sender with sprite of Pokemon they received
             sender_embed = discord.Embed(
                 title="✅ Trade Complete!",
                 description=f"Your trade with **{receiver.display_name}** is complete!",
@@ -262,9 +313,25 @@ class TradeMixin(MixinMeta):
             if "evolved" in retVal1.lower():
                 sender_embed.add_field(name="Bonus!", value=retVal1, inline=False)
             
-            await sender.send(embed=sender_embed)
+            # Add sprite of Pokemon sender received
+            sender_sprite_file = None
+            try:
+                sprite_path = f"/sprites/pokemon/{trade['receiver_pokemon_name']}.png"
+                full_sprite_path = get_sprite_path(sprite_path)
+                
+                if os.path.exists(full_sprite_path):
+                    filename = f"{trade['receiver_pokemon_name']}.png"
+                    sender_sprite_file = discord.File(full_sprite_path, filename=filename)
+                    sender_embed.set_thumbnail(url=f"attachment://{filename}")
+            except Exception as e:
+                pass
             
-            # DM to receiver
+            if sender_sprite_file:
+                await sender.send(embed=sender_embed, file=sender_sprite_file)
+            else:
+                await sender.send(embed=sender_embed)
+            
+            # DM to receiver with sprite of Pokemon they received
             receiver_embed = discord.Embed(
                 title="✅ Trade Complete!",
                 description=f"Your trade with **{sender.display_name}** is complete!",
@@ -278,7 +345,23 @@ class TradeMixin(MixinMeta):
             if "evolved" in retVal2.lower():
                 receiver_embed.add_field(name="Bonus!", value=retVal2, inline=False)
             
-            await receiver.send(embed=receiver_embed)
+            # Add sprite of Pokemon receiver received
+            receiver_sprite_file = None
+            try:
+                sprite_path = f"/sprites/pokemon/{trade['sender_pokemon_name']}.png"
+                full_sprite_path = get_sprite_path(sprite_path)
+                
+                if os.path.exists(full_sprite_path):
+                    filename = f"{trade['sender_pokemon_name']}.png"
+                    receiver_sprite_file = discord.File(full_sprite_path, filename=filename)
+                    receiver_embed.set_thumbnail(url=f"attachment://{filename}")
+            except Exception as e:
+                pass
+            
+            if receiver_sprite_file:
+                await receiver.send(embed=receiver_embed, file=receiver_sprite_file)
+            else:
+                await receiver.send(embed=receiver_embed)
             
         except discord.Forbidden:
             pass  # User has DMs disabled
@@ -286,7 +369,7 @@ class TradeMixin(MixinMeta):
             print(f"Error sending trade completion DMs: {e}")
         
         return True, "Trade completed successfully!"
-    
+
     async def cancel_trade_notify(self, trade_id: int, cancelled_by_discord_id: str):
         """Cancel trade and notify both users"""
         trade = self.trade_service.get_trade_by_id(trade_id)
@@ -499,14 +582,16 @@ class TradeInitiateView(View):
             self.selected_pokemon.trainerId
         )
         
-        # Check for error and show details
         if not trade_id:
-            error_msg = f"Failed to create trade request.\nError: {self.mixin.trade_service.message}\nStatus: {self.mixin.trade_service.statuscode}"
+            error_msg = f"Failed to create trade request.\nError: {self.mixin.trade_service.message}"
             await interaction.followup.send(error_msg)
             return
         
         # Send DM to receiver
         try:
+            import os
+            from helpers.pathhelpers import get_sprite_path
+            
             pokemon_name = self.selected_pokemon.nickName or self.selected_pokemon.pokemonName
             
             dm_embed = discord.Embed(
@@ -519,13 +604,38 @@ class TradeInitiateView(View):
                 value=f"**{pokemon_name}** ({self.selected_pokemon.pokemonName})\nLevel {self.selected_pokemon.currentLevel}",
                 inline=False
             )
+            
+            # Add type info
+            type_str = self.selected_pokemon.type1
+            if self.selected_pokemon.type2:
+                type_str += f"/{self.selected_pokemon.type2}"
+            dm_embed.add_field(name="Type", value=type_str, inline=True)
+            
             dm_embed.add_field(
                 name="Next Step",
                 value="Go to a PC and click **View Trade Request** to respond!",
                 inline=False
             )
             
-            dm_message = await self.selected_member.send(embed=dm_embed)
+            # Add Pokemon sprite as file attachment
+            sprite_file = None
+            try:
+                sprite_path = f"/sprites/pokemon/{self.selected_pokemon.pokemonName}.png"
+                full_sprite_path = get_sprite_path(sprite_path)
+                
+                if os.path.exists(full_sprite_path):
+                    filename = f"{self.selected_pokemon.pokemonName}.png"
+                    sprite_file = discord.File(full_sprite_path, filename=filename)
+                    dm_embed.set_thumbnail(url=f"attachment://{filename}")
+            except Exception as e:
+                # Sprite loading failed, continue without sprite
+                pass
+            
+            # Send DM with or without sprite
+            if sprite_file:
+                dm_message = await self.selected_member.send(embed=dm_embed, file=sprite_file)
+            else:
+                dm_message = await self.selected_member.send(embed=dm_embed)
             
             # Store message ID for potential editing later
             self.mixin.trade_service.update_notification_message_id(trade_id, str(dm_message.id))
@@ -535,7 +645,7 @@ class TradeInitiateView(View):
                 f"Trade request sent, but {self.selected_member.display_name} has DMs disabled. They'll see it when they visit a PC."
             )
         except Exception as e:
-            print(f"Error sending trade DM: {e}")
+            await interaction.followup.send(f"Error sending DM: {str(e)}\nTrade still created - they'll see it at a PC.")
         
         # Confirm to sender
         await interaction.followup.send(
@@ -546,7 +656,7 @@ class TradeInitiateView(View):
         for item in self.children:
             item.disabled = True
         await interaction.message.edit(view=self)
-    
+
     async def cancel(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
             await interaction.response.send_message("This is not for you.", ephemeral=True)
@@ -568,6 +678,8 @@ class TradeReceiverResponseView(View):
         self.trade_id = trade_id
         self.mixin = mixin
         self.showing_selection = False
+        self.pokemon = []
+        self.selected_pokemon = None  # ADD THIS LINE
         
         # Accept button
         accept_button = Button(label="Accept & Choose Pokemon", style=ButtonStyle.green, custom_id="accept")
@@ -579,6 +691,60 @@ class TradeReceiverResponseView(View):
         decline_button.callback = self.decline_trade
         self.add_item(decline_button)
     
+    async def confirm_pokemon(self, interaction: Interaction):
+        if interaction.user.id != self.user.id:
+            await interaction.response.send_message("This is not for you.", ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        if not self.selected_pokemon:
+            await interaction.followup.send("No Pokemon selected.", ephemeral=True)
+            return
+        
+        # Update trade with receiver's Pokemon
+        success = self.mixin.trade_service.update_receiver_pokemon(self.trade_id, self.selected_pokemon.trainerId)
+        
+        if not success:
+            await interaction.followup.send("Failed to update trade request.", ephemeral=True)
+            return
+        
+        # Get trade details for notification
+        trade = self.mixin.trade_service.get_trade_by_id(self.trade_id)
+        
+        # Notify sender via DM
+        try:
+            sender = await self.mixin.bot.fetch_user(int(trade['sender_discord_id']))
+            
+            dm_embed = discord.Embed(
+                title="✉️ Trade Response Received!",
+                description=f"**{self.user.display_name}** has responded to your trade!",
+                color=discord.Color.green()
+            )
+            dm_embed.add_field(
+                name="Next Step",
+                value="Go to a PC and click **View Trade Response** to accept or decline!",
+                inline=False
+            )
+            
+            await sender.send(embed=dm_embed)
+            
+        except discord.Forbidden:
+            pass
+        except Exception as e:
+            print(f"Error sending response notification: {e}")
+        
+        # Confirm to receiver
+        await interaction.followup.send(
+            "✅ Your Pokemon has been selected! Waiting for the other trainer to accept.",
+            ephemeral=True
+        )
+        
+        # Disable all controls
+        for item in self.children:
+            item.disabled = True
+        await interaction.message.edit(view=self)
+
     async def accept_trade(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
             await interaction.response.send_message("This is not for you.", ephemeral=True)
@@ -590,6 +756,10 @@ class TradeReceiverResponseView(View):
         trainer = TrainerClass(str(self.user.id))
         active_pokemon = trainer.getActivePokemon()
         all_pokemon = trainer.getPokemon(False, True)
+        
+        # LOAD each Pokemon's data
+        for p in all_pokemon:
+            p.load(pokemonId=p.trainerId)
         
         tradeable_pokemon = [p for p in all_pokemon if p.trainerId != active_pokemon.trainerId]
         
@@ -603,12 +773,13 @@ class TradeReceiverResponseView(View):
         # Show Pokemon selection
         self.clear_items()
         self.showing_selection = True
+        self.pokemon = tradeable_pokemon  # STORE THE LIST
         
         pokemon_options = [
             SelectOption(
                 label=f"{p.nickName or p.pokemonName} (Lv.{p.currentLevel})",
                 value=str(p.trainerId),
-                description=f"{p.pokemonName} - {p.type_1}" + (f"/{p.type_2}" if p.type_2 else "")
+                description=f"{p.pokemonName} - {p.type1}" + (f"/{p.type2}" if p.type2 else "")
             )
             for p in tradeable_pokemon[:25]
         ]
@@ -636,23 +807,60 @@ class TradeReceiverResponseView(View):
             await interaction.response.send_message("This is not for you.", ephemeral=True)
             return
         
-        selected_id = int(interaction.data['values'][0])
-        # Find the Pokemon in our list
+        await interaction.response.defer()
+        
+        selected_pokemon_id = int(interaction.data['values'][0])
+        
+        # Find and store the selected Pokemon
+        self.selected_pokemon = None
         for p in self.pokemon:
-            if p.trainerId == selected_id:
+            if p.trainerId == selected_pokemon_id:
                 self.selected_pokemon = p
                 break
         
-        # Enable send button if both selections made
-        if self.selected_member and self.selected_pokemon:
-            for item in self.children:
-                if item.custom_id == "send_request":
-                    item.disabled = False
+        if not self.selected_pokemon:
+            await interaction.followup.send("Pokemon not found.", ephemeral=True)
+            return
         
-        # IMPORTANT: Use defer to acknowledge the interaction without sending a message
-        await interaction.response.defer()
-        await interaction.edit_original_response(view=self)
-    
+        # Rebuild the view with the selected Pokemon and add Confirm button
+        self.clear_items()
+        
+        # Recreate the dropdown with the selected Pokemon marked as default
+        pokemon_options = [
+            SelectOption(
+                label=f"{p.nickName or p.pokemonName} (Lv.{p.currentLevel})",
+                value=str(p.trainerId),
+                description=f"{p.pokemonName} - {p.type1}" + (f"/{p.type2}" if p.type2 else ""),
+                default=(p.trainerId == selected_pokemon_id)
+            )
+            for p in self.pokemon[:25]
+        ]
+        
+        pokemon_select = Select(
+            placeholder="Select your Pokemon to trade...",
+            options=pokemon_options,
+            custom_id="pokemon_select"
+        )
+        pokemon_select.callback = self.pokemon_selected
+        self.add_item(pokemon_select)
+        
+        # Add Confirm Trade button
+        confirm_button = Button(label="Confirm Trade", style=ButtonStyle.green, custom_id="confirm")
+        confirm_button.callback = self.confirm_pokemon
+        self.add_item(confirm_button)
+        
+        # Add Cancel button
+        cancel_button = Button(label="Cancel", style=ButtonStyle.red, custom_id="cancel")
+        cancel_button.callback = self.decline_trade
+        self.add_item(cancel_button)
+        
+        # Update the message
+        pokemon_name = self.selected_pokemon.nickName or self.selected_pokemon.pokemonName
+        await interaction.message.edit(
+            content=f"Selected: **{pokemon_name}** (Level {self.selected_pokemon.currentLevel})\n\nClick **Confirm Trade** to proceed.",
+            view=self
+        )
+
     async def decline_trade(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
             await interaction.response.send_message("This is not for you.", ephemeral=True)
@@ -668,7 +876,6 @@ class TradeReceiverResponseView(View):
         for item in self.children:
             item.disabled = True
         await interaction.message.edit(view=self)
-
 
 class TradeSenderAcceptView(View):
     """View for sender to accept/decline receiver's counter-offer"""
@@ -710,10 +917,6 @@ class TradeSenderAcceptView(View):
                 ephemeral=True
             )
         
-        # Disable all controls
-        for item in self.children:
-            item.disabled = True
-        await interaction.message.edit(view=self)
     
     async def decline_trade(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
@@ -727,6 +930,3 @@ class TradeSenderAcceptView(View):
         
         await interaction.followup.send("Trade request declined.", ephemeral=True)
         
-        for item in self.children:
-            item.disabled = True
-        await interaction.message.edit(view=self)
