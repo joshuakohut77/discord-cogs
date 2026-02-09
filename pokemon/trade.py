@@ -88,8 +88,15 @@ class TradeMixin(MixinMeta):
             )
             return
         
-        # Get list of online guild members (excluding self)
+        # Get guild - handle if None
         guild = interaction.guild
+        if guild is None:
+            await interaction.followup.send(
+                "Error: Cannot access guild information. Please try again."
+            )
+            return
+        
+        # Get list of online guild members (excluding self)
         online_members = [
             m for m in guild.members 
             if not m.bot 
@@ -129,8 +136,8 @@ class TradeMixin(MixinMeta):
             color=discord.Color.blue()
         )
         
-        await interaction.followup.send(embed=embed, view=view)  # REMOVED ephemeral=True
-    
+        await interaction.followup.send(embed=embed, view=view)
+
     # ==================== Step 2: Receiver Views Request ====================
     
     async def _on_view_request_receiver(self, interaction: Interaction):
