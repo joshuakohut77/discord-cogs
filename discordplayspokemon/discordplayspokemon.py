@@ -604,8 +604,43 @@ class DiscordPlaysPokemon(commands.Cog):
         try:
             msg = await channel.send(file=discord.File(screenshot, "pokemon.png"))
             self._screen_messages[guild_id] = msg
+            # Clean up old bot messages so only the new screenshot remains
+            await self._cleanup_bot_messages(channel, msg)
         except discord.HTTPException as e:
             log.warning(f"Failed to post screenshot: {e}")
+
+    async def _cleanup_bot_messages(
+        self, channel: discord.TextChannel, keep: discord.Message
+    ):
+        """Delete all messages sent by the bot in the game channel except
+        the one we want to keep (the new screenshot)."""
+        try:
+            to_delete: list[discord.Message] = []
+            async for msg in channel.history(limit=50):
+                if msg.id == keep.id:
+                    continue
+                if msg.author.id == self.bot.user.id:
+                    to_delete.append(msg)
+
+            if not to_delete:
+                return
+
+            # bulk_delete only works on messages < 14 days old
+            # and requires between 2-100 messages
+            if len(to_delete) >= 2:
+                try:
+                    await channel.delete_messages(to_delete)
+                    return
+                except discord.HTTPException:
+                    pass  # fall through to individual deletes
+
+            for msg in to_delete:
+                try:
+                    await msg.delete()
+                except (discord.NotFound, discord.HTTPException):
+                    pass
+        except (discord.HTTPException, asyncio.TimeoutError) as e:
+            log.warning(f"Cleanup of old bot messages failed: {e}")
 
     # ------------------------------------------------------------------
     # Historical log loop — posts new screenshots on a longer interval
