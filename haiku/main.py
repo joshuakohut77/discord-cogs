@@ -134,6 +134,46 @@ class Haiku(EventMixin, commands.Cog, metaclass=CompositeClass):
             await ctx.send(f"Error getting leaderboard: {e}")
     
     @haiku.command()
+    async def channels(self, ctx: commands.Context, limit: int = 10) -> None:
+        """Show the top channels with most haikus
+        
+        Args:
+            limit: Number of channels to show (default: 10, max: 25)
+        """
+        if limit > 25:
+            limit = 25
+        
+        try:
+            top_channels = HaikuDetector.get_top_haiku_channels(
+                guild_id=ctx.guild.id if ctx.guild else None,
+                limit=limit
+            )
+            
+            if not top_channels:
+                await ctx.send("No haikus have been detected yet!")
+                return
+            
+            embed = discord.Embed(
+                title="🍃 Top Haiku Channels 🍃",
+                color=0x90EE90
+            )
+            
+            description = ""
+            for i, (channel_id, count) in enumerate(top_channels, 1):
+                # Try to get the channel object
+                channel = self.bot.get_channel(int(channel_id))
+                channel_name = channel.mention if channel else f"Unknown Channel ({channel_id})"
+                
+                medal = "🥇" if i == 1 else "🥈" if i == 2 else "🥉" if i == 3 else f"{i}."
+                description += f"{medal} {channel_name}: {count} haiku{'s' if count != 1 else ''}\n"
+            
+            embed.description = description
+            await ctx.send(embed=embed)
+            
+        except Exception as e:
+            await ctx.send(f"Error getting channel stats: {e}")
+    
+    @haiku.command()
     @commands.admin_or_permissions(manage_guild=True)
     async def toggle(self, ctx: commands.Context) -> None:
         """Toggle haiku detection for this server"""

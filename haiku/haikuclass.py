@@ -163,3 +163,38 @@ class HaikuDetector:
         """
         result = db.queryAll(queryString, {'limit': limit})
         return result
+    
+    @staticmethod
+    def get_top_haiku_channels(guild_id=None, limit=10):
+        """Get the top channels with most haikus
+        
+        Args:
+            guild_id: Optional guild ID to filter by
+            limit: Number of channels to return
+            
+        Returns:
+            List of tuples (channel_id, haiku_count)
+        """
+        db = dbconn()
+        
+        if guild_id:
+            queryString = """
+                SELECT "ChannelId", COUNT(*) as haiku_count 
+                FROM haiku 
+                WHERE "GuildId" = %(guild_id)s
+                GROUP BY "ChannelId" 
+                ORDER BY haiku_count DESC 
+                LIMIT %(limit)s;
+            """
+            result = db.queryAll(queryString, {'guild_id': str(guild_id), 'limit': limit})
+        else:
+            queryString = """
+                SELECT "ChannelId", COUNT(*) as haiku_count 
+                FROM haiku 
+                GROUP BY "ChannelId" 
+                ORDER BY haiku_count DESC 
+                LIMIT %(limit)s;
+            """
+            result = db.queryAll(queryString, {'limit': limit})
+        
+        return result
