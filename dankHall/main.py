@@ -847,16 +847,39 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         await ctx.send(embed=embed)
 
     @dankhall.command(name="random")
-    async def dh_random(self, ctx: commands.Context, reaction_count: int = None, emoji: str = None):
+    async def dh_random(self, ctx: commands.Context, *args):
         """
         Show a random certified dank post from any hall of fame.
         
         Examples:
         - `[p]dankhall random` - Get any random certified post
         - `[p]dankhall random 9` - Get a random post with exactly 9 reactions
-        - `[p]dankhall random 0 🔥` - Get a random post certified with 🔥
+        - `[p]dankhall random 🔥` - Get a random post certified with 🔥
         - `[p]dankhall random 9 ⭐` - Get a random post with 9 reactions AND ⭐ emoji
         """
+        reaction_count = None
+        emoji = None
+        
+        # Parse arguments - could be (number), (emoji), or (number, emoji)
+        if len(args) == 1:
+            # Try to parse as integer first
+            try:
+                reaction_count = int(args[0])
+            except ValueError:
+                # It's an emoji
+                emoji = args[0]
+        elif len(args) == 2:
+            # First should be number, second should be emoji
+            try:
+                reaction_count = int(args[0])
+                emoji = args[1]
+            except ValueError:
+                await ctx.send("❌ Invalid format. Use: `[p]dankhall random [count] [emoji]`")
+                return
+        elif len(args) > 2:
+            await ctx.send("❌ Too many arguments. Use: `[p]dankhall random [count] [emoji]`")
+            return
+        
         # Validate reaction count if provided
         if reaction_count is not None and reaction_count < 0:
             await ctx.send("❌ Reaction count must be 0 or greater.")
@@ -905,7 +928,8 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         # Create the hall of fame style embed
         embed = discord.Embed(
             title="🎲 Random Certified Dank",
-            color=discord.Color.gold()
+            color=discord.Color.gold(),
+            timestamp=random_cert["certified_at"]
         )
         
         if user_avatar:
