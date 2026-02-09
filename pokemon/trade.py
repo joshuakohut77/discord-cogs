@@ -88,15 +88,16 @@ class TradeMixin(MixinMeta):
             )
             return
         
-        # Get guild - handle if None
-        guild = interaction.guild
-        if guild is None:
+        # Get guild from the message's channel
+        if not interaction.message or not interaction.message.guild:
             await interaction.followup.send(
-                "Error: Cannot access guild information. Please try again."
+                "Error: This command must be used in a server channel."
             )
             return
         
-        # Get list of online guild members (excluding self)
+        guild = interaction.message.guild
+        
+        # Get list of online guild members (excluding self and bots)
         online_members = [
             m for m in guild.members 
             if not m.bot 
