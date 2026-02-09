@@ -38,6 +38,13 @@ class TradeMixin(MixinMeta):
         """
         trade = self.trade_service.get_active_trade(user_id)
         
+        # DEBUG
+        print(f"[TRADE DEBUG] get_trade_button_for_pc called for user {user_id}")
+        print(f"[TRADE DEBUG] Active trade found: {trade is not None}")
+        if trade:
+            print(f"[TRADE DEBUG] Trade ID: {trade['trade_id']}, Status: {trade['status']}")
+            print(f"[TRADE DEBUG] Sender: {trade['sender_discord_id']}, Receiver: {trade['receiver_discord_id']}")
+        
         if not trade:
             # No active trade - show normal Trade button
             button = Button(style=ButtonStyle.green, label="Trade", custom_id='trade_initiate')
@@ -49,6 +56,7 @@ class TradeMixin(MixinMeta):
         # Receiver needs to respond
         if (trade['status'] == TradeRequest.STATUS_PENDING_RECEIVER and 
             trade['receiver_discord_id'] == user_id):
+            print(f"[TRADE DEBUG] Returning 'View Trade Request' button for receiver")
             button = Button(style=ButtonStyle.blurple, label="View Trade Request", custom_id=f'view_request_{trade_id}')
             button.callback = self._on_view_request_receiver
             return button, trade_id
@@ -56,11 +64,13 @@ class TradeMixin(MixinMeta):
         # Sender needs to accept counter-offer
         if (trade['status'] == TradeRequest.STATUS_PENDING_SENDER and 
             trade['sender_discord_id'] == user_id):
+            print(f"[TRADE DEBUG] Returning 'View Trade Response' button for sender")
             button = Button(style=ButtonStyle.blurple, label="View Trade Response", custom_id=f'view_response_{trade_id}')
             button.callback = self._on_view_response_sender
             return button, trade_id
         
         # Waiting on other person
+        print(f"[TRADE DEBUG] Returning 'Trade Pending...' button (waiting on other person)")
         button = Button(style=ButtonStyle.gray, label="Trade Pending...", custom_id='trade_pending', disabled=True)
         return button, trade_id
     
@@ -519,11 +529,22 @@ class TradeInitiateView(View):
                 value=f"**{pokemon_name}** ({self.selected_pokemon.pokemonName})\nLevel {self.selected_pokemon.currentLevel}",
                 inline=False
             )
+            
+            # Add type info
+            type_str = self.selected_pokemon.type1
+            if self.selected_pokemon.type2:
+                type_str += f"/{self.selected_pokemon.type2}"
+            dm_embed.add_field(name="Type", value=type_str, inline=True)
+            
             dm_embed.add_field(
                 name="Next Step",
                 value="Go to a PC and click **View Trade Request** to respond!",
                 inline=False
             )
+            
+            # Add Pokemon sprite
+            sprite_url = f"https://pokesprites.joshkohut.com{self.selected_pokemon.frontSpriteURL}"
+            dm_embed.set_thumbnail(url=sprite_url)
             
             dm_message = await self.selected_member.send(embed=dm_embed)
             
@@ -543,17 +564,6 @@ class TradeInitiateView(View):
         )
         
         # Disable all controls
-        for item in self.children:
-            item.disabled = True
-        await interaction.message.edit(view=self)
-    
-    async def cancel(self, interaction: Interaction):
-        if interaction.user.id != self.user.id:
-            await interaction.response.send_message("This is not for you.", ephemeral=True)
-            return
-        
-        await interaction.response.send_message("Trade cancelled.")
-        
         for item in self.children:
             item.disabled = True
         await interaction.message.edit(view=self)
