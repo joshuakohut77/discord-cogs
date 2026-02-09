@@ -928,8 +928,7 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         # Create the hall of fame style embed
         embed = discord.Embed(
             title="🎲 Random Certified Dank",
-            color=discord.Color.gold(),
-            timestamp=random_cert["certified_at"]
+            color=discord.Color.gold()
         )
         
         if user_avatar:
