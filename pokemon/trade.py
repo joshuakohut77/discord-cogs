@@ -260,11 +260,11 @@ class TradeMixin(MixinMeta):
         # Get trade details
         trade = self.trade_service.get_trade_by_id(trade_id)
         
-        # Load both Pokemon
-        sender_pokemon = PokemonClass()
+        # Load both Pokemon - need to pass discordId to constructor
+        sender_pokemon = PokemonClass(trade['sender_discord_id'])
         sender_pokemon.load(pokemonId=trade['sender_pokemon_id'])
         
-        receiver_pokemon = PokemonClass()
+        receiver_pokemon = PokemonClass(trade['receiver_discord_id'])
         receiver_pokemon.load(pokemonId=trade['receiver_pokemon_id'])
         
         # Execute trade via EncounterClass (handles evolution, leaderboard, etc.)
@@ -317,7 +317,7 @@ class TradeMixin(MixinMeta):
             print(f"Error sending trade completion DMs: {e}")
         
         return True, "Trade completed successfully!"
-    
+
     async def cancel_trade_notify(self, trade_id: int, cancelled_by_discord_id: str):
         """Cancel trade and notify both users"""
         trade = self.trade_service.get_trade_by_id(trade_id)
