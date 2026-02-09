@@ -24,6 +24,22 @@ class TradeRequest:
         db = None
         try:
             db = dbconn()
+            
+            # First, validate the Pokemon exists and belongs to the sender
+            check_query = "SELECT id, discord_id FROM pokemon WHERE id = %(pokemon_id)s"
+            pokemon_check = db.querySingle(check_query, {'pokemon_id': sender_pokemon_id})
+            
+            if not pokemon_check:
+                self.statuscode = 1
+                self.message = f'Pokemon with ID {sender_pokemon_id} does not exist'
+                return None
+            
+            if pokemon_check[1] != sender_discord_id:
+                self.statuscode = 1
+                self.message = f'Pokemon {sender_pokemon_id} does not belong to sender {sender_discord_id}, belongs to {pokemon_check[1]}'
+                return None
+            
+            # Now insert the trade request
             query = """
                 INSERT INTO trade_requests 
                 (sender_discord_id, receiver_discord_id, sender_pokemon_id, status, created_at, updated_at)
@@ -39,16 +55,18 @@ class TradeRequest:
             
             if result:
                 self.statuscode = 0
-                self.message = 'Trade request created successfully'
+                self.message = f'Trade request created successfully with ID {result[0]}'
                 return result[0]  # First column is trade_id
             else:
                 self.statuscode = 1
-                self.message = 'Failed to create trade request'
+                self.message = 'executeAndReturn returned no result'
                 return None
                 
         except Exception as e:
             self.statuscode = 1
             self.message = f'Error creating trade request: {str(e)}'
+            import traceback
+            self.message += f'\n{traceback.format_exc()}'
             return None
         finally:
             if db:
