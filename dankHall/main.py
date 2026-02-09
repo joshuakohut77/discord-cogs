@@ -584,6 +584,21 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                 await ctx.send("❌ This certification is already registered in the database.")
                 return
             
+            # Try to fetch the original message to get current reaction count
+            current_reaction_count = result["reaction_count"]  # Default from embed
+            
+            try:
+                orig_channel = ctx.guild.get_channel(result["channel_id"])
+                if orig_channel:
+                    orig_message = await orig_channel.fetch_message(result["message_id"])
+                    
+                    # Find the highest reaction count on the message
+                    if orig_message.reactions:
+                        max_count = max(reaction.count for reaction in orig_message.reactions)
+                        current_reaction_count = max_count
+            except (discord.NotFound, discord.Forbidden):
+                pass  # Original message deleted or no access, use embed count
+            
             # Add to database
             success = await self.db.add_certified_message(
                 message_id=result["message_id"],
@@ -592,7 +607,7 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                 user_id=result["user_id"],
                 emoji=result["emoji"],
                 hall_message_id=message.id,
-                reaction_count=result["reaction_count"],
+                reaction_count=current_reaction_count,  # Use current count
                 hall_channel_id=hall_channel.id
             )
             
