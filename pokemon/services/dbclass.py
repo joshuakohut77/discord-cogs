@@ -1,5 +1,6 @@
 # database class
 
+import os
 import psycopg as pg
 
 
@@ -23,23 +24,25 @@ import psycopg as pg
 class db:
     def __init__(self, params=None):
         self.faulted = False
-        # TODO: need a better way to pass in db configs through all the objects.
-        # self.conn = pg.connect(
-        #     host=(
-        #         params and params.host) or "REDACTED_HOST",
-        #     dbname=(params and params.dbname) or "pokemon_db",
-        #     user=(params and params.user) or "redbot",
-        #     # todo remove password from source control
-        #     password=(params and params.password) or "REDACTED_PASSWORD",
-        #     port=(params and params.port) or REDACTED_PORT)
-
+        
+        # Get database credentials from environment variables
+        host = os.getenv("POKEMON_DB_HOST", "postgres_container")
+        dbname = os.getenv("POKEMON_DB_NAME", "pokemon_db")
+        user = os.getenv("POKEMON_DB_USER", "redbot")
+        password = os.getenv("POKEMON_DB_PASSWORD")
+        port = int(os.getenv("POKEMON_DB_PORT", "5432"))
+        
+        # Validate that password is set
+        if not password:
+            raise ValueError("POKEMON_DB_PASSWORD environment variable is required but not set")
+        
         self.conn = pg.connect(
-            host="postgres_container",
-            dbname="pokemon_db",
-            user="redbot",
-            # todo remove password from source control
-            password="REDACTED",
-            port=5432)
+            host=host,
+            dbname=dbname,
+            user=user,
+            password=password,
+            port=port
+        )
 
     def __del__(self):
         self.conn.close()
