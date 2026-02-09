@@ -1,0 +1,10 @@
+{
+    "author": ["BiCuriousGeorge#8804"],
+    "install_msg": "Haiku cog installed! I'll detect accidental haikus in messages.",
+    "name": "Haiku",
+    "short": "Detects accidental haikus in messages",
+    "description": "Automatically detects when messages form haikus (5-7-5 syllable pattern) and responds with a formatted haiku embed. Logs all detected haikus to database.",
+    "tags": ["fun", "poetry"],
+    "requirements": ["pronouncing"],
+    "hidden": false
+}
