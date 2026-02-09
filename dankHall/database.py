@@ -548,6 +548,88 @@ class DankDatabase:
             print(f"Error getting random certification with count: {e}", file=sys.stderr)
             return None
     
+    async def get_random_certification_with_emoji(self, guild_id: int, emoji: str) -> dict:
+        """Get a random certified message with a specific emoji."""
+        if not self.conn:
+            return None
+        
+        try:
+            result = self._query_one(
+                """
+                SELECT message_id, guild_id, channel_id, user_id, emoji, 
+                       hall_message_id, reaction_count, certified_at
+                FROM dank_certified_messages
+                WHERE guild_id = %s AND emoji = %s
+                ORDER BY RANDOM()
+                LIMIT 1
+                """,
+                [guild_id, emoji]
+            )
+            
+            if result:
+                return {
+                    "message_id": result[0],
+                    "guild_id": result[1],
+                    "channel_id": result[2],
+                    "user_id": result[3],
+                    "emoji": result[4],
+                    "hall_message_id": result[5],
+                    "reaction_count": result[6],
+                    "certified_at": result[7]
+                }
+            return None
+        except Exception as e:
+            print(f"Error getting random certification with emoji: {e}", file=sys.stderr)
+            return None
+    
+    async def get_random_certification_with_filters(
+        self, 
+        guild_id: int, 
+        reaction_count: int = None, 
+        emoji: str = None
+    ) -> dict:
+        """Get a random certified message with optional filters."""
+        if not self.conn:
+            return None
+        
+        try:
+            # Build query dynamically based on filters
+            query = """
+                SELECT message_id, guild_id, channel_id, user_id, emoji, 
+                       hall_message_id, reaction_count, certified_at
+                FROM dank_certified_messages
+                WHERE guild_id = %s
+            """
+            params = [guild_id]
+            
+            if reaction_count is not None:
+                query += " AND reaction_count = %s"
+                params.append(reaction_count)
+            
+            if emoji is not None:
+                query += " AND emoji = %s"
+                params.append(emoji)
+            
+            query += " ORDER BY RANDOM() LIMIT 1"
+            
+            result = self._query_one(query, params)
+            
+            if result:
+                return {
+                    "message_id": result[0],
+                    "guild_id": result[1],
+                    "channel_id": result[2],
+                    "user_id": result[3],
+                    "emoji": result[4],
+                    "hall_message_id": result[5],
+                    "reaction_count": result[6],
+                    "certified_at": result[7]
+                }
+            return None
+        except Exception as e:
+            print(f"Error getting random certification with filters: {e}", file=sys.stderr)
+            return None
+    
     async def get_random_certification_by_hall(self, guild_id: int, hall_channel_id: int) -> dict:
         """Get a random certified message from a specific hall of fame channel."""
         if not self.conn:

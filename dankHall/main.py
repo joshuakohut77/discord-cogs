@@ -847,29 +847,48 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         await ctx.send(embed=embed)
 
     @dankhall.command(name="random")
-    async def dh_random(self, ctx: commands.Context, reaction_count: int = None):
+    async def dh_random(self, ctx: commands.Context, reaction_count: int = None, emoji: str = None):
         """
         Show a random certified dank post from any hall of fame.
         
         Examples:
         - `[p]dankhall random` - Get any random certified post
         - `[p]dankhall random 9` - Get a random post with exactly 9 reactions
-        - `[p]dankhall random 5` - Get a random post with exactly 5 reactions
+        - `[p]dankhall random 0 🔥` - Get a random post certified with 🔥
+        - `[p]dankhall random 9 ⭐` - Get a random post with 9 reactions AND ⭐ emoji
         """
-        # Get a random certification, optionally filtered by reaction count
-        if reaction_count is not None:
-            if reaction_count < 0:
-                await ctx.send("❌ Reaction count must be 0 or greater.")
-                return
-            random_cert = await self.db.get_random_certification_with_count(ctx.guild.id, reaction_count)
-            if not random_cert:
+        # Validate reaction count if provided
+        if reaction_count is not None and reaction_count < 0:
+            await ctx.send("❌ Reaction count must be 0 or greater.")
+            return
+        
+        # Parse emoji if provided
+        emoji_id = None
+        if emoji:
+            try:
+                custom_emoji = await commands.EmojiConverter().convert(ctx, emoji)
+                emoji_id = str(custom_emoji)
+            except:
+                emoji_id = emoji
+        
+        # Get a random certification with optional filters
+        random_cert = await self.db.get_random_certification_with_filters(
+            ctx.guild.id, 
+            reaction_count=reaction_count, 
+            emoji=emoji_id
+        )
+        
+        if not random_cert:
+            # Build error message based on filters
+            if reaction_count is not None and emoji_id:
+                await ctx.send(f"No certifications with {reaction_count} reactions and {emoji_id} emoji found!")
+            elif reaction_count is not None:
                 await ctx.send(f"No certifications with exactly {reaction_count} reactions found!")
-                return
-        else:
-            random_cert = await self.db.get_random_certification(ctx.guild.id)
-            if not random_cert:
+            elif emoji_id:
+                await ctx.send(f"No certifications with {emoji_id} emoji found!")
+            else:
                 await ctx.send("No certifications yet in this server!")
-                return
+            return
         
         # Get user info
         user = ctx.guild.get_member(random_cert["user_id"])
@@ -886,8 +905,7 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         # Create the hall of fame style embed
         embed = discord.Embed(
             title="🎲 Random Certified Dank",
-            color=discord.Color.gold(),
-            
+            color=discord.Color.gold()
         )
         
         if user_avatar:
