@@ -8,7 +8,7 @@ Other channel messages:  Letters are passively harvested and silently fed
 
 import asyncio
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import discord
 from redbot.core import commands, Config, checks
@@ -678,6 +678,13 @@ class DiscordPlaysPokemon(commands.Cog):
             await asyncio.sleep(interval_min * 60)
 
             while guild_id in self._emulators and self._emulators[guild_id].running:
+                # Skip posting during quiet hours (2am–8am EST)
+                est = timezone(timedelta(hours=-5))
+                now_est = datetime.now(est)
+                if 2 <= now_est.hour < 8:
+                    await asyncio.sleep(interval_min * 60)
+                    continue
+
                 screenshot = await self._emulators[guild_id].get_screenshot()
                 if screenshot:
                     emu = self._emulators[guild_id]
