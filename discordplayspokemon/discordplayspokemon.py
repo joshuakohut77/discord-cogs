@@ -30,7 +30,7 @@ class DiscordPlaysPokemon(commands.Cog):
         default_guild = {
             "channel_id": None,              # channel where the game lives
             "rom_path": None,                # filesystem path to the .gb ROM
-            "screenshot_interval": 4,        # seconds between screen updates
+            "screenshot_interval": 6,        # seconds between screen updates
             "input_cooldown": 1.0,           # per-user cooldown in seconds
             "max_inputs_per_msg": 5,         # combo cap for game channel
             "max_passive_inputs": 20,        # cap for passive letter harvesting
@@ -50,6 +50,8 @@ class DiscordPlaysPokemon(commands.Cog):
         self._user_cooldowns: dict[tuple[int, int], datetime] = {}
         # Track the message we edit for the game screen (guild_id → Message)
         self._screen_messages: dict[int, discord.Message] = {}
+        # Prevent stacking screenshot edits (guild_id → Lock)
+        self._screen_locks: dict[int, asyncio.Lock] = {}
         # Historical log loop tasks (guild_id → Task)
         self._log_loops: dict[int, asyncio.Task] = {}
 
@@ -147,8 +149,8 @@ class DiscordPlaysPokemon(commands.Cog):
     @dpp.command(name="setinterval")
     @checks.admin_or_permissions(administrator=True)
     async def set_interval(self, ctx: commands.Context, seconds: int):
-        """Set the screenshot update interval (2–30 seconds)."""
-        seconds = max(2, min(30, seconds))
+        """Set the screenshot update interval (5–30 seconds)."""
+        seconds = max(5, min(30, seconds))
         await self.config.guild(ctx.guild).screenshot_interval.set(seconds)
         await ctx.send(f"Screenshot interval set to **{seconds}s**.")
 
@@ -537,9 +539,15 @@ class DiscordPlaysPokemon(commands.Cog):
 
             while guild_id in self._emulators and self._emulators[guild_id].running:
                 try:
-                    screenshot = await self._emulators[guild_id].get_screenshot()
-                    if screenshot:
-                        await self._update_screen_message(guild_id, channel, screenshot)
+                    # Skip this cycle if the previous edit is still in flight
+                    lock = self._screen_locks.setdefault(guild_id, asyncio.Lock())
+                    if lock.locked():
+                        log.debug(f"Screenshot update still in progress for guild {guild_id}, skipping cycle.")
+                    else:
+                        async with lock:
+                            screenshot = await self._emulators[guild_id].get_screenshot()
+                            if screenshot:
+                                await self._update_screen_message(guild_id, channel, screenshot)
                 except (discord.HTTPException, asyncio.TimeoutError) as e:
                     log.warning(f"Screenshot update failed (will retry): {e}")
 
