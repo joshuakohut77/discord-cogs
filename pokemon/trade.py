@@ -851,6 +851,3 @@ class TradeSenderAcceptView(View):
         
         await interaction.followup.send("Trade request declined.", ephemeral=True)
         
-        for item in self.children:
-            item.disabled = True
-        await interaction.message.edit(view=self)
