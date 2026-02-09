@@ -503,18 +503,29 @@ class quests:
                                 Time well spent.""")
             return None  # No embed, just message
         else:
-            # After Elite Four - receive Game Shark
-            self.keyitems.game_shark = True
-            self.message = dedent("""\
-                                You boot up the dusty old SNES and pop in a cartridge.
-                                Hidden behind the console, you discover an ancient Game Shark device.
-                                With this, you could unlock the true potential of your Pokemon...""")
-            self.keyitems.save()
-            from services.leaderboardclass import leaderboard as LeaderboardClass
-
-            lb = LeaderboardClass(str(self.discordId))
-            lb.easter_eggs()
-            return self.create_key_item_embed('Game Shark', '🎮')
+            # After Elite Four - check if already received Game Shark
+            if self.keyitems.game_shark:
+                # Already have Game Shark - just show message
+                self.message = dedent("""\
+                                    You boot up the dusty old SNES and pop in a cartridge.
+                                    You've already taken the Game Shark from behind the console.
+                                    Time to play some classics.""")
+                return None
+            else:
+                # First time - receive Game Shark
+                self.keyitems.game_shark = True
+                self.message = dedent("""\
+                                    You boot up the dusty old SNES and pop in a cartridge.
+                                    Hidden behind the console, you discover an ancient Game Shark device.
+                                    With this, you could unlock the true potential of your Pokemon...""")
+                self.keyitems.save()
+                
+                # Track easter egg completion
+                from services.leaderboardclass import leaderboard as LeaderboardClass
+                lb = LeaderboardClass(str(self.discordId))
+                lb.easter_eggs()
+                
+                return self.create_key_item_embed('Game Shark', '🎮')
 
     def professorOak(self):
         self.keyitems.oaks_parcel_delivered = True
