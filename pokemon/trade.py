@@ -502,38 +502,17 @@ class TradeInitiateView(View):
         
         await interaction.response.defer()
         
-        # DEBUG: Show what we're trying to send
-        await interaction.followup.send(
-            f"🔍 DEBUG: Attempting to create trade...\n"
-            f"Sender ID: {self.user.id}\n"
-            f"Receiver ID: {self.selected_member.id}\n"
-            f"Pokemon Trainer ID: {self.selected_pokemon.trainerId}"
-        )
-        
         # Create trade request in database
-        try:
-            trade_id = self.mixin.trade_service.create_trade_request(
-                str(self.user.id),
-                str(self.selected_member.id),
-                self.selected_pokemon.trainerId
-            )
-            
-            await interaction.followup.send(
-                f"🔍 DEBUG: create_trade_request returned: {trade_id}\n"
-                f"Status code: {self.mixin.trade_service.statuscode}\n"
-                f"Message: {self.mixin.trade_service.message}"
-            )
-            
-        except Exception as e:
-            await interaction.followup.send(f"🔍 DEBUG: Exception during create_trade_request: {str(e)}")
-            return
+        trade_id = self.mixin.trade_service.create_trade_request(
+            str(self.user.id),
+            str(self.selected_member.id),
+            self.selected_pokemon.trainerId
+        )
         
         if not trade_id:
             error_msg = f"Failed to create trade request.\nError: {self.mixin.trade_service.message}\nStatus: {self.mixin.trade_service.statuscode}"
             await interaction.followup.send(error_msg)
             return
-        
-        await interaction.followup.send(f"🔍 DEBUG: Trade ID {trade_id} created successfully! Attempting to send DM...")
         
         # Send DM to receiver
         try:
@@ -562,24 +541,28 @@ class TradeInitiateView(View):
                 inline=False
             )
             
-            # Add Pokemon sprite
-            sprite_url = f"https://pokesprites.joshkohut.com{self.selected_pokemon.frontSpriteURL}"
-            dm_embed.set_thumbnail(url=sprite_url)
+            # Add Pokemon sprite - Fix URL construction
+            if self.selected_pokemon.frontSpriteURL:
+                # Check if it's already a full URL or just a path
+                if self.selected_pokemon.frontSpriteURL.startswith('http'):
+                    sprite_url = self.selected_pokemon.frontSpriteURL
+                else:
+                    # It's a path, prepend the base URL
+                    sprite_url = f"https://pokesprites.joshkohut.com{self.selected_pokemon.frontSpriteURL}"
+                
+                dm_embed.set_thumbnail(url=sprite_url)
             
             dm_message = await self.selected_member.send(embed=dm_embed)
-            
-            await interaction.followup.send(f"🔍 DEBUG: DM sent successfully! Message ID: {dm_message.id}")
             
             # Store message ID for potential editing later
             self.mixin.trade_service.update_notification_message_id(trade_id, str(dm_message.id))
             
         except discord.Forbidden:
             await interaction.followup.send(
-                f"🔍 DEBUG: DM Failed - User has DMs disabled\n"
                 f"Trade request sent, but {self.selected_member.display_name} has DMs disabled. They'll see it when they visit a PC."
             )
         except Exception as e:
-            await interaction.followup.send(f"🔍 DEBUG: DM Failed with exception: {str(e)}")
+            await interaction.followup.send(f"Error sending DM: {str(e)}\nTrade still created - they'll see it at a PC.")
         
         # Confirm to sender
         await interaction.followup.send(
