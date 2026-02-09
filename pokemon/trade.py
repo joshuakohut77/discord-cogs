@@ -276,10 +276,13 @@ class TradeMixin(MixinMeta):
         
         # Send DMs to both users
         try:
+            import os
+            from helpers.pathhelpers import get_sprite_path
+            
             sender = await self.bot.fetch_user(int(trade['sender_discord_id']))
             receiver = await self.bot.fetch_user(int(trade['receiver_discord_id']))
             
-            # DM to sender
+            # DM to sender with sprite of Pokemon they received
             sender_embed = discord.Embed(
                 title="✅ Trade Complete!",
                 description=f"Your trade with **{receiver.display_name}** is complete!",
@@ -293,9 +296,25 @@ class TradeMixin(MixinMeta):
             if "evolved" in retVal1.lower():
                 sender_embed.add_field(name="Bonus!", value=retVal1, inline=False)
             
-            await sender.send(embed=sender_embed)
+            # Add sprite of Pokemon sender received
+            sender_sprite_file = None
+            try:
+                sprite_path = f"/sprites/pokemon/{trade['receiver_pokemon_name']}.png"
+                full_sprite_path = get_sprite_path(sprite_path)
+                
+                if os.path.exists(full_sprite_path):
+                    filename = f"{trade['receiver_pokemon_name']}.png"
+                    sender_sprite_file = discord.File(full_sprite_path, filename=filename)
+                    sender_embed.set_thumbnail(url=f"attachment://{filename}")
+            except Exception as e:
+                pass
             
-            # DM to receiver
+            if sender_sprite_file:
+                await sender.send(embed=sender_embed, file=sender_sprite_file)
+            else:
+                await sender.send(embed=sender_embed)
+            
+            # DM to receiver with sprite of Pokemon they received
             receiver_embed = discord.Embed(
                 title="✅ Trade Complete!",
                 description=f"Your trade with **{sender.display_name}** is complete!",
@@ -309,7 +328,23 @@ class TradeMixin(MixinMeta):
             if "evolved" in retVal2.lower():
                 receiver_embed.add_field(name="Bonus!", value=retVal2, inline=False)
             
-            await receiver.send(embed=receiver_embed)
+            # Add sprite of Pokemon receiver received
+            receiver_sprite_file = None
+            try:
+                sprite_path = f"/sprites/pokemon/{trade['sender_pokemon_name']}.png"
+                full_sprite_path = get_sprite_path(sprite_path)
+                
+                if os.path.exists(full_sprite_path):
+                    filename = f"{trade['sender_pokemon_name']}.png"
+                    receiver_sprite_file = discord.File(full_sprite_path, filename=filename)
+                    receiver_embed.set_thumbnail(url=f"attachment://{filename}")
+            except Exception as e:
+                pass
+            
+            if receiver_sprite_file:
+                await receiver.send(embed=receiver_embed, file=receiver_sprite_file)
+            else:
+                await receiver.send(embed=receiver_embed)
             
         except discord.Forbidden:
             pass  # User has DMs disabled
