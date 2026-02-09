@@ -6,6 +6,7 @@ import json
 import random
 from datetime import datetime
 
+from dbclass import db as dbconn
 from expclass import experiance as exp
 from inventoryclass import inventory as inv
 from leaderboardclass import leaderboard
@@ -47,28 +48,72 @@ class encounter:
         pokedex(self.pokemon1.discordId, pokemon2)
 
     def trade(self):
-        """ trades pokemon between two trainers """
+        """
+        Trades pokemon between two trainers.
+        Returns (retVal1, retVal2) - messages for each trainer.
+        retVal1 = message for the person RECEIVING pokemon1
+        retVal2 = message for the person RECEIVING pokemon2
+        
+        Also returns evolution info via self.trade_evolution_info dict:
+        {
+            'pokemon1_evolved': bool,
+            'pokemon1_original': str or None,
+            'pokemon1_evolved_into': str or None,
+            'pokemon2_evolved': bool,
+            'pokemon2_original': str or None,
+            'pokemon2_evolved_into': str or None,
+        }
+        """
         discordId1 = self.pokemon1.discordId
         discordId2 = self.pokemon2.discordId
         retVal1 = ""
         retVal2 = ""
         
-        # 4 pokemon evolve when traded Alakazam, Machamp, Golem, Gengar
+        # Track evolution info for the UI
+        self.trade_evolution_info = {
+            'pokemon1_evolved': False,
+            'pokemon1_original': None,
+            'pokemon1_evolved_into': None,
+            'pokemon2_evolved': False,
+            'pokemon2_original': None,
+            'pokemon2_evolved_into': None,
+        }
+        
+        # Check trade evolution for pokemon1
+        # pokemon1 is being sent FROM discordId1 TO discordId2
         evolvedPokemon = self.checkTradeEvolution(self.pokemon1)
         if evolvedPokemon is not None:
+            originalName = self.pokemon1.pokemonName
             self.pokemon1.release()
             self.pokemon1 = evolvedPokemon
-            retVal1 = "Your pokemon evolved, "
+            self.trade_evolution_info['pokemon1_evolved'] = True
+            self.trade_evolution_info['pokemon1_original'] = originalName
+            self.trade_evolution_info['pokemon1_evolved_into'] = evolvedPokemon.pokemonName
+            retVal1 = f"You traded for a {originalName.capitalize()}, but it evolved into {evolvedPokemon.pokemonName.capitalize()}! "
 
+        # Check trade evolution for pokemon2
+        # pokemon2 is being sent FROM discordId2 TO discordId1
         evolvedPokemon = self.checkTradeEvolution(self.pokemon2)
         if evolvedPokemon is not None:
+            originalName = self.pokemon2.pokemonName
             self.pokemon2.release()
             self.pokemon2 = evolvedPokemon
-            retVal2 = "Your pokemon evolved, "
+            self.trade_evolution_info['pokemon2_evolved'] = True
+            self.trade_evolution_info['pokemon2_original'] = originalName
+            self.trade_evolution_info['pokemon2_evolved_into'] = evolvedPokemon.pokemonName
+            retVal2 = f"You traded for a {originalName.capitalize()}, but it evolved into {evolvedPokemon.pokemonName.capitalize()}! "
         
-        retVal1 += "You received %s" %self.pokemon1.pokemonName
-        retVal2 += "You received %s" %self.pokemon2.pokemonName
+        if not self.trade_evolution_info['pokemon1_evolved']:
+            retVal1 += "You received %s" % self.pokemon1.pokemonName.capitalize()
+        else:
+            retVal1 += "You received %s" % self.pokemon1.pokemonName.capitalize()
+        
+        if not self.trade_evolution_info['pokemon2_evolved']:
+            retVal2 += "You received %s" % self.pokemon2.pokemonName.capitalize()
+        else:
+            retVal2 += "You received %s" % self.pokemon2.pokemonName.capitalize()
 
+        # Swap ownership
         self.pokemon1.discordId = discordId2
         self.pokemon2.discordId = discordId1
         self.pokemon1.traded = True
@@ -77,16 +122,28 @@ class encounter:
         self.pokemon1.save()
         self.pokemon2.save()
 
-        # leaderboard stats
-        lb = leaderboard(self.pokemon1.discordId)
-        lb.trades()  
+        # Leaderboard: trades for BOTH trainers
+        lb1 = leaderboard(discordId1)
+        lb1.trades()
+        lb2 = leaderboard(discordId2)
+        lb2.trades()
+
+        # Pokedex: register the pokemon each trainer is RECEIVING
+        # discordId2 receives pokemon1, discordId1 receives pokemon2
+        pokedex(discordId2, self.pokemon1)
+        pokedex(discordId1, self.pokemon2)
 
         return retVal1, retVal2
 
     def checkTradeEvolution(self, pokemon):
-        """ checks if a pokemon evolves during a trade and returns new pokemon if it does"""
-        tradedEvoList = ['kadabra', 'machoke', 'graveler', 'haunter']        
+        """
+        Checks if a pokemon evolves during a trade and returns new pokemon if it does.
+        Handles: party status, active pokemon, pokedex, leaderboard evolution stat.
+        Returns the evolved PokemonClass or None.
+        """
+        tradedEvoList = ['kadabra', 'machoke', 'graveler', 'haunter']
         evolvedPokemon = None
+        
         if pokemon.pokemonName in tradedEvoList:
             if pokemon.pokemonName == 'kadabra':
                 newPokemon = 'alakazam'
@@ -97,12 +154,51 @@ class encounter:
             elif pokemon.pokemonName == 'haunter':
                 newPokemon = 'gengar'
             
-            # ✅ FIX: Pass discordId as first argument
+            # Store old pokemon info before evolution
+            oldPartyStatus = pokemon.party
+            wasActivePokemon = False
+            try:
+                db = dbconn()
+                queryString = 'SELECT "activePokemon" FROM trainer WHERE "discord_id" = %(discordId)s'
+                result = db.querySingle(queryString, {'discordId': pokemon.discordId})
+                if result and result[0] == pokemon.trainerId:
+                    wasActivePokemon = True
+            except:
+                logger.error(excInfo=sys.exc_info())
+            finally:
+                del db
+            
+            # Create the evolved pokemon
             evolvedPokemon = PokemonClass(pokemon.discordId, newPokemon)
             evolvedPokemon.create(pokemon.currentLevel)
             
-            # ✅ FIX: Set party status based on whether the original pokemon was in party
-            evolvedPokemon.party = pokemon.party
+            # Set party status from original
+            evolvedPokemon.party = oldPartyStatus
+            
+            # Save to get its trainerId
+            evolvedPokemon.save()
+            
+            if evolvedPokemon.statuscode == 96:
+                logger.error("Error creating evolved trade Pokemon")
+                return None
+            
+            # If this was the active pokemon, update trainer's active pokemon
+            if wasActivePokemon:
+                try:
+                    db = dbconn()
+                    updateString = 'UPDATE trainer SET "activePokemon" = %(trainerId)s WHERE "discord_id" = %(discordId)s'
+                    db.execute(updateString, {'trainerId': evolvedPokemon.trainerId, 'discordId': pokemon.discordId})
+                except:
+                    logger.error(excInfo=sys.exc_info())
+                finally:
+                    del db
+            
+            # Register evolved form to Pokedex (owner is still original trainer at this point)
+            pokedex(pokemon.discordId, evolvedPokemon)
+            
+            # Leaderboard: evolution stat
+            lb = leaderboard(pokemon.discordId)
+            lb.evolved()
 
         return evolvedPokemon
 

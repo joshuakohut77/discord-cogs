@@ -275,18 +275,15 @@ class TradeMixin(MixinMeta):
         receiver_pokemon = PokemonClass(trade['receiver_discord_id'])
         receiver_pokemon.load(pokemonId=trade['receiver_pokemon_id'])
         
-        # Execute trade via EncounterClass (handles evolution, leaderboard, etc.)
+        # Execute trade via EncounterClass (handles evolution, pokedex, leaderboard)
         enc = EncounterClass(sender_pokemon, receiver_pokemon)
         retVal1, retVal2 = enc.trade()
         
-        # Register both Pokemon to their new owners' Pokedex
-        from services.pokedexclass import pokedex as PokedexClass
+        # Get evolution info from the encounter
+        evo_info = getattr(enc, 'trade_evolution_info', {})
         
-        # Sender receives receiver's Pokemon
-        PokedexClass(trade['sender_discord_id'], receiver_pokemon)
-        
-        # Receiver receives sender's Pokemon
-        PokedexClass(trade['receiver_discord_id'], sender_pokemon)
+        # NOTE: Pokedex registration is now handled inside enc.trade()
+        # so we no longer need to do it here
         
         # Mark trade as completed
         self.trade_service.complete_trade(trade_id)
@@ -299,28 +296,49 @@ class TradeMixin(MixinMeta):
             sender = await self.bot.fetch_user(int(trade['sender_discord_id']))
             receiver = await self.bot.fetch_user(int(trade['receiver_discord_id']))
             
-            # DM to sender with sprite of Pokemon they received
+            # ---- DM to SENDER ----
+            # Sender receives pokemon2 (the receiver's original pokemon)
+            # Check if pokemon2 evolved (that's what sender receives)
+            p2_evolved = evo_info.get('pokemon2_evolved', False)
+            p2_original = evo_info.get('pokemon2_original', None)
+            p2_evolved_into = evo_info.get('pokemon2_evolved_into', None)
+            
             sender_embed = discord.Embed(
                 title="✅ Trade Complete!",
                 description=f"Your trade with **{receiver.display_name}** is complete!",
                 color=discord.Color.green()
             )
-            sender_embed.add_field(
-                name="You Received",
-                value=f"**{trade['receiver_pokemon_name']}** (Level {trade['receiver_pokemon_level']})",
-                inline=False
-            )
-            if "evolved" in retVal1.lower():
-                sender_embed.add_field(name="Bonus!", value=retVal1, inline=False)
             
-            # Add sprite of Pokemon sender received
+            if p2_evolved:
+                # The pokemon they received evolved!
+                sender_embed.add_field(
+                    name="You Received",
+                    value=f"**{trade['receiver_pokemon_name'].capitalize()}** (Level {trade['receiver_pokemon_level']})",
+                    inline=False
+                )
+                sender_embed.add_field(
+                    name="✨ What's this?!",
+                    value=f"**{p2_original.capitalize()}** evolved into **{p2_evolved_into.capitalize()}**!",
+                    inline=False
+                )
+                # Use evolved pokemon's sprite
+                sprite_pokemon_name = p2_evolved_into
+            else:
+                sender_embed.add_field(
+                    name="You Received",
+                    value=f"**{trade['receiver_pokemon_name'].capitalize()}** (Level {trade['receiver_pokemon_level']})",
+                    inline=False
+                )
+                sprite_pokemon_name = trade['receiver_pokemon_name']
+            
+            # Add sprite
             sender_sprite_file = None
             try:
-                sprite_path = f"/sprites/pokemon/{trade['receiver_pokemon_name']}.png"
+                sprite_path = f"/sprites/pokemon/{sprite_pokemon_name}.png"
                 full_sprite_path = get_sprite_path(sprite_path)
                 
                 if os.path.exists(full_sprite_path):
-                    filename = f"{trade['receiver_pokemon_name']}.png"
+                    filename = f"{sprite_pokemon_name}.png"
                     sender_sprite_file = discord.File(full_sprite_path, filename=filename)
                     sender_embed.set_thumbnail(url=f"attachment://{filename}")
             except Exception as e:
@@ -331,28 +349,49 @@ class TradeMixin(MixinMeta):
             else:
                 await sender.send(embed=sender_embed)
             
-            # DM to receiver with sprite of Pokemon they received
+            # ---- DM to RECEIVER ----
+            # Receiver receives pokemon1 (the sender's original pokemon)
+            # Check if pokemon1 evolved (that's what receiver gets)
+            p1_evolved = evo_info.get('pokemon1_evolved', False)
+            p1_original = evo_info.get('pokemon1_original', None)
+            p1_evolved_into = evo_info.get('pokemon1_evolved_into', None)
+            
             receiver_embed = discord.Embed(
                 title="✅ Trade Complete!",
                 description=f"Your trade with **{sender.display_name}** is complete!",
                 color=discord.Color.green()
             )
-            receiver_embed.add_field(
-                name="You Received",
-                value=f"**{trade['sender_pokemon_name']}** (Level {trade['sender_pokemon_level']})",
-                inline=False
-            )
-            if "evolved" in retVal2.lower():
-                receiver_embed.add_field(name="Bonus!", value=retVal2, inline=False)
             
-            # Add sprite of Pokemon receiver received
+            if p1_evolved:
+                # The pokemon they received evolved!
+                receiver_embed.add_field(
+                    name="You Received",
+                    value=f"**{trade['sender_pokemon_name'].capitalize()}** (Level {trade['sender_pokemon_level']})",
+                    inline=False
+                )
+                receiver_embed.add_field(
+                    name="✨ What's this?!",
+                    value=f"**{p1_original.capitalize()}** evolved into **{p1_evolved_into.capitalize()}**!",
+                    inline=False
+                )
+                # Use evolved pokemon's sprite
+                sprite_pokemon_name = p1_evolved_into
+            else:
+                receiver_embed.add_field(
+                    name="You Received",
+                    value=f"**{trade['sender_pokemon_name'].capitalize()}** (Level {trade['sender_pokemon_level']})",
+                    inline=False
+                )
+                sprite_pokemon_name = trade['sender_pokemon_name']
+            
+            # Add sprite
             receiver_sprite_file = None
             try:
-                sprite_path = f"/sprites/pokemon/{trade['sender_pokemon_name']}.png"
+                sprite_path = f"/sprites/pokemon/{sprite_pokemon_name}.png"
                 full_sprite_path = get_sprite_path(sprite_path)
                 
                 if os.path.exists(full_sprite_path):
-                    filename = f"{trade['sender_pokemon_name']}.png"
+                    filename = f"{sprite_pokemon_name}.png"
                     receiver_sprite_file = discord.File(full_sprite_path, filename=filename)
                     receiver_embed.set_thumbnail(url=f"attachment://{filename}")
             except Exception as e:
