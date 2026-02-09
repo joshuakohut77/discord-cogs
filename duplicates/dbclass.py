@@ -1,5 +1,5 @@
 # database class
-
+import os
 import psycopg as pg
 from psycopg_pool import ConnectionPool
 from contextlib import contextmanager
@@ -18,14 +18,26 @@ class DatabasePool:
     def initialize(self):
         """Initialize the connection pool"""
         if self._pool is None:
+            # Build connection string from environment variables
+            host = os.getenv("DB_HOST", "postgres_container")
+            dbname = os.getenv("DB_NAME", "discord")
+            user = os.getenv("DB_USER", "redbot")
+            password = os.getenv("DB_PASSWORD")
+            port = os.getenv("DB_PORT", "5432")
+            
+            # Validate that password is set
+            if not password:
+                raise ValueError("DB_PASSWORD environment variable is required but not set")
+            
+            conninfo = f"host={host} dbname={dbname} user={user} password={password} port={port}"
+            
             self._pool = ConnectionPool(
-                conninfo="host=postgres_container dbname=discord user=redbot password=REDACTED port=5432",
+                conninfo=conninfo,
                 min_size=2,
                 max_size=10,
                 timeout=30,
                 open=True
             )
-    
     def close(self):
         """Close the connection pool"""
         if self._pool is not None:
