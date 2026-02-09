@@ -21,7 +21,7 @@ class DankDatabase:
     # Modify these values to match your database setup
     DB_CONFIG = {
         "host": "postgres_container",
-        "dbname": "discord",  # Change this to your desired database name
+        "dbname": "discord", 
         "user": "redbot",
         "password": "REDACTED",
         "port": 5432
@@ -124,9 +124,19 @@ class DankDatabase:
                     emoji TEXT NOT NULL,
                     reaction_count INTEGER NOT NULL,
                     hall_message_id BIGINT,
+                    hall_channel_id BIGINT,
                     certified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """)
+            
+            # Add hall_channel_id column if it doesn't exist (migration for existing tables)
+            try:
+                self._execute("""
+                    ALTER TABLE dank_certified_messages 
+                    ADD COLUMN IF NOT EXISTS hall_channel_id BIGINT
+                """)
+            except:
+                pass  # Column might already exist or ALTER not supported
             
             # Create indexes separately
             self._execute("""
@@ -137,6 +147,11 @@ class DankDatabase:
             self._execute("""
                 CREATE INDEX IF NOT EXISTS idx_guild_channel 
                 ON dank_certified_messages(guild_id, channel_id)
+            """)
+            
+            self._execute("""
+                CREATE INDEX IF NOT EXISTS idx_hall_channel 
+                ON dank_certified_messages(guild_id, hall_channel_id)
             """)
             
             print("Database tables created successfully", file=sys.stderr)
@@ -168,7 +183,8 @@ class DankDatabase:
         user_id: int,
         emoji: str,
         hall_message_id: int,
-        reaction_count: int
+        reaction_count: int,
+        hall_channel_id: int = None
     ) -> bool:
         """Add a newly certified message to the database."""
         if not self.conn:
@@ -178,10 +194,10 @@ class DankDatabase:
             self._execute(
                 """
                 INSERT INTO dank_certified_messages 
-                (message_id, guild_id, channel_id, user_id, emoji, hall_message_id, reaction_count)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                (message_id, guild_id, channel_id, user_id, emoji, hall_message_id, reaction_count, hall_channel_id)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """,
-                [message_id, guild_id, channel_id, user_id, emoji, hall_message_id, reaction_count]
+                [message_id, guild_id, channel_id, user_id, emoji, hall_message_id, reaction_count, hall_channel_id]
             )
             return True
         except Exception as e:
@@ -442,4 +458,38 @@ class DankDatabase:
             return None
         except Exception as e:
             print(f"Error getting random certification: {e}", file=sys.stderr)
+            return None
+    
+    async def get_random_certification_by_hall(self, guild_id: int, hall_channel_id: int) -> dict:
+        """Get a random certified message from a specific hall of fame channel."""
+        if not self.conn:
+            return None
+        
+        try:
+            result = self._query_one(
+                """
+                SELECT message_id, guild_id, channel_id, user_id, emoji, 
+                       hall_message_id, reaction_count, certified_at
+                FROM dank_certified_messages
+                WHERE guild_id = %s AND hall_channel_id = %s
+                ORDER BY RANDOM()
+                LIMIT 1
+                """,
+                [guild_id, hall_channel_id]
+            )
+            
+            if result:
+                return {
+                    "message_id": result[0],
+                    "guild_id": result[1],
+                    "channel_id": result[2],
+                    "user_id": result[3],
+                    "emoji": result[4],
+                    "hall_message_id": result[5],
+                    "reaction_count": result[6],
+                    "certified_at": result[7]
+                }
+            return None
+        except Exception as e:
+            print(f"Error getting random certification by hall: {e}", file=sys.stderr)
             return None

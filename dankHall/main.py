@@ -392,7 +392,8 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                 user_id=message.author.id,
                 emoji=emoji_id,
                 hall_message_id=hall_msg.id,
-                reaction_count=0  # Manual certification
+                reaction_count=0,  # Manual certification
+                hall_channel_id=hall_channel.id
             )
             
             await ctx.send(f"✅ Message manually certified and posted to {hall_channel.mention}!")
@@ -591,7 +592,8 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                 user_id=result["user_id"],
                 emoji=result["emoji"],
                 hall_message_id=message.id,
-                reaction_count=result["reaction_count"]
+                reaction_count=result["reaction_count"],
+                hall_channel_id=hall_channel.id
             )
             
             if success:
@@ -783,12 +785,20 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
 
     @dankhall.command(name="random")
     async def dh_random(self, ctx: commands.Context):
-        """Show a random certified dank post from this server."""
-        # Get a random certification from the database
-        random_cert = await self.db.get_random_certification(ctx.guild.id)
+        """Show a random certified dank post from the global hall of fame."""
+        # Get the default/global hall channel ID
+        guild_config = await self.config.guild(ctx.guild).all()
+        default_hall_id = guild_config["default_hall_channel"]
+        
+        if not default_hall_id:
+            await ctx.send("❌ No default hall of fame channel is configured.")
+            return
+        
+        # Get a random certification that was posted to the default hall
+        random_cert = await self.db.get_random_certification_by_hall(ctx.guild.id, default_hall_id)
         
         if not random_cert:
-            await ctx.send("No certifications yet in this server!")
+            await ctx.send("No certifications yet in the global hall of fame!")
             return
         
         # Try to fetch the original message to get all the content

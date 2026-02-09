@@ -18,6 +18,26 @@ class EventMixin(MixinMeta):
     
     __slots__: tuple = ()
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+import random
+
+if TYPE_CHECKING:
+    from redbot.core.bot import Red
+    from redbot.core import Config
+    from .database import DankDatabase
+
+import discord
+from redbot.core import commands
+
+from .abc import MixinMeta
+
+
+class EventMixin(MixinMeta):
+    """Handles Discord events for the Dank Hall cog."""
+    
+    __slots__: tuple = ()
+
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent) -> None:
         """
@@ -173,5 +193,6 @@ class EventMixin(MixinMeta):
                 user_id=message.author.id,
                 emoji=emoji_id,
                 hall_message_id=hall_msg.id,
-                reaction_count=matching_reaction.count
+                reaction_count=matching_reaction.count,
+                hall_channel_id=hall_channel.id
             )
