@@ -518,7 +518,7 @@ class quests:
                 self.keyitems.eevee_tail = True
                 self.message = dedent("""\
                                     You rummage through the room more carefully this time.
-                                    Hidden under the bed, you discover a soft, fluffy tail.
+                                    Hidden under your moms bed, you discover a soft, fluffy tail.
                                     It seems oddly familiar... You pocket it for later.""")
                 self.keyitems.save()
                 

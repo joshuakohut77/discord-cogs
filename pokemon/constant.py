@@ -225,7 +225,7 @@ MOONSTONE = '<:moonstone:974525917789560853>'
 # Special Items
 LINKCABLE = '<:linkingcord:979583753527631913>'
 GAMESHARK = '🎮'
-EEVEE_TAIL = '<eevee_tail:1470504255591809261>'
+EEVEE_TAIL = '<:eevee_tail:1470504255591809261>'
 
 # Key Item Emojis
 # Emoji Ids specific to ChodeEmojiMon2
