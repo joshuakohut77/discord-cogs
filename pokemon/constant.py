@@ -375,7 +375,8 @@ LOCATION_DISPLAY_NAMES = {
     "agatha-room": "Agatha's Room",
     "lance-room": "Lance's Room",
     "champion-room": 'Champion Room',
-    "underground-path-5-6": 'Underground Path'
+    "underground-path-5-6": 'Underground Path',
+    "ash-house": 'Ash\'s House'
 }
 
 # Battle Constants
