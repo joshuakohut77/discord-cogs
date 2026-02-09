@@ -468,7 +468,6 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                         result = await self._parse_hall_embed(message, embed)
                         
                         if not result:
-                            print(f"ERROR: Failed to parse hall message {message.id}", file=sys.stderr)
                             errors += 1
                             continue
                         
@@ -477,33 +476,7 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                             skipped += 1
                             continue
                         
-                        # Try to fetch the original message to get current reaction count
-                        current_reaction_count = result["reaction_count"]  # Default from embed (usually 0 for old embeds)
-                        
-                        try:
-                            orig_channel = ctx.guild.get_channel(result["channel_id"])
-                            if orig_channel:
-                                print(f"DEBUG: Fetching original message {result['message_id']} from channel {result['channel_id']}", file=sys.stderr)
-                                orig_message = await orig_channel.fetch_message(result["message_id"])
-                                
-                                # Find the highest reaction count on the message
-                                if orig_message.reactions:
-                                    max_count = max(reaction.count for reaction in orig_message.reactions)
-                                    current_reaction_count = max_count
-                                    print(f"DEBUG: Found max reaction count: {max_count}", file=sys.stderr)
-                                else:
-                                    print(f"DEBUG: Original message has no reactions", file=sys.stderr)
-                            else:
-                                print(f"DEBUG: Could not find channel {result['channel_id']}", file=sys.stderr)
-                        except (discord.NotFound, discord.Forbidden) as e:
-                            print(f"DEBUG: Could not fetch original message {result['message_id']}: {e}", file=sys.stderr)
-                        except Exception as e:
-                            print(f"DEBUG: Unexpected error fetching original message: {e}", file=sys.stderr)
-                        
-                        # Debug what we're about to insert
-                        print(f"DEBUG: Adding to DB - message_id={result['message_id']}, hall_channel_id={hall_channel.id}, reaction_count={current_reaction_count}", file=sys.stderr)
-                        
-                        # Add to database with the hall_channel.id we're scanning
+                        # Add to database
                         success = await self.db.add_certified_message(
                             message_id=result["message_id"],
                             guild_id=ctx.guild.id,
@@ -511,40 +484,33 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                             user_id=result["user_id"],
                             emoji=result["emoji"],
                             hall_message_id=message.id,
-                            reaction_count=current_reaction_count,
-                            hall_channel_id=hall_channel.id  # Use the hall channel parameter
+                            reaction_count=result["reaction_count"]
                         )
                         
                         if success:
                             added += 1
-                            print(f"DEBUG: Successfully added message {result['message_id']} to database", file=sys.stderr)
                         else:
                             errors += 1
-                            print(f"ERROR: Failed to add message {result['message_id']} to database", file=sys.stderr)
                     
                     except Exception as e:
-                        print(f"ERROR: Exception processing hall message {message.id}: {e}", file=sys.stderr)
-                        import traceback
-                        traceback.print_exc()
+                        print(f"Error parsing hall message {message.id}: {e}", file=sys.stderr)
                         errors += 1
                         continue
             
             except Exception as e:
                 await status_msg.edit(content=f"❌ Error during backfill: {e}")
-                import traceback
-                traceback.print_exc()
                 return
             
             # Send results
-            result_embed = discord.Embed(
+            embed = discord.Embed(
                 title="✅ Backfill Complete",
                 color=discord.Color.green()
             )
-            result_embed.add_field(name="Added to Database", value=str(added), inline=True)
-            result_embed.add_field(name="Already Existed", value=str(skipped), inline=True)
-            result_embed.add_field(name="Errors", value=str(errors), inline=True)
+            embed.add_field(name="Added to Database", value=str(added), inline=True)
+            embed.add_field(name="Already Existed", value=str(skipped), inline=True)
+            embed.add_field(name="Errors", value=str(errors), inline=True)
             
-            await status_msg.edit(content=None, embed=result_embed)
+            await status_msg.edit(content=None, embed=embed)
 
     @dankhall.command(name="register")
     async def dh_register(
@@ -834,35 +800,25 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
 
     @dankhall.command(name="random")
     async def dh_random(self, ctx: commands.Context):
-        """Show a random certified dank post from the global hall of fame."""
-        # Get the default/global hall channel ID
-        guild_config = await self.config.guild(ctx.guild).all()
-        default_hall_id = guild_config["default_hall_channel"]
-        
-        if not default_hall_id:
-            await ctx.send("❌ No default hall of fame channel is configured.")
-            return
-        
-        # Get a random certification that was posted to the default hall
-        random_cert = await self.db.get_random_certification_by_hall(ctx.guild.id, default_hall_id)
+        """Show a random certified dank post from any hall of fame."""
+        # Get a random certification from ANY hall
+        random_cert = await self.db.get_random_certification(ctx.guild.id)
         
         if not random_cert:
-            await ctx.send("No certifications yet in the global hall of fame!")
+            await ctx.send("No certifications yet in this server!")
             return
         
-        # Try to fetch the original message to get all the content
+        # Try to fetch the original message to get the link
         channel = ctx.guild.get_channel(random_cert["channel_id"])
-        original_message = None
         
-        if channel:
-            try:
-                original_message = await channel.fetch_message(random_cert["message_id"])
-            except (discord.NotFound, discord.Forbidden):
-                pass
-        
-        if not original_message:
-            await ctx.send("❌ Could not find the original message. It may have been deleted.")
+        if not channel:
+            await ctx.send("❌ Could not find the channel for this certification.")
             return
+        
+        # Get user info
+        user = ctx.guild.get_member(random_cert["user_id"])
+        user_name = user.display_name if user else f"User {random_cert['user_id']}"
+        user_avatar = user.display_avatar.url if user else None
         
         # Create the hall of fame style embed
         embed = discord.Embed(
@@ -871,14 +827,14 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
             timestamp=random_cert["certified_at"]
         )
         
-        embed.set_author(
-            name=original_message.author.display_name,
-            icon_url=original_message.author.display_avatar.url
-        )
+        if user_avatar:
+            embed.set_author(name=user_name, icon_url=user_avatar)
+        else:
+            embed.set_author(name=user_name)
         
         embed.add_field(
             name="Channel",
-            value=channel.mention if channel else f"Channel {random_cert['channel_id']}",
+            value=channel.mention,
             inline=True
         )
         
@@ -894,37 +850,19 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
             inline=True
         )
         
+        # Create the jump link
+        message_link = f"https://discord.com/channels/{ctx.guild.id}/{random_cert['channel_id']}/{random_cert['message_id']}"
+        
         embed.add_field(
             name="Jump to Message",
-            value=f"[Click here]({original_message.jump_url})",
+            value=f"[Click here]({message_link})",
             inline=False
         )
         
-        # Add message content if available
-        if original_message.content:
-            content = original_message.content[:1024]
-            if len(original_message.content) > 1024:
-                content += "..."
-            embed.add_field(
-                name="Content",
-                value=content,
-                inline=False
-            )
+        embed.set_footer(text="Content hidden - click the link to view if you have access")
         
-        # Send the embed first
+        # Send only the embed, no content
         await ctx.send(embed=embed)
-        
-        # Then post the media separately (just like in the hall of fame)
-        if original_message.attachments:
-            # Post all attachments
-            for attachment in original_message.attachments:
-                await ctx.send(attachment.url)
-        
-        elif original_message.embeds:
-            # If the original message had an embed (like a link preview), send that URL
-            orig_embed = original_message.embeds[0]
-            if orig_embed.url:
-                await ctx.send(orig_embed.url)
 
     # ==================== Helper Methods ====================
 
@@ -1039,23 +977,17 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         Returns dict with: message_id, channel_id, user_id, emoji, reaction_count
         """
         try:
-            # DEBUG: Print all fields to see what we're working with
-            print(f"\n========== PARSING EMBED {hall_message.id} ==========", file=sys.stderr)
-            for field in embed.fields:
-                print(f"  Field: '{field.name}' = '{field.value[:100] if field.value else 'None'}'", file=sys.stderr)
-            print("=" * 50, file=sys.stderr)
-            
             # Extract user ID from embed author icon URL
             user_id = None
             if embed.author and embed.author.icon_url:
+                # Icon URL format: https://cdn.discordapp.com/avatars/USER_ID/hash.png
+                # Try to extract user ID from the URL
                 icon_url = str(embed.author.icon_url)
-                print(f"DEBUG: Author icon URL: {icon_url}", file=sys.stderr)
                 
                 # Pattern 1: Custom avatar - /avatars/USER_ID/hash.png
                 match = re.search(r'/avatars/(\d+)/', icon_url)
                 if match:
                     user_id = int(match.group(1))
-                    print(f"DEBUG: Extracted user_id from URL: {user_id}", file=sys.stderr)
                 
                 # Pattern 2: If that fails, try embed-/avatars/USER_ID/hash
                 if not user_id:
@@ -1063,7 +995,6 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                     if match:
                         try:
                             user_id = int(match.group(1))
-                            print(f"DEBUG: Extracted user_id (pattern 2): {user_id}", file=sys.stderr)
                         except ValueError:
                             pass
             
@@ -1085,7 +1016,6 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                     channel_match = re.search(r'<#(\d+)>', field.value)
                     if channel_match:
                         channel_id = int(channel_match.group(1))
-                        print(f"DEBUG: Extracted channel_id: {channel_id}", file=sys.stderr)
                     else:
                         # Format 2: Plain channel name (fallback, won't work but let's try)
                         # We'll try to extract from the message URL later
@@ -1094,20 +1024,16 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                 # Emoji field
                 if field.name == "Emoji" and field.value:
                     emoji = field.value.strip()
-                    print(f"DEBUG: Found emoji: {emoji}", file=sys.stderr)
                 
                 # Reactions field
                 if field.name == "Reactions" and field.value:
                     try:
                         reaction_count = int(field.value) if field.value != "Manual" else 0
-                        print(f"DEBUG: Reaction count from embed: {reaction_count}", file=sys.stderr)
                     except ValueError:
                         reaction_count = 0
                 
                 # Jump to Message / Content field contains the original message link
-                # Check BOTH fields since older embeds might use "Content"
                 if field.name in ["Jump to Message", "Content"] and field.value:
-                    print(f"DEBUG: Checking field '{field.name}' for message link", file=sys.stderr)
                     # Extract full URL from markdown link or plain URL
                     # Format: [Click here](URL) or just URL
                     url_match = re.search(r'https://(?:discord\.com|discordapp\.com)/channels/(\d+)/(\d+)/(\d+)', field.value)
@@ -1118,40 +1044,35 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                         url_channel_id = int(url_match.group(2))
                         message_id = int(url_match.group(3))
                         
-                        print(f"DEBUG: Found message link - guild:{guild_id}, channel:{url_channel_id}, message:{message_id}", file=sys.stderr)
-                        
                         # Use channel_id from URL if we didn't get it from Channel field
                         if not channel_id:
                             channel_id = url_channel_id
-                            print(f"DEBUG: Using channel_id from URL: {channel_id}", file=sys.stderr)
+                        
+                        print(f"DEBUG: Found message link - guild:{guild_id}, channel:{url_channel_id}, message:{message_id}", file=sys.stderr)
             
             # If we still don't have channel_id but have message_url, try one more time
             if not channel_id and message_url:
                 url_match = re.search(r'/channels/\d+/(\d+)/\d+', message_url)
                 if url_match:
                     channel_id = int(url_match.group(1))
-                    print(f"DEBUG: Extracted channel_id from URL (fallback): {channel_id}", file=sys.stderr)
             
             # If we don't have user_id, try to fetch the original message to get it
             if not user_id and message_id and channel_id:
-                print(f"DEBUG: Attempting to fetch original message to get user_id", file=sys.stderr)
                 try:
                     channel = hall_message.guild.get_channel(channel_id)
                     if channel:
                         original_msg = await channel.fetch_message(message_id)
                         user_id = original_msg.author.id
-                        print(f"DEBUG: Fetched user_id from original message: {user_id}", file=sys.stderr)
-                    else:
-                        print(f"DEBUG: Could not find channel {channel_id}", file=sys.stderr)
-                except Exception as e:
-                    print(f"DEBUG: Failed to fetch original message: {e}", file=sys.stderr)
+                except:
+                    pass  # If we can't fetch, we'll fail validation below
             
             # Validate we got all required data
             if not all([user_id, channel_id, emoji, message_id]):
-                print(f"ERROR: Missing data - user_id: {user_id}, channel_id: {channel_id}, emoji: {emoji}, message_id: {message_id}", file=sys.stderr)
+                print(f"Missing data - user_id: {user_id}, channel_id: {channel_id}, emoji: {emoji}, message_id: {message_id}", file=sys.stderr)
+                print(f"Embed fields: {[(f.name, f.value) for f in embed.fields]}", file=sys.stderr)
+                if embed.author:
+                    print(f"Author icon URL: {embed.author.icon_url}", file=sys.stderr)
                 return None
-            
-            print(f"DEBUG: Successfully parsed - message_id: {message_id}, channel_id: {channel_id}, user_id: {user_id}, emoji: {emoji}", file=sys.stderr)
             
             return {
                 "message_id": message_id,
@@ -1162,7 +1083,7 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
             }
         
         except Exception as e:
-            print(f"ERROR parsing embed: {e}", file=sys.stderr)
+            print(f"Error parsing embed: {e}", file=sys.stderr)
             import traceback
             traceback.print_exc()
             return None
