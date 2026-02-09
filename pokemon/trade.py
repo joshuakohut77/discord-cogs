@@ -509,7 +509,6 @@ class TradeInitiateView(View):
             self.selected_pokemon.trainerId
         )
         
-        # Check for error and show details
         if not trade_id:
             error_msg = f"Failed to create trade request.\nError: {self.mixin.trade_service.message}\nStatus: {self.mixin.trade_service.statuscode}"
             await interaction.followup.send(error_msg)
@@ -564,6 +563,17 @@ class TradeInitiateView(View):
         )
         
         # Disable all controls
+        for item in self.children:
+            item.disabled = True
+        await interaction.message.edit(view=self)
+    
+    async def cancel(self, interaction: Interaction):
+        if interaction.user.id != self.user.id:
+            await interaction.response.send_message("This is not for you.", ephemeral=True)
+            return
+        
+        await interaction.response.send_message("Trade cancelled.")
+        
         for item in self.children:
             item.disabled = True
         await interaction.message.edit(view=self)
