@@ -1005,17 +1005,23 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         Returns dict with: message_id, channel_id, user_id, emoji, reaction_count
         """
         try:
+            # DEBUG: Print all fields to see what we're working with
+            print(f"\n========== PARSING EMBED {hall_message.id} ==========", file=sys.stderr)
+            for field in embed.fields:
+                print(f"  Field: '{field.name}' = '{field.value[:100] if field.value else 'None'}'", file=sys.stderr)
+            print("=" * 50, file=sys.stderr)
+            
             # Extract user ID from embed author icon URL
             user_id = None
             if embed.author and embed.author.icon_url:
-                # Icon URL format: https://cdn.discordapp.com/avatars/USER_ID/hash.png
-                # Try to extract user ID from the URL
                 icon_url = str(embed.author.icon_url)
+                print(f"DEBUG: Author icon URL: {icon_url}", file=sys.stderr)
                 
                 # Pattern 1: Custom avatar - /avatars/USER_ID/hash.png
                 match = re.search(r'/avatars/(\d+)/', icon_url)
                 if match:
                     user_id = int(match.group(1))
+                    print(f"DEBUG: Extracted user_id from URL: {user_id}", file=sys.stderr)
                 
                 # Pattern 2: If that fails, try embed-/avatars/USER_ID/hash
                 if not user_id:
@@ -1023,6 +1029,7 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                     if match:
                         try:
                             user_id = int(match.group(1))
+                            print(f"DEBUG: Extracted user_id (pattern 2): {user_id}", file=sys.stderr)
                         except ValueError:
                             pass
             
@@ -1044,6 +1051,7 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                     channel_match = re.search(r'<#(\d+)>', field.value)
                     if channel_match:
                         channel_id = int(channel_match.group(1))
+                        print(f"DEBUG: Extracted channel_id: {channel_id}", file=sys.stderr)
                     else:
                         # Format 2: Plain channel name (fallback, won't work but let's try)
                         # We'll try to extract from the message URL later
@@ -1052,16 +1060,20 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                 # Emoji field
                 if field.name == "Emoji" and field.value:
                     emoji = field.value.strip()
+                    print(f"DEBUG: Found emoji: {emoji}", file=sys.stderr)
                 
                 # Reactions field
                 if field.name == "Reactions" and field.value:
                     try:
                         reaction_count = int(field.value) if field.value != "Manual" else 0
+                        print(f"DEBUG: Reaction count from embed: {reaction_count}", file=sys.stderr)
                     except ValueError:
                         reaction_count = 0
                 
                 # Jump to Message / Content field contains the original message link
+                # Check BOTH fields since older embeds might use "Content"
                 if field.name in ["Jump to Message", "Content"] and field.value:
+                    print(f"DEBUG: Checking field '{field.name}' for message link", file=sys.stderr)
                     # Extract full URL from markdown link or plain URL
                     # Format: [Click here](URL) or just URL
                     url_match = re.search(r'https://(?:discord\.com|discordapp\.com)/channels/(\d+)/(\d+)/(\d+)', field.value)
@@ -1072,35 +1084,40 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                         url_channel_id = int(url_match.group(2))
                         message_id = int(url_match.group(3))
                         
+                        print(f"DEBUG: Found message link - guild:{guild_id}, channel:{url_channel_id}, message:{message_id}", file=sys.stderr)
+                        
                         # Use channel_id from URL if we didn't get it from Channel field
                         if not channel_id:
                             channel_id = url_channel_id
-                        
-                        print(f"DEBUG: Found message link - guild:{guild_id}, channel:{url_channel_id}, message:{message_id}", file=sys.stderr)
+                            print(f"DEBUG: Using channel_id from URL: {channel_id}", file=sys.stderr)
             
             # If we still don't have channel_id but have message_url, try one more time
             if not channel_id and message_url:
                 url_match = re.search(r'/channels/\d+/(\d+)/\d+', message_url)
                 if url_match:
                     channel_id = int(url_match.group(1))
+                    print(f"DEBUG: Extracted channel_id from URL (fallback): {channel_id}", file=sys.stderr)
             
             # If we don't have user_id, try to fetch the original message to get it
             if not user_id and message_id and channel_id:
+                print(f"DEBUG: Attempting to fetch original message to get user_id", file=sys.stderr)
                 try:
                     channel = hall_message.guild.get_channel(channel_id)
                     if channel:
                         original_msg = await channel.fetch_message(message_id)
                         user_id = original_msg.author.id
-                except:
-                    pass  # If we can't fetch, we'll fail validation below
+                        print(f"DEBUG: Fetched user_id from original message: {user_id}", file=sys.stderr)
+                    else:
+                        print(f"DEBUG: Could not find channel {channel_id}", file=sys.stderr)
+                except Exception as e:
+                    print(f"DEBUG: Failed to fetch original message: {e}", file=sys.stderr)
             
             # Validate we got all required data
             if not all([user_id, channel_id, emoji, message_id]):
-                print(f"Missing data - user_id: {user_id}, channel_id: {channel_id}, emoji: {emoji}, message_id: {message_id}", file=sys.stderr)
-                print(f"Embed fields: {[(f.name, f.value) for f in embed.fields]}", file=sys.stderr)
-                if embed.author:
-                    print(f"Author icon URL: {embed.author.icon_url}", file=sys.stderr)
+                print(f"ERROR: Missing data - user_id: {user_id}, channel_id: {channel_id}, emoji: {emoji}, message_id: {message_id}", file=sys.stderr)
                 return None
+            
+            print(f"DEBUG: Successfully parsed - message_id: {message_id}, channel_id: {channel_id}, user_id: {user_id}, emoji: {emoji}", file=sys.stderr)
             
             return {
                 "message_id": message_id,
@@ -1111,7 +1128,7 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
             }
         
         except Exception as e:
-            print(f"Error parsing embed: {e}", file=sys.stderr)
+            print(f"ERROR parsing embed: {e}", file=sys.stderr)
             import traceback
             traceback.print_exc()
             return None
