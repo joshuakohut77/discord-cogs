@@ -887,7 +887,7 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         embed = discord.Embed(
             title="🎲 Random Certified Dank",
             color=discord.Color.gold(),
-            timestamp=random_cert["certified_at"]
+            
         )
         
         if user_avatar:
