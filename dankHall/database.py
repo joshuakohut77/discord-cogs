@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import List, Tuple, Dict, Any
 from datetime import datetime
 import sys
+import os
 
 try:
     import psycopg as pg
@@ -20,11 +21,11 @@ class DankDatabase:
     # Database connection configuration
     # Modify these values to match your database setup
     DB_CONFIG = {
-        "host": "postgres_container",
-        "dbname": "discord",  
-        "user": "redbot",
-        "password": "REDACTED",
-        "port": 5432
+        "host": os.getenv("DB_HOST", "postgres_container"),
+        "dbname": os.getenv("DB_NAME", "discord"),
+        "user": os.getenv("DB_USER", "redbot"),
+        "password": os.getenv("DB_PASSWORD"),  # No default!
+        "port": int(os.getenv("DB_PORT", "5432"))
     }
     
     def __init__(self):
