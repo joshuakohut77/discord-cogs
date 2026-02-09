@@ -95,9 +95,6 @@ class AdminMixin(MixinMeta):
             # Register to Pokedex
             PokedexClass(str(user.id), pokemon)
             
-            # Track as a gifted/event Pokemon in leaderboard
-            lb = LeaderboardClass(str(user.id))
-            lb.completions()  # Counts as a special event completion
             
         except Exception as e:
             await ctx.send(f"❌ Error creating Pokemon: {str(e)}")

@@ -766,6 +766,7 @@ class quests:
                                 """)
             self.keyitems.save()
             self.inventory.save()
+        
         elif self.keyitems.elite_four:
             # Old code - determine which fossils were given
             gave_dome = not self.keyitems.dome_fossil
@@ -806,9 +807,6 @@ class quests:
                 # Register to Pokedex
                 pokedex(self.discordId, pokemon1)
                 
-                # Add leaderboard tracking
-                lb = LeaderboardClass(str(self.discordId))
-                lb.completions()
                 
                 received_pokemon.append(('Kabuto', "The scientists return your Dome Fossil... but it's not a fossil anymore!"))
             
@@ -835,9 +833,6 @@ class quests:
                 # Register to Pokedex
                 pokedex(self.discordId, pokemon2)
                 
-                # Add leaderboard tracking
-                lb = LeaderboardClass(str(self.discordId))
-                lb.completions()
                 
                 received_pokemon.append(('Omanyte', "The scientists return your Helix Fossil... but it's not a fossil anymore!"))
             
@@ -864,9 +859,6 @@ class quests:
                 # Register to Pokedex
                 pokedex(self.discordId, pokemon3)
                 
-                # Add leaderboard tracking
-                lb = LeaderboardClass(str(self.discordId))
-                lb.completions()
                 
                 received_pokemon.append(('Aerodactyl', "The scientists return your Old Amber... but it's not amber anymore!"))
             
