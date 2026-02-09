@@ -678,7 +678,8 @@ class TradeReceiverResponseView(View):
         self.trade_id = trade_id
         self.mixin = mixin
         self.showing_selection = False
-        self.pokemon = []  # ADD THIS LINE - store pokemon list
+        self.pokemon = []
+        self.selected_pokemon = None  # ADD THIS LINE
         
         # Accept button
         accept_button = Button(label="Accept & Choose Pokemon", style=ButtonStyle.green, custom_id="accept")
@@ -689,7 +690,7 @@ class TradeReceiverResponseView(View):
         decline_button = Button(label="Decline", style=ButtonStyle.red, custom_id="decline")
         decline_button.callback = self.decline_trade
         self.add_item(decline_button)
-    
+        
     async def accept_trade(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
             await interaction.response.send_message("This is not for you.", ephemeral=True)
