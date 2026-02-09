@@ -838,10 +838,6 @@ class TradeSenderAcceptView(View):
                 ephemeral=True
             )
         
-        # Disable all controls
-        for item in self.children:
-            item.disabled = True
-        await interaction.message.edit(view=self)
     
     async def decline_trade(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
