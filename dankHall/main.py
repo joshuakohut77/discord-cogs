@@ -847,26 +847,41 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
         await ctx.send(embed=embed)
 
     @dankhall.command(name="random")
-    async def dh_random(self, ctx: commands.Context):
-        """Show a random certified dank post from any hall of fame."""
-        # Get a random certification from ANY hall
-        random_cert = await self.db.get_random_certification(ctx.guild.id)
+    async def dh_random(self, ctx: commands.Context, reaction_count: int = None):
+        """
+        Show a random certified dank post from any hall of fame.
         
-        if not random_cert:
-            await ctx.send("No certifications yet in this server!")
-            return
-        
-        # Try to fetch the original message to get the link
-        channel = ctx.guild.get_channel(random_cert["channel_id"])
-        
-        if not channel:
-            await ctx.send("❌ Could not find the channel for this certification.")
-            return
+        Examples:
+        - `[p]dankhall random` - Get any random certified post
+        - `[p]dankhall random 9` - Get a random post with exactly 9 reactions
+        - `[p]dankhall random 5` - Get a random post with exactly 5 reactions
+        """
+        # Get a random certification, optionally filtered by reaction count
+        if reaction_count is not None:
+            if reaction_count < 0:
+                await ctx.send("❌ Reaction count must be 0 or greater.")
+                return
+            random_cert = await self.db.get_random_certification_with_count(ctx.guild.id, reaction_count)
+            if not random_cert:
+                await ctx.send(f"No certifications with exactly {reaction_count} reactions found!")
+                return
+        else:
+            random_cert = await self.db.get_random_certification(ctx.guild.id)
+            if not random_cert:
+                await ctx.send("No certifications yet in this server!")
+                return
         
         # Get user info
         user = ctx.guild.get_member(random_cert["user_id"])
         user_name = user.display_name if user else f"User {random_cert['user_id']}"
         user_avatar = user.display_avatar.url if user else None
+        
+        # Get channel info
+        channel = ctx.guild.get_channel(random_cert["channel_id"])
+        
+        if not channel:
+            await ctx.send("❌ Could not find the channel for this certification.")
+            return
         
         # Create the hall of fame style embed
         embed = discord.Embed(
@@ -1096,7 +1111,7 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                         if not channel_id:
                             channel_id = url_channel_id
                         
-                        
+                        print(f"DEBUG: Found message link - guild:{guild_id}, channel:{url_channel_id}, message:{message_id}", file=sys.stderr)
             
             # If we still don't have channel_id but have message_url, try one more time
             if not channel_id and message_url:

@@ -21,7 +21,7 @@ class DankDatabase:
     # Modify these values to match your database setup
     DB_CONFIG = {
         "host": "postgres_container",
-        "dbname": "discord", 
+        "dbname": "discord",  # Change this to your desired database name
         "user": "redbot",
         "password": "REDACTED",
         "port": 5432
@@ -426,6 +426,60 @@ class DankDatabase:
             print(f"Error getting total certifications: {e}", file=sys.stderr)
             return 0
     
+    async def get_god_tier_posts(self, guild_id: int) -> List[Dict[str, Any]]:
+        """
+        Get all posts with the highest reaction count (god tier).
+        
+        Returns: List of dicts with post details
+        """
+        if not self.conn:
+            return []
+        
+        try:
+            # First, get the highest reaction count
+            max_result = self._query_one(
+                """
+                SELECT MAX(reaction_count)
+                FROM dank_certified_messages
+                WHERE guild_id = %s
+                """,
+                [guild_id]
+            )
+            
+            if not max_result or max_result[0] is None:
+                return []
+            
+            max_count = max_result[0]
+            
+            # Now get all posts with that count
+            results = self._query_all(
+                """
+                SELECT message_id, channel_id, user_id, emoji, reaction_count, 
+                       hall_message_id, certified_at
+                FROM dank_certified_messages
+                WHERE guild_id = %s AND reaction_count = %s
+                ORDER BY certified_at DESC
+                """,
+                [guild_id, max_count]
+            )
+            
+            posts = []
+            for row in results:
+                posts.append({
+                    "message_id": row[0],
+                    "channel_id": row[1],
+                    "user_id": row[2],
+                    "emoji": row[3],
+                    "reaction_count": row[4],
+                    "hall_message_id": row[5],
+                    "certified_at": row[6]
+                })
+            
+            return posts
+        except Exception as e:
+            print(f"Error getting god tier posts: {e}", file=sys.stderr)
+            return []
+    
     async def get_random_certification(self, guild_id: int) -> dict:
         """Get a random certified message from the guild."""
         if not self.conn:
@@ -458,6 +512,40 @@ class DankDatabase:
             return None
         except Exception as e:
             print(f"Error getting random certification: {e}", file=sys.stderr)
+            return None
+    
+    async def get_random_certification_with_count(self, guild_id: int, reaction_count: int) -> dict:
+        """Get a random certified message with a specific reaction count."""
+        if not self.conn:
+            return None
+        
+        try:
+            result = self._query_one(
+                """
+                SELECT message_id, guild_id, channel_id, user_id, emoji, 
+                       hall_message_id, reaction_count, certified_at
+                FROM dank_certified_messages
+                WHERE guild_id = %s AND reaction_count = %s
+                ORDER BY RANDOM()
+                LIMIT 1
+                """,
+                [guild_id, reaction_count]
+            )
+            
+            if result:
+                return {
+                    "message_id": result[0],
+                    "guild_id": result[1],
+                    "channel_id": result[2],
+                    "user_id": result[3],
+                    "emoji": result[4],
+                    "hall_message_id": result[5],
+                    "reaction_count": result[6],
+                    "certified_at": result[7]
+                }
+            return None
+        except Exception as e:
+            print(f"Error getting random certification with count: {e}", file=sys.stderr)
             return None
     
     async def get_random_certification_by_hall(self, guild_id: int, hall_channel_id: int) -> dict:
