@@ -651,6 +651,7 @@ class TradeReceiverResponseView(View):
         self.trade_id = trade_id
         self.mixin = mixin
         self.showing_selection = False
+        self.pokemon = []  # ADD THIS LINE - store pokemon list
         
         # Accept button
         accept_button = Button(label="Accept & Choose Pokemon", style=ButtonStyle.green, custom_id="accept")
@@ -690,12 +691,13 @@ class TradeReceiverResponseView(View):
         # Show Pokemon selection
         self.clear_items()
         self.showing_selection = True
+        self.pokemon = tradeable_pokemon  # STORE THE LIST
         
         pokemon_options = [
             SelectOption(
                 label=f"{p.nickName or p.pokemonName} (Lv.{p.currentLevel})",
                 value=str(p.trainerId),
-                description=f"{p.pokemonName} - {p.type1}" + (f"/{p.type2}" if p.type2 else "")  # FIXED: type1 not type_1
+                description=f"{p.pokemonName} - {p.type1}" + (f"/{p.type2}" if p.type2 else "")
             )
             for p in tradeable_pokemon[:25]
         ]
@@ -717,29 +719,58 @@ class TradeReceiverResponseView(View):
             content="Select a Pokemon to offer in return:",
             view=self
         )
-
-
+    
     async def pokemon_selected(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
             await interaction.response.send_message("This is not for you.", ephemeral=True)
             return
         
-        selected_id = int(interaction.data['values'][0])
-        # Find the Pokemon in our list
-        for p in self.pokemon:
-            if p.trainerId == selected_id:
-                self.selected_pokemon = p
-                break
-        
-        # Enable send button if both selections made
-        if self.selected_member and self.selected_pokemon:
-            for item in self.children:
-                if item.custom_id == "send_request":
-                    item.disabled = False
-        
-        # IMPORTANT: Use defer to acknowledge the interaction without sending a message
         await interaction.response.defer()
-        await interaction.edit_original_response(view=self)
+        
+        selected_pokemon_id = int(interaction.data['values'][0])
+        
+        # Update trade with receiver's Pokemon
+        success = self.mixin.trade_service.update_receiver_pokemon(self.trade_id, selected_pokemon_id)
+        
+        if not success:
+            await interaction.followup.send("Failed to update trade request.", ephemeral=True)
+            return
+        
+        # Get trade details for notification
+        trade = self.mixin.trade_service.get_trade_by_id(self.trade_id)
+        
+        # Notify sender via DM
+        try:
+            sender = await self.mixin.bot.fetch_user(int(trade['sender_discord_id']))
+            
+            dm_embed = discord.Embed(
+                title="✉️ Trade Response Received!",
+                description=f"**{self.user.display_name}** has responded to your trade!",
+                color=discord.Color.green()
+            )
+            dm_embed.add_field(
+                name="Next Step",
+                value="Go to a PC and click **View Trade Response** to accept or decline!",
+                inline=False
+            )
+            
+            await sender.send(embed=dm_embed)
+            
+        except discord.Forbidden:
+            pass
+        except Exception as e:
+            print(f"Error sending response notification: {e}")
+        
+        # Confirm to receiver
+        await interaction.followup.send(
+            "✅ Your Pokemon has been selected! Waiting for the other trainer to accept.",
+            ephemeral=True
+        )
+        
+        # Disable all controls
+        for item in self.children:
+            item.disabled = True
+        await interaction.message.edit(view=self)
     
     async def decline_trade(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
@@ -756,7 +787,6 @@ class TradeReceiverResponseView(View):
         for item in self.children:
             item.disabled = True
         await interaction.message.edit(view=self)
-
 
 class TradeSenderAcceptView(View):
     """View for sender to accept/decline receiver's counter-offer"""
