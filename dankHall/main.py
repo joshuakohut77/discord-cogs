@@ -1048,7 +1048,7 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                         if not channel_id:
                             channel_id = url_channel_id
                         
-                        print(f"DEBUG: Found message link - guild:{guild_id}, channel:{url_channel_id}, message:{message_id}", file=sys.stderr)
+                        
             
             # If we still don't have channel_id but have message_url, try one more time
             if not channel_id and message_url:
