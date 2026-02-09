@@ -1936,7 +1936,9 @@ class EncountersMixin(MixinMeta):
             items.append(f'{constant.DOMEFOSSIL} **Dome Fossil**')
         if inv.helix_fossil:
             items.append(f'{constant.HELIXFOSSIL} **Helix Fossil**')
-        
+        if inv.game_shark:
+            items.append(f'{constant.GAMESHARK} **Game Shark**')
+
         items_text = "\n".join(items) if len(items) > 0 else "No key items yet."
         embed.add_field(name="Key Items", value=items_text, inline=False)
         
