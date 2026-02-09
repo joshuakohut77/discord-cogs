@@ -516,6 +516,9 @@ class TradeInitiateView(View):
         
         # Send DM to receiver
         try:
+            import os
+            from helpers.pathhelpers import get_sprite_path
+            
             pokemon_name = self.selected_pokemon.nickName or self.selected_pokemon.pokemonName
             
             dm_embed = discord.Embed(
@@ -541,11 +544,25 @@ class TradeInitiateView(View):
                 inline=False
             )
             
-            # Add Pokemon sprite using the URL pattern
-            sprite_url = f"https://pokesprites.joshkohut.com/sprites/pokemon/{self.selected_pokemon.pokemonName.lower()}.png"
-            dm_embed.set_thumbnail(url=sprite_url)
+            # Add Pokemon sprite as file attachment
+            sprite_file = None
+            try:
+                sprite_path = f"/sprites/pokemon/{self.selected_pokemon.pokemonName}.png"
+                full_sprite_path = get_sprite_path(sprite_path)
+                
+                if os.path.exists(full_sprite_path):
+                    filename = f"{self.selected_pokemon.pokemonName}.png"
+                    sprite_file = discord.File(full_sprite_path, filename=filename)
+                    dm_embed.set_image(url=f"attachment://{filename}")
+            except Exception as e:
+                # Sprite loading failed, continue without sprite
+                pass
             
-            dm_message = await self.selected_member.send(embed=dm_embed)
+            # Send DM with or without sprite
+            if sprite_file:
+                dm_message = await self.selected_member.send(embed=dm_embed, file=sprite_file)
+            else:
+                dm_message = await self.selected_member.send(embed=dm_embed)
             
             # Store message ID for potential editing later
             self.mixin.trade_service.update_notification_message_id(trade_id, str(dm_message.id))
@@ -566,7 +583,6 @@ class TradeInitiateView(View):
         for item in self.children:
             item.disabled = True
         await interaction.message.edit(view=self)
-
 
     async def cancel(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
