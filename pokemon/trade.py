@@ -541,16 +541,9 @@ class TradeInitiateView(View):
                 inline=False
             )
             
-            # Add Pokemon sprite - Fix URL construction
-            if self.selected_pokemon.frontSpriteURL:
-                # Check if it's already a full URL or just a path
-                if self.selected_pokemon.frontSpriteURL.startswith('http'):
-                    sprite_url = self.selected_pokemon.frontSpriteURL
-                else:
-                    # It's a path, prepend the base URL
-                    sprite_url = f"https://pokesprites.joshkohut.com{self.selected_pokemon.frontSpriteURL}"
-                
-                dm_embed.set_thumbnail(url=sprite_url)
+            # Add Pokemon sprite using the URL pattern
+            sprite_url = f"https://pokesprites.joshkohut.com/sprites/pokemon/{self.selected_pokemon.pokemonName.lower()}.png"
+            dm_embed.set_thumbnail(url=sprite_url)
             
             dm_message = await self.selected_member.send(embed=dm_embed)
             
@@ -573,6 +566,7 @@ class TradeInitiateView(View):
         for item in self.children:
             item.disabled = True
         await interaction.message.edit(view=self)
+
 
     async def cancel(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
