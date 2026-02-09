@@ -553,7 +553,7 @@ class TradeInitiateView(View):
                 if os.path.exists(full_sprite_path):
                     filename = f"{self.selected_pokemon.pokemonName}.png"
                     sprite_file = discord.File(full_sprite_path, filename=filename)
-                    dm_embed.set_image(url=f"attachment://{filename}")
+                    dm_embed.set_thumbnail(url=f"attachment://{filename}")
             except Exception as e:
                 # Sprite loading failed, continue without sprite
                 pass
