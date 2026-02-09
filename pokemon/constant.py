@@ -220,11 +220,11 @@ WATERSTONE = '<:waterstone:974525837921636393>'
 THUNDERSTONE = '<:thunderstone:974525867961221200>'
 LEAFSTONE = '<:leafstone:974525949590769715>'
 MOONSTONE = '<:moonstone:974525917789560853>'
-GAMESHARK = '🎮'
+
 
 # Special Items
 LINKCABLE = '<:linkingcord:979583753527631913>'
-
+GAMESHARK = '🎮'
 
 # Key Item Emojis
 # Emoji Ids specific to ChodeEmojiMon2
