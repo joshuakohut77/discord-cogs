@@ -922,8 +922,6 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
             inline=False
         )
         
-        embed.set_footer(text="Content hidden - click the link to view if you have access")
-        
         # Send only the embed, no content
         await ctx.send(embed=embed)
 
