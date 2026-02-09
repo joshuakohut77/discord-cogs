@@ -558,40 +558,17 @@ class TradeInitiateView(View):
         
         await interaction.response.defer()
         
-        await interaction.followup.send(
-            f"🔍 Step 1: About to call create_trade_request\n"
-            f"Sender: {self.user.id}\n"
-            f"Receiver: {self.selected_member.id}\n"
-            f"Pokemon trainerId: {self.selected_pokemon.trainerId}"
+        # Create trade request in database
+        trade_id = self.mixin.trade_service.create_trade_request(
+            str(self.user.id),
+            str(self.selected_member.id),
+            self.selected_pokemon.trainerId
         )
         
-        # Create trade request in database
-        try:
-            trade_id = self.mixin.trade_service.create_trade_request(
-                str(self.user.id),
-                str(self.selected_member.id),
-                self.selected_pokemon.trainerId
-            )
-            
-            await interaction.followup.send(
-                f"🔍 Step 2: create_trade_request completed\n"
-                f"Returned trade_id: {trade_id}\n"
-                f"Status code: {self.mixin.trade_service.statuscode}\n"
-                f"Message: {self.mixin.trade_service.message}"
-            )
-            
-        except Exception as e:
-            await interaction.followup.send(f"🔍 Exception in send_request: {str(e)}")
-            import traceback
-            await interaction.followup.send(f"🔍 Traceback: {traceback.format_exc()}")
-            return
-        
         if not trade_id:
-            error_msg = f"❌ Failed to create trade request.\n\nStatus: {self.mixin.trade_service.statuscode}\nError: {self.mixin.trade_service.message}"
+            error_msg = f"Failed to create trade request.\nError: {self.mixin.trade_service.message}"
             await interaction.followup.send(error_msg)
             return
-        
-        await interaction.followup.send(f"🔍 Step 3: Trade ID {trade_id} validated, attempting DM...")
         
         # Send DM to receiver
         try:
@@ -642,8 +619,6 @@ class TradeInitiateView(View):
                 dm_message = await self.selected_member.send(embed=dm_embed, file=sprite_file)
             else:
                 dm_message = await self.selected_member.send(embed=dm_embed)
-            
-            await interaction.followup.send(f"🔍 Step 4: DM sent successfully")
             
             # Store message ID for potential editing later
             self.mixin.trade_service.update_notification_message_id(trade_id, str(dm_message.id))
