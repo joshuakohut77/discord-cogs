@@ -385,14 +385,13 @@ class FinaleRenderer:
     def _remove_background(self, img: Image.Image) -> Image.Image:
         """Remove transparent/black background from sprite. Reused from imagegenclass."""
         rgba = img.convert("RGBA")
-        pixels = list(rgba.getdata())
-        new_data = []
-        for item in pixels:
-            if item[0] == 0 and item[1] == 0 and item[2] == 0 and item[3] == 0:
-                new_data.append((255, 255, 255, 0))
-            else:
-                new_data.append(item)
-        rgba.putdata(new_data)
+        pixel_data = rgba.load()
+        width, height = rgba.size
+        for y in range(height):
+            for x in range(width):
+                r, g, b, a = pixel_data[x, y]
+                if r == 0 and g == 0 and b == 0 and a == 0:
+                    pixel_data[x, y] = (255, 255, 255, 0)
         return rgba
 
     def _wrap_text(self, text: str, font, max_width: int) -> list:
