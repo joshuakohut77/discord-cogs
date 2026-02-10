@@ -479,16 +479,34 @@ class FinaleMixin(MixinMeta):
             player_poke.save()
             next_poke = bs.get_next_player_pokemon()
             if next_poke:
-                bs.battle_log = [
-                    f"Your {player_poke.pokemonName.capitalize()} fainted!",
-                    f"Go, {next_poke.pokemonName.capitalize()}!"
-                ]
+                # Show faint message (no buttons)
+                bs.battle_log = [f"Your {player_poke.pokemonName.capitalize()} fainted!"]
                 buf = engine.render_current()
                 file = discord.File(fp=buf, filename="battle.png")
                 embed = discord.Embed(color=discord.Color.red())
                 embed.set_image(url="attachment://battle.png")
-                view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
                 await self._safe_edit(msg, embed=embed, view=View(), attachments=[file])
+
+                await asyncio.sleep(3)
+
+                # Show new pokemon with buttons
+                bs.battle_log = [f"Go, {next_poke.pokemonName.capitalize()}!"]
+                for retry in range(3):
+                    try:
+                        buf = engine.render_current()
+                        file = discord.File(fp=buf, filename="battle.png")
+                        embed = discord.Embed(color=discord.Color.red())
+                        embed.set_image(url="attachment://battle.png")
+                        alive = sum(1 for p in bs.player_party if p.currentHP > 0)
+                        enemy_remaining = len(bs.enemy_team_data) - len(bs.defeated_enemies)
+                        embed.set_footer(text=f"Your team: {alive} alive | Enemy: {enemy_remaining} remaining | Turn {bs.turn_number}")
+                        view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
+                        await msg.edit(embed=embed, view=view, attachments=[file])
+                        break
+                    except Exception as e:
+                        print(f"[Finale] Switch-in edit failed (attempt {retry+1}): {e}")
+                        if retry < 2:
+                            await asyncio.sleep(1.5)
                 return
             else:
                 bs.battle_log = ["All your Pokemon have fainted!"]
