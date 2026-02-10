@@ -199,8 +199,10 @@ class FinaleMixin(MixinMeta):
         from helpers.pathhelpers import load_json_config
         try:
             moves_config = load_json_config('moves.json')
+            type_effectiveness = load_json_config('typeEffectiveness.json')
         except Exception:
             moves_config = {}
+            type_effectiveness = {}
 
         # getMoves() returns list of move name strings
         moves = player_poke.getMoves() if hasattr(player_poke, 'getMoves') else []
@@ -208,15 +210,18 @@ class FinaleMixin(MixinMeta):
             move_index = 0
 
         player_move_name = moves[move_index]
-        player_move_data = moves_config.get(player_move_name, {})
         display_name = player_move_name.replace('-', ' ').title()
 
         # --- Player attacks ---
-        p_damage, p_hit = calculate_battle_damage(player_poke, enemy_poke, player_move_data)
+        p_damage, p_hit = calculate_battle_damage(
+            player_poke, enemy_poke, player_move_name, moves_config, type_effectiveness
+        )
 
-        if p_hit:
+        if p_hit and p_damage > 0:
             enemy_poke.currentHP = max(0, enemy_poke.currentHP - p_damage)
             log_lines.append(f"Your {player_poke.pokemonName.capitalize()} used {display_name}! (-{p_damage} HP)")
+        elif p_hit:
+            log_lines.append(f"Your {player_poke.pokemonName.capitalize()} used {display_name}!")
         else:
             log_lines.append(f"Your {player_poke.pokemonName.capitalize()} used {display_name}... but it missed!")
 
@@ -225,14 +230,12 @@ class FinaleMixin(MixinMeta):
             bs.defeated_enemies.append(enemy_poke.pokemonName)
             log_lines.append(f"Enemy {enemy_poke.pokemonName.capitalize()} fainted!")
 
-            # Check for next enemy Pokemon
             next_data = bs.get_next_enemy()
             if next_data:
                 next_enemy = self._create_finale_enemy(next_data, user_id)
                 bs.enemy_pokemon = next_enemy
                 log_lines.append(f"{bs.enemy_name} sent out {next_enemy.pokemonName.capitalize()}!")
             else:
-                # Battle won!
                 bs.battle_log = log_lines
                 result = engine.end_battle(victory=True)
 
@@ -249,18 +252,20 @@ class FinaleMixin(MixinMeta):
         # --- Enemy attacks (if still alive) ---
         if enemy_poke.currentHP > 0:
             enemy_moves = enemy_poke.getMoves() if hasattr(enemy_poke, 'getMoves') else []
-            # Filter out None/empty moves
             enemy_moves = [m for m in enemy_moves if m and m.lower() != 'none']
             if enemy_moves:
                 import random
                 e_move_name = random.choice(enemy_moves)
-                e_move_data = moves_config.get(e_move_name, {})
                 e_display = e_move_name.replace('-', ' ').title()
-                e_damage, e_hit = calculate_battle_damage(enemy_poke, player_poke, e_move_data)
+                e_damage, e_hit = calculate_battle_damage(
+                    enemy_poke, player_poke, e_move_name, moves_config, type_effectiveness
+                )
 
-                if e_hit:
+                if e_hit and e_damage > 0:
                     player_poke.currentHP = max(0, player_poke.currentHP - e_damage)
                     log_lines.append(f"Enemy {enemy_poke.pokemonName.capitalize()} used {e_display}! (-{e_damage} HP)")
+                elif e_hit:
+                    log_lines.append(f"Enemy {enemy_poke.pokemonName.capitalize()} used {e_display}!")
                 else:
                     log_lines.append(f"Enemy {enemy_poke.pokemonName.capitalize()}'s {e_display} missed!")
 
@@ -337,12 +342,15 @@ class FinaleMixin(MixinMeta):
             enemy_moves = enemy_poke.getMoves() if hasattr(enemy_poke, 'getMoves') else []
             if enemy_moves:
                 import random
-                e_move = random.choice(enemy_moves)
-                e_damage, e_hit = calculate_battle_damage(enemy_poke, bs.player_pokemon, e_move)
-                e_move_name = e_move.get('name', e_move.get('moveName', 'Attack'))
+                e_move_name = random.choice(enemy_moves)
+                e_display = e_move_name.replace('-', ' ').title()
+                from helpers.pathhelpers import load_json_config
+                moves_config = load_json_config('moves.json')
+                type_effectiveness = load_json_config('typeEffectiveness.json')
+                e_damage, e_hit = calculate_battle_damage(enemy_poke, bs.player_pokemon, e_move_name, moves_config, type_effectiveness)
                 if e_hit:
                     bs.player_pokemon.currentHP = max(0, bs.player_pokemon.currentHP - e_damage)
-                    bs.battle_log.append(f"Enemy {enemy_poke.pokemonName.capitalize()} used {e_move_name.capitalize()}! (-{e_damage} HP)")
+                    bs.battle_log.append(f"Enemy {enemy_poke.pokemonName.capitalize()} used {e_display}! (-{e_damage} HP)")
 
         bs.turn_number += 1
         await self._render_battle_frame(interaction, engine)
