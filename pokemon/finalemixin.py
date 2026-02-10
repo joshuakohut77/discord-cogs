@@ -50,6 +50,23 @@ class FinaleMixin(MixinMeta):
             self.__finale_pokemon_config = load_finale_pokemon_config()
         return self.__finale_pokemon_config
 
+
+    async def _safe_edit(self, message: discord.Message, **kwargs) -> bool:
+        """Edit a message with retry logic for transient Discord errors."""
+        for attempt in range(3):
+            try:
+                await message.edit(**kwargs)
+                return True
+            except discord.DiscordServerError:
+                if attempt < 2:
+                    await asyncio.sleep(1 + attempt)
+                else:
+                    return False
+            except discord.NotFound:
+                return False
+            except Exception:
+                return False
+        return False
     # ------------------------------------------------------------------
     # Command
     # ------------------------------------------------------------------
@@ -383,7 +400,7 @@ class FinaleMixin(MixinMeta):
             file = discord.File(fp=buf, filename="battle.png")
             embed = discord.Embed(color=discord.Color.red())
             embed.set_image(url="attachment://battle.png")
-            await msg.edit(embed=embed, view=View(), attachments=[file])
+            await self._safe_edit(msg, embed=embed, view=View(), attachments=[file])
 
             await asyncio.sleep(3)
 
@@ -436,7 +453,7 @@ class FinaleMixin(MixinMeta):
         file = discord.File(fp=buf, filename="battle.png")
         embed = discord.Embed(color=discord.Color.red())
         embed.set_image(url="attachment://battle.png")
-        await msg.edit(embed=embed, view=View(), attachments=[file])
+        await self._safe_edit(msg, embed=embed, view=View(), attachments=[file])
 
         await asyncio.sleep(3)
 
@@ -447,8 +464,7 @@ class FinaleMixin(MixinMeta):
             file = discord.File(fp=buf, filename="battle.png")
             embed = discord.Embed(color=discord.Color.red())
             embed.set_image(url="attachment://battle.png")
-            await msg.edit(embed=embed, view=View(), attachments=[file])
-
+            await self._safe_edit(msg, embed=embed, view=View(), attachments=[file])
             await asyncio.sleep(3)
 
         bs.turn_number += 1
@@ -467,7 +483,7 @@ class FinaleMixin(MixinMeta):
                 embed = discord.Embed(color=discord.Color.red())
                 embed.set_image(url="attachment://battle.png")
                 view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
-                await msg.edit(embed=embed, view=view, attachments=[file])
+                await self._safe_edit(msg, embed=embed, view=View(), attachments=[file])
                 return
             else:
                 bs.battle_log = ["All your Pokemon have fainted!"]
@@ -492,7 +508,7 @@ class FinaleMixin(MixinMeta):
         enemy_remaining = len(bs.enemy_team_data) - len(bs.defeated_enemies)
         embed.set_footer(text=f"Your team: {alive} alive | Enemy: {enemy_remaining} remaining | Turn {bs.turn_number}")
         view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
-        await msg.edit(embed=embed, view=view, attachments=[file])
+        await self._safe_edit(msg, embed=embed, view=View(), attachments=[file])
 
     # ------------------------------------------------------------------
     # Message-based rendering (for auto-advance, no interaction needed)
