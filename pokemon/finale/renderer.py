@@ -385,9 +385,9 @@ class FinaleRenderer:
     def _remove_background(self, img: Image.Image) -> Image.Image:
         """Remove transparent/black background from sprite. Reused from imagegenclass."""
         rgba = img.convert("RGBA")
-        datas = rgba.getdata()
+        pixels = list(rgba.getdata())
         new_data = []
-        for item in datas:
+        for item in pixels:
             if item[0] == 0 and item[1] == 0 and item[2] == 0 and item[3] == 0:
                 new_data.append((255, 255, 255, 0))
             else:

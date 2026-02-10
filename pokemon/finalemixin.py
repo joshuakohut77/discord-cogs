@@ -11,6 +11,7 @@ from typing import Dict, Union, TYPE_CHECKING
 
 import discord
 from discord import Interaction
+from discord.ui import View
 from redbot.core import commands
 
 from .abcd import MixinMeta
@@ -136,7 +137,7 @@ class FinaleMixin(MixinMeta):
         else:
             view = FinaleDialogView(engine, self._on_dialog_advance)
 
-        await interaction.edit_original_response(embed=embed, view=view, attachments=[file])
+        await interaction.message.edit(embed=embed, view=view, attachments=[file])
 
     async def _render_battle_frame(self, interaction: Interaction, engine: FinaleEngine):
         """Render battle state and show move buttons."""
@@ -153,7 +154,7 @@ class FinaleMixin(MixinMeta):
             embed.set_footer(text=f"Your team: {alive} alive | Enemy: {enemy_remaining} remaining | Turn {bs.turn_number}")
 
         view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
-        await interaction.edit_original_response(embed=embed, view=view, attachments=[file])
+        await interaction.message.edit(embed=embed, view=view, attachments=[file])
 
     # ------------------------------------------------------------------
     # Battle initialization
@@ -319,7 +320,7 @@ class FinaleMixin(MixinMeta):
         )
         embed.set_image(url="attachment://battle.png")
 
-        await interaction.edit_original_response(embed=embed, view=view, attachments=[file])
+        await interaction.message.edit(embed=embed, view=view, attachments=[file])
 
     async def _on_switch_confirm(self, interaction: Interaction, party_index: int):
         """Confirm Pokemon switch during finale battle."""
@@ -386,7 +387,7 @@ class FinaleMixin(MixinMeta):
             retry_callback=self._on_retry,
             quit_callback=self._on_quit
         )
-        await interaction.edit_original_response(embed=embed, view=view, attachments=[file])
+        await interaction.message.edit(embed=embed, view=view, attachments=[file])
 
     async def _handle_finale_complete(self, interaction: Interaction, engine: FinaleEngine):
         """Handle the finale being completed successfully."""
@@ -425,7 +426,7 @@ class FinaleMixin(MixinMeta):
 
         # Disable all buttons
         view = View()
-        await interaction.edit_original_response(embed=embed, view=view, attachments=[file])
+        await interaction.message.edit(embed=embed, view=view, attachments=[file])
 
     async def _on_retry(self, interaction: Interaction):
         """Retry the finale from the beginning."""
@@ -454,7 +455,7 @@ class FinaleMixin(MixinMeta):
             file = discord.File(fp=buf, filename="scene.png")
             embed = discord.Embed(color=discord.Color.dark_red())
             embed.set_image(url="attachment://scene.png")
-            await interaction.edit_original_response(embed=embed, view=View(), attachments=[file])
+            await interaction.message.edit(embed=embed, view=view, attachments=[file])
             return
 
         script = get_finale_script()
@@ -469,7 +470,7 @@ class FinaleMixin(MixinMeta):
         embed.set_footer(text=f"{interaction.user.display_name}'s Finale")
 
         view = FinaleDialogView(engine, self._on_dialog_advance)
-        await interaction.edit_original_response(embed=embed, view=view, attachments=[file])
+        await interaction.message.edit(embed=embed, view=View(), attachments=[file])
 
     async def _on_quit(self, interaction: Interaction):
         """Quit the finale."""
@@ -482,4 +483,4 @@ class FinaleMixin(MixinMeta):
             description="You can return anytime with `,finale`",
             color=discord.Color.greyple()
         )
-        await interaction.edit_original_response(embed=embed, view=View(), attachments=[])
+        await interaction.message.edit(embed=embed, view=View(), attachments=[])
