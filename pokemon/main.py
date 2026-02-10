@@ -27,6 +27,7 @@ from .pokedex import PokedexMixin
 from .trade import TradeMixin
 from .leaderboard import LeaderboardMixin
 from .admin import AdminMixin
+from .finale import FinaleMixin
 
 # Things left to do
 # one state mapping instead of multiple
@@ -63,7 +64,7 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class Pokemon(StarterMixin, PokemartMixin, TradeMixin, AdminMixin, TrainerCardMixin, EncountersMixin, PokedexMixin, LeaderboardMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
+class Pokemon(FinaleMixin, StarterMixin, PokemartMixin, TradeMixin, AdminMixin, TrainerCardMixin, EncountersMixin, PokedexMixin, LeaderboardMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):
