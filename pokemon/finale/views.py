@@ -68,13 +68,23 @@ class FinaleBattleView(View):
         pokemon = engine.battle_state.player_pokemon
         moves = pokemon.getMoves() if hasattr(pokemon, 'getMoves') else []
 
-        # Add move buttons (up to 4)
-        for i, move in enumerate(moves[:4]):
-            move_name = move.get('name', move.get('moveName', f'Move {i+1}'))
-            move_type = move.get('type', 'normal')
+        # Load move config for display info
+        try:
+            from helpers.pathhelpers import load_json_config
+            moves_config = load_json_config('moves.json')
+        except Exception:
+            moves_config = {}
+
+        # Add move buttons (up to 4) — getMoves() returns a list of move name strings
+        for i, move_name in enumerate(moves[:4]):
+            if not move_name or move_name.lower() == 'none':
+                continue
+            move_data = moves_config.get(move_name, {})
+            move_type = move_data.get('moveType', 'normal')
+            display_name = move_name.replace('-', ' ').title()
             btn = Button(
                 style=self._type_button_style(move_type),
-                label=move_name.capitalize(),
+                label=display_name,
                 custom_id=f"finale_move_{i}",
                 row=0 if i < 2 else 1
             )

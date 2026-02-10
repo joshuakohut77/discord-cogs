@@ -195,22 +195,30 @@ class FinaleMixin(MixinMeta):
         enemy_poke = bs.enemy_pokemon
         log_lines = []
 
-        # Get player's move
+        # Load move configs
+        from helpers.pathhelpers import load_json_config
+        try:
+            moves_config = load_json_config('moves.json')
+        except Exception:
+            moves_config = {}
+
+        # getMoves() returns list of move name strings
         moves = player_poke.getMoves() if hasattr(player_poke, 'getMoves') else []
         if move_index >= len(moves):
             move_index = 0
 
-        player_move = moves[move_index]
+        player_move_name = moves[move_index]
+        player_move_data = moves_config.get(player_move_name, {})
+        display_name = player_move_name.replace('-', ' ').title()
 
         # --- Player attacks ---
-        p_damage, p_hit = calculate_battle_damage(player_poke, enemy_poke, player_move)
-        move_name = player_move.get('name', player_move.get('moveName', 'Attack'))
+        p_damage, p_hit = calculate_battle_damage(player_poke, enemy_poke, player_move_data)
 
         if p_hit:
             enemy_poke.currentHP = max(0, enemy_poke.currentHP - p_damage)
-            log_lines.append(f"Your {player_poke.pokemonName.capitalize()} used {move_name.capitalize()}! (-{p_damage} HP)")
+            log_lines.append(f"Your {player_poke.pokemonName.capitalize()} used {display_name}! (-{p_damage} HP)")
         else:
-            log_lines.append(f"Your {player_poke.pokemonName.capitalize()} used {move_name.capitalize()}... but it missed!")
+            log_lines.append(f"Your {player_poke.pokemonName.capitalize()} used {display_name}... but it missed!")
 
         # Check if enemy fainted
         if enemy_poke.currentHP <= 0:
@@ -228,7 +236,6 @@ class FinaleMixin(MixinMeta):
                 bs.battle_log = log_lines
                 result = engine.end_battle(victory=True)
 
-                # Leaderboard tracking
                 lb = LeaderboardClass(user_id)
                 lb.victory()
                 lb.actions()
@@ -242,17 +249,20 @@ class FinaleMixin(MixinMeta):
         # --- Enemy attacks (if still alive) ---
         if enemy_poke.currentHP > 0:
             enemy_moves = enemy_poke.getMoves() if hasattr(enemy_poke, 'getMoves') else []
+            # Filter out None/empty moves
+            enemy_moves = [m for m in enemy_moves if m and m.lower() != 'none']
             if enemy_moves:
                 import random
-                e_move = random.choice(enemy_moves)
-                e_damage, e_hit = calculate_battle_damage(enemy_poke, player_poke, e_move)
-                e_move_name = e_move.get('name', e_move.get('moveName', 'Attack'))
+                e_move_name = random.choice(enemy_moves)
+                e_move_data = moves_config.get(e_move_name, {})
+                e_display = e_move_name.replace('-', ' ').title()
+                e_damage, e_hit = calculate_battle_damage(enemy_poke, player_poke, e_move_data)
 
                 if e_hit:
                     player_poke.currentHP = max(0, player_poke.currentHP - e_damage)
-                    log_lines.append(f"Enemy {enemy_poke.pokemonName.capitalize()} used {e_move_name.capitalize()}! (-{e_damage} HP)")
+                    log_lines.append(f"Enemy {enemy_poke.pokemonName.capitalize()} used {e_display}! (-{e_damage} HP)")
                 else:
-                    log_lines.append(f"Enemy {enemy_poke.pokemonName.capitalize()}'s {e_move_name.capitalize()} missed!")
+                    log_lines.append(f"Enemy {enemy_poke.pokemonName.capitalize()}'s {e_display} missed!")
 
         bs.battle_log = log_lines
         bs.turn_number += 1
@@ -268,20 +278,17 @@ class FinaleMixin(MixinMeta):
                 await self._render_battle_frame(interaction, engine)
                 return
             else:
-                # Total defeat
                 bs.battle_log = log_lines
                 await self._handle_finale_defeat(interaction, engine)
                 return
 
-        # Check cutscene triggers before re-rendering
+        # Check cutscene triggers
         cutscene = engine.check_cutscene_triggers()
         if cutscene:
             await self._render_scene_frame(interaction, engine)
             return
 
-        # Save player pokemon state
         player_poke.save()
-
         await self._render_battle_frame(interaction, engine)
 
     # ------------------------------------------------------------------
