@@ -140,7 +140,7 @@ class FinaleRenderer:
                             label=player_pokemon.pokemonName.upper(), show_current_hp=True)
 
         # -- Battle log / text area at bottom --
-        log_text = battle_log if battle_log else f"Turn {turn_number} — Choose your move!"
+        log_text = battle_log if battle_log else f"Turn {turn_number} - Choose your move!"
         frame = self._draw_dialog_box(frame, enemy_name, log_text,
                                        text_box_color=(0, 0, 0, 200))
 

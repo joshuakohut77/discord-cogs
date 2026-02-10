@@ -89,11 +89,14 @@ class FinaleMixin(MixinMeta):
         alive_party = []
         for poke in party:
             poke.load(pokemonId=poke.trainerId)
-            if poke.currentHP > 0:
-                alive_party.append(poke)
+            stats = poke.getPokeStats()
+            poke.currentHP = stats['hp']
+            poke.discordId = str(user.id)
+            poke.save()
+            alive_party.append(poke)
 
         if not alive_party:
-            await ctx.send("All your Pokemon have fainted! Heal up before attempting the finale.")
+            await ctx.send("You don't have any Pokemon!")
             return
 
         script = get_finale_script()
@@ -381,7 +384,7 @@ class FinaleMixin(MixinMeta):
         # === STEP 1: Show player attack result (no buttons) ===
         if p_hit and p_damage > 0:
             enemy_poke.currentHP = max(0, enemy_poke.currentHP - p_damage)
-            step1_text = f"Your {player_poke.pokemonName.capitalize()} used {display_name}! (-{p_damage} HP)"
+            step1_text = f"Your {player_poke.pokemonName.capitalize()} used {display_name}!"
         elif p_hit:
             step1_text = f"Your {player_poke.pokemonName.capitalize()} used {display_name}!"
         else:
@@ -438,7 +441,7 @@ class FinaleMixin(MixinMeta):
 
             if e_hit and e_damage > 0:
                 player_poke.currentHP = max(0, player_poke.currentHP - e_damage)
-                step2_text = f"{enemy_poke.pokemonName} used {e_display}! (-{e_damage} HP)"
+                step2_text = f"{enemy_poke.pokemonName} used {e_display}! "
             elif e_hit:
                 step2_text = f"{enemy_poke.pokemonName} used {e_display}!"
                 # Still show status effect even if 0 damage
@@ -674,7 +677,7 @@ class FinaleMixin(MixinMeta):
                 )
                 if e_hit and e_damage > 0:
                     bs.player_pokemon.currentHP = max(0, bs.player_pokemon.currentHP - e_damage)
-                    bs.battle_log.append(f"{enemy_poke.pokemonName} used {e_display}! (-{e_damage} HP)")
+                    bs.battle_log.append(f"{enemy_poke.pokemonName} used {e_display}!")
 
         bs.turn_number += 1
         await self._render_battle_frame(interaction, engine)
@@ -752,8 +755,11 @@ class FinaleMixin(MixinMeta):
         alive_party = []
         for poke in party:
             poke.load(pokemonId=poke.trainerId)
-            if poke.currentHP > 0:
-                alive_party.append(poke)
+            stats = poke.getPokeStats()
+            poke.currentHP = stats['hp']
+            poke.discordId = user_id
+            poke.save()
+            alive_party.append(poke)
 
         if not alive_party:
             img = FinaleEngine(user_id, "", [], []).renderer.render_transition(

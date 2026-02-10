@@ -252,7 +252,13 @@ def get_finale_script() -> list:
         ),
         DialogScene(
             speaker="Skippy",
-            text=["Skippy sends out Skippy the Magnificent!"],
+            text=["Skippy the Magnificent!"],
+            background="finale_battle_bg.png",
+            character_sprite="skippy.png",
+        ),
+        DialogScene(
+            speaker="Skippy",
+            text=["Skippy sends our himself!"],
             background="finale_battle_bg.png",
             character_sprite="skippy.png",
         ),
