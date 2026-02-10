@@ -1,0 +1,142 @@
+{
+    "DragonDeez": {
+        "displayName": "DragonDeez",
+        "type1": "fire",
+        "type2": "none",
+        "level": 64,
+        "baseStats": {
+            "hp": 150, "attack": 130, "defense": 100,
+            "speed": 120, "special-attack": 154, "special-defense": 100
+        },
+        "moves": {
+            "nutcracker-rush": {
+                "power": 90, "accuracy": 100, "moveType": "normal",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Nutcracker Rush",
+				"statusEffect": "The nutcracker effect"
+            },
+            "sack-slam": {
+                "power": 120, "accuracy": 85, "moveType": "normal",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Sack Slam",
+				"statusEffect": "The sack slam effect"
+            },
+            "draconic-teabag": {
+                "power": 90, "accuracy": 85, "moveType": "normal",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Draconic Teabag",
+				"statusEffect": "The draconic status effect"
+            },
+            "mind-goblin": {
+                "power": 80, "accuracy": 85, "moveType": "psychic",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Mind Goblin",
+				"statusEffect": "The mind goblic effect"
+            }
+        },
+        "frontSprite": "dragon_deez.png"
+        
+    },
+	"TittyPussy": {
+        "displayName": "Titty Pussy",
+        "type1": "psychic",
+        "type2": "none",
+        "level": 66,
+        "baseStats": {
+            "hp": 150, "attack": 130, "defense": 100,
+            "speed": 120, "special-attack": 154, "special-defense": 100
+        },
+        "moves": {
+            "feminism": {
+                "power": 0, "accuracy": 100, "moveType": "normal",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Feminism Empowerment",
+				"statusEffect": "This move has no effect"
+            },
+            "free-palestine": {
+                "power": 0, "accuracy": 85, "moveType": "normal",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Free Palestine",
+				"statusEffect": "It hurt itself in confusion"
+            },
+            "protest": {
+                "power": 20, "accuracy": 85, "moveType": "psychic",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Peaceful Protest",
+				"statusEffect": "The air is filled with burning trash."
+            }
+        },
+        "frontSprite": "titty_pussy.png"
+        
+    },
+	"AngelHernandez": {
+        "displayName": "Angel Hernandez",
+        "type1": "normal",
+        "type2": "none",
+        "level": 64,
+        "baseStats": {
+            "hp": 150, "attack": 130, "defense": 100,
+            "speed": 120, "special-attack": 154, "special-defense": 100
+        },
+        "moves": {
+            "seniority-armor": {
+                "power": 40, "accuracy": 100, "moveType": "normal",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Seniority Armor",
+				"statusEffect": "Angels defense greatly rose."
+            },
+            "no-shame": {
+                "power": 35, "accuracy": 85, "moveType": "normal",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "No Shame",
+				"statusEffect": "Angels evasion sharply rose."
+            },
+            "missed-call": {
+                "power": 35, "accuracy": 85, "moveType": "normal",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Missed Call",
+				"statusEffect": "Everyone is confused."
+            }
+        },
+        "frontSprite": "angel_hernandez.png"
+        
+    },
+	"AbigailShapiro": {
+        "displayName": "Abigail Shapiro",
+        "type1": "water",
+        "type2": "none",
+        "level": 69,
+        "baseStats": {
+            "hp": 150, "attack": 130, "defense": 100,
+            "speed": 120, "special-attack": 154, "special-defense": 100
+        },
+        "moves": {
+            "big-khazar-milkers": {
+                "power": 40, "accuracy": 100, "moveType": "normal",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Big Khazar Milkers",
+				"statusEffect": "You feel your antisemitism lowered."
+            },
+            "big-honkers": {
+                "power": 35, "accuracy": 85, "moveType": "normal",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Big Honkers",
+				"statusEffect": "Your pokemon is not phased but you..."
+            },
+            "milk-blast": {
+                "power": 35, "accuracy": 85, "moveType": "normal",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Milk Blast",
+				"statusEffect": "Those things could fill a bucket!"
+            },
+            "final-solution": {
+                "power": 35, "accuracy": 85, "moveType": "normal",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Final Solution",
+				"statusEffect": "The attack failed."
+            }
+        },
+        "frontSprite": "abigail_shapiro.png"
+        
+    }
+}
