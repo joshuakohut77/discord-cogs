@@ -370,8 +370,18 @@ class FinaleRenderer:
             draw.text((bar_x, bar_y + 14), f"{current_hp}/{max_hp}",
                       fill=(255, 255, 255), font=small_font)
 
-    def _get_pokemon_sprite(self, pokemon: 'PokemonClass', front: bool = True) -> Optional[Image.Image]:
-        """Get a Pokemon sprite from URL or disk."""
+    def _get_pokemon_sprite(self, pokemon, front: bool = True):
+        """Get a Pokemon sprite — checks local finale sprites first, then URL."""
+        # Check for FinalePokemon with local sprite
+        if front and hasattr(pokemon, '_front_sprite') and pokemon._front_sprite:
+            path = os.path.join(self._char_dir, pokemon._front_sprite)
+            if os.path.exists(path):
+                try:
+                    return Image.open(path).convert("RGBA")
+                except Exception:
+                    pass
+
+        # Fall back to URL
         try:
             url = pokemon.frontSpriteURL if front else pokemon.backSpriteURL
             if url:

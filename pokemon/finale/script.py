@@ -1,16 +1,8 @@
 """
-Finale script — the story beats for the cinematic ending.
+Finale script — Part 1: Skippy's Challenge
 
-This is a placeholder script to test the engine end-to-end.
-Replace with real story content and art assets later.
-
-Scene flow:
-  1. Dialog — mysterious figure appears
-  2. Dialog — taunts the player
-  3. Battle — fight the mystery trainer
-  4. Cutscene — triggers mid-battle when enemy HP < 50%
-  5. Dialog — post-battle congratulations
-  6. Finale — credits / completion
+Scene flow through the first 4 custom Pokemon battles,
+ending at the Skippy reveal.
 """
 from .scenes import (
     DialogScene,
@@ -23,113 +15,260 @@ from .scenes import (
 
 
 def get_finale_script() -> list:
-    """
-    Returns the full ordered list of scene nodes.
-    
-    BattleCutsceneScene nodes are included in-line but the engine
-    will extract them and index them by battle_id automatically.
-    """
     return [
-        # --- ACT 1: The Encounter ---
+        # ============================================================
+        # ACT 1: THE ENCOUNTER
+        # ============================================================
 
+        DialogScene(
+            speaker="???",
+            text=["So... you actually made it."],
+            background="finale_bg.png",
+        ),
+        DialogScene(
+            speaker="???",
+            text=["The Elite Four. The Champion. All of them fell before you."],
+            background="finale_bg.png",
+        ),
+        DialogScene(
+            speaker="???",
+            text=["But this isn't over yet, {trainer_name}."],
+            background="finale_bg.png",
+            use_trainer_name=True,
+        ),
+        DialogScene(
+            speaker="???",
+            text=["There's one more battle you have to face. One that you can't possibly win."],
+            background="finale_bg.png",
+        ),
+        DialogScene(
+            speaker="{trainer_name}",
+            text=["Who are you and why is this so cinematic?"],
+            background="finale_bg.png",
+            use_trainer_name=True,
+        ),
+        DialogScene(
+            speaker="???",
+            text=["It is I, Skippy the Magnificent! Master of Pokemon. The almighty and undefeated one!"],
+            background="finale_bg.png",
+        ),
+
+        # --- Screen flash / Skippy reveal ---
         TransitionScene(
-            text="...",
-            bg_color=(0, 0, 0),
+            text="",
+            bg_color=(255, 255, 255),
+            duration=1.5,
+        ),
+        TransitionScene(
+            text="",
+            bg_color=(200, 200, 220),
+            duration=1.5,
         ),
 
         DialogScene(
-            speaker="???",
-            text=[
-                "So... you actually made it.",
-                "The Elite Four. The Champion. All of them fell before you.",
-            ],
-            background="placeholder_bg.png",      # Replace with real art
-            character_sprite="placeholder_rival.png",  # Replace with real art
-            character_position="right",
-        ),
-
-        DialogScene(
-            speaker="???",
-            text=[
-                "But this isn't over yet, {trainer_name}.",
-                "There's one more battle you have to face.",
-                "The one nobody warned you about.",
-            ],
-            background="placeholder_bg.png",
-            character_sprite="placeholder_rival.png",
-            character_position="right",
+            speaker="Skippy",
+            text=["Prepare thyself, {trainer_name}, for you shall learn to fear my superior Pokemon!"],
+            background="finale_bg.png",
+            character_sprite="skippy.png",
             use_trainer_name=True,
         ),
 
-        TransitionScene(
-            image=None,  # Replace with dramatic flash image/gif
-            text="A blinding light fills the room...",
-            bg_color=(255, 255, 255),
-        ),
-
-        # --- ACT 2: The Battle ---
-
-        BattleStartScene(
-            enemy_name="??? The Unknown",
-            enemy_team=[
-                {"mewtwo": 70},
-            ],
-            enemy_sprite="placeholder_rival.png",
-            battle_background=None,  # Will use default battle bg
-            intro_text="??? The Unknown challenges you to a battle!",
-            battle_id="final_boss",
-        ),
-
-        # This cutscene fires mid-battle when enemy HP drops below 50%
-        BattleCutsceneScene(
-            battle_id="final_boss",
-            trigger=CutsceneTrigger(enemy_hp_pct_below=50),
-            dialog=[
-                DialogScene(
-                    speaker="???",
-                    text=[
-                        "Impressive... You're stronger than I thought.",
-                        "But I'm not done yet!",
-                    ],
-                    background="placeholder_bg.png",
-                    character_sprite="placeholder_rival.png",
-                    character_position="center",
-                ),
-            ],
-            post_cutscene_heal_enemy=False,
-            post_cutscene_add_enemy=None,
-        ),
-
-        # --- ACT 3: The Aftermath ---
-
-        TransitionScene(
-            text="The battle is over.",
-            bg_color=(0, 0, 0),
-        ),
+        # ============================================================
+        # ACT 2: VAPOREON INCIDENT
+        # ============================================================
 
         DialogScene(
-            speaker="Professor Oak",
-            text=[
-                "{trainer_name}... I can't believe it.",
-                "You've done what no trainer has ever done before.",
-                "You are the true Pokemon Champion!",
-            ],
-            background="placeholder_bg.png",
-            character_sprite="oak.png",  # Falls back to sprites/trainers/oak.png
+            speaker="",
+            text=["{trainer_name} sends out their Pokemon!"],
+            background="finale_battle_bg.png",
+            character_sprite="trainer.png",
             character_position="left",
             use_trainer_name=True,
+            auto_advance=3,
+        ),
+        DialogScene(
+            speaker="Skippy",
+            text=["Skippy sends out Vaporeon!"],
+            background="finale_battle_bg.png",
+            character_sprite="vaporeon.png",
+            auto_advance=3,
+        ),
+        DialogScene(
+            speaker="{trainer_name}",
+            text=["Ha! A Vaporeon. Professor Oak told me about them..."],
+            background="finale_battle_bg.png",
+            character_sprite="vaporeon.png",
+            use_trainer_name=True,
+        ),
+        DialogScene(
+            speaker="",
+            text=["*Vaporeon looks mildly concerned from hearing the name*"],
+            background="finale_battle_bg.png",
+            character_sprite="vaporeon.png",
+        ),
+        DialogScene(
+            speaker="",
+            text=["*Vaporeon ran away!*"],
+            background="finale_battle_bg.png",
+        ),
+        DialogScene(
+            speaker="Skippy",
+            text=["Ugghhhh! That stupid Pokemon always was squirmish around pesky humans."],
+            background="finale_battle_bg.png",
+            character_sprite="skippy.png",
+        ),
+        DialogScene(
+            speaker="Skippy",
+            text=["No matter, the real battle starts now!"],
+            background="finale_battle_bg.png",
+            character_sprite="skippy.png",
         ),
 
-        # --- FINALE ---
+        # ============================================================
+        # BATTLE 1: DRAGONDEEZ
+        # ============================================================
+
+        DialogScene(
+            speaker="Skippy",
+            text=["Skippy sends out DragonDeez!"],
+            background="finale_battle_bg.png",
+            character_sprite="dragon_deez.png",
+            auto_advance=3,
+        ),
+
+        BattleStartScene(
+            enemy_name="Skippy",
+            enemy_team=[{"DragonDeez": 64}],
+            enemy_sprite="dragon_deez.png",
+            battle_background="finale_battle_bg.png",
+            intro_text="DragonDeez enters the battle!",
+            battle_id="dragondeez",
+        ),
+
+        # --- Post DragonDeez ---
+
+        DialogScene(
+            speaker="Skippy",
+            text=["How dare you! You think you're better than me???"],
+            background="finale_battle_bg.png",
+            character_sprite="skippy.png",
+        ),
+
+        # ============================================================
+        # BATTLE 2: TITTY PUSSY
+        # ============================================================
+
+        DialogScene(
+            speaker="Skippy",
+            text=["Skippy sends out Titty Pussy!"],
+            background="finale_battle_bg.png",
+            character_sprite="titty_pussy.png",
+            auto_advance=3,
+        ),
+
+        BattleStartScene(
+            enemy_name="Skippy",
+            enemy_team=[{"TittyPussy": 66}],
+            enemy_sprite="titty_pussy.png",
+            battle_background="finale_battle_bg.png",
+            intro_text="Titty Pussy enters the battle!",
+            battle_id="tittypussy",
+        ),
+
+        # --- Post Titty Pussy ---
+
+        DialogScene(
+            speaker="Skippy",
+            text=["How can this be? You are not ready for what's coming next!"],
+            background="finale_battle_bg.png",
+            character_sprite="skippy.png",
+        ),
+
+        # ============================================================
+        # BATTLE 3: ANGEL HERNANDEZ
+        # ============================================================
+
+        DialogScene(
+            speaker="Skippy",
+            text=["Skippy sends out Angel Hernandez!"],
+            background="finale_battle_bg.png",
+            character_sprite="angel_hernandez.png",
+            auto_advance=3,
+        ),
+
+        BattleStartScene(
+            enemy_name="Skippy",
+            enemy_team=[{"AngelHernandez": 64}],
+            enemy_sprite="angel_hernandez.png",
+            battle_background="finale_battle_bg.png",
+            intro_text="Angel Hernandez enters the battle!",
+            battle_id="angelhernandez",
+        ),
+
+        # --- Post Angel Hernandez ---
+
+        DialogScene(
+            speaker="Skippy",
+            text=["I'm actually not surprised. He was never good at his job. This one is the real show-stopper!"],
+            background="finale_battle_bg.png",
+            character_sprite="skippy.png",
+        ),
+
+        # ============================================================
+        # BATTLE 4: ABIGAIL SHAPIRO
+        # ============================================================
+
+        DialogScene(
+            speaker="Skippy",
+            text=["Skippy sends out Abigail Shapiro!"],
+            background="finale_battle_bg.png",
+            character_sprite="abigail_shapiro.png",
+            auto_advance=3,
+        ),
+
+        BattleStartScene(
+            enemy_name="Skippy",
+            enemy_team=[{"AbigailShapiro": 69}],
+            enemy_sprite="abigail_shapiro.png",
+            battle_background="finale_battle_bg.png",
+            intro_text="Abigail Shapiro enters the battle!",
+            battle_id="abigailshapiro",
+        ),
+
+        # --- Post Abigail Shapiro ---
+
+        DialogScene(
+            speaker="Skippy",
+            text=["You are a formidable foe, {trainer_name}."],
+            background="finale_battle_bg.png",
+            character_sprite="skippy.png",
+            use_trainer_name=True,
+        ),
+        DialogScene(
+            speaker="Skippy",
+            text=["However, do you think you have what it takes to defeat..."],
+            background="finale_battle_bg.png",
+            character_sprite="skippy.png",
+        ),
+        DialogScene(
+            speaker="Skippy",
+            text=["Skippy sends out Skippy the Magnificent!"],
+            background="finale_battle_bg.png",
+            character_sprite="skippy.png",
+        ),
+
+        # ============================================================
+        # PLACEHOLDER STOP — Part 2 goes here
+        # ============================================================
 
         FinaleScene(
-            title="🏆 Pokemon Champion 🏆",
+            title="To Be Continued...",
             text=[
-                "{trainer_name} defeated the unknown challenger",
-                "and became the greatest Pokemon trainer",
-                "the world has ever seen!",
+                "The battle with Skippy the Magnificent",
+                "is just beginning...",
+                "Stay tuned, {trainer_name}!",
             ],
-            background=None,
-            awards={"champion": True},
+            background="finale_bg.png",
+            awards={},
         ),
     ]

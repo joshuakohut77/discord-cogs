@@ -23,14 +23,15 @@ class FinaleDialogView(View):
     """View with a 'Next' button for dialog scenes and transitions."""
 
     def __init__(self, engine: 'FinaleEngine', update_callback: Callable[..., Awaitable],
-                 timeout: float = 600):
+                 is_auto: bool = False, timeout: float = 600):
         super().__init__(timeout=timeout)
         self.engine = engine
         self.update_callback = update_callback
 
+        label = "Skip ▶▶" if is_auto else "Next ▶"
         self.next_btn = Button(
-            style=ButtonStyle.primary,
-            label="Next ▶",
+            style=ButtonStyle.secondary if is_auto else ButtonStyle.primary,
+            label=label,
             custom_id="finale_next"
         )
         self.next_btn.callback = self.on_next
@@ -42,13 +43,13 @@ class FinaleDialogView(View):
             return
 
         await interaction.response.defer()
+        self.engine.cancel_auto_advance()
         result = self.engine.advance_dialog()
         await self.update_callback(interaction, result)
 
     async def on_timeout(self):
         for item in self.children:
             item.disabled = True
-
 
 class FinaleBattleView(View):
     """View with move buttons during a finale battle."""

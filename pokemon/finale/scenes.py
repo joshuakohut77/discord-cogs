@@ -66,6 +66,8 @@ class DialogScene:
     text_box_color: tuple = (0, 0, 0, 180)
     # Use trainer name placeholder {trainer_name} in text
     use_trainer_name: bool = False
+    # Auto-advance after this many seconds (0 = wait for button press)
+    auto_advance: float = 0
 
 
 @dataclass
