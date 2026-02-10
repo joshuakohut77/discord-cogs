@@ -27,7 +27,7 @@ from .pokedex import PokedexMixin
 from .trade import TradeMixin
 from .leaderboard import LeaderboardMixin
 from .admin import AdminMixin
-from .finalemixin import FinaleMixin
+from .finale import FinaleMixin
 
 # Things left to do
 # one state mapping instead of multiple
