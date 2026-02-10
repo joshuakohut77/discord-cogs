@@ -138,5 +138,43 @@
         },
         "frontSprite": "abigail_shapiro.png"
         
+    },
+	"Skippy": {
+        "displayName": "Skippy",
+        "type1": "psychic",
+        "type2": "none",
+        "level": 100,
+        "baseStats": {
+            "hp": 550, "attack": 130, "defense": 100,
+            "speed": 120, "special-attack": 154, "special-defense": 100
+        },
+        "moves": {
+            "sarcasm": {
+                "power": 40, "accuracy": 100, "moveType": "normal",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Sarcasm",
+				"statusEffect": "Skippy painfully mocks you."
+            },
+            "warp-spacetime": {
+                "power": 35, "accuracy": 85, "moveType": "normal",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Warp Spacetime",
+				"statusEffect": "The spacetime around your pokemon destorts."
+            },
+            "": {
+                "power": 35, "accuracy": 85, "moveType": "normal",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Milk Blast",
+				"statusEffect": "Those things could fill a bucket!"
+            },
+            "final-solution": {
+                "power": 35, "accuracy": 85, "moveType": "normal",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Final Solution",
+				"statusEffect": "The attack failed."
+            }
+        },
+        "frontSprite": "abigail_shapiro.png"
+        
     }
 }
