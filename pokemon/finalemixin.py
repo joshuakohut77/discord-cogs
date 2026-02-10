@@ -116,8 +116,10 @@ class FinaleMixin(MixinMeta):
         embed.set_image(url="attachment://scene.png")
         embed.set_footer(text=f"{user.display_name}'s Finale")
 
-        is_auto = engine.get_auto_advance_delay() > 0
-        view = FinaleDialogView(engine, self._on_dialog_advance, is_auto=is_auto)
+        if engine.get_auto_advance_delay() > 0:
+            view = View()
+        else:
+            view = FinaleDialogView(engine, self._on_dialog_advance)
         message = await ctx.send(embed=embed, view=view, file=file)
         engine.message = message
 
@@ -166,12 +168,12 @@ class FinaleMixin(MixinMeta):
         embed = discord.Embed(color=discord.Color.dark_purple())
         embed.set_image(url="attachment://scene.png")
 
-        is_auto = engine.get_auto_advance_delay() > 0
-
         if engine.is_in_battle():
             view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
+        elif engine.get_auto_advance_delay() > 0:
+            view = View()
         else:
-            view = FinaleDialogView(engine, self._on_dialog_advance, is_auto=is_auto)
+            view = FinaleDialogView(engine, self._on_dialog_advance)
 
         try:
             await engine.message.edit(embed=embed, view=view, attachments=[file])
@@ -269,14 +271,14 @@ class FinaleMixin(MixinMeta):
         embed.set_image(url="attachment://scene.png")
         embed.set_footer(text=f"{interaction.user.display_name}'s Finale")
 
-        is_auto = engine.get_auto_advance_delay() > 0
-
         if engine.is_in_cutscene():
             view = FinaleDialogView(engine, self._on_dialog_advance)
         elif engine.is_in_battle():
             view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
+        elif engine.get_auto_advance_delay() > 0:
+            view = View()
         else:
-            view = FinaleDialogView(engine, self._on_dialog_advance, is_auto=is_auto)
+            view = FinaleDialogView(engine, self._on_dialog_advance)
 
         await interaction.message.edit(embed=embed, view=view, attachments=[file])
         engine.message = interaction.message
@@ -535,14 +537,14 @@ class FinaleMixin(MixinMeta):
         embed = discord.Embed(color=discord.Color.dark_purple())
         embed.set_image(url="attachment://scene.png")
 
-        is_auto = engine.get_auto_advance_delay() > 0
-
         if engine.is_in_cutscene():
             view = FinaleDialogView(engine, self._on_dialog_advance)
         elif engine.is_in_battle():
             view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
+        elif engine.get_auto_advance_delay() > 0:
+            view = View()
         else:
-            view = FinaleDialogView(engine, self._on_dialog_advance, is_auto=is_auto)
+            view = FinaleDialogView(engine, self._on_dialog_advance)
 
         try:
             await engine.message.edit(embed=embed, view=view, attachments=[file])
@@ -783,8 +785,10 @@ class FinaleMixin(MixinMeta):
         embed.set_image(url="attachment://scene.png")
         embed.set_footer(text=f"{interaction.user.display_name}'s Finale")
 
-        is_auto = engine.get_auto_advance_delay() > 0
-        view = FinaleDialogView(engine, self._on_dialog_advance, is_auto=is_auto)
+        if engine.get_auto_advance_delay() > 0:
+            view = View()
+        else:
+            view = FinaleDialogView(engine, self._on_dialog_advance)
         await interaction.message.edit(embed=embed, view=view, attachments=[file])
 
         await self._schedule_auto_advance(engine)
