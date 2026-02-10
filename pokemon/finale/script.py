@@ -62,7 +62,7 @@ def get_finale_script() -> list:
 
         # --- Screen flash / Skippy reveal ---
         TransitionScene(
-            text="A blinding white light fills the room",
+            text=" A blinding light fills the room",
             bg_color=(255, 255, 255),
             duration=1.5,
         ),
