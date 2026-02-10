@@ -13,25 +13,25 @@
                 "power": 90, "accuracy": 100, "moveType": "normal",
                 "damage_class": "special", "ailment": "none",
                 "displayName": "Nutcracker Rush",
-				"statusEffect": "The nutcracker effect"
+				"statusEffect": "Your pokemon is afflicted with ligma."
             },
             "sack-slam": {
                 "power": 120, "accuracy": 85, "moveType": "normal",
                 "damage_class": "special", "ailment": "none",
                 "displayName": "Sack Slam",
-				"statusEffect": "The sack slam effect"
+				"statusEffect": "It hurt so good."
             },
             "draconic-teabag": {
                 "power": 90, "accuracy": 85, "moveType": "normal",
                 "damage_class": "special", "ailment": "none",
                 "displayName": "Draconic Teabag",
-				"statusEffect": "The draconic status effect"
+				"statusEffect": "The air tastes slightly salty."
             },
             "mind-goblin": {
                 "power": 80, "accuracy": 85, "moveType": "psychic",
                 "damage_class": "special", "ailment": "none",
                 "displayName": "Mind Goblin",
-				"statusEffect": "The mind goblic effect"
+				"statusEffect": "You try goblin deez nuts!"
             }
         },
         "frontSprite": "dragon_deez.png"
