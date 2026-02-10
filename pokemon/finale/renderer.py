@@ -372,25 +372,33 @@ class FinaleRenderer:
 
     def _get_pokemon_sprite(self, pokemon, front: bool = True):
         """Get a Pokemon sprite — checks local finale sprites first, then URL."""
+        img = None
+
         # Check for FinalePokemon with local sprite
         if front and hasattr(pokemon, '_front_sprite') and pokemon._front_sprite:
             path = os.path.join(self._char_dir, pokemon._front_sprite)
             if os.path.exists(path):
                 try:
-                    return Image.open(path).convert("RGBA")
+                    img = Image.open(path).convert("RGBA")
                 except Exception:
                     pass
 
         # Fall back to URL
-        try:
-            url = pokemon.frontSpriteURL if front else pokemon.backSpriteURL
-            if url:
-                response = requests.get(url, timeout=5)
-                if response.status_code == 200:
-                    return Image.open(BytesIO(response.content)).convert("RGBA")
-        except Exception:
-            pass
-        return None
+        if img is None:
+            try:
+                url = pokemon.frontSpriteURL if front else pokemon.backSpriteURL
+                if url:
+                    response = requests.get(url, timeout=5)
+                    if response.status_code == 200:
+                        img = Image.open(BytesIO(response.content)).convert("RGBA")
+            except Exception:
+                pass
+
+        # Remove white/black backgrounds from all sprites
+        if img is not None:
+            img = self._remove_white_background(img)
+
+        return img
 
     def _remove_background(self, img: Image.Image) -> Image.Image:
         """Remove transparent/black background from sprite. Reused from imagegenclass."""
@@ -401,6 +409,20 @@ class FinaleRenderer:
             for x in range(width):
                 r, g, b, a = pixel_data[x, y]
                 if r == 0 and g == 0 and b == 0 and a == 0:
+                    pixel_data[x, y] = (255, 255, 255, 0)
+        return rgba
+
+    def _remove_white_background(self, img: Image.Image, threshold: int = 240) -> Image.Image:
+        """Remove white background from sprites."""
+        rgba = img.convert("RGBA")
+        pixel_data = rgba.load()
+        width, height = rgba.size
+        for y in range(height):
+            for x in range(width):
+                r, g, b, a = pixel_data[x, y]
+                if r >= threshold and g >= threshold and b >= threshold:
+                    pixel_data[x, y] = (255, 255, 255, 0)
+                elif r == 0 and g == 0 and b == 0 and a == 0:
                     pixel_data[x, y] = (255, 255, 255, 0)
         return rgba
 

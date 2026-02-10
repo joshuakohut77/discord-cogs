@@ -498,17 +498,25 @@ class FinaleMixin(MixinMeta):
 
         player_poke.save()
 
-        # === STEP 4: Show move buttons again ===
-        bs.battle_log = [f"Turn {bs.turn_number} — Choose your move!"]
-        buf = engine.render_current()
-        file = discord.File(fp=buf, filename="battle.png")
-        embed = discord.Embed(color=discord.Color.red())
-        embed.set_image(url="attachment://battle.png")
-        alive = sum(1 for p in bs.player_party if p.currentHP > 0)
-        enemy_remaining = len(bs.enemy_team_data) - len(bs.defeated_enemies)
-        embed.set_footer(text=f"Your team: {alive} alive | Enemy: {enemy_remaining} remaining | Turn {bs.turn_number}")
-        view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
-        await self._safe_edit(msg, embed=embed, view=View(), attachments=[file])
+        # === STEP 4: Show move buttons again (with retry) ===
+        bs.battle_log = [f"Turn {bs.turn_number} - Choose your move!"]
+
+        for retry in range(3):
+            try:
+                buf = engine.render_current()
+                file = discord.File(fp=buf, filename="battle.png")
+                embed = discord.Embed(color=discord.Color.red())
+                embed.set_image(url="attachment://battle.png")
+                alive = sum(1 for p in bs.player_party if p.currentHP > 0)
+                enemy_remaining = len(bs.enemy_team_data) - len(bs.defeated_enemies)
+                embed.set_footer(text=f"Your team: {alive} alive | Enemy: {enemy_remaining} remaining | Turn {bs.turn_number}")
+                view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
+                await msg.edit(embed=embed, view=view, attachments=[file])
+                break
+            except Exception as e:
+                print(f"[Finale] Step 4 edit failed (attempt {retry+1}): {e}")
+                if retry < 2:
+                    await asyncio.sleep(1.5)
 
     # ------------------------------------------------------------------
     # Message-based rendering (for auto-advance, no interaction needed)
