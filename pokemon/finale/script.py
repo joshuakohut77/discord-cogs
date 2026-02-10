@@ -64,6 +64,7 @@ def get_finale_script() -> list:
         TransitionScene(
             text="",
             bg_color=(255, 255, 255),
+            text=["A blinding light fills the room"],
             duration=1.5,
         ),
         TransitionScene(
