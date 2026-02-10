@@ -50,6 +50,7 @@ def get_finale_script() -> list:
             text=["Who are you and why is this so cinematic?"],
             background="finale_bg.png",
             character_sprite="trainer.png",
+            character_position="left",
             use_trainer_name=True,
         ),
         DialogScene(
