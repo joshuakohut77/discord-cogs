@@ -104,7 +104,7 @@ class FinaleEngine:
         self.message: Optional[discord.Message] = None
         self._advance_id = 0
         self._auto_task = None
-
+        self._frame_counter = 0
         self._index_cutscenes()
 
     def next_frame_name(self, prefix: str = "scene") -> str:
