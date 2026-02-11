@@ -34,6 +34,7 @@ class FinaleAudioManager:
         self.is_looping: bool = False
         self._connected: bool = False
         self._volume: float = 0.5  # 0.0 to 1.0
+        self._event_loop: Optional[asyncio.AbstractEventLoop] = None
 
     # ------------------------------------------------------------------
     # Connection
@@ -44,6 +45,9 @@ class FinaleAudioManager:
         Connect to the voice channel the member is currently in.
         Returns True if connected successfully, False otherwise.
         """
+        # Capture the event loop for use in threaded callbacks later
+        self._event_loop = asyncio.get_running_loop()
+
         if not member.voice or not member.voice.channel:
             print("[FinaleAudio] Member is not in a voice channel.")
             return False
@@ -68,8 +72,6 @@ class FinaleAudioManager:
         # Check if bot already has a voice client in this guild (e.g. from Audio cog)
         existing_vc = guild.voice_client
         if existing_vc:
-            # Another cog (like Audio) owns the voice connection.
-            # We can't take it over cleanly, so warn and bail.
             print("[FinaleAudio] Bot already has a voice connection in this guild "
                   "(likely from the Audio cog). Finale audio disabled.")
             return False
@@ -85,7 +87,7 @@ class FinaleAudioManager:
 
     async def disconnect(self):
         """Stop playback and disconnect from voice."""
-        self.stop()
+        await self.async_stop()
         if self.voice_client:
             try:
                 if self.voice_client.is_connected():
@@ -121,9 +123,10 @@ class FinaleAudioManager:
         )
         return discord.PCMVolumeTransformer(source, volume=self._volume)
 
-    def play(self, filename: str, loop: bool = False):
+    async def async_play(self, filename: str, loop: bool = False):
         """
-        Play an audio file. If something is already playing, it stops first.
+        Play an audio file. If something is already playing, it stops first
+        and waits for the ffmpeg process to terminate cleanly.
 
         Args:
             filename: Audio file in sprites/finale/audio/
@@ -136,9 +139,12 @@ class FinaleAudioManager:
         if not filepath:
             return
 
-        # Stop current playback
+        # Stop current playback and wait for ffmpeg to terminate cleanly
         if self.voice_client.is_playing() or self.voice_client.is_paused():
+            self.is_looping = False  # prevent loop callback from re-triggering
             self.voice_client.stop()
+            # Give ffmpeg time to terminate via SIGTERM instead of SIGKILL
+            await asyncio.sleep(0.15)
 
         self.current_track = filename
         self.is_looping = loop
@@ -147,13 +153,12 @@ class FinaleAudioManager:
             if error:
                 print(f"[FinaleAudio] Playback error: {error}")
                 return
-            # If looping and still connected, replay
+            # If looping and still connected, schedule replay on the event loop
             if self.is_looping and self.connected and self.current_track == filename:
-                try:
-                    new_source = self._create_source(filepath)
-                    self.voice_client.play(new_source, after=after_callback)
-                except Exception as e:
-                    print(f"[FinaleAudio] Loop replay error: {e}")
+                if self._event_loop and not self._event_loop.is_closed():
+                    asyncio.run_coroutine_threadsafe(
+                        self._loop_replay(filepath, filename), self._event_loop
+                    )
 
         try:
             source = self._create_source(filepath)
@@ -161,12 +166,36 @@ class FinaleAudioManager:
         except Exception as e:
             print(f"[FinaleAudio] Play error: {e}")
 
-    def stop(self):
-        """Stop current playback."""
+    async def _loop_replay(self, filepath: str, filename: str):
+        """Replay a track for looping. Runs on the event loop (not the thread)."""
+        # Small delay to let the previous ffmpeg process finish cleanly
+        await asyncio.sleep(0.1)
+        if not self.is_looping or not self.connected or self.current_track != filename:
+            return
+        try:
+            source = self._create_source(filepath)
+            self.voice_client.play(source, after=lambda e: self._on_loop_after(e, filepath, filename))
+        except Exception as e:
+            print(f"[FinaleAudio] Loop replay error: {e}")
+
+    def _on_loop_after(self, error, filepath: str, filename: str):
+        """After callback for looped tracks."""
+        if error:
+            print(f"[FinaleAudio] Loop playback error: {error}")
+            return
+        if self.is_looping and self.connected and self.current_track == filename:
+            if self._event_loop and not self._event_loop.is_closed():
+                asyncio.run_coroutine_threadsafe(
+                    self._loop_replay(filepath, filename), self._event_loop
+                )
+
+    async def async_stop(self):
+        """Stop current playback and wait for clean ffmpeg shutdown."""
         self.is_looping = False
         self.current_track = None
         if self.voice_client and (self.voice_client.is_playing() or self.voice_client.is_paused()):
             self.voice_client.stop()
+            await asyncio.sleep(0.15)
 
     def set_volume(self, volume: float):
         """Set volume (0.0 to 1.0)."""
@@ -179,7 +208,7 @@ class FinaleAudioManager:
     # Scene integration
     # ------------------------------------------------------------------
 
-    def handle_scene_audio(self, audio: Optional[str], audio_loop: bool = False):
+    async def handle_scene_audio(self, audio: Optional[str], audio_loop: bool = False):
         """
         Called when a scene advances. Decides what to do with audio.
 
@@ -195,11 +224,11 @@ class FinaleAudioManager:
             return
 
         if audio.lower() == "stop":
-            self.stop()
+            await self.async_stop()
             return
 
         # If it's the same track already playing (and loop status matches), skip
         if audio == self.current_track and self.is_looping == audio_loop:
             return
 
-        self.play(audio, loop=audio_loop)
+        await self.async_play(audio, loop=audio_loop)

@@ -19,7 +19,7 @@
                 "power": 120, "accuracy": 85, "moveType": "normal",
                 "damage_class": "special", "ailment": "none",
                 "displayName": "Sack Slam",
-				"statusEffect": "It hurt so good."
+				"statusEffect": "It hurt like the dickens."
             },
             "draconic-teabag": {
                 "power": 90, "accuracy": 85, "moveType": "normal",
@@ -94,7 +94,7 @@
             "missed-call": {
                 "power": 35, "accuracy": 85, "moveType": "normal",
                 "damage_class": "special", "ailment": "none",
-                "displayName": "Missed Call",
+                "displayName": "Bad Call",
 				"statusEffect": "Everyone is confused."
             }
         },

@@ -200,7 +200,11 @@ class FinaleEngine:
         if not self.audio_manager:
             return
         audio, audio_loop = self.get_current_scene_audio()
-        self.audio_manager.handle_scene_audio(audio, audio_loop)
+        try:
+            loop = asyncio.get_running_loop()
+            loop.create_task(self.audio_manager.handle_scene_audio(audio, audio_loop))
+        except RuntimeError:
+            pass
 
     def get_current_scene_audio(self):
         """Get the audio directive for the current scene. Returns (audio, audio_loop) tuple."""
@@ -223,16 +227,22 @@ class FinaleEngine:
         return getattr(scene, 'audio', None), getattr(scene, 'audio_loop', False)
 
     def trigger_scene_audio(self):
-        """Tell the audio manager to handle the current scene's audio."""
+        """Tell the audio manager to handle the current scene's audio directive."""
         if not self.audio_manager:
             return
         audio, audio_loop = self.get_current_scene_audio()
-        self.audio_manager.handle_scene_audio(audio, audio_loop)
+        try:
+            loop = asyncio.get_running_loop()
+            loop.create_task(self.audio_manager.handle_scene_audio(audio, audio_loop))
+        except RuntimeError:
+            pass
     # ------------------------------------------------------------------
     # Rendering
     # ------------------------------------------------------------------
 
     def render_current(self) -> BytesIO:
+        self.trigger_scene_audio()
+
         if self.active_cutscene:
             dialog = self.active_cutscene.dialog[self.cutscene_dialog_index]
             text = dialog.text[self.cutscene_page_index] if self.cutscene_page_index < len(dialog.text) else ""

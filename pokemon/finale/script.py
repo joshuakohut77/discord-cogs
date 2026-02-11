@@ -96,6 +96,7 @@ def get_finale_script() -> list:
         DialogScene(
             speaker="", text=["Vaporeon looks mildly concerned from hearing the name"],
             background="finale_battle_bg.png", character_sprite="vaporeon.png",
+            audio='stop',
         ),
         DialogScene(
             speaker="", text=["Vaporeon ran away!"],
@@ -109,7 +110,7 @@ def get_finale_script() -> list:
         DialogScene(
             speaker="Skippy", text=["No matter, the real battle starts now!"],
             background="finale_battle_bg.png", character_sprite="skippy.png",
-            audio='battle_theme.mp3',
+            
         ),
 
         # ============================================================
@@ -119,6 +120,7 @@ def get_finale_script() -> list:
             speaker="Skippy", text=["Skippy sends out DragonDeez!"],
             background="finale_battle_bg.png", character_sprite="dragon_deez.png",
             auto_advance=3,
+            audio='battle_theme.mp3',
             
         ),
         BattleStartScene(
@@ -212,7 +214,8 @@ def get_finale_script() -> list:
             intro_text="Skippy the Magnificent enters the battle!",
             battle_id="skippy_unwinnable",
             battle_mode="unwinnable",
-            audio="zanarkand.mp3",
+            audio="wind.mp3",
+            audio_loop=True,
         ),
 
         # --- Dialog before last pokemon ---
@@ -226,6 +229,7 @@ def get_finale_script() -> list:
             text=["This is it. This is my last pokemon...\nGo... {last_pokemon}!"],
             background="finale_battle_bg.png", character_sprite="trainer.png",
             character_position="left", use_trainer_name=True,
+            audio="zanarkand.mp3",
         ),
 
         # ============================================================
@@ -252,7 +256,7 @@ def get_finale_script() -> list:
                     text=["Unbelievable, how can this happen?!"],
                     background="finale_battle_bg.png",
                     character_sprite="skippy.png",
-                    audio="stop"
+                    
                 ),
             ],
         ),
