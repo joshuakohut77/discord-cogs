@@ -17,38 +17,44 @@ def get_finale_script() -> list:
             speaker="???",
             text=["So... you actually made it."],
             background="finale_bg.png",
+            character_sprite="shrouded_figure.png",
         ),
         DialogScene(
             speaker="???",
             text=["The Elite Four. The Champion. All of them fell before you."],
             background="finale_bg.png",
+            character_sprite="shrouded_figure.png",
         ),
         DialogScene(
             speaker="???",
             text=["But this isn't over yet, {trainer_name}."],
             background="finale_bg.png",
             use_trainer_name=True,
+            character_sprite="shrouded_figure.png",
         ),
         DialogScene(
             speaker="???",
             text=["There's one more battle you have to face. One that you can't possibly win."],
             background="finale_bg.png",
+            character_sprite="shrouded_figure.png",
         ),
         DialogScene(
             speaker="{trainer_name}",
             text=["Who are you and why is this so cinematic?"],
             background="finale_bg.png",
+            character_sprite="trainer.png",
             use_trainer_name=True,
         ),
         DialogScene(
             speaker="???",
             text=["It is I, Skippy the Magnificent! Master of Pokemon. The almighty and undefeated one!"],
             background="finale_bg.png",
+            character_sprite="shrouded_figure.png",
         ),
 
         # --- Screen flash / Skippy reveal ---
-        TransitionScene(text="", bg_color=(255, 255, 255), duration=1.5),
-        TransitionScene(text="", bg_color=(200, 200, 220), duration=1.5),
+        TransitionScene(text="A blinding light fills the room", bg_color=(255, 255, 255), duration=1.5),
+        TransitionScene(text="A blinding light fills the room", bg_color=(200, 200, 220), duration=1.5),
 
         DialogScene(
             speaker="Skippy",
@@ -79,11 +85,11 @@ def get_finale_script() -> list:
             use_trainer_name=True,
         ),
         DialogScene(
-            speaker="", text=["*Vaporeon looks mildly concerned from hearing the name*"],
+            speaker="", text=["Vaporeon looks mildly concerned from hearing the name"],
             background="finale_battle_bg.png", character_sprite="vaporeon.png",
         ),
         DialogScene(
-            speaker="", text=["*Vaporeon ran away!*"],
+            speaker="", text=["Vaporeon ran away!"],
             background="finale_battle_bg.png",
         ),
         DialogScene(
@@ -178,7 +184,7 @@ def get_finale_script() -> list:
         ),
         DialogScene(
             speaker="Skippy",
-            text=["Skippy sends out Skippy the Magnificent!"],
+            text=["Skippy the Magnificent!"],
             background="finale_battle_bg.png", character_sprite="skippy.png",
             auto_advance=3,
         ),

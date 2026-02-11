@@ -107,10 +107,11 @@ class FinaleMixin(MixinMeta):
         )
         self.__finale_engines[user_id] = engine
 
+        fname = engine.next_frame_name("scene")
         buf = engine.render_current()
-        file = discord.File(fp=buf, filename="scene.png")
+        file = discord.File(fp=buf, filename=fname)
         embed = discord.Embed(color=discord.Color.dark_purple())
-        embed.set_image(url="attachment://scene.png")
+        embed.set_image(url=f"attachment://{fname}")
         embed.set_footer(text=f"{user.display_name}'s Finale")
 
         if engine.get_auto_advance_delay() > 0:
@@ -149,10 +150,11 @@ class FinaleMixin(MixinMeta):
     async def _auto_render_scene(self, engine: FinaleEngine):
         if not engine.message:
             return
+        fname = engine.next_frame_name("scene")
         buf = engine.render_current()
-        file = discord.File(fp=buf, filename="scene.png")
+        file = discord.File(fp=buf, filename=fname)
         embed = discord.Embed(color=discord.Color.dark_purple())
-        embed.set_image(url="attachment://scene.png")
+        embed.set_image(url=f"attachment://{fname}")
 
         if engine.is_in_battle():
             view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
@@ -172,10 +174,11 @@ class FinaleMixin(MixinMeta):
         self._setup_battle_party(engine)
         if not engine.message:
             return
+        fname = engine.next_frame_name("battle")
         buf = engine.render_current()
-        file = discord.File(fp=buf, filename="battle.png")
+        file = discord.File(fp=buf, filename=fname)
         embed = discord.Embed(color=discord.Color.red())
-        embed.set_image(url="attachment://battle.png")
+        embed.set_image(url=f"attachment://{fname}")
         view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
         try:
             await engine.message.edit(embed=embed, view=view, attachments=[file])
@@ -210,10 +213,11 @@ class FinaleMixin(MixinMeta):
     # ------------------------------------------------------------------
 
     async def _render_scene_frame(self, interaction: Interaction, engine: FinaleEngine):
+        fname = engine.next_frame_name("scene")
         buf = engine.render_current()
-        file = discord.File(fp=buf, filename="scene.png")
+        file = discord.File(fp=buf, filename=fname)
         embed = discord.Embed(color=discord.Color.dark_purple())
-        embed.set_image(url="attachment://scene.png")
+        embed.set_image(url=f"attachment://{fname}")
         embed.set_footer(text=f"{interaction.user.display_name}'s Finale")
 
         if engine.is_in_cutscene():
@@ -230,10 +234,11 @@ class FinaleMixin(MixinMeta):
         await self._schedule_auto_advance(engine)
 
     async def _render_battle_frame(self, interaction: Interaction, engine: FinaleEngine, with_buttons: bool = True):
+        fname = engine.next_frame_name("battle")
         buf = engine.render_current()
-        file = discord.File(fp=buf, filename="battle.png")
+        file = discord.File(fp=buf, filename=fname)
         embed = discord.Embed(color=discord.Color.red())
-        embed.set_image(url="attachment://battle.png")
+        embed.set_image(url=f"attachment://{fname}")
         bs = engine.battle_state
         if bs:
             alive = sum(1 for p in bs.player_party if p.currentHP > 0)
@@ -248,10 +253,11 @@ class FinaleMixin(MixinMeta):
     async def _render_scene_via_msg(self, engine: FinaleEngine):
         if not engine.message:
             return
+        fname = engine.next_frame_name("scene")
         buf = engine.render_current()
-        file = discord.File(fp=buf, filename="scene.png")
+        file = discord.File(fp=buf, filename=fname)
         embed = discord.Embed(color=discord.Color.dark_purple())
-        embed.set_image(url="attachment://scene.png")
+        embed.set_image(url=f"attachment://{fname}")
 
         if engine.is_in_cutscene():
             view = FinaleDialogView(engine, self._on_dialog_advance)
@@ -743,20 +749,22 @@ class FinaleMixin(MixinMeta):
 
     async def _safe_edit_battle(self, msg, engine):
         """Render battle state and edit message with no buttons."""
+        fname = engine.next_frame_name("battle")
         buf = engine.render_current()
-        file = discord.File(fp=buf, filename="battle.png")
+        file = discord.File(fp=buf, filename=fname)
         embed = discord.Embed(color=discord.Color.red())
-        embed.set_image(url="attachment://battle.png")
+        embed.set_image(url=f"attachment://{fname}")
         await self._safe_edit(msg, embed=embed, view=View(), attachments=[file])
 
     async def _safe_edit_battle_with_buttons(self, msg, engine):
         """Render battle state and edit message WITH move buttons (retries)."""
         for retry in range(3):
             try:
+                fname = engine.next_frame_name("battle")
                 buf = engine.render_current()
-                file = discord.File(fp=buf, filename="battle.png")
+                file = discord.File(fp=buf, filename=fname)
                 embed = discord.Embed(color=discord.Color.red())
-                embed.set_image(url="attachment://battle.png")
+                embed.set_image(url=f"attachment://{fname}")
                 bs = engine.battle_state
                 if bs:
                     alive = sum(1 for p in bs.player_party if p.currentHP > 0)
@@ -782,10 +790,11 @@ class FinaleMixin(MixinMeta):
         engine.message = interaction.message
 
         view = FinaleSwitchView(engine, self._on_switch_confirm, self._on_switch_cancel)
+        fname = engine.next_frame_name("battle")
         buf = engine.render_current()
-        file = discord.File(fp=buf, filename="battle.png")
+        file = discord.File(fp=buf, filename=fname)
         embed = discord.Embed(title="Switch Pokemon", description="Choose a Pokemon to switch to:", color=discord.Color.blue())
-        embed.set_image(url="attachment://battle.png")
+        embed.set_image(url=f"attachment://{fname}")
         await interaction.message.edit(embed=embed, view=view, attachments=[file])
 
     async def _on_switch_confirm(self, interaction: Interaction, party_index: int):
@@ -838,9 +847,10 @@ class FinaleMixin(MixinMeta):
         engine.end_battle(victory=False)
         img = engine.renderer.render_transition(text="You have been defeated...")
         file_buf = engine.renderer.to_discord_file(img, "defeat.png")
-        file = discord.File(fp=file_buf, filename="defeat.png")
+        fname = engine.next_frame_name("defeat")
+        file = discord.File(fp=file_buf, filename=fname)
         embed = discord.Embed(color=discord.Color.dark_red())
-        embed.set_image(url="attachment://defeat.png")
+        embed.set_image(url=f"attachment://{fname}")
         embed.set_footer(text="Don't give up!")
         view = FinaleDefeatView(engine, retry_callback=self._on_retry, quit_callback=self._on_quit)
         await interaction.message.edit(embed=embed, view=view, attachments=[file])
@@ -851,9 +861,10 @@ class FinaleMixin(MixinMeta):
             return
         img = engine.renderer.render_transition(text="You have been defeated...")
         file_buf = engine.renderer.to_discord_file(img, "defeat.png")
-        file = discord.File(fp=file_buf, filename="defeat.png")
+        fname = engine.next_frame_name("defeat")
+        file = discord.File(fp=file_buf, filename=fname)
         embed = discord.Embed(color=discord.Color.dark_red())
-        embed.set_image(url="attachment://defeat.png")
+        embed.set_image(url=f"attachment://{fname}")
         embed.set_footer(text="Don't give up!")
         view = FinaleDefeatView(engine, retry_callback=self._on_retry, quit_callback=self._on_quit)
         try:
@@ -873,9 +884,10 @@ class FinaleMixin(MixinMeta):
         else:
             img = engine.renderer.render_finale(title="Champion", text="Congratulations!", trainer_name=engine.trainer_name)
         file_buf = engine.renderer.to_discord_file(img, "finale.png")
-        file = discord.File(fp=file_buf, filename="finale.png")
+        fname = engine.next_frame_name("finale")
+        file = discord.File(fp=file_buf, filename=fname)
         embed = discord.Embed(color=discord.Color.gold())
-        embed.set_image(url="attachment://finale.png")
+        embed.set_image(url=f"attachment://{fname}")
         if user_id in self.__finale_engines:
             del self.__finale_engines[user_id]
         await interaction.message.edit(embed=embed, view=View(), attachments=[file])
@@ -894,9 +906,10 @@ class FinaleMixin(MixinMeta):
         else:
             img = engine.renderer.render_finale(title="Champion", text="Congratulations!", trainer_name=engine.trainer_name)
         file_buf = engine.renderer.to_discord_file(img, "finale.png")
-        file = discord.File(fp=file_buf, filename="finale.png")
+        fname = engine.next_frame_name("finale")
+        file = discord.File(fp=file_buf, filename=fname)
         embed = discord.Embed(color=discord.Color.gold())
-        embed.set_image(url="attachment://finale.png")
+        embed.set_image(url=f"attachment://{fname}")
         if user_id in self.__finale_engines:
             del self.__finale_engines[user_id]
         try:
@@ -937,10 +950,11 @@ class FinaleMixin(MixinMeta):
         self.__finale_engines[user_id] = engine
         engine.message = interaction.message
 
+        fname = engine.next_frame_name("scene")
         buf = engine.render_current()
-        file = discord.File(fp=buf, filename="scene.png")
+        file = discord.File(fp=buf, filename=fname)
         embed = discord.Embed(color=discord.Color.dark_purple())
-        embed.set_image(url="attachment://scene.png")
+        embed.set_image(url=f"attachment://{fname}")
         embed.set_footer(text=f"{interaction.user.display_name}'s Finale")
 
         if engine.get_auto_advance_delay() > 0:

@@ -38,6 +38,7 @@ class FinaleBattleState:
         self.battle_log: List[str] = []
         self.defeated_enemies: List[str] = []
         self.battle_mode: str = "normal"
+        self._frame_counter = 0
 
     @property
     def enemy_hp_pct(self) -> float:
@@ -105,6 +106,11 @@ class FinaleEngine:
         self._auto_task = None
 
         self._index_cutscenes()
+
+    def next_frame_name(self, prefix: str = "scene") -> str:
+        """Generate a unique filename to bust Discord's image cache."""
+        self._frame_counter += 1
+        return f"{prefix}_{self._frame_counter}.png"
 
     def substitute_text(self, text: str) -> str:
         """Replace all placeholders in text."""
