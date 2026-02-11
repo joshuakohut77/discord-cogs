@@ -18,6 +18,8 @@ def get_finale_script() -> list:
             text=["So... you actually made it."],
             background="finale_bg.png",
             character_sprite="shrouded_figure.png",
+            audio='intro.mp3',
+            audio_loop=True,
         ),
         DialogScene(
             speaker="???",
@@ -107,6 +109,7 @@ def get_finale_script() -> list:
         DialogScene(
             speaker="Skippy", text=["No matter, the real battle starts now!"],
             background="finale_battle_bg.png", character_sprite="skippy.png",
+            audio='battle_theme.mp3',
         ),
 
         # ============================================================
@@ -116,6 +119,7 @@ def get_finale_script() -> list:
             speaker="Skippy", text=["Skippy sends out DragonDeez!"],
             background="finale_battle_bg.png", character_sprite="dragon_deez.png",
             auto_advance=3,
+            
         ),
         BattleStartScene(
             enemy_name="Skippy", enemy_team=[{"DragonDeez": 64}],
@@ -183,6 +187,7 @@ def get_finale_script() -> list:
             text=["You are a formidable foe, {trainer_name}."],
             background="finale_battle_bg.png", character_sprite="skippy.png",
             use_trainer_name=True,
+            audio="stop",
         ),
         DialogScene(
             speaker="Skippy",
@@ -207,6 +212,7 @@ def get_finale_script() -> list:
             intro_text="Skippy the Magnificent enters the battle!",
             battle_id="skippy_unwinnable",
             battle_mode="unwinnable",
+            audio="zanarkand.mp3",
         ),
 
         # --- Dialog before last pokemon ---
@@ -246,6 +252,7 @@ def get_finale_script() -> list:
                     text=["Unbelievable, how can this happen?!"],
                     background="finale_battle_bg.png",
                     character_sprite="skippy.png",
+                    audio="stop"
                 ),
             ],
         ),
@@ -259,6 +266,7 @@ def get_finale_script() -> list:
             speaker="Skippy",
             text=["THAT'S ENOUGH! This is my game and I will not allow it!"],
             background="finale_battle_bg.png", character_sprite="skippy.png",
+            audio="wind.mp3"
         ),
 
         # Blinding light transition
@@ -290,7 +298,7 @@ def get_finale_script() -> list:
         ),
 
         # Flash — Chodethulu teleports in
-        TransitionScene(text="", bg_color=(255, 255, 255), duration=1.0),
+        TransitionScene(text="", bg_color=(255, 255, 255), duration=1.0,audio="teleport.mp3"),
 
         # Dual character scene: Skippy left, Chodethulu right
         DialogScene(
@@ -337,6 +345,7 @@ def get_finale_script() -> list:
             background="finale_bg.png",
             character_sprite="trainer.png", character_position="left",
             use_trainer_name=True,
+            audio="cahmpion_battle.mp3",
         ),
 
         # ============================================================
@@ -362,6 +371,7 @@ def get_finale_script() -> list:
             background="finale_bg.png",
             character_sprite="skippy.png", character_position="left",
             character_sprite_2="chodethulu.png", character_position_2="right",
+            audio="stop",
         ),
         DialogScene(
             speaker="Chodethulu",
@@ -377,7 +387,7 @@ def get_finale_script() -> list:
             character_sprite_2="chodethulu.png", character_position_2="right",
         ),
 
-        TransitionScene(text="Begone, Skippy.", bg_color=(255, 255, 255), duration=2.0),
+        TransitionScene(text="Begone, Skippy.", bg_color=(255, 255, 255), duration=2.0,audio="hymn.mp3"),
 
         DialogScene(
             speaker="{trainer_name}",
@@ -440,6 +450,7 @@ def get_finale_script() -> list:
             background="finale_bg.png",
             auto_advance=3,
             use_trainer_name=True,
+            audio="otherworld.mp3"
         ),
         DialogScene(
             speaker="",
@@ -475,6 +486,7 @@ def get_finale_script() -> list:
             background="finale_bg.png",
             character_sprite="trainer.png", character_position="left",
             use_trainer_name=True,
+            audio="stop",
         ),
         DialogScene(
             speaker="Chodethulu",
