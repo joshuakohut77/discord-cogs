@@ -286,7 +286,7 @@ def get_finale_script() -> list:
             dialog=[
                 DialogScene(
                     speaker="Skippy",
-                    text=["Unbelievable, how can this happen?!"],
+                    text=["Unbelievable! That's not possible!"],
                     background="finale_battle_bg.png",
                     character_sprite="skippy.png",
                     
@@ -300,14 +300,21 @@ def get_finale_script() -> list:
         # ACT 5: SKIPPY RAGE — Chodethulu appears
         # ============================================================
         DialogScene(
+            speaker="",
+            text=[""],
+            background="finale_battle_bg.png", character_sprite="",
+            audio="whoosh_short.mp3",
+            auto_advance=1,
+        ),
+        DialogScene(
             speaker="Skippy",
             text=["THAT'S ENOUGH! This is my game and I will not allow it!"],
             background="finale_battle_bg.png", character_sprite="skippy.png",
-            audio="eerie.mp3"
+            audio="eerie.mp3",
         ),
 
         # Blinding light transition
-        TransitionScene(text="", bg_color=(255, 255, 255), duration=1.5),
+        TransitionScene(text="A blinding light fills the room", bg_color=(255, 255, 255), duration=1.5),
 
         DialogScene(
             speaker="",
