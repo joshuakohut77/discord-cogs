@@ -196,6 +196,7 @@ def get_finale_script() -> list:
             speaker="Skippy",
             text=["However, do you think you have what it takes to defeat..."],
             background="finale_battle_bg.png", character_sprite="skippy.png",
+            audio='stop'
         ),
         DialogScene(
             speaker="Skippy",
@@ -203,7 +204,6 @@ def get_finale_script() -> list:
             background="finale_battle_bg.png", character_sprite="skippy.png",
             auto_advance=3,
             audio="skippy_battle.mp3",
-            audio_loop=True,
         ),
 
         # ============================================================
