@@ -94,7 +94,7 @@ def get_finale_script() -> list:
             use_trainer_name=True,
         ),
         DialogScene(
-            speaker="", text=["Vaporeon looks mildly concerned from hearing the name"],
+            speaker="", text=['Vaporeon looks mildly concerned from hearing the name "Professor Oak"'],
             background="finale_battle_bg.png", character_sprite="vaporeon.png",
             
         ),
@@ -196,7 +196,7 @@ def get_finale_script() -> list:
             speaker="Skippy",
             text=["However, do you think you have what it takes to defeat..."],
             background="finale_battle_bg.png", character_sprite="skippy.png",
-            audio='stop'
+            
         ),
         DialogScene(
             speaker="Skippy",
