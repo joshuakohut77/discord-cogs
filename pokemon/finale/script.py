@@ -127,10 +127,12 @@ def get_finale_script() -> list:
             enemy_name="Skippy", enemy_team=[{"DragonDeez": 64}],
             enemy_sprite="dragon_deez.png", battle_background="finale_battle_bg.png",
             intro_text="DragonDeez enters the battle!", battle_id="dragondeez",
+            audio='battle_theme.mp3',
         ),
         DialogScene(
             speaker="Skippy", text=["How dare you! You think you're better than me???"],
             background="finale_battle_bg.png", character_sprite="skippy.png",
+            audio='battle_theme.mp3',
         ),
 
         # ============================================================
@@ -140,16 +142,19 @@ def get_finale_script() -> list:
             speaker="Skippy", text=["Skippy sends out Titty Pussy!"],
             background="finale_battle_bg.png", character_sprite="titty_pussy.png",
             auto_advance=3,
+            audio='battle_theme.mp3',
         ),
         BattleStartScene(
             enemy_name="Skippy", enemy_team=[{"TittyPussy": 66}],
             enemy_sprite="titty_pussy.png", battle_background="finale_battle_bg.png",
             intro_text="Titty Pussy enters the battle!", battle_id="tittypussy",
+            audio='battle_theme.mp3',
         ),
         DialogScene(
             speaker="Skippy",
             text=["How can this be? You are not ready for what's coming next!"],
             background="finale_battle_bg.png", character_sprite="skippy.png",
+            audio='battle_theme.mp3',
         ),
 
         # ============================================================
@@ -158,17 +163,20 @@ def get_finale_script() -> list:
         DialogScene(
             speaker="Skippy", text=["Skippy sends out Angel Hernandez!"],
             background="finale_battle_bg.png", character_sprite="angel_hernandez.png",
+            audio='battle_theme.mp3',
             auto_advance=3,
         ),
         BattleStartScene(
             enemy_name="Skippy", enemy_team=[{"AngelHernandez": 64}],
             enemy_sprite="angel_hernandez.png", battle_background="finale_battle_bg.png",
             intro_text="Angel Hernandez enters the battle!", battle_id="angelhernandez",
+            audio='battle_theme.mp3',
         ),
         DialogScene(
             speaker="Skippy",
             text=["I'm actually not surprised. He was never good at his job. This one is the real show-stopper!"],
             background="finale_battle_bg.png", character_sprite="skippy.png",
+            audio='battle_theme.mp3',
         ),
 
         # ============================================================
@@ -178,11 +186,13 @@ def get_finale_script() -> list:
             speaker="Skippy", text=["Skippy sends out Abigail Shapiro!"],
             background="finale_battle_bg.png", character_sprite="abigail_shapiro.png",
             auto_advance=3,
+            audio='battle_theme.mp3',
         ),
         BattleStartScene(
             enemy_name="Skippy", enemy_team=[{"AbigailShapiro": 69}],
             enemy_sprite="abigail_shapiro.png", battle_background="finale_battle_bg.png",
             intro_text="Abigail Shapiro enters the battle!", battle_id="abigailshapiro",
+            audio='battle_theme.mp3',
         ),
         DialogScene(
             speaker="Skippy",
@@ -196,7 +206,7 @@ def get_finale_script() -> list:
             speaker="Skippy",
             text=["However, do you think you have what it takes to defeat..."],
             background="finale_battle_bg.png", character_sprite="skippy.png",
-            
+            audio="wind.mp3",
         ),
         DialogScene(
             speaker="Skippy",
