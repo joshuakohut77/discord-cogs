@@ -279,7 +279,7 @@ def get_finale_script() -> list:
         DialogScene(
             speaker="",
             text=["(suddenly the air feels hot and a bright light appears behind Skippy.)"],
-            background="finale_bg.png", character_sprite="skippy.png",
+            background="finale_bg.png", character_sprite="",
             character_position="left",
         ),
 
@@ -298,30 +298,26 @@ def get_finale_script() -> list:
             speaker="Chodethulu",
             text=["I warned you Skippy. Play by the rules or else you will play by mine."],
             background="finale_bg.png",
-            character_sprite="skippy.png", character_position="left",
-            character_sprite_2="chodethulu.png", character_position_2="right",
+            character_sprite="chodethulu.png", character_position="right",
         ),
         DialogScene(
             speaker="Skippy",
             text=["But it's not fair. I am the champion. I can't let a mere mortal defeat me."],
             background="finale_bg.png",
             character_sprite="skippy.png", character_position="left",
-            character_sprite_2="chodethulu.png", character_position_2="right",
         ),
         DialogScene(
             speaker="Chodethulu",
-            text=["{trainer_name}, you fought well and have shown true love for your Pokemon."],
+            text=["Young {trainer_name}, you fought well and have shown true love for your Pokemon."],
             background="finale_bg.png",
-            character_sprite="skippy.png", character_position="left",
-            character_sprite_2="chodethulu.png", character_position_2="right",
+            character_sprite="chodethulu.png", character_position="right",
             use_trainer_name=True,
         ),
         DialogScene(
             speaker="Chodethulu",
             text=["Now show Skippy the power of a true Pokemon Master."],
             background="finale_bg.png",
-            character_sprite="skippy.png", character_position="left",
-            character_sprite_2="chodethulu.png", character_position_2="right",
+            character_sprite="chodethulu.png", character_position="right",
         ),
         DialogScene(
             speaker="",
@@ -365,8 +361,7 @@ def get_finale_script() -> list:
             speaker="Chodethulu",
             text=["Your time ruling as Pokemon Champion is finished, Skippy."],
             background="finale_bg.png",
-            character_sprite="skippy.png", character_position="left",
-            character_sprite_2="chodethulu.png", character_position_2="right",
+            character_sprite="chodethulu.png", character_position="right",
         ),
         DialogScene(
             speaker="Skippy",
@@ -382,7 +377,7 @@ def get_finale_script() -> list:
             speaker="{trainer_name}",
             text=["What happened, where did he go?"],
             background="finale_bg.png",
-            character_sprite="chodethulu.png", character_position="right",
+            character_sprite="trainer.png", character_position="left",
             use_trainer_name=True,
         ),
         DialogScene(
@@ -395,7 +390,7 @@ def get_finale_script() -> list:
             speaker="{trainer_name}",
             text=["Thank you for helping me... but sir please tell me.\nWho are you?"],
             background="finale_bg.png",
-            character_sprite="chodethulu.png", character_position="right",
+            character_sprite="trainer.png", character_position="left",
             use_trainer_name=True,
         ),
         DialogScene(
@@ -420,7 +415,7 @@ def get_finale_script() -> list:
             speaker="{trainer_name}",
             text=["How about a duel then? Let's see how much I need to improve."],
             background="finale_bg.png",
-            character_sprite="chodethulu.png", character_position="right",
+            character_sprite="trainer.png", character_position="left",
             use_trainer_name=True,
         ),
         DialogScene(
