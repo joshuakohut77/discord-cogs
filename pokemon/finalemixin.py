@@ -122,6 +122,128 @@ class FinaleMixin(MixinMeta):
         engine.message = message
         await self._schedule_auto_advance(engine)
 
+    @commands.command(name="finaleact")
+    @commands.guild_only()
+    @commands.is_owner()
+    async def finale_act_command(self, ctx: commands.Context, act: int = 1) -> None:
+        """[ADMIN] Start finale at a specific act number.
+        
+        Acts: 1=Encounter, 2=Vaporeon, 3=DragonDeez, 4=TittyPussy,
+        5=AngelHernandez, 6=AbigailShapiro, 7=Unwinnable, 8=RiggedWin,
+        9=SkippyRage, 10=FinalSkippy, 11=PostSkippy, 12=Melkor, 13=Ending
+        """
+        user = ctx.author
+        user_id = str(user.id)
+
+        if user_id in self.__finale_engines:
+            self.__finale_engines[user_id].cancel_auto_advance()
+            del self.__finale_engines[user_id]
+
+        # Clear config cache so changes are picked up
+        self.__finale_pokemon_config = None
+
+        trainer = TrainerClass(user_id)
+        trainer_name = trainer.getTrainerName() if hasattr(trainer, 'getTrainerName') else user.display_name
+
+        party = trainer.getPokemon(party=True)
+        alive_party = []
+        for poke in party:
+            poke.load(pokemonId=poke.trainerId)
+            stats = poke.getPokeStats()
+            poke.currentHP = stats['hp']
+            poke.discordId = str(user.id)
+            poke.save()
+            alive_party.append(poke)
+
+        if not alive_party:
+            await ctx.send("You don't have any Pokemon!")
+            return
+
+        alive_party.sort(key=lambda p: p.currentLevel)
+
+        script = get_finale_script()
+        engine = FinaleEngine(
+            user_id=user_id,
+            trainer_name=trainer_name if trainer_name else user.display_name,
+            player_party=alive_party,
+            script=script
+        )
+
+        # Map act numbers to scene indices
+        act_map = self._get_act_map(engine.script)
+        if act not in act_map:
+            acts_list = ", ".join(f"{k}={v}" for k, v in sorted(act_map.items()))
+            await ctx.send(f"Invalid act number. Available: {acts_list}")
+            return
+
+        engine.scene_index = act_map[act]
+        engine.dialog_page_index = 0
+        self.__finale_engines[user_id] = engine
+
+        fname = engine.next_frame_name("scene")
+        buf = engine.render_current()
+        file = discord.File(fp=buf, filename=fname)
+        embed = discord.Embed(color=discord.Color.dark_purple())
+        embed.set_image(url=f"attachment://{fname}")
+        embed.set_footer(text=f"{user.display_name}'s Finale (Act {act})")
+
+        if engine.get_auto_advance_delay() > 0:
+            view = View()
+        else:
+            scene = engine.get_current_scene()
+            if isinstance(scene, BattleStartScene):
+                engine.start_battle(self._create_finale_enemy_from_config)
+                self._setup_battle_party(engine)
+                view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
+            else:
+                view = FinaleDialogView(engine, self._on_dialog_advance)
+
+        message = await ctx.send(embed=embed, view=view, file=file)
+        engine.message = message
+        await self._schedule_auto_advance(engine)
+
+    def _get_act_map(self, script) -> dict:
+        """Build a mapping of act numbers to scene indices by scanning comments/structure."""
+        # We define acts by hand to match the script structure
+        act_map = {1: 0}  # Act 1 always starts at 0
+        
+        act_markers = {
+            "Vaporeon": 2,
+            "DragonDeez": 3,
+            "Titty Pussy": 4,
+            "Angel Hernandez": 5,
+            "Abigail Shapiro": 6,
+            "skippy_unwinnable": 7,
+            "skippy_rigged": 8,
+            "Whhaaa": 9,
+            "skippy_final": 10,
+            "This is outrageous": 11,
+            "melkor": 12,
+            "Wow you": 13,
+        }
+
+        for i, scene in enumerate(script):
+            for marker, act_num in act_markers.items():
+                if act_num in act_map:
+                    continue
+                    
+                # Check dialog text
+                if hasattr(scene, 'text') and scene.text:
+                    for t in (scene.text if isinstance(scene.text, list) else [scene.text]):
+                        if marker in str(t):
+                            act_map[act_num] = i
+                            break
+
+                # Check battle_id
+                if hasattr(scene, 'battle_id') and marker == scene.battle_id:
+                    act_map[act_num] = i
+
+                # Check speaker
+                if hasattr(scene, 'speaker') and marker in str(getattr(scene, 'speaker', '')):
+                    act_map[act_num] = i
+
+        return act_map
+
     # ------------------------------------------------------------------
     # Auto-advance
     # ------------------------------------------------------------------
