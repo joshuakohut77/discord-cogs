@@ -96,7 +96,7 @@ def get_finale_script() -> list:
         DialogScene(
             speaker="", text=["Vaporeon looks mildly concerned from hearing the name"],
             background="finale_battle_bg.png", character_sprite="vaporeon.png",
-            audio='stop',
+            
         ),
         DialogScene(
             speaker="", text=["Vaporeon ran away!"],
