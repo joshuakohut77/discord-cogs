@@ -35,6 +35,7 @@ class FinaleAudioManager:
         self._connected: bool = False
         self._volume: float = 0.5  # 0.0 to 1.0
         self._event_loop: Optional[asyncio.AbstractEventLoop] = None
+        self._lock: asyncio.Lock = asyncio.Lock()
 
     # ------------------------------------------------------------------
     # Connection
@@ -45,7 +46,6 @@ class FinaleAudioManager:
         Connect to the voice channel the member is currently in.
         Returns True if connected successfully, False otherwise.
         """
-        # Capture the event loop for use in threaded callbacks later
         self._event_loop = asyncio.get_running_loop()
 
         if not member.voice or not member.voice.channel:
@@ -60,7 +60,6 @@ class FinaleAudioManager:
             if self.voice_client.channel.id == channel.id:
                 self._connected = True
                 return True
-            # Connected to wrong channel — move
             try:
                 await self.voice_client.move_to(channel)
                 self._connected = True
@@ -87,7 +86,8 @@ class FinaleAudioManager:
 
     async def disconnect(self):
         """Stop playback and disconnect from voice."""
-        await self.async_stop()
+        async with self._lock:
+            await self._stop_and_wait()
         if self.voice_client:
             try:
                 if self.voice_client.is_connected():
@@ -104,7 +104,7 @@ class FinaleAudioManager:
         return self._connected and self.voice_client is not None and self.voice_client.is_connected()
 
     # ------------------------------------------------------------------
-    # Playback
+    # Internal helpers
     # ------------------------------------------------------------------
 
     def _get_audio_path(self, filename: str) -> Optional[str]:
@@ -123,79 +123,101 @@ class FinaleAudioManager:
         )
         return discord.PCMVolumeTransformer(source, volume=self._volume)
 
+    async def _stop_and_wait(self):
+        """
+        Stop current playback and poll until ffmpeg has actually terminated.
+        Must be called while holding self._lock.
+        """
+        self.is_looping = False
+        if not self.voice_client:
+            return
+        if not self.voice_client.is_playing() and not self.voice_client.is_paused():
+            return
+
+        self.voice_client.stop()
+
+        # Poll until the player is actually finished (up to 2 seconds)
+        for _ in range(40):
+            if not self.voice_client.is_playing() and not self.voice_client.is_paused():
+                # Small extra delay for ffmpeg process cleanup
+                await asyncio.sleep(0.05)
+                return
+            await asyncio.sleep(0.05)
+
+        print("[FinaleAudio] Warning: ffmpeg did not stop within 2 seconds")
+
+    # ------------------------------------------------------------------
+    # Playback (all public methods acquire the lock)
+    # ------------------------------------------------------------------
+
     async def async_play(self, filename: str, loop: bool = False):
         """
         Play an audio file. If something is already playing, it stops first
         and waits for the ffmpeg process to terminate cleanly.
-
-        Args:
-            filename: Audio file in sprites/finale/audio/
-            loop: Whether to loop the track when it finishes
         """
-        if not self.connected:
-            return
-
-        filepath = self._get_audio_path(filename)
-        if not filepath:
-            return
-
-        # Stop current playback and wait for ffmpeg to terminate cleanly
-        if self.voice_client.is_playing() or self.voice_client.is_paused():
-            self.is_looping = False  # prevent loop callback from re-triggering
-            self.voice_client.stop()
-            # Give ffmpeg time to terminate via SIGTERM instead of SIGKILL
-            await asyncio.sleep(0.15)
-
-        self.current_track = filename
-        self.is_looping = loop
-
-        def after_callback(error):
-            if error:
-                print(f"[FinaleAudio] Playback error: {error}")
+        async with self._lock:
+            if not self.connected:
                 return
-            # If looping and still connected, schedule replay on the event loop
-            if self.is_looping and self.connected and self.current_track == filename:
-                if self._event_loop and not self._event_loop.is_closed():
-                    asyncio.run_coroutine_threadsafe(
-                        self._loop_replay(filepath, filename), self._event_loop
-                    )
 
-        try:
-            source = self._create_source(filepath)
-            self.voice_client.play(source, after=after_callback)
-        except Exception as e:
-            print(f"[FinaleAudio] Play error: {e}")
+            filepath = self._get_audio_path(filename)
+            if not filepath:
+                return
+
+            # Stop current playback and wait for ffmpeg to fully terminate
+            await self._stop_and_wait()
+
+            self.current_track = filename
+            self.is_looping = loop
+
+            def after_callback(error):
+                if error:
+                    print(f"[FinaleAudio] Playback error: {error}")
+                    return
+                if self.is_looping and self.connected and self.current_track == filename:
+                    if self._event_loop and not self._event_loop.is_closed():
+                        asyncio.run_coroutine_threadsafe(
+                            self._loop_replay(filepath, filename), self._event_loop
+                        )
+
+            try:
+                source = self._create_source(filepath)
+                self.voice_client.play(source, after=after_callback)
+            except Exception as e:
+                print(f"[FinaleAudio] Play error: {e}")
 
     async def _loop_replay(self, filepath: str, filename: str):
-        """Replay a track for looping. Runs on the event loop (not the thread)."""
-        # Small delay to let the previous ffmpeg process finish cleanly
-        await asyncio.sleep(0.1)
-        if not self.is_looping or not self.connected or self.current_track != filename:
-            return
-        try:
-            source = self._create_source(filepath)
-            self.voice_client.play(source, after=lambda e: self._on_loop_after(e, filepath, filename))
-        except Exception as e:
-            print(f"[FinaleAudio] Loop replay error: {e}")
+        """Replay a track for looping. Acquires the lock to avoid races."""
+        async with self._lock:
+            if not self.is_looping or not self.connected or self.current_track != filename:
+                return
 
-    def _on_loop_after(self, error, filepath: str, filename: str):
-        """After callback for looped tracks."""
-        if error:
-            print(f"[FinaleAudio] Loop playback error: {error}")
-            return
-        if self.is_looping and self.connected and self.current_track == filename:
-            if self._event_loop and not self._event_loop.is_closed():
-                asyncio.run_coroutine_threadsafe(
-                    self._loop_replay(filepath, filename), self._event_loop
-                )
+            # Wait for the previous player to fully finish
+            await self._stop_and_wait()
+
+            if not self.is_looping or not self.connected or self.current_track != filename:
+                return
+
+            def after_callback(error):
+                if error:
+                    print(f"[FinaleAudio] Loop playback error: {error}")
+                    return
+                if self.is_looping and self.connected and self.current_track == filename:
+                    if self._event_loop and not self._event_loop.is_closed():
+                        asyncio.run_coroutine_threadsafe(
+                            self._loop_replay(filepath, filename), self._event_loop
+                        )
+
+            try:
+                source = self._create_source(filepath)
+                self.voice_client.play(source, after=after_callback)
+            except Exception as e:
+                print(f"[FinaleAudio] Loop replay error: {e}")
 
     async def async_stop(self):
         """Stop current playback and wait for clean ffmpeg shutdown."""
-        self.is_looping = False
-        self.current_track = None
-        if self.voice_client and (self.voice_client.is_playing() or self.voice_client.is_paused()):
-            self.voice_client.stop()
-            await asyncio.sleep(0.15)
+        async with self._lock:
+            self.current_track = None
+            await self._stop_and_wait()
 
     def set_volume(self, volume: float):
         """Set volume (0.0 to 1.0)."""
@@ -220,7 +242,6 @@ class FinaleAudioManager:
             audio_loop: Whether to loop the new track
         """
         if audio is None:
-            # No audio directive — keep whatever is playing
             return
 
         if audio.lower() == "stop":

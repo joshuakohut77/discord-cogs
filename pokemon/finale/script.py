@@ -189,7 +189,8 @@ def get_finale_script() -> list:
             text=["You are a formidable foe, {trainer_name}."],
             background="finale_battle_bg.png", character_sprite="skippy.png",
             use_trainer_name=True,
-            audio="stop",
+            audio="wind.mp3",
+            audio_loop=True,
         ),
         DialogScene(
             speaker="Skippy",
@@ -214,8 +215,9 @@ def get_finale_script() -> list:
             intro_text="Skippy the Magnificent enters the battle!",
             battle_id="skippy_unwinnable",
             battle_mode="unwinnable",
-            audio="wind.mp3",
+            audio="skippy_battle.mp3",
             audio_loop=True,
+            
         ),
 
         # --- Dialog before last pokemon ---
@@ -223,6 +225,20 @@ def get_finale_script() -> list:
             speaker="Skippy",
             text=["Can't you see this is futile. I cannot be beat!"],
             background="finale_battle_bg.png", character_sprite="skippy.png",
+            audio='wind.mp3',
+            audio_loop=True,
+        ),
+        DialogScene(
+            speaker="{trainer_name}",
+            text=["He's so strong we can't even hurt him."],
+            background="finale_battle_bg.png", character_sprite="trainer.png",
+            character_position="left", use_trainer_name=True,
+        ),
+        DialogScene(
+            speaker="{trainer_name}",
+            text=["There's no possible way I can win... But I must try."],
+            background="finale_battle_bg.png", character_sprite="trainer.png",
+            character_position="left", use_trainer_name=True,
         ),
         DialogScene(
             speaker="{trainer_name}",
@@ -311,6 +327,8 @@ def get_finale_script() -> list:
             background="finale_bg.png",
             character_sprite="skippy.png", character_position="left",
             character_sprite_2="chodethulu.png", character_position_2="right",
+            audio="wind.mp3",
+            audio_loop=True,
         ),
         DialogScene(
             speaker="Chodethulu",
@@ -349,7 +367,7 @@ def get_finale_script() -> list:
             background="finale_bg.png",
             character_sprite="trainer.png", character_position="left",
             use_trainer_name=True,
-            audio="cahmpion_battle.mp3",
+            audio="champion_battle.mp3",
         ),
 
         # ============================================================
