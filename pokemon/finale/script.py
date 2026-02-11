@@ -44,6 +44,7 @@ def get_finale_script() -> list:
             background="finale_bg.png",
             character_sprite="trainer.png",
             use_trainer_name=True,
+            character_position="left",
         ),
         DialogScene(
             speaker="???",
@@ -277,7 +278,7 @@ def get_finale_script() -> list:
         ),
         DialogScene(
             speaker="",
-            text=["...suddenly the air feels hot and a bright light appears behind Skippy."],
+            text=["(suddenly the air feels hot and a bright light appears behind Skippy.)"],
             background="finale_bg.png", character_sprite="skippy.png",
             character_position="left",
         ),
