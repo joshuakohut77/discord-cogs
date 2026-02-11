@@ -202,6 +202,8 @@ def get_finale_script() -> list:
             text=["Skippy the Magnificent!"],
             background="finale_battle_bg.png", character_sprite="skippy.png",
             auto_advance=3,
+            audio="skippy_battle.mp3",
+            audio_loop=True,
         ),
 
         # ============================================================
@@ -215,8 +217,7 @@ def get_finale_script() -> list:
             intro_text="Skippy the Magnificent enters the battle!",
             battle_id="skippy_unwinnable",
             battle_mode="unwinnable",
-            audio="skippy_battle.mp3",
-            audio_loop=True,
+            
             
         ),
 
