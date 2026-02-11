@@ -221,11 +221,16 @@ def get_finale_script() -> list:
 
         # --- Dialog before last pokemon ---
         DialogScene(
+            speaker="",
+            text=[""],
+            background="finale_battle_bg.png", character_sprite="",
+            auto_advance=2,
+            audio='stop',
+        ),
+        DialogScene(
             speaker="Skippy",
             text=["Can't you see this is futile. I cannot be beat!"],
-            background="finale_battle_bg.png", character_sprite="skippy.png",
-            audio='stop',
-            
+            background="finale_battle_bg.png", character_sprite="skippy.png", 
         ),
         DialogScene(
             speaker="{trainer_name}",
@@ -235,16 +240,29 @@ def get_finale_script() -> list:
         ),
         DialogScene(
             speaker="{trainer_name}",
-            text=["There's no possible way I can win... But I must try."],
+            text=["My mom, Professor Oak, Gary... They're all counting on me."],
             background="finale_battle_bg.png", character_sprite="trainer.png",
             character_position="left", use_trainer_name=True,
+        ),
+        DialogScene(
+            speaker="{trainer_name}",
+            text=["This is my moment. This is my destiny."],
+            background="finale_battle_bg.png", character_sprite="trainer.png",
+            character_position="left", use_trainer_name=True,
+        ),
+        DialogScene(
+            speaker="{trainer_name}",
+            text=["I don't know how I can win... But I must try."],
+            background="finale_battle_bg.png", character_sprite="trainer.png",
+            character_position="left", use_trainer_name=True,
+            audio="zanarkand.mp3",
         ),
         DialogScene(
             speaker="{trainer_name}",
             text=["This is it. This is my last pokemon...\nGo... {last_pokemon}!"],
             background="finale_battle_bg.png", character_sprite="trainer.png",
             character_position="left", use_trainer_name=True,
-            audio="zanarkand.mp3",
+            
         ),
 
         # ============================================================
