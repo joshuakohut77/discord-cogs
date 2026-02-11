@@ -540,6 +540,13 @@ def get_finale_script() -> list:
             background="finale_bg.png",
             character_sprite="chodethulu.png", character_position="right",
         ),
+        DialogScene(
+            speaker="",
+            text=["Thanks for playing!"],
+            background="finale_bg.png",
+            character_sprite="", character_position="right",
+            audio="victory.mp3",
+        ),
 
         FinaleScene(
             title="The End",
@@ -550,6 +557,6 @@ def get_finale_script() -> list:
             ],
             background="finale_bg.png",
             awards={"champion": True},
-            audio="victory.mp3",
+            
         ),
     ]
