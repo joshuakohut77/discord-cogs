@@ -235,6 +235,18 @@ class FinaleMixin(MixinMeta):
         user = interaction.user
         user_id = str(user.id)
 
+        # Join the user's voice channel
+        member = interaction.guild.get_member(user.id)
+        if member and member.voice and member.voice.channel:
+            vc = member.voice.channel
+            try:
+                if interaction.guild.voice_client:
+                    await interaction.guild.voice_client.move_to(vc)
+                else:
+                    await vc.connect()
+            except Exception as e:
+                await self._debug(f"Failed to join voice channel: {e}")
+
         trainer = TrainerClass(user_id)
         trainer_name = trainer.getTrainerName() if hasattr(trainer, 'getTrainerName') else user.display_name
 
@@ -278,6 +290,14 @@ class FinaleMixin(MixinMeta):
         message = await interaction.message.edit(embed=embed, view=view, attachments=[file])
         engine.message = interaction.message
         await self._schedule_auto_advance(engine)
+
+    async def _leave_voice(self, engine: FinaleEngine):
+        """Disconnect bot from voice channel."""
+        try:
+            if engine.message and engine.message.guild and engine.message.guild.voice_client:
+                await engine.message.guild.voice_client.disconnect()
+        except Exception:
+            pass
 
     def _get_act_map(self, script) -> dict:
         """Build a mapping of act numbers to scene indices by scanning comments/structure."""
@@ -1156,6 +1176,7 @@ class FinaleMixin(MixinMeta):
         embed.set_image(url=f"attachment://{fname}")
         if user_id in self.__finale_engines:
             await self._disconnect_finale_audio(self.__finale_engines[user_id])
+            await self._leave_voice(engine)
             del self.__finale_engines[user_id]
         await interaction.message.edit(embed=embed, view=View(), attachments=[file])
 
@@ -1179,6 +1200,7 @@ class FinaleMixin(MixinMeta):
         embed.set_image(url=f"attachment://{fname}")
         if user_id in self.__finale_engines:
             await self._disconnect_finale_audio(self.__finale_engines[user_id])
+            await self._leave_voice(engine)
             del self.__finale_engines[user_id]
         try:
             await engine.message.edit(embed=embed, view=View(), attachments=[file])
@@ -1235,8 +1257,8 @@ class FinaleMixin(MixinMeta):
     async def _on_quit(self, interaction: Interaction):
         user_id = str(interaction.user.id)
         if user_id in self.__finale_engines:
-            engine = self.__finale_engines[user_id]
-            engine.cancel_auto_advance()
-            if engine.audio_manager:
-                await engine.audio_manager.disconnect()
+            self.__finale_engines[user_id].cancel_auto_advance()
+            await self._leave_voice(self.__finale_engines[user_id])
             del self.__finale_engines[user_id]
+        embed = discord.Embed(title="Finale Abandoned", description="You can return anytime with `,finale`", color=discord.Color.greyple())
+        await interaction.message.edit(embed=embed, view=View(), attachments=[])
