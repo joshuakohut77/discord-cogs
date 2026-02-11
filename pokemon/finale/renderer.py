@@ -76,29 +76,28 @@ class FinaleRenderer:
                       character_sprite: Optional[str] = None,
                       character_position: str = "right",
                       text_box_color: tuple = (0, 0, 0, 180),
-                      trainer_name: Optional[str] = None) -> Image.Image:
+                      trainer_name: Optional[str] = None,
+                      character_sprite_2: Optional[str] = None,
+                      character_position_2: str = "left") -> Image.Image:
         """
         Render a dialog scene frame.
-        
-        Returns a complete PIL Image with background, character sprite,
-        and a text box with speaker name and dialog text.
+        Supports up to two character sprites for dual-character scenes.
         """
-        # Start with background
         frame = self._load_background(background)
-        
-        # Add character sprite
+
         if character_sprite:
             frame = self._composite_character(frame, character_sprite, character_position)
 
-        # Substitute trainer name
+        if character_sprite_2:
+            frame = self._composite_character(frame, character_sprite_2, character_position_2)
+
         if trainer_name:
             text = text.replace("{trainer_name}", trainer_name)
             speaker = speaker.replace("{trainer_name}", trainer_name)
 
-        # Draw dialog box
         frame = self._draw_dialog_box(frame, speaker, text, text_box_color)
-
         return frame
+
 
     def render_battle(self, player_pokemon: 'PokemonClass',
                       enemy_pokemon: 'PokemonClass',

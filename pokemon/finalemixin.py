@@ -1,12 +1,9 @@
 """
 FinaleMixin — Cog mixin for the cinematic finale system.
-
-Provides the ,finale command and wires up the FinaleEngine
-with Discord interaction callbacks for dialog, battles, cutscenes,
-auto-advance timing, and custom Pokemon from finale config.
 """
 from __future__ import annotations
 import asyncio
+import random
 from io import BytesIO
 from typing import Dict, Union, TYPE_CHECKING
 
@@ -34,7 +31,6 @@ from services.leaderboardclass import leaderboard as LeaderboardClass
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
-
 DiscordUser = Union[discord.Member, discord.User]
 
 
@@ -45,14 +41,11 @@ class FinaleMixin(MixinMeta):
     __finale_pokemon_config: dict = None
 
     def _get_finale_pokemon_config(self) -> dict:
-        """Load and cache the finale pokemon config."""
         if self.__finale_pokemon_config is None:
             self.__finale_pokemon_config = load_finale_pokemon_config()
         return self.__finale_pokemon_config
 
-
     async def _safe_edit(self, message: discord.Message, **kwargs) -> bool:
-        """Edit a message with retry logic for transient Discord errors."""
         for attempt in range(3):
             try:
                 await message.edit(**kwargs)
@@ -61,12 +54,15 @@ class FinaleMixin(MixinMeta):
                 if attempt < 2:
                     await asyncio.sleep(1 + attempt)
                 else:
+                    print("[Finale] Message edit failed after 3 attempts")
                     return False
             except discord.NotFound:
                 return False
-            except Exception:
+            except Exception as e:
+                print(f"[Finale] Unexpected edit error: {e}")
                 return False
         return False
+
     # ------------------------------------------------------------------
     # Command
     # ------------------------------------------------------------------
@@ -74,7 +70,7 @@ class FinaleMixin(MixinMeta):
     @commands.command(name="finale")
     @commands.guild_only()
     async def finale_command(self, ctx: commands.Context) -> None:
-        """Begin the cinematic finale — the ultimate battle awaits."""
+        """Begin the cinematic finale."""
         user = ctx.author
         user_id = str(user.id)
 
@@ -99,6 +95,9 @@ class FinaleMixin(MixinMeta):
             await ctx.send("You don't have any Pokemon!")
             return
 
+        # Sort party so highest level is LAST (saved for scripted moments)
+        alive_party.sort(key=lambda p: p.currentLevel)
+
         script = get_finale_script()
         engine = FinaleEngine(
             user_id=user_id,
@@ -108,10 +107,8 @@ class FinaleMixin(MixinMeta):
         )
         self.__finale_engines[user_id] = engine
 
-        # Render first frame and send
         buf = engine.render_current()
         file = discord.File(fp=buf, filename="scene.png")
-
         embed = discord.Embed(color=discord.Color.dark_purple())
         embed.set_image(url="attachment://scene.png")
         embed.set_footer(text=f"{user.display_name}'s Finale")
@@ -122,31 +119,23 @@ class FinaleMixin(MixinMeta):
             view = FinaleDialogView(engine, self._on_dialog_advance)
         message = await ctx.send(embed=embed, view=view, file=file)
         engine.message = message
-
-        # Schedule auto-advance if needed
         await self._schedule_auto_advance(engine)
 
     # ------------------------------------------------------------------
-    # Auto-advance scheduling
+    # Auto-advance
     # ------------------------------------------------------------------
 
     async def _schedule_auto_advance(self, engine: FinaleEngine):
-        """Schedule an auto-advance task if the current scene supports it."""
         delay = engine.get_auto_advance_delay()
         if delay <= 0 or not engine.message:
             return
-
         engine._advance_id += 1
         current_id = engine._advance_id
 
         async def _auto_task():
             await asyncio.sleep(delay)
-            # Check if this task is still valid
-            if engine._advance_id != current_id:
+            if engine._advance_id != current_id or engine.is_complete:
                 return
-            if engine.is_complete:
-                return
-
             result = engine.advance_dialog()
             if result == "start_battle":
                 await self._auto_start_battle(engine)
@@ -158,13 +147,10 @@ class FinaleMixin(MixinMeta):
         engine._auto_task = asyncio.create_task(_auto_task())
 
     async def _auto_render_scene(self, engine: FinaleEngine):
-        """Render scene and edit message directly (no interaction needed)."""
         if not engine.message:
             return
-
         buf = engine.render_current()
         file = discord.File(fp=buf, filename="scene.png")
-
         embed = discord.Embed(color=discord.Color.dark_purple())
         embed.set_image(url="attachment://scene.png")
 
@@ -179,74 +165,35 @@ class FinaleMixin(MixinMeta):
             await engine.message.edit(embed=embed, view=view, attachments=[file])
         except Exception:
             pass
-
-        # Chain auto-advances
         await self._schedule_auto_advance(engine)
 
     async def _auto_start_battle(self, engine: FinaleEngine):
-        """Start a battle from auto-advance (no interaction)."""
         engine.start_battle(self._create_finale_enemy_from_config)
-
+        self._setup_battle_party(engine)
+        if not engine.message:
+            return
         buf = engine.render_current()
         file = discord.File(fp=buf, filename="battle.png")
-
         embed = discord.Embed(color=discord.Color.red())
         embed.set_image(url="attachment://battle.png")
-
-        bs = engine.battle_state
-        if bs:
-            alive = sum(1 for p in bs.player_party if p.currentHP > 0)
-            embed.set_footer(text=f"Your team: {alive} alive | Turn {bs.turn_number}")
-
         view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
-
         try:
             await engine.message.edit(embed=embed, view=view, attachments=[file])
         except Exception:
             pass
 
     async def _auto_handle_complete(self, engine: FinaleEngine):
-        """Handle finale completion from auto-advance."""
-        if not engine.message:
-            return
-        finale_scene = engine.get_finale_scene()
-        if finale_scene:
-            text = " ".join(finale_scene.text) if finale_scene.text else "Congratulations!"
-            img = engine.renderer.render_finale(
-                title=finale_scene.title, text=text,
-                background=finale_scene.background, trainer_name=engine.trainer_name
-            )
-        else:
-            img = engine.renderer.render_finale(
-                title="Champion", text="Congratulations!",
-                trainer_name=engine.trainer_name
-            )
-
-        file_buf = engine.renderer.to_discord_file(img, "finale.png")
-        file = discord.File(fp=file_buf, filename="finale.png")
-        embed = discord.Embed(color=discord.Color.gold())
-        embed.set_image(url="attachment://finale.png")
-
-        user_id = engine.user_id
-        if user_id in self.__finale_engines:
-            del self.__finale_engines[user_id]
-
-        try:
-            await engine.message.edit(embed=embed, view=View(), attachments=[file])
-        except Exception:
-            pass
+        await self._handle_finale_complete_via_msg(engine)
 
     # ------------------------------------------------------------------
-    # Dialog advance callback (from button press)
+    # Dialog advance callback
     # ------------------------------------------------------------------
 
     async def _on_dialog_advance(self, interaction: Interaction, result: str):
-        """Called by FinaleDialogView when 'Next' or 'Skip' is pressed."""
         user_id = str(interaction.user.id)
         engine = self.__finale_engines.get(user_id)
         if not engine:
             return
-
         engine.message = interaction.message
 
         if result == "start_battle":
@@ -259,14 +206,12 @@ class FinaleMixin(MixinMeta):
             await self._render_scene_frame(interaction, engine)
 
     # ------------------------------------------------------------------
-    # Rendering helpers (interaction-based)
+    # Rendering helpers
     # ------------------------------------------------------------------
 
     async def _render_scene_frame(self, interaction: Interaction, engine: FinaleEngine):
-        """Re-render current scene and update the message."""
         buf = engine.render_current()
         file = discord.File(fp=buf, filename="scene.png")
-
         embed = discord.Embed(color=discord.Color.dark_purple())
         embed.set_image(url="attachment://scene.png")
         embed.set_footer(text=f"{interaction.user.display_name}'s Finale")
@@ -282,274 +227,27 @@ class FinaleMixin(MixinMeta):
 
         await interaction.message.edit(embed=embed, view=view, attachments=[file])
         engine.message = interaction.message
-
-        # Schedule auto-advance if needed
         await self._schedule_auto_advance(engine)
 
-    async def _render_battle_frame(self, interaction: Interaction, engine: FinaleEngine,
-                                    with_buttons: bool = True):
-        """Render battle state and show move buttons."""
+    async def _render_battle_frame(self, interaction: Interaction, engine: FinaleEngine, with_buttons: bool = True):
         buf = engine.render_current()
         file = discord.File(fp=buf, filename="battle.png")
-
         embed = discord.Embed(color=discord.Color.red())
         embed.set_image(url="attachment://battle.png")
-
         bs = engine.battle_state
         if bs:
             alive = sum(1 for p in bs.player_party if p.currentHP > 0)
-            enemy_remaining = len(bs.enemy_team_data) - len(bs.defeated_enemies)
-            embed.set_footer(text=f"Your team: {alive} alive | Enemy: {enemy_remaining} remaining | Turn {bs.turn_number}")
-
+            embed.set_footer(text=f"Your team: {alive} alive | Turn {bs.turn_number}")
         if with_buttons:
             view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
         else:
             view = View()
-
         await interaction.message.edit(embed=embed, view=view, attachments=[file])
         engine.message = interaction.message
 
-    # ------------------------------------------------------------------
-    # Battle initialization
-    # ------------------------------------------------------------------
-
-    async def _start_finale_battle(self, interaction: Interaction, engine: FinaleEngine):
-        """Initialize a battle from a BattleStartScene."""
-        engine.start_battle(self._create_finale_enemy_from_config)
-        await self._render_battle_frame(interaction, engine)
-
-    def _create_finale_enemy_from_config(self, pokemon_data: dict, player_discord_id: str):
-        """Create an enemy Pokemon — checks finale config first, then falls back to standard."""
-        name = list(pokemon_data.keys())[0]
-        level = pokemon_data[name]
-
-        config = self._get_finale_pokemon_config()
-        if name in config:
-            poke = FinalePokemon(name, config[name])
-            if level:
-                poke.currentLevel = level
-                stats = poke.getPokeStats()
-                poke.currentHP = stats['hp']
-            return poke
-
-        # Standard Pokemon fallback
-        enemy_pokemon = PokemonClass(player_discord_id, name)
-        enemy_pokemon.create(level)
-        enemy_pokemon.discordId = None
-        PokedexClass(player_discord_id, enemy_pokemon)
-        return enemy_pokemon
-
-    # ------------------------------------------------------------------
-    # Battle move callback
-    # ------------------------------------------------------------------
-
-    async def _on_battle_move(self, interaction: Interaction, move_index: int):
-        """Process a player's move selection — multi-step animated turn."""
-        user = interaction.user
-        user_id = str(user.id)
-        engine = self.__finale_engines.get(user_id)
-        if not engine or not engine.battle_state:
-            return
-
-        engine.cancel_auto_advance()
-        engine.message = interaction.message
-
-        bs = engine.battle_state
-        player_poke = bs.player_pokemon
-        enemy_poke = bs.enemy_pokemon
-        msg = interaction.message
-
-        from helpers.pathhelpers import load_json_config
-        try:
-            moves_config = load_json_config('moves.json')
-            type_effectiveness = load_json_config('typeEffectiveness.json')
-        except Exception:
-            moves_config = {}
-            type_effectiveness = {}
-
-        # Inject custom moves from FinalePokemon so calculate_battle_damage finds them
-        if hasattr(enemy_poke, 'getMovesConfig'):
-            moves_config.update(enemy_poke.getMovesConfig())
-
-        # --- Get player's move ---
-        moves = player_poke.getMoves() if hasattr(player_poke, 'getMoves') else []
-        if move_index >= len(moves):
-            move_index = 0
-        player_move_name = moves[move_index]
-        display_name = player_move_name.replace('-', ' ').title()
-
-        # --- Calculate player damage ---
-        p_damage, p_hit = calculate_battle_damage(
-            player_poke, enemy_poke, player_move_name, moves_config, type_effectiveness
-        )
-
-        # === STEP 1: Show player attack result (no buttons) ===
-        if p_hit and p_damage > 0:
-            enemy_poke.currentHP = max(0, enemy_poke.currentHP - p_damage)
-            step1_text = f"Your {player_poke.pokemonName.capitalize()} used {display_name}!"
-        elif p_hit:
-            step1_text = f"Your {player_poke.pokemonName.capitalize()} used {display_name}!"
-        else:
-            step1_text = f"Your {player_poke.pokemonName.capitalize()} used {display_name}... but it missed!"
-
-        bs.battle_log = [step1_text]
-        await self._render_battle_frame(interaction, engine, with_buttons=False)
-
-        await asyncio.sleep(3)
-
-        # --- Check if enemy fainted ---
-        if enemy_poke.currentHP <= 0:
-            bs.defeated_enemies.append(enemy_poke.pokemonName)
-            bs.battle_log = [f"{enemy_poke.pokemonName} fainted!"]
-            buf = engine.render_current()
-            file = discord.File(fp=buf, filename="battle.png")
-            embed = discord.Embed(color=discord.Color.red())
-            embed.set_image(url="attachment://battle.png")
-            await self._safe_edit(msg, embed=embed, view=View(), attachments=[file])
-
-            await asyncio.sleep(3)
-
-            result = engine.end_battle(victory=True)
-
-            lb = LeaderboardClass(user_id)
-            lb.victory()
-            lb.actions()
-
-            if result == "complete":
-                await self._handle_finale_complete_via_msg(engine)
-            else:
-                await self._render_scene_via_msg(engine)
-            return
-
-        # === STEP 2: Enemy attacks ===
-        enemy_moves = enemy_poke.getMoves() if hasattr(enemy_poke, 'getMoves') else []
-        enemy_moves = [m for m in enemy_moves if m and m.lower() != 'none']
-
-        status_effect_text = None
-        if enemy_moves:
-            import random
-            e_move_name = random.choice(enemy_moves)
-
-            # Get display name and status effect from custom pokemon data
-            e_move_data = {}
-            if hasattr(enemy_poke, 'getMoveData'):
-                e_move_data = enemy_poke.getMoveData(e_move_name)
-            e_display = e_move_data.get('displayName', e_move_name.replace('-', ' ').title())
-            status_effect_text = e_move_data.get('statusEffect')
-
-            e_damage, e_hit = calculate_battle_damage(
-                enemy_poke, player_poke, e_move_name, moves_config, type_effectiveness
-            )
-
-            if e_hit and e_damage > 0:
-                player_poke.currentHP = max(0, player_poke.currentHP - e_damage)
-                step2_text = f"{enemy_poke.pokemonName} used {e_display}! "
-            elif e_hit:
-                step2_text = f"{enemy_poke.pokemonName} used {e_display}!"
-                # Still show status effect even if 0 damage
-            else:
-                step2_text = f"{enemy_poke.pokemonName}'s {e_display} missed!"
-                status_effect_text = None
-        else:
-            step2_text = f"{enemy_poke.pokemonName} has no moves!"
-
-        bs.battle_log = [step2_text]
-        buf = engine.render_current()
-        file = discord.File(fp=buf, filename="battle.png")
-        embed = discord.Embed(color=discord.Color.red())
-        embed.set_image(url="attachment://battle.png")
-        await self._safe_edit(msg, embed=embed, view=View(), attachments=[file])
-
-        await asyncio.sleep(3)
-
-        # === STEP 3: Status effect text ===
-        if status_effect_text:
-            bs.battle_log = [status_effect_text]
-            buf = engine.render_current()
-            file = discord.File(fp=buf, filename="battle.png")
-            embed = discord.Embed(color=discord.Color.red())
-            embed.set_image(url="attachment://battle.png")
-            await self._safe_edit(msg, embed=embed, view=View(), attachments=[file])
-            await asyncio.sleep(3)
-
-        bs.turn_number += 1
-
-        # --- Check player fainted ---
-        if player_poke.currentHP <= 0:
-            player_poke.save()
-            next_poke = bs.get_next_player_pokemon()
-            if next_poke:
-                # Show faint message (no buttons)
-                bs.battle_log = [f"Your {player_poke.pokemonName.capitalize()} fainted!"]
-                buf = engine.render_current()
-                file = discord.File(fp=buf, filename="battle.png")
-                embed = discord.Embed(color=discord.Color.red())
-                embed.set_image(url="attachment://battle.png")
-                await self._safe_edit(msg, embed=embed, view=View(), attachments=[file])
-
-                await asyncio.sleep(3)
-
-                # Show new pokemon with buttons
-                bs.battle_log = [f"Go, {next_poke.pokemonName.capitalize()}!"]
-                for retry in range(3):
-                    try:
-                        buf = engine.render_current()
-                        file = discord.File(fp=buf, filename="battle.png")
-                        embed = discord.Embed(color=discord.Color.red())
-                        embed.set_image(url="attachment://battle.png")
-                        alive = sum(1 for p in bs.player_party if p.currentHP > 0)
-                        enemy_remaining = len(bs.enemy_team_data) - len(bs.defeated_enemies)
-                        embed.set_footer(text=f"Your team: {alive} alive | Enemy: {enemy_remaining} remaining | Turn {bs.turn_number}")
-                        view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
-                        await msg.edit(embed=embed, view=view, attachments=[file])
-                        break
-                    except Exception as e:
-                        print(f"[Finale] Switch-in edit failed (attempt {retry+1}): {e}")
-                        if retry < 2:
-                            await asyncio.sleep(1.5)
-                return
-            else:
-                bs.battle_log = ["All your Pokemon have fainted!"]
-                await self._handle_finale_defeat_via_msg(engine)
-                return
-
-        # --- Check cutscene triggers ---
-        cutscene = engine.check_cutscene_triggers()
-        if cutscene:
-            await self._render_scene_via_msg(engine)
-            return
-
-        player_poke.save()
-
-        # === STEP 4: Show move buttons again (with retry) ===
-        bs.battle_log = [f"Turn {bs.turn_number} - Choose your move!"]
-
-        for retry in range(3):
-            try:
-                buf = engine.render_current()
-                file = discord.File(fp=buf, filename="battle.png")
-                embed = discord.Embed(color=discord.Color.red())
-                embed.set_image(url="attachment://battle.png")
-                alive = sum(1 for p in bs.player_party if p.currentHP > 0)
-                enemy_remaining = len(bs.enemy_team_data) - len(bs.defeated_enemies)
-                embed.set_footer(text=f"Your team: {alive} alive | Enemy: {enemy_remaining} remaining | Turn {bs.turn_number}")
-                view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
-                await msg.edit(embed=embed, view=view, attachments=[file])
-                break
-            except Exception as e:
-                print(f"[Finale] Step 4 edit failed (attempt {retry+1}): {e}")
-                if retry < 2:
-                    await asyncio.sleep(1.5)
-
-    # ------------------------------------------------------------------
-    # Message-based rendering (for auto-advance, no interaction needed)
-    # ------------------------------------------------------------------
-
     async def _render_scene_via_msg(self, engine: FinaleEngine):
-        """Render scene by editing engine.message directly."""
         if not engine.message:
             return
-
         buf = engine.render_current()
         file = discord.File(fp=buf, filename="scene.png")
         embed = discord.Embed(color=discord.Color.dark_purple())
@@ -568,73 +266,63 @@ class FinaleMixin(MixinMeta):
             await engine.message.edit(embed=embed, view=view, attachments=[file])
         except Exception:
             pass
-
         await self._schedule_auto_advance(engine)
 
-    async def _handle_finale_complete_via_msg(self, engine: FinaleEngine):
-        """Handle finale completion via message edit (no interaction)."""
-        if not engine.message:
-            return
-
-        finale_scene = engine.get_finale_scene()
-        if finale_scene:
-            text = " ".join(finale_scene.text) if finale_scene.text else "Congratulations!"
-            img = engine.renderer.render_finale(
-                title=finale_scene.title, text=text,
-                background=finale_scene.background, trainer_name=engine.trainer_name
-            )
-        else:
-            img = engine.renderer.render_finale(
-                title="Champion", text="Congratulations!",
-                trainer_name=engine.trainer_name
-            )
-
-        file_buf = engine.renderer.to_discord_file(img, "finale.png")
-        file = discord.File(fp=file_buf, filename="finale.png")
-        embed = discord.Embed(color=discord.Color.gold())
-        embed.set_image(url="attachment://finale.png")
-
-        user_id = engine.user_id
-        if user_id in self.__finale_engines:
-            del self.__finale_engines[user_id]
-
-        try:
-            await engine.message.edit(embed=embed, view=View(), attachments=[file])
-        except Exception:
-            pass
-
-    async def _handle_finale_defeat_via_msg(self, engine: FinaleEngine):
-        """Handle player defeat via message edit."""
-        engine.end_battle(victory=False)
-
-        if not engine.message:
-            return
-
-        img = engine.renderer.render_transition(text="You have been defeated...")
-        file_buf = engine.renderer.to_discord_file(img, "defeat.png")
-        file = discord.File(fp=file_buf, filename="defeat.png")
-
-        embed = discord.Embed(color=discord.Color.dark_red())
-        embed.set_image(url="attachment://defeat.png")
-        embed.set_footer(text="Don't give up!")
-
-        view = FinaleDefeatView(
-            engine,
-            retry_callback=self._on_retry,
-            quit_callback=self._on_quit
-        )
-
-        try:
-            await engine.message.edit(embed=embed, view=view, attachments=[file])
-        except Exception:
-            pass
-
     # ------------------------------------------------------------------
-    # Switch Pokemon
+    # Battle initialization
     # ------------------------------------------------------------------
 
-    async def _on_switch_request(self, interaction: Interaction):
-        """Show the switch Pokemon selection."""
+    async def _start_finale_battle(self, interaction: Interaction, engine: FinaleEngine):
+        engine.start_battle(self._create_finale_enemy_from_config)
+        self._setup_battle_party(engine)
+        await self._render_battle_frame(interaction, engine)
+
+    def _setup_battle_party(self, engine: FinaleEngine):
+        """Adjust the battle state party based on battle_mode."""
+        bs = engine.battle_state
+        if not bs:
+            return
+
+        if bs.battle_mode == "unwinnable":
+            # Use all pokemon except the last (highest level, saved for later)
+            if len(engine.player_party) > 1:
+                bs.player_party = list(engine.player_party[:-1])
+            else:
+                bs.player_party = list(engine.player_party)
+            bs.player_pokemon = bs.player_party[0]
+            bs.player_current_index = 0
+
+        elif bs.battle_mode in ("rigged_win", "final_skippy", "melkor"):
+            # Use only the last pokemon (highest level), fully healed
+            last_poke = engine.player_party[-1]
+            stats = last_poke.getPokeStats()
+            last_poke.currentHP = stats['hp']
+            bs.player_party = [last_poke]
+            bs.player_pokemon = last_poke
+            bs.player_current_index = 0
+
+    def _create_finale_enemy_from_config(self, pokemon_data: dict, player_discord_id: str):
+        name = list(pokemon_data.keys())[0]
+        level = pokemon_data[name]
+        config = self._get_finale_pokemon_config()
+        if name in config:
+            poke = FinalePokemon(name, config[name])
+            if level:
+                poke.currentLevel = level
+                stats = poke.getPokeStats()
+                poke.currentHP = stats['hp']
+            return poke
+        enemy_pokemon = PokemonClass(player_discord_id, name)
+        enemy_pokemon.create(level)
+        enemy_pokemon.discordId = None
+        PokedexClass(player_discord_id, enemy_pokemon)
+        return enemy_pokemon
+
+    # ------------------------------------------------------------------
+    # Battle move — dispatch by mode
+    # ------------------------------------------------------------------
+
+    async def _on_battle_move(self, interaction: Interaction, move_index: int):
         user_id = str(interaction.user.id)
         engine = self.__finale_engines.get(user_id)
         if not engine or not engine.battle_state:
@@ -642,68 +330,500 @@ class FinaleMixin(MixinMeta):
 
         engine.cancel_auto_advance()
         engine.message = interaction.message
+        mode = engine.battle_state.battle_mode
 
-        view = FinaleSwitchView(engine, self._on_switch_confirm, self._on_switch_cancel)
+        if mode == "unwinnable":
+            await self._handle_unwinnable_turn(interaction, engine, move_index)
+        elif mode == "rigged_win":
+            await self._handle_rigged_win_turn(interaction, engine, move_index)
+        elif mode == "final_skippy":
+            await self._handle_final_skippy_turn(interaction, engine, move_index)
+        elif mode == "melkor":
+            await self._handle_melkor_turn(interaction, engine, move_index)
+        else:
+            await self._handle_normal_turn(interaction, engine, move_index)
 
+    # ------------------------------------------------------------------
+    # UNWINNABLE: Player attacks do nothing, Skippy one-shots
+    # ------------------------------------------------------------------
+
+    async def _handle_unwinnable_turn(self, interaction: Interaction, engine: FinaleEngine, move_index: int):
+        bs = engine.battle_state
+        player_poke = bs.player_pokemon
+        enemy_poke = bs.enemy_pokemon
+        msg = interaction.message
+
+        moves = player_poke.getMoves() if hasattr(player_poke, 'getMoves') else []
+        if move_index < len(moves):
+            move_name = moves[move_index].replace('-', ' ').title()
+        else:
+            move_name = "Attack"
+
+        # Step 1: Player attack does nothing
+        bs.battle_log = [f"Your {player_poke.pokemonName.capitalize()} used {move_name}!"]
+        await self._safe_edit_battle(msg, engine)
+        await asyncio.sleep(3)
+
+        bs.battle_log = ["This attack cannot hurt Skippy!"]
+        await self._safe_edit_battle(msg, engine)
+        await asyncio.sleep(3)
+
+        # Step 2: Skippy attacks and one-shots
+        enemy_moves = enemy_poke.getMoves() if hasattr(enemy_poke, 'getMoves') else []
+        e_move_name = random.choice(enemy_moves) if enemy_moves else "Attack"
+        e_move_data = enemy_poke.getMoveData(e_move_name) if hasattr(enemy_poke, 'getMoveData') else {}
+        e_display = e_move_data.get('displayName', e_move_name.replace('-', ' ').title())
+        status = e_move_data.get('statusEffect')
+
+        bs.battle_log = [f"Skippy uses {e_display}!"]
+        await self._safe_edit_battle(msg, engine)
+        await asyncio.sleep(3)
+
+        if status:
+            bs.battle_log = [status]
+            await self._safe_edit_battle(msg, engine)
+            await asyncio.sleep(3)
+
+        # One-shot the player's pokemon
+        player_poke.currentHP = 0
+        player_poke.save()
+
+        bs.battle_log = [f"Your {player_poke.pokemonName.capitalize()} fainted!"]
+        await self._safe_edit_battle(msg, engine)
+        await asyncio.sleep(3)
+
+        # Check for next pokemon (excluding last/highest)
+        next_poke = bs.get_next_player_pokemon()
+        if next_poke:
+            bs.battle_log = [f"Go, {next_poke.pokemonName.capitalize()}!"]
+            bs.turn_number += 1
+            await self._safe_edit_battle_with_buttons(msg, engine)
+        else:
+            # All sacrificial pokemon down — end battle, advance to dialog
+            engine.end_battle(victory=True)
+            await self._render_scene_via_msg(engine)
+
+    # ------------------------------------------------------------------
+    # RIGGED WIN: Player does 10% per hit, Skippy can't hurt you
+    # At 50% HP, battle ends automatically
+    # ------------------------------------------------------------------
+
+    async def _handle_rigged_win_turn(self, interaction: Interaction, engine: FinaleEngine, move_index: int):
+        bs = engine.battle_state
+        player_poke = bs.player_pokemon
+        enemy_poke = bs.enemy_pokemon
+        msg = interaction.message
+
+        moves = player_poke.getMoves() if hasattr(player_poke, 'getMoves') else []
+        if move_index < len(moves):
+            move_name = moves[move_index].replace('-', ' ').title()
+        else:
+            move_name = "Attack"
+
+        # Player does 10% of enemy max HP
+        enemy_stats = enemy_poke.getPokeStats()
+        enemy_max_hp = enemy_stats['hp']
+        damage = max(1, int(enemy_max_hp * 0.10))
+        enemy_poke.currentHP = max(0, enemy_poke.currentHP - damage)
+
+        bs.battle_log = [f"Your {player_poke.pokemonName.capitalize()} used {move_name}!"]
+        await self._safe_edit_battle(msg, engine)
+        await asyncio.sleep(3)
+
+        bs.battle_log = ["It's super effective!"]
+        await self._safe_edit_battle(msg, engine)
+        await asyncio.sleep(3)
+
+        # Enemy attacks but is "resisted"
+        enemy_moves = enemy_poke.getMoves() if hasattr(enemy_poke, 'getMoves') else []
+        e_move_name = random.choice(enemy_moves) if enemy_moves else "Attack"
+        e_move_data = enemy_poke.getMoveData(e_move_name) if hasattr(enemy_poke, 'getMoveData') else {}
+        e_display = e_move_data.get('displayName', e_move_name.replace('-', ' ').title())
+
+        bs.battle_log = [f"Skippy uses {e_display}!"]
+        await self._safe_edit_battle(msg, engine)
+        await asyncio.sleep(3)
+
+        bs.battle_log = [f"Your {player_poke.pokemonName.capitalize()} resists Skippy's attack!"]
+        await self._safe_edit_battle(msg, engine)
+        await asyncio.sleep(3)
+
+        bs.turn_number += 1
+
+        # Check HP threshold: at 50% or below, end battle
+        hp_pct = (enemy_poke.currentHP / enemy_max_hp * 100) if enemy_max_hp > 0 else 0
+        if hp_pct <= 50:
+            engine.end_battle(victory=True)
+            await self._render_scene_via_msg(engine)
+            return
+
+        # Check cutscene triggers (70% dialog)
+        cutscene = engine.check_cutscene_triggers()
+        if cutscene:
+            await self._render_scene_via_msg(engine)
+            return
+
+        # Continue battle
+        bs.battle_log = [f"Turn {bs.turn_number} - Choose your move!"]
+        await self._safe_edit_battle_with_buttons(msg, engine)
+
+    # ------------------------------------------------------------------
+    # FINAL SKIPPY: Player does 15-30%, Skippy does 40-70%, can't die
+    # ------------------------------------------------------------------
+
+    async def _handle_final_skippy_turn(self, interaction: Interaction, engine: FinaleEngine, move_index: int):
+        bs = engine.battle_state
+        player_poke = bs.player_pokemon
+        enemy_poke = bs.enemy_pokemon
+        msg = interaction.message
+
+        moves = player_poke.getMoves() if hasattr(player_poke, 'getMoves') else []
+        if move_index < len(moves):
+            move_name = moves[move_index].replace('-', ' ').title()
+        else:
+            move_name = "Attack"
+
+        # Player does 15-30% of enemy max HP
+        enemy_stats = enemy_poke.getPokeStats()
+        enemy_max_hp = enemy_stats['hp']
+        pct = random.randint(15, 30) / 100.0
+        damage = max(1, int(enemy_max_hp * pct))
+        enemy_poke.currentHP = max(0, enemy_poke.currentHP - damage)
+
+        bs.battle_log = [f"Your {player_poke.pokemonName.capitalize()} used {move_name}!"]
+        await self._safe_edit_battle(msg, engine)
+        await asyncio.sleep(3)
+
+        # Check enemy fainted
+        if enemy_poke.currentHP <= 0:
+            bs.battle_log = [f"Skippy the Magnificent fainted!"]
+            await self._safe_edit_battle(msg, engine)
+            await asyncio.sleep(3)
+
+            engine.end_battle(victory=True)
+            lb = LeaderboardClass(str(interaction.user.id))
+            lb.victory()
+            lb.actions()
+            await self._render_scene_via_msg(engine)
+            return
+
+        # Enemy does 40-70% of player max HP
+        player_stats = player_poke.getPokeStats()
+        player_max_hp = player_stats['hp']
+        e_pct = random.randint(40, 70) / 100.0
+        e_damage = max(1, int(player_max_hp * e_pct))
+
+        enemy_moves = enemy_poke.getMoves() if hasattr(enemy_poke, 'getMoves') else []
+        e_move_name = random.choice(enemy_moves) if enemy_moves else "Attack"
+        e_move_data = enemy_poke.getMoveData(e_move_name) if hasattr(enemy_poke, 'getMoveData') else {}
+        e_display = e_move_data.get('displayName', e_move_name.replace('-', ' ').title())
+        status = e_move_data.get('statusEffect')
+
+        player_poke.currentHP = max(0, player_poke.currentHP - e_damage)
+
+        bs.battle_log = [f"Skippy uses {e_display}!"]
+        await self._safe_edit_battle(msg, engine)
+        await asyncio.sleep(3)
+
+        if status:
+            bs.battle_log = [status]
+            await self._safe_edit_battle(msg, engine)
+            await asyncio.sleep(3)
+
+        # If player would faint — Chodethulu heals
+        if player_poke.currentHP <= 0:
+            bs.battle_log = [f"Your {player_poke.pokemonName.capitalize()} is about to faint..."]
+            await self._safe_edit_battle(msg, engine)
+            await asyncio.sleep(3)
+
+            player_poke.currentHP = player_max_hp
+            bs.battle_log = ["Chodethulu healed your Pokemon back to full health!"]
+            await self._safe_edit_battle(msg, engine)
+            await asyncio.sleep(3)
+
+        player_poke.save()
+        bs.turn_number += 1
+
+        bs.battle_log = [f"Turn {bs.turn_number} - Choose your move!"]
+        await self._safe_edit_battle_with_buttons(msg, engine)
+
+    # ------------------------------------------------------------------
+    # MELKOR: 4 turns, small damage, then one-shot
+    # ------------------------------------------------------------------
+
+    async def _handle_melkor_turn(self, interaction: Interaction, engine: FinaleEngine, move_index: int):
+        bs = engine.battle_state
+        player_poke = bs.player_pokemon
+        enemy_poke = bs.enemy_pokemon
+        msg = interaction.message
+
+        moves = player_poke.getMoves() if hasattr(player_poke, 'getMoves') else []
+        if move_index < len(moves):
+            move_name = moves[move_index].replace('-', ' ').title()
+        else:
+            move_name = "Attack"
+
+        # Player does small damage (5% of max HP)
+        enemy_stats = enemy_poke.getPokeStats()
+        enemy_max_hp = enemy_stats['hp']
+        damage = max(1, int(enemy_max_hp * 0.05))
+        enemy_poke.currentHP = max(0, enemy_poke.currentHP - damage)
+
+        bs.battle_log = [f"Your {player_poke.pokemonName.capitalize()} used {move_name}!"]
+        await self._safe_edit_battle(msg, engine)
+        await asyncio.sleep(3)
+
+        if bs.turn_number < 4:
+            # Melkor watches
+            bs.battle_log = ["Melkor watches in amusement."]
+            await self._safe_edit_battle(msg, engine)
+            await asyncio.sleep(3)
+
+            bs.turn_number += 1
+            bs.battle_log = [f"Turn {bs.turn_number} - Choose your move!"]
+            await self._safe_edit_battle_with_buttons(msg, engine)
+        else:
+            # Turn 4: Melkor one-shots
+            bs.battle_log = ["Melkor uses The Power of Chode!"]
+            await self._safe_edit_battle(msg, engine)
+            await asyncio.sleep(3)
+
+            bs.battle_log = ["The overwhelming power of the chode engulfs the battlefield!"]
+            await self._safe_edit_battle(msg, engine)
+            await asyncio.sleep(3)
+
+            player_poke.currentHP = 0
+            bs.battle_log = [f"Your {player_poke.pokemonName.capitalize()} fainted!"]
+            await self._safe_edit_battle(msg, engine)
+            await asyncio.sleep(3)
+
+            # Heal the pokemon back so they're not stuck fainted after finale
+            player_stats = player_poke.getPokeStats()
+            player_poke.currentHP = player_stats['hp']
+            player_poke.save()
+
+            engine.end_battle(victory=True)
+            await self._render_scene_via_msg(engine)
+
+    # ------------------------------------------------------------------
+    # NORMAL: Standard battle (used for DragonDeez, TittyPussy, etc.)
+    # ------------------------------------------------------------------
+
+    async def _handle_normal_turn(self, interaction: Interaction, engine: FinaleEngine, move_index: int):
+        bs = engine.battle_state
+        player_poke = bs.player_pokemon
+        enemy_poke = bs.enemy_pokemon
+        msg = interaction.message
+
+        from helpers.pathhelpers import load_json_config
+        try:
+            moves_config = load_json_config('moves.json')
+            type_effectiveness = load_json_config('typeEffectiveness.json')
+        except Exception:
+            moves_config = {}
+            type_effectiveness = {}
+
+        if hasattr(enemy_poke, 'getMovesConfig'):
+            moves_config.update(enemy_poke.getMovesConfig())
+
+        moves = player_poke.getMoves() if hasattr(player_poke, 'getMoves') else []
+        if move_index >= len(moves):
+            move_index = 0
+        player_move_name = moves[move_index]
+        display_name = player_move_name.replace('-', ' ').title()
+
+        p_damage, p_hit = calculate_battle_damage(
+            player_poke, enemy_poke, player_move_name, moves_config, type_effectiveness
+        )
+
+        # Step 1: Player attack
+        if p_hit and p_damage > 0:
+            enemy_poke.currentHP = max(0, enemy_poke.currentHP - p_damage)
+            step1_text = f"Your {player_poke.pokemonName.capitalize()} used {display_name}!"
+        elif p_hit:
+            step1_text = f"Your {player_poke.pokemonName.capitalize()} used {display_name}!"
+        else:
+            step1_text = f"Your {player_poke.pokemonName.capitalize()} used {display_name}... but it missed!"
+
+        bs.battle_log = [step1_text]
+        await self._safe_edit_battle(msg, engine)
+        await asyncio.sleep(3)
+
+        # Check enemy fainted
+        if enemy_poke.currentHP <= 0:
+            bs.defeated_enemies.append(enemy_poke.pokemonName)
+            bs.battle_log = [f"{enemy_poke.pokemonName} fainted!"]
+            await self._safe_edit_battle(msg, engine)
+            await asyncio.sleep(3)
+
+            next_data = bs.get_next_enemy()
+            if next_data:
+                next_enemy = self._create_finale_enemy_from_config(next_data, engine.user_id)
+                bs.enemy_pokemon = next_enemy
+                bs.battle_log = [f"Skippy sent out {next_enemy.pokemonName}!"]
+                await self._safe_edit_battle_with_buttons(msg, engine)
+            else:
+                result = engine.end_battle(victory=True)
+                lb = LeaderboardClass(engine.user_id)
+                lb.victory()
+                lb.actions()
+                if result == "complete":
+                    await self._handle_finale_complete_via_msg(engine)
+                else:
+                    await self._render_scene_via_msg(engine)
+            return
+
+        # Step 2: Enemy attacks
+        enemy_moves = enemy_poke.getMoves() if hasattr(enemy_poke, 'getMoves') else []
+        enemy_moves = [m for m in enemy_moves if m and m.lower() != 'none']
+        status_effect_text = None
+
+        if enemy_moves:
+            e_move_name = random.choice(enemy_moves)
+            e_move_data = enemy_poke.getMoveData(e_move_name) if hasattr(enemy_poke, 'getMoveData') else {}
+            e_display = e_move_data.get('displayName', e_move_name.replace('-', ' ').title())
+            status_effect_text = e_move_data.get('statusEffect')
+
+            e_damage, e_hit = calculate_battle_damage(
+                enemy_poke, player_poke, e_move_name, moves_config, type_effectiveness
+            )
+            if e_hit and e_damage > 0:
+                player_poke.currentHP = max(0, player_poke.currentHP - e_damage)
+                step2_text = f"{enemy_poke.pokemonName} used {e_display}!"
+            elif e_hit:
+                step2_text = f"{enemy_poke.pokemonName} used {e_display}!"
+            else:
+                step2_text = f"{enemy_poke.pokemonName}'s {e_display} missed!"
+                status_effect_text = None
+        else:
+            step2_text = f"{enemy_poke.pokemonName} has no moves!"
+
+        bs.battle_log = [step2_text]
+        await self._safe_edit_battle(msg, engine)
+        await asyncio.sleep(3)
+
+        if status_effect_text:
+            bs.battle_log = [status_effect_text]
+            await self._safe_edit_battle(msg, engine)
+            await asyncio.sleep(3)
+
+        bs.turn_number += 1
+
+        # Check player fainted
+        if player_poke.currentHP <= 0:
+            player_poke.save()
+            next_poke = bs.get_next_player_pokemon()
+            if next_poke:
+                bs.battle_log = [f"Your {player_poke.pokemonName.capitalize()} fainted!"]
+                await self._safe_edit_battle(msg, engine)
+                await asyncio.sleep(3)
+
+                bs.battle_log = [f"Go, {next_poke.pokemonName.capitalize()}!"]
+                bs.turn_number += 1
+                await self._safe_edit_battle_with_buttons(msg, engine)
+                return
+            else:
+                bs.battle_log = ["All your Pokemon have fainted!"]
+                await self._handle_finale_defeat_via_msg(engine)
+                return
+
+        cutscene = engine.check_cutscene_triggers()
+        if cutscene:
+            await self._render_scene_via_msg(engine)
+            return
+
+        player_poke.save()
+
+        bs.battle_log = [f"Turn {bs.turn_number} - Choose your move!"]
+        await self._safe_edit_battle_with_buttons(msg, engine)
+
+    # ------------------------------------------------------------------
+    # Battle edit helpers
+    # ------------------------------------------------------------------
+
+    async def _safe_edit_battle(self, msg, engine):
+        """Render battle state and edit message with no buttons."""
         buf = engine.render_current()
         file = discord.File(fp=buf, filename="battle.png")
-
-        embed = discord.Embed(
-            title="Switch Pokemon",
-            description="Choose a Pokemon to switch to:",
-            color=discord.Color.blue()
-        )
+        embed = discord.Embed(color=discord.Color.red())
         embed.set_image(url="attachment://battle.png")
+        await self._safe_edit(msg, embed=embed, view=View(), attachments=[file])
 
-        await interaction.message.edit(embed=embed, view=view, attachments=[file])
+    async def _safe_edit_battle_with_buttons(self, msg, engine):
+        """Render battle state and edit message WITH move buttons (retries)."""
+        for retry in range(3):
+            try:
+                buf = engine.render_current()
+                file = discord.File(fp=buf, filename="battle.png")
+                embed = discord.Embed(color=discord.Color.red())
+                embed.set_image(url="attachment://battle.png")
+                bs = engine.battle_state
+                if bs:
+                    alive = sum(1 for p in bs.player_party if p.currentHP > 0)
+                    embed.set_footer(text=f"Your team: {alive} alive | Turn {bs.turn_number}")
+                view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
+                await msg.edit(embed=embed, view=view, attachments=[file])
+                break
+            except Exception as e:
+                print(f"[Finale] Button edit failed (attempt {retry+1}): {e}")
+                if retry < 2:
+                    await asyncio.sleep(1.5)
 
-    async def _on_switch_confirm(self, interaction: Interaction, party_index: int):
-        """Confirm Pokemon switch during finale battle."""
+    # ------------------------------------------------------------------
+    # Switch Pokemon
+    # ------------------------------------------------------------------
+
+    async def _on_switch_request(self, interaction: Interaction):
         user_id = str(interaction.user.id)
         engine = self.__finale_engines.get(user_id)
         if not engine or not engine.battle_state:
             return
+        engine.cancel_auto_advance()
+        engine.message = interaction.message
 
+        view = FinaleSwitchView(engine, self._on_switch_confirm, self._on_switch_cancel)
+        buf = engine.render_current()
+        file = discord.File(fp=buf, filename="battle.png")
+        embed = discord.Embed(title="Switch Pokemon", description="Choose a Pokemon to switch to:", color=discord.Color.blue())
+        embed.set_image(url="attachment://battle.png")
+        await interaction.message.edit(embed=embed, view=view, attachments=[file])
+
+    async def _on_switch_confirm(self, interaction: Interaction, party_index: int):
+        user_id = str(interaction.user.id)
+        engine = self.__finale_engines.get(user_id)
+        if not engine or not engine.battle_state:
+            return
         engine.message = interaction.message
         bs = engine.battle_state
         old_name = bs.player_pokemon.pokemonName.capitalize()
         bs.player_current_index = party_index
         bs.player_pokemon = bs.player_party[party_index]
         new_name = bs.player_pokemon.pokemonName.capitalize()
-
         bs.battle_log = [f"Come back, {old_name}!", f"Go, {new_name}!"]
 
-        # Enemy gets a free attack on switch
         enemy_poke = bs.enemy_pokemon
         if enemy_poke and enemy_poke.currentHP > 0:
             enemy_moves = enemy_poke.getMoves() if hasattr(enemy_poke, 'getMoves') else []
             enemy_moves = [m for m in enemy_moves if m and m.lower() != 'none']
             if enemy_moves:
-                import random
                 from helpers.pathhelpers import load_json_config
                 moves_config = load_json_config('moves.json')
                 type_effectiveness = load_json_config('typeEffectiveness.json')
                 if hasattr(enemy_poke, 'getMovesConfig'):
                     moves_config.update(enemy_poke.getMovesConfig())
-
                 e_move_name = random.choice(enemy_moves)
-                e_move_data = {}
-                if hasattr(enemy_poke, 'getMoveData'):
-                    e_move_data = enemy_poke.getMoveData(e_move_name)
+                e_move_data = enemy_poke.getMoveData(e_move_name) if hasattr(enemy_poke, 'getMoveData') else {}
                 e_display = e_move_data.get('displayName', e_move_name.replace('-', ' ').title())
-
                 e_damage, e_hit = calculate_battle_damage(
                     enemy_poke, bs.player_pokemon, e_move_name, moves_config, type_effectiveness
                 )
                 if e_hit and e_damage > 0:
                     bs.player_pokemon.currentHP = max(0, bs.player_pokemon.currentHP - e_damage)
                     bs.battle_log.append(f"{enemy_poke.pokemonName} used {e_display}!")
-
         bs.turn_number += 1
         await self._render_battle_frame(interaction, engine)
 
     async def _on_switch_cancel(self, interaction: Interaction):
-        """Cancel switch and go back to battle view."""
         user_id = str(interaction.user.id)
         engine = self.__finale_engines.get(user_id)
         if engine:
@@ -711,66 +831,87 @@ class FinaleMixin(MixinMeta):
             await self._render_battle_frame(interaction, engine)
 
     # ------------------------------------------------------------------
-    # Defeat / Victory / Completion (interaction-based)
+    # Defeat / Victory / Completion
     # ------------------------------------------------------------------
 
     async def _handle_finale_defeat(self, interaction: Interaction, engine: FinaleEngine):
-        """Handle player losing the finale battle (from interaction)."""
         engine.end_battle(victory=False)
-
         img = engine.renderer.render_transition(text="You have been defeated...")
         file_buf = engine.renderer.to_discord_file(img, "defeat.png")
         file = discord.File(fp=file_buf, filename="defeat.png")
-
         embed = discord.Embed(color=discord.Color.dark_red())
         embed.set_image(url="attachment://defeat.png")
         embed.set_footer(text="Don't give up!")
-
-        view = FinaleDefeatView(
-            engine,
-            retry_callback=self._on_retry,
-            quit_callback=self._on_quit
-        )
+        view = FinaleDefeatView(engine, retry_callback=self._on_retry, quit_callback=self._on_quit)
         await interaction.message.edit(embed=embed, view=view, attachments=[file])
 
-    async def _handle_finale_complete(self, interaction: Interaction, engine: FinaleEngine):
-        """Handle the finale being completed successfully (from interaction)."""
-        user_id = engine.user_id
+    async def _handle_finale_defeat_via_msg(self, engine: FinaleEngine):
+        engine.end_battle(victory=False)
+        if not engine.message:
+            return
+        img = engine.renderer.render_transition(text="You have been defeated...")
+        file_buf = engine.renderer.to_discord_file(img, "defeat.png")
+        file = discord.File(fp=file_buf, filename="defeat.png")
+        embed = discord.Embed(color=discord.Color.dark_red())
+        embed.set_image(url="attachment://defeat.png")
+        embed.set_footer(text="Don't give up!")
+        view = FinaleDefeatView(engine, retry_callback=self._on_retry, quit_callback=self._on_quit)
+        try:
+            await engine.message.edit(embed=embed, view=view, attachments=[file])
+        except Exception:
+            pass
 
+    async def _handle_finale_complete(self, interaction: Interaction, engine: FinaleEngine):
+        user_id = engine.user_id
         finale_scene = engine.get_finale_scene()
         if finale_scene:
             text = " ".join(finale_scene.text) if finale_scene.text else "Congratulations!"
             img = engine.renderer.render_finale(
-                title=finale_scene.title, text=text,
+                title=finale_scene.title, text=engine.substitute_text(text),
                 background=finale_scene.background, trainer_name=engine.trainer_name
             )
         else:
-            img = engine.renderer.render_finale(
-                title="Champion", text="Congratulations!",
-                trainer_name=engine.trainer_name
-            )
-
+            img = engine.renderer.render_finale(title="Champion", text="Congratulations!", trainer_name=engine.trainer_name)
         file_buf = engine.renderer.to_discord_file(img, "finale.png")
         file = discord.File(fp=file_buf, filename="finale.png")
-
         embed = discord.Embed(color=discord.Color.gold())
         embed.set_image(url="attachment://finale.png")
-
         if user_id in self.__finale_engines:
             del self.__finale_engines[user_id]
-
         await interaction.message.edit(embed=embed, view=View(), attachments=[file])
 
-    async def _on_retry(self, interaction: Interaction):
-        """Retry the finale from the beginning."""
-        user_id = str(interaction.user.id)
-
+    async def _handle_finale_complete_via_msg(self, engine: FinaleEngine):
+        if not engine.message:
+            return
+        user_id = engine.user_id
+        finale_scene = engine.get_finale_scene()
+        if finale_scene:
+            text = " ".join(finale_scene.text) if finale_scene.text else "Congratulations!"
+            img = engine.renderer.render_finale(
+                title=finale_scene.title, text=engine.substitute_text(text),
+                background=finale_scene.background, trainer_name=engine.trainer_name
+            )
+        else:
+            img = engine.renderer.render_finale(title="Champion", text="Congratulations!", trainer_name=engine.trainer_name)
+        file_buf = engine.renderer.to_discord_file(img, "finale.png")
+        file = discord.File(fp=file_buf, filename="finale.png")
+        embed = discord.Embed(color=discord.Color.gold())
+        embed.set_image(url="attachment://finale.png")
         if user_id in self.__finale_engines:
+            del self.__finale_engines[user_id]
+        try:
+            await engine.message.edit(embed=embed, view=View(), attachments=[file])
+        except Exception:
+            pass
+
+    async def _on_retry(self, interaction: Interaction):
+        user_id = str(interaction.user.id)
+        if user_id in self.__finale_engines:
+            self.__finale_engines[user_id].cancel_auto_advance()
             del self.__finale_engines[user_id]
 
         trainer = TrainerClass(user_id)
         trainer_name = trainer.getTrainerName() if hasattr(trainer, 'getTrainerName') else interaction.user.display_name
-
         party = trainer.getPokemon(party=True)
         alive_party = []
         for poke in party:
@@ -782,9 +923,7 @@ class FinaleMixin(MixinMeta):
             alive_party.append(poke)
 
         if not alive_party:
-            img = FinaleEngine(user_id, "", [], []).renderer.render_transition(
-                text="All your Pokemon have fainted! Heal up first."
-            )
+            img = FinaleEngine(user_id, "", [], []).renderer.render_transition(text="You don't have any Pokemon!")
             buf = FinaleEngine(user_id, "", [], []).renderer.to_discord_file(img)
             file = discord.File(fp=buf, filename="scene.png")
             embed = discord.Embed(color=discord.Color.dark_red())
@@ -792,6 +931,7 @@ class FinaleMixin(MixinMeta):
             await interaction.message.edit(embed=embed, view=View(), attachments=[file])
             return
 
+        alive_party.sort(key=lambda p: p.currentLevel)
         script = get_finale_script()
         engine = FinaleEngine(user_id, trainer_name or interaction.user.display_name, alive_party, script)
         self.__finale_engines[user_id] = engine
@@ -808,19 +948,12 @@ class FinaleMixin(MixinMeta):
         else:
             view = FinaleDialogView(engine, self._on_dialog_advance)
         await interaction.message.edit(embed=embed, view=view, attachments=[file])
-
         await self._schedule_auto_advance(engine)
 
     async def _on_quit(self, interaction: Interaction):
-        """Quit the finale."""
         user_id = str(interaction.user.id)
         if user_id in self.__finale_engines:
             self.__finale_engines[user_id].cancel_auto_advance()
             del self.__finale_engines[user_id]
-
-        embed = discord.Embed(
-            title="Finale Abandoned",
-            description="You can return anytime with `,finale`",
-            color=discord.Color.greyple()
-        )
+        embed = discord.Embed(title="Finale Abandoned", description="You can return anytime with `,finale`", color=discord.Color.greyple())
         await interaction.message.edit(embed=embed, view=View(), attachments=[])

@@ -68,6 +68,9 @@ class DialogScene:
     use_trainer_name: bool = False
     # Auto-advance after this many seconds (0 = wait for button press)
     auto_advance: float = 0
+    # Second character sprite (for dual-character scenes)
+    character_sprite_2: Optional[str] = None
+    character_position_2: str = "left"
 
 
 @dataclass
@@ -87,6 +90,8 @@ class BattleStartScene:
     intro_text: Optional[str] = None
     # Tag to identify this battle (for cutscene triggers)
     battle_id: str = "default"
+    # Battle mode: "normal", "unwinnable", "rigged_win", "final_skippy", "melkor"
+    battle_mode: str = "normal"
 
 
 @dataclass

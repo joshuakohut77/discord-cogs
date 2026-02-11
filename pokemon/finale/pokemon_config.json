@@ -161,20 +161,44 @@
                 "displayName": "Warp Spacetime",
 				"statusEffect": "The spacetime around your pokemon destorts."
             },
-            "": {
-                "power": 35, "accuracy": 85, "moveType": "normal",
+            "cosmic-decree": {
+                "power": 200, "accuracy": 100, "moveType": "psychic",
                 "damage_class": "special", "ailment": "none",
-                "displayName": "Milk Blast",
-				"statusEffect": "Those things could fill a bucket!"
+                "displayName": "Cosmic Decree",
+                "statusEffect": "Skippy declares your defeat inevitable."
             },
-            "final-solution": {
-                "power": 35, "accuracy": 85, "moveType": "normal",
+            "divine-judgment": {
+                "power": 200, "accuracy": 100, "moveType": "psychic",
                 "damage_class": "special", "ailment": "none",
-                "displayName": "Final Solution",
-				"statusEffect": "The attack failed."
+                "displayName": "Divine Judgment",
+                "statusEffect": "Skippy passes divine judgment upon you!"
             }
         },
         "frontSprite": "abigail_shapiro.png"
-        
+    },
+    "Melkor": {
+        "displayName": "Melkor",
+        "type1": "dark",
+        "type2": "psychic",
+        "level": 100,
+        "baseStats": {
+            "hp": 5000, "attack": 300, "defense": 300,
+            "speed": 300, "special-attack": 300, "special-defense": 300
+        },
+        "moves": {
+            "dark-gaze": {
+                "power": 0, "accuracy": 100, "moveType": "dark",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "Dark Gaze",
+                "statusEffect": "Melkor watches in amusement."
+            },
+            "the-power-of-chode": {
+                "power": 999, "accuracy": 100, "moveType": "dark",
+                "damage_class": "special", "ailment": "none",
+                "displayName": "The Power of Chode",
+                "statusEffect": "The overwhelming power of the chode engulfs the battlefield!"
+            }
+        },
+        "frontSprite": "melkor.png"
     }
 }

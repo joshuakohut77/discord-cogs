@@ -37,6 +37,7 @@ class FinaleBattleState:
         self.turn_number = 1
         self.battle_log: List[str] = []
         self.defeated_enemies: List[str] = []
+        self.battle_mode: str = "normal"
 
     @property
     def enemy_hp_pct(self) -> float:
@@ -105,6 +106,17 @@ class FinaleEngine:
 
         self._index_cutscenes()
 
+    def substitute_text(self, text: str) -> str:
+        """Replace all placeholders in text."""
+        text = text.replace("{trainer_name}", self.trainer_name)
+        if self.player_party:
+            last_name = self.player_party[-1].pokemonName.capitalize()
+            text = text.replace("{last_pokemon}", last_name)
+        if self.battle_state and self.battle_state.player_pokemon:
+            text = text.replace("{active_pokemon}",
+                                self.battle_state.player_pokemon.pokemonName.capitalize())
+        return text
+
     def _index_cutscenes(self):
         cleaned_script = []
         for scene in self.script:
@@ -159,12 +171,15 @@ class FinaleEngine:
             dialog = self.active_cutscene.dialog[self.cutscene_dialog_index]
             text = dialog.text[self.cutscene_page_index] if self.cutscene_page_index < len(dialog.text) else ""
             img = self.renderer.render_dialog(
-                speaker=dialog.speaker, text=text,
+                speaker=self.substitute_text(dialog.speaker),
+                text=self.substitute_text(text),
                 background=dialog.background,
                 character_sprite=dialog.character_sprite,
                 character_position=dialog.character_position,
                 text_box_color=dialog.text_box_color,
-                trainer_name=self.trainer_name
+                trainer_name=self.trainer_name,
+                character_sprite_2=getattr(dialog, 'character_sprite_2', None),
+                character_position_2=getattr(dialog, 'character_position_2', 'left'),
             )
             return self.renderer.to_discord_file(img, "cutscene.png")
 
@@ -187,19 +202,23 @@ class FinaleEngine:
         if isinstance(scene, DialogScene):
             text = scene.text[self.dialog_page_index] if self.dialog_page_index < len(scene.text) else ""
             img = self.renderer.render_dialog(
-                speaker=scene.speaker, text=text,
+                speaker=self.substitute_text(scene.speaker),
+                text=self.substitute_text(text),
                 background=scene.background,
                 character_sprite=scene.character_sprite,
                 character_position=scene.character_position,
                 text_box_color=scene.text_box_color,
-                trainer_name=self.trainer_name
+                trainer_name=self.trainer_name,
+                character_sprite_2=getattr(scene, 'character_sprite_2', None),
+                character_position_2=getattr(scene, 'character_position_2', 'left'),
             )
             return self.renderer.to_discord_file(img, "dialog.png")
 
         elif isinstance(scene, BattleStartScene):
             intro = scene.intro_text or f"{scene.enemy_name} wants to battle!"
             img = self.renderer.render_dialog(
-                speaker=scene.enemy_name, text=intro,
+                speaker=scene.enemy_name,
+                text=self.substitute_text(intro),
                 background=scene.battle_background,
                 character_sprite=scene.enemy_sprite,
                 trainer_name=self.trainer_name
@@ -207,15 +226,17 @@ class FinaleEngine:
             return self.renderer.to_discord_file(img, "battle_intro.png")
 
         elif isinstance(scene, TransitionScene):
+            txt = self.substitute_text(scene.text) if scene.text else None
             img = self.renderer.render_transition(
-                image=scene.image, text=scene.text, bg_color=scene.bg_color
+                image=scene.image, text=txt, bg_color=scene.bg_color
             )
             return self.renderer.to_discord_file(img, "transition.png")
 
         elif isinstance(scene, FinaleScene):
             text = scene.text[0] if scene.text else "The end."
             img = self.renderer.render_finale(
-                title=scene.title, text=text,
+                title=scene.title,
+                text=self.substitute_text(text),
                 background=scene.background, trainer_name=self.trainer_name
             )
             return self.renderer.to_discord_file(img, "finale.png")
@@ -317,7 +338,8 @@ class FinaleEngine:
             enemy_name=scene.enemy_name,
             battle_id=scene.battle_id
         )
-
+        
+        self.battle_state.battle_mode = scene.battle_mode
         first_enemy_data = scene.enemy_team[0]
         first_enemy = create_pokemon_func(first_enemy_data, self.user_id)
         self.battle_state.enemy_pokemon = first_enemy
