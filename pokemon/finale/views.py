@@ -44,7 +44,16 @@ class FinaleDialogView(View):
 
         try:
             await interaction.response.defer()
+        except discord.NotFound:
+            return
         except Exception:
+            # If defer fails, try edit_message as acknowledgment
+            try:
+                self.engine.cancel_auto_advance()
+                result = self.engine.advance_dialog()
+                await self.update_callback(interaction, result)
+            except Exception:
+                pass
             return
 
         try:
@@ -56,7 +65,7 @@ class FinaleDialogView(View):
             import traceback
             traceback.print_exc()
             try:
-                await interaction.followup.send(f"Something went wrong. Use `,finale` to restart.", ephemeral=True)
+                await interaction.followup.send("Something went wrong. Use `,finale` to restart.", ephemeral=True)
             except Exception:
                 pass
 

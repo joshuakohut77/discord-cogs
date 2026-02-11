@@ -465,27 +465,45 @@ class FinaleMixin(MixinMeta):
         else:
             view = FinaleDialogView(engine, self._on_dialog_advance)
 
+        # Try editing the interaction message first
+        edited = False
         try:
             await interaction.message.edit(embed=embed, view=view, attachments=[file])
             engine.message = interaction.message
+            edited = True
         except Exception as e:
-            print(f"[Finale] _render_scene_frame edit failed: {e}, using fallback")
-            # Fallback: send new message
+            print(f"[Finale] interaction.message.edit failed: {e}")
+
+        # Fallback: try editing engine.message if different
+        if not edited and engine.message and engine.message.id != interaction.message.id:
             try:
                 buf2 = engine.render_current()
                 fname2 = engine.next_frame_name("scene")
                 file2 = discord.File(fp=buf2, filename=fname2)
                 embed2 = discord.Embed(color=discord.Color.dark_purple())
                 embed2.set_image(url=f"attachment://{fname2}")
+                await engine.message.edit(embed=embed2, view=view, attachments=[file2])
+                edited = True
+            except Exception as e:
+                print(f"[Finale] engine.message.edit fallback failed: {e}")
+
+        # Last resort: send a brand new message
+        if not edited:
+            try:
+                buf3 = engine.render_current()
+                fname3 = engine.next_frame_name("scene")
+                file3 = discord.File(fp=buf3, filename=fname3)
+                embed3 = discord.Embed(color=discord.Color.dark_purple())
+                embed3.set_image(url=f"attachment://{fname3}")
                 channel = interaction.channel
-                new_msg = await channel.send(embed=embed2, view=view, file=file2)
+                new_msg = await channel.send(embed=embed3, view=view, file=file3)
                 try:
                     await interaction.message.delete()
                 except Exception:
                     pass
                 engine.message = new_msg
-            except Exception as e2:
-                print(f"[Finale] _render_scene_frame fallback also failed: {e2}")
+            except Exception as e:
+                print(f"[Finale] new message fallback also failed: {e}")
 
         await self._schedule_auto_advance(engine)
 
@@ -509,6 +527,12 @@ class FinaleMixin(MixinMeta):
     async def _render_scene_via_msg(self, engine: FinaleEngine):
         if not engine.message:
             return
+
+        try:
+            engine.trigger_scene_audio()
+        except Exception:
+            pass
+
         fname = engine.next_frame_name("scene")
         buf = engine.render_current()
         file = discord.File(fp=buf, filename=fname)
@@ -524,28 +548,29 @@ class FinaleMixin(MixinMeta):
         else:
             view = FinaleDialogView(engine, self._on_dialog_advance)
 
-        engine.active_view = view
-
+        edited = False
         try:
             await engine.message.edit(embed=embed, view=view, attachments=[file])
+            edited = True
         except Exception as e:
-            await self._debug(f"_render_scene_via_msg edit failed: {e}")
-            # Fallback: send as a new message
+            print(f"[Finale] _render_scene_via_msg edit failed: {e}")
+
+        if not edited:
             try:
                 buf2 = engine.render_current()
-                file2 = discord.File(fp=buf2, filename=fname)
+                fname2 = engine.next_frame_name("scene")
+                file2 = discord.File(fp=buf2, filename=fname2)
                 embed2 = discord.Embed(color=discord.Color.dark_purple())
-                embed2.set_image(url=f"attachment://{fname}")
+                embed2.set_image(url=f"attachment://{fname2}")
                 channel = engine.message.channel
                 new_msg = await channel.send(embed=embed2, view=view, file=file2)
-                # Delete old message
                 try:
                     await engine.message.delete()
                 except Exception:
                     pass
                 engine.message = new_msg
-            except Exception as e2:
-                await self._debug(f"_render_scene_via_msg fallback also failed: {e2}")
+            except Exception as e:
+                print(f"[Finale] _render_scene_via_msg fallback also failed: {e}")
 
         await self._schedule_auto_advance(engine)
 
