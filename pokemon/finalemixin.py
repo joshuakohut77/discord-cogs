@@ -428,13 +428,25 @@ class FinaleMixin(MixinMeta):
             print(f"[Finale] Error in _on_dialog_advance: {e}")
             import traceback
             traceback.print_exc()
+            # Fallback: try to render via message directly
+            try:
+                await self._render_scene_via_msg(engine)
+            except Exception:
+                try:
+                    await interaction.followup.send("Something went wrong. Use `,finale` to restart.", ephemeral=True)
+                except Exception:
+                    pass
 
     # ------------------------------------------------------------------
     # Rendering helpers
     # ------------------------------------------------------------------
 
     async def _render_scene_frame(self, interaction: Interaction, engine: FinaleEngine):
-        engine.trigger_scene_audio()
+        try:
+            engine.trigger_scene_audio()
+        except Exception:
+            pass
+
         fname = engine.next_frame_name("scene")
         buf = engine.render_current()
         file = discord.File(fp=buf, filename=fname)
@@ -451,8 +463,28 @@ class FinaleMixin(MixinMeta):
         else:
             view = FinaleDialogView(engine, self._on_dialog_advance)
 
-        await interaction.message.edit(embed=embed, view=view, attachments=[file])
-        engine.message = interaction.message
+        try:
+            await interaction.message.edit(embed=embed, view=view, attachments=[file])
+            engine.message = interaction.message
+        except Exception as e:
+            print(f"[Finale] _render_scene_frame edit failed: {e}, using fallback")
+            # Fallback: send new message
+            try:
+                buf2 = engine.render_current()
+                fname2 = engine.next_frame_name("scene")
+                file2 = discord.File(fp=buf2, filename=fname2)
+                embed2 = discord.Embed(color=discord.Color.dark_purple())
+                embed2.set_image(url=f"attachment://{fname2}")
+                channel = interaction.channel
+                new_msg = await channel.send(embed=embed2, view=view, file=file2)
+                try:
+                    await interaction.message.delete()
+                except Exception:
+                    pass
+                engine.message = new_msg
+            except Exception as e2:
+                print(f"[Finale] _render_scene_frame fallback also failed: {e2}")
+
         await self._schedule_auto_advance(engine)
 
     async def _render_battle_frame(self, interaction: Interaction, engine: FinaleEngine, with_buttons: bool = True):
@@ -662,6 +694,10 @@ class FinaleMixin(MixinMeta):
         else:
             # All sacrificial pokemon down — end battle, advance to dialog
             engine.end_battle(victory=True)
+            try:
+                engine.trigger_scene_audio()
+            except Exception:
+                pass
             await self._render_scene_via_msg(engine)
 
     # ------------------------------------------------------------------
@@ -715,6 +751,10 @@ class FinaleMixin(MixinMeta):
         hp_pct = (enemy_poke.currentHP / enemy_max_hp * 100) if enemy_max_hp > 0 else 0
         if hp_pct <= 50:
             engine.end_battle(victory=True)
+            try:
+                engine.trigger_scene_audio()
+            except Exception:
+                pass
             await self._render_scene_via_msg(engine)
             return
 
@@ -765,6 +805,10 @@ class FinaleMixin(MixinMeta):
             lb = LeaderboardClass(str(interaction.user.id))
             lb.victory()
             lb.actions()
+            try:
+                engine.trigger_scene_audio()
+            except Exception:
+                pass
             await self._render_scene_via_msg(engine)
             return
 
@@ -864,6 +908,10 @@ class FinaleMixin(MixinMeta):
             player_poke.save()
 
             engine.end_battle(victory=True)
+            try:
+                engine.trigger_scene_audio()
+            except Exception:
+                pass
             await self._render_scene_via_msg(engine)
 
     # ------------------------------------------------------------------
