@@ -151,14 +151,16 @@ class FinaleMixin(MixinMeta):
     @commands.command(name="finaleact")
     @commands.guild_only()
     @commands.is_owner()
-    async def finale_act_command(self, ctx: commands.Context, act: int = 1) -> None:
-        """[ADMIN] Start finale at a specific act number.
+    async def finale_act_command(self, ctx: commands.Context, act: int = 1, target: discord.Member = None) -> None:
+        """[ADMIN] Start finale at a specific act number, optionally for another user.
+        
+        Usage: ,finaleact <act> [@user]
         
         Acts: 1=Encounter, 2=Vaporeon, 3=DragonDeez, 4=TittyPussy,
         5=AngelHernandez, 6=AbigailShapiro, 7=Unwinnable, 8=RiggedWin,
         9=SkippyRage, 10=FinalSkippy, 11=PostSkippy, 12=Melkor, 13=Ending
         """
-        user = ctx.author
+        user = target if target else ctx.author
         user_id = str(user.id)
 
         if user_id in self.__finale_engines:
@@ -182,7 +184,7 @@ class FinaleMixin(MixinMeta):
             alive_party.append(poke)
 
         if not alive_party:
-            await ctx.send("You don't have any Pokemon!")
+            await ctx.send(f"{user.display_name} doesn't have any Pokemon!")
             return
 
         alive_party.sort(key=lambda p: p.currentLevel)
@@ -211,7 +213,10 @@ class FinaleMixin(MixinMeta):
         file = discord.File(fp=buf, filename=fname)
         embed = discord.Embed(color=discord.Color.dark_purple())
         embed.set_image(url=f"attachment://{fname}")
-        embed.set_footer(text=f"{user.display_name}'s Finale (Act {act})")
+        footer_text = f"{user.display_name}'s Finale (Act {act})"
+        if target:
+            footer_text += f" | Started by {ctx.author.display_name}"
+        embed.set_footer(text=footer_text)
 
         if engine.get_auto_advance_delay() > 0:
             view = View()
@@ -227,7 +232,9 @@ class FinaleMixin(MixinMeta):
         message = await ctx.send(embed=embed, view=view, file=file)
         engine.message = message
 
-        await self._try_connect_finale_audio(ctx.author, engine)
+        # Try to connect audio to the target user's voice channel
+        audio_member = ctx.guild.get_member(user.id)
+        await self._try_connect_finale_audio(audio_member, engine)
         engine.trigger_scene_audio()
 
         await self._schedule_auto_advance(engine)
