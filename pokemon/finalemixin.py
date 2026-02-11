@@ -165,8 +165,8 @@ class FinaleMixin(MixinMeta):
 
         try:
             await engine.message.edit(embed=embed, view=view, attachments=[file])
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[Finale] auto_render_scene edit failed: {e}")
         await self._schedule_auto_advance(engine)
 
     async def _auto_start_battle(self, engine: FinaleEngine):
@@ -182,8 +182,8 @@ class FinaleMixin(MixinMeta):
         view = FinaleBattleView(engine, self._on_battle_move, self._on_switch_request)
         try:
             await engine.message.edit(embed=embed, view=view, attachments=[file])
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[Finale] auto_start_battle edit failed: {e}")
 
     async def _auto_handle_complete(self, engine: FinaleEngine):
         await self._handle_finale_complete_via_msg(engine)
@@ -196,17 +196,26 @@ class FinaleMixin(MixinMeta):
         user_id = str(interaction.user.id)
         engine = self.__finale_engines.get(user_id)
         if not engine:
+            try:
+                await interaction.followup.send("Finale session expired. Use `,finale` to restart.", ephemeral=True)
+            except Exception:
+                pass
             return
         engine.message = interaction.message
 
-        if result == "start_battle":
-            await self._start_finale_battle(interaction, engine)
-        elif result == "resume_battle":
-            await self._render_battle_frame(interaction, engine)
-        elif result == "complete":
-            await self._handle_finale_complete(interaction, engine)
-        else:
-            await self._render_scene_frame(interaction, engine)
+        try:
+            if result == "start_battle":
+                await self._start_finale_battle(interaction, engine)
+            elif result == "resume_battle":
+                await self._render_battle_frame(interaction, engine)
+            elif result == "complete":
+                await self._handle_finale_complete(interaction, engine)
+            else:
+                await self._render_scene_frame(interaction, engine)
+        except Exception as e:
+            print(f"[Finale] Error in _on_dialog_advance: {e}")
+            import traceback
+            traceback.print_exc()
 
     # ------------------------------------------------------------------
     # Rendering helpers
@@ -270,8 +279,8 @@ class FinaleMixin(MixinMeta):
 
         try:
             await engine.message.edit(embed=embed, view=view, attachments=[file])
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[Finale] _render_scene_via_msg edit failed: {e}")
         await self._schedule_auto_advance(engine)
 
     # ------------------------------------------------------------------
@@ -311,8 +320,10 @@ class FinaleMixin(MixinMeta):
         name = list(pokemon_data.keys())[0]
         level = pokemon_data[name]
         config = self._get_finale_pokemon_config()
+        print(f"[Finale] Creating enemy: {name}, in config: {name in config}")
         if name in config:
             poke = FinalePokemon(name, config[name])
+            print(f"[Finale] Created FinalePokemon: {poke.pokemonName}, _front_sprite: {poke._front_sprite}")
             if level:
                 poke.currentLevel = level
                 stats = poke.getPokeStats()
@@ -331,7 +342,19 @@ class FinaleMixin(MixinMeta):
     async def _on_battle_move(self, interaction: Interaction, move_index: int):
         user_id = str(interaction.user.id)
         engine = self.__finale_engines.get(user_id)
-        if not engine or not engine.battle_state:
+        if not engine:
+            try:
+                await interaction.followup.send("Finale session expired.", ephemeral=True)
+            except Exception:
+                pass
+            return
+        if not engine.battle_state:
+            # Battle ended but old view is still showing — re-render current scene
+            engine.message = interaction.message
+            try:
+                await self._render_scene_frame(interaction, engine)
+            except Exception:
+                pass
             return
 
         engine.cancel_auto_advance()
