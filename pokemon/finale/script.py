@@ -227,6 +227,7 @@ def get_finale_script() -> list:
             intro_text="Skippy the Magnificent enters the battle!",
             battle_id="skippy_unwinnable",
             battle_mode="unwinnable",
+            audio="skippy_battle.mp3",
         ),
 
         # --- Dialog before last pokemon ---
@@ -272,6 +273,7 @@ def get_finale_script() -> list:
             text=["This is it. This is my last pokemon...\nGo... {last_pokemon}!"],
             background="finale_battle_bg.png", character_sprite="trainer.png",
             character_position="left", use_trainer_name=True,
+            audio="zanarkand.mp3",
             
         ),
 
@@ -287,6 +289,7 @@ def get_finale_script() -> list:
             intro_text="{last_pokemon} stands tall against Skippy!",
             battle_id="skippy_rigged",
             battle_mode="rigged_win",
+            audio="zanarkand.mp3",
         ),
 
         # Cutscene at 70% HP
@@ -299,6 +302,7 @@ def get_finale_script() -> list:
                     text=["Unbelievable! That's not possible!"],
                     background="finale_battle_bg.png",
                     character_sprite="skippy.png",
+                    audio="zanarkand.mp3",
                     
                 ),
             ],
@@ -330,6 +334,7 @@ def get_finale_script() -> list:
             speaker="",
             text=["...your pokemon vanishes into thin air."],
             background="finale_bg.png",
+            audio="eerie.mp3",
         ),
 
         DialogScene(
@@ -337,12 +342,14 @@ def get_finale_script() -> list:
             text=["You really pissed me off, {trainer_name}."],
             background="finale_bg.png", character_sprite="skippy.png",
             character_position="left", use_trainer_name=True,
+            audio="eerie.mp3",
         ),
         DialogScene(
             speaker="Skippy",
             text=["I cannot allow you to leave. I'm sorry but it must be done..."],
             background="finale_bg.png", character_sprite="skippy.png",
             character_position="left",
+            audio="eerie.mp3",
         ),
         DialogScene(
             speaker="Skippy",
@@ -369,12 +376,16 @@ def get_finale_script() -> list:
             text=["I warned you Skippy. Play by the rules or else you will play by mine."],
             background="finale_bg.png",
             character_sprite="chodethulu.png", character_position="right",
+            audio="wind.mp3",
+            audio_loop=True,
         ),
         DialogScene(
             speaker="Skippy",
             text=["But it's not fair. I am the champion. I can't let a mere mortal defeat me."],
             background="finale_bg.png",
             character_sprite="skippy.png", character_position="left",
+            audio="wind.mp3",
+            audio_loop=True,
         ),
         DialogScene(
             speaker="Chodethulu",
@@ -382,18 +393,24 @@ def get_finale_script() -> list:
             background="finale_bg.png",
             character_sprite="chodethulu.png", character_position="right",
             use_trainer_name=True,
+            audio="wind.mp3",
+            audio_loop=True,
         ),
         DialogScene(
             speaker="Chodethulu",
             text=["Now show Skippy the power of a true Pokemon Master."],
             background="finale_bg.png",
             character_sprite="chodethulu.png", character_position="right",
+            audio="wind.mp3",
+            audio_loop=True,
         ),
         DialogScene(
             speaker="",
             text=["...suddenly your final Pokemon appears at your side."],
             background="finale_bg.png",
             character_sprite="trainer.png", character_position="left",
+            audio="wind.mp3",
+            audio_loop=True,
         ),
         DialogScene(
             speaker="{trainer_name}",
@@ -416,6 +433,7 @@ def get_finale_script() -> list:
             intro_text="The true battle begins!",
             battle_id="skippy_final",
             battle_mode="final_skippy",
+            audio="champion_battle.mp3",
         ),
 
         # ============================================================
@@ -451,12 +469,14 @@ def get_finale_script() -> list:
             background="finale_bg.png",
             character_sprite="trainer.png", character_position="left",
             use_trainer_name=True,
+            audio="hymn.mp3",
         ),
         DialogScene(
             speaker="Chodethulu",
             text=["I sent him back to his home. He won't be bothering you anymore."],
             background="finale_bg.png",
             character_sprite="chodethulu.png", character_position="right",
+            audio="hymn.mp3",
         ),
         DialogScene(
             speaker="{trainer_name}",
@@ -464,24 +484,28 @@ def get_finale_script() -> list:
             background="finale_bg.png",
             character_sprite="trainer.png", character_position="left",
             use_trainer_name=True,
+            audio="hymn.mp3",
         ),
         DialogScene(
             speaker="Chodethulu",
             text=["There are some things you are simply not ready to learn."],
             background="finale_bg.png",
             character_sprite="chodethulu.png", character_position="right",
+            audio="hymn.mp3",
         ),
         DialogScene(
             speaker="Chodethulu",
             text=["You must continue your journey of becoming a Pokemon Master."],
             background="finale_bg.png",
             character_sprite="chodethulu.png", character_position="right",
+            audio="hymn.mp3",
         ),
         DialogScene(
             speaker="Chodethulu",
             text=["Who knows, maybe one day you'll be able to defeat me."],
             background="finale_bg.png",
             character_sprite="chodethulu.png", character_position="right",
+            audio="hymn.mp3",
         ),
         DialogScene(
             speaker="{trainer_name}",
@@ -489,12 +513,14 @@ def get_finale_script() -> list:
             background="finale_bg.png",
             character_sprite="trainer.png", character_position="left",
             use_trainer_name=True,
+            audio="hymn.mp3",
         ),
         DialogScene(
             speaker="Chodethulu",
-            text=["I suppose it has been a while. A duel would be good for me."],
+            text=["A duel? I suppose it has been a while. A duel would be good for me."],
             background="finale_bg.png",
             character_sprite="chodethulu.png", character_position="right",
+            audio="hymn.mp3",
         ),
 
         # ============================================================
@@ -514,6 +540,7 @@ def get_finale_script() -> list:
             background="finale_battle_bg.png",
             character_sprite="trainer.png", character_position="left",
             auto_advance=3, use_trainer_name=True,
+            audio="otherworld.mp3"
         ),
         DialogScene(
             speaker="",
@@ -521,6 +548,7 @@ def get_finale_script() -> list:
             background="finale_battle_bg.png",
             character_sprite="melkor.png",
             auto_advance=4,
+            audio="otherworld.mp3"
         ),
 
         BattleStartScene(
@@ -531,6 +559,7 @@ def get_finale_script() -> list:
             intro_text="Melkor enters the battlefield!",
             battle_id="melkor",
             battle_mode="melkor",
+            audio="otherworld.mp3"
         ),
 
         # ============================================================
