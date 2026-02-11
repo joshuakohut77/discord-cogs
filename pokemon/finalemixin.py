@@ -136,6 +136,8 @@ class FinaleMixin(MixinMeta):
                 "join a Voice Channel before starting.\n\n"
                 "**Stay Active:** Don't delay too long between actions "
                 "or the session may time out.\n\n"
+                "**Battle Ready:** There is no need to heal "
+                "all your pokemon are in fighting shape.\n\n"
                 "When you're ready, the ultimate challenge begins."
             ),
             color=discord.Color.dark_purple()
