@@ -235,17 +235,7 @@ class FinaleMixin(MixinMeta):
         user = interaction.user
         user_id = str(user.id)
 
-        # Join the user's voice channel
-        member = interaction.guild.get_member(user.id)
-        if member and member.voice and member.voice.channel:
-            vc = member.voice.channel
-            try:
-                if interaction.guild.voice_client:
-                    await interaction.guild.voice_client.move_to(vc)
-                else:
-                    await vc.connect()
-            except Exception as e:
-                await self._debug(f"Failed to join voice channel: {e}")
+        # Audio will be connected after engine is created
 
         trainer = TrainerClass(user_id)
         trainer_name = trainer.getTrainerName() if hasattr(trainer, 'getTrainerName') else user.display_name
@@ -289,7 +279,8 @@ class FinaleMixin(MixinMeta):
 
         message = await interaction.message.edit(embed=embed, view=view, attachments=[file])
         engine.message = interaction.message
-        await self._schedule_auto_advance(engine)
+        await self._try_connect_finale_audio(interaction.guild.get_member(user.id), engine)
+        engine.trigger_scene_audio()
 
     async def _leave_voice(self, engine: FinaleEngine):
         """Disconnect bot from voice channel."""
