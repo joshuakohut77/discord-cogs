@@ -224,8 +224,8 @@ def get_finale_script() -> list:
             speaker="Skippy",
             text=["Can't you see this is futile. I cannot be beat!"],
             background="finale_battle_bg.png", character_sprite="skippy.png",
-            audio='wind.mp3',
-            audio_loop=True,
+            audio='stop',
+            
         ),
         DialogScene(
             speaker="{trainer_name}",
