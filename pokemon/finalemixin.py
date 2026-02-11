@@ -35,6 +35,54 @@ if TYPE_CHECKING:
 DiscordUser = Union[discord.Member, discord.User]
 
 
+class FinaleReadyView(View):
+    """Pre-finale confirmation view."""
+    def __init__(self, mixin: 'FinaleMixin', user_id: str, timeout: float = 300):
+        super().__init__(timeout=timeout)
+        self.mixin = mixin
+        self.user_id = user_id
+
+        yes_btn = discord.ui.Button(style=discord.ButtonStyle.success, label="Yes, I'm ready!", custom_id="finale_ready_yes")
+        yes_btn.callback = self.on_yes
+        self.add_item(yes_btn)
+
+        later_btn = discord.ui.Button(style=discord.ButtonStyle.secondary, label="Maybe later", custom_id="finale_ready_later")
+        later_btn.callback = self.on_later
+        self.add_item(later_btn)
+
+    async def on_yes(self, interaction: Interaction):
+        if str(interaction.user.id) != self.user_id:
+            await interaction.response.send_message("This isn't for you.", ephemeral=True)
+            return
+
+        # Check if user is in a voice channel
+        member = interaction.guild.get_member(interaction.user.id)
+        if not member or not member.voice or not member.voice.channel:
+            await interaction.response.send_message(
+                "I see you're not in a voice channel. Please join one before starting the finale!",
+                ephemeral=True
+            )
+            return
+
+        await interaction.response.defer()
+        await self.mixin._begin_finale(interaction)
+
+    async def on_later(self, interaction: Interaction):
+        if str(interaction.user.id) != self.user_id:
+            await interaction.response.send_message("This isn't for you.", ephemeral=True)
+            return
+        await interaction.response.defer()
+        embed = discord.Embed(
+            title="No worries!",
+            description="Come back anytime with `,finale` when you're ready.",
+            color=discord.Color.greyple()
+        )
+        await interaction.message.edit(embed=embed, view=View(), attachments=[])
+
+    async def on_timeout(self):
+        for item in self.children:
+            item.disabled = True
+
 class FinaleMixin(MixinMeta):
     """Cinematic finale battle system."""
 
@@ -79,54 +127,24 @@ class FinaleMixin(MixinMeta):
             await ctx.send("You're already in the finale! Finish or let it time out first.")
             return
 
-        trainer = TrainerClass(user_id)
-        trainer_name = trainer.getTrainerName() if hasattr(trainer, 'getTrainerName') else user.display_name
-
-        party = trainer.getPokemon(party=True)
-        alive_party = []
-        for poke in party:
-            poke.load(pokemonId=poke.trainerId)
-            stats = poke.getPokeStats()
-            poke.currentHP = stats['hp']
-            poke.discordId = str(user.id)
-            poke.save()
-            alive_party.append(poke)
-
-        if not alive_party:
-            await ctx.send("You don't have any Pokemon!")
-            return
-
-        # Sort party so highest level is LAST (saved for scripted moments)
-        alive_party.sort(key=lambda p: p.currentLevel)
-
-        script = get_finale_script()
-        engine = FinaleEngine(
-            user_id=user_id,
-            trainer_name=trainer_name if trainer_name else user.display_name,
-            player_party=alive_party,
-            script=script
+        embed = discord.Embed(
+            title="The Finale Awaits...",
+            description=(
+                "Before we begin, a few things to know:\n\n"
+                "**Estimated Time:** 10-15 minutes\n\n"
+                "**Voice Channel Required:** Please be at a computer and "
+                "join a Voice Channel before starting.\n\n"
+                "**Stay Active:** Don't delay too long between actions "
+                "or the session may time out.\n\n"
+                "When you're ready, the ultimate challenge begins."
+            ),
+            color=discord.Color.dark_purple()
         )
-        self.__finale_engines[user_id] = engine
+        embed.set_footer(text="Are you ready to begin?")
 
-        fname = engine.next_frame_name("scene")
-        buf = engine.render_current()
-        file = discord.File(fp=buf, filename=fname)
-        embed = discord.Embed(color=discord.Color.dark_purple())
-        embed.set_image(url=f"attachment://{fname}")
-        embed.set_footer(text=f"{user.display_name}'s Finale")
+        view = FinaleReadyView(self, user_id)
+        await ctx.send(embed=embed, view=view)
 
-        if engine.get_auto_advance_delay() > 0:
-            view = View()
-        else:
-            view = FinaleDialogView(engine, self._on_dialog_advance)
-        message = await ctx.send(embed=embed, view=view, file=file)
-        engine.message = message
-
-        # Connect audio if user is in a voice channel
-        await self._try_connect_finale_audio(ctx.author, engine)
-        engine.trigger_scene_audio()
-
-        await self._schedule_auto_advance(engine)
 
     @commands.command(name="finaleact")
     @commands.guild_only()
@@ -210,6 +228,55 @@ class FinaleMixin(MixinMeta):
         await self._try_connect_finale_audio(ctx.author, engine)
         engine.trigger_scene_audio()
 
+        await self._schedule_auto_advance(engine)
+
+    async def _begin_finale(self, interaction: Interaction):
+        """Actually start the finale after the player confirms."""
+        user = interaction.user
+        user_id = str(user.id)
+
+        trainer = TrainerClass(user_id)
+        trainer_name = trainer.getTrainerName() if hasattr(trainer, 'getTrainerName') else user.display_name
+
+        party = trainer.getPokemon(party=True)
+        alive_party = []
+        for poke in party:
+            poke.load(pokemonId=poke.trainerId)
+            stats = poke.getPokeStats()
+            poke.currentHP = stats['hp']
+            poke.discordId = str(user.id)
+            poke.save()
+            alive_party.append(poke)
+
+        if not alive_party:
+            await interaction.followup.send("You don't have any Pokemon!")
+            return
+
+        alive_party.sort(key=lambda p: p.currentLevel)
+
+        script = get_finale_script()
+        engine = FinaleEngine(
+            user_id=user_id,
+            trainer_name=trainer_name if trainer_name else user.display_name,
+            player_party=alive_party,
+            script=script
+        )
+        self.__finale_engines[user_id] = engine
+
+        fname = engine.next_frame_name("scene")
+        buf = engine.render_current()
+        file = discord.File(fp=buf, filename=fname)
+        embed = discord.Embed(color=discord.Color.dark_purple())
+        embed.set_image(url=f"attachment://{fname}")
+        embed.set_footer(text=f"{user.display_name}'s Finale")
+
+        if engine.get_auto_advance_delay() > 0:
+            view = View()
+        else:
+            view = FinaleDialogView(engine, self._on_dialog_advance)
+
+        message = await interaction.message.edit(embed=embed, view=view, attachments=[file])
+        engine.message = interaction.message
         await self._schedule_auto_advance(engine)
 
     def _get_act_map(self, script) -> dict:
