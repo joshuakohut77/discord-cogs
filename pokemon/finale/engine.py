@@ -7,6 +7,7 @@ from io import BytesIO
 from typing import List, Dict, Optional, Any, TYPE_CHECKING
 
 import discord
+from discord.ui import View
 
 from .scenes import (
     SceneType, DialogScene, BattleStartScene, BattleCutsceneScene,
@@ -39,6 +40,7 @@ class FinaleBattleState:
         self.defeated_enemies: List[str] = []
         self.battle_mode: str = "normal"
         self._frame_counter = 0
+        self.active_view: Optional[View] = None
 
     @property
     def enemy_hp_pct(self) -> float:
@@ -99,6 +101,7 @@ class FinaleEngine:
 
         self.renderer = FinaleRenderer()
         self.is_complete = False
+        self.active_view: Optional[View] = None
 
         # Message tracking for auto-advance
         self.message: Optional[discord.Message] = None

@@ -42,14 +42,23 @@ class FinaleDialogView(View):
             await interaction.response.send_message("This isn't your story.", ephemeral=True)
             return
 
-        await interaction.response.defer()
-        self.engine.cancel_auto_advance()
-        result = self.engine.advance_dialog()
-        await self.update_callback(interaction, result)
+        try:
+            await interaction.response.defer()
+        except Exception:
+            return
 
-    async def on_timeout(self):
-        for item in self.children:
-            item.disabled = True
+        try:
+            self.engine.cancel_auto_advance()
+            result = self.engine.advance_dialog()
+            await self.update_callback(interaction, result)
+        except Exception as e:
+            print(f"[Finale] on_next callback error: {e}")
+            import traceback
+            traceback.print_exc()
+            try:
+                await interaction.followup.send(f"Something went wrong. Use `,finale` to restart.", ephemeral=True)
+            except Exception:
+                pass
 
 class FinaleBattleView(View):
     """View with move buttons during a finale battle."""
@@ -110,8 +119,20 @@ class FinaleBattleView(View):
             if str(interaction.user.id) != self.engine.user_id:
                 await interaction.response.send_message("This isn't your battle.", ephemeral=True)
                 return
-            await interaction.response.defer()
-            await self.attack_callback(interaction, move_index)
+            try:
+                await interaction.response.defer()
+            except Exception:
+                return
+            try:
+                await self.attack_callback(interaction, move_index)
+            except Exception as e:
+                print(f"[Finale] move callback error: {e}")
+                import traceback
+                traceback.print_exc()
+                try:
+                    await interaction.followup.send("Something went wrong. Use `,finale` to restart.", ephemeral=True)
+                except Exception:
+                    pass
         return callback
 
     async def on_switch(self, interaction: Interaction):

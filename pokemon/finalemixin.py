@@ -277,10 +277,29 @@ class FinaleMixin(MixinMeta):
         else:
             view = FinaleDialogView(engine, self._on_dialog_advance)
 
+        engine.active_view = view
+
         try:
             await engine.message.edit(embed=embed, view=view, attachments=[file])
         except Exception as e:
-            print(f"[Finale] _render_scene_via_msg edit failed: {e}")
+            await self._debug(f"_render_scene_via_msg edit failed: {e}")
+            # Fallback: send as a new message
+            try:
+                buf2 = engine.render_current()
+                file2 = discord.File(fp=buf2, filename=fname)
+                embed2 = discord.Embed(color=discord.Color.dark_purple())
+                embed2.set_image(url=f"attachment://{fname}")
+                channel = engine.message.channel
+                new_msg = await channel.send(embed=embed2, view=view, file=file2)
+                # Delete old message
+                try:
+                    await engine.message.delete()
+                except Exception:
+                    pass
+                engine.message = new_msg
+            except Exception as e2:
+                await self._debug(f"_render_scene_via_msg fallback also failed: {e2}")
+
         await self._schedule_auto_advance(engine)
 
     # ------------------------------------------------------------------
@@ -320,10 +339,9 @@ class FinaleMixin(MixinMeta):
         name = list(pokemon_data.keys())[0]
         level = pokemon_data[name]
         config = self._get_finale_pokemon_config()
-        print(f"[Finale] Creating enemy: {name}, in config: {name in config}")
+        
         if name in config:
             poke = FinalePokemon(name, config[name])
-            print(f"[Finale] Created FinalePokemon: {poke.pokemonName}, _front_sprite: {poke._front_sprite}")
             if level:
                 poke.currentLevel = level
                 stats = poke.getPokeStats()

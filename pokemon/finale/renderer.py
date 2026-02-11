@@ -119,9 +119,8 @@ class FinaleRenderer:
         small_font = self.get_font(18)
         
         # -- Enemy Pokemon (top-right area) --
-        print(f"[Finale Renderer] render_battle enemy: {enemy_pokemon.pokemonName}, has _front_sprite: {getattr(enemy_pokemon, '_front_sprite', 'N/A')}")
         enemy_sprite = self._get_pokemon_sprite(enemy_pokemon, front=True)
-        print(f"[Finale Renderer] enemy_sprite loaded: {enemy_sprite is not None}")
+        
         if enemy_sprite:
             enemy_sprite = self._remove_background(enemy_sprite).resize(POKEMON_SPRITE_SIZE)
             frame.paste(enemy_sprite, (520, 20), enemy_sprite)
