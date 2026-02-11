@@ -48,6 +48,12 @@ def get_finale_script() -> list:
         ),
         DialogScene(
             speaker="???",
+            text=["You're in my game now. Not that crap game KlapPapa coded. Of course it's cinematic!"],
+            background="finale_bg.png",
+            character_sprite="shrouded_figure.png",
+        ),
+        DialogScene(
+            speaker="???",
             text=["It is I, Skippy the Magnificent! Master of Pokemon. The almighty and undefeated one!"],
             background="finale_bg.png",
             character_sprite="shrouded_figure.png",
@@ -447,7 +453,7 @@ def get_finale_script() -> list:
             text=["Chodethulu sends out Melkor!"],
             background="finale_battle_bg.png",
             character_sprite="melkor.png",
-            auto_advance=3,
+            auto_advance=4,
         ),
 
         BattleStartScene(
