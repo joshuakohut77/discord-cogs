@@ -550,5 +550,6 @@ def get_finale_script() -> list:
             ],
             background="finale_bg.png",
             awards={"champion": True},
+            audio="victory.mp3",
         ),
     ]
