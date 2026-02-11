@@ -217,8 +217,6 @@ def get_finale_script() -> list:
             intro_text="Skippy the Magnificent enters the battle!",
             battle_id="skippy_unwinnable",
             battle_mode="unwinnable",
-            
-            
         ),
 
         # --- Dialog before last pokemon ---
