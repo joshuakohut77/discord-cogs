@@ -72,6 +72,13 @@ class DialogScene:
     character_sprite_2: Optional[str] = None
     character_position_2: str = "left"
 
+    # --- Audio ---
+    # Audio file to play when this scene starts (in sprites/finale/audio/).
+    # None = keep current audio. "stop" = stop playback.
+    audio: Optional[str] = None
+    # Whether to loop the audio track
+    audio_loop: bool = False
+
 
 @dataclass
 class BattleStartScene:
@@ -93,6 +100,10 @@ class BattleStartScene:
     # Battle mode: "normal", "unwinnable", "rigged_win", "final_skippy", "melkor"
     battle_mode: str = "normal"
 
+    # --- Audio ---
+    audio: Optional[str] = None
+    audio_loop: bool = False
+
 
 @dataclass
 class BattleCutsceneScene:
@@ -111,6 +122,11 @@ class BattleCutsceneScene:
     # If True, this cutscene has already fired and won't fire again
     fired: bool = False
 
+    # --- Audio ---
+    # Audio to play when this cutscene triggers (overrides battle audio)
+    audio: Optional[str] = None
+    audio_loop: bool = False
+
 
 @dataclass
 class TransitionScene:
@@ -126,6 +142,10 @@ class TransitionScene:
     # Background color if no image (R, G, B)
     bg_color: tuple = (0, 0, 0)
 
+    # --- Audio ---
+    audio: Optional[str] = None
+    audio_loop: bool = False
+
 
 @dataclass
 class FinaleScene:
@@ -140,3 +160,7 @@ class FinaleScene:
     background: Optional[str] = None
     # Awards/flags to set in the database
     awards: Dict[str, Any] = field(default_factory=dict)
+
+    # --- Audio ---
+    audio: Optional[str] = None
+    audio_loop: bool = False

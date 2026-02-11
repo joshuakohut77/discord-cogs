@@ -16,6 +16,7 @@ from .abcd import MixinMeta
 from .finale.engine import FinaleEngine
 from .finale.script import get_finale_script
 from .finale.scenes import DialogScene, TransitionScene, BattleStartScene, FinaleScene
+from .finale.audio import FinaleAudioManager
 from .finale.views import (
     FinaleDialogView, FinaleBattleView,
     FinaleSwitchView, FinaleDefeatView
@@ -120,6 +121,11 @@ class FinaleMixin(MixinMeta):
             view = FinaleDialogView(engine, self._on_dialog_advance)
         message = await ctx.send(embed=embed, view=view, file=file)
         engine.message = message
+
+        # Connect audio if user is in a voice channel
+        await self._try_connect_finale_audio(ctx.author, engine)
+        engine.trigger_scene_audio()
+
         await self._schedule_auto_advance(engine)
 
     @commands.command(name="finaleact")
@@ -200,6 +206,10 @@ class FinaleMixin(MixinMeta):
 
         message = await ctx.send(embed=embed, view=view, file=file)
         engine.message = message
+
+        await self._try_connect_finale_audio(ctx.author, engine)
+        engine.trigger_scene_audio()
+
         await self._schedule_auto_advance(engine)
 
     def _get_act_map(self, script) -> dict:
@@ -272,6 +282,7 @@ class FinaleMixin(MixinMeta):
     async def _auto_render_scene(self, engine: FinaleEngine):
         if not engine.message:
             return
+        engine.trigger_scene_audio()
         fname = engine.next_frame_name("scene")
         buf = engine.render_current()
         file = discord.File(fp=buf, filename=fname)
@@ -294,6 +305,7 @@ class FinaleMixin(MixinMeta):
     async def _auto_start_battle(self, engine: FinaleEngine):
         engine.start_battle(self._create_finale_enemy_from_config)
         self._setup_battle_party(engine)
+        engine.trigger_scene_audio()
         if not engine.message:
             return
         fname = engine.next_frame_name("battle")
@@ -344,6 +356,7 @@ class FinaleMixin(MixinMeta):
     # ------------------------------------------------------------------
 
     async def _render_scene_frame(self, interaction: Interaction, engine: FinaleEngine):
+        engine.trigger_scene_audio()
         fname = engine.next_frame_name("scene")
         buf = engine.render_current()
         file = discord.File(fp=buf, filename=fname)
@@ -431,6 +444,7 @@ class FinaleMixin(MixinMeta):
     async def _start_finale_battle(self, interaction: Interaction, engine: FinaleEngine):
         engine.start_battle(self._create_finale_enemy_from_config)
         self._setup_battle_party(engine)
+        engine.trigger_scene_audio()
         await self._render_battle_frame(interaction, engine)
 
     def _setup_battle_party(self, engine: FinaleEngine):
@@ -940,6 +954,28 @@ class FinaleMixin(MixinMeta):
                 if retry < 2:
                     await asyncio.sleep(1.5)
 
+    async def _try_connect_finale_audio(self, member: discord.Member, engine: FinaleEngine):
+        """Attempt to connect audio for the finale. Non-fatal if it fails."""
+        try:
+            audio_mgr = FinaleAudioManager()
+            connected = await audio_mgr.connect(member)
+            if connected:
+                engine.audio_manager = audio_mgr
+                print(f"[Finale] Audio connected for {member.display_name}")
+            else:
+                print(f"[Finale] Audio not available (user not in voice or bot already in voice)")
+        except Exception as e:
+            print(f"[Finale] Audio setup failed (non-fatal): {e}")
+
+    async def _disconnect_finale_audio(self, engine: FinaleEngine):
+        """Disconnect audio for a finale engine."""
+        if engine.audio_manager:
+            try:
+                await engine.audio_manager.disconnect()
+            except Exception as e:
+                print(f"[Finale] Audio disconnect error: {e}")
+            engine.audio_manager = None
+
     # ------------------------------------------------------------------
     # Switch Pokemon
     # ------------------------------------------------------------------
@@ -1052,6 +1088,7 @@ class FinaleMixin(MixinMeta):
         embed = discord.Embed(color=discord.Color.gold())
         embed.set_image(url=f"attachment://{fname}")
         if user_id in self.__finale_engines:
+            await self._disconnect_finale_audio(self.__finale_engines[user_id])
             del self.__finale_engines[user_id]
         await interaction.message.edit(embed=embed, view=View(), attachments=[file])
 
@@ -1074,6 +1111,7 @@ class FinaleMixin(MixinMeta):
         embed = discord.Embed(color=discord.Color.gold())
         embed.set_image(url=f"attachment://{fname}")
         if user_id in self.__finale_engines:
+            await self._disconnect_finale_audio(self.__finale_engines[user_id])
             del self.__finale_engines[user_id]
         try:
             await engine.message.edit(embed=embed, view=View(), attachments=[file])
@@ -1130,7 +1168,8 @@ class FinaleMixin(MixinMeta):
     async def _on_quit(self, interaction: Interaction):
         user_id = str(interaction.user.id)
         if user_id in self.__finale_engines:
-            self.__finale_engines[user_id].cancel_auto_advance()
+            engine = self.__finale_engines[user_id]
+            engine.cancel_auto_advance()
+            if engine.audio_manager:
+                await engine.audio_manager.disconnect()
             del self.__finale_engines[user_id]
-        embed = discord.Embed(title="Finale Abandoned", description="You can return anytime with `,finale`", color=discord.Color.greyple())
-        await interaction.message.edit(embed=embed, view=View(), attachments=[])

@@ -41,6 +41,8 @@ class FinaleBattleState:
         self.battle_mode: str = "normal"
         self._frame_counter = 0
         self.active_view: Optional[View] = None
+        # Audio manager (set by finalemixin if user is in voice)
+        self.audio_manager = None
 
     @property
     def enemy_hp_pct(self) -> float:
@@ -105,6 +107,8 @@ class FinaleEngine:
 
         # Message tracking for auto-advance
         self.message: Optional[discord.Message] = None
+        # Audio manager (set by finalemixin if user is in voice)
+        self.audio_manager = None
         self._advance_id = 0
         self._auto_task = None
         self._frame_counter = 0
@@ -171,6 +175,59 @@ class FinaleEngine:
             return scene.duration
         return 0
 
+    def get_current_scene_audio(self):
+        """Get the audio directive for the current scene. Returns (audio, audio_loop) tuple."""
+        if self.active_cutscene:
+            # Check cutscene-level audio first
+            audio = getattr(self.active_cutscene, 'audio', None)
+            audio_loop = getattr(self.active_cutscene, 'audio_loop', False)
+            # If the specific cutscene dialog has its own audio override, use that
+            if self.cutscene_dialog_index < len(self.active_cutscene.dialog):
+                dialog = self.active_cutscene.dialog[self.cutscene_dialog_index]
+                d_audio = getattr(dialog, 'audio', None)
+                if d_audio is not None:
+                    audio = d_audio
+                    audio_loop = getattr(dialog, 'audio_loop', False)
+            return audio, audio_loop
+
+        scene = self.get_current_scene()
+        if scene is None:
+            return "stop", False
+        return getattr(scene, 'audio', None), getattr(scene, 'audio_loop', False)
+
+    def trigger_scene_audio(self):
+        """Tell the audio manager to handle the current scene's audio directive."""
+        if not self.audio_manager:
+            return
+        audio, audio_loop = self.get_current_scene_audio()
+        self.audio_manager.handle_scene_audio(audio, audio_loop)
+
+    def get_current_scene_audio(self):
+        """Get the audio directive for the current scene. Returns (audio, audio_loop) tuple."""
+        if self.active_cutscene:
+            # Check the cutscene-level audio first
+            audio = getattr(self.active_cutscene, 'audio', None)
+            audio_loop = getattr(self.active_cutscene, 'audio_loop', False)
+            # If cutscene dialog has its own audio, use that instead
+            if self.cutscene_dialog_index < len(self.active_cutscene.dialog):
+                dialog = self.active_cutscene.dialog[self.cutscene_dialog_index]
+                d_audio = getattr(dialog, 'audio', None)
+                if d_audio is not None:
+                    audio = d_audio
+                    audio_loop = getattr(dialog, 'audio_loop', False)
+            return audio, audio_loop
+
+        scene = self.get_current_scene()
+        if scene is None:
+            return "stop", False
+        return getattr(scene, 'audio', None), getattr(scene, 'audio_loop', False)
+
+    def trigger_scene_audio(self):
+        """Tell the audio manager to handle the current scene's audio."""
+        if not self.audio_manager:
+            return
+        audio, audio_loop = self.get_current_scene_audio()
+        self.audio_manager.handle_scene_audio(audio, audio_loop)
     # ------------------------------------------------------------------
     # Rendering
     # ------------------------------------------------------------------
