@@ -285,7 +285,7 @@ def get_finale_script() -> list:
             speaker="Skippy",
             text=["THAT'S ENOUGH! This is my game and I will not allow it!"],
             background="finale_battle_bg.png", character_sprite="skippy.png",
-            audio="wind.mp3"
+            audio="eerie.mp3"
         ),
 
         # Blinding light transition
@@ -310,8 +310,8 @@ def get_finale_script() -> list:
             character_position="left",
         ),
         DialogScene(
-            speaker="",
-            text=["(suddenly the air feels hot and a bright light appears behind Skippy.)"],
+            speaker="Skippy",
+            text=["Wait a minute, what's going on???"],
             background="finale_bg.png", character_sprite="",
             character_position="left",
         ),
