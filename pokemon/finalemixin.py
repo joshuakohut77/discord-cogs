@@ -232,10 +232,28 @@ class FinaleMixin(MixinMeta):
         message = await ctx.send(embed=embed, view=view, file=file)
         engine.message = message
 
-        # Try to connect audio to the target user's voice channel
-        audio_member = ctx.guild.get_member(user.id)
+        # Connect audio — use target's voice channel if targeting, otherwise admin's
+        audio_member = ctx.guild.get_member(user.id) if target else ctx.author
         await self._try_connect_finale_audio(audio_member, engine)
-        engine.trigger_scene_audio()
+
+        # When jumping to a specific act, the current scene's audio may be None
+        # (meaning "keep playing"), but nothing is playing yet since we skipped
+        # earlier scenes. Scan backwards to find the last explicit audio directive.
+        current_audio, current_loop = engine.get_current_scene_audio()
+        if current_audio is None and engine.scene_index > 0:
+            for i in range(engine.scene_index - 1, -1, -1):
+                prev_scene = engine.script[i]
+                prev_audio = getattr(prev_scene, 'audio', None)
+                if prev_audio is not None and prev_audio.lower() != "stop":
+                    prev_loop = getattr(prev_scene, 'audio_loop', False)
+                    if engine.audio_manager:
+                        import asyncio
+                        await engine.audio_manager.handle_scene_audio(prev_audio, prev_loop)
+                    break
+            else:
+                engine.trigger_scene_audio()
+        else:
+            engine.trigger_scene_audio()
 
         await self._schedule_auto_advance(engine)
 
