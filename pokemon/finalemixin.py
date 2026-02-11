@@ -613,7 +613,7 @@ class FinaleMixin(MixinMeta):
         await self._safe_edit_battle(msg, engine)
         await asyncio.sleep(3)
 
-        bs.battle_log = [f"Your {player_poke.pokemonName.capitalize()} resists Skippy's attack!"]
+        bs.battle_log = [f"Your last pokemon resists Skippy's attack!"]
         await self._safe_edit_battle(msg, engine)
         await asyncio.sleep(3)
 

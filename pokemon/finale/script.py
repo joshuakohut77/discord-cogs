@@ -467,7 +467,7 @@ def get_finale_script() -> list:
             speaker="{trainer_name}",
             text=["Wow you're tough. I need to improve a lot before I can take you on."],
             background="finale_bg.png",
-            character_sprite="chodethulu.png", character_position="right",
+            character_sprite="trainer.png", character_position="left",
             use_trainer_name=True,
         ),
         DialogScene(

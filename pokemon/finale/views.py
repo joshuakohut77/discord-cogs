@@ -101,8 +101,10 @@ class FinaleBattleView(View):
             btn.callback = self._make_move_callback(i)
             self.add_item(btn)
 
-        # Switch Pokemon button (row 2)
-        if engine.battle_state and len(engine.battle_state.player_party) > 1:
+        # Switch Pokemon button (row 2) — disabled for scripted battle modes
+        no_switch_modes = ("unwinnable", "rigged_win", "final_skippy", "melkor")
+        battle_mode = getattr(engine.battle_state, 'battle_mode', 'normal') if engine.battle_state else 'normal'
+        if engine.battle_state and len(engine.battle_state.player_party) > 1 and battle_mode not in no_switch_modes:
             alive_count = sum(1 for p in engine.battle_state.player_party if p.currentHP > 0)
             if alive_count > 1 and switch_callback:
                 switch_btn = Button(
