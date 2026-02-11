@@ -23,14 +23,24 @@ class FinaleDialogView(View):
     """View with a 'Next' button for dialog scenes and transitions."""
 
     def __init__(self, engine: 'FinaleEngine', update_callback: Callable[..., Awaitable],
-                 is_auto: bool = False, timeout: float = 600):
+             is_auto: bool = False, button_label: str = None, button_style: ButtonStyle = None,
+             timeout: float = 600):
         super().__init__(timeout=timeout)
         self.engine = engine
         self.update_callback = update_callback
 
-        label = "Skip ▶▶" if is_auto else "Next ▶"
+        if button_label:
+            label = button_label
+        else:
+            label = "Skip ▶▶" if is_auto else "Next ▶"
+
+        if button_style:
+            style = button_style
+        else:
+            style = ButtonStyle.secondary if is_auto else ButtonStyle.primary
+
         self.next_btn = Button(
-            style=ButtonStyle.secondary if is_auto else ButtonStyle.primary,
+            style=style,
             label=label,
             custom_id="finale_next"
         )

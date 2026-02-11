@@ -463,7 +463,13 @@ class FinaleMixin(MixinMeta):
         elif engine.get_auto_advance_delay() > 0:
             view = View()
         else:
-            view = FinaleDialogView(engine, self._on_dialog_advance)
+            from .finale.scenes import FinaleScene as _FinaleScene
+            current_scene = engine.get_current_scene()
+            if isinstance(current_scene, _FinaleScene):
+                view = FinaleDialogView(engine, self._on_dialog_advance,
+                                        button_label="End Finale", button_style=discord.ButtonStyle.danger)
+            else:
+                view = FinaleDialogView(engine, self._on_dialog_advance)
 
         # Try editing the interaction message first
         edited = False
@@ -546,7 +552,13 @@ class FinaleMixin(MixinMeta):
         elif engine.get_auto_advance_delay() > 0:
             view = View()
         else:
-            view = FinaleDialogView(engine, self._on_dialog_advance)
+            from .finale.scenes import FinaleScene as _FinaleScene
+            current_scene = engine.get_current_scene()
+            if isinstance(current_scene, _FinaleScene):
+                view = FinaleDialogView(engine, self._on_dialog_advance,
+                                        button_label="End Finale", button_style=discord.ButtonStyle.danger)
+            else:
+                view = FinaleDialogView(engine, self._on_dialog_advance)
 
         edited = False
         try:
