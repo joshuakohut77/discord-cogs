@@ -5381,7 +5381,20 @@ class EncountersMixin(MixinMeta):
 
         # Check if trainer has requirements for gym leader
         requirements = gym_info['leader'].get('requirements', [])
+        print(f"[GYM DEBUG] Location: {location_id}, Requirements: {requirements}")
         has_requirements = self.__check_prerequisites(user_id, requirements)
+        print(f"[GYM DEBUG] User: {user_id}, has_requirements: {has_requirements}")
+
+        # Also debug the keyitems directly
+        from services.questclass import quests as QuestsClass
+        quest_obj = QuestsClass(user_id)
+        for req in requirements:
+            if req == 'volcano_badge':
+                print(f"[GYM DEBUG] keyitems.badge_volcano = {quest_obj.keyitems.badge_volcano}")
+            if req == 'soul_badge':
+                print(f"[GYM DEBUG] keyitems.badge_soul = {quest_obj.keyitems.badge_soul}")
+            if req == 'rainbow_badge':
+                print(f"[GYM DEBUG] keyitems.badge_rainbow = {quest_obj.keyitems.badge_rainbow}")
 
         # Create gym button (disabled if requirements not met)
         button = Button(
