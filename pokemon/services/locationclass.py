@@ -171,6 +171,11 @@ class location:
         try:
             db = dbconn()
 
+            # Reset Elite Four progress when entering Indigo Plateau Center
+            if int(locationId) == 2331:
+                from battleclass import battle as BattleClass
+                BattleClass.resetEliteFour(self.discordId)
+
             # This next section checks if there's any valid quests in current area
             # TODO replace this load with object in memory
             p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/quests.json')

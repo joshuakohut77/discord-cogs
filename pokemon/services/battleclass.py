@@ -37,6 +37,14 @@ class battle:
         playerInventory = inv(self.discordId)
         playerInventory.money += moneyReward
         playerInventory.save()
+
+        # If player defeated the Champion (elite-4-5), grant elite_four keyitem
+        if enemy_uuid == "elite-4-5":
+            playerKeyItems = kitems(self.discordId)
+            if not playerKeyItems.elite_four:
+                playerKeyItems.elite_four = True
+                playerKeyItems.save()
+
         return
 
     def gymLeaderVictory(self, gymLeader: GymLeaderModel):
@@ -72,7 +80,18 @@ class battle:
             playerKeyItems.badge_marsh = True
         playerKeyItems.save()
 
-
+    @staticmethod
+    def resetEliteFour(discordId):
+        """ Removes all elite-4 entries from trainer_battles so the player can retry """
+        elite_four_uuids = ('elite-4-1', 'elite-4-2', 'elite-4-3', 'elite-4-4', 'elite-4-5')
+        try:
+            db = dbconn()
+            deleteString = 'DELETE FROM trainer_battles WHERE discord_id = %(discordId)s AND enemy_uuid IN %(uuids)s'
+            db.execute(deleteString, { 'discordId': discordId, 'uuids': elite_four_uuids })
+        except Exception as e:
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            del db
 
     def getRemainingTrainerCount(self):
         """ returns a count of remaining trainers in the area """
@@ -173,10 +192,7 @@ class battle:
 
 
     def __insertEnemyCompleted(self, enemy_uuid):
-        """ inserts and enemy_uuid into the database which indicase complete """
-        # do not lock out if trainer is elite-4 to allow multiple battles
-        if enemy_uuid == "elite-4":
-            return
+        """ inserts and enemy_uuid into the database which indicates complete """
         try:
             db = dbconn()
             insertString = 'INSERT INTO trainer_battles (discord_id, "locationId", enemy_uuid) VALUES(%(discordId)s, %(locationId)s, %(enemy_uuid)s)'
