@@ -5300,10 +5300,6 @@ class EncountersMixin(MixinMeta):
         
         await interaction.message.edit(embed=embed, view=view)
 
-    def load_json_config(filename: str, use_cache: bool = True) -> Dict:
-        if use_cache and filename in _config_cache:
-            return _config_cache[filename]
-
     def __load_quests_data(self):
         """Load quests.json file"""
         if self.__quests_data is None:
