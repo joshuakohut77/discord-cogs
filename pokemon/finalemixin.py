@@ -28,6 +28,7 @@ from services.pokeclass import Pokemon as PokemonClass
 from services.encounterclass import calculate_battle_damage
 from services.pokedexclass import pokedex as PokedexClass
 from services.leaderboardclass import leaderboard as LeaderboardClass
+from services.keyitemsclass import keyitems as KeyItemsClass
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -127,6 +128,12 @@ class FinaleMixin(MixinMeta):
             await ctx.send("You're already in the finale! Finish or let it time out first.")
             return
 
+        # Check for elite_four key item
+        player_keyitems = KeyItemsClass(user_id)
+        if not player_keyitems.elite_four:
+            await ctx.send("You haven't earned the right to challenge the finale yet. Defeat the Elite Four first!")
+            return
+
         embed = discord.Embed(
             title="The Finale Awaits...",
             description=(
@@ -138,6 +145,9 @@ class FinaleMixin(MixinMeta):
                 "or the session may time out.\n\n"
                 "**Battle Ready:** There is no need to heal "
                 "all your pokemon are in fighting shape.\n\n"
+                "**Warning:** Discord does not like what I did "
+                "and the finale can occasionally break.\n\n"
+                "If it does, I will try to fix it for you.\n\n"
                 "When you're ready, the ultimate challenge begins."
             ),
             color=discord.Color.dark_purple()
