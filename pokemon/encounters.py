@@ -5430,17 +5430,17 @@ class EncountersMixin(MixinMeta):
         # TEMP DEBUG - remove later
         gyms_data = self.__load_gyms_data()
         gym_info = gyms_data.get(str(location.locationId))
-        debug_msg = f"locId: {location.locationId}, gym_info exists: {gym_info is not None}"
         if gym_info:
             reqs = gym_info['leader'].get('requirements', [])
-            debug_msg += f", reqs: {reqs}"
-            prereq_result = self.__check_prerequisites(str(user.id), reqs)
-            debug_msg += f", prereq_result: {prereq_result}"
-        if gym_button:
-            debug_msg += f", button.disabled: {gym_button.disabled}"
-        else:
-            debug_msg += f", gym_button: None"
-        await ctx.send(f"```{debug_msg}```", delete_after=30)
+            from services.questclass import quests as QuestsClass
+            quest_obj = QuestsClass(str(user.id))
+            ki = quest_obj.keyitems
+            debug_msg = f"reqs: {reqs}\n"
+            debug_msg += f"badge_volcano: {ki.badge_volcano}\n"
+            debug_msg += f"badge_soul: {ki.badge_soul}\n"
+            debug_msg += f"badge_rainbow: {ki.badge_rainbow}\n"
+            debug_msg += f"prerequsitesValid result: {quest_obj.prerequsitesValid(reqs)}"
+            await ctx.send(f"```{debug_msg}```", delete_after=30)
         #///////////////////////////////////////////////////////////////
         wild_trainers_button = self.__get_wild_trainers_button(str(user.id), location.locationId)
         
