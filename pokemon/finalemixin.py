@@ -292,6 +292,20 @@ class FinaleMixin(MixinMeta):
         )
         self.__finale_engines[user_id] = engine
 
+        # DM bot owner when someone else starts the finale
+        try:
+            app_info = await self.bot.application_info()
+            owner_id = app_info.owner.id
+            if interaction.user.id != owner_id:
+                owner = self.bot.get_user(owner_id) or await self.bot.fetch_user(owner_id)
+                if owner:
+                    await owner.send(
+                        f"🎬 **{interaction.user.display_name}** (`{interaction.user.id}`) "
+                        f"just started the finale in **{interaction.guild.name}** — #{interaction.channel.name}"
+                    )
+        except Exception as e:
+            print(f"[Finale] Failed to DM owner about finale start: {e}")
+
         fname = engine.next_frame_name("scene")
         buf = engine.render_current()
         file = discord.File(fp=buf, filename=fname)
