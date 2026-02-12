@@ -41,6 +41,7 @@ class FinaleBattleState:
         self.battle_mode: str = "normal"
         self._frame_counter = 0
         self.active_view: Optional[View] = None
+        self.enemy_move_index: int = 0  # Round-robin index for enemy moves
         # Audio manager (set by finalemixin if user is in voice)
         self.audio_manager = None
 
@@ -68,6 +69,7 @@ class FinaleBattleState:
         next_idx = self.enemy_current_index + 1
         if next_idx < len(self.enemy_team_data):
             self.enemy_current_index = next_idx
+            self.enemy_move_index = 0  # Reset round-robin for new enemy
             return self.enemy_team_data[next_idx]
         return None
 
@@ -80,6 +82,17 @@ class FinaleBattleState:
                 return poke
         return None
 
+    def get_next_enemy_move(self) -> str:
+        """Get the next enemy move using round-robin cycling."""
+        if not self.enemy_pokemon:
+            return "Attack"
+        enemy_moves = self.enemy_pokemon.getMoves() if hasattr(self.enemy_pokemon, 'getMoves') else []
+        enemy_moves = [m for m in enemy_moves if m and m.lower() != 'none']
+        if not enemy_moves:
+            return "Attack"
+        move = enemy_moves[self.enemy_move_index % len(enemy_moves)]
+        self.enemy_move_index += 1
+        return move
 
 class FinaleEngine:
     """Drives the cinematic finale sequence."""

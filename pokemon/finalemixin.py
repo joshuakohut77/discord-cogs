@@ -726,8 +726,7 @@ class FinaleMixin(MixinMeta):
         await asyncio.sleep(3)
 
         # Step 2: Skippy attacks and one-shots
-        enemy_moves = enemy_poke.getMoves() if hasattr(enemy_poke, 'getMoves') else []
-        e_move_name = random.choice(enemy_moves) if enemy_moves else "Attack"
+        e_move_name = bs.get_next_enemy_move()
         e_move_data = enemy_poke.getMoveData(e_move_name) if hasattr(enemy_poke, 'getMoveData') else {}
         e_display = e_move_data.get('displayName', e_move_name.replace('-', ' ').title())
         status = e_move_data.get('statusEffect')
@@ -796,8 +795,7 @@ class FinaleMixin(MixinMeta):
         await asyncio.sleep(3)
 
         # Enemy attacks but is "resisted"
-        enemy_moves = enemy_poke.getMoves() if hasattr(enemy_poke, 'getMoves') else []
-        e_move_name = random.choice(enemy_moves) if enemy_moves else "Attack"
+        e_move_name = bs.get_next_enemy_move()
         e_move_data = enemy_poke.getMoveData(e_move_name) if hasattr(enemy_poke, 'getMoveData') else {}
         e_display = e_move_data.get('displayName', e_move_name.replace('-', ' ').title())
 
@@ -882,8 +880,7 @@ class FinaleMixin(MixinMeta):
         e_pct = random.randint(40, 70) / 100.0
         e_damage = max(1, int(player_max_hp * e_pct))
 
-        enemy_moves = enemy_poke.getMoves() if hasattr(enemy_poke, 'getMoves') else []
-        e_move_name = random.choice(enemy_moves) if enemy_moves else "Attack"
+        e_move_name = bs.get_next_enemy_move()
         e_move_data = enemy_poke.getMoveData(e_move_name) if hasattr(enemy_poke, 'getMoveData') else {}
         e_display = e_move_data.get('displayName', e_move_name.replace('-', ' ').title())
         status = e_move_data.get('statusEffect')
@@ -1047,12 +1044,11 @@ class FinaleMixin(MixinMeta):
             return
 
         # Step 2: Enemy attacks
+        status_effect_text = None
         enemy_moves = enemy_poke.getMoves() if hasattr(enemy_poke, 'getMoves') else []
         enemy_moves = [m for m in enemy_moves if m and m.lower() != 'none']
-        status_effect_text = None
-
         if enemy_moves:
-            e_move_name = random.choice(enemy_moves)
+            e_move_name = bs.get_next_enemy_move()
             e_move_data = enemy_poke.getMoveData(e_move_name) if hasattr(enemy_poke, 'getMoveData') else {}
             e_display = e_move_data.get('displayName', e_move_name.replace('-', ' ').title())
             status_effect_text = e_move_data.get('statusEffect')
@@ -1209,7 +1205,7 @@ class FinaleMixin(MixinMeta):
                 type_effectiveness = load_json_config('typeEffectiveness.json')
                 if hasattr(enemy_poke, 'getMovesConfig'):
                     moves_config.update(enemy_poke.getMovesConfig())
-                e_move_name = random.choice(enemy_moves)
+                e_move_name = bs.get_next_enemy_move()
                 e_move_data = enemy_poke.getMoveData(e_move_name) if hasattr(enemy_poke, 'getMoveData') else {}
                 e_display = e_move_data.get('displayName', e_move_name.replace('-', ' ').title())
                 e_damage, e_hit = calculate_battle_damage(
