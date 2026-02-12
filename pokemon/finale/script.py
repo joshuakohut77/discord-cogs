@@ -200,7 +200,6 @@ def get_finale_script() -> list:
             background="finale_battle_bg.png", character_sprite="skippy.png",
             use_trainer_name=True,
             audio="wind.mp3",
-            audio_loop=True,
         ),
         DialogScene(
             speaker="Skippy",
