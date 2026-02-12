@@ -3806,5 +3806,554 @@
         }
       ]
     }
+  ],
+  "2342": [
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 750,
+      "enemy_uuid": "8bf7775c",
+      "pokemon": [
+        {
+          "golbat": 25
+        },
+        {
+          "zubat": 25
+        },
+        {
+          "zubat": 25
+        },
+        {
+          "raticate": 25
+        },
+        {
+          "zubat": 25
+        }
+      ]
+    },
+    {
+      "name": "Scientist",
+      "filename": "/sprites/trainers/scientist.png",
+      "money": 1400,
+      "enemy_uuid": "8bf77856",
+      "pokemon": [
+        {
+          "magnemite": 28
+        },
+        {
+          "voltorb": 28
+        },
+        {
+          "magneton": 28
+        }
+      ]
+    },
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 870,
+      "enemy_uuid": "8bf77a04",
+      "pokemon": [
+        {
+          "cubone": 29
+        },
+        {
+          "zubat": 29
+        }
+      ]
+    },
+    {
+      "name": "Scientist",
+      "filename": "/sprites/trainers/scientist.png",
+      "money": 1300,
+      "enemy_uuid": "8bf77b08",
+      "pokemon": [
+        {
+          "grimer": 26
+        },
+        {
+          "weezing": 26
+        },
+        {
+          "koffing": 26
+        },
+        {
+          "weezing": 26
+        }
+      ]
+    }
+  ],
+  "2343": [
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 840,
+      "enemy_uuid": "8bf77c02",
+      "pokemon": [
+        {
+          "raticate": 28
+        },
+        {
+          "hypno": 28
+        },
+        {
+          "raticate": 28
+        }
+      ]
+    },
+    {
+      "name": "Scientist",
+      "filename": "/sprites/trainers/scientist.png",
+      "money": 1450,
+      "enemy_uuid": "8bf77d06",
+      "pokemon": [
+        {
+          "electrode": 29
+        },
+        {
+          "weezing": 29
+        }
+      ]
+    }
+  ],
+  "2344": [
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 840,
+      "enemy_uuid": "8bf77e82",
+      "pokemon": [
+        {
+          "ekans": 28
+        },
+        {
+          "zubat": 28
+        },
+        {
+          "cubone": 28
+        }
+      ]
+    },
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 870,
+      "enemy_uuid": "8bf77f86",
+      "pokemon": [
+        {
+          "machop": 28
+        },
+        {
+          "drowzee": 28
+        }
+      ]
+    },
+    {
+      "name": "Scientist",
+      "filename": "/sprites/trainers/scientist.png",
+      "money": 1650,
+      "enemy_uuid": "8bf78148",
+      "pokemon": [
+        {
+          "electrode": 33
+        }
+      ]
+    }
+  ],
+  "2345": [
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 1015,
+      "enemy_uuid": "8bf78224",
+      "pokemon": [
+        {
+          "hypno": 33
+        }
+      ]
+    },
+    {
+      "name": "Juggler",
+      "filename": "/sprites/trainers/juggler.png",
+      "money": 1160,
+      "enemy_uuid": "8bf782f6",
+      "pokemon": [
+        {
+          "kadabra": 29
+        },
+        {
+          "mr-mime": 29
+        }
+      ]
+    },
+    {
+      "name": "Scientist",
+      "filename": "/sprites/trainers/scientist.png",
+      "money": 1450,
+      "enemy_uuid": "8bf78454",
+      "pokemon": [
+        {
+          "magneton": 26
+        },
+        {
+          "koffing": 26
+        },
+        {
+          "weezing": 26
+        },
+        {
+          "magnemite": 26
+        }
+      ]
+    },
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 990,
+      "enemy_uuid": "8bf78526",
+      "pokemon": [
+        {
+          "arbok": 33
+        }
+      ]
+    }
+  ],
+  "2346": [
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 870,
+      "enemy_uuid": "8bf785f8",
+      "pokemon": [
+        {
+          "machop": 29
+        },
+        {
+          "machoke": 29
+        }
+      ]
+    },
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 840,
+      "enemy_uuid": "8bf7872e",
+      "pokemon": [
+        {
+          "zubat": 28
+        },
+        {
+          "zubat": 28
+        },
+        {
+          "golbat": 28
+        }
+      ]
+    },
+    {
+      "name": "Scientist",
+      "filename": "/sprites/trainers/scientist.png",
+      "money": 1250,
+      "enemy_uuid": "8bf78800",
+      "pokemon": [
+        {
+          "voltorb": 25
+        },
+        {
+          "koffing": 25
+        },
+        {
+          "magneton": 25
+        },
+        {
+          "magnemite": 25
+        },
+        {
+          "koffing": 25
+        }
+      ]
+    }
+  ],
+  "2347": [
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 870,
+      "enemy_uuid": "8bf788d2",
+      "pokemon": [
+        {
+          "cubone": 29
+        },
+        {
+          "cubone": 29
+        }
+      ]
+    },
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 780,
+      "enemy_uuid": "8bf789ae",
+      "pokemon": [
+        {
+          "raticate": 26
+        },
+        {
+          "arbok": 26
+        },
+        {
+          "koffing": 26
+        },
+        {
+          "golbat": 26
+        }
+      ]
+    },
+    {
+      "name": "Scientist",
+      "filename": "/sprites/trainers/scientist.png",
+      "money": 1450,
+      "enemy_uuid": "8bf78c4c",
+      "pokemon": [
+        {
+          "electrode": 29
+        },
+        {
+          "muk": 29
+        }
+      ]
+    },
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 840,
+      "enemy_uuid": "8bf78d32",
+      "pokemon": [
+        {
+          "sandshrew": 29
+        },
+        {
+          "sandslash": 29
+        }
+      ]
+    },
+    {
+      "name": "Blue",
+      "filename": "/sprites/trainers/blue.png",
+      "money": 2600,
+      "enemy_uuid": "8bf78e22",
+      "pokemon": [
+        {
+          "pidgeot": 37
+        },
+        {
+          "exeggcute": 38
+        },
+        {
+          "gyarados": 35
+        },
+        {
+          "alakazam": 35
+        },
+        {
+          "dynamic-3": 40
+        }
+      ]
+    }
+  ],
+  "2348": [
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 780,
+      "enemy_uuid": "8bf78f1c",
+      "pokemon": [
+        {
+          "raticate": 26
+        },
+        {
+          "zubat": 26
+        },
+        {
+          "golbat": 26
+        },
+        {
+          "rattata": 26
+        }
+      ]
+    },
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 840,
+      "enemy_uuid": "8bf79016",
+      "pokemon": [
+        {
+          "weezing": 28
+        },
+        {
+          "golbat": 28
+        },
+        {
+          "koffing": 28
+        }
+      ]
+    },
+    {
+      "name": "Scientist",
+      "filename": "/sprites/trainers/scientist.png",
+      "money": 1450,
+      "enemy_uuid": "8bf79264",
+      "pokemon": [
+        {
+          "grimer": 29
+        },
+        {
+          "electrode": 29
+        }
+      ]
+    }
+  ],
+  "2349": [
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 840,
+      "enemy_uuid": "8bf79372",
+      "pokemon": [
+        {
+          "golbat": 28
+        },
+        {
+          "drowzee": 28
+        },
+        {
+          "hypno": 28
+        }
+      ]
+    },
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 840,
+      "enemy_uuid": "8bf7946c",
+      "pokemon": [
+        {
+          "drowzee": 28
+        },
+        {
+          "grimer": 28
+        },
+        {
+          "machop": 28
+        }
+      ]
+    },
+    {
+      "name": "Scientist",
+      "filename": "/sprites/trainers/scientist.png",
+      "money": 1400,
+      "enemy_uuid": "8bf79570",
+      "pokemon": [
+        {
+          "voltorb": 28
+        },
+        {
+          "koffing": 28
+        },
+        {
+          "magneton": 28
+        }
+      ]
+    }
+  ],
+  "23410": [
+    {
+      "name": "Scientist",
+      "filename": "/sprites/trainers/scientist.png",
+      "money": 1450,
+      "enemy_uuid": "8bf7966a",
+      "pokemon": [
+        {
+          "magnemite": 29
+        },
+        {
+          "koffing": 29
+        }
+      ]
+    },
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 840,
+      "enemy_uuid": "8bf79818",
+      "pokemon": [
+        {
+          "machoke": 33
+        }
+      ]
+    }
+  ],
+  "23411": [
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 750,
+      "enemy_uuid": "8bf7991c",
+      "pokemon": [
+        {
+          "rattata": 25
+        },
+        {
+          "rattata": 25
+        },
+        {
+          "zubat": 25
+        },
+        {
+          "rattata": 25
+        },
+        {
+          "ekans": 25
+        }
+      ]
+    },
+    {
+      "name": "Rocket",
+      "filename": "/sprites/trainers/rocket.png",
+      "money": 960,
+      "enemy_uuid": "8bf79a0c",
+      "pokemon": [
+        {
+          "cubone": 32
+        },
+        {
+          "drowzee": 32
+        },
+        {
+          "marowak": 32
+        }        
+      ]
+    },
+    {
+      "name": "Giovanni",
+      "filename": "/sprites/trainers/giovanni.png",
+      "money": 4059,
+      "enemy_uuid": "8bf79b06",
+      "pokemon": [
+        {
+          "nidorino": 37
+        },
+        {
+          "kangaskhan": 35
+        },
+        {
+          "rhyhorn": 37
+        } ,
+        {
+          "nidoqueen": 41
+        }        
+      ]
+    }
   ]
 }
