@@ -638,8 +638,8 @@ class quests:
         self.keyitems.HM04 = True
         self.keyitems.gold_teeth = False
         self.message = dedent("""\
-                            Speaking to the warden about the dead pokemon you found, he admired your bling bling grille. 
-                            He offered to trade you for the gold teeth. They fit perfectly...""")
+                            Speaking to the warden about the dead pokemon you found, he didn't seem phased.. 
+                            He did ask you for the gold teeth. They fit perfectly...""")
         self.keyitems.save()
         return self.create_key_item_embed('HM04')
 
@@ -747,7 +747,7 @@ class quests:
         self.message = dedent("""\
                             You walked into a house and found some old guy in pain. 
                             He was unable to speak. You notice a corpse of a dead Marowak in the corner.
-                            You search the body for loot and found the skull with gold teeth still in it.""")
+                            You search the body for loot and found the back of the skull with gold teeth stuck in it.""")
         self.keyitems.save()
         return self.create_key_item_embed('Gold Teeth')
 
