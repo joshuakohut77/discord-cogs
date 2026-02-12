@@ -2115,9 +2115,12 @@ class EncountersMixin(MixinMeta):
         use_items_btn.callback = self.on_bag_party_use_items_click
         view.add_item(use_items_btn)
 
-        deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
-        deposit_btn.callback = self.on_bag_party_deposit_click
-        view.add_item(deposit_btn)
+        # Only show Deposit if at a Pokemon Center
+        _dep_location = self._get_trainer(str(user.id)).getLocation()
+        if _dep_location.pokecenter:
+            deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
+            deposit_btn.callback = self.on_bag_party_deposit_click
+            view.add_item(deposit_btn)
         
         release_btn = Button(style=ButtonStyle.red, label="🗑️ Release", custom_id='bag_party_release', row=2)
         release_btn.callback = self.on_bag_party_release_click
@@ -2492,9 +2495,12 @@ class EncountersMixin(MixinMeta):
         use_items_btn.callback = self.on_bag_party_use_items_click
         view.add_item(use_items_btn)
         
-        deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
-        deposit_btn.callback = self.on_bag_party_deposit_click
-        view.add_item(deposit_btn)
+        # Only show Deposit if at a Pokemon Center
+        _dep_location = self._get_trainer(str(user.id)).getLocation()
+        if _dep_location.pokecenter:
+            deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
+            deposit_btn.callback = self.on_bag_party_deposit_click
+            view.add_item(deposit_btn)
         
         release_btn = Button(style=ButtonStyle.red, label="🗑️ Release", custom_id='bag_party_release', row=2)
         release_btn.callback = self.on_bag_party_release_click
@@ -2654,9 +2660,12 @@ class EncountersMixin(MixinMeta):
         use_items_btn.callback = self.on_bag_party_use_items_click
         view.add_item(use_items_btn)
 
-        deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
-        deposit_btn.callback = self.on_bag_party_deposit_click
-        view.add_item(deposit_btn)
+        # Only show Deposit if at a Pokemon Center
+        _dep_location = self._get_trainer(str(user.id)).getLocation()
+        if _dep_location.pokecenter:
+            deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
+            deposit_btn.callback = self.on_bag_party_deposit_click
+            view.add_item(deposit_btn)
         
         release_btn = Button(style=ButtonStyle.red, label="🗑️ Release", custom_id='bag_party_release', row=2)
         release_btn.callback = self.on_bag_party_release_click
@@ -2684,6 +2693,14 @@ class EncountersMixin(MixinMeta):
             return
         
         bag_state = self.__bag_states[str(user.id)]
+        
+        # Check if location has a Pokemon Center
+        trainer_obj = self._get_trainer(str(user.id))
+        deposit_location = trainer_obj.getLocation()
+        if not deposit_location.pokecenter:
+            await interaction.followup.send('You need to be at a Pokémon Center to deposit Pokémon!', ephemeral=True)
+            return
+        
         selected_trainer_id = bag_state.selected_pokemon_id
         
         if not selected_trainer_id:
@@ -2797,9 +2814,12 @@ class EncountersMixin(MixinMeta):
         use_items_btn.callback = self.on_bag_party_use_items_click
         view.add_item(use_items_btn)
 
-        deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
-        deposit_btn.callback = self.on_bag_party_deposit_click
-        view.add_item(deposit_btn)
+        # Only show Deposit if at a Pokemon Center
+        _dep_location = self._get_trainer(str(user.id)).getLocation()
+        if _dep_location.pokecenter:
+            deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
+            deposit_btn.callback = self.on_bag_party_deposit_click
+            view.add_item(deposit_btn)
         
         release_btn = Button(style=ButtonStyle.red, label="🗑️ Release", custom_id='bag_party_release', row=2)
         release_btn.callback = self.on_bag_party_release_click
@@ -2947,9 +2967,12 @@ class EncountersMixin(MixinMeta):
         use_items_btn.callback = self.on_bag_party_use_items_click
         view.add_item(use_items_btn)
 
-        deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
-        deposit_btn.callback = self.on_bag_party_deposit_click
-        view.add_item(deposit_btn)
+        # Only show Deposit if at a Pokemon Center
+        _dep_location = self._get_trainer(str(user.id)).getLocation()
+        if _dep_location.pokecenter:
+            deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
+            deposit_btn.callback = self.on_bag_party_deposit_click
+            view.add_item(deposit_btn)
         
         release_btn = Button(style=ButtonStyle.red, label="🗑️ Release", custom_id='bag_party_release', row=2)
         release_btn.callback = self.on_bag_party_release_click
@@ -3099,7 +3122,7 @@ class EncountersMixin(MixinMeta):
         trainer_btn.callback = self.on_bag_trainer_card_click
         view.add_item(trainer_btn)
 
-        # ROW 1: Party, PC, Pokedex buttons
+        # ROW 1: Party, PC (if pokecenter), Pokedex buttons
         party_btn = Button(
             style=ButtonStyle.blurple if current_view == 'party' else ButtonStyle.gray,
             label="👥 Party",
@@ -3109,14 +3132,29 @@ class EncountersMixin(MixinMeta):
         party_btn.callback = self.on_bag_party_click
         view.add_item(party_btn)
         
-        pc_btn = Button(
-            style=ButtonStyle.blurple if current_view == 'pc' else ButtonStyle.gray,
-            label="💾 PC",
-            custom_id='bag_pc',
-            row=1
-        )
-        pc_btn.callback = self.on_bag_pc_click
-        view.add_item(pc_btn)
+        # Only show PC button if current location has a Pokemon Center
+        user_id = None
+        if hasattr(self, '_current_user_id'):
+            user_id = self._current_user_id
+        
+        has_pokecenter = False
+        if user_id:
+            try:
+                _trainer = self._get_trainer(user_id)
+                _location = _trainer.getLocation()
+                has_pokecenter = _location.pokecenter
+            except Exception:
+                has_pokecenter = False
+        
+        if has_pokecenter:
+            pc_btn = Button(
+                style=ButtonStyle.blurple if current_view == 'pc' else ButtonStyle.gray,
+                label="💾 PC",
+                custom_id='bag_pc',
+                row=1
+            )
+            pc_btn.callback = self.on_bag_pc_click
+            view.add_item(pc_btn)
         
         pokedex_btn = Button(
             style=ButtonStyle.blurple if current_view == 'pokedex' else ButtonStyle.gray,
@@ -3159,9 +3197,6 @@ class EncountersMixin(MixinMeta):
         
         # Check if user has HM02 for Flight Map button
         from services.keyitemsclass import keyitems as KeyItemClass
-        user_id = None
-        if hasattr(self, '_current_user_id'):
-            user_id = self._current_user_id
         
         if user_id:
             keyitems = KeyItemClass(user_id)
@@ -3890,6 +3925,14 @@ class EncountersMixin(MixinMeta):
             return
         
         bag_state = self.__bag_states[str(user.id)]
+        
+        # Check if location has a Pokemon Center
+        trainer = self._get_trainer(str(user.id))
+        location = trainer.getLocation()
+        if not location.pokecenter:
+            await interaction.followup.send('You need to be at a Pokémon Center to access the PC!', ephemeral=True)
+            return
+        
         bag_state.current_view = 'pc'
         
         from services.trainerclass import trainer as TrainerClass
@@ -4301,9 +4344,12 @@ class EncountersMixin(MixinMeta):
         use_items_btn.callback = self.on_bag_party_use_items_click
         view.add_item(use_items_btn)
 
-        deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='party_deposit', row=2)
-        deposit_btn.callback = self.on_party_deposit_click
-        view.add_item(deposit_btn)
+        # Only show Deposit if at a Pokemon Center
+        _dep_location = self._get_trainer(str(user.id)).getLocation()
+        if _dep_location.pokecenter:
+            deposit_btn = Button(style=ButtonStyle.gray, label="💾 Deposit", custom_id='bag_party_deposit', row=2)
+            deposit_btn.callback = self.on_bag_party_deposit_click
+            view.add_item(deposit_btn)
         
         release_btn = Button(style=ButtonStyle.red, label="🗑️ Release", custom_id='party_release', row=2)
         release_btn.callback = self.on_party_release_click
