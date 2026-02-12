@@ -2,7 +2,7 @@
   "80": [
     {
       "name": "Lass",
-      "filename": "/sprites/trainers/lass.png",
+      "spritePath": "/sprites/trainers/lass.png",
       "money": 210,
       "enemy_uuid": "456201ee",
       "pokemon": [
@@ -13,7 +13,7 @@
     },
     {
       "name": "Bug Catcher",
-      "filename": "/sprites/trainers/bugcatcher.png",
+      "spritePath": "/sprites/trainers/bugcatcher.png",
       "money": 110,
       "enemy_uuid": "88a2b498",
       "pokemon": [
@@ -27,7 +27,7 @@
     },
     {
       "name": "Super Nerd",
-      "filename": "/sprites/trainers/supernerd.png",
+      "spritePath": "/sprites/trainers/supernerd.png",
       "money": 275,
       "enemy_uuid": "a70e3e75",
       "pokemon": [
@@ -41,7 +41,7 @@
     },
     {
       "name": "Bug Catcher",
-      "filename": "/sprites/trainers/bugcatcher.png",
+      "spritePath": "/sprites/trainers/bugcatcher.png",
       "money": 100,
       "enemy_uuid": "82c8c35b",
       "pokemon": [
@@ -58,7 +58,7 @@
     },
     {
       "name": "Lass",
-      "filename": "/sprites/trainers/lass.png",
+      "spritePath": "/sprites/trainers/lass.png",
       "money": 165,
       "enemy_uuid": "5c424fcd",
       "pokemon": [
@@ -72,7 +72,7 @@
     },
     {
       "name": "Youngster",
-      "filename": "/sprites/trainers/youngster.png",
+      "spritePath": "/sprites/trainers/youngster.png",
       "money": 150,
       "enemy_uuid": "9185d1a6",
       "pokemon": [
@@ -89,7 +89,7 @@
     },
     {
       "name": "Hiker",
-      "filename": "/sprites/trainers/hiker.png",
+      "spritePath": "/sprites/trainers/hiker.png",
       "money": 350,
       "enemy_uuid": "e693b6d5",
       "pokemon": [
@@ -108,7 +108,7 @@
   "87": [
     {
       "name": "PokéManiac",
-      "filename": "/sprites/trainers/pokemaniac.png",
+      "spritePath": "/sprites/trainers/pokemaniac.png",
       "money": 1150,
       "enemy_uuid": "5ebd1842",
       "pokemon": [
@@ -122,7 +122,7 @@
     },
     {
       "name": "PokéManiac",
-      "filename": "/sprites/trainers/pokemaniac.png",
+      "spritePath": "/sprites/trainers/pokemaniac.png",
       "money": 1250,
       "enemy_uuid": "bf228872",
       "pokemon": [
@@ -133,7 +133,7 @@
     },
     {
       "name": "Jr. Trainer",
-      "filename": "/sprites/trainers/jrtrainer.png",
+      "spritePath": "/sprites/trainers/jrtrainer.png",
       "money": 440,
       "enemy_uuid": "9047cb29",
       "pokemon": [
@@ -147,7 +147,7 @@
     },
     {
       "name": "PokéManiac",
-      "filename": "/sprites/trainers/pokemaniac.png",
+      "spritePath": "/sprites/trainers/pokemaniac.png",
       "money": 1100,
       "enemy_uuid": "63e74891",
       "pokemon": [
@@ -161,7 +161,7 @@
     },
     {
       "name": "Hiker",
-      "filename": "/sprites/trainers/hiker.png",
+      "spritePath": "/sprites/trainers/hiker.png",
       "money": 875,
       "enemy_uuid": "fa7adb41",
       "pokemon": [
@@ -172,7 +172,7 @@
     },
     {
       "name": "Hiker",
-      "filename": "/sprites/trainers/hiker.png",
+      "spritePath": "/sprites/trainers/hiker.png",
       "money": 700,
       "enemy_uuid": "3c9ca462",
       "pokemon": [
@@ -186,7 +186,7 @@
     },
     {
       "name": "Hiker",
-      "filename": "/sprites/trainers/hiker.png",
+      "spritePath": "/sprites/trainers/hiker.png",
       "money": 665,
       "enemy_uuid": "74ff3621",
       "pokemon": [
@@ -206,7 +206,7 @@
     },
     {
       "name": "Hiker",
-      "filename": "/sprites/trainers/hiker.png",
+      "spritePath": "/sprites/trainers/hiker.png",
       "money": 700,
       "enemy_uuid": "31e3c84d",
       "pokemon": [
@@ -432,7 +432,7 @@
           "pidgey": 27
         },
         {
-          "Pidgeotto": 27
+          "pidgeotto": 27
         }
       ]
     },
@@ -795,7 +795,7 @@
           "pidgeotto": 26
         },
         {
-          "farfetch'd": 26
+          "farfetchd": 26
         },
         {
           "doduo": 26
@@ -1504,7 +1504,7 @@
   "102": [
     {
       "name": "Blue",
-      "filename": "/sprites/trainers/blue.png",
+      "spritePath": "/sprites/trainers/blue.png",
       "money": 280,
       "enemy_uuid": "5c772560",
       "pokemon": [
@@ -1520,7 +1520,7 @@
   "103": [
     {
       "name": "Blue",
-      "filename": "/sprites/trainers/blue.png",
+      "spritePath": "/sprites/trainers/blue.png",
       "money": 595,
       "enemy_uuid": "fb123420",
       "pokemon": [
@@ -1576,7 +1576,7 @@
           "pidgey": 14
         },
         {
-          "nidora-f": 14
+          "nidoran-f": 14
         }
       ]
     },
@@ -1607,7 +1607,7 @@
           "pidgey": 16
         },
         {
-          "nidora-f": 16
+          "nidoran-f": 16
         }
       ]
     },
@@ -1698,7 +1698,7 @@
           "nidoran-m": 15
         },
         {
-          "nidora-f": 15
+          "nidoran-f": 15
         }
       ]
     },
@@ -2020,8 +2020,8 @@
       ]
     },
     {
-      "name": "Super Nerd ",
-      "spritePath": "/sprites/trainers/supernerd .png",
+      "name": "Super Nerd",
+      "spritePath": "/sprites/trainers/supernerd.png",
       "money": 550,
       "enemy_uuid": "8bf75538",
       "pokemon": [
@@ -2285,7 +2285,7 @@
   "152": [
     {
       "name": "Cooltrainer",
-      "filename": "/sprites/trainers/cooltrainer.png",
+      "spritePath": "/sprites/trainers/cooltrainer.png",
       "money": 1540,
       "enemy_uuid": "ce6e02fe",
       "pokemon": [
@@ -2299,7 +2299,7 @@
     },
     {
       "name": "Cooltrainer",
-      "filename": "/sprites/trainers/cooltrainer.png",
+      "spritePath": "/sprites/trainers/cooltrainer.png",
       "money": 1470,
       "enemy_uuid": "73f0123b",
       "pokemon": [
@@ -2321,7 +2321,7 @@
   "157": [
     {
       "name": "Blue",
-      "filename": "/sprites/trainers/blue.png",
+      "spritePath": "/sprites/trainers/blue.png",
       "money": 3445,
       "enemy_uuid": "01abb928",
       "pokemon": [
@@ -2349,7 +2349,7 @@
   "159": [
     {
       "name": "Blackbelt",
-      "filename": "/sprites/trainers/blackbelt.png",
+      "spritePath": "/sprites/trainers/blackbelt.png",
       "money": 1075,
       "enemy_uuid": "83d13ce6",
       "pokemon": [
@@ -2366,7 +2366,7 @@
     },
     {
       "name": "Juggler",
-      "filename": "/sprites/trainers/juggler.png",
+      "spritePath": "/sprites/trainers/juggler.png",
       "money": 1435,
       "enemy_uuid": "f302d964",
       "pokemon": [
@@ -2386,7 +2386,7 @@
     },
     {
       "name": "Tamer",
-      "filename": "/sprites/trainers/tamer.png",
+      "spritePath": "/sprites/trainers/tamer.png",
       "money": 1760,
       "enemy_uuid": "1f8817b7",
       "pokemon": [
@@ -2400,7 +2400,7 @@
     },
     {
       "name": "Juggler",
-      "filename": "/sprites/trainers/juggler.png",
+      "spritePath": "/sprites/trainers/juggler.png",
       "money": 1680,
       "enemy_uuid": "30e5989f",
       "pokemon": [
@@ -2411,7 +2411,7 @@
     },
     {
       "name": "PokéManiac",
-      "filename": "/sprites/trainers/pokemaniac.png",
+      "spritePath": "/sprites/trainers/pokemaniac.png",
       "money": 2000,
       "enemy_uuid": "67cd1c63",
       "pokemon": [
@@ -2430,7 +2430,7 @@
   "161": [
     {
       "name": "Burglar",
-      "filename": "/sprites/trainers/burglar.png",
+      "spritePath": "/sprites/trainers/burglar.png",
       "money": 3060,
       "enemy_uuid": "7ca8f107",
       "pokemon": [
@@ -2446,7 +2446,7 @@
   "802": [
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 330,
       "enemy_uuid": "4d2d602c",
       "pokemon": [
@@ -2463,7 +2463,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 360,
       "enemy_uuid": "825b928f",
       "pokemon": [
@@ -2477,7 +2477,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 480,
       "enemy_uuid": "e8919671",
       "pokemon": [
@@ -2488,7 +2488,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 390,
       "enemy_uuid": "b01f7221",
       "pokemon": [
@@ -2502,7 +2502,7 @@
     },
     {
       "name": "Super Nerd",
-      "filename": "/sprites/trainers/supernerd.png",
+      "spritePath": "/sprites/trainers/supernerd.png",
       "money": 300,
       "enemy_uuid": "76911218",
       "pokemon": [
@@ -2521,7 +2521,7 @@
   "861": [
     {
       "name": "Blue",
-      "filename": "/sprites/trainers/blue.png",
+      "spritePath": "/sprites/trainers/blue.png",
       "money": 175,
       "enemy_uuid": "1622718f",
       "pokemon": [
@@ -2534,7 +2534,7 @@
   "871": [
     {
       "name": "Hiker",
-      "filename": "/sprites/trainers/hiker.png",
+      "spritePath": "/sprites/trainers/hiker.png",
       "money": 735,
       "enemy_uuid": "3bdf731a",
       "pokemon": [
@@ -2548,7 +2548,7 @@
     },
     {
       "name": "Jr. Trainer",
-      "filename": "/sprites/trainers/jrtrainer.png",
+      "spritePath": "/sprites/trainers/jrtrainer.png",
       "money": 420,
       "enemy_uuid": "adfe628c",
       "pokemon": [
@@ -2565,7 +2565,7 @@
     },
     {
       "name": "Hiker",
-      "filename": "/sprites/trainers/hiker.png",
+      "spritePath": "/sprites/trainers/hiker.png",
       "money": 735,
       "enemy_uuid": "b8530944",
       "pokemon": [
@@ -2582,7 +2582,7 @@
     },
     {
       "name": "PokéManiac",
-      "filename": "/sprites/trainers/pokemaniac.png",
+      "spritePath": "/sprites/trainers/pokemaniac.png",
       "money": 1000,
       "enemy_uuid": "3adef382",
       "pokemon": [
@@ -2599,7 +2599,7 @@
     },
     {
       "name": "Jr. Trainer",
-      "filename": "/sprites/trainers/jrtrainer.png",
+      "spritePath": "/sprites/trainers/jrtrainer.png",
       "money": 440,
       "enemy_uuid": "0cb268ba",
       "pokemon": [
@@ -2613,7 +2613,7 @@
     },
     {
       "name": "Jr. Trainer",
-      "filename": "/sprites/trainers/jrtrainer.png",
+      "spritePath": "/sprites/trainers/jrtrainer.png",
       "money": 380,
       "enemy_uuid": "b28c9227",
       "pokemon": [
@@ -2633,7 +2633,7 @@
     },
     {
       "name": "Jr. Trainer",
-      "filename": "/sprites/trainers/jrtrainer.png",
+      "spritePath": "/sprites/trainers/jrtrainer.png",
       "money": 400,
       "enemy_uuid": "b918d3cd",
       "pokemon": [
@@ -2846,7 +2846,7 @@
   "1593": [
     {
       "name": "Cooltrainer",
-      "filename": "/sprites/trainers/cooltrainer.png",
+      "spritePath": "/sprites/trainers/cooltrainer.png",
       "money": 1505,
       "enemy_uuid": "3f4717d4",
       "pokemon": [
@@ -2863,7 +2863,7 @@
     },
     {
       "name": "Cooltrainer",
-      "filename": "/sprites/trainers/cooltrainer.png",
+      "spritePath": "/sprites/trainers/cooltrainer.png",
       "money": 1505,
       "enemy_uuid": "3ad8ad3e",
       "pokemon": [
@@ -2880,7 +2880,7 @@
     },
     {
       "name": "Cooltrainer",
-      "filename": "/sprites/trainers/cooltrainer.png",
+      "spritePath": "/sprites/trainers/cooltrainer.png",
       "money": 1505,
       "enemy_uuid": "ac8a6a8a",
       "pokemon": [
@@ -2897,7 +2897,7 @@
     },
     {
       "name": "Cooltrainer",
-      "filename": "/sprites/trainers/cooltrainer.png",
+      "spritePath": "/sprites/trainers/cooltrainer.png",
       "money": 1505,
       "enemy_uuid": "4d659282",
       "pokemon": [
@@ -2916,7 +2916,7 @@
   "1602": [
     {
       "name": "Blue",
-      "filename": "/sprites/trainers/blue.png",
+      "spritePath": "/sprites/trainers/blue.png",
       "money": 1625,
       "enemy_uuid": "0dd1243b",
       "pokemon": [
@@ -2941,7 +2941,7 @@
   "1603": [
     {
       "name": "Channeler",
-      "filename": "/sprites/trainers/channeler.png",
+      "spritePath": "/sprites/trainers/channeler.png",
       "money": 690,
       "enemy_uuid": "121033ff",
       "pokemon": [
@@ -2952,7 +2952,7 @@
     },
     {
       "name": "Channeler",
-      "filename": "/sprites/trainers/channeler.png",
+      "spritePath": "/sprites/trainers/channeler.png",
       "money": 660,
       "enemy_uuid": "27c9e5b4",
       "pokemon": [
@@ -2963,7 +2963,7 @@
     },
     {
       "name": "Channeler",
-      "filename": "/sprites/trainers/channeler.png",
+      "spritePath": "/sprites/trainers/channeler.png",
       "money": 720,
       "enemy_uuid": "4cf4d78f",
       "pokemon": [
@@ -2976,7 +2976,7 @@
   "1604": [
     {
       "name": "Channeler",
-      "filename": "/sprites/trainers/channeler.png",
+      "spritePath": "/sprites/trainers/channeler.png",
       "money": 690,
       "enemy_uuid": "351a417c",
       "pokemon": [
@@ -2990,7 +2990,7 @@
     },
     {
       "name": "Channeler",
-      "filename": "/sprites/trainers/channeler.png",
+      "spritePath": "/sprites/trainers/channeler.png",
       "money": 660,
       "enemy_uuid": "c863c78a",
       "pokemon": [
@@ -3001,7 +3001,7 @@
     },
     {
       "name": "Channeler",
-      "filename": "/sprites/trainers/channeler.png",
+      "spritePath": "/sprites/trainers/channeler.png",
       "money": 720,
       "enemy_uuid": "8fa07fce",
       "pokemon": [
@@ -3014,7 +3014,7 @@
   "1605": [
     {
       "name": "Channeler",
-      "filename": "/sprites/trainers/channeler.png",
+      "spritePath": "/sprites/trainers/channeler.png",
       "money": 660,
       "enemy_uuid": "e0ed494d",
       "pokemon": [
@@ -3025,7 +3025,7 @@
     },
     {
       "name": "Channeler",
-      "filename": "/sprites/trainers/channeler.png",
+      "spritePath": "/sprites/trainers/channeler.png",
       "money": 690,
       "enemy_uuid": "ad1beb29",
       "pokemon": [
@@ -3036,7 +3036,7 @@
     },
     {
       "name": "Channeler",
-      "filename": "/sprites/trainers/channeler.png",
+      "spritePath": "/sprites/trainers/channeler.png",
       "money": 720,
       "enemy_uuid": "2dd07c0b",
       "pokemon": [
@@ -3047,7 +3047,7 @@
     },
     {
       "name": "Channeler",
-      "filename": "/sprites/trainers/channeler.png",
+      "spritePath": "/sprites/trainers/channeler.png",
       "money": 660,
       "enemy_uuid": "88f30dcc",
       "pokemon": [
@@ -3060,7 +3060,7 @@
   "1606": [
     {
       "name": "Channeler",
-      "filename": "/sprites/trainers/channeler.png",
+      "spritePath": "/sprites/trainers/channeler.png",
       "money": 660,
       "enemy_uuid": "893f11cf",
       "pokemon": [
@@ -3077,7 +3077,7 @@
     },
     {
       "name": "Channeler",
-      "filename": "/sprites/trainers/channeler.png",
+      "spritePath": "/sprites/trainers/channeler.png",
       "money": 720,
       "enemy_uuid": "aec4e406",
       "pokemon": [
@@ -3088,7 +3088,7 @@
     },
     {
       "name": "Channeler",
-      "filename": "/sprites/trainers/channeler.png",
+      "spritePath": "/sprites/trainers/channeler.png",
       "money": 720,
       "enemy_uuid": "4a27be61",
       "pokemon": [
@@ -3101,7 +3101,7 @@
   "1607": [
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 750,
       "enemy_uuid": "68dff53d",
       "pokemon": [
@@ -3118,7 +3118,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 780,
       "enemy_uuid": "bc6b7f07",
       "pokemon": [
@@ -3132,7 +3132,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 690,
       "enemy_uuid": "e1f1df78",
       "pokemon": [
@@ -3154,7 +3154,7 @@
   "1610": [
     {
       "name": "Burglar",
-      "filename": "/sprites/trainers/burglar.png",
+      "spritePath": "/sprites/trainers/burglar.png",
       "money": 3060,
       "enemy_uuid": "c38cad96",
       "pokemon": [
@@ -3168,7 +3168,7 @@
     },
     {
       "name": "Scientist",
-      "filename": "/sprites/trainers/scientist.png",
+      "spritePath": "/sprites/trainers/scientist.png",
       "money": 1700,
       "enemy_uuid": "2a84dbfb",
       "pokemon": [
@@ -3184,7 +3184,7 @@
   "1612": [
     {
       "name": "Burglar",
-      "filename": "/sprites/trainers/burglar.png",
+      "spritePath": "/sprites/trainers/burglar.png",
       "money": 3420,
       "enemy_uuid": "6fb120f2",
       "pokemon": [
@@ -3197,7 +3197,7 @@
   "1613": [
     {
       "name": "Scientist",
-      "filename": "/sprites/trainers/scientist.png",
+      "spritePath": "/sprites/trainers/scientist.png",
       "money": 1450,
       "enemy_uuid": "db53a165",
       "pokemon": [
@@ -3211,7 +3211,7 @@
     },
     {
       "name": "Burglar",
-      "filename": "/sprites/trainers/burglar.png",
+      "spritePath": "/sprites/trainers/burglar.png",
       "money": 3060,
       "enemy_uuid": "6a700a36",
       "pokemon": [
@@ -3227,7 +3227,7 @@
   "1881": [
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 630,
       "enemy_uuid": "9f351174",
       "pokemon": [
@@ -3241,7 +3241,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 630,
       "enemy_uuid": "f275a863",
       "pokemon": [
@@ -3255,7 +3255,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 600,
       "enemy_uuid": "9b407701",
       "pokemon": [
@@ -3272,7 +3272,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 570,
       "enemy_uuid": "937a1211",
       "pokemon": [
@@ -3292,7 +3292,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 660,
       "enemy_uuid": "92d598f3",
       "pokemon": [
@@ -3308,7 +3308,7 @@
   "1882": [
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 510,
       "enemy_uuid": "1ccbec9d",
       "pokemon": [
@@ -3333,7 +3333,7 @@
   "1883": [
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 630,
       "enemy_uuid": "e6b63540",
       "pokemon": [
@@ -3347,7 +3347,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 600,
       "enemy_uuid": "f79d13ca",
       "pokemon": [
@@ -3366,7 +3366,7 @@
   "1884": [
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 630,
       "enemy_uuid": "5cb1fe99",
       "pokemon": [
@@ -3380,7 +3380,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 690,
       "enemy_uuid": "b1496bd9",
       "pokemon": [
@@ -3397,7 +3397,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 690,
       "enemy_uuid": "ced51252",
       "pokemon": [
@@ -3414,7 +3414,7 @@
     },
     {
       "name": "Giovanni",
-      "filename": "/sprites/trainers/giovanni.png",
+      "spritePath": "/sprites/trainers/giovanni.png",
       "money": 2871,
       "enemy_uuid": "393a0d5c",
       "pokemon": [
@@ -3433,7 +3433,7 @@
   "2332": [
     {
       "name": "Lorelei",
-      "filename": "/sprites/trainers/lorelei.png",
+      "spritePath": "/sprites/trainers/lorelei.png",
       "money": 10400,
       "enemy_uuid": "elite-4-1",
       "pokemon": [
@@ -3458,7 +3458,7 @@
   "2333": [
     {
       "name": "Bruno",
-      "filename": "/sprites/trainers/bruno.png",
+      "spritePath": "/sprites/trainers/bruno.png",
       "money": 10600,
       "enemy_uuid": "elite-4-2",
       "pokemon": [
@@ -3483,7 +3483,7 @@
   "2334": [
     {
       "name": "Agatha",
-      "filename": "/sprites/trainers/agatha.png",
+      "spritePath": "/sprites/trainers/agatha.png",
       "money": 10800,
       "enemy_uuid": "elite-4-3",
       "pokemon": [
@@ -3508,7 +3508,7 @@
   "2335": [
     {
       "name": "Lance",
-      "filename": "/sprites/trainers/lance.png",
+      "spritePath": "/sprites/trainers/lance.png",
       "money": 11000,
       "enemy_uuid": "elite-4-4",
       "pokemon": [
@@ -3533,7 +3533,7 @@
   "2336": [
     {
       "name": "Blue",
-      "filename": "/sprites/trainers/blue.png",
+      "spritePath": "/sprites/trainers/blue.png",
       "money": 12500,
       "enemy_uuid": "elite-4-5",
       "pokemon": [
@@ -3561,7 +3561,7 @@
   "4982": [
     {
       "name": "Gentleman",
-      "filename": "/sprites/trainers/gentleman.png",
+      "spritePath": "/sprites/trainers/gentleman.png",
       "money": 1260,
       "enemy_uuid": "640957ad",
       "pokemon": [
@@ -3569,13 +3569,13 @@
           "growlithe": 18
         },
         {
-          "Growlithe": 18
+          "growlithe": 18
         }
       ]
     },
     {
       "name": "Gentleman",
-      "filename": "/sprites/trainers/gentleman.png",
+      "spritePath": "/sprites/trainers/gentleman.png",
       "money": 1330,
       "enemy_uuid": "d85e1bc6",
       "pokemon": [
@@ -3583,13 +3583,13 @@
           "nidoran-m": 19
         },
         {
-          "Nidoran-f": 19
+          "nidoran-f": 19
         }
       ]
     },
     {
       "name": "Lass",
-      "filename": "/sprites/trainers/lass.png",
+      "spritePath": "/sprites/trainers/lass.png",
       "money": 270,
       "enemy_uuid": "06338257",
       "pokemon": [
@@ -3597,13 +3597,13 @@
           "pidgey": 18
         },
         {
-          "Nidoran-f": 18
+          "nidoran-f": 18
         }
       ]
     },
     {
       "name": "Youngster",
-      "filename": "/sprites/trainers/youngster.png",
+      "spritePath": "/sprites/trainers/youngster.png",
       "money": 315,
       "enemy_uuid": "72fc7945",
       "pokemon": [
@@ -3616,7 +3616,7 @@
   "4984": [
     {
       "name": "Sailor",
-      "filename": "/sprites/trainers/sailor.png",
+      "spritePath": "/sprites/trainers/sailor.png",
       "money": 630,
       "enemy_uuid": "2c048a8e",
       "pokemon": [
@@ -3626,7 +3626,8 @@
       ]
     },
     {
-      "name": "sailor",
+      "name": "Sailor",
+      "spritePath": "/sprites/trainers/sailor.png",
       "money": 510,
       "enemy_uuid": "21066c7a",
       "pokemon": [
@@ -3642,7 +3643,8 @@
       ]
     },
     {
-      "name": "sailor",
+      "name": "Sailor",
+      "spritePath": "/sprites/trainers/sailor.png",
       "money": 510,
       "enemy_uuid": "fef7b31b",
       "pokemon": [
@@ -3658,7 +3660,8 @@
       ]
     },
     {
-      "name": "sailor",
+      "name": "Sailor",
+      "spritePath": "/sprites/trainers/sailor.png",
       "money": 540,
       "enemy_uuid": "49e3125d",
       "pokemon": [
@@ -3671,7 +3674,8 @@
       ]
     },
     {
-      "name": "fisherman",
+      "name": "Fisherman",
+      "spritePath": "/sprites/trainers/fisherman.png",
       "money": 595,
       "enemy_uuid": "8b4a4c0f",
       "pokemon": [
@@ -3687,7 +3691,8 @@
       ]
     },
     {
-      "name": "sailor",
+      "name": "Sailor",
+      "spritePath": "/sprites/trainers/sailor.png",
       "money": 600,
       "enemy_uuid": "c128d777",
       "pokemon": [
@@ -3700,7 +3705,7 @@
   "4987": [
     {
       "name": "Blue",
-      "filename": "/sprites/trainers/blue.png",
+      "spritePath": "/sprites/trainers/blue.png",
       "money": 1300,
       "enemy_uuid": "3a07d2da",
       "pokemon": [
@@ -3722,7 +3727,7 @@
   "4988": [
     {
       "name": "Fisherman",
-      "filename": "/sprites/trainers/fisherman.png",
+      "spritePath": "/sprites/trainers/fisherman.png",
       "money": 595,
       "enemy_uuid": "84d7f2b6",
       "pokemon": [
@@ -3739,7 +3744,7 @@
     },
     {
       "name": "Gentleman",
-      "filename": "/sprites/trainers/gentleman.png",
+      "spritePath": "/sprites/trainers/gentleman.png",
       "money": 1610,
       "enemy_uuid": "16ba7bfe",
       "pokemon": [
@@ -3750,7 +3755,7 @@
     },
     {
       "name": "Gentleman",
-      "filename": "/sprites/trainers/gentleman.png",
+      "spritePath": "/sprites/trainers/gentleman.png",
       "money": 1190,
       "enemy_uuid": "5695a1b7",
       "pokemon": [
@@ -3764,7 +3769,7 @@
     },
     {
       "name": "Lass",
-      "filename": "/sprites/trainers/lass.png",
+      "spritePath": "/sprites/trainers/lass.png",
       "money": 270,
       "enemy_uuid": "82646950",
       "pokemon": [
@@ -3780,7 +3785,7 @@
   "4989": [
     {
       "name": "Sailor",
-      "filename": "/sprites/trainers/sailor.png",
+      "spritePath": "/sprites/trainers/sailor.png",
       "money": 510,
       "enemy_uuid": "71ae2f4c",
       "pokemon": [
@@ -3794,7 +3799,7 @@
     },
     {
       "name": "Sailor",
-      "filename": "/sprites/trainers/sailor.png",
+      "spritePath": "/sprites/trainers/sailor.png",
       "money": 540,
       "enemy_uuid": "b45cfc52",
       "pokemon": [
@@ -3810,7 +3815,7 @@
   "2342": [
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 750,
       "enemy_uuid": "8bf7775c",
       "pokemon": [
@@ -3833,7 +3838,7 @@
     },
     {
       "name": "Scientist",
-      "filename": "/sprites/trainers/scientist.png",
+      "spritePath": "/sprites/trainers/scientist.png",
       "money": 1400,
       "enemy_uuid": "8bf77856",
       "pokemon": [
@@ -3850,7 +3855,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 870,
       "enemy_uuid": "8bf77a04",
       "pokemon": [
@@ -3864,7 +3869,7 @@
     },
     {
       "name": "Scientist",
-      "filename": "/sprites/trainers/scientist.png",
+      "spritePath": "/sprites/trainers/scientist.png",
       "money": 1300,
       "enemy_uuid": "8bf77b08",
       "pokemon": [
@@ -3886,7 +3891,7 @@
   "2343": [
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 840,
       "enemy_uuid": "8bf77c02",
       "pokemon": [
@@ -3903,7 +3908,7 @@
     },
     {
       "name": "Scientist",
-      "filename": "/sprites/trainers/scientist.png",
+      "spritePath": "/sprites/trainers/scientist.png",
       "money": 1450,
       "enemy_uuid": "8bf77d06",
       "pokemon": [
@@ -3919,7 +3924,7 @@
   "2344": [
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 840,
       "enemy_uuid": "8bf77e82",
       "pokemon": [
@@ -3936,7 +3941,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 870,
       "enemy_uuid": "8bf77f86",
       "pokemon": [
@@ -3950,7 +3955,7 @@
     },
     {
       "name": "Scientist",
-      "filename": "/sprites/trainers/scientist.png",
+      "spritePath": "/sprites/trainers/scientist.png",
       "money": 1650,
       "enemy_uuid": "8bf78148",
       "pokemon": [
@@ -3963,7 +3968,7 @@
   "2345": [
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 1015,
       "enemy_uuid": "8bf78224",
       "pokemon": [
@@ -3974,7 +3979,7 @@
     },
     {
       "name": "Juggler",
-      "filename": "/sprites/trainers/juggler.png",
+      "spritePath": "/sprites/trainers/juggler.png",
       "money": 1160,
       "enemy_uuid": "8bf782f6",
       "pokemon": [
@@ -3988,7 +3993,7 @@
     },
     {
       "name": "Scientist",
-      "filename": "/sprites/trainers/scientist.png",
+      "spritePath": "/sprites/trainers/scientist.png",
       "money": 1450,
       "enemy_uuid": "8bf78454",
       "pokemon": [
@@ -4008,7 +4013,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 990,
       "enemy_uuid": "8bf78526",
       "pokemon": [
@@ -4021,7 +4026,7 @@
   "2346": [
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 870,
       "enemy_uuid": "8bf785f8",
       "pokemon": [
@@ -4035,7 +4040,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 840,
       "enemy_uuid": "8bf7872e",
       "pokemon": [
@@ -4052,7 +4057,7 @@
     },
     {
       "name": "Scientist",
-      "filename": "/sprites/trainers/scientist.png",
+      "spritePath": "/sprites/trainers/scientist.png",
       "money": 1250,
       "enemy_uuid": "8bf78800",
       "pokemon": [
@@ -4077,7 +4082,7 @@
   "2347": [
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 870,
       "enemy_uuid": "8bf788d2",
       "pokemon": [
@@ -4091,7 +4096,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 780,
       "enemy_uuid": "8bf789ae",
       "pokemon": [
@@ -4111,7 +4116,7 @@
     },
     {
       "name": "Scientist",
-      "filename": "/sprites/trainers/scientist.png",
+      "spritePath": "/sprites/trainers/scientist.png",
       "money": 1450,
       "enemy_uuid": "8bf78c4c",
       "pokemon": [
@@ -4125,7 +4130,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 840,
       "enemy_uuid": "8bf78d32",
       "pokemon": [
@@ -4139,7 +4144,7 @@
     },
     {
       "name": "Blue",
-      "filename": "/sprites/trainers/blue.png",
+      "spritePath": "/sprites/trainers/blue.png",
       "money": 2600,
       "enemy_uuid": "8bf78e22",
       "pokemon": [
@@ -4164,7 +4169,7 @@
   "2348": [
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 780,
       "enemy_uuid": "8bf78f1c",
       "pokemon": [
@@ -4184,7 +4189,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 840,
       "enemy_uuid": "8bf79016",
       "pokemon": [
@@ -4201,7 +4206,7 @@
     },
     {
       "name": "Scientist",
-      "filename": "/sprites/trainers/scientist.png",
+      "spritePath": "/sprites/trainers/scientist.png",
       "money": 1450,
       "enemy_uuid": "8bf79264",
       "pokemon": [
@@ -4217,7 +4222,7 @@
   "2349": [
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 840,
       "enemy_uuid": "8bf79372",
       "pokemon": [
@@ -4234,7 +4239,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 840,
       "enemy_uuid": "8bf7946c",
       "pokemon": [
@@ -4251,7 +4256,7 @@
     },
     {
       "name": "Scientist",
-      "filename": "/sprites/trainers/scientist.png",
+      "spritePath": "/sprites/trainers/scientist.png",
       "money": 1400,
       "enemy_uuid": "8bf79570",
       "pokemon": [
@@ -4270,7 +4275,7 @@
   "23410": [
     {
       "name": "Scientist",
-      "filename": "/sprites/trainers/scientist.png",
+      "spritePath": "/sprites/trainers/scientist.png",
       "money": 1450,
       "enemy_uuid": "8bf7966a",
       "pokemon": [
@@ -4284,7 +4289,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 840,
       "enemy_uuid": "8bf79818",
       "pokemon": [
@@ -4297,7 +4302,7 @@
   "23411": [
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 750,
       "enemy_uuid": "8bf7991c",
       "pokemon": [
@@ -4320,7 +4325,7 @@
     },
     {
       "name": "Rocket",
-      "filename": "/sprites/trainers/rocket.png",
+      "spritePath": "/sprites/trainers/rocket.png",
       "money": 960,
       "enemy_uuid": "8bf79a0c",
       "pokemon": [
@@ -4332,12 +4337,12 @@
         },
         {
           "marowak": 32
-        }        
+        }
       ]
     },
     {
       "name": "Giovanni",
-      "filename": "/sprites/trainers/giovanni.png",
+      "spritePath": "/sprites/trainers/giovanni.png",
       "money": 4059,
       "enemy_uuid": "8bf79b06",
       "pokemon": [
@@ -4349,10 +4354,10 @@
         },
         {
           "rhyhorn": 37
-        } ,
+        },
         {
           "nidoqueen": 41
-        }        
+        }
       ]
     }
   ]
