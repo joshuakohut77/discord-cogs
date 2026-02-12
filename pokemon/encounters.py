@@ -5427,21 +5427,6 @@ class EncountersMixin(MixinMeta):
         quest_buttons = self.__get_available_quests(str(user.id), location.name)
         gym_button = self.__get_gym_button(str(user.id), location.locationId)
         
-        # TEMP DEBUG - remove later
-        gyms_data = self.__load_gyms_data()
-        gym_info = gyms_data.get(str(location.locationId))
-        if gym_info:
-            reqs = gym_info['leader'].get('requirements', [])
-            from services.questclass import quests as QuestsClass
-            quest_obj = QuestsClass(str(user.id))
-            ki = quest_obj.keyitems
-            debug_msg = f"reqs: {reqs}\n"
-            debug_msg += f"badge_volcano: {ki.badge_volcano}\n"
-            debug_msg += f"badge_soul: {ki.badge_soul}\n"
-            debug_msg += f"badge_rainbow: {ki.badge_rainbow}\n"
-            debug_msg += f"prerequsitesValid result: {quest_obj.prerequsitesValid(reqs)}"
-            await ctx.send(f"```{debug_msg}```", delete_after=30)
-        #///////////////////////////////////////////////////////////////
         wild_trainers_button = self.__get_wild_trainers_button(str(user.id), location.locationId)
         
         from .constant import LOCATION_DISPLAY_NAMES
