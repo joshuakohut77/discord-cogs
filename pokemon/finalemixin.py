@@ -633,6 +633,10 @@ class FinaleMixin(MixinMeta):
                 bs.player_party = list(engine.player_party[:-1])
             else:
                 bs.player_party = list(engine.player_party)
+            # Heal all pokemon to full HP before the fight
+            for poke in bs.player_party:
+                stats = poke.getPokeStats()
+                poke.currentHP = stats['hp']
             bs.player_pokemon = bs.player_party[0]
             bs.player_current_index = 0
 

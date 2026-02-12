@@ -8,7 +8,8 @@ Supports: .mp3, .wav, .ogg, .flac
 Usage in scenes:
     DialogScene(..., audio="battle_theme.mp3", audio_loop=True)
     TransitionScene(..., audio="dramatic_sting.wav")
-    DialogScene(..., audio="stop")  # explicitly stop audio
+    DialogScene(..., audio="stop")       # explicitly stop audio (instant)
+    DialogScene(..., audio="fade_stop")  # fade out then stop (2 seconds)
     DialogScene(...)  # no audio field = keep current audio playing
 """
 from __future__ import annotations
@@ -33,7 +34,7 @@ class FinaleAudioManager:
         self.current_track: Optional[str] = None
         self.is_looping: bool = False
         self._connected: bool = False
-        self._volume: float = 0.5  # 0.0 to 1.0
+        self._volume: float = 0.2  # 0.0 to 1.0
         self._event_loop: Optional[asyncio.AbstractEventLoop] = None
         self._lock: asyncio.Lock = asyncio.Lock()
 
@@ -219,6 +220,43 @@ class FinaleAudioManager:
             self.current_track = None
             await self._stop_and_wait()
 
+    async def async_fade_stop(self, duration: float = 2.0, steps: int = 20):
+        """Gradually fade volume to zero, then stop playback."""
+        async with self._lock:
+            if not self.connected or not self.voice_client:
+                self.current_track = None
+                return
+            if not self.voice_client.is_playing() and not self.voice_client.is_paused():
+                self.current_track = None
+                return
+
+            # Prevent looping from restarting the track during fade
+            self.is_looping = False
+            self.current_track = None
+
+            # Get current volume from the source if possible
+            source = self.voice_client.source
+            if isinstance(source, discord.PCMVolumeTransformer):
+                start_volume = source.volume
+            else:
+                start_volume = self._volume
+
+            step_delay = duration / steps
+            for i in range(steps):
+                if not self.voice_client or not self.voice_client.is_playing():
+                    break
+                new_vol = start_volume * (1.0 - (i + 1) / steps)
+                if isinstance(self.voice_client.source, discord.PCMVolumeTransformer):
+                    self.voice_client.source.volume = max(0.0, new_vol)
+                await asyncio.sleep(step_delay)
+
+            # Now fully stop
+            await self._stop_and_wait()
+
+            # Restore original volume setting for next track
+            if self.voice_client and self.voice_client.source and isinstance(self.voice_client.source, discord.PCMVolumeTransformer):
+                self.voice_client.source.volume = self._volume
+
     def set_volume(self, volume: float):
         """Set volume (0.0 to 1.0)."""
         self._volume = max(0.0, min(1.0, volume))
@@ -237,7 +275,8 @@ class FinaleAudioManager:
         Args:
             audio: The scene's audio field.
                    - None: keep current audio playing (no change)
-                   - "stop": stop current audio
+                   - "stop": stop current audio immediately
+                   - "fade_stop": fade out current audio over ~2 seconds then stop
                    - "filename.mp3": play this file
             audio_loop: Whether to loop the new track
         """
@@ -246,6 +285,10 @@ class FinaleAudioManager:
 
         if audio.lower() == "stop":
             await self.async_stop()
+            return
+
+        if audio.lower() == "fade_stop":
+            await self.async_fade_stop()
             return
 
         # If it's the same track already playing (and loop status matches), skip

@@ -174,7 +174,7 @@ def get_finale_script() -> list:
         ),
         DialogScene(
             speaker="Skippy",
-            text=["I'm actually not surprised. He was never good at his job. This one is the real show-stopper!"],
+            text=["I'm actually not surprised. He was never good at his job. Time for the real show-stopper!"],
             background="finale_battle_bg.png", character_sprite="skippy.png",
             audio='battle_theme.mp3',
         ),
@@ -236,7 +236,7 @@ def get_finale_script() -> list:
             text=[""],
             background="finale_battle_bg.png", character_sprite="",
             auto_advance=2,
-            audio='stop',
+            audio='fade_stop',
         ),
         DialogScene(
             speaker="Skippy",
@@ -328,7 +328,7 @@ def get_finale_script() -> list:
         ),
 
         # Blinding light transition
-        TransitionScene(text="A blinding light fills the room", bg_color=(255, 255, 255), duration=1.5),
+        TransitionScene(text="A blinding light fills the room", bg_color=(255, 255, 255), duration=1.5,audio="eerie.mp3"),
 
         DialogScene(
             speaker="",
@@ -445,7 +445,7 @@ def get_finale_script() -> list:
             background="finale_bg.png",
             character_sprite="skippy.png", character_position="left",
             character_sprite_2="chodethulu.png", character_position_2="right",
-            audio="stop",
+            audio="fade_stop",
         ),
         DialogScene(
             speaker="Chodethulu",
