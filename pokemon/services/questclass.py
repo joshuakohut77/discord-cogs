@@ -226,8 +226,7 @@ class quests:
                     requirementsMet = False
                     break
             if item == 'volcano_badge':
-                if not self.keyitemsbadge_.volcano:
-                    requirementsMet = False
+                if not self.keyitems.badge_volcano:
                     break
             if item == 'earth_badge':
                 if not self.keyitems.badge_earth:
