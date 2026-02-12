@@ -43,26 +43,26 @@ class StarterMixin(MixinMeta):
         pass
 
 
-    @_trainer.command()
-    async def active(self, ctx: commands.Context, user: DiscordUser = None) -> None:
-        """Show the currect active pokemon for the trainer."""
-        author = ctx.author
+    # @_trainer.command()
+    # async def active(self, ctx: commands.Context, user: DiscordUser = None) -> None:
+    #     """Show the currect active pokemon for the trainer."""
+    #     author = ctx.author
 
-        if user is None:
-            user = ctx.author
+    #     if user is None:
+    #         user = ctx.author
 
-         # This will create the trainer if it doesn't exist
-        trainer = TrainerClass(str(user.id))
-        pokemon = trainer.getActivePokemon()
+    #      # This will create the trainer if it doesn't exist
+    #     trainer = TrainerClass(str(user.id))
+    #     pokemon = trainer.getActivePokemon()
 
-        state = PokemonState(str(user.id), None, DisplayCard.STATS, [pokemon], pokemon.trainerId, None)
+    #     state = PokemonState(str(user.id), None, DisplayCard.STATS, [pokemon], pokemon.trainerId, None)
 
-        authorIsTrainer = user.id == state.discordId
+    #     authorIsTrainer = user.id == state.discordId
 
-        embed, btns = self.__pokemonSingleCard(user, state, state.card, authorIsTrainer)
+    #     embed, btns = self.__pokemonSingleCard(user, state, state.card, authorIsTrainer)
 
-        message: discord.Message = await ctx.send(embed=embed, view=btns)
-        self.setPokemonState(author, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
+    #     message: discord.Message = await ctx.send(embed=embed, view=btns)
+    #     self.setPokemonState(author, PokemonState(str(user.id), message.id, state.card, state.pokemon, state.active, None))
 
     @_trainer.command()
     async def delete(self, ctx: commands.Context) -> None:
