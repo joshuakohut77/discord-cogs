@@ -26,14 +26,14 @@ class imagegen:
         """ generate an image for the start of a wild pokemon battle  """
         battleBackground = self.battlePath + 'pokebattle_trainer_start.png'
         partypokeballFainted = self.battlePath + '/party_pokeball_fainted.png'
-        trainerSprite = self.trainersPath + enemyTrainer.filename
+        trainerSprite = self.trainersPath + enemyTrainer.spritePath
         enemyTrainerParty = len(enemyTrainer.pokemon)
         
         backgroundImg = Image.open(battleBackground)
         partypokeballFaintedImg = Image.open(partypokeballFainted)
         trainerSpriteImg = Image.open(trainerSprite)
 
-         # create font sizes
+        # create font sizes
         font = ImageFont.truetype(self.fontPath, 35)
 
         draw = ImageDraw.Draw(backgroundImg)
@@ -59,7 +59,7 @@ class imagegen:
         battleBackground = self.battlePath + 'pokebattle_trainer_start.png'
         partypokeball = self.battlePath + 'party_pokeball.png'
         partypokeballFainted = self.battlePath + 'party_pokeball_fainted.png'
-        trainerSprite = self.trainersPath + enemyTrainer.filename
+        trainerSprite = self.trainersPath + enemyTrainer.spritePath
         enemyTrainerParty = len(enemyTrainer.pokemon)
 
         backgroundImg = Image.open(battleBackground)
@@ -67,7 +67,7 @@ class imagegen:
         partypokeballFaintedImg = Image.open(partypokeballFainted)
         trainerSpriteImg = Image.open(trainerSprite)
 
-         # create font sizes
+        # create font sizes
         font = ImageFont.truetype(self.fontPath, 35)
 
         draw = ImageDraw.Draw(backgroundImg)
