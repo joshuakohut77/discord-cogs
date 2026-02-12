@@ -146,7 +146,7 @@ class FinaleMixin(MixinMeta):
                 "**Battle Ready:** There is no need to heal "
                 "all your pokemon are in fighting shape.\n\n"
                 "**Warning:** Discord does not like what I did "
-                "and the finale can occasionally break."
+                "and the finale can occasionally break. "
                 "If it does, I will try to fix it for you.\n\n"
                 "When you're ready, the ultimate challenge begins."
             ),
