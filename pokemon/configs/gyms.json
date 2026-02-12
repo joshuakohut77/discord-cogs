@@ -520,7 +520,7 @@
       "money": 4950,
       "enemy_uuid": "8bf6c33e",
       "requirements": [
-        "badge_volcano"
+        "volcano_badge", "soul_badge", "rainbow_badge"
       ],
       "pokemon": [
         {
