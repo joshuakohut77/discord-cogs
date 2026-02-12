@@ -199,13 +199,13 @@ def get_finale_script() -> list:
             text=["You are a formidable foe, {trainer_name}."],
             background="finale_battle_bg.png", character_sprite="skippy.png",
             use_trainer_name=True,
-            audio="wind.mp3",
+            audio="fade_stop",
         ),
         DialogScene(
             speaker="Skippy",
             text=["However, do you think you have what it takes to defeat..."],
             background="finale_battle_bg.png", character_sprite="skippy.png",
-            audio="wind.mp3",
+            
         ),
         DialogScene(
             speaker="Skippy",
@@ -570,7 +570,7 @@ def get_finale_script() -> list:
             background="finale_bg.png",
             character_sprite="trainer.png", character_position="left",
             use_trainer_name=True,
-            audio="stop",
+            audio="fade_stop",
         ),
         DialogScene(
             speaker="Chodethulu",
