@@ -131,7 +131,7 @@ class FinaleMixin(MixinMeta):
         # Check for elite_four key item
         player_keyitems = KeyItemsClass(user_id)
         if not player_keyitems.elite_four:
-            await ctx.send("You haven't earned the right to challenge the finale yet. Defeat the Elite Four first!")
+            await ctx.send("You haven't earned the right to challenge the finale yet.")
             return
 
         embed = discord.Embed(
