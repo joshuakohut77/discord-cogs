@@ -630,7 +630,7 @@ class quests:
         self.message = dedent("""\
                             You browsed the Museum of Science and found a cool looking stone. 
                             You placed the stone in your bag when no one was looking.
-                            The inscription said "Property of John Hammond""")
+                            The inscription said \"Property of John Hammond\"""")
         self.keyitems.save()
         return self.create_key_item_embed('Old Amber')
 
@@ -758,8 +758,8 @@ class quests:
                 self.keyitems.dome_fossil = False
             if self.keyitems.helix_fossil:
                 self.keyitems.helix_fossil = False
-            if self.keyitems.old_amber > 0:
-                self.keyitems.old_amber = -1
+            if self.keyitems.old_amber:
+                self.keyitems.old_amber = False
             self.message = dedent("""\
                                 You find some german scientists in a lab. They offer to experiement 
                                 on your prehistoric rocks. You gladly give them your stupid rocks.
@@ -771,7 +771,7 @@ class quests:
             # Old code - determine which fossils were given
             gave_dome = not self.keyitems.dome_fossil
             gave_helix = not self.keyitems.helix_fossil
-            gave_amber = self.keyitems.old_amber == -1
+            gave_amber = not self.keyitems.old_amber
             
             # New code - follows the exact pattern from checkTruck method
             from trainerclass import trainer as trainerClass
