@@ -601,7 +601,7 @@ class EncountersMixin(MixinMeta):
         if enemy_pokemon_index >= len(enemy_pokemon_list) and hasattr(next_trainer, 'enemy_uuid') and next_trainer.enemy_uuid == "elite-4-5":
             finale_embed = discord.Embed(
                 title="🏆 Congratulations, Champion!",
-                description="You have defeated the Elite Four and become the Pokémon Champion!\n\n"
+                description="You have defeated the Elite Four!\n\n"
                             "**You have unlocked the finale!**\n"
                             "Please type the command `,finale` and read the instructions to continue.",
                 color=discord.Color.gold()
