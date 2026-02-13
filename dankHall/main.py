@@ -1126,6 +1126,12 @@ class DankHall(EventMixin, commands.Cog, metaclass=CompositeClass):
                 # Emoji field
                 if field.name == "Emoji" and field.value:
                     emoji = field.value.strip()
+                    # Normalize custom emoji format to just the ID
+                    # Embed format: <:name:id> or <a:name:id> (animated)
+                    # Store just the ID for consistency with events.py
+                    custom_emoji_match = re.match(r'<a?:\w+:(\d+)>', emoji)
+                    if custom_emoji_match:
+                        emoji = custom_emoji_match.group(1)
                 
                 # Reactions field
                 if field.name == "Reactions" and field.value:
