@@ -176,6 +176,22 @@ class location:
                 from battleclass import battle as BattleClass
                 BattleClass.resetEliteFour(self.discordId)
 
+            # Elite Four room progression - must defeat current room's trainer before advancing
+            elite_four_requirements = {
+                2333: 'elite-4-1',  # Must beat Lorelei (2332) to enter Bruno's room
+                2334: 'elite-4-2',  # Must beat Bruno (2333) to enter Agatha's room
+                2335: 'elite-4-3',  # Must beat Agatha (2334) to enter Lance's room
+                2336: 'elite-4-4',  # Must beat Lance (2335) to enter Champion's room
+            }
+            required_uuid = elite_four_requirements.get(int(locationId))
+            if required_uuid:
+                checkQuery = 'SELECT 1 FROM trainer_battles WHERE discord_id = %(discordId)s AND enemy_uuid = %(enemy_uuid)s'
+                result = db.querySingle(checkQuery, { 'discordId': self.discordId, 'enemy_uuid': required_uuid })
+                if not result:
+                    self.statuscode = 420
+                    self.message = 'You must defeat the trainer in this room before advancing!'
+                    return
+
             # This next section checks if there's any valid quests in current area
             # TODO replace this load with object in memory
             p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/quests.json')
