@@ -3212,6 +3212,8 @@ class EncountersMixin(MixinMeta):
             if poke.nickName:
                 label = f"{poke.nickName} ({poke.pokemonName.capitalize()})"
             label += f" Lv.{poke.currentLevel}"
+            if poke.trainerId == active.trainerId:
+                label += " ⭐"
             
             stats = poke.getPokeStats()
             if poke.currentHP <= 0:
