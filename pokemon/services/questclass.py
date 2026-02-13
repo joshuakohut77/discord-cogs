@@ -714,22 +714,21 @@ class quests:
         if self.keyitems.dome_fossil or self.keyitems.helix_fossil or self.keyitems.old_amber > 0:
             if self.keyitems.dome_fossil:
                 self.keyitems.dome_fossil = False
+                self.keyitems.gave_dome = True
             if self.keyitems.helix_fossil:
                 self.keyitems.helix_fossil = False
+                self.keyitems.gave_helix = True
             if self.keyitems.old_amber:
                 self.keyitems.old_amber = False
+                self.keyitems.gave_amber = True
             self.message = dedent("""\
                                 You find some german scientists in a lab. They offer to experiement on your prehistoric rocks. You gladly give them your stupid rocks.
                                 """)
             self.keyitems.save()
-            self.inventory.save()
+            
         
         elif self.keyitems.elite_four:
-            # Old code - determine which fossils were given
-            gave_dome = not self.keyitems.dome_fossil
-            gave_helix = not self.keyitems.helix_fossil
-            gave_amber = not self.keyitems.old_amber
-            
+         
             # New code - follows the exact pattern from checkTruck method
             from trainerclass import trainer as trainerClass
             from pokedexclass import pokedex
@@ -741,7 +740,8 @@ class quests:
             # Track all received Pokemon for combined message
             received_pokemon = []
             
-            if gave_dome:
+            if self.keyitems.gave_dome:
+                self.keyitems.gave_dome = False
                 party_count = trainer.getPartySize()
                 
                 # Create Kabuto Pokemon - using string name like checkTruck does
@@ -767,7 +767,8 @@ class quests:
                 
                 received_pokemon.append(('Kabuto', "The scientists return your Dome Fossil... but it's not a fossil anymore!"))
             
-            if gave_helix:
+            if self.keyitems.gave_helix:
+                self.keyitems.gave_helix = False
                 party_count = trainer.getPartySize()
                 
                 # Create Omanyte Pokemon - using string name like checkTruck does
@@ -793,7 +794,8 @@ class quests:
                 
                 received_pokemon.append(('Omanyte', "The scientists return your Helix Fossil... but it's not a fossil anymore!"))
             
-            if gave_amber:
+            if self.keyitems.gave_amber:
+                self.keyitems.gave_amber = False
                 party_count = trainer.getPartySize()
                 
                 # Create Aerodactyl Pokemon - using string name like checkTruck does
@@ -823,7 +825,7 @@ class quests:
                 # Build combined message with all Pokemon received
                 import discord
                 import constant
-                
+                self.keyitems.save()
                 # Get emojis for all received Pokemon
                 pokemon_emojis = []
                 for pokemon_name, _ in received_pokemon:
