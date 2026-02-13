@@ -46,6 +46,10 @@
   "71": [
     [
       {
+        "item": "link-cable",
+        "price": 5000
+      },
+      {
         "item": "ultra-ball",
         "price": 1200
       },
@@ -77,6 +81,10 @@
   ],
   "76": [
     [
+      {
+        "item": "link-cable",
+        "price": 5000
+      },
       {
         "item": "ultra-ball",
         "price": 1200
@@ -110,6 +118,10 @@
   "151": [
     [
       {
+        "item": "link-cable",
+        "price": 5000
+      },
+      {
         "item": "poke-ball",
         "price": 200
       },
@@ -138,6 +150,10 @@
   "154": [
     [
       {
+        "item": "link-cable",
+        "price": 5000
+      },
+      {
         "item": "poke-ball",
         "price": 200
       },
@@ -161,6 +177,10 @@
   ],
   "231": [
     [
+      {
+        "item": "link-cable",
+        "price": 5000
+      },
       {
         "item": "poke-ball",
         "price": 200
@@ -193,6 +213,10 @@
   ],
   "232": [
     [
+      {
+        "item": "link-cable",
+        "price": 5000
+      },
       {
         "item": "great-ball",
         "price": 600
@@ -234,6 +258,10 @@
   "2331": [
     [
       {
+        "item": "link-cable",
+        "price": 5000
+      },
+      {
         "item": "ultra-ball",
         "price": 1200
       },
@@ -266,6 +294,10 @@
   "234": [
     [
       {
+        "item": "link-cable",
+        "price": 5000
+      },
+      {
         "item": "great-ball",
         "price": 600
       },
@@ -293,6 +325,10 @@
   ],
   "672": [
     [
+      {
+        "item": "link-cable",
+        "price": 5000
+      },
       {
         "item": "great-ball",
         "price": 600
@@ -372,6 +408,10 @@
   "674": [
     [
       {
+        "item": "link-cable",
+        "price": 5000
+      },
+      {
         "item": "poke-doll",
         "price": 1000
       },
@@ -399,6 +439,10 @@
   ],
   "675": [
     [
+      {
+        "item": "link-cable",
+        "price": 5000
+      },
       {
         "item": "x-accuracy",
         "price": 950
@@ -453,6 +497,10 @@
   ],
   "676": [
     [
+      {
+        "item": "link-cable",
+        "price": 5000
+      },
       {
         "item": "fresh-water",
         "price": 200
