@@ -725,127 +725,91 @@ class quests:
                                 You find some german scientists in a lab. They offer to experiement on your prehistoric rocks. You gladly give them your stupid rocks.
                                 """)
             self.keyitems.save()
-            
-        
-        elif self.keyitems.elite_four:
-         
-            # New code - follows the exact pattern from checkTruck method
+            return
+        elif self.keyitems.gave_dome or self.keyitems.gave_helix or self.keyitems.gave_amber:
             from trainerclass import trainer as trainerClass
             from pokedexclass import pokedex
-            from services.leaderboardclass import leaderboard as LeaderboardClass
             
-            # Create trainer object to check party size
             trainer = trainerClass(self.discordId)
-            
-            # Track all received Pokemon for combined message
             received_pokemon = []
             
             if self.keyitems.gave_dome:
                 self.keyitems.gave_dome = False
                 party_count = trainer.getPartySize()
                 
-                # Create Kabuto Pokemon - using string name like checkTruck does
                 pokemon1 = pokeClass(self.discordId, 'kabuto')
                 pokemon1.create(35)
-                
-                # CRITICAL: Set discordId and party status before saving
                 pokemon1.discordId = self.discordId
-                pokemon1.party = party_count < 6  # Add to party if there's space, otherwise to PC
-                
-                # Save the Pokemon
+                pokemon1.party = party_count < 6
                 pokemon1.save()
                 
-                # Check if save was successful
                 if pokemon1.statuscode == 96:
                     self.statuscode = 96
                     self.message = "Error occurred while creating Kabuto"
                     return
                 
-                # Register to Pokedex
                 pokedex(self.discordId, pokemon1)
-                
-                
                 received_pokemon.append(('Kabuto', "The scientists return your Dome Fossil... but it's not a fossil anymore!"))
             
             if self.keyitems.gave_helix:
                 self.keyitems.gave_helix = False
                 party_count = trainer.getPartySize()
                 
-                # Create Omanyte Pokemon - using string name like checkTruck does
                 pokemon2 = pokeClass(self.discordId, 'omanyte')
                 pokemon2.create(35)
-                
-                # CRITICAL: Set discordId and party status before saving
                 pokemon2.discordId = self.discordId
-                pokemon2.party = party_count < 6  # Add to party if there's space, otherwise to PC
-                
-                # Save the Pokemon
+                pokemon2.party = party_count < 6
                 pokemon2.save()
                 
-                # Check if save was successful
                 if pokemon2.statuscode == 96:
                     self.statuscode = 96
                     self.message = "Error occurred while creating Omanyte"
                     return
                 
-                # Register to Pokedex
                 pokedex(self.discordId, pokemon2)
-                
-                
                 received_pokemon.append(('Omanyte', "The scientists return your Helix Fossil... but it's not a fossil anymore!"))
             
             if self.keyitems.gave_amber:
                 self.keyitems.gave_amber = False
                 party_count = trainer.getPartySize()
                 
-                # Create Aerodactyl Pokemon - using string name like checkTruck does
                 pokemon3 = pokeClass(self.discordId, 'aerodactyl')
                 pokemon3.create(35)
-                
-                # CRITICAL: Set discordId and party status before saving
                 pokemon3.discordId = self.discordId
-                pokemon3.party = party_count < 6  # Add to party if there's space, otherwise to PC
-                
-                # Save the Pokemon
+                pokemon3.party = party_count < 6
                 pokemon3.save()
                 
-                # Check if save was successful
                 if pokemon3.statuscode == 96:
                     self.statuscode = 96
                     self.message = "Error occurred while creating Aerodactyl"
                     return
                 
-                # Register to Pokedex
                 pokedex(self.discordId, pokemon3)
-                
-                
                 received_pokemon.append(('Aerodactyl', "The scientists return your Old Amber... but it's not amber anymore!"))
             
             if received_pokemon:
-                # Build combined message with all Pokemon received
                 import discord
                 import constant
                 self.keyitems.save()
-                # Get emojis for all received Pokemon
                 pokemon_emojis = []
                 for pokemon_name, _ in received_pokemon:
                     emoji = constant.POKEMON_EMOJIS.get(pokemon_name.upper(), '✨')
                     pokemon_emojis.append(f"{emoji} **{pokemon_name}**")
                 
-                # Create single embed with all Pokemon
                 embed = discord.Embed(
                     title="Pokémon Received!",
                     description="\n".join(pokemon_emojis),
                     color=discord.Color.gold()
                 )
                 
-                # Combine all messages
                 messages = [msg for _, msg in received_pokemon]
                 self.message = "\n\n".join(messages)
                 
                 return {'embed': embed}
+            else:
+                self.message = """The scientists begin to shout at you in german. You decide to leave"""
         else:
-            self.message = """The scientists begin to shout at you in german. You decide to leave"""
+            self.message = """You don't have any fossils to give the scientists. They shoo you away."""
         
         return
 
