@@ -2870,7 +2870,10 @@ class EncountersMixin(MixinMeta):
             selected_trainer_id = str(selected_pokemon.trainerId)
             bag_state.selected_pokemon_id = selected_trainer_id
         
-        # CRITICAL FIX: Reload the selected Pokemon to get all its data
+        # Always persist the selected Pokemon ID so button handlers can find it
+        bag_state.selected_pokemon_id = selected_trainer_id
+
+        # Reload the selected Pokemon to get all its data
         selected_pokemon.load(pokemonId=selected_pokemon.trainerId)
 
         # Create embed for selected Pokemon
@@ -3176,7 +3179,10 @@ class EncountersMixin(MixinMeta):
             selected_trainer_id = str(selected_pokemon.trainerId)
             bag_state.selected_pokemon_id = selected_trainer_id
         
-        # CRITICAL FIX: Reload the selected Pokemon to get all its data
+        # Always persist the selected Pokemon ID so button handlers can find it
+        bag_state.selected_pokemon_id = selected_trainer_id
+
+        # Reload the selected Pokemon to get all its data
         selected_pokemon.load(pokemonId=selected_pokemon.trainerId)
 
         # Create embed for selected Pokemon
