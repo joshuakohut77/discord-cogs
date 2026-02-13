@@ -490,10 +490,7 @@ class quests:
     def garysSister(self):
         self.inventory.townmap = 1
         self.message = dedent("""\
-                        You ran into Garys sister outside of town. 
-                        You could feel the instant chemistry between you two. 
-                        She handed you her number on the back of
-                        a peice of paper.""")
+                        You decided to have one last quickie with Gary's sister. She handed you her number on the back of a peice of paper.""")
         self.inventory.save()
         return self.create_key_item_embed('Town Map')
 
@@ -501,25 +498,20 @@ class quests:
         if not self.keyitems.oaks_parcel_delivered:
             # Before delivering Oak's parcel - find nothing
             self.message = dedent("""\
-                                You rummage through the room looking for anything interesting.
-                                Nothing but dusty old furniture and outdated magazines.
-                                What a waste of time.""")
+                                You rummage through the room looking for anything interesting. Nothing but dusty old furniture and outdated magazines. What a waste of time.""")
             return None  # No embed, just message
         else:
             # After delivering Oak's parcel - check if already received Eevee's Tail
             if self.keyitems.eevee_tail:
                 # Already have Eevee's Tail - just show message
                 self.message = dedent("""\
-                                    You search the room again, but there's nothing left to find.
-                                    You already took the mysterious tail you found earlier.""")
+                                    You search the room again, but there's nothing left to find. You already took the mysterious tail you found earlier.""")
                 return None
             else:
                 # First time - receive Eevee's Tail
                 self.keyitems.eevee_tail = True
                 self.message = dedent("""\
-                                    You rummage through the room more carefully this time.
-                                    Hidden under your moms bed, you discover a soft, fluffy tail.
-                                    It seems oddly familiar... You pocket it for later.""")
+                                    You rummage through the room more carefully this time. Hidden under your moms bed, you discover a soft, fluffy tail. It seems oddly familiar... You pocket it for later.""")
                 self.keyitems.save()
                 
                 # Track easter egg completion
@@ -533,26 +525,20 @@ class quests:
         if not self.keyitems.elite_four:
             # Before Elite Four - just play the game
             self.message = dedent("""\
-                                You boot up the dusty old SNES and pop in a cartridge.
-                                After hours of gaming, you realize you've accomplished nothing productive.
-                                Time well spent.""")
+                                You boot up the dusty old SNES and pop in a cartridge. After hours of gaming, you realize you've accomplished nothing productive. Time well spent.""")
             return None  # No embed, just message
         else:
             # After Elite Four - check if already received Game Shark
             if self.keyitems.game_shark:
                 # Already have Game Shark - just show message
                 self.message = dedent("""\
-                                    You boot up the dusty old SNES and pop in a cartridge.
-                                    You've already taken the Game Shark from behind the console.
-                                    Time to play some classics.""")
+                                    You boot up the dusty old SNES and pop in a cartridge. You've already taken the Game Shark from behind the console. Time to play some classics.""")
                 return None
             else:
                 # First time - receive Game Shark
                 self.keyitems.game_shark = True
                 self.message = dedent("""\
-                                    You boot up the dusty old SNES and pop in a cartridge.
-                                    Hidden behind the console, you discover an ancient Game Shark device.
-                                    With this, you could unlock the true potential of your Pokemon...""")
+                                    You boot up the dusty old SNES and pop in a cartridge. Hidden behind the console, you discover an ancient Game Shark device. With this, you could unlock the true potential of your Pokemon...""")
                 self.keyitems.save()
                 
                 # Track easter egg completion
@@ -566,8 +552,7 @@ class quests:
         self.keyitems.oaks_parcel_delivered = True
         self.keyitems.oaks_parcel = False
         self.message = dedent("""\
-                            Professor Oak was busy in your mothers bedroom. 
-                            You left his parcel on his desk.""")
+                            Professor Oak was busy in your mothers bedroom. You left his parcel on his desk.""")
         self.keyitems.save()
         return
 
@@ -578,24 +563,21 @@ class quests:
         self.keyitems.helix_fossil = (fossil == 'Helix Fossil')
         self.keyitems.dome_fossil = (fossil == 'Dome Fossil')
         self.message = dedent("""\
-                            Some nerd was super excited about finding two rocks. 
-                            You take one just to ruin his day.""")
+                            Some nerd was super excited about finding two rocks. You take one just to ruin his day.""")
         self.keyitems.save()
         return self.create_key_item_embed(fossil)
 
     def fishingGuru(self):
         self.keyitems.old_rod = True
         self.message = dedent("""\
-                            Some creepy guy gave you an old-rod with missing fishing line. 
-                            You notice bubbles coming from the water near you.""")
+                            Some creepy guy gave you an old-rod with missing fishing line. You notice bubbles coming from the water near you.""")
         self.keyitems.save()
         return self.create_key_item_embed('Old Rod')
 
     def pokemonFanClub(self):
         self.keyitems.bike_voucher = True
         self.message = dedent("""\
-                            You met a guy who found out his wife was cheating on him with some professor.
-                            He gave you the bike voucher which was her birthday surprise.""")
+                            You met a guy who found out his wife was cheating on him with some professor. He gave you the bike voucher which was her birthday surprise.""")
         self.keyitems.save()
         return self.create_key_item_embed('Bike Voucher')
 
@@ -603,34 +585,28 @@ class quests:
         self.keyitems.bike_voucher = False
         self.keyitems.bicycle = True
         self.message = dedent("""\
-                            A robbery distracted the bike shop clerk.
-                            You stole a bicycle.
-                            Your voucher fell out of your pocket in the process.""")
+                            A robbery distracted the bike shop clerk. You stole a bicycle. Your voucher fell out of your pocket in the process.""")
         self.keyitems.save()
         return self.create_key_item_embed('Bicycle')
 
     def speakToCaptain(self):
         self.keyitems.HM01 = True
         self.message = dedent("""\
-                        You caught the captain and his crew smuggling black tar heroine.
-                        The captin bribed you to keep quiet.""")
+                        You caught the captain and his crew smuggling black tar heroine. The captin bribed you to keep quiet.""")
         self.keyitems.save()
         return self.create_key_item_embed('HM01')
 
     def oaksAide(self):
         self.keyitems.HM05 = True
         self.message = dedent("""\
-                            You met Professor Oaks aide. She was jealous to hear about Oak's relationship with your mother.
-                            She gave you a valuable item from Oaks collection. She seemed suspiciously young.""")
+                            You met Professor Oaks aide. She was jealous to hear about Oak's relationship with your mother. She gave you a valuable item from Oaks collection. She seemed suspiciously young.""")
         self.keyitems.save()
         return self.create_key_item_embed('HM05')
 
     def museumOfScience(self):
         self.keyitems.old_amber = True
         self.message = dedent("""\
-                            You browsed the Museum of Science and found a cool looking stone. 
-                            You placed the stone in your bag when no one was looking.
-                            The inscription said \"Property of John Hammond\"""")
+                            You browsed the Museum of Science and found a cool looking stone. You placed the stone in your bag when no one was looking. The inscription said \"Property of John Hammond\"""")
         self.keyitems.save()
         return self.create_key_item_embed('Old Amber')
 
@@ -638,17 +614,14 @@ class quests:
         self.keyitems.HM04 = True
         self.keyitems.gold_teeth = False
         self.message = dedent("""\
-                            Speaking to the warden about the dead pokemon you found, he didn't seem phased.. 
-                            He did ask you for the gold teeth. They fit perfectly...""")
+                            Speaking to the warden about the dead pokemon you found, he didn't seem phased. He did ask you for the gold teeth. They fit perfectly...""")
         self.keyitems.save()
         return self.create_key_item_embed('HM04')
 
     def cafe(self):
         self.inventory.coincase = 1
         self.message = dedent("""\
-                            In a cafe you meet a man who was down on his gambling luck. 
-                            He has bet and lost his wife in a bet. In an attempt to quit
-                            he gives you his coin case.
+                            In a cafe you meet a man who was down on his gambling luck. He has bet and lost his wife in a bet. In an attempt to quit he gives you his coin case.
                             """)
         self.inventory.save()
         return self.create_key_item_embed('Coin Case')
@@ -656,9 +629,7 @@ class quests:
     def rooftopSquare(self):
         self.inventory.lemonade = 1
         self.message = dedent("""\
-                            On the rooftop square you find a little girl flossing for a TikTok video. 
-                            In a blinding rage you crush her body with a vending machine. In the process
-                            a bottle was disloged. 
+                            On the rooftop square you find a little girl flossing for a TikTok video. In a blinding rage you crush her body with a vending machine. In the process a bottle was disloged. 
                             """)
         self.inventory.save()
         return self.create_key_item_embed('Lemonade')
@@ -666,44 +637,35 @@ class quests:
     def rocketHideout(self):
         self.keyitems.silph_scope = True
         self.message = dedent("""\
-                            Deep inside Team Rockets hideout, you stumble upon a Free Mason sex ritual. Soon you were discovered.
-                            You tried to use your escape-rope but instead were bound by it.
-                            For two days you were used as a sex slave in an endless train. 
-                            In a comotose of post nut clarity, you grab the Grand Masters headdress and escape. 
+                            Deep inside Team Rockets hideout, you stumble upon a Free Mason sex ritual. Soon you were discovered. You tried to use your escape-rope but instead were bound by it. For two days you were used as a sex slave in an endless train. In a comotose of post nut clarity, you grab the Grand Masters headdress and escape. 
                             """)
         self.keyitems.save()
         return self.create_key_item_embed('Silph Scope')
 
     def freeSpirits(self):
         self.message = dedent("""\
-                            During a search for a Big Tiddy Goth GF you stumble upon some ghosts in a tower. 
-                            Using your Silph Scope you battle your way to the top. You slayed an endangered 
-                            pokemon species. Why did you come here again?
+                            During a search for a Big Tiddy Goth GF you stumble upon some ghosts in a tower. Using your Silph Scope you battle your way to the top. You slayed an endangered pokemon species. Why did you come here again?
                             You received Nothing!""")
         return
 
     def mrFuji(self):
         self.keyitems.pokeflute = True
         self.message = dedent("""\
-                            You meet a feeble old Mr. Fuji alone in his house. You notice a cool instrument haning on his wall. 
-                            You asked if you could have it. He declined. He was alone...""")
+                            You meet a feeble old Mr. Fuji alone in his house. You notice a cool instrument haning on his wall. You asked if you could have it. He declined. He was alone...""")
         self.keyitems.save()
         return self.create_key_item_embed('Poké Flute')
 
     def rescueMrFuji(self):
         self.keyitems.mr_fujis_finger = True
         self.message = dedent("""\
-                            At the top of Pokemon Tower, you find Mr. Fuji being held captive by Team Rocket.
-                            Using your Silph Scope, you defeat the ghost Pokemon and rescue him.
-                            In the scuffle, Mr. Fuji loses a finger. You pocket it as a souvenir.""")
+                            At the top of Pokemon Tower, you find Mr. Fuji being held captive by Team Rocket. Using your Silph Scope, you defeat the ghost Pokemon and rescue him. In the scuffle, Mr. Fuji loses a finger. You pocket it as a souvenir.""")
         self.keyitems.save()
         return self.create_key_item_embed('Mr. Fuji\'s Finger', '👆')
 
     def loneHouse(self):
         self.keyitems.HM03 = True
         self.message = dedent("""\
-                            Deep inside the safari zone you find a lone house. Inside was a man who told you get off his property. 
-                            You left and reported to the authories he has dirt on the Clintons. The next day you scavanged his house.
+                            Deep inside the safari zone you find a lone house. Inside was a man who told you get off his property. You left and reported to the authories he has dirt on the Clintons. The next day you scavanged his house.
                             """)
         self.keyitems.save()
         return self.create_key_item_embed('HM03')
@@ -720,16 +682,14 @@ class quests:
     def fishingBrother(self):
         self.keyitems.super_rod = True
         self.message = dedent("""\
-                            You met the brother of a previous fisherman. You shared the story about seeing the bubbles in the water.
-                            He quickly became anxious for you to leave. He offered you a new rod in exchange for your silence.""")
+                            You met the brother of a previous fisherman. You shared the story about seeing the bubbles in the water. He quickly became anxious for you to leave. He offered you a new rod in exchange for your silence.""")
         self.keyitems.save()
         return self.create_key_item_embed('Super Rod')
 
     def fishingDude(self):
         self.keyitems.good_rod = True
         self.message = dedent("""\
-                            Along the path you met a cool fishing dude. All day you spent drinking and fishing together. 
-                            While he was taking a piss you stole his rod simply because it was nicer than yours.
+                            Along the path you met a cool fishing dude. All day you spent drinking and fishing together. While he was taking a piss you stole his rod simply because it was nicer than yours.
                             """)
         self.keyitems.save()
         return self.create_key_item_embed('Good Rod')
@@ -745,9 +705,7 @@ class quests:
     def theWarden(self):
         self.keyitems.gold_teeth = True
         self.message = dedent("""\
-                            You walked into a house and found some old guy in pain. 
-                            He was unable to speak. You notice a corpse of a dead Marowak in the corner.
-                            You search the body for loot and found the back of the skull with gold teeth stuck in it.""")
+                            You walked into a house and found some old guy in pain. He was unable to speak. You notice a corpse of a dead Marowak in the corner. You search the body for loot and found the back of the skull with gold teeth stuck in it.""")
         self.keyitems.save()
         return self.create_key_item_embed('Gold Teeth')
 
@@ -761,8 +719,7 @@ class quests:
             if self.keyitems.old_amber:
                 self.keyitems.old_amber = False
             self.message = dedent("""\
-                                You find some german scientists in a lab. They offer to experiement 
-                                on your prehistoric rocks. You gladly give them your stupid rocks.
+                                You find some german scientists in a lab. They offer to experiement on your prehistoric rocks. You gladly give them your stupid rocks.
                                 """)
             self.keyitems.save()
             self.inventory.save()
@@ -893,8 +850,7 @@ class quests:
     def ssAnne(self):
         self.keyitems.ss_ticket = True
         self.message = dedent("""\
-                            Rummaging through someones mailbox you find an evelope. 
-                            Inside it says "For Tommy. Sincerely, The Make a Wish Foundation""")
+                            Rummaging through someones mailbox you find an evelope. Inside it says "For Tommy. Sincerely, The Make a Wish Foundation""")
         self.keyitems.save()
         return self.create_key_item_embed('S.S. Ticket')
 
@@ -958,8 +914,7 @@ class quests:
 
         self.statuscode = 420
         self.message = dedent("""\
-                        You find an abandoned truck. Using your massive penis, you pushed
-                        it out of the way. Underneath you discover a pokeball.""")
+                        You find an abandoned truck. Using your massive penis, you pushed it out of the way. Underneath you discover a pokeball.""")
         return self.create_key_item_embed('Mew')
 
 
