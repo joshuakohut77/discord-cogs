@@ -626,7 +626,7 @@ class quests:
         return self.create_key_item_embed('HM05')
 
     def museumOfScience(self):
-        self.keyitems.old_amber = 1
+        self.keyitems.old_amber = True
         self.message = dedent("""\
                             You browsed the Museum of Science and found a cool looking stone. 
                             You placed the stone in your bag when no one was looking.
