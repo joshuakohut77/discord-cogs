@@ -326,10 +326,6 @@
   "672": [
     [
       {
-        "item": "link-cable",
-        "price": 5000
-      },
-      {
         "item": "great-ball",
         "price": 600
       },
@@ -408,10 +404,6 @@
   "674": [
     [
       {
-        "item": "link-cable",
-        "price": 5000
-      },
-      {
         "item": "poke-doll",
         "price": 1000
       },
@@ -439,10 +431,6 @@
   ],
   "675": [
     [
-      {
-        "item": "link-cable",
-        "price": 5000
-      },
       {
         "item": "x-accuracy",
         "price": 950
