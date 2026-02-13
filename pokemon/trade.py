@@ -81,6 +81,16 @@ class TradeMixin(MixinMeta):
         user = interaction.user
         await interaction.response.defer()
         
+        # Check if user has a Link Cable
+        from services.inventoryclass import inventory as InventoryClass
+        inv = InventoryClass(str(user.id))
+        if inv.linkcable < 1:
+            await interaction.followup.send(
+                "🔗 You need a **Link Cable** to trade! Visit a Poké Mart to buy one.",
+                ephemeral=True
+            )
+            return
+        
         # Check if user already has active trade
         if self.trade_service.has_active_trade(str(user.id)):
             await interaction.followup.send(
@@ -138,6 +148,7 @@ class TradeMixin(MixinMeta):
         )
         
         await interaction.followup.send(embed=embed, view=view)
+
 
     # ==================== Step 2: Receiver Views Request ====================
     
@@ -791,56 +802,70 @@ class TradeReceiverResponseView(View):
         
         await interaction.response.defer()
         
-        # Get user's Pokemon (excluding active)
+        # Check if receiver has a Link Cable
+        from services.inventoryclass import inventory as InventoryClass
+        inv = InventoryClass(str(self.user.id))
+        if inv.linkcable < 1:
+            await interaction.followup.send(
+                "🔗 You need a **Link Cable** to trade! Visit a Poké Mart to buy one.",
+                ephemeral=True
+            )
+            return
+        
+        # Show Pokemon selection for the receiver
+        self.showing_selection = True
+        
+        # Get receiver's Pokemon
         trainer = TrainerClass(str(self.user.id))
         active_pokemon = trainer.getActivePokemon()
         all_pokemon = trainer.getPokemon(False, True)
         
-        # LOAD each Pokemon's data
         for p in all_pokemon:
             p.load(pokemonId=p.trainerId)
         
-        tradeable_pokemon = [p for p in all_pokemon if p.trainerId != active_pokemon.trainerId]
+        self.pokemon = [p for p in all_pokemon if p.trainerId != active_pokemon.trainerId]
         
-        if not tradeable_pokemon:
+        if not self.pokemon:
             await interaction.followup.send(
                 "You don't have any Pokemon available to trade (excluding your active Pokemon).",
                 ephemeral=True
             )
             return
         
-        # Show Pokemon selection
+        # Rebuild view with Pokemon selection
         self.clear_items()
-        self.showing_selection = True
-        self.pokemon = tradeable_pokemon  # STORE THE LIST
         
         pokemon_options = [
             SelectOption(
                 label=f"{p.nickName or p.pokemonName} (Lv.{p.currentLevel})",
                 value=str(p.trainerId),
-                description=f"{p.pokemonName} - {p.type1}" + (f"/{p.type2}" if p.type2 else "")
+                description=f"{p.pokemonName} - {p.type1}" + (f"/{p.type2}" if p.type2 else ""),
+                default=(self.selected_pokemon and p.trainerId == self.selected_pokemon.trainerId)
             )
-            for p in tradeable_pokemon[:25]
+            for p in self.pokemon[:25]
         ]
         
         pokemon_select = Select(
-            placeholder="Select your Pokemon to trade...",
+            placeholder="Select a Pokemon to offer...",
             options=pokemon_options,
             custom_id="pokemon_select"
         )
         pokemon_select.callback = self.pokemon_selected
         self.add_item(pokemon_select)
         
+        confirm_button = Button(label="Confirm Trade", style=ButtonStyle.green, custom_id="confirm", disabled=True)
+        confirm_button.callback = self.confirm_pokemon
+        self.add_item(confirm_button)
+        
         cancel_button = Button(label="Cancel", style=ButtonStyle.red, custom_id="cancel")
         cancel_button.callback = self.decline_trade
         self.add_item(cancel_button)
         
-        await interaction.followup.edit_message(
-            message_id=interaction.message.id,
+        await interaction.message.edit(
             content="Select a Pokemon to offer in return:",
             view=self
         )
-    
+
     async def pokemon_selected(self, interaction: Interaction):
         if interaction.user.id != self.user.id:
             await interaction.response.send_message("This is not for you.", ephemeral=True)
