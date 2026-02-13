@@ -673,8 +673,7 @@ class quests:
     def secretResort(self):
         self.keyitems.HM02 = True
         self.message = dedent("""\
-                            
-                            You received HM02!""")
+                            You find a secret resort. Inside was a man reminissing about his private island. He offered you an item to keep quiet about this place.""")
         self.keyitems.save()
         return self.create_key_item_embed('HM02')
         return
