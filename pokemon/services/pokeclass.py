@@ -762,24 +762,47 @@ class Pokemon:
                 del db
             return starterName
 
-    def getMovesLearnedBetweenLevels(self, startLevel, endLevel):
-        """ Returns list of moves learned between two levels (exclusive start, inclusive end) """
-        movesLearned = []
-        try:
+    def getMoves(self, moveDict=None):
+        """ returns a list of the pokemon's current moves """
+        # If this pokemon has moves loaded from the database, use those
+        if moveDict is None:
+            db_moves = [self.move_1, self.move_2, self.move_3, self.move_4]
+            has_db_moves = any(m is not None for m in db_moves)
+            if has_db_moves:
+                return db_moves
+
+        # Fallback: calculate default moves from config (used for enemy/created pokemon)
+        moveList = []
+        if moveDict is None:
+            moveDict = {}
+            # this is the pokemon json object from the config file
             pokemon = self.__loadPokemonConfig()
             moveDict = pokemon['moves']
-            
-            for moveName, moveLevel in moveDict.items():
-                if startLevel < moveLevel <= endLevel:
-                    movesLearned.append((moveName, moveLevel))
-            
-            # Sort by level so we process moves in order
-            movesLearned.sort(key=lambda x: x[1])
+        try:
+            level = self.currentLevel
+            # use starter level for pokemon without a level
+            if level is None:
+                level = STARTER_LEVEL
+            # iterate through the dictionary selecting the top 4 highest moves at the current level
+            defaultList = sorted(
+                moveDict.items(), key=lambda x: x[1], reverse=True)
+            for move in defaultList:
+                moveLevel = move[1]
+                moveName = move[0]
+                if int(moveLevel) <= level:
+                    moveList.append(moveName)
+            # check if list is padded to 4 and if not, append blank moves
+            if len(moveList) < 4:
+                diff = 4-len(moveList)
+                for x in range(diff):
+                    x = None
+                    moveList.append(x)
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
-            return movesLearned
+            # return only 4 moves
+            return moveList[0: 4]
 
     def getCurrentMoveCount(self):
         """ Returns the number of moves this Pokemon currently knows (not None) """
