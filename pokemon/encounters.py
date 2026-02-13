@@ -468,6 +468,7 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('All your party Pokemon have fainted! Heal at a Pokemon Center first.', ephemeral=True)
             return
         
+        alive_party = self.__sort_party_active_first(alive_party, str(user.id))
         battle = BattleClass(str(user.id), location.locationId, enemyType="wild")
         next_trainer = battle.getNextTrainer()
         
@@ -635,6 +636,7 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('All your party Pokemon have fainted! Heal at a Pokemon Center first.', ephemeral=True)
             return
         
+        alive_party = self.__sort_party_active_first(alive_party, str(user.id))
         # Get next trainer
         battle_manager = BattleClass(user_id, location.locationId, enemyType="wild")
         trainer_model = battle_manager.getNextTrainer()
@@ -4957,6 +4959,21 @@ class EncountersMixin(MixinMeta):
                 return pokemon, i
         return None, -1
 
+    def __sort_party_active_first(self, alive_party: list, user_id: str) -> list:
+            """Reorder alive_party so the active Pokemon is first"""
+            from services.trainerclass import trainer as TrainerClass
+            trainer = self._get_trainer(user_id)
+            active = trainer.getActivePokemon()
+            
+            if active and hasattr(active, 'trainerId'):
+                active_id = active.trainerId
+                for i, poke in enumerate(alive_party):
+                    if poke.trainerId == active_id:
+                        if i != 0:
+                            alive_party.insert(0, alive_party.pop(i))
+                        break
+            
+            return alive_party
 
     def __create_enemy_pokemon(self, pokemon_data: dict, player_discord_id: str):
         """
@@ -6320,7 +6337,8 @@ class EncountersMixin(MixinMeta):
         if len(alive_party) == 0:
             await interaction.followup.send('All your party Pokemon have fainted! Heal at a Pokemon Center first.', ephemeral=True)
             return
-
+        
+        alive_party = self.__sort_party_active_first(alive_party, str(user.id))
         battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
         next_trainer = battle.getNextTrainer()
         
@@ -6573,6 +6591,7 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('All your party Pokemon have fainted! Heal at a Pokemon Center first.', ephemeral=True)
             return
 
+        alive_party = self.__sort_party_active_first(alive_party, str(user.id))
         battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
         next_trainer = battle.getNextTrainer()
         
@@ -7365,6 +7384,7 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('All your party Pokemon have fainted!', ephemeral=True)
             return
 
+        alive_party = self.__sort_party_active_first(alive_party, str(user.id))
         gyms_data = self.__load_gyms_data()
         gym_info = gyms_data.get(str(location.locationId))
         battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
@@ -7822,6 +7842,7 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('All your party Pokemon have fainted!', ephemeral=True)
             return
 
+        alive_party = self.__sort_party_active_first(alive_party, str(user.id))
         gyms_data = self.__load_gyms_data()
         gym_info = gyms_data.get(str(location.locationId))
         battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
