@@ -597,6 +597,17 @@ class EncountersMixin(MixinMeta):
             view=view_nav
         )
 
+        # Check if player just defeated the Champion (elite-4-5)
+        if enemy_pokemon_index >= len(enemy_pokemon_list) and hasattr(next_trainer, 'enemy_uuid') and next_trainer.enemy_uuid == "elite-4-5":
+            finale_embed = discord.Embed(
+                title="🏆 Congratulations, Champion!",
+                description="You have defeated the Elite Four and become the Pokémon Champion!\n\n"
+                            "**You have unlocked the finale!**\n"
+                            "Please type the command `,finale` and read the instructions to continue.",
+                color=discord.Color.gold()
+            )
+            await interaction.followup.send(embed=finale_embed)
+
     async def on_wild_battle_manual(self, interaction: discord.Interaction):
         """Handle MANUAL turn-by-turn battle with wild trainer"""
         user = interaction.user
@@ -5235,6 +5246,17 @@ class EncountersMixin(MixinMeta):
                 ephemeral=True
             )
         else:
+            # Check if player just defeated the Champion (elite-4-5)
+            if hasattr(trainer_model, 'enemy_uuid') and trainer_model.enemy_uuid == "elite-4-5":
+                finale_embed = discord.Embed(
+                    title="🏆 Congratulations, Champion!",
+                    description="You have defeated the Elite Four and become the Pokémon Champion!\n\n"
+                                "**You have unlocked the finale!**\n"
+                                "Please type the command `,finale` and read the instructions to continue.",
+                    color=discord.Color.gold()
+                )
+                await interaction.followup.send(embed=finale_embed)
+
             # Check if gym leader is available (only for gym battles, not wild trainers)
             if not hasattr(battle_state, 'is_wild_trainer') or not battle_state.is_wild_trainer:
                 gym_leader = battle_manager.getGymLeader()
