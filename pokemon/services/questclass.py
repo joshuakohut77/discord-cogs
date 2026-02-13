@@ -631,7 +631,7 @@ class quests:
                             You browsed the Museum of Science and found a cool looking stone. 
                             You placed the stone in your bag when no one was looking.
                             The inscription said "Property of John Hammond""")
-        self.inventory.save()
+        self.keyitems.save()
         return self.create_key_item_embed('Old Amber')
 
     def returnTeeth(self):
