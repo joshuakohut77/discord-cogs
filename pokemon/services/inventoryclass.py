@@ -47,7 +47,6 @@ class inventory:
         self.maxether = None
         self.ether = None
         self.nugget = None
-        self.oldamber = None
         self.pokedoll = None
         self.ppup = None
         self.sodapop = None
@@ -84,7 +83,7 @@ class inventory:
                                 "dire-hit"=%(direhit)s, "fresh-water"=%(freshwater)s,
                                 "hp-up"=%(hpup)s, "lemonade"=%(lemonade)s, 
                                 "elixir"=%(elixir)s, "max-elixir"=%(maxelixir)s, "max-ether"=%(maxether)s, 
-                                "ether"=%(ether)s, "nugget"=%(nugget)s, "old-amber"=%(oldamber)s, 
+                                "ether"=%(ether)s, "nugget"=%(nugget)s, 
                                 "poke-doll"=%(pokedoll)s, "pp-up"=%(ppup)s, "soda-pop"=%(sodapop)s, 
                                 "town-map"=%(townmap)s, "x-accuracy"=%(xaccuracy)s, "x-attack"=%(xattack)s, 
                                 "x-defense"=%(xdefense)s, "x-sp-atk"=%(xspatk)s, "x-sp-def"=%(xspatk)s, 
@@ -106,7 +105,7 @@ class inventory:
                             'freshwater': self.freshwater,
                             'hpup': self.hpup, 'lemonade': self.lemonade, 
                             'elixir': self.elixir, 'maxelixir': self.maxelixir, 'maxether': self.maxether, 
-                            'ether': self.ether, 'nugget': self.nugget, 'oldamber': self.oldamber, 
+                            'ether': self.ether, 'nugget': self.nugget, 
                             'pokedoll': self.pokedoll, 'ppup': self.ppup, 'sodapop': self.sodapop, 
                             'townmap': self.townmap, 'xaccuracy': self.xaccuracy, 
                             'xattack': self.xattack, 'xdefense': self.xdefense, 'xspatk': self.xspatk, 
@@ -135,7 +134,7 @@ class inventory:
                             "max-potion", "antidote", "super-repel", calcium, carbos, 
                             "coin-case", "dire-hit", "fresh-water", 
                             "hp-up", lemonade, elixir, "max-elixir", 
-                            "max-ether", ether, nugget, "old-amber", "poke-doll", 
+                            "max-ether", ether, nugget, "poke-doll", 
                             "pp-up", "soda-pop", "town-map", "x-accuracy", "x-defense", 
                             "x-attack", "x-sp-atk", "x-sp-def", "x-speed", 
                             "fire-stone", "water-stone", 
@@ -169,7 +168,6 @@ class inventory:
                 self.carbos = result[22]
                 self.coincase = result[23]
                 self.direhit = result[24]
-                self.direhit = result[24]
                 self.freshwater = result[25]
                 self.hpup = result[26]
                 self.lemonade = result[27]
@@ -178,27 +176,27 @@ class inventory:
                 self.maxether = result[30]
                 self.ether = result[31]
                 self.nugget = result[32]
-                self.oldamber = result[33]
-                self.pokedoll = result[34]
-                self.ppup = result[35]
-                self.sodapop = result[36]
-                self.townmap = result[37]
-                self.xaccuracy = result[38]
-                self.xdefense = result[39]
-                self.xattack = result[40]
-                self.xspatk = result[41]
-                self.xspdef = result[42]
-                self.xspeed = result[43]
-                self.firestone = result[44]
-                self.waterstone = result[45]
-                self.thunderstone = result[46]
-                self.leafstone = result[47]
-                self.moonstone = result[48]
-                self.iron = result[49]
-                self.protein = result[50]
+                self.pokedoll = result[33]
+                self.ppup = result[34]
+                self.sodapop = result[35]
+                self.townmap = result[36]
+                self.xaccuracy = result[37]
+                self.xdefense = result[38]
+                self.xattack = result[39]
+                self.xspatk = result[40]
+                self.xspdef = result[41]
+                self.xspeed = result[42]
+                self.firestone = result[43]
+                self.waterstone = result[44]
+                self.thunderstone = result[45]
+                self.leafstone = result[46]
+                self.moonstone = result[47]
+                self.iron = result[48]
+                self.protein = result[49]
                 # Special Items
-                self.linkcable = result[51]
-                self.gameshark = result[52]
+                self.linkcable = result[50]
+                self.gameshark = result[51]
+
 
         except:
             self.statuscode = 96
