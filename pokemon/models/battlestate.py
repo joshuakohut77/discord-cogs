@@ -42,6 +42,10 @@ class BattleState:
         self.is_wild_trainer: bool = False
         self.level_up_data = None  # Will store (pokemon, old_level, new_level, auto_learned_moves, pendingMoves)
 
+        # Ailment tracking for manual battles
+        self.player_ailment = None  # Set after creation in encounters.py
+        self.enemy_ailment = None   # Set after creation in encounters.py
+
 
 class WildBattleState:
     """Track ongoing wild Pokemon battle state"""
@@ -65,3 +69,8 @@ class WildBattleState:
         self.wild_pokemon = wild_pokemon
         self.turn_number = 1
         self.battle_log = []
+        self.level_up_data = None
+
+        # Ailment tracking for manual battles
+        self.player_ailment = None  # Set after creation in encounters.py
+        self.enemy_ailment = None   # Set after creation in encounters.py
