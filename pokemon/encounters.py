@@ -1517,6 +1517,10 @@ class EncountersMixin(MixinMeta):
         player_hp_pct = (player_poke.currentHP / player_stats['hp']) * 100 if player_stats['hp'] > 0 else 0
         wild_hp_pct = (wild_poke.currentHP / wild_stats['hp']) * 100 if wild_stats['hp'] > 0 else 0
 
+        # Get ailment emojis
+        p_ailment_emoji = self.__get_ailment_emoji(getattr(battle_state, 'player_ailment', None))
+        e_ailment_emoji = self.__get_ailment_emoji(getattr(battle_state, 'enemy_ailment', None))
+
         embed = discord.Embed(
             title=f"⚔️ Wild Battle: {user.display_name} vs Wild {wild_poke.pokemonName.capitalize()}",
             description=f"**Turn {battle_state.turn_number}**\nChoose your move!",
@@ -1529,7 +1533,7 @@ class EncountersMixin(MixinMeta):
             wild_types += f", {wild_poke.type2}"
         
         embed.add_field(
-            name=f"❤️ Wild {wild_poke.pokemonName.capitalize()} (Lv.{wild_poke.currentLevel})",
+            name=f"❤️ Wild {wild_poke.pokemonName.capitalize()} (Lv.{wild_poke.currentLevel}){e_ailment_emoji}",
             value=f"**HP:** {wild_poke.currentHP}/{wild_stats['hp']} {create_hp_bar(wild_hp_pct)}\n"
                 f"**Type:** {wild_types}",
             inline=False
@@ -1541,7 +1545,7 @@ class EncountersMixin(MixinMeta):
             player_types += f", {player_poke.type2}"
         
         embed.add_field(
-            name=f"💚 Your {player_poke.pokemonName.capitalize()} (Lv.{player_poke.currentLevel})",
+            name=f"💚 Your {player_poke.pokemonName.capitalize()} (Lv.{player_poke.currentLevel}){p_ailment_emoji}",
             value=f"**HP:** {player_poke.currentHP}/{player_stats['hp']} {create_hp_bar(player_hp_pct)}\n"
                 f"**Type:** {player_types}",
             inline=False
@@ -1560,7 +1564,6 @@ class EncountersMixin(MixinMeta):
         embed.set_image(url=player_poke.backSpriteURL)
         
         return embed
-
     
 
     async def on_nav_map_click(self, interaction: discord.Interaction, already_deferred: bool = False):
@@ -5050,8 +5053,10 @@ class EncountersMixin(MixinMeta):
         # Calculate HP percentages for visual bar
         player_hp_pct = (player_poke.currentHP / player_stats['hp']) * 100 if player_stats['hp'] > 0 else 0
         enemy_hp_pct = (enemy_poke.currentHP / enemy_stats['hp']) * 100 if enemy_stats['hp'] > 0 else 0
-        
-        # Create HP bar visualization
+
+        # Get ailment emojis
+        p_ailment_emoji = self.__get_ailment_emoji(getattr(battle_state, 'player_ailment', None))
+        e_ailment_emoji = self.__get_ailment_emoji(getattr(battle_state, 'enemy_ailment', None))
         
         embed = discord.Embed(
             title=f"⚔️ Battle: {user.display_name} vs {battle_state.enemy_name}",
@@ -5065,7 +5070,7 @@ class EncountersMixin(MixinMeta):
             enemy_types += f", {enemy_poke.type2}"
         
         embed.add_field(
-            name=f"❤️ Enemy {enemy_poke.pokemonName.capitalize()} (Lv.{enemy_poke.currentLevel})",
+            name=f"❤️ Enemy {enemy_poke.pokemonName.capitalize()} (Lv.{enemy_poke.currentLevel}){e_ailment_emoji}",
             value=f"**HP:** {enemy_poke.currentHP}/{enemy_stats['hp']} {create_hp_bar(enemy_hp_pct)}\n"
                   f"**Type:** {enemy_types}",
             inline=False
@@ -5077,7 +5082,7 @@ class EncountersMixin(MixinMeta):
             player_types += f", {player_poke.type2}"
         
         embed.add_field(
-            name=f"💚 Your {player_poke.pokemonName.capitalize()} (Lv.{player_poke.currentLevel})",
+            name=f"💚 Your {player_poke.pokemonName.capitalize()} (Lv.{player_poke.currentLevel}){p_ailment_emoji}",
             value=f"**HP:** {player_poke.currentHP}/{player_stats['hp']} {create_hp_bar(player_hp_pct)}\n"
                   f"**Type:** {player_types}",
             inline=False
@@ -5096,6 +5101,7 @@ class EncountersMixin(MixinMeta):
         embed.set_image(url=player_poke.backSpriteURL)
         
         return embed
+
 
     # def __create_move_buttons(self, battle_state: BattleState) -> View:
     #     """Create buttons for each of the player's Pokemon's moves"""
@@ -5647,6 +5653,26 @@ class EncountersMixin(MixinMeta):
         embed = self.__create_battle_embed(user, battle_state)
         view = self.__create_battle_move_buttons_with_items(battle_state)
         await interaction.message.edit(embed=embed, view=view)
+
+    def __get_ailment_emoji(self, ailment_obj) -> str:
+        """Get emoji for the active ailment, or empty string if none"""
+        if ailment_obj is None:
+            return ''
+        if ailment_obj.sleep:
+            return ' 💤'
+        if ailment_obj.burn:
+            return ' 🔥'
+        if ailment_obj.poison:
+            return ' ☠️'
+        if ailment_obj.freeze:
+            return ' 🧊'
+        if ailment_obj.paralysis:
+            return ' ⚡'
+        if ailment_obj.confusion:
+            return ' 💫'
+        if ailment_obj.trap:
+            return ' 🪢'
+        return ''
 
     def __has_ailment(self, ailment_obj) -> bool:
         """Check if an ailment object has any active ailment"""
