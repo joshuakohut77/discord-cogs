@@ -136,7 +136,7 @@ class keyitems:
                     elite_four=%(elite_four)s,
                     dome_fossil=%(dome_fossil)s, helix_fossil=%(helix_fossil)s, mr_fujis_finger=%(mr_fujis_finger)s,
                     game_shark=%(game_shark)s, eevee_tail=%(eevee_tail)s, old_amber=%(old_amber)s,
-                    gave_amber=%(gave_amber)s, gave_dome=%(gave_dome)s, gave_helix=%(gave_helix)s,
+                    gave_amber=%(gave_amber)s, gave_dome=%(gave_dome)s, gave_helix=%(gave_helix)s
 	                    WHERE discord_id=%(discordId)s;
                 '''
                 values = { 'HM01':self.HM01, 'HM02': self.HM02, 'HM03':self.HM03, 'HM04':self.HM04, 'HM05':self.HM05,
