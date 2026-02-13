@@ -173,7 +173,7 @@ class location:
 
             # Reset Elite Four progress when entering Indigo Plateau Center
             if int(locationId) == 2331:
-                from battleclass import battle as BattleClass
+                from .battleclass import battle as BattleClass
                 BattleClass.resetEliteFour(self.discordId)
 
             # This next section checks if there's any valid quests in current area
