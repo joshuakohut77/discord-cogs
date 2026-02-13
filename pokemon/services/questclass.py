@@ -711,7 +711,7 @@ class quests:
 
     def pokemonLab(self):
         # special quest where you trade in Helix/Dome Fossil and old amber for pokemon later
-        if self.keyitems.dome_fossil or self.keyitems.helix_fossil or self.keyitems.old_amber > 0:
+        if self.keyitems.dome_fossil or self.keyitems.helix_fossil or self.keyitems.old_amber:
             if self.keyitems.dome_fossil:
                 self.keyitems.dome_fossil = False
                 self.keyitems.gave_dome = True
