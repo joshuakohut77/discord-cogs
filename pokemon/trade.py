@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
 from redbot.core import commands
 
+import constant
 from services.trainerclass import trainer as TrainerClass
 from services.pokeclass import Pokemon as PokemonClass
 from services.encounterclass import encounter as EncounterClass
@@ -86,7 +87,7 @@ class TradeMixin(MixinMeta):
         inv = InventoryClass(str(user.id))
         if inv.linkcable < 1:
             await interaction.followup.send(
-                "🔗 You need a **Link Cable** to trade! Visit a Poké Mart to buy one.",
+                constant.LINKCABLE + " You need a **Link Cable** to trade! Visit a Poké Mart to buy one.",
                 ephemeral=True
             )
             return
@@ -807,7 +808,7 @@ class TradeReceiverResponseView(View):
         inv = InventoryClass(str(self.user.id))
         if inv.linkcable < 1:
             await interaction.followup.send(
-                "🔗 You need a **Link Cable** to trade! Visit a Poké Mart to buy one.",
+                constant.LINKCABLE + " You need a **Link Cable** to trade! Visit a Poké Mart to buy one.",
                 ephemeral=True
             )
             return
