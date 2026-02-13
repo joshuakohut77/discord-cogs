@@ -5607,11 +5607,14 @@ class EncountersMixin(MixinMeta):
         quest_obj = QuestsClass(str(user.id))
         result = quest_obj.questHandler(quest_name)
 
+        # Ensure message is never empty to avoid Discord 400 error
+        quest_message = quest_obj.message if quest_obj.message else f'Quest "{quest_name}" completed.'
+
         # Send response with embed if available
         if result and isinstance(result, dict) and 'embed' in result:
-            await interaction.response.send_message(quest_obj.message, embed=result['embed'], ephemeral=True)
+            await interaction.response.send_message(quest_message, embed=result['embed'], ephemeral=True)
         else:
-            await interaction.response.send_message(quest_obj.message, ephemeral=True)
+            await interaction.response.send_message(quest_message, ephemeral=True)
 
         # Disable the quest button after completion
         view = View()
