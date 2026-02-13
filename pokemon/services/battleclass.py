@@ -83,11 +83,10 @@ class battle:
     @staticmethod
     def resetEliteFour(discordId):
         """ Removes all elite-4 entries from trainer_battles so the player can retry """
-        elite_four_uuids = ('elite-4-1', 'elite-4-2', 'elite-4-3', 'elite-4-4', 'elite-4-5')
         try:
             db = dbconn()
-            deleteString = 'DELETE FROM trainer_battles WHERE discord_id = %(discordId)s AND enemy_uuid IN %(uuids)s'
-            db.execute(deleteString, { 'discordId': discordId, 'uuids': elite_four_uuids })
+            deleteString = "DELETE FROM trainer_battles WHERE discord_id = %(discordId)s AND enemy_uuid LIKE 'elite-4-%%'"
+            db.execute(deleteString, { 'discordId': discordId })
         except Exception as e:
             logger.error(excInfo=sys.exc_info())
         finally:
