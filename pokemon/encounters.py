@@ -2361,7 +2361,8 @@ class EncountersMixin(MixinMeta):
                 label=label[:100],
                 value=str(poke.trainerId),
                 description=description[:100],
-                default=(str(poke.trainerId) == selected_trainer_id)
+                default=(str(poke.trainerId) == selected_trainer_id),
+                emoji=constant.POKEMON_EMOJIS.get(poke.pokemonName.upper())
             )
         
         select.callback = self.on_bag_pokemon_select
@@ -2471,7 +2472,8 @@ class EncountersMixin(MixinMeta):
                 label=label[:100],
                 value=str(poke.trainerId),
                 description=description[:100],
-                default=(str(poke.trainerId) == item_state.selected_pokemon_id)
+                default=(str(poke.trainerId) == item_state.selected_pokemon_id),
+                emoji=constant.POKEMON_EMOJIS.get(poke.pokemonName.upper())
             )
         
         pokemon_select.callback = self.on_item_usage_pokemon_select
@@ -2741,7 +2743,8 @@ class EncountersMixin(MixinMeta):
                 label=label[:100],
                 value=str(poke.trainerId),
                 description=description[:100],
-                default=(str(poke.trainerId) == selected_trainer_id)
+                default=(str(poke.trainerId) == selected_trainer_id),
+                emoji=constant.POKEMON_EMOJIS.get(poke.pokemonName.upper())
             )
         
         select.callback = self.on_bag_pokemon_select
@@ -2908,7 +2911,8 @@ class EncountersMixin(MixinMeta):
                 label=label[:100],
                 value=str(poke.trainerId),
                 description=description[:100],
-                default=(str(poke.trainerId) == selected_trainer_id)
+                default=(str(poke.trainerId) == selected_trainer_id),
+                emoji=constant.POKEMON_EMOJIS.get(poke.pokemonName.upper())
             )
         
         select.callback = self.on_bag_pokemon_select
@@ -3062,7 +3066,8 @@ class EncountersMixin(MixinMeta):
                 label=label[:100],
                 value=str(poke.trainerId),
                 description=description[:100],
-                default=(str(poke.trainerId) == selected_trainer_id)
+                default=(str(poke.trainerId) == selected_trainer_id),
+                emoji=constant.POKEMON_EMOJIS.get(poke.pokemonName.upper())
             )
         
         select.callback = self.on_bag_pokemon_select
@@ -3218,7 +3223,8 @@ class EncountersMixin(MixinMeta):
                 label=label[:100],
                 value=str(poke.trainerId),
                 description=description[:100],
-                default=(str(poke.trainerId) == selected_trainer_id)
+                default=(str(poke.trainerId) == selected_trainer_id),
+                emoji=constant.POKEMON_EMOJIS.get(poke.pokemonName.upper())
             )
         
         select.callback = self.on_bag_pokemon_select
@@ -3568,7 +3574,8 @@ class EncountersMixin(MixinMeta):
                 label=label[:100],
                 value=str(poke.trainerId),
                 description=description[:100],
-                default=(str(poke.trainerId) == item_state.selected_pokemon_id)
+                default=(str(poke.trainerId) == item_state.selected_pokemon_id),
+                emoji=constant.POKEMON_EMOJIS.get(poke.pokemonName.upper())
             )
         
         pokemon_select.callback = self.on_battle_item_pokemon_select
@@ -4019,7 +4026,8 @@ class EncountersMixin(MixinMeta):
                 label=label[:100],
                 value=str(poke.trainerId),
                 description=description[:100],
-                default=(str(poke.trainerId) == selected_trainer_id)
+                default=(str(poke.trainerId) == selected_trainer_id),
+                emoji=constant.POKEMON_EMOJIS.get(poke.pokemonName.upper())
             )
         
         select.callback = self.on_bag_pc_pokemon_select
@@ -4154,7 +4162,8 @@ class EncountersMixin(MixinMeta):
                 label=label[:100],
                 value=str(poke.trainerId),
                 description=description[:100],
-                default=(str(poke.trainerId) == selected_trainer_id)
+                default=(str(poke.trainerId) == selected_trainer_id),
+                emoji=constant.POKEMON_EMOJIS.get(poke.pokemonName.upper())
             )
         
         select.callback = self.on_bag_pc_pokemon_select
@@ -4295,7 +4304,8 @@ class EncountersMixin(MixinMeta):
                 label=label[:100],
                 value=str(poke.trainerId),
                 description=description[:100],
-                default=(str(poke.trainerId) == selected_trainer_id)
+                default=(str(poke.trainerId) == selected_trainer_id),
+                emoji=constant.POKEMON_EMOJIS.get(poke.pokemonName.upper())
             )
         
         select.callback = self.on_bag_pc_pokemon_select
@@ -4594,8 +4604,8 @@ class EncountersMixin(MixinMeta):
                 label=label[:100],
                 value=str(poke.trainerId),
                 description=description[:100],
-                default=(str(poke.trainerId) == selected_trainer_id)  # Mark selected
-                # No emoji - Discord Select doesn't support custom emojis properly
+                default=(str(poke.trainerId) == selected_trainer_id),
+                emoji=constant.POKEMON_EMOJIS.get(poke.pokemonName.upper())
             )
         
         select.callback = self.on_pokemon_select
