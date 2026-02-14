@@ -2401,7 +2401,6 @@ class EncountersMixin(MixinMeta):
         embed.add_field(name="Items", value=items_text, inline=False)
         
         # TMs section
-        import constant
         tm_items = []
         owned_tms = inv.getOwnedTMs()
         for tm_key, qty in owned_tms:
@@ -2767,7 +2766,6 @@ class EncountersMixin(MixinMeta):
         ]
         
         # Add TMs to usable items list
-        import constant
         owned_tms = inv.getOwnedTMs()
         for tm_key, qty in owned_tms:
             move_name = constant.TM_MOVE_MAPPING.get(tm_key, 'Unknown')
