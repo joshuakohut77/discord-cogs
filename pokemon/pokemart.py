@@ -276,51 +276,56 @@ itemDisplayNames = {
         'desc': ''
     },
     # TMs
-    "TM32": {
-        'name': 'TM 32',
-        'desc': 'Double Team',
-        'emoji': constant.HM01
-    },
-    "TM02": {
-        'name': 'TM 02',
-        'desc': 'Razor Wind',
-        'emoji': constant.HM01
-    },
-    "TM37": {
-        'name': 'TM 37',
-        'desc': 'Egg Bomb',
-        'emoji': constant.HM01
-    },
-    "TM05": {
-        'name': 'TM 05',
-        'desc': 'Mega Kick',
-        'emoji': constant.HM01
-    },
-    "TM17": {
-        'name': 'TM 17',
-        'desc': 'Submission',
-        'emoji': constant.HM01
-    },
-    "TM33": {
-        'name': 'TM 33',
-        'desc': 'Reflect',
-        'emoji': constant.HM01
-    },
-    "TM07": {
-        'name': 'TM 07',
-        'desc': 'Horn Drill',
-        'emoji': constant.HM01
-    },
-    "TM01": {
-        'name': 'TM 01',
-        'desc': 'Mega Punch',
-        'emoji': constant.HM01
-    },
-    "TM09": {
-        'name': 'TM 09',
-        'desc': 'Take Down',
-        'emoji': constant.HM01
-    },
+    "TM01": {'name': 'TM01 Mega Punch', 'desc': 'Teaches Mega Punch to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM02": {'name': 'TM02 Razor Wind', 'desc': 'Teaches Razor Wind to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM03": {'name': 'TM03 Swords Dance', 'desc': 'Teaches Swords Dance to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM04": {'name': 'TM04 Whirlwind', 'desc': 'Teaches Whirlwind to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM05": {'name': 'TM05 Mega Kick', 'desc': 'Teaches Mega Kick to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM06": {'name': 'TM06 Toxic', 'desc': 'Teaches Toxic to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM07": {'name': 'TM07 Horn Drill', 'desc': 'Teaches Horn Drill to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM08": {'name': 'TM08 Body Slam', 'desc': 'Teaches Body Slam to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM09": {'name': 'TM09 Take Down', 'desc': 'Teaches Take Down to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM10": {'name': 'TM10 Double Edge', 'desc': 'Teaches Double-Edge to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM11": {'name': 'TM11 Bubble Beam', 'desc': 'Teaches Bubble Beam to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM12": {'name': 'TM12 Water Gun', 'desc': 'Teaches Water Gun to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM13": {'name': 'TM13 Ice Beam', 'desc': 'Teaches Ice Beam to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM14": {'name': 'TM14 Blizzard', 'desc': 'Teaches Blizzard to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM15": {'name': 'TM15 Hyper Beam', 'desc': 'Teaches Hyper Beam to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM16": {'name': 'TM16 Pay Day', 'desc': 'Teaches Pay Day to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM17": {'name': 'TM17 Submission', 'desc': 'Teaches Submission to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM18": {'name': 'TM18 Counter', 'desc': 'Teaches Counter to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM19": {'name': 'TM19 Seismic Toss', 'desc': 'Teaches Seismic Toss to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM20": {'name': 'TM20 Rage', 'desc': 'Teaches Rage to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM21": {'name': 'TM21 Mega Drain', 'desc': 'Teaches Mega Drain to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM22": {'name': 'TM22 Solar Beam', 'desc': 'Teaches Solar Beam to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM23": {'name': 'TM23 Dragon Rage', 'desc': 'Teaches Dragon Rage to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM24": {'name': 'TM24 Thunderbolt', 'desc': 'Teaches Thunderbolt to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM25": {'name': 'TM25 Thunder', 'desc': 'Teaches Thunder to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM26": {'name': 'TM26 Earthquake', 'desc': 'Teaches Earthquake to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM27": {'name': 'TM27 Fissure', 'desc': 'Teaches Fissure to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM28": {'name': 'TM28 Dig', 'desc': 'Teaches Dig to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM29": {'name': 'TM29 Psychic', 'desc': 'Teaches Psychic to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM30": {'name': 'TM30 Teleport', 'desc': 'Teaches Teleport to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM31": {'name': 'TM31 Mimic', 'desc': 'Teaches Mimic to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM32": {'name': 'TM32 Double Team', 'desc': 'Teaches Double Team to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM33": {'name': 'TM33 Reflect', 'desc': 'Teaches Reflect to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM34": {'name': 'TM34 Bide', 'desc': 'Teaches Bide to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM35": {'name': 'TM35 Metronome', 'desc': 'Teaches Metronome to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM36": {'name': 'TM36 Self Destruct', 'desc': 'Teaches Self-Destruct to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM37": {'name': 'TM37 Egg Bomb', 'desc': 'Teaches Egg Bomb to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM38": {'name': 'TM38 Fire Blast', 'desc': 'Teaches Fire Blast to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM39": {'name': 'TM39 Swift', 'desc': 'Teaches Swift to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM40": {'name': 'TM40 Skull Bash', 'desc': 'Teaches Skull Bash to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM41": {'name': 'TM41 Softboiled', 'desc': 'Teaches Softboiled to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM42": {'name': 'TM42 Dream Eater', 'desc': 'Teaches Dream Eater to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM43": {'name': 'TM43 Sky Attack', 'desc': 'Teaches Sky Attack to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM44": {'name': 'TM44 Rest', 'desc': 'Teaches Rest to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM45": {'name': 'TM45 Thunder Wave', 'desc': 'Teaches Thunder Wave to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM46": {'name': 'TM46 Psywave', 'desc': 'Teaches Psywave to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM47": {'name': 'TM47 Explosion', 'desc': 'Teaches Explosion to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM48": {'name': 'TM48 Rock Slide', 'desc': 'Teaches Rock Slide to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM49": {'name': 'TM49 Tri Attack', 'desc': 'Teaches Tri Attack to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
+    "TM50": {'name': 'TM50 Substitute', 'desc': 'Teaches Substitute to a compatible Pokémon.', 'emoji': constant.TM_EMOJI},
     # Special Items
     "link-cable": {
         "name": "Link Cable",

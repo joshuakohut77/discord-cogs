@@ -210,6 +210,12 @@ class store:
                 inventory.maxether += quantity
             elif name == 'old-amber':
                 inventory.oldamber += quantity
+            # TMs
+            elif name.startswith('TM') and len(name) <= 4:
+                tm_num = int(name[2:])
+                if 1 <= tm_num <= 50:
+                    current = inventory.getTM(tm_num)
+                    inventory.setTM(tm_num, current + quantity)
             # Special Items
             elif name == 'link-cable':
                 inventory.linkcable += quantity
@@ -437,6 +443,13 @@ class store:
             inventory.moonstone -= quantity
             if inventory.moonstone < 0:
                 validQuantity = False
+        elif name.startswith('TM') and len(name) <= 4:
+                tm_num = int(name[2:])
+                if 1 <= tm_num <= 50:
+                    current = inventory.getTM(tm_num)
+                    inventory.setTM(tm_num, current - quantity)
+                    if inventory.getTM(tm_num) < 0:
+                        validQuantity = False
 
         if not validQuantity:
             self.statuscode = 420

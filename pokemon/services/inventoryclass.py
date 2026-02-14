@@ -1,3 +1,4 @@
+
 # inventory class
 import sys
 from dbclass import db as dbconn
@@ -65,7 +66,33 @@ class inventory:
         # Special Items
         self.linkcable = None
         self.gameshark = None
+        # TMs (TM01-TM50)
+        for i in range(1, 51):
+            setattr(self, f'tm{i:02d}', None)
         self.__loadInventory()
+
+    def getTM(self, tm_number):
+        """Get quantity of a specific TM by number (1-50) or string like 'TM01'"""
+        if isinstance(tm_number, str):
+            # Handle "TM01" format
+            tm_number = int(tm_number.replace("TM", ""))
+        return getattr(self, f'tm{tm_number:02d}', 0) or 0
+
+    def setTM(self, tm_number, value):
+        """Set quantity of a specific TM by number (1-50) or string like 'TM01'"""
+        if isinstance(tm_number, str):
+            tm_number = int(tm_number.replace("TM", ""))
+        setattr(self, f'tm{tm_number:02d}', value)
+
+    def getOwnedTMs(self):
+        """Returns list of (tm_key, quantity) for TMs with quantity > 0.
+        e.g. [('TM01', 2), ('TM05', 1)]"""
+        owned = []
+        for i in range(1, 51):
+            qty = getattr(self, f'tm{i:02d}', 0) or 0
+            if qty > 0:
+                owned.append((f'TM{i:02d}', qty))
+        return owned
 
     def save(self):
         """ updates a trainers inventory """
@@ -86,12 +113,16 @@ class inventory:
                                 "ether"=%(ether)s, "nugget"=%(nugget)s, 
                                 "poke-doll"=%(pokedoll)s, "pp-up"=%(ppup)s, "soda-pop"=%(sodapop)s, 
                                 "town-map"=%(townmap)s, "x-accuracy"=%(xaccuracy)s, "x-attack"=%(xattack)s, 
-                                "x-defense"=%(xdefense)s, "x-sp-atk"=%(xspatk)s, "x-sp-def"=%(xspatk)s, 
+                                "x-defense"=%(xdefense)s, "x-sp-atk"=%(xspatk)s, "x-sp-def"=%(xspdef)s, 
                                 "x-speed"=%(xspeed)s, "fire-stone"=%(firestone)s, 
                                 "water-stone"=%(waterstone)s, "thunder-stone"=%(thunderstone)s, 
                                 "leaf-stone"=%(leafstone)s, "moon-stone"=%(moonstone)s,
-                                "link-cable"=%(linkcable)s, "game-shark"=%(gameshark)s
-                                WHERE "discord_id"=%(discordId)s'''
+                                "link-cable"=%(linkcable)s, "game-shark"=%(gameshark)s'''
+            # Append TM columns to update string
+            tm_updates = ', '.join([f'"TM{i:02d}"=%(tm{i:02d})s' for i in range(1, 51)])
+            updateString += ', ' + tm_updates
+            updateString += ' WHERE "discord_id"=%(discordId)s'
+
             values = { 'money': self.money, 'pokeball':self.pokeball,
                             'potion': self.potion, 'greatball': self.greatball, 'ultraball': self.ultraball,
                             'superpotion': self.superpotion, 'hyperpotion': self.hyperpotion, 'revive': self.revive,
@@ -114,6 +145,9 @@ class inventory:
                             'leafstone': self.leafstone, 'moonstone': self.moonstone,
                             "linkcable": self.linkcable, "gameshark": self.gameshark,
                             'discordId': self.discordId }
+            # Add TM values
+            for i in range(1, 51):
+                values[f'tm{i:02d}'] = getattr(self, f'tm{i:02d}', 0) or 0
             db.execute(updateString, values)
         except:
             self.statuscode = 96
@@ -127,7 +161,9 @@ class inventory:
         """ loads a trainers inventory into the class object """
         try:
             db = dbconn()
-            queryString = '''SELECT "money", "poke-ball", "great-ball", "ultra-ball", 
+            # Build TM column list
+            tm_columns = ', '.join([f'"TM{i:02d}"' for i in range(1, 51)])
+            queryString = f'''SELECT "money", "poke-ball", "great-ball", "ultra-ball", 
                             "master-ball", "potion", "super-potion", "hyper-potion", "revive", 
                             "full-restore", "repel", "awakening", "escape-rope", "full-heal",
                             "ice-heal", "max-repel", "burn-heal", "paralyze-heal", 
@@ -139,7 +175,8 @@ class inventory:
                             "x-attack", "x-sp-atk", "x-sp-def", "x-speed", 
                             "fire-stone", "water-stone", 
                             "thunder-stone", "leaf-stone", "moon-stone",
-                            "iron", "protein", "link-cable", "game-shark"
+                            "iron", "protein", "link-cable", "game-shark",
+                            {tm_columns}
                             FROM inventory WHERE "discord_id"=%(discordId)s'''
             result = db.querySingle(queryString, { 'discordId': self.discordId })
             if len(result) > 0:
@@ -193,15 +230,14 @@ class inventory:
                 self.moonstone = result[47]
                 self.iron = result[48]
                 self.protein = result[49]
-                # Special Items
                 self.linkcable = result[50]
                 self.gameshark = result[51]
-
-
+                # TM01-TM50 start at index 52
+                for i in range(1, 51):
+                    setattr(self, f'tm{i:02d}', result[51 + i])
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
         finally:
-            # delete and close connection
             del db
             return

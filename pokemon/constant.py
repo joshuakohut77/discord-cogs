@@ -220,6 +220,7 @@ WATERSTONE = '<:waterstone:974525837921636393>'
 THUNDERSTONE = '<:thunderstone:974525867961221200>'
 LEAFSTONE = '<:leafstone:974525949590769715>'
 MOONSTONE = '<:moonstone:974525917789560853>'
+TM_EMOJI = '<:hm01:974518903021600849>'  # Same as HM01 - or create a new TM emoji
 
 
 # Special Items
@@ -411,3 +412,58 @@ ITEM_HEALING = {
 
 # Battle Intro Delay
 BATTLE_INTRO_DELAY_SECONDS = 3
+
+
+
+TM_MOVE_MAPPING = {
+    "TM01": "mega-punch",
+    "TM02": "razor-wind",
+    "TM03": "swords-dance",
+    "TM04": "whirlwind",
+    "TM05": "mega-kick",
+    "TM06": "toxic",
+    "TM07": "horn-drill",
+    "TM08": "body-slam",
+    "TM09": "take-down",
+    "TM10": "double-edge",
+    "TM11": "bubble-beam",
+    "TM12": "water-gun",
+    "TM13": "ice-beam",
+    "TM14": "blizzard",
+    "TM15": "hyper-beam",
+    "TM16": "pay-day",
+    "TM17": "submission",
+    "TM18": "counter",
+    "TM19": "seismic-toss",
+    "TM20": "rage",
+    "TM21": "mega-drain",
+    "TM22": "solar-beam",
+    "TM23": "dragon-rage",
+    "TM24": "thunderbolt",
+    "TM25": "thunder",
+    "TM26": "earthquake",
+    "TM27": "fissure",
+    "TM28": "dig",
+    "TM29": "psychic",
+    "TM30": "teleport",
+    "TM31": "mimic",
+    "TM32": "double-team",
+    "TM33": "reflect",
+    "TM34": "bide",
+    "TM35": "metronome",
+    "TM36": "self-destruct",
+    "TM37": "egg-bomb",
+    "TM38": "fire-blast",
+    "TM39": "swift",
+    "TM40": "skull-bash",
+    "TM41": "softboiled",
+    "TM42": "dream-eater",
+    "TM43": "sky-attack",
+    "TM44": "rest",
+    "TM45": "thunder-wave",
+    "TM46": "psywave",
+    "TM47": "explosion",
+    "TM48": "rock-slide",
+    "TM49": "tri-attack",
+    "TM50": "substitute",
+}

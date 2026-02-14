@@ -271,6 +271,96 @@ class EncountersMixin(MixinMeta):
             except:
                 pass  # Timeout or error
 
+
+    async def __handle_tm_usage(self, interaction: discord.Interaction, user, item_state):
+        """Handle using a TM on a Pokemon from the party Use Items menu."""
+        import constant
+        from services.inventoryclass import inventory as InventoryClass
+        from services.pokeclass import Pokemon as PokemonClass
+        from helpers.pathhelpers import load_json_config
+        
+        tm_key = item_state.selected_item  # e.g. "TM24"
+        move_name = constant.TM_MOVE_MAPPING.get(tm_key)
+        
+        if not move_name:
+            await interaction.followup.send(f'❌ Unknown TM: {tm_key}', ephemeral=True)
+            return
+        
+        # Load the target Pokemon
+        pokemon = PokemonClass(str(user.id))
+        pokemon.load(int(item_state.selected_pokemon_id))
+        
+        # Check if Pokemon can learn this TM (check tms.json)
+        tms_config = load_json_config('tms.json')
+        compatible_pokemon = tms_config.get(tm_key, [])
+        
+        can_learn = False
+        for entry in compatible_pokemon:
+            if entry.get('Name', '').lower() == pokemon.pokemonName.lower():
+                can_learn = True
+                break
+        
+        if not can_learn:
+            display_move = move_name.replace('-', ' ').title()
+            await interaction.followup.send(
+                f'❌ {pokemon.pokemonName.capitalize()} is not compatible with {tm_key} ({display_move})!',
+                ephemeral=True
+            )
+            return
+        
+        # Check if Pokemon already knows this move
+        current_moves = pokemon.getCurrentMovesList()
+        for slot, existing_move in current_moves:
+            if existing_move == move_name:
+                display_move = move_name.replace('-', ' ').title()
+                await interaction.followup.send(
+                    f'❌ {pokemon.pokemonName.capitalize()} already knows {display_move}!',
+                    ephemeral=True
+                )
+                return
+        
+        # Consume the TM from inventory
+        inv = InventoryClass(str(user.id))
+        current_qty = inv.getTM(tm_key)
+        if current_qty <= 0:
+            await interaction.followup.send(f'❌ You don\'t have any {tm_key}!', ephemeral=True)
+            return
+        inv.setTM(tm_key, current_qty - 1)
+        inv.save()
+        
+        # Try to learn the move
+        current_move_count = pokemon.getCurrentMoveCount()
+        display_move = move_name.replace('-', ' ').title()
+        
+        if current_move_count < 4:
+            # Auto-learn — has an empty slot
+            pokemon.learnMove(move_name)
+            pokemon.save()
+            
+            await interaction.followup.send(
+                f'✅ {pokemon.pokemonName.capitalize()} learned {display_move}!',
+                ephemeral=True
+            )
+            
+            # Refresh the item usage view
+            embed, view = self.__create_item_usage_view(user)
+            await interaction.message.edit(embed=embed, view=view)
+        else:
+            # Has 4 moves — need to ask which to replace
+            # Send confirmation first, then trigger move learning UI
+            await interaction.followup.send(
+                f'📋 {pokemon.pokemonName.capitalize()} wants to learn {display_move} ({tm_key}), but already knows 4 moves...',
+                ephemeral=True
+            )
+            
+            # Use the existing move learning handler
+            await self.__handle_move_learning(interaction, pokemon, [move_name])
+            
+            # Refresh the item usage view after move learning completes
+            embed, view = self.__create_item_usage_view(user)
+            await interaction.message.edit(embed=embed, view=view)
+
+
     def __get_wild_trainers_button(self, user_id: str, location_id: int):
         """
         Check if location has wild trainers and return button if available.
@@ -2307,11 +2397,41 @@ class EncountersMixin(MixinMeta):
         if inv.lemonade > 0:
             items.append(f'{constant.LEMONADE} **Lemonade** — {inv.lemonade}')
         
-        items_text = "\n".join(items) if len(items) > 0 else "No items yet."
+        items_text = "\\n".join(items) if len(items) > 0 else "No items yet."
         embed.add_field(name="Items", value=items_text, inline=False)
         
+        # TMs section
+        import constant
+        tm_items = []
+        owned_tms = inv.getOwnedTMs()
+        for tm_key, qty in owned_tms:
+            move_name = constant.TM_MOVE_MAPPING.get(tm_key, 'Unknown')
+            display_move = move_name.replace('-', ' ').title()
+            tm_items.append(f'{constant.TM_EMOJI} **{tm_key}** {display_move} — {qty}')
+        
+        if tm_items:
+            # Discord embed field value max is 1024 chars, split if needed
+            tm_text = "\\n".join(tm_items)
+            if len(tm_text) <= 1024:
+                embed.add_field(name="TMs", value=tm_text, inline=False)
+            else:
+                # Split into multiple fields
+                chunk = []
+                chunk_len = 0
+                field_num = 1
+                for line in tm_items:
+                    if chunk_len + len(line) + 1 > 1024:
+                        embed.add_field(name=f"TMs ({field_num})", value="\\n".join(chunk), inline=False)
+                        chunk = []
+                        chunk_len = 0
+                        field_num += 1
+                    chunk.append(line)
+                    chunk_len += len(line) + 1
+                if chunk:
+                    embed.add_field(name=f"TMs ({field_num})" if field_num > 1 else "TMs", value="\\n".join(chunk), inline=False)
+        
         return embed
-
+    
     def __create_keyitems_embed(self, user: discord.User) -> discord.Embed:
         """Create embed showing trainer's key items (excluding HMs)"""
         from services.keyitemsclass import keyitems as KeyItemClass
@@ -2646,6 +2766,14 @@ class EncountersMixin(MixinMeta):
             ('moon-stone', inv.moonstone, 'Moon Stone', 'Evolves certain Pokemon'),
         ]
         
+        # Add TMs to usable items list
+        import constant
+        owned_tms = inv.getOwnedTMs()
+        for tm_key, qty in owned_tms:
+            move_name = constant.TM_MOVE_MAPPING.get(tm_key, 'Unknown')
+            display_move = move_name.replace('-', ' ').title()
+            usable_items.append((tm_key, qty, f'{tm_key} {display_move}', f'Teaches {display_move}'))
+        
         has_items = False
         for item_key, quantity, display_name, description in usable_items:
             if quantity > 0:
@@ -2742,6 +2870,11 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('Please select both a Pokemon and an item.', ephemeral=True)
             return
         
+        # Check if selected item is a TM
+        if item_state.selected_item.startswith('TM') and len(item_state.selected_item) <= 4:
+            await self.__handle_tm_usage(interaction, user, item_state)
+            return
+
         from services.trainerclass import trainer as TrainerClass
         from services.pokeclass import Pokemon as PokemonClass
         
