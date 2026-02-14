@@ -266,39 +266,7 @@ class Pokemon:
         pokemonConfig = json.load(open(p, 'r'))
         return pokemonConfig[self.pokemonName['partySprite']]
 
-    def getMoves(self, moveDict=None):
-        """ returns a list of the pokemon's current moves """
-        moveList = []
-        if moveDict is None:
-            moveDict = {}
-            # this is the pokemon json object from the config file
-            pokemon = self.__loadPokemonConfig()
-            moveDict = pokemon['moves']
-        try:
-            level = self.currentLevel
-            # user starter level for pokemon without a level
-            if level is None:
-                level = STARTER_LEVEL
-            # itterate throught he dictionary selecting the top 4 highest moves at the current level
-            defaultList = sorted(
-                moveDict.items(), key=lambda x: x[1], reverse=True)
-            for move in defaultList:
-                moveLevel = move[1]
-                moveName = move[0]
-                if int(moveLevel) <= level:
-                    moveList.append(moveName)
-            # check if list is padded to move and if not, append blank moves
-            if len(moveList) < 4:
-                diff = 4-len(moveList)
-                for x in range(diff):
-                    x = None
-                    moveList.append(x)
-        except:
-            self.statuscode = 96
-            logger.error(excInfo=sys.exc_info())
 
-        # return only 4 moves
-        return moveList[0: 4]
 
     def __isActivePokemon(self):
         """ checks if this pokemon is the trainer's active pokemon """
@@ -587,23 +555,25 @@ class Pokemon:
             return"https://pokesprites.joshkohut.com/sprites/pokemon/shiny/"
         return basePath
 
-    def __getNewMoves(self, moveDict=None):
-        """ returns a pokemons moves at a specific level """
-        newMove = ''
-        if moveDict is None:
-            moveDict = {}
-            # this is the pokemon json object from the config file
-            pokemon = self.__loadPokemonConfig()
-            moveDict = pokemon['moves']
+    def getMovesLearnedBetweenLevels(self, fromLevel, toLevel):
+        """
+        Returns a list of (moveName, moveLevel) tuples for all moves
+        learned between fromLevel (exclusive) and toLevel (inclusive).
+        Sorted by level ascending so they are processed in order.
+        """
+        movesLearned = []
         try:
-            for key, value in moveDict.items():
-                if value == self.currentLevel:
-                    newMove = key
+            pokemon = self.__loadPokemonConfig()
+            moveDict = pokemon.get('moves', {})
+            for moveName, moveLevel in moveDict.items():
+                if fromLevel < int(moveLevel) <= toLevel:
+                    movesLearned.append((moveName, int(moveLevel)))
+            # Sort by level so lower-level moves are learned first
+            movesLearned.sort(key=lambda x: x[1])
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
-        finally:
-            return newMove
+        return movesLearned
 
     def __calculateUniqueStat(self, statObj):
         """ returns integer of a stat calculated from various parameters """
