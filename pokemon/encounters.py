@@ -272,34 +272,34 @@ class EncountersMixin(MixinMeta):
                 pass  # Timeout or error
 
 
-    async def __handle_tm_usage(self, interaction: discord.Interaction, user, item_state):
+    async def __handle_tm_usage(self, interaction, user, item_state):
         """Handle using a TM on a Pokemon from the party Use Items menu."""
         import constant
         from services.inventoryclass import inventory as InventoryClass
         from services.pokeclass import Pokemon as PokemonClass
         from helpers.pathhelpers import load_json_config
-        
+
         tm_key = item_state.selected_item  # e.g. "TM24"
         move_name = constant.TM_MOVE_MAPPING.get(tm_key)
-        
+
         if not move_name:
             await interaction.followup.send(f'❌ Unknown TM: {tm_key}', ephemeral=True)
             return
-        
+
         # Load the target Pokemon
         pokemon = PokemonClass(str(user.id))
         pokemon.load(int(item_state.selected_pokemon_id))
-        
+
         # Check if Pokemon can learn this TM (check tms.json)
         tms_config = load_json_config('tms.json')
         compatible_pokemon = tms_config.get(tm_key, [])
-        
+
         can_learn = False
         for entry in compatible_pokemon:
             if entry.get('Name', '').lower() == pokemon.pokemonName.lower():
                 can_learn = True
                 break
-        
+
         if not can_learn:
             display_move = move_name.replace('-', ' ').title()
             await interaction.followup.send(
@@ -307,7 +307,7 @@ class EncountersMixin(MixinMeta):
                 ephemeral=True
             )
             return
-        
+
         # Check if Pokemon already knows this move
         current_moves = pokemon.getCurrentMovesList()
         for slot, existing_move in current_moves:
@@ -318,48 +318,131 @@ class EncountersMixin(MixinMeta):
                     ephemeral=True
                 )
                 return
-        
-        # Consume the TM from inventory
+
+        # Check TM quantity
         inv = InventoryClass(str(user.id))
         current_qty = inv.getTM(tm_key)
         if current_qty <= 0:
             await interaction.followup.send(f'❌ You don\'t have any {tm_key}!', ephemeral=True)
             return
-        inv.setTM(tm_key, current_qty - 1)
-        inv.save()
-        
-        # Try to learn the move
+
         current_move_count = pokemon.getCurrentMoveCount()
         display_move = move_name.replace('-', ' ').title()
-        
+
         if current_move_count < 4:
-            # Auto-learn — has an empty slot
+            # Auto-learn — consume TM and learn immediately
+            inv.setTM(tm_key, current_qty - 1)
+            inv.save()
+
             pokemon.learnMove(move_name)
             pokemon.save()
-            
+
             await interaction.followup.send(
                 f'✅ {pokemon.pokemonName.capitalize()} learned {display_move}!',
                 ephemeral=True
             )
-            
+
             # Refresh the item usage view
             embed, view = self.__create_item_usage_view(user)
             await interaction.message.edit(embed=embed, view=view)
         else:
-            # Has 4 moves — need to ask which to replace
-            # Send confirmation first, then trigger move learning UI
-            await interaction.followup.send(
-                f'📋 {pokemon.pokemonName.capitalize()} wants to learn {display_move} ({tm_key}), but already knows 4 moves...',
+            # Has 4 moves — show replacement UI, only consume TM on confirm
+            await self.__handle_tm_move_learning(interaction, user, pokemon, move_name, tm_key)
+
+    async def __handle_tm_move_learning(self, interaction, user, pokemon, move_to_learn, tm_key):
+        """TM-specific move learning UI. Only consumes the TM if the player replaces a move."""
+        from helpers.pathhelpers import load_json_config
+        from services.inventoryclass import inventory as InventoryClass
+        import constant
+
+        moves_config = load_json_config('moves.json')
+
+        # Create the embed (reuse existing helper)
+        embed = self.__create_move_learning_embed(pokemon, move_to_learn, moves_config)
+        embed.title = f"📀 {tm_key} — {move_to_learn.replace('-', ' ').title()}"
+
+        # Get current moves
+        current_moves = pokemon.getCurrentMovesList()
+
+        # Add current move details to embed
+        for slot, move_name in current_moves:
+            move_data = moves_config.get(move_name, {})
+            power = move_data.get('power', 'N/A')
+            move_type = move_data.get('moveType', 'normal')
+            embed.add_field(
+                name=f"Slot {slot}: {move_name.replace('-', ' ').title()}",
+                value=f"Type: {move_type.title()} | Power: {power}",
+                inline=True
+            )
+
+        # Create buttons for each current move + Don't Learn
+        view = discord.ui.View(timeout=180)
+
+        for slot, move_name in current_moves:
+            button = discord.ui.Button(
+                label=f"Replace {move_name.replace('-', ' ').title()}",
+                style=discord.ButtonStyle.primary,
+                custom_id=f"tm_replace_move_{slot}"
+            )
+
+            async def replace_callback(inter: discord.Interaction, slot_num=slot, old_move=move_name):
+                if inter.user.id != interaction.user.id:
+                    await inter.response.send_message("This is not for you!", ephemeral=True)
+                    return
+
+                # NOW consume the TM
+                inv = InventoryClass(str(inter.user.id))
+                current_qty = inv.getTM(tm_key)
+                inv.setTM(tm_key, current_qty - 1)
+                inv.save()
+
+                # Learn the move in the selected slot
+                pokemon.learnMove(move_to_learn, replaceSlot=slot_num)
+                pokemon.save()
+
+                display_move = move_to_learn.replace('-', ' ').title()
+                old_display = old_move.replace('-', ' ').title()
+
+                # Delete the move learning message
+                await inter.message.delete()
+
+                await inter.response.send_message(
+                    f"✅ {pokemon.pokemonName.capitalize()} forgot {old_display} and learned {display_move}!",
+                    ephemeral=True
+                )
+
+                # Refresh the item usage view on the original message
+                embed, view = self.__create_item_usage_view(inter.user)
+                await interaction.message.edit(embed=embed, view=view)
+
+            button.callback = replace_callback
+            view.add_item(button)
+
+        # Don't Learn button — TM is NOT consumed
+        dont_learn_button = discord.ui.Button(
+            label="Don't Learn",
+            style=discord.ButtonStyle.secondary,
+            custom_id="tm_dont_learn_move"
+        )
+
+        async def dont_learn_callback(inter: discord.Interaction):
+            if inter.user.id != interaction.user.id:
+                await inter.response.send_message("This is not for you!", ephemeral=True)
+                return
+
+            display_move = move_to_learn.replace('-', ' ').title()
+
+            await inter.message.delete()
+
+            await inter.response.send_message(
+                f"❌ {pokemon.pokemonName.capitalize()} did not learn {display_move}. {tm_key} was not used.",
                 ephemeral=True
             )
-            
-            # Use the existing move learning handler
-            await self.__handle_move_learning(interaction, pokemon, [move_name])
-            
-            # Refresh the item usage view after move learning completes
-            embed, view = self.__create_item_usage_view(user)
-            await interaction.message.edit(embed=embed, view=view)
 
+        dont_learn_button.callback = dont_learn_callback
+        view.add_item(dont_learn_button)
+
+        await interaction.followup.send(embed=embed, view=view, ephemeral=False)
 
     def __get_wild_trainers_button(self, user_id: str, location_id: int):
         """
