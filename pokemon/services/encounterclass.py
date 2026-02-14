@@ -345,27 +345,33 @@ class encounter:
     #                     return retVal
     #     return retVal
 
-    def battle_fight(self, move1=None):
-        """ this function simulates a live battle between two pokemon """
+    def battle_fight(self, move1):
+        """ main pokemon battle method with special move support """
         retVal = {'result': None}
-        if move1 == '':
-            self.statuscode = 96
-            self.message = 'Invalid move sent for turn based battle'
-            return retVal
-        
-        # Clear battle log for new fight
-        self.battle_log = []
-        
         # get pokemons current fighting HP
-        battleHP1 = self.pokemon1.currentHP        
+        battleHP1 = self.pokemon1.currentHP
         battleHP2 = self.pokemon2.currentHP
-        # get pokemons list of moves
-        if move1 is None:
+        
+        if move1:
+            battleMoves1 = [move1]
+        else:
             battleMoves1 = self.__removeNullMoves(self.pokemon1.getMoves())
         battleMoves2 = self.__removeNullMoves(self.pokemon2.getMoves())
 
         statusMovesCount = 0
         turn_number = 1
+
+        # Special move tracking (local to this battle)
+        rest_turns_1 = 0   # Player rest sleep counter
+        rest_turns_2 = 0   # Enemy rest sleep counter
+        leech_seed_1 = False  # Player's pokemon is seeded (takes drain damage)
+        leech_seed_2 = False  # Enemy's pokemon is seeded (takes drain damage)
+
+        # Get max HP for both pokemon (needed for special moves)
+        p1_stats = self.pokemon1.getPokeStats()
+        p2_stats = self.pokemon2.getPokeStats()
+        p1_max_hp = p1_stats['hp']
+        p2_max_hp = p2_stats['hp']
         
         # pokemon1 goes first
         if move1 == None:
@@ -375,98 +381,154 @@ class encounter:
         
         for x in range(max_battle_turns):
             self.battle_log.append(f"**Turn {turn_number}:**")
-            
-            if move1 == None:
-                randMoveSelector = random.randrange(1, len(battleMoves1)+1)
-                move1 = battleMoves1[randMoveSelector-1]
-                pbMove = self.__loadMovesConfig(move1)
-                power = pbMove['power']
-                if power is None and statusMovesCount >= 1:
-                    continue
-                elif power is None:
-                    statusMovesCount += 1
-                damage = self.__calculateDamageOfMove(pbMove)
-            else:
-                pbMove = self.__loadMovesConfig(move1)
-                damage = self.__calculateDamageOfMove(pbMove)
 
-            modifiedPokemon1, attackViability = self.ailment1.calculateAilmentDamage(self.pokemon1)
+            # =================================================================
+            # POKEMON 1'S TURN (Player)
+            # =================================================================
 
-            if self.ailment2.trap:
-                self.battle_log.append(f'{self.pokemon2.pokemonName.capitalize()} is still trapped')
-            
-            if not attackViability and not self.ailment2.trap:
-                isAilment2 = self.ailment2.rollAilmentChance(pbMove)
-                if isAilment2:
-                    self.ailment2.setAilment(pbMove['ailment'])
-                battleHP2 -= damage
-                
-                # Log player's move
-                if move1 is None:
-                    self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used {battleMoves1[randMoveSelector-1].replace("-", " ").title()}! Dealt {damage} damage.')
+            # Check Rest sleep first (overrides normal ailment sleep check)
+            p1_skip_turn = False
+            if rest_turns_1 > 0:
+                rest_turns_1 -= 1
+                if rest_turns_1 == 0:
+                    self.battle_log.append(f'💤 {self.pokemon1.pokemonName.capitalize()} woke up from Rest!')
                 else:
-                    self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used {move1.replace("-", " ").title()}! Dealt {damage} damage.')
+                    self.battle_log.append(f'💤 {self.pokemon1.pokemonName.capitalize()} is sleeping from Rest!')
+                p1_skip_turn = True
+
+            if not p1_skip_turn:
+                # Select move
+                if move1 == None:
+                    randMoveSelector = random.randrange(1, len(battleMoves1)+1)
+                    move1 = battleMoves1[randMoveSelector-1]
+                    pbMove = self.__loadMovesConfig(move1)
+                    power = pbMove['power']
+                    special_fn = pbMove.get('special_function', '')
+                    # Skip non-special status moves after using one already
+                    if power is None and not special_fn and statusMovesCount >= 1:
+                        move1 = None
+                        turn_number += 1
+                        continue
+                    elif power is None and not special_fn:
+                        statusMovesCount += 1
+                else:
+                    pbMove = self.__loadMovesConfig(move1)
+                    special_fn = pbMove.get('special_function', '')
+
+                # Check ailments (normal ailment processing)
+                modifiedPokemon1, attackViability = self.ailment1.calculateAilmentDamage(self.pokemon1)
+
+                if self.ailment2.trap:
+                    self.battle_log.append(f'{self.pokemon2.pokemonName.capitalize()} is still trapped')
                 
-                if battleHP2 <=0:
-                    self.pokemon1.currentHP = battleHP1
-                    self.__victory()
-                    self.statuscode = 420
-                    retVal = {'result': 'victory'}
-                    self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} fainted!')
-                    break
-                
-                if pbMove['moveType'] == 'fire' and self.ailment2.freeze:
-                    self.battle_log.append(f'{self.pokemon2.pokemonName.capitalize()} is no longer frozen')
-                    self.ailment2.freeze = False
-            else:
-                # some ailment is preventing attack
-                if not self.ailment2.trap:
-                    self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} has an ailment preventing it from attacking!')
-                
-                enemyMove = ''
-                if self.ailment1.trap:
-                    self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is trapped!')
-                    enemyMove = 'Bind Trap'
-                    pbMove = self.__loadMovesConfig('bind')
-                    trapDamage = self.__calculateDamageOfMove(pbMove)
-                    self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} took {trapDamage} trap damage')
-                    battleHP1 -= trapDamage
-                elif self.ailment1.confusion:
-                    self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is confused!')
-                    enemyMove = 'Self Confusion'
-                    if random.randrange(1, 1+1) == 1:
-                        pbMove = self.__loadMovesConfig('tackle')
-                        confusionDamage = self.__calculateDamageOfMove(pbMove)
-                        battleHP1 -= confusionDamage
-                        self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} hurt itself in confusion! {confusionDamage} damage.')
-                elif self.ailment1.sleep:
-                    self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is asleep!')
-                elif self.ailment1.freeze:
-                    self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is frozen!')
-                
-                if battleHP1 <= 0:
-                    self.__defeat()
-                    self.statuscode = 420
-                    retVal = {'result': 'defeat'}
-                    self.battle_log.append(f'Your {self.pokemon1.pokemonName.capitalize()} fainted!')
-                    return retVal
-            
-            if battleHP2 <=0:
-                self.pokemon1.currentHP = battleHP1
-                self.__victory()
-                self.statuscode = 420
-                retVal = {'result': 'victory'}
-                break
-        
-            elif battleHP2 > 0:
-                # Burn/poison damage after attack
-                if self.ailment1.burn or self.ailment1.poison:
-                    self.pokemon1.currentHP = modifiedPokemon1.currentHP
-                    battleHP1 = modifiedPokemon1.currentHP
-                    if self.ailment1.burn:
-                        self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is hurt by burn!')
+                if not attackViability and not self.ailment2.trap:
+                    # Pokemon CAN attack - handle special moves or normal damage
+                    move_display = move1.replace("-", " ").title()
+
+                    # --- SPECIAL MOVE HANDLING (Pokemon 1) ---
+                    if special_fn == 'rest':
+                        from helpers.specialmoves import handle_rest
+                        heal_amount, new_hp = handle_rest(battleHP1, p1_max_hp)
+                        battleHP1 = new_hp
+                        rest_turns_1 = 2
+                        # Clear any existing ailments
+                        self.ailment1.resetAilments()
+                        self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Rest! Recovered {heal_amount} HP and fell asleep! 💤')
+
+                    elif special_fn == 'recover':
+                        from helpers.specialmoves import handle_recover
+                        actual_heal, new_hp = handle_recover(battleHP1, p1_max_hp)
+                        battleHP1 = new_hp
+                        self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Recover! Restored {actual_heal} HP! 💚')
+
+                    elif special_fn == 'night_shade':
+                        from helpers.specialmoves import calculate_night_shade_damage, check_accuracy
+                        if check_accuracy(pbMove.get('accuracy', 100)):
+                            ns_damage = calculate_night_shade_damage(self.pokemon1.currentLevel)
+                            battleHP2 -= ns_damage
+                            self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Night Shade! Dealt {ns_damage} damage!')
+                        else:
+                            self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Night Shade but it missed!')
+
+                    elif special_fn == 'leech_seed':
+                        from helpers.specialmoves import check_accuracy
+                        if check_accuracy(pbMove.get('accuracy', 100)):
+                            leech_seed_2 = True
+                            self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Leech Seed! Enemy was seeded! 🌱')
+                        else:
+                            self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Leech Seed but it missed!')
+
+                    elif special_fn == 'dream_eater':
+                        from helpers.specialmoves import calculate_drain_heal
+                        if self.ailment2.sleep or rest_turns_2 > 0:
+                            damage = self.__calculateDamageOfMove(pbMove)
+                            if damage > 0:
+                                battleHP2 -= damage
+                                drain_heal = calculate_drain_heal(damage)
+                                battleHP1 = min(p1_max_hp, battleHP1 + drain_heal)
+                                self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Dream Eater! Dealt {damage} damage and drained {drain_heal} HP! 💜')
+                            else:
+                                self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Dream Eater but it missed!')
+                        else:
+                            self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Dream Eater but it failed! Target is not asleep.')
+
+                    elif special_fn == 'drain':
+                        from helpers.specialmoves import calculate_drain_heal
+                        damage = self.__calculateDamageOfMove(pbMove)
+                        if damage > 0:
+                            battleHP2 -= damage
+                            drain_heal = calculate_drain_heal(damage)
+                            battleHP1 = min(p1_max_hp, battleHP1 + drain_heal)
+                            self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used {move_display}! Dealt {damage} damage and drained {drain_heal} HP! 💚')
+                        else:
+                            self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used {move_display} but it missed!')
+
                     else:
-                        self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is hurt by poison!')
+                        # --- NORMAL MOVE (existing logic) ---
+                        damage = self.__calculateDamageOfMove(pbMove)
+                        isAilment2 = self.ailment2.rollAilmentChance(pbMove)
+                        if isAilment2:
+                            self.ailment2.setAilment(pbMove['ailment'])
+                        battleHP2 -= damage
+                        self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used {move_display}! Dealt {damage} damage.')
+                    
+                    # Check if enemy fainted after player's attack
+                    if battleHP2 <= 0:
+                        self.pokemon1.currentHP = battleHP1
+                        self.__victory()
+                        self.statuscode = 420
+                        retVal = {'result': 'victory'}
+                        self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} fainted!')
+                        break
+                    
+                    if pbMove['moveType'] == 'fire' and self.ailment2.freeze:
+                        self.battle_log.append(f'{self.pokemon2.pokemonName.capitalize()} is no longer frozen')
+                        self.ailment2.freeze = False
+                else:
+                    # Some ailment is preventing attack
+                    if not self.ailment2.trap:
+                        self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} has an ailment preventing it from attacking!')
+                    
+                    enemyMove = ''
+                    if self.ailment1.trap:
+                        self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is trapped!')
+                        enemyMove = 'Bind Trap'
+                        pbMove = self.__loadMovesConfig('bind')
+                        trapDamage = self.__calculateDamageOfMove(pbMove)
+                        self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} took {trapDamage} trap damage')
+                        battleHP1 -= trapDamage
+                    elif self.ailment1.confusion:
+                        self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is confused!')
+                        enemyMove = 'Self Confusion'
+                        if random.randrange(1, 1+1) == 1:
+                            pbMove = self.__loadMovesConfig('tackle')
+                            confusionDamage = self.__calculateDamageOfMove(pbMove)
+                            battleHP1 -= confusionDamage
+                            self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} hurt itself in confusion! {confusionDamage} damage.')
+                    elif self.ailment1.sleep:
+                        self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is asleep!')
+                    elif self.ailment1.freeze:
+                        self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is frozen!')
                     
                     if battleHP1 <= 0:
                         self.__defeat()
@@ -474,74 +536,149 @@ class encounter:
                         retVal = {'result': 'defeat'}
                         self.battle_log.append(f'Your {self.pokemon1.pokemonName.capitalize()} fainted!')
                         return retVal
-
-            # Enemy's turn
-            randMoveSelector = random.randrange(1, len(battleMoves2)+1)
-            move2 = battleMoves2[randMoveSelector-1]
-            pbMove = self.__loadMovesConfig(move2)
-            damage = self.__calculateDamageOfMove(pbMove)
-
-            modifiedPokemon2, attackViability = self.ailment2.calculateAilmentDamage(self.pokemon2)
-            
-            if self.ailment1.trap:
-                self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is still trapped')
-            
-            if not attackViability and not self.ailment1.trap:
-                isAilment1 = self.ailment1.rollAilmentChance(pbMove)
-                if isAilment1:
-                    self.ailment1.setAilment(pbMove['ailment'])
-                battleHP1 -= damage
-                self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used {battleMoves2[randMoveSelector-1].replace("-", " ").title()}! Dealt {damage} damage.')
-            else:
-                if not self.ailment1.trap:
-                    self.battle_log.append(f'{self.pokemon2.pokemonName.capitalize()} has an ailment preventing it from attacking!')
-                
-                if self.ailment2.trap:
-                    enemyMove = 'Bind Trap'
-                    pbMove = self.__loadMovesConfig('bind')
-                    trapDamage = self.__calculateDamageOfMove(pbMove)
-                    self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} took {trapDamage} trap damage')
-                    battleHP2 -= trapDamage
-                elif self.ailment2.confusion:
-                    self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} is confused!')
-                    if random.randrange(1, 1+1) == 1:
-                        pbMove = self.__loadMovesConfig('tackle')
-                        confusionDamage = self.__calculateDamageOfMove(pbMove)
-                        battleHP2 -= confusionDamage
-                        self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} hurt itself in confusion! {confusionDamage} damage.')
-                elif self.ailment2.sleep:
-                    self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} is asleep!')
-                elif self.ailment2.freeze:
-                    self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} is frozen!')
                 
                 if battleHP2 <= 0:
+                    self.pokemon1.currentHP = battleHP1
                     self.__victory()
                     self.statuscode = 420
                     retVal = {'result': 'victory'}
-                    self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} fainted!')
-                    return retVal
+                    break
+            
+                elif battleHP2 > 0:
+                    # Burn/poison damage after player's attack
+                    if self.ailment1.burn or self.ailment1.poison:
+                        self.pokemon1.currentHP = modifiedPokemon1.currentHP
+                        battleHP1 = modifiedPokemon1.currentHP
+                        if self.ailment1.burn:
+                            self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is hurt by burn!')
+                        else:
+                            self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is hurt by poison!')
+                        
+                        if battleHP1 <= 0:
+                            self.__defeat()
+                            self.statuscode = 420
+                            retVal = {'result': 'defeat'}
+                            self.battle_log.append(f'Your {self.pokemon1.pokemonName.capitalize()} fainted!')
+                            return retVal
 
-            if battleHP1 <=0:
-                self.pokemon1.currentHP = battleHP1
-                self.__defeat()
-                self.statuscode = 420
-                retVal = {'result': 'defeat'}
-                self.battle_log.append(f'Your {self.pokemon1.pokemonName.capitalize()} fainted!')
-                break
+            # =================================================================
+            # POKEMON 2'S TURN (Enemy)
+            # =================================================================
 
-            elif battleHP1 > 0:
-                if pbMove['moveType'] == 'fire' and self.ailment1.freeze:
-                    self.ailment1.freeze = False  
-                    self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is no longer frozen')
-                    
-                # Burn/poison damage for enemy
-                if self.ailment2.burn or self.ailment2.poison:
-                    self.pokemon2.currentHP = modifiedPokemon2.currentHP
-                    battleHP2 = modifiedPokemon2.currentHP
-                    if self.ailment2.burn:
-                        self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} is hurt by burn!')
+            # Check Rest sleep first for enemy
+            p2_skip_turn = False
+            if rest_turns_2 > 0:
+                rest_turns_2 -= 1
+                if rest_turns_2 == 0:
+                    self.battle_log.append(f'💤 Enemy {self.pokemon2.pokemonName.capitalize()} woke up from Rest!')
+                else:
+                    self.battle_log.append(f'💤 Enemy {self.pokemon2.pokemonName.capitalize()} is sleeping from Rest!')
+                p2_skip_turn = True
+
+            if not p2_skip_turn:
+                # Enemy selects move
+                randMoveSelector = random.randrange(1, len(battleMoves2)+1)
+                move2 = battleMoves2[randMoveSelector-1]
+                pbMove = self.__loadMovesConfig(move2)
+                enemy_special_fn = pbMove.get('special_function', '')
+                move2_display = move2.replace("-", " ").title()
+
+                modifiedPokemon2, attackViability = self.ailment2.calculateAilmentDamage(self.pokemon2)
+                
+                if self.ailment1.trap:
+                    self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is still trapped')
+                
+                if not attackViability and not self.ailment1.trap:
+                    # Enemy CAN attack - handle special moves or normal damage
+
+                    # --- SPECIAL MOVE HANDLING (Pokemon 2 / Enemy) ---
+                    if enemy_special_fn == 'rest':
+                        from helpers.specialmoves import handle_rest
+                        heal_amount, new_hp = handle_rest(battleHP2, p2_max_hp)
+                        battleHP2 = new_hp
+                        rest_turns_2 = 2
+                        self.ailment2.resetAilments()
+                        self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Rest! Recovered {heal_amount} HP and fell asleep! 💤')
+
+                    elif enemy_special_fn == 'recover':
+                        from helpers.specialmoves import handle_recover
+                        actual_heal, new_hp = handle_recover(battleHP2, p2_max_hp)
+                        battleHP2 = new_hp
+                        self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Recover! Restored {actual_heal} HP! 💚')
+
+                    elif enemy_special_fn == 'night_shade':
+                        from helpers.specialmoves import calculate_night_shade_damage, check_accuracy
+                        if check_accuracy(pbMove.get('accuracy', 100)):
+                            ns_damage = calculate_night_shade_damage(self.pokemon2.currentLevel)
+                            battleHP1 -= ns_damage
+                            self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Night Shade! Dealt {ns_damage} damage!')
+                        else:
+                            self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Night Shade but it missed!')
+
+                    elif enemy_special_fn == 'leech_seed':
+                        from helpers.specialmoves import check_accuracy
+                        if check_accuracy(pbMove.get('accuracy', 100)):
+                            leech_seed_1 = True
+                            self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Leech Seed! Your Pokemon was seeded! 🌱')
+                        else:
+                            self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Leech Seed but it missed!')
+
+                    elif enemy_special_fn == 'dream_eater':
+                        from helpers.specialmoves import calculate_drain_heal
+                        if self.ailment1.sleep or rest_turns_1 > 0:
+                            damage = self.__calculateDamageOfMove(pbMove)
+                            if damage > 0:
+                                battleHP1 -= damage
+                                drain_heal = calculate_drain_heal(damage)
+                                battleHP2 = min(p2_max_hp, battleHP2 + drain_heal)
+                                self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Dream Eater! Dealt {damage} damage and drained {drain_heal} HP! 💜')
+                            else:
+                                self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Dream Eater but it missed!')
+                        else:
+                            self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Dream Eater but it failed! Target is not asleep.')
+
+                    elif enemy_special_fn == 'drain':
+                        from helpers.specialmoves import calculate_drain_heal
+                        damage = self.__calculateDamageOfMove(pbMove)
+                        if damage > 0:
+                            battleHP1 -= damage
+                            drain_heal = calculate_drain_heal(damage)
+                            battleHP2 = min(p2_max_hp, battleHP2 + drain_heal)
+                            self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used {move2_display}! Dealt {damage} damage and drained {drain_heal} HP! 💚')
+                        else:
+                            self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used {move2_display} but it missed!')
+
                     else:
-                        self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} is hurt by poison!')
+                        # --- NORMAL MOVE (existing logic) ---
+                        damage = self.__calculateDamageOfMove(pbMove)
+                        isAilment1 = self.ailment1.rollAilmentChance(pbMove)
+                        if isAilment1:
+                            self.ailment1.setAilment(pbMove['ailment'])
+                        battleHP1 -= damage
+                        self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used {move2_display}! Dealt {damage} damage.')
+
+                else:
+                    # Some ailment is preventing enemy's attack
+                    if not self.ailment1.trap:
+                        self.battle_log.append(f'{self.pokemon2.pokemonName.capitalize()} has an ailment preventing it from attacking!')
+                    
+                    if self.ailment2.trap:
+                        enemyMove = 'Bind Trap'
+                        pbMove = self.__loadMovesConfig('bind')
+                        trapDamage = self.__calculateDamageOfMove(pbMove)
+                        self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} took {trapDamage} trap damage')
+                        battleHP2 -= trapDamage
+                    elif self.ailment2.confusion:
+                        self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} is confused!')
+                        if random.randrange(1, 1+1) == 1:
+                            pbMove = self.__loadMovesConfig('tackle')
+                            confusionDamage = self.__calculateDamageOfMove(pbMove)
+                            battleHP2 -= confusionDamage
+                            self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} hurt itself in confusion! {confusionDamage} damage.')
+                    elif self.ailment2.sleep:
+                        self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} is asleep!')
+                    elif self.ailment2.freeze:
+                        self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} is frozen!')
                     
                     if battleHP2 <= 0:
                         self.__victory()
@@ -550,7 +687,79 @@ class encounter:
                         self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} fainted!')
                         return retVal
 
+            # =================================================================
+            # END OF TURN — Leech Seed drain
+            # =================================================================
+            if leech_seed_1 and battleHP1 > 0 and battleHP2 > 0:
+                from helpers.specialmoves import calculate_leech_seed_damage
+                seed_damage = calculate_leech_seed_damage(p1_max_hp)
+                battleHP1 -= seed_damage
+                battleHP2 = min(p2_max_hp, battleHP2 + seed_damage)
+                self.battle_log.append(f'🌱 {self.pokemon1.pokemonName.capitalize()} had its energy drained by Leech Seed! (-{seed_damage} HP)')
+
+            if leech_seed_2 and battleHP2 > 0 and battleHP1 > 0:
+                from helpers.specialmoves import calculate_leech_seed_damage
+                seed_damage = calculate_leech_seed_damage(p2_max_hp)
+                battleHP2 -= seed_damage
+                battleHP1 = min(p1_max_hp, battleHP1 + seed_damage)
+                self.battle_log.append(f'🌱 Enemy {self.pokemon2.pokemonName.capitalize()} had its energy drained by Leech Seed! (-{seed_damage} HP)')
+
+            # =================================================================
+            # END OF TURN — Victory/Defeat checks and burn/poison
+            # =================================================================
+            if battleHP1 <= 0:
+                self.pokemon1.currentHP = battleHP1
+                self.__defeat()
+                self.statuscode = 420
+                retVal = {'result': 'defeat'}
+                self.battle_log.append(f'Your {self.pokemon1.pokemonName.capitalize()} fainted!')
+                break
+
+            elif battleHP2 <= 0:
+                self.pokemon1.currentHP = battleHP1
+                self.__victory()
+                self.statuscode = 420
+                retVal = {'result': 'victory'}
+                self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} fainted!')
+                break
+
+            elif battleHP1 > 0 and battleHP2 > 0:
+                if pbMove['moveType'] == 'fire' and self.ailment1.freeze:
+                    self.ailment1.freeze = False  
+                    self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is no longer frozen')
+                    
+                # Burn/poison damage for player
+                if self.ailment1.burn or self.ailment1.poison:
+                    self.pokemon1.currentHP = modifiedPokemon1.currentHP
+                    battleHP1 = modifiedPokemon1.currentHP
+                    if self.ailment1.burn:
+                        self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is hurt by burn!')
+                    else:
+                        self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is hurt by poison!')
+                    if battleHP1 <= 0:
+                        self.__defeat()
+                        self.statuscode = 420
+                        retVal = {'result': 'defeat'}
+                        self.battle_log.append(f'Your {self.pokemon1.pokemonName.capitalize()} fainted!')
+                        return retVal
+
+                # Burn/poison damage for enemy
+                if self.ailment2.burn or self.ailment2.poison:
+                    self.pokemon2.currentHP = modifiedPokemon2.currentHP
+                    battleHP2 = modifiedPokemon2.currentHP
+                    if self.ailment2.burn:
+                        self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} is hurt by burn!')
+                    else:
+                        self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} is hurt by poison!')
+                    if battleHP2 <= 0:
+                        self.__victory()
+                        self.statuscode = 420
+                        retVal = {'result': 'victory'}
+                        self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} fainted!')
+                        return retVal
+
             turn_number += 1
+            move1 = None  # Reset for next auto turn
 
         return retVal
 

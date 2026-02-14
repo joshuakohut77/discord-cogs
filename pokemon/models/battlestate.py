@@ -46,6 +46,12 @@ class BattleState:
         self.player_ailment = None  # Set after creation in encounters.py
         self.enemy_ailment = None   # Set after creation in encounters.py
 
+        # Special move tracking
+        self.rest_turns_player = 0    # Turns remaining in Rest sleep for player
+        self.rest_turns_enemy = 0     # Turns remaining in Rest sleep for enemy
+        self.leech_seed_player = False # Player's Pokemon is seeded (takes damage)
+        self.leech_seed_enemy = False  # Enemy's Pokemon is seeded (takes damage)
+
 
 class WildBattleState:
     """Track ongoing wild Pokemon battle state"""
@@ -74,3 +80,9 @@ class WildBattleState:
         # Ailment tracking for manual battles
         self.player_ailment = None  # Set after creation in encounters.py
         self.enemy_ailment = None   # Set after creation in encounters.py
+
+        # Special move tracking
+        self.rest_turns_player = 0    # Turns remaining in Rest sleep for player
+        self.rest_turns_enemy = 0     # Turns remaining in Rest sleep for enemy
+        self.leech_seed_player = False # Player's Pokemon is seeded (takes damage)
+        self.leech_seed_enemy = False  # Enemy's Pokemon is seeded (takes damage)

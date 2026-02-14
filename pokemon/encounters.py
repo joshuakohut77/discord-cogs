@@ -946,7 +946,7 @@ class EncountersMixin(MixinMeta):
 
     @require_wild_battle_state()
     async def on_wild_battle_move_click(self, interaction: discord.Interaction):
-        """Handle move selection in wild battle - with ailment support"""
+        """Handle move selection in wild battle - with ailment + special move support"""
         user = interaction.user
         user_id = str(user.id)
         battle_state = self.__wild_battle_states[user_id]
@@ -960,86 +960,106 @@ class EncountersMixin(MixinMeta):
         import math
         moves_config = load_json_config('moves.json')
         type_effectiveness = load_json_config('typeEffectiveness.json')
+        from helpers.specialmoves import (
+            handle_rest, handle_recover, calculate_drain_heal,
+            calculate_night_shade_damage, calculate_leech_seed_damage,
+            check_dream_eater_valid, check_accuracy, get_special_function
+        )
 
         player_move_data = moves_config.get(move_name, {})
         player_power = player_move_data.get('power', 0)
+        player_special_fn = get_special_function(player_move_data)
 
         log_lines = []
         log_lines.append(f"**Turn {battle_state.turn_number}:**")
 
-        # Safety: init ailments if missing (e.g. battle started before this update)
+        # Safety: init ailments if missing
         if not hasattr(battle_state, 'player_ailment') or battle_state.player_ailment is None:
             battle_state.player_ailment = AilmentClass(battle_state.player_pokemon.trainerId)
             battle_state.enemy_ailment = AilmentClass('wild_enemy')
 
+        # Safety: init special move tracking if missing
+        if not hasattr(battle_state, 'rest_turns_player'):
+            battle_state.rest_turns_player = 0
+            battle_state.rest_turns_enemy = 0
+            battle_state.leech_seed_player = False
+            battle_state.leech_seed_enemy = False
+
         p_ailment = battle_state.player_ailment
         e_ailment = battle_state.enemy_ailment
 
+        p_name = battle_state.player_pokemon.pokemonName.capitalize()
+        w_name = f"Wild {battle_state.wild_pokemon.pokemonName.capitalize()}"
+        move_display = move_name.replace('-', ' ').title()
+
         # =====================================================================
-        # PLAYER'S TURN - Check if player can attack
+        # PLAYER'S TURN - Check Rest sleep first
         # =====================================================================
         player_can_attack = True
         player_burn_halve = False
+        player_hit = False
 
-        # Sleep check
-        if p_ailment.sleep:
+        if battle_state.rest_turns_player > 0:
+            battle_state.rest_turns_player -= 1
+            if battle_state.rest_turns_player == 0:
+                p_ailment.sleep = False
+                p_ailment.turnCounter = 0
+                log_lines.append(f"💤 {p_name} woke up from Rest!")
+            else:
+                log_lines.append(f"💤 {p_name} is sleeping from Rest!")
+            player_can_attack = False
+
+        elif p_ailment.sleep:
             if p_ailment.turnCounter >= random.randint(1, 7):
                 p_ailment.sleep = False
                 p_ailment.turnCounter = 0
-                log_lines.append(f"💤 {battle_state.player_pokemon.pokemonName.capitalize()} woke up!")
+                log_lines.append(f"💤 {p_name} woke up!")
             else:
                 p_ailment.turnCounter += 1
-                log_lines.append(f"💤 {battle_state.player_pokemon.pokemonName.capitalize()} is fast asleep!")
+                log_lines.append(f"💤 {p_name} is fast asleep!")
                 player_can_attack = False
 
-        # Freeze check
         elif p_ailment.freeze:
-            # 20% chance to thaw each turn (Gen 2+ behavior, Gen 1 never thaws naturally)
             if random.randint(1, 5) == 1:
                 p_ailment.freeze = False
-                log_lines.append(f"🧊 {battle_state.player_pokemon.pokemonName.capitalize()} thawed out!")
+                log_lines.append(f"🧊 {p_name} thawed out!")
             else:
-                log_lines.append(f"🧊 {battle_state.player_pokemon.pokemonName.capitalize()} is frozen solid!")
+                log_lines.append(f"🧊 {p_name} is frozen solid!")
                 player_can_attack = False
 
-        # Paralysis check (25% chance can't move)
         elif p_ailment.paralysis:
             if random.randint(1, 4) == 1:
-                log_lines.append(f"⚡ {battle_state.player_pokemon.pokemonName.capitalize()} is paralyzed and can't move!")
+                log_lines.append(f"⚡ {p_name} is paralyzed and can't move!")
                 player_can_attack = False
 
-        # Confusion check (50% chance to hit self)
         elif p_ailment.confusion:
             if p_ailment.turnCounter >= random.randint(2, 5):
                 p_ailment.confusion = False
                 p_ailment.turnCounter = 0
-                log_lines.append(f"💫 {battle_state.player_pokemon.pokemonName.capitalize()} snapped out of confusion!")
+                log_lines.append(f"💫 {p_name} snapped out of confusion!")
             else:
                 p_ailment.turnCounter += 1
                 if random.randint(1, 2) == 1:
-                    # Hit self - 40 power typeless physical attack
                     p_stats = battle_state.player_pokemon.getPokeStats()
                     self_damage = int(((2 * battle_state.player_pokemon.currentLevel / 5 + 2) * 40 * (p_stats['attack'] / p_stats['defense']) / 50 + 2))
                     self_damage = max(1, self_damage)
                     battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - self_damage)
-                    log_lines.append(f"💫 {battle_state.player_pokemon.pokemonName.capitalize()} is confused and hurt itself for {self_damage} damage!")
+                    log_lines.append(f"💫 {p_name} is confused and hurt itself for {self_damage} damage!")
                     player_can_attack = False
 
-        # Trap check
         elif p_ailment.trap:
             if p_ailment.turnCounter >= random.randint(2, 5):
                 p_ailment.trap = False
                 p_ailment.turnCounter = 0
-                log_lines.append(f"🪢 {battle_state.player_pokemon.pokemonName.capitalize()} broke free!")
+                log_lines.append(f"🪢 {p_name} broke free!")
             else:
                 p_ailment.turnCounter += 1
                 p_stats = battle_state.player_pokemon.getPokeStats()
                 trap_damage = max(1, p_stats['hp'] // 16)
                 battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - trap_damage)
-                log_lines.append(f"🪢 {battle_state.player_pokemon.pokemonName.capitalize()} is trapped! Took {trap_damage} damage!")
+                log_lines.append(f"🪢 {p_name} is trapped! Took {trap_damage} damage!")
                 player_can_attack = False
 
-        # Burn flag (doesn't prevent attack, but halves physical damage)
         if p_ailment.burn:
             player_burn_halve = True
 
@@ -1047,57 +1067,133 @@ class EncountersMixin(MixinMeta):
         # PLAYER ATTACKS (if able)
         # =====================================================================
         if player_can_attack:
-            player_damage, player_hit = calculate_battle_damage(
-                battle_state.player_pokemon,
-                battle_state.wild_pokemon,
-                move_name,
-                moves_config,
-                type_effectiveness
-            )
+            p_stats = battle_state.player_pokemon.getPokeStats()
+            p_max_hp = p_stats['hp']
+            w_stats = battle_state.wild_pokemon.getPokeStats()
+            w_max_hp = w_stats['hp']
 
-            # Halve physical damage if burned
-            if player_burn_halve and player_move_data.get('damage_class') == 'physical' and player_damage > 0:
-                player_damage = max(1, player_damage // 2)
+            if player_special_fn == 'rest':
+                heal_amount, new_hp = handle_rest(battle_state.player_pokemon.currentHP, p_max_hp)
+                battle_state.player_pokemon.currentHP = new_hp
+                battle_state.rest_turns_player = 2
+                p_ailment.resetAilments()
+                p_ailment.sleep = True
+                log_lines.append(f"• {p_name} used Rest! Recovered {heal_amount} HP and fell asleep! 💤")
+                player_hit = True
 
-            if player_hit and player_damage > 0:
-                battle_state.wild_pokemon.currentHP = max(0, battle_state.wild_pokemon.currentHP - player_damage)
-                log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}! Dealt {player_damage} damage!")
-            elif player_hit and (player_power is None or player_power == 0):
-                log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}!")
+            elif player_special_fn == 'recover':
+                actual_heal, new_hp = handle_recover(battle_state.player_pokemon.currentHP, p_max_hp)
+                battle_state.player_pokemon.currentHP = new_hp
+                log_lines.append(f"• {p_name} used Recover! Restored {actual_heal} HP! 💚")
+                player_hit = True
+
+            elif player_special_fn == 'night_shade':
+                if check_accuracy(player_move_data.get('accuracy', 100)):
+                    ns_damage = calculate_night_shade_damage(battle_state.player_pokemon.currentLevel)
+                    battle_state.wild_pokemon.currentHP = max(0, battle_state.wild_pokemon.currentHP - ns_damage)
+                    log_lines.append(f"• {p_name} used Night Shade! Dealt {ns_damage} damage!")
+                    player_hit = True
+                else:
+                    log_lines.append(f"• {p_name} used Night Shade but it missed!")
+
+            elif player_special_fn == 'leech_seed':
+                if check_accuracy(player_move_data.get('accuracy', 100)):
+                    if not battle_state.leech_seed_enemy:
+                        battle_state.leech_seed_enemy = True
+                        log_lines.append(f"• {p_name} used Leech Seed! {w_name} was seeded! 🌱")
+                    else:
+                        log_lines.append(f"• {p_name} used Leech Seed but {w_name} is already seeded!")
+                    player_hit = True
+                else:
+                    log_lines.append(f"• {p_name} used Leech Seed but it missed!")
+
+            elif player_special_fn == 'dream_eater':
+                if e_ailment.sleep or battle_state.rest_turns_enemy > 0:
+                    player_damage, player_hit = calculate_battle_damage(
+                        battle_state.player_pokemon, battle_state.wild_pokemon,
+                        move_name, moves_config, type_effectiveness
+                    )
+                    if player_burn_halve and player_move_data.get('damage_class') == 'physical' and player_damage > 0:
+                        player_damage = max(1, player_damage // 2)
+                    if player_hit and player_damage > 0:
+                        battle_state.wild_pokemon.currentHP = max(0, battle_state.wild_pokemon.currentHP - player_damage)
+                        drain_heal = calculate_drain_heal(player_damage)
+                        battle_state.player_pokemon.currentHP = min(p_max_hp, battle_state.player_pokemon.currentHP + drain_heal)
+                        log_lines.append(f"• {p_name} used Dream Eater! Dealt {player_damage} damage and drained {drain_heal} HP! 💜")
+                    elif player_hit:
+                        log_lines.append(f"• {p_name} used Dream Eater but dealt no damage!")
+                    else:
+                        log_lines.append(f"• {p_name} used Dream Eater but it missed!")
+                else:
+                    log_lines.append(f"• {p_name} used Dream Eater but it failed! Target is not asleep.")
+                    player_hit = False
+
+            elif player_special_fn == 'drain':
+                player_damage, player_hit = calculate_battle_damage(
+                    battle_state.player_pokemon, battle_state.wild_pokemon,
+                    move_name, moves_config, type_effectiveness
+                )
+                if player_burn_halve and player_move_data.get('damage_class') == 'physical' and player_damage > 0:
+                    player_damage = max(1, player_damage // 2)
+                if player_hit and player_damage > 0:
+                    battle_state.wild_pokemon.currentHP = max(0, battle_state.wild_pokemon.currentHP - player_damage)
+                    drain_heal = calculate_drain_heal(player_damage)
+                    battle_state.player_pokemon.currentHP = min(p_max_hp, battle_state.player_pokemon.currentHP + drain_heal)
+                    log_lines.append(f"• {p_name} used {move_display}! Dealt {player_damage} damage and drained {drain_heal} HP! 💚")
+                elif player_hit:
+                    log_lines.append(f"• {p_name} used {move_display}!")
+                else:
+                    log_lines.append(f"• {p_name} used {move_display} but it missed!")
+
             else:
-                log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()} but it missed!")
-                player_hit = False
+                # --- NORMAL ATTACK ---
+                player_damage, player_hit = calculate_battle_damage(
+                    battle_state.player_pokemon, battle_state.wild_pokemon,
+                    move_name, moves_config, type_effectiveness
+                )
 
-            # Roll ailment on enemy from player's move (only if move hit)
-            if player_hit:
-                ailment_name = player_move_data.get('ailment', '')
-                if ailment_name:
-                    ailment_chance = player_move_data.get('ailment_chance', 0)
-                    should_apply = False
-                    if ailment_chance == 0 and player_move_data.get('damage_class') == 'status':
-                        should_apply = True  # Pure status moves always apply
-                    elif ailment_chance > 0:
-                        should_apply = random.randint(1, 100) <= ailment_chance
+                if player_burn_halve and player_move_data.get('damage_class') == 'physical' and player_damage > 0:
+                    player_damage = max(1, player_damage // 2)
 
-                    if should_apply and not self.__has_ailment(e_ailment):
-                        e_ailment.setAilment(ailment_name)
-                        log_lines.append(f"🔥 Wild {battle_state.wild_pokemon.pokemonName.capitalize()} is now {self.__ailment_display(ailment_name)}!")
+                if player_hit and player_damage > 0:
+                    battle_state.wild_pokemon.currentHP = max(0, battle_state.wild_pokemon.currentHP - player_damage)
+                    log_lines.append(f"• {p_name} used {move_display}! Dealt {player_damage} damage!")
+                elif player_hit and (player_power is None or player_power == 0):
+                    log_lines.append(f"• {p_name} used {move_display}!")
+                else:
+                    log_lines.append(f"• {p_name} used {move_display} but it missed!")
+                    player_hit = False
 
-                # Fire moves thaw frozen enemies
-                if player_move_data.get('moveType') == 'fire' and e_ailment.freeze:
-                    e_ailment.freeze = False
-                    log_lines.append(f"🔥 Wild {battle_state.wild_pokemon.pokemonName.capitalize()} was thawed by the fire!")
+                # Roll ailment on wild pokemon
+                if player_hit:
+                    ailment_name = player_move_data.get('ailment', '')
+                    if ailment_name:
+                        ailment_chance = player_move_data.get('ailment_chance', 0)
+                        should_apply = False
+                        if ailment_chance == 0 and player_move_data.get('damage_class') == 'status':
+                            should_apply = True
+                        elif ailment_chance > 0:
+                            should_apply = random.randint(1, 100) <= ailment_chance
 
-        # Check if wild Pokemon fainted after player's attack
+                        if should_apply and not self.__has_ailment(e_ailment, battle_state.rest_turns_enemy):
+                            e_ailment.setAilment(ailment_name)
+                            log_lines.append(f"🔥 {w_name} is now {self.__ailment_display(ailment_name)}!")
+
+                    if player_move_data.get('moveType') == 'fire' and e_ailment.freeze:
+                        e_ailment.freeze = False
+                        log_lines.append(f"🔥 {w_name} was thawed by the fire!")
+
+        # =====================================================================
+        # CHECK: Did wild Pokemon faint?
+        # =====================================================================
         if battle_state.wild_pokemon.currentHP <= 0:
-            log_lines.append(f"💀 Wild {battle_state.wild_pokemon.pokemonName.capitalize()} fainted!")
+            log_lines.append(f"💀 {w_name} fainted!")
 
-            # LEADERBOARD TRACKING
+            from services.leaderboardclass import leaderboard as LeaderboardClass
             lb = LeaderboardClass(str(user.id))
             lb.victory()
             lb.actions()
 
-            # AWARD EXPERIENCE
             enc = EncounterClass(battle_state.player_pokemon, battle_state.wild_pokemon)
             enc.updateUniqueEncounters()
             expObj = exp(battle_state.wild_pokemon)
@@ -1116,13 +1212,12 @@ class EncountersMixin(MixinMeta):
 
             if levelUp:
                 new_level = battle_state.player_pokemon.currentLevel
-                log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up to {new_level}!")
+                log_lines.append(f"⬆️ {p_name} leveled up to {new_level}!")
 
             evolution_name = None
             if hasattr(battle_state.player_pokemon, 'evolvedInto') and battle_state.player_pokemon.evolvedInto:
                 evolution_name = battle_state.player_pokemon.evolvedInto
-                log_lines.append(f"✨ {battle_state.player_pokemon.pokemonName.capitalize()} is evolving into {evolution_name.capitalize()}!")
-
+                log_lines.append(f"✨ {p_name} is evolving into {evolution_name.capitalize()}!")
                 evolved_pokemon = PokemonClass(battle_state.player_pokemon.discordId, evolution_name)
                 evolved_pokemon.load()
                 battle_state.player_pokemon = evolved_pokemon
@@ -1139,7 +1234,6 @@ class EncountersMixin(MixinMeta):
 
             battle_state.battle_log = ["\n".join(log_lines)]
             battle_state.player_pokemon.save()
-
             await self.__handle_wild_battle_victory(interaction, battle_state)
 
             if hasattr(battle_state, 'level_up_data') and battle_state.level_up_data:
@@ -1158,7 +1252,7 @@ class EncountersMixin(MixinMeta):
 
         # Check if player fainted from confusion/trap self-damage before enemy turn
         if battle_state.player_pokemon.currentHP <= 0:
-            log_lines.append(f"💀 Your {battle_state.player_pokemon.pokemonName.capitalize()} fainted!")
+            log_lines.append(f"💀 Your {p_name} fainted!")
             battle_state.battle_log = ["\n".join(log_lines)]
             battle_state.player_pokemon.save()
             await self.__handle_wild_battle_defeat(interaction, battle_state)
@@ -1166,38 +1260,48 @@ class EncountersMixin(MixinMeta):
             return
 
         # =====================================================================
-        # ENEMY'S TURN - Check if enemy can attack
+        # ENEMY'S TURN - Check Rest sleep first
         # =====================================================================
         enemy_can_attack = True
 
-        if e_ailment.sleep:
+        if battle_state.rest_turns_enemy > 0:
+            battle_state.rest_turns_enemy -= 1
+            if battle_state.rest_turns_enemy == 0:
+                e_ailment.sleep = False
+                e_ailment.turnCounter = 0
+                log_lines.append(f"💤 {w_name} woke up from Rest!")
+            else:
+                log_lines.append(f"💤 {w_name} is sleeping from Rest!")
+            enemy_can_attack = False
+
+        elif e_ailment.sleep:
             if e_ailment.turnCounter >= random.randint(1, 7):
                 e_ailment.sleep = False
                 e_ailment.turnCounter = 0
-                log_lines.append(f"💤 Wild {battle_state.wild_pokemon.pokemonName.capitalize()} woke up!")
+                log_lines.append(f"💤 {w_name} woke up!")
             else:
                 e_ailment.turnCounter += 1
-                log_lines.append(f"💤 Wild {battle_state.wild_pokemon.pokemonName.capitalize()} is fast asleep!")
+                log_lines.append(f"💤 {w_name} is fast asleep!")
                 enemy_can_attack = False
 
         elif e_ailment.freeze:
             if random.randint(1, 5) == 1:
                 e_ailment.freeze = False
-                log_lines.append(f"🧊 Wild {battle_state.wild_pokemon.pokemonName.capitalize()} thawed out!")
+                log_lines.append(f"🧊 {w_name} thawed out!")
             else:
-                log_lines.append(f"🧊 Wild {battle_state.wild_pokemon.pokemonName.capitalize()} is frozen solid!")
+                log_lines.append(f"🧊 {w_name} is frozen solid!")
                 enemy_can_attack = False
 
         elif e_ailment.paralysis:
             if random.randint(1, 4) == 1:
-                log_lines.append(f"⚡ Wild {battle_state.wild_pokemon.pokemonName.capitalize()} is paralyzed and can't move!")
+                log_lines.append(f"⚡ {w_name} is paralyzed and can't move!")
                 enemy_can_attack = False
 
         elif e_ailment.confusion:
             if e_ailment.turnCounter >= random.randint(2, 5):
                 e_ailment.confusion = False
                 e_ailment.turnCounter = 0
-                log_lines.append(f"💫 Wild {battle_state.wild_pokemon.pokemonName.capitalize()} snapped out of confusion!")
+                log_lines.append(f"💫 {w_name} snapped out of confusion!")
             else:
                 e_ailment.turnCounter += 1
                 if random.randint(1, 2) == 1:
@@ -1205,71 +1309,145 @@ class EncountersMixin(MixinMeta):
                     self_damage = int(((2 * battle_state.wild_pokemon.currentLevel / 5 + 2) * 40 * (e_stats['attack'] / e_stats['defense']) / 50 + 2))
                     self_damage = max(1, self_damage)
                     battle_state.wild_pokemon.currentHP = max(0, battle_state.wild_pokemon.currentHP - self_damage)
-                    log_lines.append(f"💫 Wild {battle_state.wild_pokemon.pokemonName.capitalize()} is confused and hurt itself for {self_damage} damage!")
+                    log_lines.append(f"💫 {w_name} is confused and hurt itself for {self_damage} damage!")
                     enemy_can_attack = False
 
         elif e_ailment.trap:
             if e_ailment.turnCounter >= random.randint(2, 5):
                 e_ailment.trap = False
                 e_ailment.turnCounter = 0
-                log_lines.append(f"🪢 Wild {battle_state.wild_pokemon.pokemonName.capitalize()} broke free!")
+                log_lines.append(f"🪢 {w_name} broke free!")
             else:
                 e_ailment.turnCounter += 1
                 e_stats = battle_state.wild_pokemon.getPokeStats()
                 trap_damage = max(1, e_stats['hp'] // 16)
                 battle_state.wild_pokemon.currentHP = max(0, battle_state.wild_pokemon.currentHP - trap_damage)
-                log_lines.append(f"🪢 Wild {battle_state.wild_pokemon.pokemonName.capitalize()} is trapped! Took {trap_damage} damage!")
+                log_lines.append(f"🪢 {w_name} is trapped! Took {trap_damage} damage!")
                 enemy_can_attack = False
 
-        enemy_burn_halve = e_ailment.burn
-
         # =====================================================================
-        # ENEMY ATTACKS (if able)
+        # WILD POKEMON ATTACKS (if able)
         # =====================================================================
         if enemy_can_attack:
             wild_moves = [m for m in battle_state.wild_pokemon.getMoves() if m and m.lower() != 'none']
             if wild_moves:
                 wild_move_name = random.choice(wild_moves)
                 wild_move_data = moves_config.get(wild_move_name, {})
+                wild_special_fn = get_special_function(wild_move_data)
+                wild_move_display = wild_move_name.replace('-', ' ').title()
 
-                wild_damage, wild_hit = calculate_battle_damage(
-                    battle_state.wild_pokemon,
-                    battle_state.player_pokemon,
-                    wild_move_name,
-                    moves_config,
-                    type_effectiveness
-                )
+                w_stats = battle_state.wild_pokemon.getPokeStats()
+                w_max_hp = w_stats['hp']
+                p_stats = battle_state.player_pokemon.getPokeStats()
+                p_max_hp = p_stats['hp']
 
-                if enemy_burn_halve and wild_move_data.get('damage_class') == 'physical' and wild_damage > 0:
-                    wild_damage = max(1, wild_damage // 2)
+                wild_burn_halve = e_ailment.burn
 
-                if wild_hit and wild_damage > 0:
-                    battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - wild_damage)
-                    log_lines.append(f"• Wild {battle_state.wild_pokemon.pokemonName.capitalize()} used {wild_move_name.replace('-', ' ').title()}! Dealt {wild_damage} damage!")
-                elif wild_hit and (wild_move_data.get('power') is None or wild_move_data.get('power', 0) == 0):
-                    log_lines.append(f"• Wild {battle_state.wild_pokemon.pokemonName.capitalize()} used {wild_move_name.replace('-', ' ').title()}!")
+                if wild_special_fn == 'rest':
+                    heal_amount, new_hp = handle_rest(battle_state.wild_pokemon.currentHP, w_max_hp)
+                    battle_state.wild_pokemon.currentHP = new_hp
+                    battle_state.rest_turns_enemy = 2
+                    e_ailment.resetAilments()
+                    e_ailment.sleep = True
+                    log_lines.append(f"• {w_name} used Rest! Recovered {heal_amount} HP and fell asleep! 💤")
+
+                elif wild_special_fn == 'recover':
+                    actual_heal, new_hp = handle_recover(battle_state.wild_pokemon.currentHP, w_max_hp)
+                    battle_state.wild_pokemon.currentHP = new_hp
+                    log_lines.append(f"• {w_name} used Recover! Restored {actual_heal} HP! 💚")
+
+                elif wild_special_fn == 'night_shade':
+                    if check_accuracy(wild_move_data.get('accuracy', 100)):
+                        ns_damage = calculate_night_shade_damage(battle_state.wild_pokemon.currentLevel)
+                        battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - ns_damage)
+                        log_lines.append(f"• {w_name} used Night Shade! Dealt {ns_damage} damage!")
+                    else:
+                        log_lines.append(f"• {w_name} used Night Shade but it missed!")
+
+                elif wild_special_fn == 'leech_seed':
+                    if check_accuracy(wild_move_data.get('accuracy', 100)):
+                        if not battle_state.leech_seed_player:
+                            battle_state.leech_seed_player = True
+                            log_lines.append(f"• {w_name} used Leech Seed! Your Pokemon was seeded! 🌱")
+                        else:
+                            log_lines.append(f"• {w_name} used Leech Seed but your Pokemon is already seeded!")
+                    else:
+                        log_lines.append(f"• {w_name} used Leech Seed but it missed!")
+
+                elif wild_special_fn == 'dream_eater':
+                    if p_ailment.sleep or battle_state.rest_turns_player > 0:
+                        wild_damage, wild_hit = calculate_battle_damage(
+                            battle_state.wild_pokemon, battle_state.player_pokemon,
+                            wild_move_name, moves_config, type_effectiveness
+                        )
+                        if wild_burn_halve and wild_move_data.get('damage_class') == 'physical' and wild_damage > 0:
+                            wild_damage = max(1, wild_damage // 2)
+                        if wild_hit and wild_damage > 0:
+                            battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - wild_damage)
+                            drain_heal = calculate_drain_heal(wild_damage)
+                            battle_state.wild_pokemon.currentHP = min(w_max_hp, battle_state.wild_pokemon.currentHP + drain_heal)
+                            log_lines.append(f"• {w_name} used Dream Eater! Dealt {wild_damage} damage and drained {drain_heal} HP! 💜")
+                        elif wild_hit:
+                            log_lines.append(f"• {w_name} used Dream Eater but dealt no damage!")
+                        else:
+                            log_lines.append(f"• {w_name} used Dream Eater but it missed!")
+                    else:
+                        log_lines.append(f"• {w_name} used Dream Eater but it failed! Target is not asleep.")
+
+                elif wild_special_fn == 'drain':
+                    wild_damage, wild_hit = calculate_battle_damage(
+                        battle_state.wild_pokemon, battle_state.player_pokemon,
+                        wild_move_name, moves_config, type_effectiveness
+                    )
+                    if wild_burn_halve and wild_move_data.get('damage_class') == 'physical' and wild_damage > 0:
+                        wild_damage = max(1, wild_damage // 2)
+                    if wild_hit and wild_damage > 0:
+                        battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - wild_damage)
+                        drain_heal = calculate_drain_heal(wild_damage)
+                        battle_state.wild_pokemon.currentHP = min(w_max_hp, battle_state.wild_pokemon.currentHP + drain_heal)
+                        log_lines.append(f"• {w_name} used {wild_move_display}! Dealt {wild_damage} damage and drained {drain_heal} HP! 💚")
+                    elif wild_hit:
+                        log_lines.append(f"• {w_name} used {wild_move_display}!")
+                    else:
+                        log_lines.append(f"• {w_name} used {wild_move_display} but it missed!")
+
                 else:
-                    log_lines.append(f"• Wild {battle_state.wild_pokemon.pokemonName.capitalize()} used {wild_move_name.replace('-', ' ').title()} but it missed!")
-                    wild_hit = False
+                    # --- NORMAL WILD ATTACK ---
+                    wild_damage, wild_hit = calculate_battle_damage(
+                        battle_state.wild_pokemon, battle_state.player_pokemon,
+                        wild_move_name, moves_config, type_effectiveness
+                    )
 
-                # Roll ailment on player from enemy's move
-                if wild_hit:
-                    ailment_name = wild_move_data.get('ailment', '')
-                    if ailment_name:
-                        ailment_chance = wild_move_data.get('ailment_chance', 0)
-                        should_apply = False
-                        if ailment_chance == 0 and wild_move_data.get('damage_class') == 'status':
-                            should_apply = True
-                        elif ailment_chance > 0:
-                            should_apply = random.randint(1, 100) <= ailment_chance
+                    if wild_burn_halve and wild_move_data.get('damage_class') == 'physical' and wild_damage > 0:
+                        wild_damage = max(1, wild_damage // 2)
 
-                        if should_apply and not self.__has_ailment(p_ailment):
-                            p_ailment.setAilment(ailment_name)
-                            log_lines.append(f"🔥 {battle_state.player_pokemon.pokemonName.capitalize()} is now {self.__ailment_display(ailment_name)}!")
+                    if wild_hit and wild_damage > 0:
+                        battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - wild_damage)
+                        log_lines.append(f"• {w_name} used {wild_move_display}! Dealt {wild_damage} damage!")
+                    elif wild_hit and (wild_move_data.get('power') is None or wild_move_data.get('power', 0) == 0):
+                        log_lines.append(f"• {w_name} used {wild_move_display}!")
+                    else:
+                        log_lines.append(f"• {w_name} used {wild_move_display} but it missed!")
+                        wild_hit = False
 
-                    if wild_move_data.get('moveType') == 'fire' and p_ailment.freeze:
-                        p_ailment.freeze = False
-                        log_lines.append(f"🔥 {battle_state.player_pokemon.pokemonName.capitalize()} was thawed by the fire!")
+                    # Roll ailment on player
+                    if wild_hit:
+                        ailment_name = wild_move_data.get('ailment', '')
+                        if ailment_name:
+                            ailment_chance = wild_move_data.get('ailment_chance', 0)
+                            should_apply = False
+                            if ailment_chance == 0 and wild_move_data.get('damage_class') == 'status':
+                                should_apply = True
+                            elif ailment_chance > 0:
+                                should_apply = random.randint(1, 100) <= ailment_chance
+
+                            if should_apply and not self.__has_ailment(p_ailment, battle_state.rest_turns_player):
+                                p_ailment.setAilment(ailment_name)
+                                log_lines.append(f"🔥 {p_name} is now {self.__ailment_display(ailment_name)}!")
+
+                        if wild_move_data.get('moveType') == 'fire' and p_ailment.freeze:
+                            p_ailment.freeze = False
+                            log_lines.append(f"🔥 {p_name} was thawed by the fire!")
 
         # =====================================================================
         # END OF TURN - Burn/Poison residual damage
@@ -1278,33 +1456,53 @@ class EncountersMixin(MixinMeta):
             p_stats = battle_state.player_pokemon.getPokeStats()
             burn_damage = max(1, p_stats['hp'] // 16)
             battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - burn_damage)
-            log_lines.append(f"🔥 {battle_state.player_pokemon.pokemonName.capitalize()} is hurt by its burn! (-{burn_damage})")
+            log_lines.append(f"🔥 {p_name} is hurt by its burn! (-{burn_damage})")
 
         if p_ailment.poison and battle_state.player_pokemon.currentHP > 0:
             p_stats = battle_state.player_pokemon.getPokeStats()
             poison_damage = max(1, p_stats['hp'] // 16)
             battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - poison_damage)
-            log_lines.append(f"☠️ {battle_state.player_pokemon.pokemonName.capitalize()} is hurt by poison! (-{poison_damage})")
+            log_lines.append(f"☠️ {p_name} is hurt by poison! (-{poison_damage})")
 
         if e_ailment.burn and battle_state.wild_pokemon.currentHP > 0:
             e_stats = battle_state.wild_pokemon.getPokeStats()
             burn_damage = max(1, e_stats['hp'] // 16)
             battle_state.wild_pokemon.currentHP = max(0, battle_state.wild_pokemon.currentHP - burn_damage)
-            log_lines.append(f"🔥 Wild {battle_state.wild_pokemon.pokemonName.capitalize()} is hurt by its burn! (-{burn_damage})")
+            log_lines.append(f"🔥 {w_name} is hurt by its burn! (-{burn_damage})")
 
         if e_ailment.poison and battle_state.wild_pokemon.currentHP > 0:
             e_stats = battle_state.wild_pokemon.getPokeStats()
             poison_damage = max(1, e_stats['hp'] // 16)
             battle_state.wild_pokemon.currentHP = max(0, battle_state.wild_pokemon.currentHP - poison_damage)
-            log_lines.append(f"☠️ Wild {battle_state.wild_pokemon.pokemonName.capitalize()} is hurt by poison! (-{poison_damage})")
+            log_lines.append(f"☠️ {w_name} is hurt by poison! (-{poison_damage})")
+
+        # =====================================================================
+        # END OF TURN - Leech Seed drain
+        # =====================================================================
+        if battle_state.leech_seed_player and battle_state.player_pokemon.currentHP > 0:
+            p_stats = battle_state.player_pokemon.getPokeStats()
+            seed_damage = calculate_leech_seed_damage(p_stats['hp'])
+            battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - seed_damage)
+            w_stats = battle_state.wild_pokemon.getPokeStats()
+            battle_state.wild_pokemon.currentHP = min(w_stats['hp'], battle_state.wild_pokemon.currentHP + seed_damage)
+            log_lines.append(f"🌱 {p_name} had its energy drained by Leech Seed! (-{seed_damage} HP)")
+
+        if battle_state.leech_seed_enemy and battle_state.wild_pokemon.currentHP > 0:
+            w_stats = battle_state.wild_pokemon.getPokeStats()
+            seed_damage = calculate_leech_seed_damage(w_stats['hp'])
+            battle_state.wild_pokemon.currentHP = max(0, battle_state.wild_pokemon.currentHP - seed_damage)
+            p_stats = battle_state.player_pokemon.getPokeStats()
+            battle_state.player_pokemon.currentHP = min(p_stats['hp'], battle_state.player_pokemon.currentHP + seed_damage)
+            log_lines.append(f"🌱 {w_name} had its energy drained by Leech Seed! (-{seed_damage} HP)")
 
         # =====================================================================
         # POST-TURN FAINT CHECKS
         # =====================================================================
-        # Check if wild Pokemon fainted from burn/poison
+        # Check if wild Pokemon fainted from burn/poison/leech seed
         if battle_state.wild_pokemon.currentHP <= 0:
-            log_lines.append(f"💀 Wild {battle_state.wild_pokemon.pokemonName.capitalize()} fainted!")
+            log_lines.append(f"💀 {w_name} fainted!")
 
+            from services.leaderboardclass import leaderboard as LeaderboardClass
             lb = LeaderboardClass(str(user.id))
             lb.victory()
             lb.actions()
@@ -1327,12 +1525,12 @@ class EncountersMixin(MixinMeta):
 
             if levelUp:
                 new_level = battle_state.player_pokemon.currentLevel
-                log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up to {new_level}!")
+                log_lines.append(f"⬆️ {p_name} leveled up to {new_level}!")
 
             evolution_name = None
             if hasattr(battle_state.player_pokemon, 'evolvedInto') and battle_state.player_pokemon.evolvedInto:
                 evolution_name = battle_state.player_pokemon.evolvedInto
-                log_lines.append(f"✨ {battle_state.player_pokemon.pokemonName.capitalize()} is evolving into {evolution_name.capitalize()}!")
+                log_lines.append(f"✨ {p_name} is evolving into {evolution_name.capitalize()}!")
                 evolved_pokemon = PokemonClass(battle_state.player_pokemon.discordId, evolution_name)
                 evolved_pokemon.load()
                 battle_state.player_pokemon = evolved_pokemon
@@ -1365,11 +1563,17 @@ class EncountersMixin(MixinMeta):
             del self.__wild_battle_states[user_id]
             return
 
-        # Check if player fainted from burn/poison/enemy attack
+        # Check if player fainted from burn/poison/leech seed/enemy attack
         if battle_state.player_pokemon.currentHP <= 0:
-            log_lines.append(f"💀 Your {battle_state.player_pokemon.pokemonName.capitalize()} fainted!")
+            log_lines.append(f"💀 Your {p_name} fainted!")
             battle_state.battle_log = ["\n".join(log_lines)]
             battle_state.player_pokemon.save()
+
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.defeat()
+            lb.actions()
+
             await self.__handle_wild_battle_defeat(interaction, battle_state)
             del self.__wild_battle_states[user_id]
             return
@@ -1381,67 +1585,6 @@ class EncountersMixin(MixinMeta):
         embed = self.__create_wild_battle_embed(user, battle_state)
         view = self.__create_battle_move_buttons_with_items(battle_state)
         await interaction.message.edit(embed=embed, view=view)
-
-    # def __create_wild_battle_move_buttons(self, battle_state: WildBattleState) -> View:
-    #     """Create buttons for moves, run away, and catch options"""
-    #     view = View()
-    #     moves = battle_state.player_pokemon.getMoves()
-        
-    #     # Load move data to show power/type
-    #     try:
-    #         p = os.path.join(os.path.dirname(__file__), 'configs', 'moves.json')
-    #         with open(p, 'r') as f:
-    #             moves_config = json.load(f)
-    #     except:
-    #         moves_config = {}
-        
-    #     # Add move buttons (in a row)
-    #     move_buttons = []
-    #     for i, move_name in enumerate(moves):
-    #         if move_name and move_name.lower() != 'none':
-    #             move_data = moves_config.get(move_name, {})
-    #             power = move_data.get('power', 0)
-    #             move_type = move_data.get('moveType', '???')
-                
-    #             if power and power > 0:
-    #                 label = f"{move_name.replace('-', ' ').title()} ({power})"
-    #             else:
-    #                 label = f"{move_name.replace('-', ' ').title()}"
-                
-    #             button = Button(
-    #                 style=ButtonStyle.primary, 
-    #                 label=label, 
-    #                 custom_id=f'wild_battle_move_{move_name}',
-    #                 row=0
-    #             )
-    #             button.callback = self.on_wild_battle_move_click
-    #             move_buttons.append(button)
-        
-    #     for btn in move_buttons[:4]:  # Max 4 moves
-    #         view.add_item(btn)
-        
-    #     # Add Run Away button (second row)
-    #     run_button = Button(
-    #         style=ButtonStyle.danger, 
-    #         label="🏃 Run Away", 
-    #         custom_id='wild_battle_run',
-    #         row=1
-    #     )
-    #     run_button.callback = self.on_wild_battle_run_click
-    #     view.add_item(run_button)
-        
-    #     # Add Catch button (second row)
-    #     catch_button = Button(
-    #         style=ButtonStyle.success, 
-    #         label="Catch", 
-    #         custom_id='wild_battle_catch',
-    #         row=1
-    #     )
-    #     catch_button.callback = self.on_wild_battle_catch_click
-    #     view.add_item(catch_button)
-        
-    #     return view
-
 
     def __create_wild_battle_embed(self, user: discord.User, battle_state: WildBattleState) -> discord.Embed:
         """Create an embed showing the current wild battle state"""
@@ -1456,8 +1599,10 @@ class EncountersMixin(MixinMeta):
         wild_hp_pct = (wild_poke.currentHP / wild_stats['hp']) * 100 if wild_stats['hp'] > 0 else 0
 
         # Get ailment emojis
-        p_ailment_emoji = self.__get_ailment_emoji(getattr(battle_state, 'player_ailment', None))
-        e_ailment_emoji = self.__get_ailment_emoji(getattr(battle_state, 'enemy_ailment', None))
+        p_ailment_emoji = self.__get_ailment_emoji(battle_state.player_ailment, getattr(battle_state, 'rest_turns_player', 0))
+        e_ailment_emoji = self.__get_ailment_emoji(battle_state.enemy_ailment, getattr(battle_state, 'rest_turns_enemy', 0))
+
+
 
         embed = discord.Embed(
             title=f"⚔️ Wild Battle: {user.display_name} vs Wild {wild_poke.pokemonName.capitalize()}",
@@ -5123,9 +5268,9 @@ class EncountersMixin(MixinMeta):
         enemy_hp_pct = (enemy_poke.currentHP / enemy_stats['hp']) * 100 if enemy_stats['hp'] > 0 else 0
 
         # Get ailment emojis
-        p_ailment_emoji = self.__get_ailment_emoji(getattr(battle_state, 'player_ailment', None))
-        e_ailment_emoji = self.__get_ailment_emoji(getattr(battle_state, 'enemy_ailment', None))
-        
+        p_ailment_emoji = self.__get_ailment_emoji(battle_state.player_ailment, getattr(battle_state, 'rest_turns_player', 0))
+        e_ailment_emoji = self.__get_ailment_emoji(battle_state.enemy_ailment, getattr(battle_state, 'rest_turns_enemy', 0))
+
         embed = discord.Embed(
             title=f"⚔️ Battle: {user.display_name} vs {battle_state.enemy_name}",
             description=f"**Turn {battle_state.turn_number}**\nChoose your move!",
@@ -5171,43 +5316,9 @@ class EncountersMixin(MixinMeta):
         return embed
 
 
-    # def __create_move_buttons(self, battle_state: BattleState) -> View:
-    #     """Create buttons for each of the player's Pokemon's moves"""
-    #     view = View()
-    #     moves = battle_state.player_pokemon.getMoves()
-        
-    #     # Load move data to show power/type
-    #     try:
-    #         p = os.path.join(os.path.dirname(__file__), 'configs', 'moves.json')
-    #         with open(p, 'r') as f:
-    #             moves_config = json.load(f)
-    #     except:
-    #         moves_config = {}
-        
-    #     for i, move_name in enumerate(moves):
-    #         if move_name and move_name.lower() != 'none':
-    #             move_data = moves_config.get(move_name, {})
-    #             power = move_data.get('power', 0)
-    #             move_type = move_data.get('moveType', '???')
-                
-    #             # Create button label with move info
-    #             if power and power > 0:
-    #                 label = f"{move_name.replace('-', ' ').title()} ({move_type.title()}, PWR:{power})"
-    #             else:
-    #                 label = f"{move_name.replace('-', ' ').title()} ({move_type.title()})"
-                
-    #             button = Button(
-    #                 style=ButtonStyle.primary,
-    #                 label=label[:80],  # Discord label limit
-    #                 custom_id=f'battle_move_{move_name}'
-    #             )
-    #             button.callback = self.on_battle_move_click
-    #             view.add_item(button)
-        
-    #     return view
 
     async def on_battle_move_click(self, interaction: discord.Interaction):
-        """Handle when player selects a move during manual battle - with ailment support"""
+        """Handle when player selects a move during manual battle - with ailment + special move support"""
         user = interaction.user
         user_id = str(user.id)
 
@@ -5229,9 +5340,15 @@ class EncountersMixin(MixinMeta):
         import math
         moves_config = load_json_config('moves.json')
         type_effectiveness = load_json_config('typeEffectiveness.json')
+        from helpers.specialmoves import (
+            handle_rest, handle_recover, calculate_drain_heal,
+            calculate_night_shade_damage, calculate_leech_seed_damage,
+            check_dream_eater_valid, check_accuracy, get_special_function
+        )
 
         player_move_data = moves_config.get(move_name, {})
         player_power = player_move_data.get('power', 0)
+        player_special_fn = get_special_function(player_move_data)
 
         log_lines = []
         log_lines.append(f"**Turn {battle_state.turn_number}:**")
@@ -5241,215 +5358,478 @@ class EncountersMixin(MixinMeta):
             battle_state.player_ailment = AilmentClass(battle_state.player_pokemon.trainerId)
             battle_state.enemy_ailment = AilmentClass('trainer_enemy')
 
+        # Safety: init special move tracking if missing (battles started before this update)
+        if not hasattr(battle_state, 'rest_turns_player'):
+            battle_state.rest_turns_player = 0
+            battle_state.rest_turns_enemy = 0
+            battle_state.leech_seed_player = False
+            battle_state.leech_seed_enemy = False
+
         p_ailment = battle_state.player_ailment
         e_ailment = battle_state.enemy_ailment
 
+        p_name = battle_state.player_pokemon.pokemonName.capitalize()
+        e_name = f"Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()}"
+        move_display = move_name.replace('-', ' ').title()
+
         # =====================================================================
-        # PLAYER'S TURN - Check ailments
+        # PLAYER'S TURN - Check Rest sleep first
         # =====================================================================
         player_can_attack = True
         player_burn_halve = False
+        player_hit = False
 
-        if p_ailment.sleep:
+        # Rest sleep check (overrides normal sleep)
+        if battle_state.rest_turns_player > 0:
+            battle_state.rest_turns_player -= 1
+            if battle_state.rest_turns_player == 0:
+                p_ailment.sleep = False
+                p_ailment.turnCounter = 0
+                log_lines.append(f"💤 {p_name} woke up from Rest!")
+            else:
+                log_lines.append(f"💤 {p_name} is sleeping from Rest!")
+            player_can_attack = False
+
+        # Normal ailment checks (only if not in Rest sleep)
+        elif p_ailment.sleep:
             if p_ailment.turnCounter >= random.randint(1, 7):
                 p_ailment.sleep = False
                 p_ailment.turnCounter = 0
-                log_lines.append(f"💤 {battle_state.player_pokemon.pokemonName.capitalize()} woke up!")
+                log_lines.append(f"💤 {p_name} woke up!")
             else:
                 p_ailment.turnCounter += 1
-                log_lines.append(f"💤 {battle_state.player_pokemon.pokemonName.capitalize()} is fast asleep!")
+                log_lines.append(f"💤 {p_name} is fast asleep!")
                 player_can_attack = False
 
         elif p_ailment.freeze:
             if random.randint(1, 5) == 1:
                 p_ailment.freeze = False
-                log_lines.append(f"🧊 {battle_state.player_pokemon.pokemonName.capitalize()} thawed out!")
+                log_lines.append(f"🧊 {p_name} thawed out!")
             else:
-                log_lines.append(f"🧊 {battle_state.player_pokemon.pokemonName.capitalize()} is frozen solid!")
+                log_lines.append(f"🧊 {p_name} is frozen solid!")
                 player_can_attack = False
 
         elif p_ailment.paralysis:
             if random.randint(1, 4) == 1:
-                log_lines.append(f"⚡ {battle_state.player_pokemon.pokemonName.capitalize()} is paralyzed and can't move!")
+                log_lines.append(f"⚡ {p_name} is paralyzed and can't move!")
                 player_can_attack = False
 
         elif p_ailment.confusion:
             if p_ailment.turnCounter >= random.randint(2, 5):
                 p_ailment.confusion = False
                 p_ailment.turnCounter = 0
-                log_lines.append(f"💫 {battle_state.player_pokemon.pokemonName.capitalize()} snapped out of confusion!")
+                log_lines.append(f"💫 {p_name} snapped out of confusion!")
             else:
                 p_ailment.turnCounter += 1
-                log_lines.append(f"💫 {battle_state.player_pokemon.pokemonName.capitalize()} is confused!")
                 if random.randint(1, 2) == 1:
                     p_stats = battle_state.player_pokemon.getPokeStats()
                     self_damage = int(((2 * battle_state.player_pokemon.currentLevel / 5 + 2) * 40 * (p_stats['attack'] / p_stats['defense']) / 50 + 2))
                     self_damage = max(1, self_damage)
                     battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - self_damage)
-                    log_lines.append(f"💫 {battle_state.player_pokemon.pokemonName.capitalize()} is confused and hurt itself for {self_damage} damage!")
+                    log_lines.append(f"💫 {p_name} is confused and hurt itself for {self_damage} damage!")
                     player_can_attack = False
 
         elif p_ailment.trap:
             if p_ailment.turnCounter >= random.randint(2, 5):
                 p_ailment.trap = False
                 p_ailment.turnCounter = 0
-                log_lines.append(f"🪢 {battle_state.player_pokemon.pokemonName.capitalize()} broke free!")
+                log_lines.append(f"🪢 {p_name} broke free!")
             else:
                 p_ailment.turnCounter += 1
                 p_stats = battle_state.player_pokemon.getPokeStats()
                 trap_damage = max(1, p_stats['hp'] // 16)
                 battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - trap_damage)
-                log_lines.append(f"🪢 {battle_state.player_pokemon.pokemonName.capitalize()} is trapped! Took {trap_damage} damage!")
+                log_lines.append(f"🪢 {p_name} is trapped! Took {trap_damage} damage!")
                 player_can_attack = False
 
         if p_ailment.burn:
             player_burn_halve = True
 
         # =====================================================================
-        # PLAYER ATTACKS
+        # PLAYER ATTACKS (if able)
         # =====================================================================
         if player_can_attack:
-            player_damage, player_hit = calculate_battle_damage(
-                battle_state.player_pokemon,
-                battle_state.enemy_pokemon,
-                move_name,
-                moves_config,
-                type_effectiveness
-            )
+            p_stats = battle_state.player_pokemon.getPokeStats()
+            p_max_hp = p_stats['hp']
+            e_stats = battle_state.enemy_pokemon.getPokeStats()
+            e_max_hp = e_stats['hp']
 
-            if player_burn_halve and player_move_data.get('damage_class') == 'physical' and player_damage > 0:
-                player_damage = max(1, player_damage // 2)
+            if player_special_fn == 'rest':
+                heal_amount, new_hp = handle_rest(battle_state.player_pokemon.currentHP, p_max_hp)
+                battle_state.player_pokemon.currentHP = new_hp
+                battle_state.rest_turns_player = 2
+                p_ailment.resetAilments()
+                p_ailment.sleep = True
+                log_lines.append(f"• {p_name} used Rest! Recovered {heal_amount} HP and fell asleep! 💤")
+                player_hit = True
 
-            if player_hit and player_damage > 0:
-                battle_state.enemy_pokemon.currentHP = max(0, battle_state.enemy_pokemon.currentHP - player_damage)
-                log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}! Dealt {player_damage} damage!")
-            elif player_hit and (player_power is None or player_power == 0):
-                log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()}!")
+            elif player_special_fn == 'recover':
+                actual_heal, new_hp = handle_recover(battle_state.player_pokemon.currentHP, p_max_hp)
+                battle_state.player_pokemon.currentHP = new_hp
+                log_lines.append(f"• {p_name} used Recover! Restored {actual_heal} HP! 💚")
+                player_hit = True
+
+            elif player_special_fn == 'night_shade':
+                if check_accuracy(player_move_data.get('accuracy', 100)):
+                    ns_damage = calculate_night_shade_damage(battle_state.player_pokemon.currentLevel)
+                    battle_state.enemy_pokemon.currentHP = max(0, battle_state.enemy_pokemon.currentHP - ns_damage)
+                    log_lines.append(f"• {p_name} used Night Shade! Dealt {ns_damage} damage!")
+                    player_hit = True
+                else:
+                    log_lines.append(f"• {p_name} used Night Shade but it missed!")
+
+            elif player_special_fn == 'leech_seed':
+                if check_accuracy(player_move_data.get('accuracy', 100)):
+                    if not battle_state.leech_seed_enemy:
+                        battle_state.leech_seed_enemy = True
+                        log_lines.append(f"• {p_name} used Leech Seed! {e_name} was seeded! 🌱")
+                    else:
+                        log_lines.append(f"• {p_name} used Leech Seed but {e_name} is already seeded!")
+                    player_hit = True
+                else:
+                    log_lines.append(f"• {p_name} used Leech Seed but it missed!")
+
+            elif player_special_fn == 'dream_eater':
+                if e_ailment.sleep or battle_state.rest_turns_enemy > 0:
+                    player_damage, player_hit = calculate_battle_damage(
+                        battle_state.player_pokemon, battle_state.enemy_pokemon,
+                        move_name, moves_config, type_effectiveness
+                    )
+                    if player_burn_halve and player_move_data.get('damage_class') == 'physical' and player_damage > 0:
+                        player_damage = max(1, player_damage // 2)
+                    if player_hit and player_damage > 0:
+                        battle_state.enemy_pokemon.currentHP = max(0, battle_state.enemy_pokemon.currentHP - player_damage)
+                        drain_heal = calculate_drain_heal(player_damage)
+                        battle_state.player_pokemon.currentHP = min(p_max_hp, battle_state.player_pokemon.currentHP + drain_heal)
+                        log_lines.append(f"• {p_name} used Dream Eater! Dealt {player_damage} damage and drained {drain_heal} HP! 💜")
+                    elif player_hit:
+                        log_lines.append(f"• {p_name} used Dream Eater but dealt no damage!")
+                    else:
+                        log_lines.append(f"• {p_name} used Dream Eater but it missed!")
+                else:
+                    log_lines.append(f"• {p_name} used Dream Eater but it failed! Target is not asleep.")
+                    player_hit = False
+
+            elif player_special_fn == 'drain':
+                player_damage, player_hit = calculate_battle_damage(
+                    battle_state.player_pokemon, battle_state.enemy_pokemon,
+                    move_name, moves_config, type_effectiveness
+                )
+                if player_burn_halve and player_move_data.get('damage_class') == 'physical' and player_damage > 0:
+                    player_damage = max(1, player_damage // 2)
+                if player_hit and player_damage > 0:
+                    battle_state.enemy_pokemon.currentHP = max(0, battle_state.enemy_pokemon.currentHP - player_damage)
+                    drain_heal = calculate_drain_heal(player_damage)
+                    battle_state.player_pokemon.currentHP = min(p_max_hp, battle_state.player_pokemon.currentHP + drain_heal)
+                    log_lines.append(f"• {p_name} used {move_display}! Dealt {player_damage} damage and drained {drain_heal} HP! 💚")
+                elif player_hit:
+                    log_lines.append(f"• {p_name} used {move_display}!")
+                else:
+                    log_lines.append(f"• {p_name} used {move_display} but it missed!")
+
             else:
-                log_lines.append(f"• {battle_state.player_pokemon.pokemonName.capitalize()} used {move_name.replace('-', ' ').title()} but it missed!")
-                player_hit = False
+                # --- NORMAL ATTACK (existing logic) ---
+                player_damage, player_hit = calculate_battle_damage(
+                    battle_state.player_pokemon, battle_state.enemy_pokemon,
+                    move_name, moves_config, type_effectiveness
+                )
 
-            # Roll ailment on enemy
-            if player_hit:
-                ailment_name = player_move_data.get('ailment', '')
-                if ailment_name:
-                    ailment_chance = player_move_data.get('ailment_chance', 0)
-                    should_apply = False
-                    if ailment_chance == 0 and player_move_data.get('damage_class') == 'status':
-                        should_apply = True
-                    elif ailment_chance > 0:
-                        should_apply = random.randint(1, 100) <= ailment_chance
+                if player_burn_halve and player_move_data.get('damage_class') == 'physical' and player_damage > 0:
+                    player_damage = max(1, player_damage // 2)
 
-                    if should_apply and not self.__has_ailment(e_ailment):
-                        e_ailment.setAilment(ailment_name)
-                        log_lines.append(f"🔥 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} is now {self.__ailment_display(ailment_name)}!")
+                if player_hit and player_damage > 0:
+                    battle_state.enemy_pokemon.currentHP = max(0, battle_state.enemy_pokemon.currentHP - player_damage)
+                    log_lines.append(f"• {p_name} used {move_display}! Dealt {player_damage} damage!")
+                elif player_hit and (player_power is None or player_power == 0):
+                    log_lines.append(f"• {p_name} used {move_display}!")
+                else:
+                    log_lines.append(f"• {p_name} used {move_display} but it missed!")
+                    player_hit = False
 
-                if player_move_data.get('moveType') == 'fire' and e_ailment.freeze:
-                    e_ailment.freeze = False
-                    log_lines.append(f"🔥 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} was thawed by the fire!")
+                # Roll ailment on enemy (only for normal moves, special moves don't roll ailments)
+                if player_hit:
+                    ailment_name = player_move_data.get('ailment', '')
+                    if ailment_name:
+                        ailment_chance = player_move_data.get('ailment_chance', 0)
+                        should_apply = False
+                        if ailment_chance == 0 and player_move_data.get('damage_class') == 'status':
+                            should_apply = True
+                        elif ailment_chance > 0:
+                            should_apply = random.randint(1, 100) <= ailment_chance
+
+                        if should_apply and not self.__has_ailment(e_ailment, battle_state.rest_turns_enemy):
+                            e_ailment.setAilment(ailment_name)
+                            log_lines.append(f"🔥 {e_name} is now {self.__ailment_display(ailment_name)}!")
+
+                    if player_move_data.get('moveType') == 'fire' and e_ailment.freeze:
+                        e_ailment.freeze = False
+                        log_lines.append(f"🔥 {e_name} was thawed by the fire!")
 
         # =====================================================================
-        # CHECK ENEMY FAINTED (from player attack)
+        # CHECK: Did enemy Pokemon faint?
         # =====================================================================
         if battle_state.enemy_pokemon.currentHP <= 0:
-            log_lines.append(f"💀 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} fainted!")
-
-            # AWARD EXPERIENCE
-            enc = EncounterClass(battle_state.player_pokemon, battle_state.enemy_pokemon)
-            enc.updateUniqueEncounters()
-            expObj = exp(battle_state.enemy_pokemon)
-            expGained = expObj.getExpGained()
-            evGained = expObj.getEffortValue()
-
-            current_hp = battle_state.player_pokemon.currentHP
-            old_level = battle_state.player_pokemon.currentLevel
-            levelUp, expMsg, pendingMoves = battle_state.player_pokemon.processBattleOutcome(expGained, evGained, current_hp)
-
-            auto_learned_moves = []
-            if expMsg and "learned" in expMsg.lower():
-                import re
-                learned_matches = re.findall(r'learned ([a-z\-]+)', expMsg.lower())
-                auto_learned_moves.extend(learned_matches)
-
-            if levelUp:
-                new_level = battle_state.player_pokemon.currentLevel
-                log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up to {new_level}!")
-
-            evolution_name = None
-            if hasattr(battle_state.player_pokemon, 'evolvedInto') and battle_state.player_pokemon.evolvedInto:
-                evolution_name = battle_state.player_pokemon.evolvedInto
-                log_lines.append(f"✨ {battle_state.player_pokemon.pokemonName.capitalize()} is evolving into {evolution_name.capitalize()}!")
-                evolved_pokemon = PokemonClass(battle_state.player_pokemon.discordId, evolution_name)
-                evolved_pokemon.load()
-                battle_state.player_pokemon = evolved_pokemon
-
-            if levelUp or (pendingMoves and len(pendingMoves) > 0):
-                battle_state.level_up_data = {
-                    'pokemon': battle_state.player_pokemon,
-                    'old_level': old_level,
-                    'new_level': battle_state.player_pokemon.currentLevel,
-                    'auto_learned_moves': auto_learned_moves,
-                    'pending_moves': pendingMoves if pendingMoves else [],
-                    'evolution_name': evolution_name
-                }
+            log_lines.append(f"💀 {e_name} fainted!")
 
             battle_state.defeated_enemies.append(battle_state.enemy_pokemon.pokemonName)
-            battle_state.battle_log = ["\n".join(log_lines)]
+            battle_state.enemy_current_index += 1
 
-            # Check for next enemy Pokemon
-            next_index = battle_state.enemy_current_index + 1
-            if next_index < len(battle_state.enemy_pokemon_data):
-                battle_state.enemy_current_index = next_index
-                from services.pokedexclass import pokedex as PokedexClass
+            # Clear leech seed on defeated enemy
+            battle_state.leech_seed_enemy = False
+            battle_state.rest_turns_enemy = 0
+
+            if battle_state.enemy_current_index < len(battle_state.enemy_pokemon_data):
+                next_enemy_data = battle_state.enemy_pokemon_data[battle_state.enemy_current_index]
                 try:
-                    next_enemy = self.__create_enemy_pokemon(
-                        battle_state.enemy_pokemon_data[next_index], str(user.id)
-                    )
-                    PokedexClass(str(user.id), next_enemy)
+                    next_enemy = self.__create_enemy_pokemon(next_enemy_data, battle_state.user_id)
                     battle_state.enemy_pokemon = next_enemy
-
-                    # Reset ENEMY ailments for new Pokemon
                     battle_state.enemy_ailment = AilmentClass('trainer_enemy')
-
-                    log_lines.append(f"⚡ {battle_state.enemy_name} sent out {next_enemy.pokemonName.capitalize()}!")
+                    e_name_new = battle_state.enemy_pokemon.pokemonName.capitalize()
+                    log_lines.append(f"⚡ {battle_state.enemy_name} sent out {e_name_new}!")
                 except Exception as e:
-                    log_lines.append(f"Error creating next enemy: {str(e)}")
+                    log_lines.append(f"Error creating next enemy Pokemon: {str(e)}")
 
                 battle_state.battle_log = ["\n".join(log_lines)]
                 battle_state.turn_number += 1
-
                 embed = self.__create_battle_embed(user, battle_state)
                 view = self.__create_battle_move_buttons_with_items(battle_state)
                 await interaction.message.edit(embed=embed, view=view)
                 return
             else:
-                # Enemy has no more Pokemon - PLAYER WINS!
+                battle_state.battle_log = ["\n".join(log_lines)]
                 battle_state.player_pokemon.save()
-
-                lb = LeaderboardClass(str(user.id))
-                lb.victory()
-                lb.actions()
-
                 await self.__handle_gym_battle_victory(interaction, battle_state)
-
-                if hasattr(battle_state, 'level_up_data') and battle_state.level_up_data:
-                    data = battle_state.level_up_data
-                    level_up_embed = self.__create_level_up_embed(
-                        data['pokemon'], data['old_level'], data['new_level'],
-                        learned_moves=data['auto_learned_moves'],
-                        evolution_name=data['evolution_name']
-                    )
-                    await interaction.followup.send(embed=level_up_embed, ephemeral=True)
-                    if data['pending_moves']:
-                        await self.__handle_move_learning(interaction, data['pokemon'], data['pending_moves'], battle_state)
-
                 del self.__battle_states[user_id]
                 return
 
-        # Check if player fainted from confusion/trap self-damage
+        # Check if player fainted from confusion/trap self-damage before enemy turn
         if battle_state.player_pokemon.currentHP <= 0:
-            log_lines.append(f"💀 Your {battle_state.player_pokemon.pokemonName.capitalize()} fainted!")
+            log_lines.append(f"💀 Your {p_name} fainted!")
+            battle_state.player_pokemon.currentHP = 0
             battle_state.player_pokemon.save()
+
+            # Clear leech seed on fainted player pokemon
+            battle_state.leech_seed_player = False
+            battle_state.rest_turns_player = 0
+
+            next_pokemon, next_index = self.__get_next_party_pokemon(battle_state.player_party, battle_state.player_current_index)
+            if next_pokemon:
+                battle_state.player_current_index = next_index
+                battle_state.player_pokemon = next_pokemon
+                battle_state.player_ailment = AilmentClass(next_pokemon.trainerId)
+                log_lines.append(f"⚡ You sent out {battle_state.player_pokemon.pokemonName.capitalize()}!")
+                battle_state.battle_log = ["\n".join(log_lines)]
+                battle_state.turn_number += 1
+                embed = self.__create_battle_embed(user, battle_state)
+                view = self.__create_battle_move_buttons_with_items(battle_state)
+                await interaction.message.edit(embed=embed, view=view)
+                return
+            else:
+                battle_state.battle_log = ["\n".join(log_lines)]
+                await self.__handle_gym_battle_defeat(interaction, battle_state)
+                del self.__battle_states[user_id]
+                return
+
+        # =====================================================================
+        # ENEMY'S TURN - Check Rest sleep first
+        # =====================================================================
+        enemy_can_attack = True
+
+        if battle_state.rest_turns_enemy > 0:
+            battle_state.rest_turns_enemy -= 1
+            if battle_state.rest_turns_enemy == 0:
+                e_ailment.sleep = False
+                e_ailment.turnCounter = 0
+                log_lines.append(f"💤 {e_name} woke up from Rest!")
+            else:
+                log_lines.append(f"💤 {e_name} is sleeping from Rest!")
+            enemy_can_attack = False
+
+        elif e_ailment.sleep:
+            if e_ailment.turnCounter >= random.randint(1, 7):
+                e_ailment.sleep = False
+                e_ailment.turnCounter = 0
+                log_lines.append(f"💤 {e_name} woke up!")
+            else:
+                e_ailment.turnCounter += 1
+                log_lines.append(f"💤 {e_name} is fast asleep!")
+                enemy_can_attack = False
+
+        elif e_ailment.freeze:
+            if random.randint(1, 5) == 1:
+                e_ailment.freeze = False
+                log_lines.append(f"🧊 {e_name} thawed out!")
+            else:
+                log_lines.append(f"🧊 {e_name} is frozen solid!")
+                enemy_can_attack = False
+
+        elif e_ailment.paralysis:
+            if random.randint(1, 4) == 1:
+                log_lines.append(f"⚡ {e_name} is paralyzed and can't move!")
+                enemy_can_attack = False
+
+        elif e_ailment.confusion:
+            if e_ailment.turnCounter >= random.randint(2, 5):
+                e_ailment.confusion = False
+                e_ailment.turnCounter = 0
+                log_lines.append(f"💫 {e_name} snapped out of confusion!")
+            else:
+                e_ailment.turnCounter += 1
+                if random.randint(1, 2) == 1:
+                    e_stats = battle_state.enemy_pokemon.getPokeStats()
+                    self_damage = int(((2 * battle_state.enemy_pokemon.currentLevel / 5 + 2) * 40 * (e_stats['attack'] / e_stats['defense']) / 50 + 2))
+                    self_damage = max(1, self_damage)
+                    battle_state.enemy_pokemon.currentHP = max(0, battle_state.enemy_pokemon.currentHP - self_damage)
+                    log_lines.append(f"💫 {e_name} is confused and hurt itself for {self_damage} damage!")
+                    enemy_can_attack = False
+
+        elif e_ailment.trap:
+            if e_ailment.turnCounter >= random.randint(2, 5):
+                e_ailment.trap = False
+                e_ailment.turnCounter = 0
+                log_lines.append(f"🪢 {e_name} broke free!")
+            else:
+                e_ailment.turnCounter += 1
+                e_stats = battle_state.enemy_pokemon.getPokeStats()
+                trap_damage = max(1, e_stats['hp'] // 16)
+                battle_state.enemy_pokemon.currentHP = max(0, battle_state.enemy_pokemon.currentHP - trap_damage)
+                log_lines.append(f"🪢 {e_name} is trapped! Took {trap_damage} damage!")
+                enemy_can_attack = False
+
+        # =====================================================================
+        # ENEMY ATTACKS (if able)
+        # =====================================================================
+        if enemy_can_attack:
+            enemy_moves = [m for m in battle_state.enemy_pokemon.getMoves() if m and m.lower() != 'none']
+            if enemy_moves:
+                enemy_move_name = random.choice(enemy_moves)
+                enemy_move_data = moves_config.get(enemy_move_name, {})
+                enemy_special_fn = get_special_function(enemy_move_data)
+                enemy_move_display = enemy_move_name.replace('-', ' ').title()
+
+                e_stats = battle_state.enemy_pokemon.getPokeStats()
+                e_max_hp = e_stats['hp']
+                p_stats = battle_state.player_pokemon.getPokeStats()
+                p_max_hp = p_stats['hp']
+
+                enemy_burn_halve = e_ailment.burn
+
+                if enemy_special_fn == 'rest':
+                    heal_amount, new_hp = handle_rest(battle_state.enemy_pokemon.currentHP, e_max_hp)
+                    battle_state.enemy_pokemon.currentHP = new_hp
+                    battle_state.rest_turns_enemy = 2
+                    e_ailment.resetAilments()
+                    e_ailment.sleep = True
+                    log_lines.append(f"• {e_name} used Rest! Recovered {heal_amount} HP and fell asleep! 💤")
+
+                elif enemy_special_fn == 'recover':
+                    actual_heal, new_hp = handle_recover(battle_state.enemy_pokemon.currentHP, e_max_hp)
+                    battle_state.enemy_pokemon.currentHP = new_hp
+                    log_lines.append(f"• {e_name} used Recover! Restored {actual_heal} HP! 💚")
+
+                elif enemy_special_fn == 'night_shade':
+                    if check_accuracy(enemy_move_data.get('accuracy', 100)):
+                        ns_damage = calculate_night_shade_damage(battle_state.enemy_pokemon.currentLevel)
+                        battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - ns_damage)
+                        log_lines.append(f"• {e_name} used Night Shade! Dealt {ns_damage} damage!")
+                    else:
+                        log_lines.append(f"• {e_name} used Night Shade but it missed!")
+
+                elif enemy_special_fn == 'leech_seed':
+                    if check_accuracy(enemy_move_data.get('accuracy', 100)):
+                        if not battle_state.leech_seed_player:
+                            battle_state.leech_seed_player = True
+                            log_lines.append(f"• {e_name} used Leech Seed! Your Pokemon was seeded! 🌱")
+                        else:
+                            log_lines.append(f"• {e_name} used Leech Seed but your Pokemon is already seeded!")
+                    else:
+                        log_lines.append(f"• {e_name} used Leech Seed but it missed!")
+
+                elif enemy_special_fn == 'dream_eater':
+                    if p_ailment.sleep or battle_state.rest_turns_player > 0:
+                        enemy_damage, enemy_hit = calculate_battle_damage(
+                            battle_state.enemy_pokemon, battle_state.player_pokemon,
+                            enemy_move_name, moves_config, type_effectiveness
+                        )
+                        if enemy_burn_halve and enemy_move_data.get('damage_class') == 'physical' and enemy_damage > 0:
+                            enemy_damage = max(1, enemy_damage // 2)
+                        if enemy_hit and enemy_damage > 0:
+                            battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - enemy_damage)
+                            drain_heal = calculate_drain_heal(enemy_damage)
+                            battle_state.enemy_pokemon.currentHP = min(e_max_hp, battle_state.enemy_pokemon.currentHP + drain_heal)
+                            log_lines.append(f"• {e_name} used Dream Eater! Dealt {enemy_damage} damage and drained {drain_heal} HP! 💜")
+                        elif enemy_hit:
+                            log_lines.append(f"• {e_name} used Dream Eater but dealt no damage!")
+                        else:
+                            log_lines.append(f"• {e_name} used Dream Eater but it missed!")
+                    else:
+                        log_lines.append(f"• {e_name} used Dream Eater but it failed! Target is not asleep.")
+
+                elif enemy_special_fn == 'drain':
+                    enemy_damage, enemy_hit = calculate_battle_damage(
+                        battle_state.enemy_pokemon, battle_state.player_pokemon,
+                        enemy_move_name, moves_config, type_effectiveness
+                    )
+                    if enemy_burn_halve and enemy_move_data.get('damage_class') == 'physical' and enemy_damage > 0:
+                        enemy_damage = max(1, enemy_damage // 2)
+                    if enemy_hit and enemy_damage > 0:
+                        battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - enemy_damage)
+                        drain_heal = calculate_drain_heal(enemy_damage)
+                        battle_state.enemy_pokemon.currentHP = min(e_max_hp, battle_state.enemy_pokemon.currentHP + drain_heal)
+                        log_lines.append(f"• {e_name} used {enemy_move_display}! Dealt {enemy_damage} damage and drained {drain_heal} HP! 💚")
+                    elif enemy_hit:
+                        log_lines.append(f"• {e_name} used {enemy_move_display}!")
+                    else:
+                        log_lines.append(f"• {e_name} used {enemy_move_display} but it missed!")
+
+                else:
+                    # --- NORMAL ENEMY ATTACK ---
+                    enemy_damage, enemy_hit = calculate_battle_damage(
+                        battle_state.enemy_pokemon, battle_state.player_pokemon,
+                        enemy_move_name, moves_config, type_effectiveness
+                    )
+
+                    if enemy_burn_halve and enemy_move_data.get('damage_class') == 'physical' and enemy_damage > 0:
+                        enemy_damage = max(1, enemy_damage // 2)
+
+                    if enemy_hit and enemy_damage > 0:
+                        battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - enemy_damage)
+                        log_lines.append(f"• {e_name} used {enemy_move_display}! Dealt {enemy_damage} damage!")
+                    elif enemy_hit and (enemy_move_data.get('power') is None or enemy_move_data.get('power', 0) == 0):
+                        log_lines.append(f"• {e_name} used {enemy_move_display}!")
+                    else:
+                        log_lines.append(f"• {e_name} used {enemy_move_display} but it missed!")
+                        enemy_hit = False
+
+                    # Roll ailment on player from enemy's move
+                    if enemy_hit:
+                        ailment_name = enemy_move_data.get('ailment', '')
+                        if ailment_name:
+                            ailment_chance = enemy_move_data.get('ailment_chance', 0)
+                            should_apply = False
+                            if ailment_chance == 0 and enemy_move_data.get('damage_class') == 'status':
+                                should_apply = True
+                            elif ailment_chance > 0:
+                                should_apply = random.randint(1, 100) <= ailment_chance
+
+                            if should_apply and not self.__has_ailment(p_ailment, battle_state.rest_turns_player):
+                                p_ailment.setAilment(ailment_name)
+                                log_lines.append(f"🔥 {p_name} is now {self.__ailment_display(ailment_name)}!")
+
+                        if enemy_move_data.get('moveType') == 'fire' and p_ailment.freeze:
+                            p_ailment.freeze = False
+                            log_lines.append(f"🔥 {p_name} was thawed by the fire!")
+
+        # =====================================================================
+        # CHECK: Did player Pokemon faint from enemy attack?
+        # =====================================================================
+        if battle_state.player_pokemon.currentHP <= 0:
+            log_lines.append(f"💀 Your {p_name} fainted!")
+            battle_state.player_pokemon.currentHP = 0
+            battle_state.player_pokemon.save()
+
+            battle_state.leech_seed_player = False
+            battle_state.rest_turns_player = 0
 
             next_pokemon, next_index = self.__get_next_party_pokemon(battle_state.player_party, battle_state.player_current_index)
             if next_pokemon:
@@ -5471,201 +5851,70 @@ class EncountersMixin(MixinMeta):
                 return
 
         # =====================================================================
-        # ENEMY'S TURN - Check ailments
-        # =====================================================================
-        enemy_can_attack = True
-
-        if e_ailment.sleep:
-            if e_ailment.turnCounter >= random.randint(1, 7):
-                e_ailment.sleep = False
-                e_ailment.turnCounter = 0
-                log_lines.append(f"💤 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} woke up!")
-            else:
-                e_ailment.turnCounter += 1
-                log_lines.append(f"💤 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} is fast asleep!")
-                enemy_can_attack = False
-
-        elif e_ailment.freeze:
-            if random.randint(1, 5) == 1:
-                e_ailment.freeze = False
-                log_lines.append(f"🧊 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} thawed out!")
-            else:
-                log_lines.append(f"🧊 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} is frozen solid!")
-                enemy_can_attack = False
-
-        elif e_ailment.paralysis:
-            if random.randint(1, 4) == 1:
-                log_lines.append(f"⚡ Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} is paralyzed and can't move!")
-                enemy_can_attack = False
-
-        elif e_ailment.confusion:
-            if e_ailment.turnCounter >= random.randint(2, 5):
-                e_ailment.confusion = False
-                e_ailment.turnCounter = 0
-                log_lines.append(f"💫 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} snapped out of confusion!")
-            else:
-                e_ailment.turnCounter += 1
-                log_lines.append(f"💫 Enemy {battle_state.player_pokemon.pokemonName.capitalize()} is confused!")
-                if random.randint(1, 2) == 1:
-                    e_stats = battle_state.enemy_pokemon.getPokeStats()
-                    self_damage = int(((2 * battle_state.enemy_pokemon.currentLevel / 5 + 2) * 40 * (e_stats['attack'] / e_stats['defense']) / 50 + 2))
-                    self_damage = max(1, self_damage)
-                    battle_state.enemy_pokemon.currentHP = max(0, battle_state.enemy_pokemon.currentHP - self_damage)
-                    log_lines.append(f"💫 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} is confused and hurt itself for {self_damage} damage!")
-                    enemy_can_attack = False
-
-        elif e_ailment.trap:
-            if e_ailment.turnCounter >= random.randint(2, 5):
-                e_ailment.trap = False
-                e_ailment.turnCounter = 0
-                log_lines.append(f"🪢 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} broke free!")
-            else:
-                e_ailment.turnCounter += 1
-                e_stats = battle_state.enemy_pokemon.getPokeStats()
-                trap_damage = max(1, e_stats['hp'] // 16)
-                battle_state.enemy_pokemon.currentHP = max(0, battle_state.enemy_pokemon.currentHP - trap_damage)
-                log_lines.append(f"🪢 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} is trapped! Took {trap_damage} damage!")
-                enemy_can_attack = False
-
-        enemy_burn_halve = e_ailment.burn
-
-        # =====================================================================
-        # ENEMY ATTACKS
-        # =====================================================================
-        if enemy_can_attack and battle_state.enemy_pokemon.currentHP > 0:
-            enemy_moves = [m for m in battle_state.enemy_pokemon.getMoves() if m and m.lower() != 'none']
-            if enemy_moves:
-                enemy_move_name = random.choice(enemy_moves)
-                enemy_move_data = moves_config.get(enemy_move_name, {})
-
-                enemy_damage, enemy_hit = calculate_battle_damage(
-                    battle_state.enemy_pokemon,
-                    battle_state.player_pokemon,
-                    enemy_move_name,
-                    moves_config,
-                    type_effectiveness
-                )
-
-                if enemy_burn_halve and enemy_move_data.get('damage_class') == 'physical' and enemy_damage > 0:
-                    enemy_damage = max(1, enemy_damage // 2)
-
-                if enemy_hit and enemy_damage > 0:
-                    battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - enemy_damage)
-                    log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} used {enemy_move_name.replace('-', ' ').title()}! Dealt {enemy_damage} damage!")
-                elif enemy_hit and (enemy_move_data.get('power') is None or enemy_move_data.get('power', 0) == 0):
-                    log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} used {enemy_move_name.replace('-', ' ').title()}!")
-                else:
-                    log_lines.append(f"• Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} used {enemy_move_name.replace('-', ' ').title()} but it missed!")
-                    enemy_hit = False
-
-                # Roll ailment on player from enemy's move
-                if enemy_hit:
-                    ailment_name = enemy_move_data.get('ailment', '')
-                    if ailment_name:
-                        ailment_chance = enemy_move_data.get('ailment_chance', 0)
-                        should_apply = False
-                        if ailment_chance == 0 and enemy_move_data.get('damage_class') == 'status':
-                            should_apply = True
-                        elif ailment_chance > 0:
-                            should_apply = random.randint(1, 100) <= ailment_chance
-
-                        if should_apply and not self.__has_ailment(p_ailment):
-                            p_ailment.setAilment(ailment_name)
-                            log_lines.append(f"🔥 {battle_state.player_pokemon.pokemonName.capitalize()} is now {self.__ailment_display(ailment_name)}!")
-
-                    if enemy_move_data.get('moveType') == 'fire' and p_ailment.freeze:
-                        p_ailment.freeze = False
-                        log_lines.append(f"🔥 {battle_state.player_pokemon.pokemonName.capitalize()} was thawed by the fire!")
-
-        # =====================================================================
         # END OF TURN - Burn/Poison damage
         # =====================================================================
         if p_ailment.burn and battle_state.player_pokemon.currentHP > 0:
             p_stats = battle_state.player_pokemon.getPokeStats()
             burn_damage = max(1, p_stats['hp'] // 16)
             battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - burn_damage)
-            log_lines.append(f"🔥 {battle_state.player_pokemon.pokemonName.capitalize()} is hurt by its burn! (-{burn_damage})")
+            log_lines.append(f"🔥 {p_name} is hurt by its burn! (-{burn_damage})")
 
         if p_ailment.poison and battle_state.player_pokemon.currentHP > 0:
             p_stats = battle_state.player_pokemon.getPokeStats()
             poison_damage = max(1, p_stats['hp'] // 16)
             battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - poison_damage)
-            log_lines.append(f"☠️ {battle_state.player_pokemon.pokemonName.capitalize()} is hurt by poison! (-{poison_damage})")
+            log_lines.append(f"☠️ {p_name} is hurt by poison! (-{poison_damage})")
 
         if e_ailment.burn and battle_state.enemy_pokemon.currentHP > 0:
             e_stats = battle_state.enemy_pokemon.getPokeStats()
             burn_damage = max(1, e_stats['hp'] // 16)
             battle_state.enemy_pokemon.currentHP = max(0, battle_state.enemy_pokemon.currentHP - burn_damage)
-            log_lines.append(f"🔥 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} is hurt by its burn! (-{burn_damage})")
+            log_lines.append(f"🔥 {e_name} is hurt by its burn! (-{burn_damage})")
 
         if e_ailment.poison and battle_state.enemy_pokemon.currentHP > 0:
             e_stats = battle_state.enemy_pokemon.getPokeStats()
             poison_damage = max(1, e_stats['hp'] // 16)
             battle_state.enemy_pokemon.currentHP = max(0, battle_state.enemy_pokemon.currentHP - poison_damage)
-            log_lines.append(f"☠️ Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} is hurt by poison! (-{poison_damage})")
+            log_lines.append(f"☠️ {e_name} is hurt by poison! (-{poison_damage})")
+
+        # =====================================================================
+        # END OF TURN - Leech Seed drain
+        # =====================================================================
+        if battle_state.leech_seed_player and battle_state.player_pokemon.currentHP > 0:
+            p_stats = battle_state.player_pokemon.getPokeStats()
+            seed_damage = calculate_leech_seed_damage(p_stats['hp'])
+            battle_state.player_pokemon.currentHP = max(0, battle_state.player_pokemon.currentHP - seed_damage)
+            e_stats = battle_state.enemy_pokemon.getPokeStats()
+            battle_state.enemy_pokemon.currentHP = min(e_stats['hp'], battle_state.enemy_pokemon.currentHP + seed_damage)
+            log_lines.append(f"🌱 {p_name} had its energy drained by Leech Seed! (-{seed_damage} HP)")
+
+        if battle_state.leech_seed_enemy and battle_state.enemy_pokemon.currentHP > 0:
+            e_stats = battle_state.enemy_pokemon.getPokeStats()
+            seed_damage = calculate_leech_seed_damage(e_stats['hp'])
+            battle_state.enemy_pokemon.currentHP = max(0, battle_state.enemy_pokemon.currentHP - seed_damage)
+            p_stats = battle_state.player_pokemon.getPokeStats()
+            battle_state.player_pokemon.currentHP = min(p_stats['hp'], battle_state.player_pokemon.currentHP + seed_damage)
+            log_lines.append(f"🌱 {e_name} had its energy drained by Leech Seed! (-{seed_damage} HP)")
 
         # =====================================================================
         # POST-TURN FAINT CHECKS
         # =====================================================================
-        # Enemy fainted from burn/poison
         if battle_state.enemy_pokemon.currentHP <= 0:
-            log_lines.append(f"💀 Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()} fainted!")
-
-            enc = EncounterClass(battle_state.player_pokemon, battle_state.enemy_pokemon)
-            enc.updateUniqueEncounters()
-            expObj = exp(battle_state.enemy_pokemon)
-            expGained = expObj.getExpGained()
-            evGained = expObj.getEffortValue()
-
-            current_hp = battle_state.player_pokemon.currentHP
-            old_level = battle_state.player_pokemon.currentLevel
-            levelUp, expMsg, pendingMoves = battle_state.player_pokemon.processBattleOutcome(expGained, evGained, current_hp)
-
-            auto_learned_moves = []
-            if expMsg and "learned" in expMsg.lower():
-                import re
-                learned_matches = re.findall(r'learned ([a-z\-]+)', expMsg.lower())
-                auto_learned_moves.extend(learned_matches)
-
-            if levelUp:
-                log_lines.append(f"⬆️ {battle_state.player_pokemon.pokemonName.capitalize()} leveled up to {battle_state.player_pokemon.currentLevel}!")
-
-            evolution_name = None
-            if hasattr(battle_state.player_pokemon, 'evolvedInto') and battle_state.player_pokemon.evolvedInto:
-                evolution_name = battle_state.player_pokemon.evolvedInto
-                log_lines.append(f"✨ Evolving into {evolution_name.capitalize()}!")
-                evolved_pokemon = PokemonClass(battle_state.player_pokemon.discordId, evolution_name)
-                evolved_pokemon.load()
-                battle_state.player_pokemon = evolved_pokemon
-
-            if levelUp or (pendingMoves and len(pendingMoves) > 0):
-                battle_state.level_up_data = {
-                    'pokemon': battle_state.player_pokemon,
-                    'old_level': old_level,
-                    'new_level': battle_state.player_pokemon.currentLevel,
-                    'auto_learned_moves': auto_learned_moves,
-                    'pending_moves': pendingMoves if pendingMoves else [],
-                    'evolution_name': evolution_name
-                }
-
+            log_lines.append(f"💀 {e_name} fainted from residual damage!")
             battle_state.defeated_enemies.append(battle_state.enemy_pokemon.pokemonName)
-            battle_state.battle_log = ["\n".join(log_lines)]
+            battle_state.enemy_current_index += 1
+            battle_state.leech_seed_enemy = False
+            battle_state.rest_turns_enemy = 0
 
-            next_index = battle_state.enemy_current_index + 1
-            if next_index < len(battle_state.enemy_pokemon_data):
-                battle_state.enemy_current_index = next_index
-                from services.pokedexclass import pokedex as PokedexClass
+            if battle_state.enemy_current_index < len(battle_state.enemy_pokemon_data):
+                next_enemy_data = battle_state.enemy_pokemon_data[battle_state.enemy_current_index]
                 try:
-                    next_enemy = self.__create_enemy_pokemon(
-                        battle_state.enemy_pokemon_data[next_index], str(user.id)
-                    )
-                    PokedexClass(str(user.id), next_enemy)
+                    next_enemy = self.__create_enemy_pokemon(next_enemy_data, battle_state.user_id)
                     battle_state.enemy_pokemon = next_enemy
                     battle_state.enemy_ailment = AilmentClass('trainer_enemy')
                     log_lines.append(f"⚡ {battle_state.enemy_name} sent out {next_enemy.pokemonName.capitalize()}!")
                 except Exception as e:
                     log_lines.append(f"Error: {str(e)}")
-
                 battle_state.battle_log = ["\n".join(log_lines)]
                 battle_state.turn_number += 1
                 embed = self.__create_battle_embed(user, battle_state)
@@ -5673,28 +5922,18 @@ class EncountersMixin(MixinMeta):
                 await interaction.message.edit(embed=embed, view=view)
                 return
             else:
+                battle_state.battle_log = ["\n".join(log_lines)]
                 battle_state.player_pokemon.save()
-                lb = LeaderboardClass(str(user.id))
-                lb.victory()
-                lb.actions()
                 await self.__handle_gym_battle_victory(interaction, battle_state)
-                if hasattr(battle_state, 'level_up_data') and battle_state.level_up_data:
-                    data = battle_state.level_up_data
-                    level_up_embed = self.__create_level_up_embed(
-                        data['pokemon'], data['old_level'], data['new_level'],
-                        learned_moves=data['auto_learned_moves'],
-                        evolution_name=data['evolution_name']
-                    )
-                    await interaction.followup.send(embed=level_up_embed, ephemeral=True)
-                    if data['pending_moves']:
-                        await self.__handle_move_learning(interaction, data['pokemon'], data['pending_moves'], battle_state)
                 del self.__battle_states[user_id]
                 return
 
-        # Player fainted from enemy attack / burn / poison
         if battle_state.player_pokemon.currentHP <= 0:
-            log_lines.append(f"💀 Your {battle_state.player_pokemon.pokemonName.capitalize()} fainted!")
+            log_lines.append(f"💀 Your {p_name} fainted from residual damage!")
+            battle_state.player_pokemon.currentHP = 0
             battle_state.player_pokemon.save()
+            battle_state.leech_seed_player = False
+            battle_state.rest_turns_player = 0
 
             next_pokemon, next_index = self.__get_next_party_pokemon(battle_state.player_party, battle_state.player_current_index)
             if next_pokemon:
@@ -5722,8 +5961,11 @@ class EncountersMixin(MixinMeta):
         view = self.__create_battle_move_buttons_with_items(battle_state)
         await interaction.message.edit(embed=embed, view=view)
 
-    def __get_ailment_emoji(self, ailment_obj) -> str:
+
+    def __get_ailment_emoji(self, ailment_obj, rest_turns=0) -> str:
         """Get emoji for the active ailment, or empty string if none"""
+        if rest_turns > 0:
+            return ' 💤'
         if ailment_obj is None:
             return ''
         if ailment_obj.sleep:
@@ -5742,11 +5984,14 @@ class EncountersMixin(MixinMeta):
             return ' 🪢'
         return ''
 
-    def __has_ailment(self, ailment_obj) -> bool:
-        """Check if an ailment object has any active ailment"""
+    def __has_ailment(self, ailment_obj, rest_turns=0) -> bool:
+        """Check if an ailment object has any active ailment (or is in Rest sleep)"""
+        if rest_turns > 0:
+            return True
         return (ailment_obj.sleep or ailment_obj.poison or ailment_obj.burn
                 or ailment_obj.freeze or ailment_obj.paralysis
                 or ailment_obj.trap or ailment_obj.confusion)
+
 
     def __ailment_display(self, ailment_name: str) -> str:
         """Get a display-friendly ailment name with emoji"""
@@ -5758,6 +6003,7 @@ class EncountersMixin(MixinMeta):
             'paralysis': '⚡ paralyzed',
             'trap': '🪢 trapped',
             'confusion': '💫 confused',
+            'leech_seed': '🌱 seeded',
         }
         return displays.get(ailment_name, ailment_name)
 

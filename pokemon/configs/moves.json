@@ -560,28 +560,31 @@
       "ailment_chance": 0
   },
   "absorb": {
-      "accuracy": 100,
-      "power": 20,
-      "moveType": "grass",
-      "damage_class": "special",
-      "ailment": "",
-      "ailment_chance": 0
+    "accuracy": 100,
+    "power": 20,
+    "moveType": "grass",
+    "damage_class": "special",
+    "ailment": "",
+    "ailment_chance": 0,
+    "special_function": "drain"
   },
   "mega-drain": {
-      "accuracy": 100,
-      "power": 40,
-      "moveType": "grass",
-      "damage_class": "special",
-      "ailment": "",
-      "ailment_chance": 0
+    "accuracy": 100,
+    "power": 40,
+    "moveType": "grass",
+    "damage_class": "special",
+    "ailment": "",
+    "ailment_chance": 0,
+    "special_function": "drain"
   },
   "leech-seed": {
-      "accuracy": 90,
-      "power": 0,
-      "moveType": "grass",
-      "damage_class": "status",
-      "ailment": "",
-      "ailment_chance": 0
+    "accuracy": 90,
+    "power": 0,
+    "moveType": "grass",
+    "damage_class": "status",
+    "ailment": "",
+    "ailment_chance": 0,
+    "special_function": "leech_seed"
   },
   "growth": {
       "accuracy": 100,
@@ -800,12 +803,13 @@
       "ailment_chance": 0
   },
   "night-shade": {
-      "accuracy": 100,
-      "power": 0,
-      "moveType": "ghost",
-      "damage_class": "special",
-      "ailment": "",
-      "ailment_chance": 0
+    "accuracy": 100,
+    "power": 0,
+    "moveType": "ghost",
+    "damage_class": "special",
+    "ailment": "",
+    "ailment_chance": 0,
+    "special_function": "night_shade"
   },
   "mimic": {
       "accuracy": 100,
@@ -831,13 +835,14 @@
       "ailment": "",
       "ailment_chance": 0
   },
-  "recover": {
-      "accuracy": 100,
-      "power": 0,
-      "moveType": "normal",
-      "damage_class": "status",
-      "ailment": "",
-      "ailment_chance": 0
+    "recover": {
+    "accuracy": 100,
+    "power": 0,
+    "moveType": "normal",
+    "damage_class": "status",
+    "ailment": "",
+    "ailment_chance": 0,
+    "special_function": "recover"
   },
   "harden": {
       "accuracy": 100,
@@ -1096,12 +1101,13 @@
       "ailment_chance": 0
   },
   "dream-eater": {
-      "accuracy": 100,
-      "power": 100,
-      "moveType": "psychic",
-      "damage_class": "special",
-      "ailment": "",
-      "ailment_chance": 0
+    "accuracy": 100,
+    "power": 100,
+    "moveType": "psychic",
+    "damage_class": "special",
+    "ailment": "",
+    "ailment_chance": 0,
+    "special_function": "dream_eater"
   },
   "poison-gas": {
       "accuracy": 90,
@@ -1120,12 +1126,13 @@
       "ailment_chance": 0
   },
   "leech-life": {
-      "accuracy": 100,
-      "power": 80,
-      "moveType": "bug",
-      "damage_class": "physical",
-      "ailment": "",
-      "ailment_chance": 0
+    "accuracy": 100,
+    "power": 80,
+    "moveType": "bug",
+    "damage_class": "physical",
+    "ailment": "",
+    "ailment_chance": 0,
+    "special_function": "drain"
   },
   "lovely-kiss": {
       "accuracy": 75,
@@ -1240,12 +1247,13 @@
       "ailment_chance": 0
   },
   "rest": {
-      "accuracy": 100,
-      "power": 0,
-      "moveType": "psychic",
-      "damage_class": "status",
-      "ailment": "",
-      "ailment_chance": 0
+    "accuracy": 100,
+    "power": 0,
+    "moveType": "psychic",
+    "damage_class": "status",
+    "ailment": "",
+    "ailment_chance": 0,
+    "special_function": "rest"
   },
   "rock-slide": {
       "accuracy": 90,
