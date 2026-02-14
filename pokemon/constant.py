@@ -220,7 +220,7 @@ WATERSTONE = '<:waterstone:974525837921636393>'
 THUNDERSTONE = '<:thunderstone:974525867961221200>'
 LEAFSTONE = '<:leafstone:974525949590769715>'
 MOONSTONE = '<:moonstone:974525917789560853>'
-TM_EMOJI = '<:hm01:974518903021600849>'  # Same as HM01 - or create a new TM emoji
+TM_EMOJI = '💿'  # create a new TM emoji
 
 
 # Special Items
