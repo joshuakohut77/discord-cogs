@@ -613,7 +613,6 @@ class EncountersMixin(MixinMeta):
     async def on_wild_battle_manual(self, interaction: discord.Interaction):
         """Handle MANUAL turn-by-turn battle with wild trainer"""
         user = interaction.user
-        user_id = str(user.id)
         
         if not self.__checkUserActionState(user, interaction.message):
             await interaction.response.send_message('This is not for you.', ephemeral=True)
@@ -621,80 +620,19 @@ class EncountersMixin(MixinMeta):
         
         await interaction.response.defer()
         
-        trainer = self._get_trainer(user_id)
+        trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         
-        # Get player's party
-        player_party = trainer.getPokemon(party=True)
-        alive_party = []
-        for poke in player_party:
-            poke.load(pokemonId=poke.trainerId)
-            if poke.currentHP > 0:
-                alive_party.append(poke)
+        battle_manager = BattleClass(str(user.id), location.locationId, enemyType="wild")
+        opponent = battle_manager.getNextTrainer()
         
-        if len(alive_party) == 0:
-            await interaction.followup.send('All your party Pokemon have fainted! Heal at a Pokemon Center first.', ephemeral=True)
-            return
-        
-        alive_party = self.__sort_party_active_first(alive_party, str(user.id))
-        # Get next trainer
-        battle_manager = BattleClass(user_id, location.locationId, enemyType="wild")
-        trainer_model = battle_manager.getNextTrainer()
-        
-        if not trainer_model:
-            await interaction.followup.send('No trainer to battle.', ephemeral=True)
-            return
-        
-        # Initialize battle state with POSITIONAL arguments (not keyword)
-        player_pokemon = alive_party[0]
-        enemy_pokemon_list = trainer_model.pokemon
-        
-        # Create first enemy Pokemon
-        first_enemy = enemy_pokemon_list[0]
-        enemy_name = list(first_enemy.keys())[0]
-        enemy_level = first_enemy[enemy_name]
-        
-        from services.pokedexclass import pokedex as PokedexClass
-
-        enemy_pokemon = PokemonClass(str(user.id), enemy_name)
-        enemy_pokemon.create(enemy_level)
-        enemy_pokemon.discordId = None
-        
-        PokedexClass(str(user.id), enemy_pokemon)
-
-        # BattleState uses POSITIONAL arguments - check the __init__ signature
-        battle_state = BattleState(
-            user_id,              # user_id
-            interaction.channel_id,  # channel_id
-            interaction.message.id,  # message_id
-            alive_party,          # player_party
-            enemy_pokemon_list,   # enemy_pokemon_list
-            trainer_model.name,   # enemy_name
-            trainer_model,        # trainer_model
-            battle_manager        # battle_manager
-        )
-        
-        # Set additional state properties after initialization
-        battle_state.player_pokemon = player_pokemon
-        battle_state.enemy_pokemon = enemy_pokemon
-        battle_state.is_wild_trainer = True
-
-        # Initialize ailments for manual battle
-        battle_state.player_ailment = AilmentClass(alive_party[0].trainerId)
-        battle_state.player_ailment.load()
-        battle_state.enemy_ailment = AilmentClass('trainer_enemy')
-        
-        self.__battle_states[user_id] = battle_state
-        
-        # Create battle display
-        embed = self.__create_battle_embed(user, battle_state)
-        view = self.__create_battle_move_buttons_with_items(battle_state)
-        
-        # Edit the message instead of followup
-        await interaction.message.edit(
-            content=None,
-            embed=embed,
-            view=view
+        await self._start_manual_trainer_battle(
+            interaction,
+            enemy_type="wild",
+            opponent=opponent,
+            battle_manager=battle_manager,
+            sprite_path=None,
+            is_wild_trainer=True
         )
 
 
@@ -5000,6 +4938,114 @@ class EncountersMixin(MixinMeta):
             
             return alive_party
 
+    async def _start_manual_trainer_battle(self, interaction: discord.Interaction, 
+                                            enemy_type: str, opponent, battle_manager,
+                                            sprite_path: str = None, is_gym_leader: bool = False,
+                                            gym_name: str = None, is_wild_trainer: bool = False):
+        """
+        Shared helper to start a manual trainer/leader battle.
+        
+        Args:
+            interaction: The Discord interaction (already deferred)
+            enemy_type: "gym" or "wild"
+            opponent: The trainer/leader model (from getNextTrainer or getGymLeader)
+            battle_manager: The BattleClass instance
+            sprite_path: Path to intro sprite (None = skip intro)
+            is_gym_leader: Whether this is a gym leader fight
+            gym_name: Gym name for intro screen (only for gym leaders)
+            is_wild_trainer: Whether this is a wild/route trainer
+        """
+        user = interaction.user
+        
+        # Get player's alive party
+        trainer = self._get_trainer(str(user.id))
+        player_party = trainer.getPokemon(party=True)
+        alive_party = []
+        for poke in player_party:
+            poke.load(pokemonId=poke.trainerId)
+            if poke.currentHP > 0:
+                alive_party.append(poke)
+        
+        if len(alive_party) == 0:
+            await interaction.followup.send('All your party Pokemon have fainted! Heal at a Pokemon Center first.', ephemeral=True)
+            return
+        
+        if not opponent:
+            await interaction.followup.send('No trainer to battle.', ephemeral=True)
+            return
+        
+        if not opponent.pokemon or len(opponent.pokemon) == 0:
+            await interaction.followup.send(f'Error: {opponent.name} has no Pokemon data.', ephemeral=True)
+            return
+        
+        # Show intro screen if sprite path provided
+        target_message = interaction.message
+        if sprite_path:
+            target_message = await self.__show_battle_intro(
+                interaction,
+                opponent.name,
+                sprite_path,
+                is_gym_leader=is_gym_leader,
+                gym_name=gym_name
+            )
+        
+        # Create first enemy Pokemon
+        enemy_pokemon_list = opponent.pokemon
+        try:
+            first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0], str(user.id))
+        except Exception as e:
+            error_msg = f'Error creating enemy Pokemon: {str(e)}'
+            if sprite_path:
+                await target_message.edit(content=error_msg)
+            else:
+                await interaction.followup.send(error_msg, ephemeral=True)
+            return
+        
+        # Create battle state
+        battle_state = BattleState(
+            user_id=str(user.id),
+            channel_id=interaction.channel_id,
+            message_id=0,
+            player_party=alive_party,
+            enemy_pokemon_list=enemy_pokemon_list,
+            enemy_name=opponent.name,
+            trainer_model=opponent,
+            battle_manager=battle_manager
+        )
+        
+        battle_state.enemy_pokemon = first_enemy_pokemon
+        battle_state.is_wild_trainer = is_wild_trainer
+        
+        # Initialize ailments
+        battle_state.player_ailment = AilmentClass(alive_party[0].trainerId)
+        battle_state.player_ailment.load()
+        battle_state.enemy_ailment = AilmentClass('trainer_enemy')
+        
+        self.__battle_states[str(user.id)] = battle_state
+        
+        # Create battle UI
+        embed = self.__create_battle_embed(user, battle_state)
+        view = self.__create_battle_move_buttons_with_items(battle_state)
+        
+        battle_type = "Gym Leader" if is_gym_leader else "Manual"
+        start_text = f"**{battle_type} Battle Started!**\n{opponent.name} has {len(enemy_pokemon_list)} Pokemon!"
+        
+        if sprite_path:
+            message = await target_message.edit(
+                content=start_text,
+                embed=embed,
+                view=view,
+                attachments=[]
+            )
+        else:
+            message = await interaction.message.edit(
+                content=None,
+                embed=embed,
+                view=view
+            )
+        
+        battle_state.message_id = message.id
+
     def __create_enemy_pokemon(self, pokemon_data: dict, player_discord_id: str):
         """
         Create an enemy Pokemon from dictionary data like {"geodude": 12}
@@ -6613,7 +6659,7 @@ class EncountersMixin(MixinMeta):
         )
 
     async def on_gym_battle_manual(self, interaction: discord.Interaction):
-        """Handle MANUAL battle with gym trainer - supports multiple Pokemon with intro"""
+        """Handle MANUAL battle with gym trainer"""
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
@@ -6624,83 +6670,20 @@ class EncountersMixin(MixinMeta):
 
         trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
-        
-        # Get player's full party
-        player_party = trainer.getPokemon(party=True)
-        
-        # Load all party Pokemon and filter out fainted ones
-        alive_party = []
-        for poke in player_party:
-            poke.load(pokemonId=poke.trainerId)
-            if poke.currentHP > 0:
-                alive_party.append(poke)
-        
-        if len(alive_party) == 0:
-            await interaction.followup.send('All your party Pokemon have fainted! Heal at a Pokemon Center first.', ephemeral=True)
-            return
 
-        alive_party = self.__sort_party_active_first(alive_party, str(user.id))
-        battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
-        next_trainer = battle.getNextTrainer()
+        battle_manager = BattleClass(str(user.id), location.locationId, enemyType="gym")
+        opponent = battle_manager.getNextTrainer()
         
-        if not next_trainer:
-            await interaction.followup.send('No trainer to battle.', ephemeral=True)
-            return
+        sprite_path = opponent.spritePath if opponent else None
 
-        # SHOW INTRO SCREEN with trainer sprite
-        intro_message = await self.__show_battle_intro(
-            interaction, 
-            next_trainer.name, 
-            next_trainer.spritePath,
+        await self._start_manual_trainer_battle(
+            interaction,
+            enemy_type="gym",
+            opponent=opponent,
+            battle_manager=battle_manager,
+            sprite_path=sprite_path,
             is_gym_leader=False
         )
-
-        # Get enemy's full Pokemon list
-        enemy_pokemon_list = next_trainer.pokemon
-
-        from services.pokedexclass import pokedex as PokedexClass
-
-        # Create first enemy Pokemon
-        try:
-            first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0], str(user.id))
-            PokedexClass(str(user.id), first_enemy_pokemon)
-        except Exception as e:
-            await intro_message.edit(content=f'Error creating enemy Pokemon: {str(e)}')
-            return
-
-        # START MANUAL BATTLE with multiple Pokemon support
-        battle_state = BattleState(
-            user_id=str(user.id),
-            channel_id=interaction.channel_id,
-            message_id=0,
-            player_party=alive_party,
-            enemy_pokemon_list=enemy_pokemon_list,
-            enemy_name=next_trainer.name,
-            trainer_model=next_trainer,
-            battle_manager=battle
-        )
-        
-        battle_state.enemy_pokemon = first_enemy_pokemon
-
-        # Initialize ailments for manual battle
-        battle_state.player_ailment = AilmentClass(alive_party[0].trainerId)
-        battle_state.player_ailment.load()
-        battle_state.enemy_ailment = AilmentClass('trainer_enemy')
-
-        self.__battle_states[str(user.id)] = battle_state
-
-        # REPLACE intro screen with battle interface
-        embed = self.__create_battle_embed(user, battle_state)
-        view = self.__create_battle_move_buttons_with_items(battle_state)
-
-        message = await intro_message.edit(
-            content=f"**Manual Battle Started!**\n{next_trainer.name} has {len(enemy_pokemon_list)} Pokemon!",
-            embed=embed,
-            view=view,
-            attachments=[]  # Remove the sprite attachment
-        )
-
-        battle_state.message_id = message.id
 
     async def on_mart_sell_menu(self, interaction: discord.Interaction):
         """Show sell menu with player's items"""
@@ -7864,7 +7847,7 @@ class EncountersMixin(MixinMeta):
                 )
 
     async def on_gym_leader_battle_manual(self, interaction: discord.Interaction):
-        """Handle MANUAL battle with gym leader - supports multiple Pokemon with intro"""
+        """Handle MANUAL battle with gym leader"""
         user = interaction.user
 
         if not self.__checkUserActionState(user, interaction.message):
@@ -7875,90 +7858,29 @@ class EncountersMixin(MixinMeta):
 
         trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
-        
-        # Get player's full party
-        player_party = trainer.getPokemon(party=True)
-        
-        # Load all party Pokemon and filter out fainted ones
-        alive_party = []
-        for poke in player_party:
-            poke.load(pokemonId=poke.trainerId)
-            if poke.currentHP > 0:
-                alive_party.append(poke)
-        
-        if len(alive_party) == 0:
-            await interaction.followup.send('All your party Pokemon have fainted!', ephemeral=True)
-            return
 
-        alive_party = self.__sort_party_active_first(alive_party, str(user.id))
         gyms_data = self.__load_gyms_data()
         gym_info = gyms_data.get(str(location.locationId))
-        battle = BattleClass(str(user.id), location.locationId, enemyType="gym")
-
-        gym_leader = battle.getGymLeader()
-        if not gym_leader or battle.statuscode == 420:
-            await interaction.followup.send(battle.message if battle.message else 'Cannot challenge gym leader.', ephemeral=True)
+        
+        battle_manager = BattleClass(str(user.id), location.locationId, enemyType="gym")
+        opponent = battle_manager.getGymLeader()
+        
+        if not opponent or battle_manager.statuscode == 420:
+            await interaction.followup.send(
+                battle_manager.message if battle_manager.message else 'Cannot challenge gym leader.',
+                ephemeral=True
+            )
             return
 
-        if not gym_leader.pokemon or len(gym_leader.pokemon) == 0:
-            await interaction.followup.send(f'Error: Gym Leader has no Pokemon data.', ephemeral=True)
-            return
-
-        # SHOW INTRO SCREEN with gym leader sprite
-        intro_message = await self.__show_battle_intro(
+        await self._start_manual_trainer_battle(
             interaction,
-            gym_leader.name,
-            gym_info["leader"]["leader_spritePath"],
+            enemy_type="gym",
+            opponent=opponent,
+            battle_manager=battle_manager,
+            sprite_path=gym_info["leader"]["leader_spritePath"],
             is_gym_leader=True,
             gym_name=gym_info["leader"]["gym-name"]
         )
-
-        # Get enemy's full Pokemon list
-        enemy_pokemon_list = gym_leader.pokemon
-
-        from services.pokedexclass import pokedex as PokedexClass
-
-        # Create first enemy Pokemon
-        try:
-            first_enemy_pokemon = self.__create_enemy_pokemon(enemy_pokemon_list[0], str(user.id))
-            PokedexClass(str(user.id), first_enemy_pokemon)
-        except Exception as e:
-            await intro_message.edit(content=f'Error creating gym leader Pokemon: {str(e)}')
-            return
-
-        # START MANUAL BATTLE
-        battle_state = BattleState(
-            user_id=str(user.id),
-            channel_id=interaction.channel_id,
-            message_id=0,
-            player_party=alive_party,
-            enemy_pokemon_list=enemy_pokemon_list,
-            enemy_name=gym_leader.name,
-            trainer_model=gym_leader,
-            battle_manager=battle
-        )
-        
-        battle_state.enemy_pokemon = first_enemy_pokemon
-
-        # Initialize ailments for manual battle
-        battle_state.player_ailment = AilmentClass(alive_party[0].trainerId)
-        battle_state.player_ailment.load()
-        battle_state.enemy_ailment = AilmentClass('trainer_enemy')
-
-        self.__battle_states[str(user.id)] = battle_state
-
-        # REPLACE intro screen with battle interface
-        embed = self.__create_battle_embed(user, battle_state)
-        view = self.__create_battle_move_buttons_with_items(battle_state)
-
-        message = await intro_message.edit(
-            content=f"**Gym Leader Battle Started!**\n{gym_leader.name} has {len(enemy_pokemon_list)} Pokemon!",
-            embed=embed,
-            view=view,
-            attachments=[]  # Remove the sprite attachment
-        )
-
-        battle_state.message_id = message.id
 
 
     def __has_pokemart(self, location_id: int) -> bool:
