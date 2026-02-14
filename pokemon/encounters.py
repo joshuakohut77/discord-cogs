@@ -1262,7 +1262,7 @@ class EncountersMixin(MixinMeta):
                     log_lines.append(f"• {p_name} used {move_display}!")
                     apply_stat_change(
                         player_move_data, p_stages, e_stages,
-                        log_lines, p_name, e_name
+                        log_lines, p_name, w_name
                     )
                 else:
                     log_lines.append(f"• {p_name} used {move_display} but it missed!")
@@ -1351,7 +1351,7 @@ class EncountersMixin(MixinMeta):
             else:
                 # --- NORMAL ATTACK ---
                 player_damage, player_hit = calculate_battle_damage(
-                    battle_state.player_pokemon, battle_state.enemy_pokemon,
+                    battle_state.player_pokemon, battle_state.wild_pokemon,
                     move_name, moves_config, type_effectiveness,
                     p_stages, e_stages
                 )
@@ -5777,7 +5777,7 @@ class EncountersMixin(MixinMeta):
             elif player_special_fn == 'night_shade':
                 if check_accuracy(player_move_data.get('accuracy', 100)):
                     ns_damage = calculate_night_shade_damage(battle_state.player_pokemon.currentLevel)
-                    battle_state.enemy_pokemon.currentHP = max(0, battle_state.enemy_pokemon.currentHP - ns_damage)
+                    battle_state.wild_pokemon.currentHP = max(0, battle_state.wild_pokemon.currentHP - ns_damage)
                     log_lines.append(f"• {p_name} used Night Shade! Dealt {ns_damage} damage!")
                     player_hit = True
                 else:
@@ -5797,14 +5797,14 @@ class EncountersMixin(MixinMeta):
             elif player_special_fn == 'dream_eater':
                 if e_ailment.sleep or battle_state.rest_turns_enemy > 0:
                     player_damage, player_hit = calculate_battle_damage(
-                        battle_state.player_pokemon, battle_state.enemy_pokemon,
+                        battle_state.player_pokemon, battle_state.wild_pokemon,
                         move_name, moves_config, type_effectiveness,
                         p_stages, e_stages
                     )
                     if player_burn_halve and player_move_data.get('damage_class') == 'physical' and player_damage > 0:
                         player_damage = max(1, player_damage // 2)
                     if player_hit and player_damage > 0:
-                        battle_state.enemy_pokemon.currentHP = max(0, battle_state.enemy_pokemon.currentHP - player_damage)
+                        battle_state.wild_pokemon.currentHP = max(0, battle_state.wild_pokemon.currentHP - player_damage)
                         drain_heal = calculate_drain_heal(player_damage)
                         battle_state.player_pokemon.currentHP = min(p_max_hp, battle_state.player_pokemon.currentHP + drain_heal)
                         log_lines.append(f"• {p_name} used Dream Eater! Dealt {player_damage} damage and drained {drain_heal} HP! 💜")
@@ -5818,14 +5818,14 @@ class EncountersMixin(MixinMeta):
 
             elif player_special_fn == 'drain':
                 player_damage, player_hit = calculate_battle_damage(
-                    battle_state.player_pokemon, battle_state.enemy_pokemon,
+                    battle_state.player_pokemon, battle_state.wild_pokemon,
                     move_name, moves_config, type_effectiveness,
                     p_stages, e_stages
                 )
                 if player_burn_halve and player_move_data.get('damage_class') == 'physical' and player_damage > 0:
                     player_damage = max(1, player_damage // 2)
                 if player_hit and player_damage > 0:
-                    battle_state.enemy_pokemon.currentHP = max(0, battle_state.enemy_pokemon.currentHP - player_damage)
+                    battle_state.wild_pokemon.currentHP = max(0, battle_state.wild_pokemon.currentHP - player_damage)
                     drain_heal = calculate_drain_heal(player_damage)
                     battle_state.player_pokemon.currentHP = min(p_max_hp, battle_state.player_pokemon.currentHP + drain_heal)
                     log_lines.append(f"• {p_name} used {move_display}! Dealt {player_damage} damage and drained {drain_heal} HP! 💚")
