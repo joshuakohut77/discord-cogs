@@ -37,7 +37,6 @@ CREATE TABLE IF NOT EXISTS public.inventory
     "max-ether" integer DEFAULT 0,
     ether integer DEFAULT 0,
     nugget integer DEFAULT 0,
-    "old-amber" integer DEFAULT 0,
     "poke-doll" integer DEFAULT 0,
     "pp-up" integer DEFAULT 0,
     "soda-pop" integer DEFAULT 0,
