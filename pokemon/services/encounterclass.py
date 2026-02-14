@@ -218,137 +218,11 @@ class encounter:
         self.statuscode = 420
         return retVal
 
-    # def battle_turn(self, move1):
-    #     retVal = {'result': None}
-    #     if move1 == '':
-    #         self.statuscode = 96
-    #         self.message = 'Invalid move sent for turn based battle'
-    #         return retVal
-    #     # get pokemons current fighting HP
-    #     battleHP1 = self.pokemon1.currentHP
-    #     battleHP2 = self.pokemon2.currentHP
-    #     # get pokemons list of moves
-    #     battleMoves2 = self.__removeNullMoves(self.pokemon2.getMoves())
-
-    #     # get and calculate the damage of the move from pokemon 1
-    #     pbMove = self.__loadMovesConfig(move1)
-    #     damage1 = self.__calculateDamageOfMove(pbMove)
-        
-    #     modifiedPokemon1, attackViability = self.ailment1.calculateAilmentDamage(self.pokemon1)
-        
-    #     # check if pokemon can attack or not from any ailments
-    #     if attackViability:
-    #         # use ailment2 here because this is calcualted for opposing pokemon
-    #         isAilment2 = self.ailment2.rollAilmentChance(pbMove)
-    #         if isAilment2:
-    #             self.ailment2.setAilment(pbMove['ailment'])
-    #         battleHP2 -= damage1
-    #     else:
-    #         # some ailment is preventing attack
-    #         enemyMove = ''
-    #         if self.ailment1.trap:
-    #             enemyMove = 'Bind Trap'
-    #             pbMove = self.__loadMovesConfig('bind') # bind move somewhat correctly calculates damage in this case
-    #             trapDamage = self.__calculateDamageOfMove(pbMove)
-    #             battleHP1 -= trapDamage
-    #             # pokemon is trapped and cannot move
-    #         elif self.ailment1.confusion:
-    #             # pokemon is confused
-    #             enemyMove = 'Self Confusion'
-    #             # 50% chance to damage self in confusion
-    #             if random.randrange(1, 1+1) == 1:
-    #                 pbMove = self.__loadMovesConfig('tackle') # tackle move correctly calculates damage in this case
-    #                 confusionDamage = self.__calculateDamageOfMove(pbMove)
-    #                 battleHP1 -= confusionDamage
-    #                 # pokemon damaged itself in confusion return value
-
-    #         elif self.ailment1.sleep:
-    #             # pokemon is still asleep
-    #             retVal = {}
-    #         if battleHP1 <= 0:
-    #             self.__defeat()
-    #             self.statuscode = 420
-    #             retVal = {'result': 'defeat', 'activeMove': move1, 'activeDamage': damage1, 'enemyMove': enemyMove, 'enemyDamage': 0}
-    #             return retVal
-            
-    #     if battleHP2 <=0:
-    #         self.pokemon1.currentHP = battleHP1
-    #         self.__victory()
-    #         self.statuscode = 420
-    #         retVal = {'result': 'victory', 'activeMove': move1, 'activeDamage': damage1}
-    
-    #     elif battleHP2 > 0:
-    #         # these ailments calculate damage after an attack is completed but negated if enemy dies
-    #         if self.ailment1.burn or self.ailment1.poison:
-    #             self.pokemon1.currentHP = modifiedPokemon1.currentHP
-    #             battleHP1 = modifiedPokemon1.currentHP
-    #             if battleHP1 <= 0:
-    #                 self.__defeat()
-    #                 self.statuscode = 420
-    #                 retVal = {'result': 'defeat', 'activeMove': move1, 'activeDamage': damage1, 'enemyMove': move2, 'enemyDamage': damage2}
-    #                 return retVal
-            
-    #         randMoveSelector = random.randrange(1, len(battleMoves2)+1)
-    #         move2 = battleMoves2[randMoveSelector-1]
-    #         pbMove = self.__loadMovesConfig(move2)
-    #         damage2 = self.__calculateDamageOfMove(pbMove)
-            
-    #         modifiedPokemon2, attackViability = self.ailment2.calculateAilmentDamage(self.pokemon2)
-
-    #         # check if pokemon can attack or not from any ailments
-    #         if attackViability:
-    #             # use ailment1 here because this is calcualted for opposing pokemon
-    #             isAilment1 = self.ailment1.rollAilmentChance(pbMove)
-    #             if isAilment1:
-    #                 self.ailment1.setAilment(pbMove['ailment'])
-    #             battleHP1 -= damage2
-            
-    #         else:
-    #             # some ailment is preventing attack
-    #             enemyMove = ''
-    #             if self.ailment2.trap:
-    #                 enemyMove = 'Bind Trap'
-    #                 pbMove = self.__loadMovesConfig('bind') # bind move somewhat correctly calculates damage in this case
-    #                 trapDamage = self.__calculateDamageOfMove(pbMove)
-    #                 print('%s took %s damage' %(self.pokemon1.pokemonName, str(trapDamage)))
-    #                 battleHP2 -= trapDamage
-    #                 # pokemon is trapped and cannot move
-    #             elif self.ailment2.confusion:
-    #                 enemyMove = 'Self Confusion'
-    #                 if random.randrange(1, 1+1) == 1:
-    #                     pbMove = self.__loadMovesConfig('tackle') # tackle move correctly calculates damage in this case
-    #                     confusionDamage = self.__calculateDamageOfMove(pbMove)
-    #                     print('%s took %s damage' %(self.pokemon1.pokemonName, str(confusionDamage)))
-    #                     battleHP2 -= confusionDamage
-    #                     # pokemon damaged itself in confusion return value
-    #             if battleHP2 <= 0:
-    #                 self.__victory()
-    #                 self.statuscode = 420
-    #                 retVal = {'result': 'victory', 'activeMove': move1, 'activeDamage': damage1, 'enemyMove': enemyMove, 'enemyDamage': 0}
-    #                 return retVal
-
-    #         if battleHP1 <=0:
-    #             self.pokemon2.currentHP = battleHP2
-    #             self.__defeat()
-    #             self.statuscode = 420
-    #             retVal = {'result': 'defeat', 'activeMove': move1, 'activeDamage': damage1, 'enemyMove': move2, 'enemyDamage': damage2}
-            
-    #         elif battleHP1 > 0:
-    #             # these ailments calculate damage after an attack is completed but negated if enemy dies
-    #             if self.ailment2.burn or self.ailment2.poison:
-    #                 self.pokemon2.currentHP = modifiedPokemon2.currentHP
-    #                 battleHP2 = modifiedPokemon2.currentHP
-    #                 if battleHP2 <= 0:
-    #                     self.__victory()
-    #                     self.statuscode = 420
-    #                     retVal = {'result': 'victory', 'activeMove': move1, 'activeDamage': damage1, 'enemyMove': move2, 'enemyDamage': damage2}
-    #                     return retVal
-    #     return retVal
+ 
 
     def battle_fight(self, move1):
-        """ main pokemon battle method with special move support """
+        """ main pokemon battle method with special move + stat stage support """
         retVal = {'result': None}
-        # get pokemons current fighting HP
         battleHP1 = self.pokemon1.currentHP
         battleHP2 = self.pokemon2.currentHP
         
@@ -361,19 +235,27 @@ class encounter:
         statusMovesCount = 0
         turn_number = 1
 
-        # Special move tracking (local to this battle)
-        rest_turns_1 = 0   # Player rest sleep counter
-        rest_turns_2 = 0   # Enemy rest sleep counter
-        leech_seed_1 = False  # Player's pokemon is seeded (takes drain damage)
-        leech_seed_2 = False  # Enemy's pokemon is seeded (takes drain damage)
+        # Special move tracking
+        rest_turns_1 = 0
+        rest_turns_2 = 0
+        leech_seed_1 = False
+        leech_seed_2 = False
 
-        # Get max HP for both pokemon (needed for special moves)
+        # Stat stage tracking
+        from helpers.statstages import StatStages, apply_stat_change, apply_secondary_stat_change
+        from helpers.specialmoves import (
+            handle_rest, handle_recover, calculate_drain_heal,
+            calculate_night_shade_damage, calculate_leech_seed_damage,
+            check_accuracy, handle_haze
+        )
+        stat_stages_1 = StatStages()  # Player
+        stat_stages_2 = StatStages()  # Enemy
+
         p1_stats = self.pokemon1.getPokeStats()
         p2_stats = self.pokemon2.getPokeStats()
         p1_max_hp = p1_stats['hp']
         p2_max_hp = p2_stats['hp']
         
-        # pokemon1 goes first
         if move1 == None:
             max_battle_turns = MAX_BATTLE_TURNS
         else:
@@ -385,8 +267,6 @@ class encounter:
             # =================================================================
             # POKEMON 1'S TURN (Player)
             # =================================================================
-
-            # Check Rest sleep first (overrides normal ailment sleep check)
             p1_skip_turn = False
             if rest_turns_1 > 0:
                 rest_turns_1 -= 1
@@ -397,52 +277,62 @@ class encounter:
                 p1_skip_turn = True
 
             if not p1_skip_turn:
-                # Select move
                 if move1 == None:
                     randMoveSelector = random.randrange(1, len(battleMoves1)+1)
                     move1 = battleMoves1[randMoveSelector-1]
                     pbMove = self.__loadMovesConfig(move1)
                     power = pbMove['power']
                     special_fn = pbMove.get('special_function', '')
-                    # Skip non-special status moves after using one already
-                    if power is None and not special_fn and statusMovesCount >= 1:
+                    has_stat_change = 'stat_change' in pbMove
+                    if power is None and not special_fn and not has_stat_change and statusMovesCount >= 1:
                         move1 = None
                         turn_number += 1
                         continue
-                    elif power is None and not special_fn:
+                    elif power is None and not special_fn and not has_stat_change:
                         statusMovesCount += 1
                 else:
                     pbMove = self.__loadMovesConfig(move1)
                     special_fn = pbMove.get('special_function', '')
+                    has_stat_change = 'stat_change' in pbMove
 
-                # Check ailments (normal ailment processing)
                 modifiedPokemon1, attackViability = self.ailment1.calculateAilmentDamage(self.pokemon1)
+                move_display = move1.replace("-", " ").title()
 
                 if self.ailment2.trap:
                     self.battle_log.append(f'{self.pokemon2.pokemonName.capitalize()} is still trapped')
                 
                 if not attackViability and not self.ailment2.trap:
-                    # Pokemon CAN attack - handle special moves or normal damage
-                    move_display = move1.replace("-", " ").title()
+                    # Pokemon CAN attack
 
-                    # --- SPECIAL MOVE HANDLING (Pokemon 1) ---
-                    if special_fn == 'rest':
-                        from helpers.specialmoves import handle_rest
+                    # --- STAT CHANGE MOVES ---
+                    if has_stat_change and not special_fn:
+                        self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used {move_display}!')
+                        apply_stat_change(
+                            pbMove, stat_stages_1, stat_stages_2,
+                            self.battle_log,
+                            self.pokemon1.pokemonName.capitalize(),
+                            f'Enemy {self.pokemon2.pokemonName.capitalize()}'
+                        )
+
+                    # --- HAZE ---
+                    elif special_fn == 'haze':
+                        handle_haze(stat_stages_1, stat_stages_2)
+                        self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Haze! All stat changes were eliminated!')
+
+                    # --- REST ---
+                    elif special_fn == 'rest':
                         heal_amount, new_hp = handle_rest(battleHP1, p1_max_hp)
                         battleHP1 = new_hp
                         rest_turns_1 = 2
-                        # Clear any existing ailments
                         self.ailment1.resetAilments()
                         self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Rest! Recovered {heal_amount} HP and fell asleep! 💤')
 
                     elif special_fn == 'recover':
-                        from helpers.specialmoves import handle_recover
                         actual_heal, new_hp = handle_recover(battleHP1, p1_max_hp)
                         battleHP1 = new_hp
                         self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Recover! Restored {actual_heal} HP! 💚')
 
                     elif special_fn == 'night_shade':
-                        from helpers.specialmoves import calculate_night_shade_damage, check_accuracy
                         if check_accuracy(pbMove.get('accuracy', 100)):
                             ns_damage = calculate_night_shade_damage(self.pokemon1.currentLevel)
                             battleHP2 -= ns_damage
@@ -451,7 +341,6 @@ class encounter:
                             self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Night Shade but it missed!')
 
                     elif special_fn == 'leech_seed':
-                        from helpers.specialmoves import check_accuracy
                         if check_accuracy(pbMove.get('accuracy', 100)):
                             leech_seed_2 = True
                             self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Leech Seed! Enemy was seeded! 🌱')
@@ -459,9 +348,8 @@ class encounter:
                             self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Leech Seed but it missed!')
 
                     elif special_fn == 'dream_eater':
-                        from helpers.specialmoves import calculate_drain_heal
                         if self.ailment2.sleep or rest_turns_2 > 0:
-                            damage = self.__calculateDamageOfMove(pbMove)
+                            damage = self.__calculateDamageOfMove(pbMove, stat_stages_1, stat_stages_2)
                             if damage > 0:
                                 battleHP2 -= damage
                                 drain_heal = calculate_drain_heal(damage)
@@ -473,8 +361,7 @@ class encounter:
                             self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Dream Eater but it failed! Target is not asleep.')
 
                     elif special_fn == 'drain':
-                        from helpers.specialmoves import calculate_drain_heal
-                        damage = self.__calculateDamageOfMove(pbMove)
+                        damage = self.__calculateDamageOfMove(pbMove, stat_stages_1, stat_stages_2)
                         if damage > 0:
                             battleHP2 -= damage
                             drain_heal = calculate_drain_heal(damage)
@@ -484,15 +371,23 @@ class encounter:
                             self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used {move_display} but it missed!')
 
                     else:
-                        # --- NORMAL MOVE (existing logic) ---
-                        damage = self.__calculateDamageOfMove(pbMove)
+                        # --- NORMAL MOVE ---
+                        damage = self.__calculateDamageOfMove(pbMove, stat_stages_1, stat_stages_2)
                         isAilment2 = self.ailment2.rollAilmentChance(pbMove)
                         if isAilment2:
                             self.ailment2.setAilment(pbMove['ailment'])
                         battleHP2 -= damage
                         self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used {move_display}! Dealt {damage} damage.')
+
+                        # Secondary stat change on damaging moves
+                        if damage > 0:
+                            apply_secondary_stat_change(
+                                pbMove, stat_stages_1, stat_stages_2,
+                                self.battle_log,
+                                self.pokemon1.pokemonName.capitalize(),
+                                f'Enemy {self.pokemon2.pokemonName.capitalize()}'
+                            )
                     
-                    # Check if enemy fainted after player's attack
                     if battleHP2 <= 0:
                         self.pokemon1.currentHP = battleHP1
                         self.__victory()
@@ -505,21 +400,18 @@ class encounter:
                         self.battle_log.append(f'{self.pokemon2.pokemonName.capitalize()} is no longer frozen')
                         self.ailment2.freeze = False
                 else:
-                    # Some ailment is preventing attack
                     if not self.ailment2.trap:
                         self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} has an ailment preventing it from attacking!')
                     
                     enemyMove = ''
                     if self.ailment1.trap:
                         self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is trapped!')
-                        enemyMove = 'Bind Trap'
                         pbMove = self.__loadMovesConfig('bind')
-                        trapDamage = self.__calculateDamageOfMove(pbMove)
+                        trapDamage = self.__calculateDamageOfMove(pbMove, stat_stages_2, stat_stages_1)
                         self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} took {trapDamage} trap damage')
                         battleHP1 -= trapDamage
                     elif self.ailment1.confusion:
                         self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is confused!')
-                        enemyMove = 'Self Confusion'
                         if random.randrange(1, 1+1) == 1:
                             pbMove = self.__loadMovesConfig('tackle')
                             confusionDamage = self.__calculateDamageOfMove(pbMove)
@@ -545,7 +437,6 @@ class encounter:
                     break
             
                 elif battleHP2 > 0:
-                    # Burn/poison damage after player's attack
                     if self.ailment1.burn or self.ailment1.poison:
                         self.pokemon1.currentHP = modifiedPokemon1.currentHP
                         battleHP1 = modifiedPokemon1.currentHP
@@ -553,7 +444,6 @@ class encounter:
                             self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is hurt by burn!')
                         else:
                             self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is hurt by poison!')
-                        
                         if battleHP1 <= 0:
                             self.__defeat()
                             self.statuscode = 420
@@ -564,8 +454,6 @@ class encounter:
             # =================================================================
             # POKEMON 2'S TURN (Enemy)
             # =================================================================
-
-            # Check Rest sleep first for enemy
             p2_skip_turn = False
             if rest_turns_2 > 0:
                 rest_turns_2 -= 1
@@ -576,11 +464,11 @@ class encounter:
                 p2_skip_turn = True
 
             if not p2_skip_turn:
-                # Enemy selects move
                 randMoveSelector = random.randrange(1, len(battleMoves2)+1)
                 move2 = battleMoves2[randMoveSelector-1]
                 pbMove = self.__loadMovesConfig(move2)
                 enemy_special_fn = pbMove.get('special_function', '')
+                enemy_has_stat_change = 'stat_change' in pbMove
                 move2_display = move2.replace("-", " ").title()
 
                 modifiedPokemon2, attackViability = self.ailment2.calculateAilmentDamage(self.pokemon2)
@@ -589,11 +477,22 @@ class encounter:
                     self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is still trapped')
                 
                 if not attackViability and not self.ailment1.trap:
-                    # Enemy CAN attack - handle special moves or normal damage
+                    # Enemy CAN attack
 
-                    # --- SPECIAL MOVE HANDLING (Pokemon 2 / Enemy) ---
-                    if enemy_special_fn == 'rest':
-                        from helpers.specialmoves import handle_rest
+                    if enemy_has_stat_change and not enemy_special_fn:
+                        self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used {move2_display}!')
+                        apply_stat_change(
+                            pbMove, stat_stages_2, stat_stages_1,
+                            self.battle_log,
+                            f'Enemy {self.pokemon2.pokemonName.capitalize()}',
+                            self.pokemon1.pokemonName.capitalize()
+                        )
+
+                    elif enemy_special_fn == 'haze':
+                        handle_haze(stat_stages_1, stat_stages_2)
+                        self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Haze! All stat changes were eliminated!')
+
+                    elif enemy_special_fn == 'rest':
                         heal_amount, new_hp = handle_rest(battleHP2, p2_max_hp)
                         battleHP2 = new_hp
                         rest_turns_2 = 2
@@ -601,13 +500,11 @@ class encounter:
                         self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Rest! Recovered {heal_amount} HP and fell asleep! 💤')
 
                     elif enemy_special_fn == 'recover':
-                        from helpers.specialmoves import handle_recover
                         actual_heal, new_hp = handle_recover(battleHP2, p2_max_hp)
                         battleHP2 = new_hp
                         self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Recover! Restored {actual_heal} HP! 💚')
 
                     elif enemy_special_fn == 'night_shade':
-                        from helpers.specialmoves import calculate_night_shade_damage, check_accuracy
                         if check_accuracy(pbMove.get('accuracy', 100)):
                             ns_damage = calculate_night_shade_damage(self.pokemon2.currentLevel)
                             battleHP1 -= ns_damage
@@ -616,7 +513,6 @@ class encounter:
                             self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Night Shade but it missed!')
 
                     elif enemy_special_fn == 'leech_seed':
-                        from helpers.specialmoves import check_accuracy
                         if check_accuracy(pbMove.get('accuracy', 100)):
                             leech_seed_1 = True
                             self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Leech Seed! Your Pokemon was seeded! 🌱')
@@ -624,9 +520,8 @@ class encounter:
                             self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Leech Seed but it missed!')
 
                     elif enemy_special_fn == 'dream_eater':
-                        from helpers.specialmoves import calculate_drain_heal
                         if self.ailment1.sleep or rest_turns_1 > 0:
-                            damage = self.__calculateDamageOfMove(pbMove)
+                            damage = self.__calculateDamageOfMove(pbMove, stat_stages_2, stat_stages_1)
                             if damage > 0:
                                 battleHP1 -= damage
                                 drain_heal = calculate_drain_heal(damage)
@@ -638,8 +533,7 @@ class encounter:
                             self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Dream Eater but it failed! Target is not asleep.')
 
                     elif enemy_special_fn == 'drain':
-                        from helpers.specialmoves import calculate_drain_heal
-                        damage = self.__calculateDamageOfMove(pbMove)
+                        damage = self.__calculateDamageOfMove(pbMove, stat_stages_2, stat_stages_1)
                         if damage > 0:
                             battleHP1 -= damage
                             drain_heal = calculate_drain_heal(damage)
@@ -649,23 +543,29 @@ class encounter:
                             self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used {move2_display} but it missed!')
 
                     else:
-                        # --- NORMAL MOVE (existing logic) ---
-                        damage = self.__calculateDamageOfMove(pbMove)
+                        # --- NORMAL ENEMY MOVE ---
+                        damage = self.__calculateDamageOfMove(pbMove, stat_stages_2, stat_stages_1)
                         isAilment1 = self.ailment1.rollAilmentChance(pbMove)
                         if isAilment1:
                             self.ailment1.setAilment(pbMove['ailment'])
                         battleHP1 -= damage
                         self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used {move2_display}! Dealt {damage} damage.')
 
+                        if damage > 0:
+                            apply_secondary_stat_change(
+                                pbMove, stat_stages_2, stat_stages_1,
+                                self.battle_log,
+                                f'Enemy {self.pokemon2.pokemonName.capitalize()}',
+                                self.pokemon1.pokemonName.capitalize()
+                            )
+
                 else:
-                    # Some ailment is preventing enemy's attack
                     if not self.ailment1.trap:
                         self.battle_log.append(f'{self.pokemon2.pokemonName.capitalize()} has an ailment preventing it from attacking!')
                     
                     if self.ailment2.trap:
-                        enemyMove = 'Bind Trap'
                         pbMove = self.__loadMovesConfig('bind')
-                        trapDamage = self.__calculateDamageOfMove(pbMove)
+                        trapDamage = self.__calculateDamageOfMove(pbMove, stat_stages_1, stat_stages_2)
                         self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} took {trapDamage} trap damage')
                         battleHP2 -= trapDamage
                     elif self.ailment2.confusion:
@@ -691,21 +591,19 @@ class encounter:
             # END OF TURN — Leech Seed drain
             # =================================================================
             if leech_seed_1 and battleHP1 > 0 and battleHP2 > 0:
-                from helpers.specialmoves import calculate_leech_seed_damage
                 seed_damage = calculate_leech_seed_damage(p1_max_hp)
                 battleHP1 -= seed_damage
                 battleHP2 = min(p2_max_hp, battleHP2 + seed_damage)
                 self.battle_log.append(f'🌱 {self.pokemon1.pokemonName.capitalize()} had its energy drained by Leech Seed! (-{seed_damage} HP)')
 
             if leech_seed_2 and battleHP2 > 0 and battleHP1 > 0:
-                from helpers.specialmoves import calculate_leech_seed_damage
                 seed_damage = calculate_leech_seed_damage(p2_max_hp)
                 battleHP2 -= seed_damage
                 battleHP1 = min(p1_max_hp, battleHP1 + seed_damage)
                 self.battle_log.append(f'🌱 Enemy {self.pokemon2.pokemonName.capitalize()} had its energy drained by Leech Seed! (-{seed_damage} HP)')
 
             # =================================================================
-            # END OF TURN — Victory/Defeat checks and burn/poison
+            # END OF TURN — Victory/Defeat + burn/poison
             # =================================================================
             if battleHP1 <= 0:
                 self.pokemon1.currentHP = battleHP1
@@ -728,7 +626,6 @@ class encounter:
                     self.ailment1.freeze = False  
                     self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is no longer frozen')
                     
-                # Burn/poison damage for player
                 if self.ailment1.burn or self.ailment1.poison:
                     self.pokemon1.currentHP = modifiedPokemon1.currentHP
                     battleHP1 = modifiedPokemon1.currentHP
@@ -743,7 +640,6 @@ class encounter:
                         self.battle_log.append(f'Your {self.pokemon1.pokemonName.capitalize()} fainted!')
                         return retVal
 
-                # Burn/poison damage for enemy
                 if self.ailment2.burn or self.ailment2.poison:
                     self.pokemon2.currentHP = modifiedPokemon2.currentHP
                     battleHP2 = modifiedPokemon2.currentHP
@@ -759,9 +655,10 @@ class encounter:
                         return retVal
 
             turn_number += 1
-            move1 = None  # Reset for next auto turn
+            move1 = None
 
         return retVal
+
 
     def runAway(self):
         """ run away from battle """
@@ -920,8 +817,8 @@ class encounter:
             newCurrentHP = 0
         return newCurrentHP
 
-    def __calculateDamageOfMove(self, move):
-        """ calcualtes the damage of the move against opponent """
+    def __calculateDamageOfMove(self, move, stat_stages_attacker=None, stat_stages_defender=None):
+        """ calculates the damage of the move against opponent, with stat stage support """
         calculatedDamage = 0
         moveHit = True
         pbMove = move
@@ -937,7 +834,7 @@ class encounter:
             if power is None:
                 return 0
             moveType = pbMove['moveType']
-            damage_class = pbMove['damage_class'] # physical or special or status
+            damage_class = pbMove['damage_class']
             pokemon1Stats = self.pokemon1.getPokeStats()
             pokemon2Stats = self.pokemon2.getPokeStats()
             attack = 0
@@ -945,26 +842,34 @@ class encounter:
             if damage_class == 'physical':
                 attack = pokemon1Stats['attack']
                 defense = pokemon2Stats['defense']
+                # Apply stat stage multipliers
+                if stat_stages_attacker:
+                    from helpers.statstages import get_modified_stat
+                    attack = get_modified_stat(attack, 'attack', stat_stages_attacker)
+                if stat_stages_defender:
+                    from helpers.statstages import get_modified_stat
+                    defense = get_modified_stat(defense, 'defense', stat_stages_defender)
             else:
                 attack = pokemon1Stats['special-attack']
                 defense = pokemon2Stats['special-defense']
+                if stat_stages_attacker:
+                    from helpers.statstages import get_modified_stat
+                    attack = get_modified_stat(attack, 'special-attack', stat_stages_attacker)
+                if stat_stages_defender:
+                    from helpers.statstages import get_modified_stat
+                    defense = get_modified_stat(defense, 'special-defense', stat_stages_defender)
             randmonMult = random.randrange(217, 256) / 255
-            defendingType = self.pokemon2.type1 # type 1 is the primary type 
+            defendingType = self.pokemon2.type1
             if moveType in defendingType:
                 stab = 1.5
             else:
                 stab = 1
             level = self.pokemon1.currentLevel
             type_effectiveness = self.__getDamageTypeMultiplier(moveType, defendingType)
-
-            # formula found here: https://bulbapedia.bulbagarden.net/wiki/Damage#Example
-            calc_level = ((2*level)/5)+2
-            calc_numerator = ((calc_level * power * (attack/defense))/50) + 2
-            calculatedDamage = round(calc_numerator * randmonMult * stab * type_effectiveness)
-
+            calculatedDamage = int(((2 * level / 5 + 2) * power * (attack / defense) / 50 + 2) * randmonMult * stab * type_effectiveness)
         return calculatedDamage
 
-    # TODO: make this a dict, save a db call
+
     def __getDamageTypeMultiplier(self, moveType, defendingType):
         """ returns a multiplier for the type-effectiveness """
         dmgMult = None
@@ -1043,14 +948,14 @@ class encounter:
 
 
 # Module-level utility function for damage calculation
-def calculate_battle_damage(attacker: PokemonClass, defender: PokemonClass,
+def calculate_battle_damage(attacker, defender,
                             move_name: str, moves_config: dict,
-                            type_effectiveness: dict) -> tuple:
+                            type_effectiveness: dict,
+                            attacker_stat_stages=None,
+                            defender_stat_stages=None) -> tuple:
     """
     Calculate battle damage using Pokemon battle formula.
-
-    This is a standalone function that can be called from UI code (encounters.py)
-    to calculate damage without needing an encounter class instance.
+    Now supports stat stage modifiers.
 
     Args:
         attacker: The attacking Pokemon
@@ -1058,60 +963,57 @@ def calculate_battle_damage(attacker: PokemonClass, defender: PokemonClass,
         move_name: Name of the move being used
         moves_config: Loaded moves.json configuration
         type_effectiveness: Loaded typeEffectiveness.json configuration
+        attacker_stat_stages: Optional StatStages object for attacker
+        defender_stat_stages: Optional StatStages object for defender
 
     Returns:
         tuple: (damage_dealt: int, attack_hit: bool)
-
-    Example:
-        >>> from helpers.pathhelpers import load_json_config
-        >>> moves = load_json_config('moves.json')
-        >>> types = load_json_config('typeEffectiveness.json')
-        >>> damage, hit = calculate_battle_damage(pikachu, bulbasaur, 'thunderbolt', moves, types)
     """
-    # Get move data
     move_data = moves_config.get(move_name, {})
     power = move_data.get('power', 0)
     accuracy = move_data.get('accuracy', 100)
     move_type = move_data.get('moveType', 'normal')
     damage_class = move_data.get('damage_class', 'physical')
 
-    # Check if move hits
     hit_roll = random.randint(1, 100)
     if hit_roll > accuracy:
         return 0, False
 
-    # Status moves don't deal damage
     if power is None or power == 0:
         return 0, True
 
-    # Get Pokemon stats
     attacker_stats = attacker.getPokeStats()
     defender_stats = defender.getPokeStats()
 
-    # Determine attack/defense stats based on damage class
     if damage_class == 'physical':
         attack = attacker_stats['attack']
         defense = defender_stats['defense']
+        if attacker_stat_stages:
+            from helpers.statstages import get_modified_stat
+            attack = get_modified_stat(attack, 'attack', attacker_stat_stages)
+        if defender_stat_stages:
+            from helpers.statstages import get_modified_stat
+            defense = get_modified_stat(defense, 'defense', defender_stat_stages)
     else:
         attack = attacker_stats['special-attack']
         defense = defender_stats['special-defense']
+        if attacker_stat_stages:
+            from helpers.statstages import get_modified_stat
+            attack = get_modified_stat(attack, 'special-attack', attacker_stat_stages)
+        if defender_stat_stages:
+            from helpers.statstages import get_modified_stat
+            defense = get_modified_stat(defense, 'special-defense', defender_stat_stages)
 
-    # Calculate base damage using Gen 1 formula
-    # Formula: https://bulbapedia.bulbagarden.net/wiki/Damage#Generation_I
     level = attacker.currentLevel
     base_damage = ((2 * level / 5 + 2) * power * (attack / defense) / 50 + 2)
 
-    # Random multiplier (217-255 / 255)
     random_mult = random.randrange(217, 256) / 255
 
-    # STAB (Same Type Attack Bonus) - 1.5x if move type matches Pokemon type
     stab = 1.5 if (move_type == attacker.type1 or move_type == attacker.type2) else 1.0
 
-    # Type effectiveness
     defending_type = defender.type1
     effectiveness = type_effectiveness.get(move_type, {}).get(defending_type, 1.0)
 
-    # Final damage calculation
     damage = int(base_damage * random_mult * stab * effectiveness)
 
     return damage, True

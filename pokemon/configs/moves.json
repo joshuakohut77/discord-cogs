@@ -109,7 +109,8 @@
       "moveType": "normal",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change": {"target": "self", "stat": "attack", "stages": 2}
   },
   "cut": {
       "accuracy": 95,
@@ -309,7 +310,8 @@
       "moveType": "normal",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change": {"target": "enemy", "stat": "defense", "stages": -1}
   },
   "poison-sting": {
       "accuracy": 100,
@@ -341,7 +343,8 @@
       "moveType": "normal",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change": {"target": "enemy", "stat": "defense", "stages": -1}
   },
   "bite": {
       "accuracy": 100,
@@ -357,7 +360,8 @@
       "moveType": "normal",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change": {"target": "enemy", "stat": "attack", "stages": -1}
   },
   "roar": {
       "accuracy": 100,
@@ -405,7 +409,9 @@
       "moveType": "poison",
       "damage_class": "special",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change_secondary": {"target": "enemy", "stat": "defense", "stages": -1, "chance": 10}
+
   },
   "ember": {
       "accuracy": 100,
@@ -476,8 +482,10 @@
       "power": 65,
       "moveType": "psychic",
       "damage_class": "special",
-      "ailment": "confusion",
-      "ailment_chance": 10
+      "ailment": "",
+      "ailment_chance": 10,
+    "stat_change_secondary": {"target": "enemy", "stat": "special-defense", "stages": -1, "chance": 33}
+
   },
   "bubble-beam": {
       "accuracy": 100,
@@ -485,7 +493,9 @@
       "moveType": "water",
       "damage_class": "special",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change_secondary": {"target": "enemy", "stat": "speed", "stages": -1, "chance": 10}
+
   },
   "aurora-beam": {
       "accuracy": 100,
@@ -592,7 +602,8 @@
       "moveType": "normal",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change": {"target": "self", "stat": "special-attack", "stages": 1}
   },
   "razor-leaf": {
       "accuracy": 95,
@@ -648,7 +659,8 @@
       "moveType": "bug",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change": {"target": "enemy", "stat": "speed", "stages": -1}
   },
   "dragon-rage": {
       "accuracy": 100,
@@ -768,7 +780,8 @@
       "moveType": "psychic",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change": {"target": "self", "stat": "attack", "stages": 1}
   },
   "agility": {
       "accuracy": 100,
@@ -776,7 +789,8 @@
       "moveType": "psychic",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change": {"target": "self", "stat": "speed", "stages": 1}
   },
   "quick-attack": {
       "accuracy": 100,
@@ -825,7 +839,8 @@
       "moveType": "normal",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change": {"target": "enemy", "stat": "defense", "stages": -2}
   },
   "double-team": {
       "accuracy": 100,
@@ -850,7 +865,8 @@
       "moveType": "normal",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change": {"target": "self", "stat": "defense", "stages": 1}
   },
   "minimize": {
       "accuracy": 100,
@@ -882,7 +898,8 @@
       "moveType": "water",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change": {"target": "self", "stat": "defense", "stages": 1}
   },
   "defense-curl": {
       "accuracy": 100,
@@ -890,7 +907,8 @@
       "moveType": "normal",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change": {"target": "self", "stat": "defense", "stages": 1}
   },
   "barrier": {
       "accuracy": 100,
@@ -898,7 +916,8 @@
       "moveType": "psychic",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change": {"target": "self", "stat": "defense", "stages": 2}
   },
   "light-screen": {
       "accuracy": 100,
@@ -914,7 +933,8 @@
       "moveType": "ice",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+      "special_function": "haze"
   },
   "reflect": {
       "accuracy": 100,
@@ -1058,7 +1078,9 @@
       "moveType": "normal",
       "damage_class": "physical",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change_secondary": {"target": "enemy", "stat": "speed", "stages": -1, "chance": 10}
+
   },
   "amnesia": {
       "accuracy": 100,
@@ -1066,7 +1088,8 @@
       "moveType": "psychic",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change": {"target": "self", "stat": "special-defense", "stages": 2}
   },
   "kinesis": {
       "accuracy": 80,
@@ -1164,7 +1187,9 @@
       "moveType": "water",
       "damage_class": "special",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change_secondary": {"target": "enemy", "stat": "speed", "stages": -1, "chance": 10}
+
   },
   "dizzy-punch": {
       "accuracy": 100,
@@ -1212,7 +1237,8 @@
       "moveType": "poison",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change": {"target": "self", "stat": "defense", "stages": 2}
   },
   "crabhammer": {
       "accuracy": 90,
@@ -1277,7 +1303,8 @@
       "moveType": "normal",
       "damage_class": "status",
       "ailment": "",
-      "ailment_chance": 0
+      "ailment_chance": 0,
+    "stat_change": {"target": "self", "stat": "attack", "stages": 1}
   },
   "conversion": {
       "accuracy": 100,

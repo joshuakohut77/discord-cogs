@@ -13,8 +13,7 @@ import random
 
 
 # Set of all special function identifiers
-SPECIAL_FUNCTIONS = {'rest', 'recover', 'leech_seed', 'drain', 'night_shade', 'dream_eater'}
-
+SPECIAL_FUNCTIONS = {'rest', 'recover', 'leech_seed', 'drain', 'night_shade', 'dream_eater', 'haze'}
 
 def is_special_move(move_data):
     """Check if a move has a special function that needs handling."""
@@ -92,3 +91,13 @@ def check_accuracy(accuracy):
     if accuracy is None or accuracy >= 100:
         return True
     return random.randint(1, 100) <= accuracy
+
+def handle_haze(attacker_stat_stages, defender_stat_stages):
+    """
+    Haze: Reset all stat stages for both sides to 0.
+    Returns True if any stages were actually changed.
+    """
+    had_changes = attacker_stat_stages.has_any_changes() or defender_stat_stages.has_any_changes()
+    attacker_stat_stages.reset()
+    defender_stat_stages.reset()
+    return had_changes

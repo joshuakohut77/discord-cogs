@@ -963,8 +963,10 @@ class EncountersMixin(MixinMeta):
         from helpers.specialmoves import (
             handle_rest, handle_recover, calculate_drain_heal,
             calculate_night_shade_damage, calculate_leech_seed_damage,
-            check_dream_eater_valid, check_accuracy, get_special_function
+            check_dream_eater_valid, check_accuracy, get_special_function,
+            handle_haze
         )
+        from helpers.statstages import apply_stat_change, apply_secondary_stat_change
 
         player_move_data = moves_config.get(move_name, {})
         player_power = player_move_data.get('power', 0)
@@ -984,9 +986,18 @@ class EncountersMixin(MixinMeta):
             battle_state.rest_turns_enemy = 0
             battle_state.leech_seed_player = False
             battle_state.leech_seed_enemy = False
+            battle_state.player_stat_stages.reset()
+            battle_state.enemy_stat_stages.reset()
+
+        if not hasattr(battle_state, 'player_stat_stages'):
+            from helpers.statstages import StatStages
+            battle_state.player_stat_stages = StatStages()
+            battle_state.enemy_stat_stages = StatStages()
 
         p_ailment = battle_state.player_ailment
         e_ailment = battle_state.enemy_ailment
+        p_stages = battle_state.player_stat_stages
+        e_stages = battle_state.enemy_stat_stages
 
         p_name = battle_state.player_pokemon.pokemonName.capitalize()
         w_name = f"Wild {battle_state.wild_pokemon.pokemonName.capitalize()}"
@@ -1072,7 +1083,24 @@ class EncountersMixin(MixinMeta):
             w_stats = battle_state.wild_pokemon.getPokeStats()
             w_max_hp = w_stats['hp']
 
-            if player_special_fn == 'rest':
+            if 'stat_change' in player_move_data and not player_special_fn:
+                move_hit = check_accuracy(player_move_data.get('accuracy', 100))
+                if move_hit:
+                    log_lines.append(f"• {p_name} used {move_display}!")
+                    apply_stat_change(
+                        player_move_data, p_stages, e_stages,
+                        log_lines, p_name, e_name
+                    )
+                else:
+                    log_lines.append(f"• {p_name} used {move_display} but it missed!")
+                player_hit = True
+
+            elif player_special_fn == 'haze':
+                handle_haze(p_stages, e_stages)
+                log_lines.append(f"• {p_name} used Haze! All stat changes were eliminated!")
+                player_hit = True
+
+            elif player_special_fn == 'rest':
                 heal_amount, new_hp = handle_rest(battle_state.player_pokemon.currentHP, p_max_hp)
                 battle_state.player_pokemon.currentHP = new_hp
                 battle_state.rest_turns_player = 2
@@ -1110,8 +1138,9 @@ class EncountersMixin(MixinMeta):
             elif player_special_fn == 'dream_eater':
                 if e_ailment.sleep or battle_state.rest_turns_enemy > 0:
                     player_damage, player_hit = calculate_battle_damage(
-                        battle_state.player_pokemon, battle_state.wild_pokemon,
-                        move_name, moves_config, type_effectiveness
+                        battle_state.player_pokemon, battle_state.enemy_pokemon,
+                        move_name, moves_config, type_effectiveness,
+                        p_stages, e_stages
                     )
                     if player_burn_halve and player_move_data.get('damage_class') == 'physical' and player_damage > 0:
                         player_damage = max(1, player_damage // 2)
@@ -1130,8 +1159,9 @@ class EncountersMixin(MixinMeta):
 
             elif player_special_fn == 'drain':
                 player_damage, player_hit = calculate_battle_damage(
-                    battle_state.player_pokemon, battle_state.wild_pokemon,
-                    move_name, moves_config, type_effectiveness
+                    battle_state.player_pokemon, battle_state.enemy_pokemon,
+                    move_name, moves_config, type_effectiveness,
+                    p_stages, e_stages
                 )
                 if player_burn_halve and player_move_data.get('damage_class') == 'physical' and player_damage > 0:
                     player_damage = max(1, player_damage // 2)
@@ -1148,8 +1178,9 @@ class EncountersMixin(MixinMeta):
             else:
                 # --- NORMAL ATTACK ---
                 player_damage, player_hit = calculate_battle_damage(
-                    battle_state.player_pokemon, battle_state.wild_pokemon,
-                    move_name, moves_config, type_effectiveness
+                    battle_state.player_pokemon, battle_state.enemy_pokemon,
+                    move_name, moves_config, type_effectiveness,
+                    p_stages, e_stages
                 )
 
                 if player_burn_halve and player_move_data.get('damage_class') == 'physical' and player_damage > 0:
@@ -1182,6 +1213,13 @@ class EncountersMixin(MixinMeta):
                     if player_move_data.get('moveType') == 'fire' and e_ailment.freeze:
                         e_ailment.freeze = False
                         log_lines.append(f"🔥 {w_name} was thawed by the fire!")
+
+                    # Secondary stat change on damaging moves (e.g. Acid, Psychic)
+                    if player_hit and player_damage > 0:
+                        apply_secondary_stat_change(
+                            player_move_data, p_stages, e_stages,
+                            log_lines, p_name, w_name
+                        )
 
         # =====================================================================
         # CHECK: Did wild Pokemon faint?
@@ -1343,7 +1381,22 @@ class EncountersMixin(MixinMeta):
 
                 wild_burn_halve = e_ailment.burn
 
-                if wild_special_fn == 'rest':
+                if 'stat_change' in wild_move_data and not wild_special_fn:
+                    move_hit = check_accuracy(wild_move_data.get('accuracy', 100))
+                    if move_hit:
+                        log_lines.append(f"• {w_name} used {wild_move_display}!")
+                        apply_stat_change(
+                            wild_move_data, e_stages, p_stages,
+                            log_lines, w_name, p_name
+                        )
+                    else:
+                        log_lines.append(f"• {w_name} used {wild_move_display} but it missed!")
+
+                elif wild_special_fn == 'haze':
+                    handle_haze(p_stages, e_stages)
+                    log_lines.append(f"• {w_name} used Haze! All stat changes were eliminated!")
+
+                elif wild_special_fn == 'rest':
                     heal_amount, new_hp = handle_rest(battle_state.wild_pokemon.currentHP, w_max_hp)
                     battle_state.wild_pokemon.currentHP = new_hp
                     battle_state.rest_turns_enemy = 2
@@ -1378,7 +1431,8 @@ class EncountersMixin(MixinMeta):
                     if p_ailment.sleep or battle_state.rest_turns_player > 0:
                         wild_damage, wild_hit = calculate_battle_damage(
                             battle_state.wild_pokemon, battle_state.player_pokemon,
-                            wild_move_name, moves_config, type_effectiveness
+                            wild_move_name, moves_config, type_effectiveness,
+                            e_stages, p_stages
                         )
                         if wild_burn_halve and wild_move_data.get('damage_class') == 'physical' and wild_damage > 0:
                             wild_damage = max(1, wild_damage // 2)
@@ -1397,7 +1451,8 @@ class EncountersMixin(MixinMeta):
                 elif wild_special_fn == 'drain':
                     wild_damage, wild_hit = calculate_battle_damage(
                         battle_state.wild_pokemon, battle_state.player_pokemon,
-                        wild_move_name, moves_config, type_effectiveness
+                        wild_move_name, moves_config, type_effectiveness,
+                        e_stages, p_stages
                     )
                     if wild_burn_halve and wild_move_data.get('damage_class') == 'physical' and wild_damage > 0:
                         wild_damage = max(1, wild_damage // 2)
@@ -1415,7 +1470,8 @@ class EncountersMixin(MixinMeta):
                     # --- NORMAL WILD ATTACK ---
                     wild_damage, wild_hit = calculate_battle_damage(
                         battle_state.wild_pokemon, battle_state.player_pokemon,
-                        wild_move_name, moves_config, type_effectiveness
+                        wild_move_name, moves_config, type_effectiveness,
+                        e_stages, p_stages
                     )
 
                     if wild_burn_halve and wild_move_data.get('damage_class') == 'physical' and wild_damage > 0:
@@ -1448,6 +1504,13 @@ class EncountersMixin(MixinMeta):
                         if wild_move_data.get('moveType') == 'fire' and p_ailment.freeze:
                             p_ailment.freeze = False
                             log_lines.append(f"🔥 {p_name} was thawed by the fire!")
+
+                        # Secondary stat change on damaging moves
+                        if wild_hit and wild_damage > 0:
+                            apply_secondary_stat_change(
+                                wild_move_data, e_stages, p_stages,
+                                log_lines, w_name, p_name
+                            )
 
         # =====================================================================
         # END OF TURN - Burn/Poison residual damage
@@ -5343,8 +5406,10 @@ class EncountersMixin(MixinMeta):
         from helpers.specialmoves import (
             handle_rest, handle_recover, calculate_drain_heal,
             calculate_night_shade_damage, calculate_leech_seed_damage,
-            check_dream_eater_valid, check_accuracy, get_special_function
+            check_dream_eater_valid, check_accuracy, get_special_function,
+            handle_haze
         )
+        from helpers.statstages import apply_stat_change, apply_secondary_stat_change
 
         player_move_data = moves_config.get(move_name, {})
         player_power = player_move_data.get('power', 0)
@@ -5364,9 +5429,18 @@ class EncountersMixin(MixinMeta):
             battle_state.rest_turns_enemy = 0
             battle_state.leech_seed_player = False
             battle_state.leech_seed_enemy = False
+            battle_state.player_stat_stages.reset()
+            battle_state.enemy_stat_stages.reset()
+
+        if not hasattr(battle_state, 'player_stat_stages'):
+            from helpers.statstages import StatStages
+            battle_state.player_stat_stages = StatStages()
+            battle_state.enemy_stat_stages = StatStages()
 
         p_ailment = battle_state.player_ailment
         e_ailment = battle_state.enemy_ailment
+        p_stages = battle_state.player_stat_stages
+        e_stages = battle_state.enemy_stat_stages
 
         p_name = battle_state.player_pokemon.pokemonName.capitalize()
         e_name = f"Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()}"
@@ -5454,7 +5528,24 @@ class EncountersMixin(MixinMeta):
             e_stats = battle_state.enemy_pokemon.getPokeStats()
             e_max_hp = e_stats['hp']
 
-            if player_special_fn == 'rest':
+            if 'stat_change' in player_move_data and not player_special_fn:
+                move_hit = check_accuracy(player_move_data.get('accuracy', 100))
+                if move_hit:
+                    log_lines.append(f"• {p_name} used {move_display}!")
+                    apply_stat_change(
+                        player_move_data, p_stages, e_stages,
+                        log_lines, p_name, e_name
+                    )
+                else:
+                    log_lines.append(f"• {p_name} used {move_display} but it missed!")
+                player_hit = True
+
+            elif player_special_fn == 'haze':
+                handle_haze(p_stages, e_stages)
+                log_lines.append(f"• {p_name} used Haze! All stat changes were eliminated!")
+                player_hit = True
+
+            elif player_special_fn == 'rest':
                 heal_amount, new_hp = handle_rest(battle_state.player_pokemon.currentHP, p_max_hp)
                 battle_state.player_pokemon.currentHP = new_hp
                 battle_state.rest_turns_player = 2
@@ -5493,7 +5584,8 @@ class EncountersMixin(MixinMeta):
                 if e_ailment.sleep or battle_state.rest_turns_enemy > 0:
                     player_damage, player_hit = calculate_battle_damage(
                         battle_state.player_pokemon, battle_state.enemy_pokemon,
-                        move_name, moves_config, type_effectiveness
+                        move_name, moves_config, type_effectiveness,
+                        p_stages, e_stages
                     )
                     if player_burn_halve and player_move_data.get('damage_class') == 'physical' and player_damage > 0:
                         player_damage = max(1, player_damage // 2)
@@ -5513,7 +5605,8 @@ class EncountersMixin(MixinMeta):
             elif player_special_fn == 'drain':
                 player_damage, player_hit = calculate_battle_damage(
                     battle_state.player_pokemon, battle_state.enemy_pokemon,
-                    move_name, moves_config, type_effectiveness
+                    move_name, moves_config, type_effectiveness,
+                    p_stages, e_stages
                 )
                 if player_burn_halve and player_move_data.get('damage_class') == 'physical' and player_damage > 0:
                     player_damage = max(1, player_damage // 2)
@@ -5531,7 +5624,8 @@ class EncountersMixin(MixinMeta):
                 # --- NORMAL ATTACK (existing logic) ---
                 player_damage, player_hit = calculate_battle_damage(
                     battle_state.player_pokemon, battle_state.enemy_pokemon,
-                    move_name, moves_config, type_effectiveness
+                    move_name, moves_config, type_effectiveness,
+                    p_stages, e_stages
                 )
 
                 if player_burn_halve and player_move_data.get('damage_class') == 'physical' and player_damage > 0:
@@ -5565,6 +5659,13 @@ class EncountersMixin(MixinMeta):
                         e_ailment.freeze = False
                         log_lines.append(f"🔥 {e_name} was thawed by the fire!")
 
+                    # Secondary stat change on damaging moves (e.g. Acid, Psychic)
+                    if player_hit and player_damage > 0:
+                        apply_secondary_stat_change(
+                            player_move_data, p_stages, e_stages,
+                            log_lines, p_name, e_name
+                        )
+
         # =====================================================================
         # CHECK: Did enemy Pokemon faint?
         # =====================================================================
@@ -5577,6 +5678,7 @@ class EncountersMixin(MixinMeta):
             # Clear leech seed on defeated enemy
             battle_state.leech_seed_enemy = False
             battle_state.rest_turns_enemy = 0
+            battle_state.enemy_stat_stages.reset()
 
             if battle_state.enemy_current_index < len(battle_state.enemy_pokemon_data):
                 next_enemy_data = battle_state.enemy_pokemon_data[battle_state.enemy_current_index]
@@ -5611,6 +5713,7 @@ class EncountersMixin(MixinMeta):
             # Clear leech seed on fainted player pokemon
             battle_state.leech_seed_player = False
             battle_state.rest_turns_player = 0
+            battle_state.player_stat_stages.reset()
 
             next_pokemon, next_index = self.__get_next_party_pokemon(battle_state.player_party, battle_state.player_current_index)
             if next_pokemon:
@@ -5714,7 +5817,22 @@ class EncountersMixin(MixinMeta):
 
                 enemy_burn_halve = e_ailment.burn
 
-                if enemy_special_fn == 'rest':
+                if 'stat_change' in enemy_move_data and not enemy_special_fn:
+                    move_hit = check_accuracy(enemy_move_data.get('accuracy', 100))
+                    if move_hit:
+                        log_lines.append(f"• {e_name} used {enemy_move_display}!")
+                        apply_stat_change(
+                            enemy_move_data, e_stages, p_stages,
+                            log_lines, e_name, p_name
+                        )
+                    else:
+                        log_lines.append(f"• {e_name} used {enemy_move_display} but it missed!")
+
+                elif enemy_special_fn == 'haze':
+                    handle_haze(p_stages, e_stages)
+                    log_lines.append(f"• {e_name} used Haze! All stat changes were eliminated!")
+
+                elif enemy_special_fn == 'rest':
                     heal_amount, new_hp = handle_rest(battle_state.enemy_pokemon.currentHP, e_max_hp)
                     battle_state.enemy_pokemon.currentHP = new_hp
                     battle_state.rest_turns_enemy = 2
@@ -5749,7 +5867,8 @@ class EncountersMixin(MixinMeta):
                     if p_ailment.sleep or battle_state.rest_turns_player > 0:
                         enemy_damage, enemy_hit = calculate_battle_damage(
                             battle_state.enemy_pokemon, battle_state.player_pokemon,
-                            enemy_move_name, moves_config, type_effectiveness
+                            enemy_move_name, moves_config, type_effectiveness,
+                            e_stages, p_stages
                         )
                         if enemy_burn_halve and enemy_move_data.get('damage_class') == 'physical' and enemy_damage > 0:
                             enemy_damage = max(1, enemy_damage // 2)
@@ -5768,7 +5887,8 @@ class EncountersMixin(MixinMeta):
                 elif enemy_special_fn == 'drain':
                     enemy_damage, enemy_hit = calculate_battle_damage(
                         battle_state.enemy_pokemon, battle_state.player_pokemon,
-                        enemy_move_name, moves_config, type_effectiveness
+                        enemy_move_name, moves_config, type_effectiveness,
+                        e_stages, p_stages
                     )
                     if enemy_burn_halve and enemy_move_data.get('damage_class') == 'physical' and enemy_damage > 0:
                         enemy_damage = max(1, enemy_damage // 2)
@@ -5786,7 +5906,8 @@ class EncountersMixin(MixinMeta):
                     # --- NORMAL ENEMY ATTACK ---
                     enemy_damage, enemy_hit = calculate_battle_damage(
                         battle_state.enemy_pokemon, battle_state.player_pokemon,
-                        enemy_move_name, moves_config, type_effectiveness
+                        enemy_move_name, moves_config, type_effectiveness,
+                        e_stages, p_stages
                     )
 
                     if enemy_burn_halve and enemy_move_data.get('damage_class') == 'physical' and enemy_damage > 0:
@@ -5820,6 +5941,13 @@ class EncountersMixin(MixinMeta):
                             p_ailment.freeze = False
                             log_lines.append(f"🔥 {p_name} was thawed by the fire!")
 
+                        # Secondary stat change on damaging moves
+                        if enemy_hit and enemy_damage > 0:
+                            apply_secondary_stat_change(
+                                enemy_move_data, e_stages, p_stages,
+                                log_lines, e_name, p_name
+                            )
+
         # =====================================================================
         # CHECK: Did player Pokemon faint from enemy attack?
         # =====================================================================
@@ -5830,6 +5958,7 @@ class EncountersMixin(MixinMeta):
 
             battle_state.leech_seed_player = False
             battle_state.rest_turns_player = 0
+            battle_state.player_stat_stages.reset()
 
             next_pokemon, next_index = self.__get_next_party_pokemon(battle_state.player_party, battle_state.player_current_index)
             if next_pokemon:
@@ -5905,6 +6034,8 @@ class EncountersMixin(MixinMeta):
             battle_state.enemy_current_index += 1
             battle_state.leech_seed_enemy = False
             battle_state.rest_turns_enemy = 0
+            battle_state.enemy_stat_stages.reset()
+            
 
             if battle_state.enemy_current_index < len(battle_state.enemy_pokemon_data):
                 next_enemy_data = battle_state.enemy_pokemon_data[battle_state.enemy_current_index]
@@ -5934,6 +6065,7 @@ class EncountersMixin(MixinMeta):
             battle_state.player_pokemon.save()
             battle_state.leech_seed_player = False
             battle_state.rest_turns_player = 0
+            battle_state.player_stat_stages.reset()
 
             next_pokemon, next_index = self.__get_next_party_pokemon(battle_state.player_party, battle_state.player_current_index)
             if next_pokemon:
