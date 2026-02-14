@@ -385,7 +385,7 @@
   },
   "sonic-boom": {
       "accuracy": 90,
-      "power": 0,
+      "power": 20,
       "moveType": "normal",
       "damage_class": "special",
       "ailment": "",
@@ -649,7 +649,7 @@
   },
   "dragon-rage": {
       "accuracy": 100,
-      "power": 0,
+      "power": 40,
       "moveType": "dragon",
       "damage_class": "special",
       "ailment": "",
@@ -1188,7 +1188,7 @@
       "power": 0,
       "moveType": "psychic",
       "damage_class": "special",
-      "ailment": "",
+      "ailment": "confusion",
       "ailment_chance": 0
   },
   "splash": {
