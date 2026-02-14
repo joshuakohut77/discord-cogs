@@ -40,8 +40,6 @@ class TradeMixin(MixinMeta):
         trade = self.trade_service.get_active_trade(user_id)
         
         # DEBUG
-        print(f"[TRADE DEBUG] get_trade_button_for_pc called for user {user_id}")
-        print(f"[TRADE DEBUG] Active trade found: {trade is not None}")
         if trade:
             print(f"[TRADE DEBUG] Trade ID: {trade['trade_id']}, Status: {trade['status']}")
             print(f"[TRADE DEBUG] Sender: {trade['sender_discord_id']}, Receiver: {trade['receiver_discord_id']}")
