@@ -72,8 +72,10 @@ def createPokemonEmbedWithFile(user: Member, pokemon: PokemonClass):
     stats = pokemon.getPokeStats()
     color = getTypeColor(pokemon.type1)
 
+    display_name = get_pokemon_display_name(pokemon)
+
     # Create the embed object
-    embed = discord.Embed(title=f"#{pokemon.pokedexId}  {pokemon.pokemonName.capitalize()}", color=color)
+    embed = discord.Embed(title=f"#{pokemon.pokedexId}  {display_name}", color=color)
     embed.set_author(name=f"{user.display_name}",
                     icon_url=str(user.display_avatar.url))
     
@@ -107,8 +109,10 @@ def createPokemonEmbedWithFile(user: Member, pokemon: PokemonClass):
 def createPokemonAboutEmbed(user: Member, pokemon: PokemonClass) -> Embed:
     color = getTypeColor(pokemon.type1)
 
+    display_name = get_pokemon_display_name(pokemon)
+
     # Create the embed object
-    embed = discord.Embed(title=f"#{pokemon.pokedexId}  {pokemon.pokemonName.capitalize()}", color=color)
+    embed = discord.Embed(title=f"#{pokemon.pokedexId}  {display_name}", color=color)
     embed.set_author(name=f"{user.display_name}",
                     icon_url=str(user.display_avatar.url))
     
@@ -147,8 +151,10 @@ def createStatsEmbed(user: Member, pokemon: PokemonClass):
     exp = pokemon.getNextLevelExperience()
     color = getTypeColor(pokemon.type1)
 
+    display_name = get_pokemon_display_name(pokemon)
+
     # Create the embed object
-    embed = discord.Embed(title=f"#{pokemon.pokedexId}  {pokemon.pokemonName.capitalize()}", color=color)
+    embed = discord.Embed(title=f"#{pokemon.pokedexId}  {display_name}", color=color)
     embed.set_author(name=f"{user.display_name}",
                     icon_url=str(user.display_avatar.url))
     
@@ -186,12 +192,13 @@ def createStatsEmbed(user: Member, pokemon: PokemonClass):
     embed.set_thumbnail(url=pokemon.frontSpriteURL)
     return embed
 
-
 def createPokedexEntryEmbed(user: Member, pokemon: PokemonClass, dex: PokedexModel):
     color = getTypeColor(pokemon.type1)
 
+    display_name = get_pokemon_display_name(pokemon)
+
     # Create the embed object
-    embed = discord.Embed(title=f"#{pokemon.trainerId}  {pokemon.pokemonName.capitalize()}", color=color)
+    embed = discord.Embed(title=f"#{pokemon.trainerId}  {display_name}", color=color)
     embed.set_author(name=f"{user.display_name}",
                     icon_url=str(user.display_avatar.url))
     

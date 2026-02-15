@@ -2694,9 +2694,10 @@ class EncountersMixin(MixinMeta):
         for poke in pokeList:
             poke.load(pokemonId=poke.trainerId)
             
-            label = f"{poke.pokemonName.capitalize()}"
+            shiny_tag = "✨" if hasattr(poke, 'is_shiny') and poke.is_shiny else ""
+            label = f"{shiny_tag}{poke.pokemonName.capitalize()}"
             if poke.nickName:
-                label = f"{poke.nickName} ({poke.pokemonName.capitalize()})"
+                label = f"{shiny_tag}{poke.nickName} ({poke.pokemonName.capitalize()})"
             label += f" Lv.{poke.currentLevel}"
             if poke.trainerId == active.trainerId:
                 label += " ⭐"
@@ -2806,9 +2807,10 @@ class EncountersMixin(MixinMeta):
         for poke in pokeList:
             poke.load(pokemonId=poke.trainerId)
             
-            label = f"{poke.pokemonName.capitalize()}"
+            shiny_tag = "✨" if hasattr(poke, 'is_shiny') and poke.is_shiny else ""
+            label = f"{shiny_tag}{poke.pokemonName.capitalize()}"
             if poke.nickName:
-                label = f"{poke.nickName} ({poke.pokemonName.capitalize()})"
+                label = f"{shiny_tag}{poke.nickName} ({poke.pokemonName.capitalize()})"
             label += f" Lv.{poke.currentLevel}"
             
             stats = poke.getPokeStats()
@@ -3089,9 +3091,10 @@ class EncountersMixin(MixinMeta):
         for poke in pokeList:
             poke.load(pokemonId=poke.trainerId)
             
-            label = f"{poke.pokemonName.capitalize()}"
+            shiny_tag = "✨" if hasattr(poke, 'is_shiny') and poke.is_shiny else ""
+            label = f"{shiny_tag}{poke.pokemonName.capitalize()}"
             if poke.nickName:
-                label = f"{poke.nickName} ({poke.pokemonName.capitalize()})"
+                label = f"{shiny_tag}{poke.nickName} ({poke.pokemonName.capitalize()})"
             label += f" Lv.{poke.currentLevel}"
             if poke.trainerId == active.trainerId:
                 label += " ⭐"
@@ -3258,9 +3261,10 @@ class EncountersMixin(MixinMeta):
         for poke in pokeList:
             poke.load(pokemonId=poke.trainerId)
             
-            label = f"{poke.pokemonName.capitalize()}"
+            shiny_tag = "✨" if hasattr(poke, 'is_shiny') and poke.is_shiny else ""
+            label = f"{shiny_tag}{poke.pokemonName.capitalize()}"
             if poke.nickName:
-                label = f"{poke.nickName} ({poke.pokemonName.capitalize()})"
+                label = f"{shiny_tag}{poke.nickName} ({poke.pokemonName.capitalize()})"
             label += f" Lv.{poke.currentLevel}"
             if poke.trainerId == active.trainerId:
                 label += " ⭐"
@@ -3414,9 +3418,10 @@ class EncountersMixin(MixinMeta):
             # Reload to get latest stats from database
             poke.load(pokemonId=poke.trainerId)
             
-            label = f"{poke.pokemonName.capitalize()}"
+            shiny_tag = "✨" if hasattr(poke, 'is_shiny') and poke.is_shiny else ""
+            label = f"{shiny_tag}{poke.pokemonName.capitalize()}"
             if poke.nickName:
-                label = f"{poke.nickName} ({poke.pokemonName.capitalize()})"
+                label = f"{shiny_tag}{poke.nickName} ({poke.pokemonName.capitalize()})"
             label += f" Lv.{poke.currentLevel}"
             if poke.trainerId == active.trainerId:
                 label += " ⭐"
@@ -3572,9 +3577,10 @@ class EncountersMixin(MixinMeta):
             # Reload to get latest stats from database
             poke.load(pokemonId=poke.trainerId)
             
-            label = f"{poke.pokemonName.capitalize()}"
+            shiny_tag = "✨" if hasattr(poke, 'is_shiny') and poke.is_shiny else ""
+            label = f"{shiny_tag}{poke.pokemonName.capitalize()}"
             if poke.nickName:
-                label = f"{poke.nickName} ({poke.pokemonName.capitalize()})"
+                label = f"{shiny_tag}{poke.nickName} ({poke.pokemonName.capitalize()})"
             label += f" Lv.{poke.currentLevel}"
             if poke.trainerId == active.trainerId:
                 label += " ⭐"
@@ -3925,9 +3931,10 @@ class EncountersMixin(MixinMeta):
             if not hasattr(poke, 'currentHP') or poke.currentHP is None:
                 poke.load(pokemonId=poke.trainerId)
             
-            label = f"{poke.pokemonName.capitalize()}"
+            shiny_tag = "✨" if hasattr(poke, 'is_shiny') and poke.is_shiny else ""
+            label = f"{shiny_tag}{poke.pokemonName.capitalize()}"
             if poke.nickName:
-                label = f"{poke.nickName} ({poke.pokemonName.capitalize()})"
+                label = f"{shiny_tag}{poke.nickName} ({poke.pokemonName.capitalize()})"
             label += f" Lv.{poke.currentLevel}"
             
             stats = poke.getPokeStats()
@@ -4377,9 +4384,10 @@ class EncountersMixin(MixinMeta):
         for poke in pc_list:
             poke.load(pokemonId=poke.trainerId)
             
-            label = f"{poke.pokemonName.capitalize()}"
+            shiny_tag = "✨" if hasattr(poke, 'is_shiny') and poke.is_shiny else ""
+            label = f"{shiny_tag}{poke.pokemonName.capitalize()}"
             if poke.nickName:
-                label = f"{poke.nickName} ({poke.pokemonName.capitalize()})"
+                label = f"{shiny_tag}{poke.nickName} ({poke.pokemonName.capitalize()})"
             label += f" Lv.{poke.currentLevel}"
             
             stats = poke.getPokeStats()
@@ -4513,9 +4521,10 @@ class EncountersMixin(MixinMeta):
         for poke in pc_list:
             poke.load(pokemonId=poke.trainerId)
             
-            label = f"{poke.pokemonName.capitalize()}"
+            shiny_tag = "✨" if hasattr(poke, 'is_shiny') and poke.is_shiny else ""
+            label = f"{shiny_tag}{poke.pokemonName.capitalize()}"
             if poke.nickName:
-                label = f"{poke.nickName} ({poke.pokemonName.capitalize()})"
+                label = f"{shiny_tag}{poke.nickName} ({poke.pokemonName.capitalize()})"
             label += f" Lv.{poke.currentLevel}"
             
             stats = poke.getPokeStats()
@@ -4655,9 +4664,10 @@ class EncountersMixin(MixinMeta):
             # Reload to get latest stats from database
             poke.load(pokemonId=poke.trainerId)
             
-            label = f"{poke.pokemonName.capitalize()}"
+            shiny_tag = "✨" if hasattr(poke, 'is_shiny') and poke.is_shiny else ""
+            label = f"{shiny_tag}{poke.pokemonName.capitalize()}"
             if poke.nickName:
-                label = f"{poke.nickName} ({poke.pokemonName.capitalize()})"
+                label = f"{shiny_tag}{poke.nickName} ({poke.pokemonName.capitalize()})"
             label += f" Lv.{poke.currentLevel}"
             
             stats = poke.getPokeStats()
@@ -5285,7 +5295,9 @@ class EncountersMixin(MixinMeta):
             max_hp = stats['hp']
             current_hp = poke.currentHP
             
-            poke_name = poke.nickName if poke.nickName else poke.pokemonName.capitalize()
+            from .functions import get_pokemon_display_name
+            poke_display = get_pokemon_display_name(poke)
+            poke_name = poke.nickName if poke.nickName else poke_display
             
             # Try multiple name formats to find emoji
             # First try uppercase without hyphens/spaces

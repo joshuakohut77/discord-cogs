@@ -552,7 +552,7 @@ class TradeInitiateView(View):
         # Pokemon dropdown
         pokemon_options = [
             SelectOption(
-                label=f"{p.nickName or p.pokemonName} (Lv.{p.currentLevel})",
+                label=f"{'✨' if hasattr(p, 'is_shiny') and p.is_shiny else ''}{p.nickName or p.pokemonName} (Lv.{p.currentLevel})",
                 value=str(p.trainerId),
                 description=f"{p.pokemonName} - {p.type1}" + (f"/{p.type2}" if p.type2 else ""),
                 default=(self.selected_pokemon and p.trainerId == self.selected_pokemon.trainerId)
@@ -836,7 +836,7 @@ class TradeReceiverResponseView(View):
         
         pokemon_options = [
             SelectOption(
-                label=f"{p.nickName or p.pokemonName} (Lv.{p.currentLevel})",
+                label=f"{'✨' if hasattr(p, 'is_shiny') and p.is_shiny else ''}{p.nickName or p.pokemonName} (Lv.{p.currentLevel})",
                 value=str(p.trainerId),
                 description=f"{p.pokemonName} - {p.type1}" + (f"/{p.type2}" if p.type2 else ""),
                 default=(self.selected_pokemon and p.trainerId == self.selected_pokemon.trainerId)
@@ -891,7 +891,7 @@ class TradeReceiverResponseView(View):
         # Recreate the dropdown with the selected Pokemon marked as default
         pokemon_options = [
             SelectOption(
-                label=f"{p.nickName or p.pokemonName} (Lv.{p.currentLevel})",
+                label=f"{'✨' if hasattr(p, 'is_shiny') and p.is_shiny else ''}{p.nickName or p.pokemonName} (Lv.{p.currentLevel})",
                 value=str(p.trainerId),
                 description=f"{p.pokemonName} - {p.type1}" + (f"/{p.type2}" if p.type2 else ""),
                 default=(p.trainerId == selected_pokemon_id)
