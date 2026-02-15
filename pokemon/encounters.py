@@ -6935,6 +6935,15 @@ class EncountersMixin(MixinMeta):
         # Ensure message is never empty to avoid Discord 400 error
         quest_message = quest_obj.message if quest_obj.message else f'Quest "{quest_name}" completed.'
 
+        # new code
+        # Check if this quest triggers a teleport (e.g., Mysterious Cave)
+        if result and isinstance(result, dict) and result.get('teleport'):
+            # Send the quest message as ephemeral first
+            await interaction.response.send_message(quest_message, ephemeral=True)
+            # Then refresh the main map message to show the new location
+            await self.on_nav_map_click(interaction, already_deferred=True)
+            return
+
         # Send response with embed if available
         if result and isinstance(result, dict) and 'embed' in result:
             await interaction.response.send_message(quest_message, embed=result['embed'], ephemeral=True)

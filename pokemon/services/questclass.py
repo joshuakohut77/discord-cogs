@@ -896,13 +896,12 @@ class quests:
         return
 
     def mysteriousCave(self):
-        pass
-        # # trainer set location to location 147 - cerulean cave
-        # locationId = 147
-        # trainer = trainerClass (self.discordId)
-        # trainer.setLocation(locationId)
-        # self.message = """You notice some fatty out for a walk. You enter inside the mysterious cave to avoid him."""
-        # return
+        from trainerclass import trainer as trainerClass
+        locationId = 147
+        trainer = trainerClass(self.discordId)
+        trainer.setLocation(locationId)
+        self.message = """Your eight badges begin to glow... The ground shifts beneath your feet and suddenly you find yourself standing at the entrance of a mysterious cave. The air is thick with an unknown power."""
+        return {'teleport': True}
 
     def checkTruck(self):
         from trainerclass import trainer as trainerClass
