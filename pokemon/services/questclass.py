@@ -373,7 +373,7 @@ class quests:
             'Gold Teeth': '🦷',  # Unicode emoji since no constant exists
             'Item Finder': constant.ITEM_FINDER,
             'Mew': constant.POKEMON_EMOJIS['MEW'],
-            'Porygon': constant.POKEMON_EMOJIS['Porygon'],
+            'Porygon': constant.POKEMON_EMOJIS['PORYGON'],
             'Aerodactyl': constant.POKEMON_EMOJIS['AERODACTYL'],
             'Kabuto': constant.POKEMON_EMOJIS['KABUTO'],
             'Omanyte': constant.POKEMON_EMOJIS['OMANYTE'],
