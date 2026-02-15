@@ -24,6 +24,7 @@ class quests:
         self.discordId = discordId
         self.keyitems = kitems(discordId)
         self.inventory = inv(discordId)
+        self.found_easter_egg = None  # Tuple of (egg_id, display_name) when found
 
     def locationBlocked(self, blockers: List):
         """ verifies the trainer has no blockers to the location """
@@ -529,6 +530,9 @@ class quests:
                 lb = LeaderboardClass(str(self.discordId))
                 lb.easter_eggs()
                 
+                # Store easter egg for achievement announcement
+                self.found_easter_egg = ('search_room', "Eevee's Tail")
+                
                 return self.create_key_item_embed('Eevee\'s Tail')
             
     def playSNES(self):
@@ -555,6 +559,9 @@ class quests:
                 from services.leaderboardclass import leaderboard as LeaderboardClass
                 lb = LeaderboardClass(str(self.discordId))
                 lb.easter_eggs()
+                
+                # Store easter egg for achievement announcement
+                self.found_easter_egg = ('play_snes', 'Game Shark')
                 
                 return self.create_key_item_embed('Game Shark', '🎮')
 
@@ -942,10 +949,14 @@ class quests:
         uniqueEncounters.mew = True
         uniqueEncounters.save()
         
+        # Track easter egg completion
         from services.leaderboardclass import leaderboard as LeaderboardClass
-
-        lb = LeaderboardClass(str(self.discordId))
+        lb = LeaderboardClass(self.discordId)
         lb.easter_eggs()
+        
+        # Store easter egg for achievement announcement
+        self.found_easter_egg = ('check_truck', 'Mew')
+
 
         self.statuscode = 420
         self.message = dedent("""\

@@ -6968,6 +6968,16 @@ class EncountersMixin(MixinMeta):
         quest_obj = QuestsClass(str(user.id))
         result = quest_obj.questHandler(quest_name)
 
+        # Check if an easter egg was found and send achievement
+        if hasattr(quest_obj, 'found_easter_egg') and quest_obj.found_easter_egg:
+            egg_id, egg_name = quest_obj.found_easter_egg
+            if interaction.guild:
+                await self.send_easter_egg_achievement(
+                    str(user.id),
+                    interaction.guild,
+                    egg_id
+                )
+
         # Ensure message is never empty to avoid Discord 400 error
         quest_message = quest_obj.message if quest_obj.message else f'Quest "{quest_name}" completed.'
 

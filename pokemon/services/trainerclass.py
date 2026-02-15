@@ -788,6 +788,10 @@ class trainer:
             lb = leaderboard(self.discordId)
             lb.evolved()
             
+            # Track if this is a special evolution for achievements
+            if evolvedPokemon.pokemonName in ['vaporeon']:
+                evolvedPokemon.special_evolution = evolvedPokemon.pokemonName
+
             # Check for first evolution achievement (for special pokemon like Vaporeon)
             # This requires guild context which we don't have here
             # Store the evolved pokemon name for later checking

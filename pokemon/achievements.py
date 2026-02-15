@@ -240,15 +240,17 @@ class AchievementsMixin(MixinMeta):
     ) -> None:
         """
         Send an easter egg discovery achievement (without spoiling the egg).
+        Only sends once per user per egg.
         
         Args:
             user_id: Discord ID of the user who found the egg
             guild: The guild to send the achievement to
-            egg_id: Identifier for the easter egg (not shown to other users)
+            egg_id: Identifier for the easter egg (internal use only)
         """
         try:
-            # Check if this user already found this egg
             db = dbconn()
+            
+            # Check if this user already got achievement for this egg in this guild
             check_query = '''
                 SELECT 1 FROM easter_eggs_found 
                 WHERE guild_id = %(guild_id)s AND discord_id = %(discord_id)s AND egg_id = %(egg_id)s
@@ -260,9 +262,9 @@ class AchievementsMixin(MixinMeta):
             })
             
             if result:
-                return  # User already found this egg
+                return  # Already announced this achievement
             
-            # Record the discovery
+            # Record the achievement announcement
             insert_query = '''
                 INSERT INTO easter_eggs_found (guild_id, discord_id, egg_id, found_at)
                 VALUES (%(guild_id)s, %(discord_id)s, %(egg_id)s, NOW())
@@ -273,7 +275,7 @@ class AchievementsMixin(MixinMeta):
                 'egg_id': egg_id
             })
             
-            # Send achievement (without spoiling what the egg was)
+            # Send achievement
             user = guild.get_member(int(user_id))
             if user:
                 await self.send_achievement(
@@ -282,8 +284,9 @@ class AchievementsMixin(MixinMeta):
                     achievement_type="easter_egg",
                     egg_id=egg_id
                 )
-        except Exception:
-            pass  # Silently fail
+        except Exception as e:
+            # Silently fail - likely table doesn't exist yet or other DB issue
+            pass
         finally:
             if db:
                 del db

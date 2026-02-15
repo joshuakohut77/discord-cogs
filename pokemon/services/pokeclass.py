@@ -458,6 +458,10 @@ class Pokemon:
                         
                         # ✅ Store evolution info for UI
                         self.evolvedInto = evolvedForm
+
+                        # Track if this is a special evolution (Vaporeon/Jolteon/Flareon)
+                        if evolvedForm in ['vaporeon']:
+                            self.special_evolution = evolvedForm
                         
                         # Check if evolved form learns any moves at the current level
                         evoMoves = self.getMovesLearnedBetweenLevels(self.currentLevel - 1, self.currentLevel)
