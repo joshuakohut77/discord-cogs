@@ -526,6 +526,15 @@ class trainer:
             # Only execute if not completed
             method = 'only-one'
             pokemon = self.__getEncounter(method)
+            
+            # Mark encounter as complete IMMEDIATELY upon encountering
+            # This ensures it's recorded regardless of battle outcome (fight/catch/run)
+            if pokemon is not None:
+                from .encounterclass import encounter
+                activePokemon = self.getActivePokemon()
+                if activePokemon is not None:
+                    enc = encounter(activePokemon, pokemon)
+                    enc.updateUniqueEncounters()
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
