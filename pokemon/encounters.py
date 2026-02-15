@@ -1429,9 +1429,8 @@ class EncountersMixin(MixinMeta):
             if hasattr(battle_state.player_pokemon, 'evolvedInto') and battle_state.player_pokemon.evolvedInto:
                 evolution_name = battle_state.player_pokemon.evolvedInto
                 log_lines.append(f"✨ {p_name} is evolving into {evolution_name.capitalize()}!")
-                evolved_pokemon = PokemonClass(battle_state.player_pokemon.discordId, evolution_name)
-                evolved_pokemon.load()
-                battle_state.player_pokemon = evolved_pokemon
+                # addExperience() already handled evolution internally via self.load()
+                # battle_state.player_pokemon is already the evolved pokemon - don't replace it
 
             if levelUp or (pendingMoves and len(pendingMoves) > 0):
                 battle_state.level_up_data = {
