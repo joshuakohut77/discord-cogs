@@ -170,11 +170,11 @@ class encounter:
             
             # Create the evolved pokemon
             evolvedPokemon = PokemonClass(pokemon.discordId, newPokemon)
-            evolvedPokemon.create(pokemon.currentLevel)
-            
+            evolvedPokemon.create(pokemon.currentLevel, is_shiny=pokemon.is_shiny)
+
             # Set party status from original
             evolvedPokemon.party = oldPartyStatus
-            
+
             # Save to get its trainerId
             evolvedPokemon.save()
             

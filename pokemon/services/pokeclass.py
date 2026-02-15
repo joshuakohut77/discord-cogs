@@ -61,6 +61,8 @@ class Pokemon:
         self.uniqueEncounter = False
         self.ailments = ailment(None)
         self.evolvedInto = None
+        self.is_shiny = False
+        self.is_deleted = False
 
     def load(self, pokemonId=None):
         """ populates the object with stats from pokeapi """
@@ -75,7 +77,7 @@ class Pokemon:
         self.backSpriteURL = self.__getBackSpritePath()
 
     # TODO: make static method
-    def create(self, level):
+    def create(self, level, is_shiny=False):
         """ creates a new pokemon with generated stats at a given level """
         # this function is used to create new pokemon and will auto generate their level 1 moves
         if type(level) != int:
@@ -119,8 +121,17 @@ class Pokemon:
 
             self.pokemonName = pokemon['name']
             self.pokedexId = pokemon['id']
-            self.frontSpriteURL = self.__getFrontSpritePath()
-            self.backSpriteURL = self.__getBackSpritePath()
+            self.is_shiny = is_shiny
+
+            # Modify sprite URLs if shiny
+            if self.is_shiny:
+                self.frontSpriteURL = f"https://pokesprites.joshkohut.com/sprites/pokemon/shiny/{self.pokedexId}.png"
+                self.backSpriteURL = f"https://pokesprites.joshkohut.com/sprites/pokemon/shiny/back/{self.pokedexId}.png"
+            else:
+                self.frontSpriteURL = self.__getFrontSpritePath()
+                self.backSpriteURL = self.__getBackSpritePath()
+
+            
             self.growthRate = pokemon['growthRate']
             self.base_exp = pokemon['base_experience']
 
@@ -165,7 +176,7 @@ class Pokemon:
                             "IV_speed", "IV_special_attack", "IV_special_defense", "EV_hp", 
                             "EV_attack", "EV_defense", "EV_speed", "EV_special_attack", 
                             "EV_special_defense", "move_1", "move_2", "move_3", "move_4", 
-                            "type_1", "type_2", "nickName", "currentHP", "party")
+                            "type_1", "type_2", "nickName", "currentHP", "party", "is_shiny", "is_deleted")
                         VALUES (%(discordId)s, %(pokemonId)s, %(pokemonName)s,
                             %(growthRate)s, %(currentLevel)s, %(currentExp)s,
                             %(traded)s, %(base_hp)s,%(base_attack)s,
@@ -178,7 +189,7 @@ class Pokemon:
                             %(EV_special_attack)s, %(EV_special_defense)s,
                             %(move_1)s, %(move_2)s, %(move_3)s, %(move_4)s, 
                             %(type_1)s, %(type_2)s, %(nickName)s, 
-                            %(currentHP)s, %(party)s)
+                            %(currentHP)s, %(party)s, %(is_shiny)s, %(is_deleted)s)
                         RETURNING id
                 """
                 values = {'discordId': self.discordId, 'pokemonId': self.pokedexId, 'pokemonName': self.pokemonName,
@@ -193,7 +204,8 @@ class Pokemon:
                           'EV_special_attack': self.special_attack.EV, 'EV_special_defense': self.special_defense.EV,
                           'move_1': self.move_1, 'move_2': self.move_2, 'move_3': self.move_3, 'move_4': self.move_4,
                           'type_1': self.type1, 'type_2': self.type2, 'nickName': self.nickName, 
-                          'currentHP': self.currentHP, 'party': self.party }
+                          'currentHP': self.currentHP, 'party': self.party,
+                          'is_shiny': self.is_shiny, 'is_deleted': self.is_deleted }
 
                 trainerIds = db.executeAndReturn(queryString, values)
                 if trainerIds:
@@ -212,7 +224,8 @@ class Pokemon:
                             "EV_defense"=%(EV_defense)s, "EV_speed"=%(EV_speed)s, 
                             "EV_special_attack"=%(EV_special_attack)s, "EV_special_defense"=%(EV_special_defense)s,
                             "move_1"=%(move_1)s, "move_2"=%(move_2)s, "move_3"=%(move_3)s, 
-                            "move_4"=%(move_4)s, "nickName"=%(nickName)s, "currentHP"=%(currentHP)s, "party"=%(party)s
+                            "move_4"=%(move_4)s, "nickName"=%(nickName)s, "currentHP"=%(currentHP)s, "party"=%(party)s,
+                            "is_shiny"=%(is_shiny)s, "is_deleted"=%(is_deleted)s
                         WHERE id = %(trainerId)s;
                 """
                 values = {'discordId': self.discordId, 'pokemonId': self.pokedexId, 'pokemonName': self.pokemonName,
@@ -227,6 +240,7 @@ class Pokemon:
                           'EV_special_attack': self.special_attack.EV, 'EV_special_defense': self.special_defense.EV,
                           'move_1': self.move_1, 'move_2': self.move_2, 'move_3': self.move_3, 'move_4': self.move_4,
                           'nickName': self.nickName, 'currentHP': self.currentHP, 'party': self.party, 
+                          'is_shiny': self.is_shiny, 'is_deleted': self.is_deleted,
                           'trainerId': self.trainerId }
 
                 db.execute(queryString, values)
@@ -237,9 +251,22 @@ class Pokemon:
             # delete and close connection
             del db
 
+    # def release(self):
+    #     """ release a pokemon """
+    #     return self.__delete()
+
     def release(self):
-        """ release a pokemon """
-        return self.__delete()
+        """ Marks a pokemon as deleted (soft delete) """
+        try:
+            db = dbconn()
+            updateString = 'UPDATE pokemon SET is_deleted = TRUE WHERE id = %(trainerId)s'
+            db.execute(updateString, {'trainerId': self.trainerId})
+            self.statuscode = 69
+        except:
+            self.statuscode = 96
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            del db
 
     def getPokeStats(self):
         """ returns a dictionary of a pokemon's unique stats based off level, EV, and IV """
@@ -372,10 +399,11 @@ class Pokemon:
                         oldTrainerId = self.trainerId
                         oldPartyStatus = self.party
                         wasActivePokemon = self.__isActivePokemon()
+                        old_is_shiny = self.is_shiny  # Preserve shiny status
                         
                         # Create evolved Pokemon with correct constructor arguments
                         evolvedPokemon = Pokemon(self.discordId, evolvedForm)
-                        evolvedPokemon.create(self.currentLevel)
+                        evolvedPokemon.create(self.currentLevel, is_shiny=old_is_shiny)
                         
                         # Inherit party status from old Pokemon
                         evolvedPokemon.party = oldPartyStatus
@@ -437,7 +465,9 @@ class Pokemon:
             ailments."paralysis",
             ailments."trap",
             ailments."confusion",
-            ailments."disable"
+            ailments."disable",
+            "is_shiny",
+            "is_deleted"
             FROM pokemon
             LEFT JOIN ailments ON pokemon."id" = ailments."pokemonId"
             WHERE "id" = %(pokemonId)s'''
@@ -495,6 +525,9 @@ class Pokemon:
                 self.ailments.trap = result[41]
                 self.ailments.confusion = result[42]
                 self.ailments.disable = result[43]
+
+            self.is_shiny = result[44] if result[44] is not None else False
+            self.is_deleted = result[45] if result[45] is not None else False
 
         # delete and close connection
         del db

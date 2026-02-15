@@ -731,10 +731,11 @@ class trainer:
             # Store old Pokemon info before creating new one
             oldPartyStatus = pokemon.party
             wasActivePokemon = (pokemon.trainerId == self.getActivePokemon().trainerId)
+            old_is_shiny = pokemon.is_shiny  # Preserve shiny status
             
             # Create evolved Pokemon with correct constructor (discordId, pokemonName)
             evolvedPokemon = pokeClass(self.discordId, newPokemon)
-            evolvedPokemon.create(pokemon.currentLevel)
+            evolvedPokemon.create(pokemon.currentLevel, is_shiny=old_is_shiny)
             
             # Set critical attributes
             evolvedPokemon.discordId = self.discordId
@@ -994,8 +995,18 @@ class trainer:
             min_level = selectedEncounter['min_level']
             max_level = selectedEncounter['max_level']
             level = random.randrange(int(min_level), int(max_level)+1)
+            
+            # Check for shiny (only for wild encounters, not gifts)
+            is_shiny = False
+            if method != 'gift':
+                from .shinyclass import ShinyChecker
+                shiny_checker = ShinyChecker()
+                is_shiny = shiny_checker.roll_for_shiny(name)
+                # Store for UI notification
+                self.encountered_shiny = is_shiny
+            
             pokemon = pokeClass(None, name)
-            pokemon.create(level)
+            pokemon.create(level, is_shiny=is_shiny)
             if method == 'gift' or method == 'only-one':
                 pokemon.uniqueEncounter = True
             if method == 'gift':
@@ -1007,7 +1018,7 @@ class trainer:
                 self.statuscode = 96
                 self.message = "error occured during pokemon create()"
                 return
-        
+
         # leaderboard stats
         lb = leaderboard(self.discordId)
         lb.actions()

@@ -6845,6 +6845,10 @@ class EncountersMixin(MixinMeta):
     async def on_action_encounter(self, interaction: discord.Interaction):
         await self.__on_action(interaction)
 
+    
+
+
+
     async def on_quest_click(self, interaction: discord.Interaction):
         """Handle quest button clicks"""
         user = interaction.user
@@ -8698,6 +8702,7 @@ class EncountersMixin(MixinMeta):
             # await interaction.channel.send(trainer.message)
 
         # A wild pokemon encounter
+        # A wild pokemon encounter
         if ActionType.ENCOUNTER.value == action.type.value:
             wildPokemon = trainer.encounter(method)
             if wildPokemon is None:
@@ -8741,15 +8746,26 @@ class EncountersMixin(MixinMeta):
                 else:
                     await interaction.followup.send('No pokemon encountered.', ephemeral=True)
                 return
+            
+            # Check if this is a shiny encounter and send notification
+            if hasattr(trainer, 'encountered_shiny') and trainer.encountered_shiny:
+                # Send ephemeral shiny notification
+                shiny_embed = discord.Embed(
+                    title="✨ SHINY POKEMON! ✨",
+                    description=f"You found a **SHINY {wildPokemon.pokemonName.upper()}**!\n\n⭐ Only one of these can be owned on this server at a time!",
+                    color=discord.Color.gold()
+                )
+                shiny_embed.set_thumbnail(url=wildPokemon.frontSpriteURL)
+                await interaction.followup.send(embed=shiny_embed, ephemeral=True)
 
         # active = trainer.getActivePokemon()
         active = state.activePokemon
-        
+
         # await interaction.response.send_message(f'You encountered a wild {pokemon.pokemonName}!')
         desc = f'''
-{user.display_name} encountered a wild {wildPokemon.pokemonName.capitalize()}!
-{user.display_name} sent out {getTrainerGivenPokemonName(active)}.
-'''
+        {user.display_name} encountered a wild {wildPokemon.pokemonName.capitalize()}!
+        {user.display_name} sent out {getTrainerGivenPokemonName(active)}.
+        '''
 
         embed = self.__wildPokemonEncounter(user, wildPokemon, active, desc)
 
