@@ -240,8 +240,13 @@ def create_hp_bar(hp_percent: float, bar_length: int = 10) -> str:
 
 # In functions.py or as a helper in encounters.py:
 def get_pokemon_display_name(pokemon):
-    """Get display name with shiny indicator"""
-    name = pokemon.pokemonName.capitalize()
+    """Get display name with nickname and shiny indicator"""
+    # Use nickname if available, otherwise use pokemon name
+    if pokemon.nickName:
+        name = pokemon.nickName
+    else:
+        name = pokemon.pokemonName.capitalize()
+    
     if hasattr(pokemon, 'is_shiny') and pokemon.is_shiny:
         return f"✨ {name} ✨"
     return name

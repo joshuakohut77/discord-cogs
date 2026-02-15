@@ -892,7 +892,9 @@ class EncountersMixin(MixinMeta):
         )
         
         player_summary = []
-        player_summary.append(f"**{battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
+        from .functions import get_pokemon_display_name
+        player_display = get_pokemon_display_name(battle_state.player_pokemon)
+        player_summary.append(f"**{player_display}** (Lv.{player_level})")
         player_summary.append(f"HP: {battle_state.player_pokemon.currentHP}/{player_max_hp}")
         
         embed.add_field(
@@ -929,7 +931,9 @@ class EncountersMixin(MixinMeta):
         )
         
         player_summary = []
-        player_summary.append(f"**{battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
+        from .functions import get_pokemon_display_name
+        player_display = get_pokemon_display_name(battle_state.player_pokemon)
+        player_summary.append(f"**{player_display}** (Lv.{player_level})")
         player_summary.append(f"HP: 0/{player_max_hp} ❌")
         
         embed.add_field(
@@ -1866,8 +1870,10 @@ class EncountersMixin(MixinMeta):
         if player_poke.type2:
             player_types += f", {player_poke.type2}"
         
+        from .functions import get_pokemon_display_name
+        player_display = get_pokemon_display_name(player_poke)
         embed.add_field(
-            name=f"💚 Your {player_poke.pokemonName.capitalize()} (Lv.{player_poke.currentLevel}){p_ailment_emoji}",
+            name=f"💚 Your {player_display} (Lv.{player_poke.currentLevel}){p_ailment_emoji}",
             value=f"**HP:** {player_poke.currentHP}/{player_stats['hp']} {create_hp_bar(player_hp_pct)}\n"
                 f"**Type:** {player_types}",
             inline=False
@@ -5312,8 +5318,7 @@ class EncountersMixin(MixinMeta):
             current_hp = poke.currentHP
             
             from .functions import get_pokemon_display_name
-            poke_display = get_pokemon_display_name(poke)
-            poke_name = poke.nickName if poke.nickName else poke_display
+            poke_name = get_pokemon_display_name(poke)
             
             # Try multiple name formats to find emoji
             # First try uppercase without hyphens/spaces
@@ -5628,8 +5633,10 @@ class EncountersMixin(MixinMeta):
         if player_poke.type2:
             player_types += f", {player_poke.type2}"
         
+        from .functions import get_pokemon_display_name
+        player_display = get_pokemon_display_name(player_poke)
         embed.add_field(
-            name=f"💚 Your {player_poke.pokemonName.capitalize()} (Lv.{player_poke.currentLevel}){p_ailment_emoji}",
+            name=f"💚 Your {player_display} (Lv.{player_poke.currentLevel}){p_ailment_emoji}",
             value=f"**HP:** {player_poke.currentHP}/{player_stats['hp']} {create_hp_bar(player_hp_pct)}\n"
                   f"**Type:** {player_types}",
             inline=False
@@ -6509,7 +6516,9 @@ class EncountersMixin(MixinMeta):
             
             # Show player's current Pokemon
             player_summary = []
-            player_summary.append(f"**{battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
+            from .functions import get_pokemon_display_name
+            player_display = get_pokemon_display_name(battle_state.player_pokemon)
+            player_summary.append(f"**{player_display}** (Lv.{player_level})")
             player_summary.append(f"HP: {battle_state.player_pokemon.currentHP}/{player_max_hp}")
             
             embed.add_field(
@@ -6756,6 +6765,151 @@ class EncountersMixin(MixinMeta):
         """Base command to manage the trainer (user).
         """
     
+    @commands.command(name='nickname')
+    async def trainer_nickname(self, ctx):
+        """Set or clear nicknames for your Pokemon"""
+        user = ctx.author
+        trainer = self._get_trainer(str(user.id))
+        
+        # Get party Pokemon
+        party = trainer.getPokemon(party=True)
+        if not party:
+            await ctx.send("You don't have any Pokemon in your party!")
+            return
+        
+        # Load each Pokemon
+        for poke in party:
+            poke.load(pokemonId=poke.trainerId)
+        
+        # Create dropdown with party Pokemon
+        options = []
+        for i, poke in enumerate(party):
+            from .functions import get_pokemon_display_name
+            display_name = get_pokemon_display_name(poke)
+            current_nickname = f" (nicknamed)" if poke.nickName else ""
+            label = f"{display_name} - Lv.{poke.currentLevel}{current_nickname}"
+            options.append(discord.SelectOption(
+                label=label[:100],  # Discord limit
+                value=str(poke.trainerId),
+                description=f"Species: {poke.pokemonName.capitalize()}"
+            ))
+        
+        select = Select(
+            placeholder="Choose a Pokemon to nickname...",
+            options=options,
+            custom_id="nickname_select"
+        )
+        
+        view = View(timeout=180)
+        
+        async def select_callback(interaction: discord.Interaction):
+            if interaction.user.id != user.id:
+                await interaction.response.send_message("This isn't your Pokemon!", ephemeral=True)
+                return
+            
+            selected_trainer_id = int(select.values[0])
+            
+            # Find the selected Pokemon
+            selected_poke = None
+            for poke in party:
+                if poke.trainerId == selected_trainer_id:
+                    selected_poke = poke
+                    break
+            
+            if not selected_poke:
+                await interaction.response.send_message("Pokemon not found!", ephemeral=True)
+                return
+            
+            # Create modal for nickname input
+            await interaction.response.send_modal(NicknameModal(selected_poke))
+        
+        select.callback = select_callback
+        view.add_item(select)
+        
+        # Add cancel button
+        cancel_btn = Button(style=ButtonStyle.secondary, label="❌ Cancel", custom_id="nickname_cancel")
+        async def cancel_callback(interaction: discord.Interaction):
+            if interaction.user.id != user.id:
+                await interaction.response.send_message("This isn't for you!", ephemeral=True)
+                return
+            await interaction.message.delete()
+        
+        cancel_btn.callback = cancel_callback
+        view.add_item(cancel_btn)
+        
+        embed = discord.Embed(
+            title="🏷️ Pokemon Nickname Manager",
+            description="Select a Pokemon from your party to set or change its nickname.",
+            color=discord.Color.blue()
+        )
+        
+        await ctx.send(embed=embed, view=view)
+
+
+    class NicknameModal(discord.ui.Modal, title="Set Pokemon Nickname"):
+        def __init__(self, pokemon):
+            super().__init__()
+            self.pokemon = pokemon
+            
+            current_nick = pokemon.nickName if pokemon.nickName else ""
+            
+            # Add nickname input field
+            self.nickname_input = discord.ui.TextInput(
+                label="Nickname",
+                placeholder=f"Enter nickname for {pokemon.pokemonName.capitalize()}",
+                default=current_nick,
+                required=False,
+                max_length=20,
+                style=discord.TextStyle.short
+            )
+            self.add_item(self.nickname_input)
+            
+            # Add clear option
+            self.clear_input = discord.ui.TextInput(
+                label='Type "CLEAR" to remove nickname',
+                placeholder="Leave blank to set nickname above",
+                required=False,
+                max_length=5,
+                style=discord.TextStyle.short
+            )
+            self.add_item(self.clear_input)
+        
+        async def on_submit(self, interaction: discord.Interaction):
+            nickname = self.nickname_input.value.strip()
+            clear_text = self.clear_input.value.strip().upper()
+            
+            # Check if user wants to clear
+            if clear_text == "CLEAR":
+                self.pokemon.nickName = None
+                self.pokemon.save()
+                
+                embed = discord.Embed(
+                    title="✅ Nickname Cleared",
+                    description=f"**{self.pokemon.pokemonName.capitalize()}** no longer has a nickname.",
+                    color=discord.Color.green()
+                )
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                return
+            
+            # Set new nickname
+            if nickname:
+                self.pokemon.nickName = nickname
+                self.pokemon.save()
+                
+                embed = discord.Embed(
+                    title="✅ Nickname Set",
+                    description=f"**{self.pokemon.pokemonName.capitalize()}** is now nicknamed **{nickname}**!",
+                    color=discord.Color.green()
+                )
+            else:
+                embed = discord.Embed(
+                    title="❌ No Change",
+                    description="No nickname entered.",
+                    color=discord.Color.red()
+                )
+            
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+
     @commands.command(name="play", aliases=['p','m'])
     async def play(self, ctx: commands.Context):
         """Show the map with navigation buttons"""
