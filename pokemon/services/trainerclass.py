@@ -943,14 +943,22 @@ class trainer:
         from .encounterclass import encounter
         pokemon = None
         activePokemon = self.getActivePokemon()
-        if activePokemon is None:
-            self.statuscode = 420
-            self.message = "You do not have an active pokemon!"
-            return
-        if activePokemon.currentHP == 0:
-            self.statuscode = 420
-            self.message = "Your active Pokemon has no HP left!"
-            return
+        
+        # If active is None or fainted, find any alive party Pokemon
+        # We just need a living Pokemon to allow the encounter - the actual battle
+        # Pokemon selection happens later in encounters.py
+        if activePokemon is None or (not isinstance(activePokemon, str) and activePokemon.currentHP <= 0):
+            party = self.getPokemon(party=True)
+            found_alive = False
+            for poke in party:
+                poke.load(pokemonId=poke.trainerId)
+                if poke.currentHP > 0:
+                    found_alive = True
+                    break
+            if not found_alive:
+                self.statuscode = 420
+                self.message = "All your Pokemon have fainted! Heal at a Pokemon Center first."
+                return
         
         loc = LocationClass(self.discordId)
         selectedEncounter = loc.action(method)
@@ -1019,6 +1027,7 @@ class trainer:
         lb = leaderboard(self.discordId)
         lb.actions()
         return pokemon
+
 
     def __healPokemon(self, pokemon: pokeClass, item: str):
         """ heals a pokemons currentHP """
