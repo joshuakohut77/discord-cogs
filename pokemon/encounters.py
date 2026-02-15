@@ -1041,6 +1041,10 @@ class EncountersMixin(MixinMeta):
                 color=discord.Color.green()
             )
             
+            # Check for capture milestones
+            if interaction.guild:
+                await self.check_capture_milestones(str(user.id), interaction.guild)
+
             view = self.__create_post_battle_buttons(user_id)
             
             await interaction.message.edit(
@@ -3003,6 +3007,19 @@ class EncountersMixin(MixinMeta):
                 )
                 evolution_embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
                 
+                # After evolution is complete and shown to user
+                if hasattr(trainer, 'last_evolved_pokemon') and trainer.last_evolved_pokemon:
+                    # Check for first evolution (especially for Vaporeon, Jolteon, Flareon)
+                    special_evolutions = ['vaporeon']
+                    if trainer.last_evolved_pokemon.lower() in special_evolutions:
+                        if interaction.guild:
+                            await self.check_first_evolution(
+                                str(user.id),
+                                interaction.guild,
+                                trainer.last_evolved_pokemon
+                            )
+                    trainer.last_evolved_pokemon = None  # Clear it
+
                 # Add Pokemon sprite
                 sprite_file = None
                 try:
@@ -6403,7 +6420,18 @@ class EncountersMixin(MixinMeta):
         
         # Award rewards
         if hasattr(trainer_model, 'badge'):  # It's a gym leader
+            # It's a gym leader
             battle_manager.gymLeaderVictory(trainer_model)
+            
+            # Send badge achievement
+            if interaction.guild:
+                await self.send_achievement(
+                    guild=interaction.guild,
+                    user=user,
+                    achievement_type="badge",
+                    badge_name=trainer_model.badge,
+                    gym_name=trainer_model.name
+                )
             
             embed = discord.Embed(
                 title="🏆 VICTORY!",
@@ -6550,6 +6578,14 @@ class EncountersMixin(MixinMeta):
                     color=discord.Color.gold()
                 )
                 await interaction.followup.send(embed=finale_embed)
+
+                # Send Elite Four achievement
+                if interaction.guild:
+                    await self.send_achievement(
+                        guild=interaction.guild,
+                        user=user,
+                        achievement_type="elite_four"
+                    )
 
             # Check if gym leader is available (only for gym battles, not wild trainers)
             if not hasattr(battle_state, 'is_wild_trainer') or not battle_state.is_wild_trainer:

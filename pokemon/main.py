@@ -28,6 +28,7 @@ from .trade import TradeMixin
 from .leaderboard import LeaderboardMixin
 from .admin import AdminMixin
 from .finalemixin import FinaleMixin
+from .achievements import AchievementsMixin
 
 # Things left to do
 # one state mapping instead of multiple
@@ -64,7 +65,7 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class Pokemon(FinaleMixin, StarterMixin, PokemartMixin, TradeMixin, AdminMixin, TrainerCardMixin, EncountersMixin, PokedexMixin, LeaderboardMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
+class Pokemon(AchievementsMixin, FinaleMixin, StarterMixin, PokemartMixin, TradeMixin, AdminMixin, TrainerCardMixin, EncountersMixin, PokedexMixin, LeaderboardMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):
@@ -78,7 +79,8 @@ class Pokemon(FinaleMixin, StarterMixin, PokemartMixin, TradeMixin, AdminMixin, 
             "enabled": True,
         }
         default_guild: Dict[str, Any] = {
-            "enabled": True
+            "enabled": True,
+            "achievement_channel": None
         }
         self.config.register_channel(**default_channel)
         self.config.register_guild(**default_guild)

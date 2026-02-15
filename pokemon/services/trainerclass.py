@@ -788,6 +788,11 @@ class trainer:
             lb = leaderboard(self.discordId)
             lb.evolved()
             
+            # Check for first evolution achievement (for special pokemon like Vaporeon)
+            # This requires guild context which we don't have here
+            # Store the evolved pokemon name for later checking
+            self.last_evolved_pokemon = evolvedPokemon.pokemonName
+            
             # Save inventory to deduct the stone
             inventory.save()
             
