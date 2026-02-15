@@ -2480,7 +2480,7 @@ class EncountersMixin(MixinMeta):
         if inv.lemonade > 0:
             items.append(f'{constant.LEMONADE} **Lemonade** — {inv.lemonade}')
         
-        items_text = "\\n".join(items) if len(items) > 0 else "No items yet."
+        items_text = "\n".join(items) if len(items) > 0 else "No items yet."
         embed.add_field(name="Items", value=items_text, inline=False)
         
         # TMs section
@@ -2493,7 +2493,7 @@ class EncountersMixin(MixinMeta):
         
         if tm_items:
             # Discord embed field value max is 1024 chars, split if needed
-            tm_text = "\\n".join(tm_items)
+            tm_text = "\n".join(tm_items)
             if len(tm_text) <= 1024:
                 embed.add_field(name="TMs", value=tm_text, inline=False)
             else:
@@ -2503,14 +2503,14 @@ class EncountersMixin(MixinMeta):
                 field_num = 1
                 for line in tm_items:
                     if chunk_len + len(line) + 1 > 1024:
-                        embed.add_field(name=f"TMs ({field_num})", value="\\n".join(chunk), inline=False)
+                        embed.add_field(name=f"TMs ({field_num})", value="\n".join(chunk), inline=False)
                         chunk = []
                         chunk_len = 0
                         field_num += 1
                     chunk.append(line)
                     chunk_len += len(line) + 1
                 if chunk:
-                    embed.add_field(name=f"TMs ({field_num})" if field_num > 1 else "TMs", value="\\n".join(chunk), inline=False)
+                    embed.add_field(name=f"TMs ({field_num})" if field_num > 1 else "TMs", value="\n".join(chunk), inline=False)
         
         return embed
     
