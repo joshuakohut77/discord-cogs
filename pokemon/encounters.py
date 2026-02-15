@@ -5371,6 +5371,35 @@ class EncountersMixin(MixinMeta):
             
             return alive_party
 
+    def __get_battle_ready_pokemon(self, user_id: str, state_active=None):
+        """Get the best Pokemon for battle - active if alive, otherwise first alive party Pokemon.
+        Does NOT change the active Pokemon setting in the database.
+        
+        Args:
+            user_id: The user's Discord ID
+            state_active: The active Pokemon from state (already loaded). If None, fetches from DB.
+        
+        Returns:
+            A loaded PokemonClass with currentHP > 0, or None if all fainted.
+        """
+        # Check if the provided active is usable
+        if state_active is not None and not isinstance(state_active, str):
+            # Reload to get latest HP from DB
+            state_active.load(pokemonId=state_active.trainerId)
+            if state_active.currentHP > 0:
+                return state_active
+        
+        # Active is fainted or missing - find first alive party Pokemon
+        trainer = self._get_trainer(user_id)
+        party = trainer.getPokemon(party=True)
+        for poke in party:
+            poke.load(pokemonId=poke.trainerId)
+            if poke.currentHP > 0:
+                return poke
+        
+        # All Pokemon fainted
+        return None
+
     async def _start_manual_trainer_battle(self, interaction: discord.Interaction, 
                                             enemy_type: str, opponent, battle_manager,
                                             sprite_path: str = None, is_gym_leader: bool = False,
@@ -8770,9 +8799,14 @@ class EncountersMixin(MixinMeta):
                 await interaction.followup.send(embed=shiny_embed, ephemeral=True)
 
         # active = trainer.getActivePokemon()
-        active = state.activePokemon
+        # Get battle-ready Pokemon (active if alive, otherwise first alive party member)
+        active = self.__get_battle_ready_pokemon(str(user.id), state.activePokemon)
+        if active is None:
+            await interaction.followup.send('All your Pokemon have fainted! Heal at a Pokemon Center first.', ephemeral=True)
+            if str(user.id) in self.__useractions:
+                del self.__useractions[str(user.id)]
+            return
 
-        # await interaction.response.send_message(f'You encountered a wild {pokemon.pokemonName}!')
         desc = f'''
         {user.display_name} encountered a wild {wildPokemon.pokemonName.capitalize()}!
         {user.display_name} sent out {getTrainerGivenPokemonName(active)}.
@@ -8822,12 +8856,10 @@ class EncountersMixin(MixinMeta):
 
         state = self.__useractions[str(user.id)]
         
-        # Get player's active Pokemon
-        active_pokemon = state.activePokemon
-        
-        # Check if active Pokemon can battle
-        if active_pokemon.currentHP <= 0:
-            await interaction.followup.send('Your active Pokemon has fainted! You need to heal first.', ephemeral=True)
+        # Get battle-ready Pokemon (active if alive, otherwise first alive party member)
+        active_pokemon = self.__get_battle_ready_pokemon(str(user.id), state.activePokemon)
+        if active_pokemon is None:
+            await interaction.followup.send('All your Pokemon have fainted! Heal at a Pokemon Center first.', ephemeral=True)
             del self.__useractions[str(user.id)]
             return
         
@@ -8864,6 +8896,9 @@ class EncountersMixin(MixinMeta):
         # Clean up old action state since we're now in battle state
         del self.__useractions[str(user.id)]
 
+
+
+
     async def on_wild_auto_fight_click(self, interaction: discord.Interaction):
         """Handle AUTO fight with wild Pokemon - old auto-battle system with nice embeds"""
         user = interaction.user
@@ -8877,18 +8912,26 @@ class EncountersMixin(MixinMeta):
         state = self.__useractions[str(user.id)]
         trainer = self._get_trainer(str(user.id))
 
-        # Use old auto-battle system
-        trainer.fight(state.wildPokemon)
-
-        if trainer.statuscode == 96:
-            await interaction.followup.send(trainer.message, ephemeral=True)
+        # Get battle-ready Pokemon (active if alive, otherwise first alive party member)
+        battle_pokemon = self.__get_battle_ready_pokemon(str(user.id), state.activePokemon)
+        if battle_pokemon is None:
+            await interaction.followup.send('All your Pokemon have fainted! Heal at a Pokemon Center first.', ephemeral=True)
+            del self.__useractions[str(user.id)]
             return
 
-        # Get updated active pokemon
-        active = trainer.getActivePokemon()
+        # Run the fight directly with battle-ready Pokemon (bypasses trainer.fight which always uses DB active)
+        enc = EncounterClass(battle_pokemon, state.wildPokemon)
+        retVal = enc.fight()
+
+        if enc.statuscode == 96:
+            await interaction.followup.send(enc.message, ephemeral=True)
+            return
+
+        # Reload battle pokemon to get updated HP after fight
+        battle_pokemon.load(pokemonId=battle_pokemon.trainerId)
         
         # Determine if victory or defeat
-        is_victory = active.currentHP > 0
+        is_victory = battle_pokemon.currentHP > 0
         
         # Create appropriate embed
         if is_victory:
@@ -8899,7 +8942,7 @@ class EncountersMixin(MixinMeta):
             lb.actions()
 
             # VICTORY EMBED
-            player_stats = active.getPokeStats()
+            player_stats = battle_pokemon.getPokeStats()
             player_max_hp = player_stats['hp']
             
             embed = discord.Embed(
@@ -8909,8 +8952,8 @@ class EncountersMixin(MixinMeta):
             )
             
             player_summary = []
-            player_summary.append(f"**{active.pokemonName.capitalize()}** (Lv.{active.currentLevel})")
-            player_summary.append(f"HP: {active.currentHP}/{player_max_hp}")
+            player_summary.append(f"**{battle_pokemon.pokemonName.capitalize()}** (Lv.{battle_pokemon.currentLevel})")
+            player_summary.append(f"HP: {battle_pokemon.currentHP}/{player_max_hp}")
             
             embed.add_field(
                 name="💚 Your Pokemon",
@@ -8918,31 +8961,26 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
             
-            # Add battle result message
-            embed.add_field(
-                name="⚔️ Battle Result",
-                value=trainer.message,
-                inline=False
-            )
+            # Add exp info if available
+            if enc.message:
+                embed.add_field(
+                    name="📊 Experience",
+                    value=enc.message,
+                    inline=False
+                )
         else:
-            # LEADERBOARD TRACKING
-            from services.leaderboardclass import leaderboard as LeaderboardClass
-            lb = LeaderboardClass(str(user.id))
-            lb.defeat()
-            lb.actions()
-
             # DEFEAT EMBED
-            player_stats = active.getPokeStats()
+            player_stats = battle_pokemon.getPokeStats()
             player_max_hp = player_stats['hp']
             
             embed = discord.Embed(
-                title="💀 DEFEAT",
-                description=f"You were defeated by the wild {state.wildPokemon.pokemonName.capitalize()}...",
-                color=discord.Color.dark_red()
+                title="💀 Defeat...",
+                description=f"You were defeated by the wild {state.wildPokemon.pokemonName.capitalize()}!",
+                color=discord.Color.red()
             )
             
             player_summary = []
-            player_summary.append(f"**{active.pokemonName.capitalize()}** (Lv.{active.currentLevel})")
+            player_summary.append(f"**{battle_pokemon.pokemonName.capitalize()}** (Lv.{battle_pokemon.currentLevel})")
             player_summary.append(f"HP: 0/{player_max_hp} ❌")
             
             embed.add_field(
@@ -9120,13 +9158,18 @@ class EncountersMixin(MixinMeta):
         # active = trainer.getActivePokemon()
         state = self.__useractions[str(user.id)]
         wildPokemon = state.wildPokemon
-        active = state.activePokemon
-        
-        # await interaction.response.send_message(f'You encountered a wild {pokemon.pokemonName}!')
+        # Get battle-ready Pokemon (active if alive, otherwise first alive party member)
+        active = self.__get_battle_ready_pokemon(str(user.id), state.activePokemon)
+        if active is None:
+            await interaction.followup.send('All your Pokemon have fainted! Heal at a Pokemon Center first.', ephemeral=True)
+            if str(user.id) in self.__useractions:
+                del self.__useractions[str(user.id)]
+            return
+
         desc = f'''
-{user.display_name} encountered a wild {wildPokemon.pokemonName.capitalize()}!
-{user.display_name} sent out {getTrainerGivenPokemonName(active)}.
-'''
+        {user.display_name} encountered a wild {wildPokemon.pokemonName.capitalize()}!
+        {user.display_name} sent out {getTrainerGivenPokemonName(active)}.
+        '''
 
         embed = self.__wildPokemonEncounter(user, wildPokemon, active, desc)
 

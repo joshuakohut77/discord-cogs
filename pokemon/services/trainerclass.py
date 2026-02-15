@@ -243,21 +243,16 @@ class trainer:
         try:
             db = dbconn()
             if party:
-                queryString = 'SELECT id FROM pokemon WHERE party = True AND discord_id = %(discordId)s'
+                queryString = 'SELECT id FROM pokemon WHERE party = True AND discord_id = %(discordId)s AND (is_deleted = False OR is_deleted IS NULL)'
             elif pc:
-                queryString = 'SELECT id FROM pokemon WHERE party = False AND discord_id = %(discordId)s'
+                queryString = 'SELECT id FROM pokemon WHERE party = False AND discord_id = %(discordId)s AND (is_deleted = False OR is_deleted IS NULL)'
             else:
-                queryString = 'SELECT id FROM pokemon WHERE discord_id = %(discordId)s order by party desc'
+                queryString = 'SELECT id FROM pokemon WHERE discord_id = %(discordId)s AND (is_deleted = False OR is_deleted IS NULL) order by party desc'
             results = db.queryAll(queryString, { 'discordId': self.discordId })
             for row in results:
                 pokemonId = row[0]
                 pokemon = pokeClass(self.discordId)
                 pokemon.trainerId = pokemonId
-                # pokemon.load(pokemonId=pokemonId)
-                # if pokemon.statuscode == 96:
-                #     self.statuscode = 96
-                #     self.message = "error occured during pokemon load()"
-                #     return
                 pokemonList.append(pokemon)
         except:
             self.statuscode = 96
@@ -837,6 +832,7 @@ class trainer:
             SELECT COUNT(*)  FROM
                 Pokemon WHERE party = True 
                 AND "discord_id" = %(discordId)s
+                AND (is_deleted = False OR is_deleted IS NULL)
             """
             result = db.querySingle(queryString, { 'discordId': self.discordId })
             if result:
