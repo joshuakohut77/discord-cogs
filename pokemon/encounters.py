@@ -9,8 +9,8 @@ import discord
 from discord import (Embed, Member)
 from discord import message
 
-from discord import ButtonStyle, Interaction
-from discord.ui import Button, View
+from discord.ui import View, Button, Select, Modal
+from discord import SelectOption, ButtonStyle, Interaction
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
