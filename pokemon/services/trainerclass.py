@@ -732,6 +732,12 @@ class trainer:
             evolvedPokemon = pokeClass(self.discordId, newPokemon)
             evolvedPokemon.create(pokemon.currentLevel, is_shiny=old_is_shiny)
             
+            # Transfer moves from pre-evolution (don't use evolved form's defaults)
+            evolvedPokemon.move_1 = pokemon.move_1
+            evolvedPokemon.move_2 = pokemon.move_2
+            evolvedPokemon.move_3 = pokemon.move_3
+            evolvedPokemon.move_4 = pokemon.move_4
+            
             # Set critical attributes
             evolvedPokemon.discordId = self.discordId
             evolvedPokemon.party = oldPartyStatus

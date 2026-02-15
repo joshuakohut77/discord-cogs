@@ -400,10 +400,17 @@ class Pokemon:
                         oldPartyStatus = self.party
                         wasActivePokemon = self.__isActivePokemon()
                         old_is_shiny = self.is_shiny  # Preserve shiny status
+                        old_moves = [self.move_1, self.move_2, self.move_3, self.move_4]
                         
                         # Create evolved Pokemon with correct constructor arguments
                         evolvedPokemon = Pokemon(self.discordId, evolvedForm)
                         evolvedPokemon.create(self.currentLevel, is_shiny=old_is_shiny)
+                        
+                        # Transfer moves from pre-evolution (don't use evolved form's defaults)
+                        evolvedPokemon.move_1 = old_moves[0]
+                        evolvedPokemon.move_2 = old_moves[1]
+                        evolvedPokemon.move_3 = old_moves[2]
+                        evolvedPokemon.move_4 = old_moves[3]
                         
                         # Inherit party status from old Pokemon
                         evolvedPokemon.party = oldPartyStatus
@@ -423,6 +430,19 @@ class Pokemon:
                         
                         # ✅ Store evolution info for UI
                         self.evolvedInto = evolvedForm
+                        
+                        # Check if evolved form learns any moves at the current level
+                        evoMoves = self.getMovesLearnedBetweenLevels(self.currentLevel - 1, self.currentLevel)
+                        for evoMoveName, evoMoveLevel in evoMoves:
+                            # Skip if already known
+                            if evoMoveName in [self.move_1, self.move_2, self.move_3, self.move_4]:
+                                continue
+                            currentMoveCount = self.getCurrentMoveCount()
+                            if currentMoveCount < 4:
+                                if self.learnMove(evoMoveName):
+                                    retMsg += f'Your pokemon learned {evoMoveName.replace("-", " ").title()}! '
+                            else:
+                                pendingMoves.append(evoMoveName)
             
             self.save()
         except:
