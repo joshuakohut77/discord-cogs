@@ -27,7 +27,8 @@ class uniqueEncounters:
         self.eevee = False
         self.snorlax = False
         self.mew = False
-        
+        self.porygon = False
+
         # populate object
         self.__load()
 
@@ -38,7 +39,7 @@ class uniqueEncounters:
             queryString = '''
                 SELECT discord_id, articuno, zapdos, moltres, mewtwo, 
                 magikarp, charmander, squirtle, bulbasaur, 
-                lapras, hitmonchan, hitmonlee, eevee, snorlax, mew
+                lapras, hitmonchan, hitmonlee, eevee, snorlax, mew, porygon
 	            FROM "unique-encounters" WHERE discord_id=%(discordId)s
             '''
             result = db.querySingle(queryString, { 'discordId': self.discordId })
@@ -57,6 +58,7 @@ class uniqueEncounters:
                 self.eevee = result[12]
                 self.snorlax = result[13]
                 self.mew = result[14]
+                self.porygon = result[15]
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
@@ -71,20 +73,21 @@ class uniqueEncounters:
             if self.discordId is not None:
                 updateString = '''
                 UPDATE "unique-encounters"
-	                SET "articuno"=%(articuno)s, "zapdos"=%(zapdos)s, "moltres"=%(moltres)s,
-                    "mewtwo"=%(mewtwo)s, "magikarp"=%(magikarp)s, 
-                    "charmander"=%(charmander)s, "squirtle"=%(squirtle)s, "bulbasaur"=%(bulbasaur)s, 
-                    lapras=%(lapras)s, hitmonchan=%(hitmonchan)s, hitmonlee=%(hitmonlee)s, 
-                    eevee=%(eevee)s, snorlax=%(snorlax)s, mew=%(mew)s
-	                    WHERE discord_id=%(discordId)s;
+	                SET "articuno"=%(articuno)s, "zapdos"=%(zapdos)s, "moltres"=%(moltres)s, 
+                    "mewtwo"=%(mewtwo)s, "magikarp"=%(magikarp)s, "charmander"=%(charmander)s, 
+                    "squirtle"=%(squirtle)s, "bulbasaur"=%(bulbasaur)s, "lapras"=%(lapras)s, 
+                    "hitmonchan"=%(hitmonchan)s, "hitmonlee"=%(hitmonlee)s, "eevee"=%(eevee)s, 
+                    "snorlax"=%(snorlax)s, "mew"=%(mew)s, "porygon"=%(porygon)s
+                    WHERE discord_id=%(discordId)s
                 '''
-                values = { 'articuno':self.articuno, 'zapdos': self.zapdos, 'moltres':self.moltres,
-                            'mewtwo':self.mewtwo, 'magikarp':self.magikarp,
-                            'charmander':self.charmander, 'squirtle':self.squirtle,
-                            'bulbasaur':self.bulbasaur, 'lapras':self.lapras,
-                            'hitmonchan':self.hitmonchan, 'hitmonlee':self.hitmonlee,
-                            'eevee':self.eevee, 'snorlax':self.snorlax, 'mew':self.mew,
-                            'discordId':self.discordId }
+                values = {
+                    'articuno': self.articuno, 'zapdos': self.zapdos, 'moltres': self.moltres,
+                    'mewtwo': self.mewtwo, 'magikarp': self.magikarp, 'charmander': self.charmander,
+                    'squirtle': self.squirtle, 'bulbasaur': self.bulbasaur, 'lapras': self.lapras,
+                    'hitmonchan': self.hitmonchan, 'hitmonlee': self.hitmonlee, 'eevee': self.eevee,
+                    'snorlax': self.snorlax, 'mew': self.mew, 'porygon': self.porygon,
+                    'discordId': self.discordId
+                }
                 db.execute(updateString, values)
         except:
             self.statuscode = 96

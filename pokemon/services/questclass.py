@@ -316,6 +316,10 @@ class quests:
         elif questName == 'Pokemon Fan Club':
             if self.keyitems.bike_voucher or self.keyitems.bicycle:
                 return True
+        elif questName == 'Porygon':
+            uniqueEncounters = uEnc(self.discordId)
+            if uniqueEncounters.porygon:
+                return True
         # easter eggs
         elif questName == 'Play SNES':
             if self.keyitems.elite_four and self.keyitems.game_shark:
@@ -327,6 +331,8 @@ class quests:
             uniqueEncounters = uEnc(self.discordId)
             if uniqueEncounters.mew:
                 return True
+        
+        
 
     # new code - add this method to the quests class
     def create_key_item_embed(self, item_name: str, emoji: str = None) -> dict:
@@ -399,6 +405,7 @@ class quests:
     Oaks Aide - get HM05
     Museum of Science - get Old Amber
     Cafe - get coin_case item
+    Porygon - get porygon for 100k coin
     Rooftop Square - get lemonade item
     Rocket Hideout - get silph_scope
     Free Spirits - nothing
@@ -445,6 +452,8 @@ class quests:
             return self.museumOfScience()
         elif questName == 'Cafe':
             return self.cafe()
+        elif questName == 'Porygon':
+            return self.porygon()
         elif questName == 'Rooftop Square':
             return self.rooftopSquare()
         elif questName == 'Rocket Hideout':
@@ -625,6 +634,67 @@ class quests:
                             """)
         self.inventory.save()
         return self.create_key_item_embed('Coin Case')
+
+    def porygon(self):
+        from trainerclass import trainer as trainerClass
+        from pokedexclass import pokedex
+        
+        PORYGON_COST = 100000
+        
+        # Check if trainer has already received Porygon
+        uniqueEncounters = uEnc(self.discordId)
+        if uniqueEncounters.porygon:
+            self.statuscode = 420
+            self.message = "You already purchased Porygon!"
+            return
+        
+        # Check if trainer has enough money
+        if self.inventory.money < PORYGON_COST:
+            self.statuscode = 420
+            self.message = f"You don't have enough money! You need ¥{PORYGON_COST:,} but only have ¥{self.inventory.money:,}."
+            return
+        
+        # Deduct money
+        self.inventory.money -= PORYGON_COST
+        self.inventory.save()
+        
+        # Create trainer object to check party size
+        trainer = trainerClass(self.discordId)
+        party_count = trainer.getPartySize()
+        
+        # Create Porygon Pokemon
+        pokemon = pokeClass(self.discordId, 'porygon')
+        pokemon.create(26)
+        
+        # CRITICAL: Set discordId and party status before saving
+        pokemon.discordId = self.discordId
+        pokemon.party = party_count < 6  # Add to party if there's space, otherwise to PC
+        
+        # Save the Pokemon
+        pokemon.save()
+        
+        # Check if save was successful
+        if pokemon.statuscode == 96:
+            self.statuscode = 96
+            self.message = "Error occurred while creating Porygon"
+            # Refund money on failure
+            self.inventory.money += PORYGON_COST
+            self.inventory.save()
+            return
+        
+        # Register to Pokedex
+        pokedex(self.discordId, pokemon)
+        
+        # Update unique encounters to mark Porygon as received
+        uniqueEncounters.porygon = True
+        uniqueEncounters.save()
+        
+        self.statuscode = 420
+        if party_count < 6:
+            self.message = f"You purchased Porygon for ¥{PORYGON_COST:,}! Porygon was added to your party."
+        else:
+            self.message = f"You purchased Porygon for ¥{PORYGON_COST:,}! Your party is full, so Porygon was sent to your PC."
+        return self.create_key_item_embed('Porygon')
 
     def rooftopSquare(self):
         self.inventory.lemonade = 1

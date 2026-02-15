@@ -633,7 +633,7 @@
   },
   "1880": {
     "pre-requsites": [],
-    "quest": [],
+    "quest": ["Porygon"],
     "blockers": [],
     "name": "game-corner"
   },

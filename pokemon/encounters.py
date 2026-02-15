@@ -6922,6 +6922,11 @@ class EncountersMixin(MixinMeta):
             )
             return
 
+        # Special handling for Porygon - show confirmation prompt
+        if quest_name == 'Porygon':
+            await self.__show_porygon_confirmation(interaction, user)
+            return
+
         # Execute the quest
         from services.questclass import quests as QuestsClass
         quest_obj = QuestsClass(str(user.id))
@@ -6958,6 +6963,89 @@ class EncountersMixin(MixinMeta):
                 view.add_item(new_button)
 
         await interaction.message.edit(view=view)
+
+
+    async def __show_porygon_confirmation(self, interaction: discord.Interaction, user):
+        """Show confirmation prompt for buying Porygon"""
+        from services.inventoryclass import inventory as InventoryClass
+        from services.uniqueencounters import uniqueEncounters as uEnc
+        
+        PORYGON_COST = 100000
+        
+        # Check if already purchased
+        unique_enc = uEnc(str(user.id))
+        if unique_enc.porygon:
+            await interaction.response.send_message("You already purchased Porygon!", ephemeral=True)
+            return
+        
+        # Get trainer's money
+        inventory = InventoryClass(str(user.id))
+        has_enough = inventory.money >= PORYGON_COST
+        
+        embed = discord.Embed(
+            title="🖥️ Porygon For Sale!",
+            description="A scientist approaches you with a Pokéball containing a digital Pokémon.",
+            color=discord.Color.blue() if has_enough else discord.Color.red()
+        )
+        embed.add_field(name="Price", value=f"¥{PORYGON_COST:,}", inline=True)
+        embed.add_field(name="Your Money", value=f"¥{inventory.money:,}", inline=True)
+        
+        if not has_enough:
+            embed.add_field(name="", value=f"❌ You need ¥{PORYGON_COST - inventory.money:,} more!", inline=False)
+        else:
+            embed.add_field(name="", value="Do you want to buy Porygon for ¥100,000?", inline=False)
+        
+        view = View()
+        
+        yes_btn = Button(style=ButtonStyle.green, label="Buy Porygon", custom_id='porygon_confirm_yes', disabled=not has_enough)
+        yes_btn.callback = self.on_porygon_confirm
+        view.add_item(yes_btn)
+        
+        no_btn = Button(style=ButtonStyle.gray, label="No Thanks", custom_id='porygon_confirm_no')
+        no_btn.callback = self.on_porygon_decline
+        view.add_item(no_btn)
+        
+        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
+    async def on_porygon_confirm(self, interaction: discord.Interaction):
+        """Handle Porygon purchase confirmation"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        # Execute the quest
+        from services.questclass import quests as QuestsClass
+        quest_obj = QuestsClass(str(user.id))
+        result = quest_obj.questHandler('Porygon')
+        
+        quest_message = quest_obj.message if quest_obj.message else 'Porygon quest completed.'
+        
+        # Disable the buttons after purchase
+        view = View()
+        disabled_btn = Button(style=ButtonStyle.green, label="Purchased!", custom_id='porygon_confirm_yes', disabled=True)
+        disabled_btn.callback = self.on_porygon_confirm
+        view.add_item(disabled_btn)
+        
+        if result and isinstance(result, dict) and 'embed' in result:
+            await interaction.edit_original_response(content=quest_message, embed=result['embed'], view=view)
+        else:
+            await interaction.edit_original_response(content=quest_message, view=view)
+
+    async def on_porygon_decline(self, interaction: discord.Interaction):
+        """Handle Porygon purchase decline"""
+        await interaction.response.defer()
+        
+        embed = discord.Embed(
+            title="🖥️ Maybe Next Time",
+            description="The scientist nods and walks away with the Pokéball.",
+            color=discord.Color.light_gray()
+        )
+        
+        view = View()
+        disabled_btn = Button(style=ButtonStyle.gray, label="Declined", custom_id='porygon_confirm_no', disabled=True)
+        disabled_btn.callback = self.on_porygon_decline
+        view.add_item(disabled_btn)
+        
+        await interaction.edit_original_response(embed=embed, view=view)
 
     def __create_battle_move_buttons_with_items(self, battle_state) -> View:
         """
