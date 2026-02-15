@@ -6759,11 +6759,77 @@ class EncountersMixin(MixinMeta):
 
         return button
 
+class NicknameModal(Modal, title="Set Pokemon Nickname"):
+    def __init__(self, pokemon):
+        super().__init__()
+        self.pokemon = pokemon
+        
+        current_nick = pokemon.nickName if pokemon.nickName else ""
+        
+        # Add nickname input field
+        self.nickname_input = discord.ui.TextInput(
+            label="Nickname",
+            placeholder=f"Enter nickname for {pokemon.pokemonName.capitalize()}",
+            default=current_nick,
+            required=False,
+            max_length=20,
+            style=discord.TextStyle.short
+        )
+        self.add_item(self.nickname_input)
+        
+        # Add clear option
+        self.clear_input = discord.ui.TextInput(
+            label='Type "CLEAR" to remove nickname',
+            placeholder="Leave blank to set nickname above",
+            required=False,
+            max_length=5,
+            style=discord.TextStyle.short
+        )
+        self.add_item(self.clear_input)
+    
+    async def on_submit(self, interaction: discord.Interaction):
+        nickname = self.nickname_input.value.strip()
+        clear_text = self.clear_input.value.strip().upper()
+        
+        # Check if user wants to clear
+        if clear_text == "CLEAR":
+            self.pokemon.nickName = None
+            self.pokemon.save()
+            
+            embed = discord.Embed(
+                title="✅ Nickname Cleared",
+                description=f"**{self.pokemon.pokemonName.capitalize()}** no longer has a nickname.",
+                color=discord.Color.green()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+        
+        # Set new nickname
+        if nickname:
+            self.pokemon.nickName = nickname
+            self.pokemon.save()
+            
+            embed = discord.Embed(
+                title="✅ Nickname Set",
+                description=f"**{self.pokemon.pokemonName.capitalize()}** is now nicknamed **{nickname}**!",
+                color=discord.Color.green()
+            )
+        else:
+            embed = discord.Embed(
+                title="❌ No Change",
+                description="No nickname entered.",
+                color=discord.Color.red()
+            )
+        
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
     @commands.group(name="trainer")
     @commands.guild_only()
     async def _trainer(self, ctx: commands.Context) -> None:
         """Base command to manage the trainer (user).
         """
+    
+
     
     @commands.command(name='nickname')
     async def trainer_nickname(self, ctx):
@@ -6846,70 +6912,7 @@ class EncountersMixin(MixinMeta):
         await ctx.send(embed=embed, view=view)
 
 
-    class NicknameModal(discord.ui.Modal, title="Set Pokemon Nickname"):
-        def __init__(self, pokemon):
-            super().__init__()
-            self.pokemon = pokemon
-            
-            current_nick = pokemon.nickName if pokemon.nickName else ""
-            
-            # Add nickname input field
-            self.nickname_input = discord.ui.TextInput(
-                label="Nickname",
-                placeholder=f"Enter nickname for {pokemon.pokemonName.capitalize()}",
-                default=current_nick,
-                required=False,
-                max_length=20,
-                style=discord.TextStyle.short
-            )
-            self.add_item(self.nickname_input)
-            
-            # Add clear option
-            self.clear_input = discord.ui.TextInput(
-                label='Type "CLEAR" to remove nickname',
-                placeholder="Leave blank to set nickname above",
-                required=False,
-                max_length=5,
-                style=discord.TextStyle.short
-            )
-            self.add_item(self.clear_input)
-        
-        async def on_submit(self, interaction: discord.Interaction):
-            nickname = self.nickname_input.value.strip()
-            clear_text = self.clear_input.value.strip().upper()
-            
-            # Check if user wants to clear
-            if clear_text == "CLEAR":
-                self.pokemon.nickName = None
-                self.pokemon.save()
-                
-                embed = discord.Embed(
-                    title="✅ Nickname Cleared",
-                    description=f"**{self.pokemon.pokemonName.capitalize()}** no longer has a nickname.",
-                    color=discord.Color.green()
-                )
-                await interaction.response.send_message(embed=embed, ephemeral=True)
-                return
-            
-            # Set new nickname
-            if nickname:
-                self.pokemon.nickName = nickname
-                self.pokemon.save()
-                
-                embed = discord.Embed(
-                    title="✅ Nickname Set",
-                    description=f"**{self.pokemon.pokemonName.capitalize()}** is now nicknamed **{nickname}**!",
-                    color=discord.Color.green()
-                )
-            else:
-                embed = discord.Embed(
-                    title="❌ No Change",
-                    description="No nickname entered.",
-                    color=discord.Color.red()
-                )
-            
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-
+    
     @commands.command(name="play", aliases=['p','m'])
     async def play(self, ctx: commands.Context):
         """Show the map with navigation buttons"""
