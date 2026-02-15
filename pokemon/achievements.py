@@ -111,9 +111,16 @@ class AchievementsMixin(MixinMeta):
             
         elif achievement_type == "first_evolution":
             pokemon_name = kwargs.get("pokemon_name", "Unknown")
+
+            if pokemon_name.capitalize() == 'vaporeon':
+                funFact += '\nDid you know?'
+            else:
+                funFact = ''
+
             embed = Embed(
                 title="🌊 First Evolution Discovery!",
-                description=f"**{user.display_name}** is the first trainer to evolve a **{pokemon_name.capitalize()}**!",
+                description=f"**{user.display_name}** is the first trainer to evolve a **{pokemon_name.capitalize()}**!{funFact}",
+                
                 color=discord.Color.purple()
             )
             embed.set_thumbnail(url=user.display_avatar.url)
