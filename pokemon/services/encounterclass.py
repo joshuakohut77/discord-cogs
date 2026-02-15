@@ -172,7 +172,11 @@ class encounter:
             evolvedPokemon = PokemonClass(pokemon.discordId, newPokemon)
             evolvedPokemon.create(pokemon.currentLevel, is_shiny=pokemon.is_shiny)
 
-            # Transfer moves from pre-evolution (don't use evolved form's defaults)
+            if evolvedPokemon.statuscode == 96:
+                logger.error("Error creating evolved trade Pokemon during create()")
+                return None
+
+            # Transfer moves from pre-evolution
             evolvedPokemon.move_1 = pokemon.move_1
             evolvedPokemon.move_2 = pokemon.move_2
             evolvedPokemon.move_3 = pokemon.move_3

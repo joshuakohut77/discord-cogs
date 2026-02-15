@@ -395,38 +395,66 @@ class Pokemon:
                         retMsg += 'Your pokemon is evolving......... Your pokemon evolved into %s!' % (
                             evolvedForm)
                         
-                        # Store old Pokemon info before creating new one
-                        oldTrainerId = self.trainerId
-                        oldPartyStatus = self.party
-                        wasActivePokemon = self.__isActivePokemon()
-                        old_is_shiny = self.is_shiny  # Preserve shiny status
-                        old_moves = [self.move_1, self.move_2, self.move_3, self.move_4]
-                        
-                        # Create evolved Pokemon with correct constructor arguments
-                        evolvedPokemon = Pokemon(self.discordId, evolvedForm)
-                        evolvedPokemon.create(self.currentLevel, is_shiny=old_is_shiny)
-                        
-                        # Transfer moves from pre-evolution (don't use evolved form's defaults)
-                        evolvedPokemon.move_1 = old_moves[0]
-                        evolvedPokemon.move_2 = old_moves[1]
-                        evolvedPokemon.move_3 = old_moves[2]
-                        evolvedPokemon.move_4 = old_moves[3]
-                        
-                        # Inherit party status from old Pokemon
-                        evolvedPokemon.party = oldPartyStatus
-                        
-                        # Save the evolved Pokemon first to get its trainerId
-                        evolvedPokemon.save()
-                        
-                        # If this was the active Pokemon, update the trainer's active Pokemon
-                        if wasActivePokemon:
-                            self.__updateActivePokemon(evolvedPokemon.trainerId)
-                        
-                        # Release the old Pokemon (marks as released, doesn't delete)
-                        self.release()
-                        
-                        # Update self to point to the evolved Pokemon's data
-                        self.load(evolvedPokemon.trainerId)
+                        # Evolve in-place: update species data while keeping moves, IVs, EVs, etc.
+                        oldPokedexId = self.pokedexId
+                        oldMaxHP = self.getPokeStats().get('hp', self.currentHP)
+                        try:
+                            # Load the evolved form's config
+                            self.pokedexId = evolvedForm
+                            evolvedConfig = self.__loadPokemonConfig()
+                            
+                            # Update species-related fields
+                            self.pokemonName = evolvedConfig['name']
+                            self.pokedexId = evolvedConfig['id']
+                            self.growthRate = evolvedConfig['growthRate']
+                            self.base_exp = evolvedConfig['base_experience']
+                            self.type1 = evolvedConfig['type1']
+                            self.type2 = evolvedConfig['type2']
+                            
+                            # Update base stats (keep IVs and EVs)
+                            baseDict = evolvedConfig['stats']
+                            self.hp.base = baseDict['hp']
+                            self.attack.base = baseDict['attack']
+                            self.defense.base = baseDict['defense']
+                            self.speed.base = baseDict['speed']
+                            self.special_attack.base = baseDict['special-attack']
+                            self.special_defense.base = baseDict['special-defense']
+                            
+                            # Update sprites
+                            if self.is_shiny:
+                                self.frontSpriteURL = f"https://pokesprites.joshkohut.com/sprites/pokemon/shiny/{self.pokedexId}.png"
+                                self.backSpriteURL = f"https://pokesprites.joshkohut.com/sprites/pokemon/shiny/back/{self.pokedexId}.png"
+                            else:
+                                self.frontSpriteURL = self.__getFrontSpritePath()
+                                self.backSpriteURL = self.__getBackSpritePath()
+                            
+                            # Recalculate HP with new base stats (keep same HP ratio)
+                            newMaxHP = self.getPokeStats().get('hp', oldMaxHP)
+                            if oldMaxHP > 0:
+                                hpRatio = self.currentHP / oldMaxHP
+                                self.currentHP = max(1, int(newMaxHP * hpRatio))
+                            else:
+                                self.currentHP = newMaxHP
+                            
+                            # Register evolved form to Pokedex
+                            from pokedexclass import pokedex
+                            pokedex(self.discordId, self)
+                            
+                            # Check if evolved form learns any new moves at the current level
+                            evoMoves = self.getMovesLearnedBetweenLevels(self.currentLevel - 1, self.currentLevel)
+                            for evoMoveName, evoMoveLevel in evoMoves:
+                                if evoMoveName in [self.move_1, self.move_2, self.move_3, self.move_4]:
+                                    continue
+                                currentMoveCount = self.getCurrentMoveCount()
+                                if currentMoveCount < 4:
+                                    if self.learnMove(evoMoveName):
+                                        retMsg += f'Your pokemon learned {evoMoveName.replace("-", " ").title()}! '
+                                else:
+                                    pendingMoves.append(evoMoveName)
+                            
+                        except Exception as e:
+                            self.pokedexId = oldPokedexId
+                            logger.error(excInfo=sys.exc_info())
                         
                         # ✅ Store evolution info for UI
                         self.evolvedInto = evolvedForm

@@ -732,7 +732,12 @@ class trainer:
             evolvedPokemon = pokeClass(self.discordId, newPokemon)
             evolvedPokemon.create(pokemon.currentLevel, is_shiny=old_is_shiny)
             
-            # Transfer moves from pre-evolution (don't use evolved form's defaults)
+            if evolvedPokemon.statuscode == 96:
+                self.statuscode = 96
+                self.message = "Error occurred while creating evolved Pokemon"
+                return
+            
+            # Transfer moves from pre-evolution
             evolvedPokemon.move_1 = pokemon.move_1
             evolvedPokemon.move_2 = pokemon.move_2
             evolvedPokemon.move_3 = pokemon.move_3
