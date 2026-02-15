@@ -373,6 +373,7 @@ class quests:
             'Gold Teeth': '🦷',  # Unicode emoji since no constant exists
             'Item Finder': constant.ITEM_FINDER,
             'Mew': constant.POKEMON_EMOJIS['MEW'],
+            'Porygon': constant.POKEMON_EMOJIS['Porygon'],
             'Aerodactyl': constant.POKEMON_EMOJIS['AERODACTYL'],
             'Kabuto': constant.POKEMON_EMOJIS['KABUTO'],
             'Omanyte': constant.POKEMON_EMOJIS['OMANYTE'],
@@ -694,6 +695,7 @@ class quests:
             self.message = f"You purchased Porygon for ¥{PORYGON_COST:,}! Porygon was added to your party."
         else:
             self.message = f"You purchased Porygon for ¥{PORYGON_COST:,}! Your party is full, so Porygon was sent to your PC."
+        
         return self.create_key_item_embed('Porygon')
 
     def rooftopSquare(self):
