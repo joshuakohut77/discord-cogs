@@ -5560,5 +5560,44 @@
     "weight": 69,
     "description": "A mythical pokemon never seen before. His power is so amazing it almost seems impossible.",
     "partySprite": "/sprites/menu/party/mew.png"
+  },
+  "mini-chode": {
+    "id": 6969,
+    "name": "mini-chode",
+    "base_experience": 300,
+    "growthRate": "medium-slow",
+    "type1": "psychic",
+    "type2": "",
+    "stats": {
+      "hp": 100,
+      "attack": 100,
+      "defense": 100,
+      "special-attack": 100,
+      "special-defense": 100,
+      "speed": 100
+    },
+    "effort": {
+      "hp": 3,
+      "attack": 0,
+      "defense": 0,
+      "special-attack": 0,
+      "special-defense": 0,
+      "speed": 0
+    },
+    "moves": {
+      "pound": 1,
+      "transform": 10,
+      "mega-punch": 20,
+      "metronome": 30,
+      "psychic": 40,
+      "barrier": 50,
+      "amnesia": 60,
+      "baton-pass": 70,
+      "ancient-power": 80
+    },
+    "height": 5,
+    "weight": 69,
+    "description": "A mythical pokemon never seen before. His power is so amazing it almost seems impossible.",
+    "partySprite": "/sprites/menu/party/mew.png"
   }
 }
