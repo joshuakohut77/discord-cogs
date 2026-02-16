@@ -380,7 +380,7 @@ class encounter:
 
                     elif special_fn == 'dream_eater':
                         if self.ailment2.sleep or rest_turns_2 > 0:
-                            damage = self.__calculateDamageOfMove(pbMove, stat_stages_1, stat_stages_2)
+                            damage = self.__calculateDamageOfMove(pbMove, stat_stages_attacker=stat_stages_1, stat_stages_defender=stat_stages_2)
                             if damage > 0:
                                 battleHP2 -= damage
                                 drain_heal = calculate_drain_heal(damage)
@@ -392,7 +392,7 @@ class encounter:
                             self.battle_log.append(f'• {self.pokemon1.pokemonName.capitalize()} used Dream Eater but it failed! Target is not asleep.')
 
                     elif special_fn == 'drain':
-                        damage = self.__calculateDamageOfMove(pbMove, stat_stages_1, stat_stages_2)
+                        damage = self.__calculateDamageOfMove(pbMove, stat_stages_attacker=stat_stages_1, stat_stages_defender=stat_stages_2)
                         if damage > 0:
                             battleHP2 -= damage
                             drain_heal = calculate_drain_heal(damage)
@@ -403,7 +403,7 @@ class encounter:
 
                     else:
                         # --- NORMAL MOVE ---
-                        damage = self.__calculateDamageOfMove(pbMove, stat_stages_1, stat_stages_2)
+                        damage = self.__calculateDamageOfMove(pbMove, stat_stages_attacker=stat_stages_1, stat_stages_defender=stat_stages_2)
                         isAilment2 = self.ailment2.rollAilmentChance(pbMove)
                         if isAilment2:
                             self.ailment2.setAilment(pbMove['ailment'])
