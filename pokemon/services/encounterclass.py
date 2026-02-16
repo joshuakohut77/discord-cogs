@@ -290,18 +290,37 @@ class encounter:
 
             if not p1_skip_turn:
                 if move1 == None:
-                    randMoveSelector = random.randrange(1, len(battleMoves1)+1)
-                    move1 = battleMoves1[randMoveSelector-1]
+                    # Smart move selection for auto-battle:
+                    # Separate moves into damaging and non-damaging
+                    damaging_moves = []
+                    non_damaging_moves = []
+                    for m in battleMoves1:
+                        mData = self.__loadMovesConfig(m)
+                        if mData.get('power') is not None and mData['power'] > 0:
+                            damaging_moves.append(m)
+                        else:
+                            non_damaging_moves.append(m)
+                    
+                    # Prefer damaging moves: 85% chance if available, 
+                    # allow 1 non-damaging move per battle
+                    use_damaging = True
+                    if non_damaging_moves and statusMovesCount < 1 and random.random() < 0.15:
+                        use_damaging = False
+                    
+                    if use_damaging and damaging_moves:
+                        move1 = random.choice(damaging_moves)
+                    elif non_damaging_moves and statusMovesCount < 1:
+                        move1 = random.choice(non_damaging_moves)
+                        statusMovesCount += 1
+                    elif damaging_moves:
+                        move1 = random.choice(damaging_moves)
+                    else:
+                        # Fallback: all moves are non-damaging, just pick one
+                        move1 = random.choice(battleMoves1)
+                    
                     pbMove = self.__loadMovesConfig(move1)
-                    power = pbMove['power']
                     special_fn = pbMove.get('special_function', '')
                     has_stat_change = 'stat_change' in pbMove
-                    if power is None and not special_fn and not has_stat_change and statusMovesCount >= 1:
-                        move1 = None
-                        turn_number += 1
-                        continue
-                    elif power is None and not special_fn and not has_stat_change:
-                        statusMovesCount += 1
                 else:
                     pbMove = self.__loadMovesConfig(move1)
                     special_fn = pbMove.get('special_function', '')
