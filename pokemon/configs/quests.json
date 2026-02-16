@@ -301,7 +301,7 @@
   },
   "154": {
     "pre-requsites": [],
-    "quest": [],
+    "quest": ["Old Man"],
     "blockers": [],
     "name": "viridian-city"
   },

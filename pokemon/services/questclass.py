@@ -402,6 +402,7 @@ class quests:
     Play SNES - Fun canon quest
     Search Room - Fun non-canon quest of finding Ash's Mom's toy
     Professor Oak - deliver parcel
+    Old Man - the old man teaches you to capture a pokemon
     Super Nerd - Get Helix Fossil item
     Fishing Guru - get old-rod item
     Bike Voucher - get bicycle item
@@ -443,6 +444,8 @@ class quests:
             return self.garysSister()
         elif questName == 'Professor Oak':
             return self.professorOak()
+        elif questName == 'Old Man':
+            return self.oldMan()
         elif questName == 'Super Nerd':
             return self.superNerd()
         elif questName == 'Fishing Guru':
@@ -576,6 +579,15 @@ class quests:
         self.message = dedent("""\
                             Professor Oak was busy in your mothers bedroom. You left his parcel on his desk.""")
         self.keyitems.save()
+        return
+
+    def oldMan(self):
+        # do stuff here for easter egg pre-fix
+        if self.keyitems.elite_four:
+            setSomeVariable = 1
+
+        self.message = dedent("""\
+                            A nice old man teaches you how to catch a pokemon.""")
         return
 
     def superNerd(self):
