@@ -1726,5 +1726,17 @@
         "name": "mewtwo",
         "min_level": null
       }
+    ],
+    "missing-chode": [
+      {
+        "name": "missing-chode",
+        "min_level": null
+      }
+    ],
+    "mini-chode": [
+      {
+        "name": "mini-chode",
+        "min_level": null
+      }
     ]
   }
