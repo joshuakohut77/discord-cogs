@@ -1047,6 +1047,13 @@ class trainer:
                 activePokemon = self.getActivePokemon()  # Get the trainer's active pokemon
                 enc = encounter(activePokemon, pokemon)  # Pass active pokemon as pokemon1, gift as pokemon2
                 enc.updateUniqueEncounters()
+            # MissingNo easter egg - update unique encounters on first surf encounter
+            if name == 'missing-chode':
+                from .encounterclass import encounter
+                activePokemon = self.getActivePokemon()
+                if activePokemon is not None:
+                    enc = encounter(activePokemon, pokemon)
+                    enc.updateUniqueEncounters()
             if pokemon.statuscode == 96:
                 self.statuscode = 96
                 self.message = "error occured during pokemon create()"
