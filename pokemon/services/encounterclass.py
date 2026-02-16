@@ -848,8 +848,14 @@ class encounter:
             newCurrentHP = 0
         return newCurrentHP
 
-    def __calculateDamageOfMove(self, move, stat_stages_attacker=None, stat_stages_defender=None):
-        """ calculates the damage of the move against opponent, with stat stage support """
+    def __calculateDamageOfMove(self, move, attacker=None, defender=None, stat_stages_attacker=None, stat_stages_defender=None):
+        """ calculates the damage of the move, with stat stage support.
+            attacker/defender default to pokemon1/pokemon2 if not provided. """
+        if attacker is None:
+            attacker = self.pokemon1
+        if defender is None:
+            defender = self.pokemon2
+            
         calculatedDamage = 0
         moveHit = True
         pbMove = move
@@ -866,13 +872,13 @@ class encounter:
                 return 0
             moveType = pbMove['moveType']
             damage_class = pbMove['damage_class']
-            pokemon1Stats = self.pokemon1.getPokeStats()
-            pokemon2Stats = self.pokemon2.getPokeStats()
+            attackerStats = attacker.getPokeStats()
+            defenderStats = defender.getPokeStats()
             attack = 0
             defense = 0
             if damage_class == 'physical':
-                attack = pokemon1Stats['attack']
-                defense = pokemon2Stats['defense']
+                attack = attackerStats['attack']
+                defense = defenderStats['defense']
                 # Apply stat stage multipliers
                 if stat_stages_attacker:
                     from helpers.statstages import get_modified_stat
@@ -881,8 +887,8 @@ class encounter:
                     from helpers.statstages import get_modified_stat
                     defense = get_modified_stat(defense, 'defense', stat_stages_defender)
             else:
-                attack = pokemon1Stats['special-attack']
-                defense = pokemon2Stats['special-defense']
+                attack = attackerStats['special-attack']
+                defense = defenderStats['special-defense']
                 if stat_stages_attacker:
                     from helpers.statstages import get_modified_stat
                     attack = get_modified_stat(attack, 'special-attack', stat_stages_attacker)
@@ -890,12 +896,12 @@ class encounter:
                     from helpers.statstages import get_modified_stat
                     defense = get_modified_stat(defense, 'special-defense', stat_stages_defender)
             randmonMult = random.randrange(217, 256) / 255
-            defendingType = self.pokemon2.type1
-            if moveType in defendingType:
+            defendingType = defender.type1
+            if moveType in attacker.type1:
                 stab = 1.5
             else:
                 stab = 1
-            level = self.pokemon1.currentLevel
+            level = attacker.currentLevel
             type_effectiveness = self.__getDamageTypeMultiplier(moveType, defendingType)
             calculatedDamage = int(((2 * level / 5 + 2) * power * (attack / defense) / 50 + 2) * randmonMult * stab * type_effectiveness)
         return calculatedDamage
