@@ -5561,9 +5561,9 @@
     "description": "A mythical pokemon never seen before. His power is so amazing it almost seems impossible.",
     "partySprite": "/sprites/menu/party/mew.png"
   },
-  "mini-chode": {
+  "giant-chode": {
     "id": 6767,
-    "name": "mini-chode",
+    "name": "giant-chode",
     "base_experience": 300,
     "growthRate": "medium-slow",
     "type1": "psychic",
