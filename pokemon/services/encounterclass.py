@@ -153,6 +153,8 @@ class encounter:
                 newPokemon = 'golem'
             elif pokemon.pokemonName == 'haunter':
                 newPokemon = 'gengar'
+            elif pokemon.pokemonName == 'missing-chode':
+                newPokemon = 'giant-chode'
             
             # Store old pokemon info before evolution
             oldPartyStatus = pokemon.party
