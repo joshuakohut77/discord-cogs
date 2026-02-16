@@ -111,18 +111,26 @@ class location:
                 if include_method:
                     methodList.append(actions[method])
             
-            
-            # # This next section checks if there's any valid quests in current area
-            # # TODO replace this load with object in memory
-            # p = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../configs/quests.json')
-            # questsConfig = json.load(open(p, 'r'))
-            # quest = QuestModel(questsConfig[str(locationId)])
-            # if quest.questName != []:
-            #     questObj = qObj(self.discordId)
-            #     if questObj.prerequsitesValid(quest.prerequsites):
-            #         for questMethod in quest.questName:
-            #             if not questObj.questComplete(questMethod):
-            #                 methodList.append(ActionModel(questMethod, ActionType.QUEST, questMethod))
+            # --- MissingNo Easter Egg: inject Surf at Cinnabar Island ---
+            if locationId == 71:
+                try:
+                    db2 = dbconn()
+                    stepQuery = 'SELECT missingno_step FROM trainer WHERE discord_id = %(discordId)s'
+                    stepResult = db2.querySingle(stepQuery, {'discordId': self.discordId})
+                    missingno_step = stepResult[0] if stepResult and stepResult[0] else 0
+                    del db2
+                    
+                    if missingno_step == 2 and keyitems.HM03:
+                        from helpers.helpers import check_hm_usable
+                        can_surf, _ = check_hm_usable(self.discordId, 'HM03')
+                        if can_surf:
+                            # Only add surf if it's not already in the list
+                            surf_already_present = any(m.value == 'surf' for m in methodList)
+                            if not surf_already_present:
+                                methodList.append(actions['surf'])
+                except:
+                    logger.error(excInfo=sys.exc_info())
+            # --- End MissingNo injection ---
 
         except:
             self.statuscode = 96
@@ -146,6 +154,29 @@ class location:
                 if locationId > 0:
                     areaEncounters = encountersConfig[str(locationId)]
             
+            # --- MissingNo Easter Egg: Surf at Cinnabar Island ---
+            if locationId == 71 and selectedMethod == 'surf':
+                try:
+                    db_check = dbconn()
+                    stepQuery = 'SELECT missingno_step FROM trainer WHERE discord_id = %(discordId)s'
+                    stepResult = db_check.querySingle(stepQuery, {'discordId': self.discordId})
+                    missingno_step = stepResult[0] if stepResult and stepResult[0] else 0
+                    del db_check
+                    
+                    if missingno_step == 2:
+                        # Return missing-chode encounter data
+                        areaEncounterPokemon = {
+                            'name': 'missing-chode',
+                            'chance': 100,
+                            'max_level': 55,
+                            'min_level': 55,
+                            'method': 'surf'
+                        }
+                        return areaEncounterPokemon
+                except:
+                    logger.error(excInfo=sys.exc_info())
+            # --- End MissingNo override ---
+            
             totalChance = 0
             encounterList = []
             action = actions[selectedMethod]
@@ -165,7 +196,7 @@ class location:
             logger.error(excInfo=sys.exc_info())
         finally:
             return areaEncounterPokemon
-    
+        
     def setLocation(self, locationId):
         """ updates the trainer table to set the locationId """
         try:
@@ -203,6 +234,27 @@ class location:
                     self.statuscode = 420
                     self.message = 'You have not completed all prior quests to advance'
                     return
+
+            # --- MissingNo Easter Egg step tracking ---
+            try:
+                stepQuery = 'SELECT missingno_step FROM trainer WHERE discord_id = %(discordId)s'
+                stepResult = db.querySingle(stepQuery, {'discordId': self.discordId})
+                current_step = stepResult[0] if stepResult and stepResult[0] else 0
+                
+                if current_step == 1:
+                    # Player talked to old man, now check if they're flying to cinnabar (71)
+                    if int(locationId) == 71:
+                        db.execute('UPDATE trainer SET missingno_step = 2 WHERE discord_id = %(discordId)s', {'discordId': self.discordId})
+                    else:
+                        # Went somewhere else — reset
+                        db.execute('UPDATE trainer SET missingno_step = 0 WHERE discord_id = %(discordId)s', {'discordId': self.discordId})
+                elif current_step == 2:
+                    # Player is at cinnabar with step 2 active, leaving resets it
+                    if int(locationId) != 71:
+                        db.execute('UPDATE trainer SET missingno_step = 0 WHERE discord_id = %(discordId)s', {'discordId': self.discordId})
+            except:
+                logger.error(excInfo=sys.exc_info())
+            # --- End MissingNo tracking ---
 
             updateString = """
             UPDATE trainer

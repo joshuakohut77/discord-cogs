@@ -328,11 +328,13 @@ class quests:
                 return True
             elif not self.keyitems.elite_four:
                 return True  # Quest is "complete" before Elite Four (no reward)
-
         elif questName == 'Check Truck':
             uniqueEncounters = uEnc(self.discordId)
             if uniqueEncounters.mew:
                 return True
+        elif questName == 'Old Man':
+            # Old Man quest is always "completable" (repeatable for easter egg)
+            return False
         
         
 
@@ -582,12 +584,22 @@ class quests:
         return
 
     def oldMan(self):
-        # do stuff here for easter egg pre-fix
         if self.keyitems.elite_four:
-            setSomeVariable = 1
-
-        self.message = dedent("""\
-                            A nice old man teaches you how to catch a pokemon.""")
+            # Set missingno step 1 in database
+            try:
+                db = dbconn()
+                updateStr = 'UPDATE trainer SET missingno_step = 1 WHERE discord_id = %(discordId)s'
+                db.execute(updateStr, {'discordId': self.discordId})
+            except:
+                logger.error(excInfo=sys.exc_info())
+            finally:
+                del db
+            
+            self.message = dedent("""\
+                                A nice old man teaches you how to catch a pokemon. He demonstrates by catching a Weedle. Something feels... off. The air crackles with static. The old man winks at you knowingly.""")
+        else:
+            self.message = dedent("""\
+                                A nice old man teaches you how to catch a pokemon.""")
         return
 
     def superNerd(self):

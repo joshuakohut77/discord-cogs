@@ -28,6 +28,7 @@ class uniqueEncounters:
         self.snorlax = False
         self.mew = False
         self.porygon = False
+        self.missingno = False
 
         # populate object
         self.__load()
@@ -39,8 +40,8 @@ class uniqueEncounters:
             queryString = '''
                 SELECT discord_id, articuno, zapdos, moltres, mewtwo, 
                 magikarp, charmander, squirtle, bulbasaur, 
-                lapras, hitmonchan, hitmonlee, eevee, snorlax, mew, porygon
-	            FROM "unique-encounters" WHERE discord_id=%(discordId)s
+                lapras, hitmonchan, hitmonlee, eevee, snorlax, mew, porygon, missingno
+                FROM "unique-encounters" WHERE discord_id=%(discordId)s
             '''
             result = db.querySingle(queryString, { 'discordId': self.discordId })
             if result:
@@ -59,6 +60,7 @@ class uniqueEncounters:
                 self.snorlax = result[13]
                 self.mew = result[14]
                 self.porygon = result[15]
+                self.missingno = result[16] if len(result) > 16 else False
         except:
             self.statuscode = 96
             logger.error(excInfo=sys.exc_info())
@@ -73,11 +75,11 @@ class uniqueEncounters:
             if self.discordId is not None:
                 updateString = '''
                 UPDATE "unique-encounters"
-	                SET "articuno"=%(articuno)s, "zapdos"=%(zapdos)s, "moltres"=%(moltres)s, 
+                    SET "articuno"=%(articuno)s, "zapdos"=%(zapdos)s, "moltres"=%(moltres)s, 
                     "mewtwo"=%(mewtwo)s, "magikarp"=%(magikarp)s, "charmander"=%(charmander)s, 
                     "squirtle"=%(squirtle)s, "bulbasaur"=%(bulbasaur)s, "lapras"=%(lapras)s, 
                     "hitmonchan"=%(hitmonchan)s, "hitmonlee"=%(hitmonlee)s, "eevee"=%(eevee)s, 
-                    "snorlax"=%(snorlax)s, "mew"=%(mew)s, "porygon"=%(porygon)s
+                    "snorlax"=%(snorlax)s, "mew"=%(mew)s, "porygon"=%(porygon)s, "missingno"=%(missingno)s
                     WHERE discord_id=%(discordId)s
                 '''
                 values = {
@@ -86,6 +88,7 @@ class uniqueEncounters:
                     'squirtle': self.squirtle, 'bulbasaur': self.bulbasaur, 'lapras': self.lapras,
                     'hitmonchan': self.hitmonchan, 'hitmonlee': self.hitmonlee, 'eevee': self.eevee,
                     'snorlax': self.snorlax, 'mew': self.mew, 'porygon': self.porygon,
+                    'missingno': self.missingno,
                     'discordId': self.discordId
                 }
                 db.execute(updateString, values)
