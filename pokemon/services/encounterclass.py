@@ -438,14 +438,14 @@ class encounter:
                     if self.ailment1.trap:
                         self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is trapped!')
                         pbMove = self.__loadMovesConfig('bind')
-                        trapDamage = self.__calculateDamageOfMove(pbMove, stat_stages_2, stat_stages_1)
+                        trapDamage = self.__calculateDamageOfMove(pbMove, attacker=self.pokemon2, defender=self.pokemon1, stat_stages_attacker=stat_stages_2, stat_stages_defender=stat_stages_1)
                         self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} took {trapDamage} trap damage')
                         battleHP1 -= trapDamage
                     elif self.ailment1.confusion:
                         self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} is confused!')
                         if random.randrange(1, 1+1) == 1:
                             pbMove = self.__loadMovesConfig('tackle')
-                            confusionDamage = self.__calculateDamageOfMove(pbMove)
+                            confusionDamage = self.__calculateDamageOfMove(pbMove, attacker=self.pokemon2, defender=self.pokemon2)
                             battleHP1 -= confusionDamage
                             self.battle_log.append(f'{self.pokemon1.pokemonName.capitalize()} hurt itself in confusion! {confusionDamage} damage.')
                     elif self.ailment1.sleep:
@@ -552,7 +552,7 @@ class encounter:
 
                     elif enemy_special_fn == 'dream_eater':
                         if self.ailment1.sleep or rest_turns_1 > 0:
-                            damage = self.__calculateDamageOfMove(pbMove, stat_stages_2, stat_stages_1)
+                            damage = self.__calculateDamageOfMove(pbMove, attacker=self.pokemon2, defender=self.pokemon1, stat_stages_attacker=stat_stages_2, stat_stages_defender=stat_stages_1)
                             if damage > 0:
                                 battleHP1 -= damage
                                 drain_heal = calculate_drain_heal(damage)
@@ -564,7 +564,7 @@ class encounter:
                             self.battle_log.append(f'• Enemy {self.pokemon2.pokemonName.capitalize()} used Dream Eater but it failed! Target is not asleep.')
 
                     elif enemy_special_fn == 'drain':
-                        damage = self.__calculateDamageOfMove(pbMove, stat_stages_2, stat_stages_1)
+                        damage = self.__calculateDamageOfMove(pbMove, attacker=self.pokemon2, defender=self.pokemon1, stat_stages_attacker=stat_stages_2, stat_stages_defender=stat_stages_1)
                         if damage > 0:
                             battleHP1 -= damage
                             drain_heal = calculate_drain_heal(damage)
@@ -575,7 +575,7 @@ class encounter:
 
                     else:
                         # --- NORMAL ENEMY MOVE ---
-                        damage = self.__calculateDamageOfMove(pbMove, stat_stages_2, stat_stages_1)
+                        damage = self.__calculateDamageOfMove(pbMove, attacker=self.pokemon2, defender=self.pokemon1, stat_stages_attacker=stat_stages_2, stat_stages_defender=stat_stages_1)
                         isAilment1 = self.ailment1.rollAilmentChance(pbMove)
                         if isAilment1:
                             self.ailment1.setAilment(pbMove['ailment'])
@@ -596,14 +596,14 @@ class encounter:
                     
                     if self.ailment2.trap:
                         pbMove = self.__loadMovesConfig('bind')
-                        trapDamage = self.__calculateDamageOfMove(pbMove, stat_stages_1, stat_stages_2)
+                        trapDamage = self.__calculateDamageOfMove(pbMove, attacker=self.pokemon1, defender=self.pokemon2, stat_stages_attacker=stat_stages_1, stat_stages_defender=stat_stages_2)
                         self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} took {trapDamage} trap damage')
                         battleHP2 -= trapDamage
                     elif self.ailment2.confusion:
                         self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} is confused!')
                         if random.randrange(1, 1+1) == 1:
                             pbMove = self.__loadMovesConfig('tackle')
-                            confusionDamage = self.__calculateDamageOfMove(pbMove)
+                            confusionDamage = self.__calculateDamageOfMove(pbMove, attacker=self.pokemon2, defender=self.pokemon2)
                             battleHP2 -= confusionDamage
                             self.battle_log.append(f'Enemy {self.pokemon2.pokemonName.capitalize()} hurt itself in confusion! {confusionDamage} damage.')
                     elif self.ailment2.sleep:
