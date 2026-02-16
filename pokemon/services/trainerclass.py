@@ -880,20 +880,23 @@ class trainer:
             return partySize
 
     def withdraw(self, trainerId):
-        """ withdraw pokemon  """
+        """ withdraw pokemon """
         currentPartySize = self.getPartySize()
-        if currentPartySize < MAX_PARTY_SIZE:
-            self.__withdraw(trainerId)
+        if currentPartySize < 6:
             self.statuscode = 69
+            self.message = ''
+            self.__withdraw(trainerId)
         else:
             self.statuscode = 420
-            self.message = "You already have a full party!"
+            self.message = "Your party is full! You must deposit a pokemon first."
         return
     
     def deposit(self, trainerId):
         """ deposit pokemon """
         currentPartySize = self.getPartySize()
         if currentPartySize > 1:
+            self.statuscode = 69
+            self.message = ''
             self.__deposit(trainerId)
         else:
             self.statuscode = 420

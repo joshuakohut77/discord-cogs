@@ -3573,11 +3573,66 @@ class EncountersMixin(MixinMeta):
 
 
     async def on_bag_party_release_click(self, interaction: discord.Interaction):
-        """Release Pokemon (placeholder)"""
-        await interaction.response.send_message(
-            'Release cuming soon!',
-            ephemeral=True
-        )
+        """Release Pokemon from party"""
+        user = interaction.user
+        await interaction.response.defer()
+        
+        if str(user.id) not in self.__bag_states:
+            await interaction.followup.send('Session expired.', ephemeral=True)
+            return
+        
+        bag_state = self.__bag_states[str(user.id)]
+        selected_trainer_id = bag_state.selected_pokemon_id
+        
+        if not selected_trainer_id:
+            await interaction.followup.send('No Pokemon selected.', ephemeral=True)
+            return
+        
+        from services.trainerclass import trainer as TrainerClass
+        
+        trainer = self._get_trainer(str(user.id))
+        
+        # Get Pokemon info before releasing
+        pokemon = trainer.getPokemonById(int(selected_trainer_id))
+        if not pokemon:
+            await interaction.followup.send('Pokemon not found.', ephemeral=True)
+            return
+        
+        pokemon.load(pokemonId=pokemon.trainerId)
+        
+        # Check if it's the active Pokemon
+        active = trainer.getActivePokemon()
+        if pokemon.trainerId == active.trainerId:
+            await interaction.followup.send('You cannot release your active Pokemon!', ephemeral=True)
+            return
+        
+        # Check if it's the starter
+        starter = trainer.getStarterPokemon()
+        if pokemon.trainerId == starter.trainerId:
+            await interaction.followup.send('You cannot release your starter Pokemon!', ephemeral=True)
+            return
+        
+        # Check party size - must keep at least one
+        party_size = trainer.getPartySize()
+        if party_size <= 1:
+            await interaction.followup.send('You must keep at least one Pokemon in your party!', ephemeral=True)
+            return
+        
+        poke_name = pokemon.nickName if pokemon.nickName else pokemon.pokemonName.capitalize()
+        
+        # Release the Pokemon
+        trainer.releasePokemon(pokemon.trainerId)
+        
+        await interaction.followup.send(f'Released {poke_name}. {trainer.message}', ephemeral=True)
+        
+        # Send to logging channel
+        await self.sendToLoggingChannel(f'{user.display_name} released {poke_name}. {trainer.message}')
+        
+        # Reset selection
+        bag_state.selected_pokemon_id = None
+        
+        # Refresh party view
+        await self.on_bag_party_click(interaction)
 
 
     async def on_party_back_to_bag_click(self, interaction: discord.Interaction):
