@@ -4427,7 +4427,7 @@ class EncountersMixin(MixinMeta):
         
         trainer = self._get_trainer(str(user.id))
         pc_list = trainer.getPokemon(pc=True)
-        pc_list.sort(key=lambda p: (p.nickName if hasattr(p, 'nickName') and p.nickName else p.pokemonName).lower())
+        pc_list.sort(key=lambda p: p.pokemonName.lower())
         
         if len(pc_list) == 0:
             # PC is now empty
