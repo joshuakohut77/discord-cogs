@@ -141,7 +141,7 @@ class encounter:
         Handles: party status, active pokemon, pokedex, leaderboard evolution stat.
         Returns the evolved PokemonClass or None.
         """
-        tradedEvoList = ['kadabra', 'machoke', 'graveler', 'haunter']
+        tradedEvoList = ['kadabra', 'machoke', 'graveler', 'haunter', 'missing-chode']
         evolvedPokemon = None
         
         if pokemon.pokemonName in tradedEvoList:
