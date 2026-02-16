@@ -4427,6 +4427,8 @@ class EncountersMixin(MixinMeta):
         
         trainer = self._get_trainer(str(user.id))
         pc_list = trainer.getPokemon(pc=True)
+        for poke in pc_list:
+            poke.load(pokemonId=poke.trainerId)
         pc_list.sort(key=lambda p: (p.pokemonName or '').lower())
         
         if len(pc_list) == 0:
@@ -4576,6 +4578,8 @@ class EncountersMixin(MixinMeta):
         
         trainer = self._get_trainer(str(user.id))
         pc_list = trainer.getPokemon(pc=True)
+        for poke in pc_list:
+            poke.load(pokemonId=poke.trainerId)
         pc_list.sort(key=lambda p: (p.pokemonName or '').lower())
         
         # Find the selected Pokemon
@@ -4691,6 +4695,8 @@ class EncountersMixin(MixinMeta):
         
         trainer = self._get_trainer(str(user.id))
         pc_list = trainer.getPokemon(pc=True)
+        for poke in pc_list:
+            poke.load(pokemonId=poke.trainerId)
         pc_list.sort(key=lambda p: (p.pokemonName or '').lower())
 
         if len(pc_list) == 0:
