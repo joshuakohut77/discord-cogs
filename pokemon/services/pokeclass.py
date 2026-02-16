@@ -604,7 +604,7 @@ class Pokemon:
     def __getFrontSpritePath(self):
         """ returns a path to pokemon front sprite """
         basePath = self.__getSpriteBasePath()
-        return basePath + "%s.png?v=3" % self.pokedexId
+        return basePath + "%s.png?v=4" % self.pokedexId
 
     def __getBackSpritePath(self):
         """ returns a path to pokemon back sprite """
