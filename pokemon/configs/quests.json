@@ -827,7 +827,7 @@
   },
   "23411": {
     "pre-requsites": [],
-    "quest": [],
+    "quest": ["Master Ball"],
     "blockers": [],
     "name": "silph-co-11F"
   }

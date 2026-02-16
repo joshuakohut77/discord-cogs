@@ -380,6 +380,7 @@ class quests:
             'Omanyte': constant.POKEMON_EMOJIS['OMANYTE'],
             'Mr. Fuji\'s Finger': constant.MR_FUJI_FINGER,
             'Eevee\'s Tail': constant.EEVEE_TAIL,
+            'Master Ball': constant.MASTERBALL
         }
         
         # Get emoji from map or use provided emoji
@@ -418,6 +419,7 @@ class quests:
     Fishing Dude - get good_rod
     The Warden - get gold_teeth
     Return Teeth - get HM04
+    Master Ball - get master_ball after defeating Giovani
     Pokemon Lab - take helix or dome fossile and Old Amber and turn into Pokemon
     SS Anne - get ss_ticket item
     The Pokemon League - battle the elite 4
@@ -484,6 +486,8 @@ class quests:
             return self.pokemonLab()
         elif questName == 'SS Anne':
             return self.ssAnne()
+        elif questName == 'Master Ball':
+            return self.masterBall()
         elif questName == 'The Pokemon League':
             return self.thePokemonLeague()
         elif questName == 'Mysterious Cave':
@@ -888,6 +892,11 @@ class quests:
         else:
             self.message = """You don't have any fossils to give the scientists. They shoo you away."""
         
+        return
+
+    def masterBall(self):
+
+
         return
 
     def ssAnne(self):
