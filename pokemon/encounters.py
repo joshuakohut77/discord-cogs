@@ -4427,7 +4427,7 @@ class EncountersMixin(MixinMeta):
         
         trainer = self._get_trainer(str(user.id))
         pc_list = trainer.getPokemon(pc=True)
-        pc_list.sort(key=lambda p: p.pokemonName.lower())
+        pc_list.sort(key=lambda p: (p.pokemonName or '').lower())
         
         if len(pc_list) == 0:
             # PC is now empty
@@ -4576,7 +4576,7 @@ class EncountersMixin(MixinMeta):
         
         trainer = self._get_trainer(str(user.id))
         pc_list = trainer.getPokemon(pc=True)
-        pc_list.sort(key=lambda p: p.pokemonName.lower())
+        pc_list.sort(key=lambda p: (p.pokemonName or '').lower())
         
         # Find the selected Pokemon
         selected_pokemon = None
@@ -4691,7 +4691,7 @@ class EncountersMixin(MixinMeta):
         
         trainer = self._get_trainer(str(user.id))
         pc_list = trainer.getPokemon(pc=True)
-        pc_list.sort(key=lambda p: p.pokemonName.lower())
+        pc_list.sort(key=lambda p: (p.pokemonName or '').lower())
 
         if len(pc_list) == 0:
             # No Pokemon in PC
