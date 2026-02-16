@@ -1049,11 +1049,13 @@ class trainer:
                 enc.updateUniqueEncounters()
             # MissingNo easter egg - update unique encounters on first surf encounter
             if name == 'missing-chode':
-                from .encounterclass import encounter
-                activePokemon = self.getActivePokemon()
-                if activePokemon is not None:
-                    enc = encounter(activePokemon, pokemon)
-                    enc.updateUniqueEncounters()
+                uEncObj = uEnc(self.discordId)
+                if not uEncObj.missingno:
+                    uEncObj.missingno = True
+                    uEncObj.save()
+                    lb_egg = leaderboard(self.discordId)
+                    lb_egg.easter_eggs()
+                    self.encountered_easter_egg = ('missing_chode', 'MissingNo')
             if pokemon.statuscode == 96:
                 self.statuscode = 96
                 self.message = "error occured during pokemon create()"

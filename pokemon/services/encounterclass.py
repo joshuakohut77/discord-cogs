@@ -939,10 +939,6 @@ class encounter:
         elif name == 'missing-chode':
             if not uEncObj.missingno:
                 uEncObj.missingno = True
-                # One-time easter egg leaderboard bump
-                from .leaderboardclass import leaderboard as LeaderboardClass
-                lb = LeaderboardClass(discordId)
-                lb.easter_eggs()
 
 
         after_value = uEncObj.articuno if name == 'articuno' else None
