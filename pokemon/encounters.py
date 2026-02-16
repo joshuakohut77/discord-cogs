@@ -735,92 +735,80 @@ class EncountersMixin(MixinMeta):
         disabled_view.add_item(disabled_btn)
         await interaction.message.edit(embed=sim_embed, view=disabled_view)
         
-        # Build battle
+        # Get ALL enemy Pokemon
         enemy_pokemon_list = next_trainer.pokemon
+        
+        # Battle tracking - same pattern as gym battles
         player_pokemon_index = 0
         enemy_pokemon_index = 0
         all_battle_logs = []
         defeated_enemies = []
-        defeated_players = []
+        defeated_player = []
         exp_messages = []
         
-        max_turns = 100
-        turn = 0
-        
-        while turn < max_turns:
-            turn += 1
-            
-            # Check if battle is over
-            if player_pokemon_index >= len(alive_party):
-                # Player lost
-                all_battle_logs.append("\n💀 **All your Pokemon have fainted! You lost!**")
-                # LEADERBOARD TRACKING
-                from services.leaderboardclass import leaderboard as LeaderboardClass
-                lb = LeaderboardClass(str(user.id))
-                lb.defeat()
-                lb.actions()
-                break
-            
-            if enemy_pokemon_index >= len(enemy_pokemon_list):
-                # Player won!
-                all_battle_logs.append(f"\n🏆 **Victory! You defeated {next_trainer.name}!**")
-                battle.battleVictory(next_trainer)
-
-                # LEADERBOARD TRACKING
-                from services.leaderboardclass import leaderboard as LeaderboardClass
-                lb = LeaderboardClass(str(user.id))
-                lb.victory()
-                lb.actions()
-                break
-            
-            # Get current Pokemon
+        # Battle loop - uses result-based checking (not HP-based)
+        while player_pokemon_index < len(alive_party) and enemy_pokemon_index < len(enemy_pokemon_list):
             player_pokemon = alive_party[player_pokemon_index]
-            current_enemy = enemy_pokemon_list[enemy_pokemon_index]
-            enemy_name = list(current_enemy.keys())[0]
-            enemy_level = current_enemy[enemy_name]
+            enemy_data = enemy_pokemon_list[enemy_pokemon_index]
             
             from services.pokedexclass import pokedex as PokedexClass
 
-            # Create enemy Pokemon
+            enemy_name = list(enemy_data.keys())[0]
+            enemy_level = enemy_data[enemy_name]
             enemy_pokemon = PokemonClass(str(user.id), enemy_name)
             enemy_pokemon.create(enemy_level)
-            enemy_pokemon.discordId = None 
+            enemy_pokemon.discordId = None
             
             PokedexClass(str(user.id), enemy_pokemon)
 
-            # Battle turn
+            # Fight this matchup - full auto battle
             enc = EncounterClass(player_pokemon, enemy_pokemon)
             result = enc.fight(battleType='auto')
             
-            all_battle_logs.append(f"\n**Turn {turn}:**")
-            all_battle_logs.append(f"• {player_pokemon.pokemonName.capitalize()} (HP: {player_pokemon.currentHP}) vs {enemy_name.capitalize()} (HP: {enemy_pokemon.currentHP})")
+            # Add this battle's logs
+            if hasattr(enc, 'battle_log') and enc.battle_log:
+                all_battle_logs.extend(enc.battle_log)
             
             # Capture experience message
             if enc.message:
                 exp_messages.append(f"{player_pokemon.pokemonName.capitalize()}: {enc.message}")
-
-            # Check if enemy fainted
-            if enemy_pokemon.currentHP <= 0:
-                defeated_enemies.append(enemy_name)
-                all_battle_logs.append(f"💥 Enemy {enemy_name.capitalize()} fainted!")
-                enemy_pokemon_index += 1
-                
-                # Level up check for player's Pokemon
-                if player_pokemon.currentLevel > player_pokemon.previousLevel:
-                    all_battle_logs.append(f"✨ {player_pokemon.pokemonName.capitalize()} leveled up to {player_pokemon.currentLevel}!")
             
-            # Check if player's Pokemon fainted
-            if player_pokemon.currentHP <= 0:
-                defeated_players.append(player_pokemon.pokemonName)
-                all_battle_logs.append(f"💀 Your {player_pokemon.pokemonName.capitalize()} fainted!")
+            # Check result (NOT currentHP - battle_fight doesn't update pokemon HP on draws)
+            if result.get('result') == 'victory':
+                defeated_enemies.append(enemy_name)
+                enemy_pokemon_index += 1
+                all_battle_logs.append(f"💀 Enemy {enemy_name.capitalize()} fainted!")
+                
+                if enemy_pokemon_index < len(enemy_pokemon_list):
+                    next_enemy_name = list(enemy_pokemon_list[enemy_pokemon_index].keys())[0]
+                    all_battle_logs.append(f"⚡ {next_trainer.name} sent out {next_enemy_name.capitalize()}!")
+            else:
+                # Defeat OR draw - treat as player loss for this matchup
+                defeated_player.append(player_pokemon.pokemonName)
                 player_pokemon_index += 1
+                all_battle_logs.append(f"💀 Your {player_pokemon.pokemonName.capitalize()} fainted!")
                 
                 if player_pokemon_index < len(alive_party):
                     next_player = alive_party[player_pokemon_index]
-                    all_battle_logs.append(f"⚡ Go, {next_player.pokemonName.capitalize()}!")
+                    all_battle_logs.append(f"⚡ You sent out {next_player.pokemonName.capitalize()}!")
+        
+        # Determine overall winner
+        if enemy_pokemon_index >= len(enemy_pokemon_list):
+            battle_result = 'victory'
+            battle.battleVictory(next_trainer)
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.victory()
+            lb.actions()
+        else:
+            battle_result = 'defeat'
+            from services.leaderboardclass import leaderboard as LeaderboardClass
+            lb = LeaderboardClass(str(user.id))
+            lb.defeat()
+            lb.actions()
         
         # --- Build battle log: last 5 turn blocks ---
-        turn_indices = [i for i, line in enumerate(all_battle_logs) if line.startswith("\n**Turn ")]
+        turn_indices = [i for i, line in enumerate(all_battle_logs) if line.startswith("**Turn ")]
         if len(turn_indices) > 5:
             start_idx = turn_indices[-5]
             trimmed_logs = all_battle_logs[start_idx:]
@@ -828,17 +816,13 @@ class EncountersMixin(MixinMeta):
         else:
             battle_log_text = "\n".join(all_battle_logs)
         
-        # Determine result
-        is_victory = enemy_pokemon_index >= len(enemy_pokemon_list)
-        
-        if is_victory:
+        if battle_result == 'victory':
             embed = discord.Embed(
                 title="🎉 Victory!",
                 description=f"You defeated {next_trainer.name}!",
                 color=discord.Color.green()
             )
             
-            # Show defeated enemies
             enemy_summary = []
             enemy_summary.append(f"**Defeated {len(defeated_enemies)} Pokemon:**")
             for i, poke_name in enumerate(defeated_enemies, 1):
@@ -850,14 +834,13 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
             
-            # Show player's final Pokemon
             final_player = alive_party[min(player_pokemon_index, len(alive_party) - 1)]
             player_stats = final_player.getPokeStats()
             player_summary = []
             player_summary.append(f"**Your {final_player.pokemonName.capitalize()}** (Lv.{final_player.currentLevel})")
             player_summary.append(f"HP: {final_player.currentHP}/{player_stats['hp']}")
-            if len(defeated_players) > 0:
-                player_summary.append(f"\nFainted: {len(defeated_players)}/{len(alive_party)}")
+            if len(defeated_player) > 0:
+                player_summary.append(f"\nFainted: {len(defeated_player)}/{len(alive_party)}")
             
             embed.add_field(
                 name="💚 Your Team",
@@ -893,7 +876,7 @@ class EncountersMixin(MixinMeta):
             
             player_summary = []
             player_summary.append(f"**Your Team:** All {len(alive_party)} Pokemon fainted")
-            for i, poke_name in enumerate(defeated_players, 1):
+            for i, poke_name in enumerate(defeated_player, 1):
                 player_summary.append(f"{i}. {poke_name.capitalize()} ❌")
             
             embed.add_field(
@@ -902,14 +885,19 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
             
+            enemy_summary = []
             if len(defeated_enemies) > 0:
-                enemy_summary = []
                 enemy_summary.append(f"**Defeated:** {len(defeated_enemies)}/{len(enemy_pokemon_list)}")
-                embed.add_field(
-                    name="🎯 Enemy Team",
-                    value="\n".join(enemy_summary),
-                    inline=True
-                )
+            current_enemy = enemy_pokemon_list[enemy_pokemon_index]
+            current_enemy_name = list(current_enemy.keys())[0]
+            current_enemy_level = current_enemy[current_enemy_name]
+            enemy_summary.append(f"\n**{current_enemy_name.capitalize()}** (Lv.{current_enemy_level}) - Still standing")
+            
+            embed.add_field(
+                name="🎯 Enemy Team",
+                value="\n".join(enemy_summary),
+                inline=True
+            )
             
             embed.add_field(
                 name="⚔️ Battle Log",
@@ -920,13 +908,11 @@ class EncountersMixin(MixinMeta):
         view_nav = self.__create_post_battle_buttons(str(user.id))
         new_message = await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
         
-        # Delete the simulating message
         try:
             await interaction.message.delete()
         except:
             pass
         
-        # Update ActionState
         trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         self.__useractions[str(user.id)] = ActionState(
@@ -938,7 +924,6 @@ class EncountersMixin(MixinMeta):
             None,
             ''
         )
-
 
     async def on_wild_battle_manual(self, interaction: discord.Interaction):
         """Handle MANUAL turn-by-turn battle with wild trainer"""
@@ -7566,19 +7551,15 @@ class EncountersMixin(MixinMeta):
         all_battle_logs = []
         defeated_enemies = []
         defeated_player = []
-        exp_messages = []  # Track experience gains
+        exp_messages = []
         
         # Battle loop - continue until one side has no Pokemon left
-        battle_result = None
-        
         while player_pokemon_index < len(alive_party) and enemy_pokemon_index < len(enemy_pokemon_list):
-            # Get current Pokemon
             player_pokemon = alive_party[player_pokemon_index]
             enemy_data = enemy_pokemon_list[enemy_pokemon_index]
             
             from services.pokedexclass import pokedex as PokedexClass
 
-            # Create enemy Pokemon
             enemy_name = list(enemy_data.keys())[0]
             enemy_level = enemy_data[enemy_name]
             enemy_pokemon = PokemonClass(str(user.id), enemy_name)
@@ -7587,21 +7568,16 @@ class EncountersMixin(MixinMeta):
             
             PokedexClass(str(user.id), enemy_pokemon)
 
-            # Fight this matchup
             enc = EncounterClass(player_pokemon, enemy_pokemon)
             result = enc.fight(battleType='auto')
             
-            # Add this battle's logs
             if hasattr(enc, 'battle_log') and enc.battle_log:
                 all_battle_logs.extend(enc.battle_log)
             
-            # Capture experience message
             if enc.message:
                 exp_messages.append(f"{player_pokemon.pokemonName.capitalize()}: {enc.message}")
             
-            # Process result
             if result.get('result') == 'victory':
-                # Player won this round - enemy Pokemon fainted
                 defeated_enemies.append(enemy_name)
                 enemy_pokemon_index += 1
                 all_battle_logs.append(f"💀 Enemy {enemy_name.capitalize()} fainted!")
@@ -7610,7 +7586,6 @@ class EncountersMixin(MixinMeta):
                     next_enemy_name = list(enemy_pokemon_list[enemy_pokemon_index].keys())[0]
                     all_battle_logs.append(f"⚡ {next_trainer.name} sent out {next_enemy_name.capitalize()}!")
             else:
-                # Player lost this round - player Pokemon fainted
                 defeated_player.append(player_pokemon.pokemonName)
                 player_pokemon_index += 1
                 all_battle_logs.append(f"💀 Your {player_pokemon.pokemonName.capitalize()} fainted!")
@@ -7621,25 +7596,20 @@ class EncountersMixin(MixinMeta):
         
         # Determine overall winner
         if enemy_pokemon_index >= len(enemy_pokemon_list):
-            # Player won - defeated all enemy Pokemon
             battle_result = 'victory'
             battle.battleVictory(next_trainer)
-            # LEADERBOARD TRACKING
             from services.leaderboardclass import leaderboard as LeaderboardClass
             lb = LeaderboardClass(str(user.id))
             lb.victory()
             lb.actions()
         else:
-            # Player lost - all player Pokemon fainted
             battle_result = 'defeat'
-            # LEADERBOARD TRACKING
             from services.leaderboardclass import leaderboard as LeaderboardClass
             lb = LeaderboardClass(str(user.id))
             lb.defeat()
             lb.actions()
         
         # --- Build battle log: last 5 turn blocks ---
-        # Filter to only "Turn X:" headers and take last 5 turn sections
         turn_indices = [i for i, line in enumerate(all_battle_logs) if line.startswith("**Turn ")]
         if len(turn_indices) > 5:
             start_idx = turn_indices[-5]
@@ -7655,7 +7625,6 @@ class EncountersMixin(MixinMeta):
                 color=discord.Color.green()
             )
             
-            # Show defeated enemies
             enemy_summary = []
             enemy_summary.append(f"**Defeated {len(defeated_enemies)} Pokemon:**")
             for i, poke_name in enumerate(defeated_enemies, 1):
@@ -7667,7 +7636,6 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
             
-            # Show player's final Pokemon
             final_player = alive_party[player_pokemon_index]
             player_stats = final_player.getPokeStats()
             player_summary = []
@@ -7682,14 +7650,12 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
             
-            # Battle log (last 5 turns)
             embed.add_field(
                 name="⚔️ Battle Log",
                 value=battle_log_text[:1024],
                 inline=False
             )
             
-            # Experience gains
             if len(exp_messages) > 0:
                 exp_text = "\n".join(exp_messages[:5])
                 embed.add_field(
@@ -7704,7 +7670,6 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
             
-            # Check for more trainers
             remaining = battle.getRemainingTrainerCount()
             if remaining > 0:
                 next_up = battle.getNextTrainer()
@@ -7723,14 +7688,12 @@ class EncountersMixin(MixinMeta):
                     )
             
         else:
-            # Defeat
             embed = discord.Embed(
                 title="💀 Defeat...",
                 description=f"You were defeated by {next_trainer.name}...",
                 color=discord.Color.dark_red()
             )
             
-            # Show player's fainted Pokemon
             player_summary = []
             player_summary.append(f"**Your Team:** All {len(alive_party)} Pokemon fainted")
             for i, poke_name in enumerate(defeated_player, 1):
@@ -7742,7 +7705,6 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
             
-            # Show enemy's remaining Pokemon
             enemy_summary = []
             if len(defeated_enemies) > 0:
                 enemy_summary.append(f"**Defeated:** {len(defeated_enemies)}/{len(enemy_pokemon_list)}")
@@ -7758,24 +7720,20 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
             
-            # Battle log (last 5 turns)
             embed.add_field(
                 name="⚔️ Battle Log",
                 value=battle_log_text[:1024],
                 inline=False
             )
         
-        # new code
         view_nav = self.__create_post_battle_buttons(str(user.id))
         new_message = await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
         
-        # Delete the simulating message
         try:
             await interaction.message.delete()
         except:
             pass
         
-        # CRITICAL: Update ActionState with new message ID so buttons work
         trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         self.__useractions[str(user.id)] = ActionState(
@@ -7787,7 +7745,6 @@ class EncountersMixin(MixinMeta):
             None,
             ''
         )
-
 
     async def on_gym_battle_manual(self, interaction: discord.Interaction):
         """Handle MANUAL battle with gym trainer"""
@@ -8534,7 +8491,6 @@ class EncountersMixin(MixinMeta):
         trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         
-        # Get player's full party
         player_party = trainer.getPokemon(party=True)
         alive_party = []
         for poke in player_party:
@@ -8583,47 +8539,35 @@ class EncountersMixin(MixinMeta):
         disabled_view.add_item(disabled_btn)
         await interaction.message.edit(embed=sim_embed, view=disabled_view)
 
-        # Get ALL gym leader Pokemon
         enemy_pokemon_list = gym_leader.pokemon
         
-        # Battle tracking
         player_pokemon_index = 0
         enemy_pokemon_index = 0
         all_battle_logs = []
         defeated_enemies = []
         defeated_player = []
-        exp_messages = []  # Track experience gains
-        
-        # Battle loop - continue until one side has no Pokemon left
-        battle_result = None
+        exp_messages = []
         
         while player_pokemon_index < len(alive_party) and enemy_pokemon_index < len(enemy_pokemon_list):
-            # Get current Pokemon
             player_pokemon = alive_party[player_pokemon_index]
             enemy_data = enemy_pokemon_list[enemy_pokemon_index]
             
-            # Create enemy Pokemon
             enemy_name = list(enemy_data.keys())[0]
             enemy_level = enemy_data[enemy_name]
             enemy_pokemon = PokemonClass(str(user.id), enemy_name)
             enemy_pokemon.create(enemy_level)
             enemy_pokemon.discordId = None
             
-            # Fight this matchup
             enc = EncounterClass(player_pokemon, enemy_pokemon)
             result = enc.fight(battleType='auto')
             
-            # Add this battle's logs
             if hasattr(enc, 'battle_log') and enc.battle_log:
                 all_battle_logs.extend(enc.battle_log)
             
-            # Capture experience message
             if enc.message:
                 exp_messages.append(f"{player_pokemon.pokemonName.capitalize()}: {enc.message}")
 
-            # Process result
             if result.get('result') == 'victory':
-                # Player won this round - enemy Pokemon fainted
                 defeated_enemies.append(enemy_name)
                 enemy_pokemon_index += 1
                 all_battle_logs.append(f"💀 Enemy {enemy_name.capitalize()} fainted!")
@@ -8632,7 +8576,6 @@ class EncountersMixin(MixinMeta):
                     next_enemy_name = list(enemy_pokemon_list[enemy_pokemon_index].keys())[0]
                     all_battle_logs.append(f"⚡ {gym_leader.name} sent out {next_enemy_name.capitalize()}!")
             else:
-                # Player lost this round - player Pokemon fainted
                 defeated_player.append(player_pokemon.pokemonName)
                 player_pokemon_index += 1
                 all_battle_logs.append(f"💀 Your {player_pokemon.pokemonName.capitalize()} fainted!")
@@ -8641,20 +8584,15 @@ class EncountersMixin(MixinMeta):
                     next_player = alive_party[player_pokemon_index]
                     all_battle_logs.append(f"⚡ You sent out {next_player.pokemonName.capitalize()}!")
         
-        # Determine overall winner
         if enemy_pokemon_index >= len(enemy_pokemon_list):
-            # Player won - defeated all enemy Pokemon
             battle_result = 'victory'
             battle.gymLeaderVictory(gym_leader)
-            # LEADERBOARD TRACKING
             from services.leaderboardclass import leaderboard as LeaderboardClass
             lb = LeaderboardClass(str(user.id))
             lb.victory()
             lb.actions()
         else:
-            # Player lost - all player Pokemon fainted
             battle_result = 'defeat'
-            # LEADERBOARD TRACKING
             from services.leaderboardclass import leaderboard as LeaderboardClass
             lb = LeaderboardClass(str(user.id))
             lb.defeat()
@@ -8676,7 +8614,6 @@ class EncountersMixin(MixinMeta):
                 color=discord.Color.gold()
             )
             
-            # Show defeated enemies
             enemy_summary = []
             enemy_summary.append(f"**Defeated {len(defeated_enemies)} Pokemon:**")
             for i, poke_name in enumerate(defeated_enemies, 1):
@@ -8688,7 +8625,6 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
             
-            # Show player's final Pokemon
             final_player = alive_party[player_pokemon_index]
             player_stats = final_player.getPokeStats()
             player_summary = []
@@ -8703,14 +8639,12 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
             
-            # Battle log (last 5 turns)
             embed.add_field(
                 name="⚔️ Battle Log",
                 value=battle_log_text[:1024],
                 inline=False
             )
             
-            # Experience gains
             if len(exp_messages) > 0:
                 exp_text = "\n".join(exp_messages[:5])
                 embed.add_field(
@@ -8732,14 +8666,12 @@ class EncountersMixin(MixinMeta):
             )
             
         else:
-            # Defeat
             embed = discord.Embed(
                 title="💀 Defeat...",
                 description=f"You were defeated by Gym Leader {gym_leader.name}...",
                 color=discord.Color.dark_red()
             )
             
-            # Show player's fainted Pokemon
             player_summary = []
             player_summary.append(f"**Your Team:** All {len(alive_party)} Pokemon fainted")
             for i, poke_name in enumerate(defeated_player, 1):
@@ -8751,7 +8683,6 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
             
-            # Show enemy's remaining Pokemon
             enemy_summary = []
             if len(defeated_enemies) > 0:
                 enemy_summary.append(f"**Defeated:** {len(defeated_enemies)}/{len(enemy_pokemon_list)}")
@@ -8767,7 +8698,6 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
             
-            # Battle log (last 5 turns)
             embed.add_field(
                 name="⚔️ Battle Log",
                 value=battle_log_text[:1024],
@@ -8777,13 +8707,11 @@ class EncountersMixin(MixinMeta):
         view_nav = self.__create_post_battle_buttons(str(user.id))
         new_message = await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
         
-        # Delete the simulating message
         try:
             await interaction.message.delete()
         except:
             pass
         
-        # CRITICAL: Update ActionState with new message ID so buttons work
         trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         self.__useractions[str(user.id)] = ActionState(
@@ -8796,7 +8724,6 @@ class EncountersMixin(MixinMeta):
             ''
         )
 
-        # Check for more trainers and send as followup (not in embed)
         remaining = battle.getRemainingTrainerCount()
         if remaining > 0:
             next_up = battle.getNextTrainer()
@@ -8806,7 +8733,6 @@ class EncountersMixin(MixinMeta):
                 ephemeral=True
             )
         else:
-            # Check if player just defeated the Champion (elite-4-5)
             if hasattr(gym_leader, 'enemy_uuid') and gym_leader.enemy_uuid == "elite-4-5":
                 finale_embed = discord.Embed(
                     title="🏆 Congratulations, Champion!",
@@ -8816,7 +8742,6 @@ class EncountersMixin(MixinMeta):
                     color=discord.Color.gold()
                 )
                 await interaction.followup.send(embed=finale_embed)
-
 
     async def on_gym_click(self, interaction: discord.Interaction):
         """Handle gym button clicks - now shows battle type choice with embed"""
