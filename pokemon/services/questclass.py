@@ -912,7 +912,7 @@ class quests:
             self.message = "The Master Ball is guarded by Giovanni. You must defeat him first!"
             return
 
-        self.inventory.masterball = (self.inventory.masterball or 0) + 1
+        self.inventory.masterball = 1
         self.inventory.save()
         self.message = dedent("""\
                             After defeating Giovanni, you find a glowing Poké Ball sitting on his desk. The Master Ball — the ultimate catching device. You pocket it before anyone notices.""")
