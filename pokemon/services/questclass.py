@@ -895,9 +895,27 @@ class quests:
         return
 
     def masterBall(self):
+        """Awards Master Ball if Giovanni (8bf79b06) has been defeated"""
+        try:
+            db = dbconn()
+            queryString = 'SELECT 1 FROM trainer_battles WHERE enemy_uuid = %(enemy_uuid)s AND discord_id = %(discordId)s'
+            result = db.querySingle(queryString, {'enemy_uuid': '8bf79b06', 'discordId': self.discordId})
+        except:
+            logger.error(excInfo=sys.exc_info())
+            self.message = "An error occurred checking battle records."
+            return
+        finally:
+            del db
 
+        if not result:
+            self.message = "The Master Ball is guarded by Giovanni. You must defeat him first!"
+            return
 
-        return
+        self.inventory.masterball = (self.inventory.masterball or 0) + 1
+        self.inventory.save()
+        self.message = dedent("""\
+                            After defeating Giovanni, you find a glowing Poké Ball sitting on his desk. The Master Ball — the ultimate catching device. You pocket it before anyone notices.""")
+        return self.create_key_item_embed('Master Ball')
 
     def ssAnne(self):
         self.keyitems.ss_ticket = True
