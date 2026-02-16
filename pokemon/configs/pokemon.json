@@ -5562,7 +5562,7 @@
     "partySprite": "/sprites/menu/party/mew.png"
   },
   "mini-chode": {
-    "id": 6969,
+    "id": 6767,
     "name": "mini-chode",
     "base_experience": 300,
     "growthRate": "medium-slow",
