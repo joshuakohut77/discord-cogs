@@ -8,6 +8,7 @@ from pokeclass import Pokemon as pokeClass
 from loggerclass import logger as log
 from uniqueencounters import uniqueEncounters as uEnc
 import models.quest as QuestModel
+from dbclass import db as dbconn
 from textwrap import dedent
 
 # Class Logger
