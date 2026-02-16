@@ -79,6 +79,10 @@ class trainer:
             uniqueEncountersUpdateQuery = 'UPDATE "unique-encounters" SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
             db.executeWithoutCommit(uniqueEncountersUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
             
+            uniqueEncountersUpdateQuery = 'UPDATE "easter_eggs_found" SET discord_id = %(newDiscordId)s WHERE discord_id = %(discordId)s'
+            db.executeWithoutCommit(uniqueEncountersUpdateQuery, { 'newDiscordId': newDiscordId, 'discordId': self.discordId })
+            
+            
             db.commit()
             retMsg = "Trainer deleted successfully!"
             self.statuscode = 420
