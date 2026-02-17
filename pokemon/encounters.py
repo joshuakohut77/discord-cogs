@@ -2198,7 +2198,7 @@ class EncountersMixin(MixinMeta):
         # ROW 0: North/South buttons
         if location.north:
             north_name = LOCATION_DISPLAY_NAMES.get(location.north, location.north)
-            north_btn = Button(style=ButtonStyle.gray, emoji='⬆️', label=f"{north_name[:15]}", custom_id='dir_north', row=0)
+            north_btn = Button(style=ButtonStyle.gray, emoji='⬆️', label=f"{north_name[:25]}", custom_id='dir_north', row=0)
             north_btn.callback = self.on_direction_click
             view.add_item(north_btn)
         else:
@@ -2207,7 +2207,7 @@ class EncountersMixin(MixinMeta):
         
         if location.south:
             south_name = LOCATION_DISPLAY_NAMES.get(location.south, location.south)
-            south_btn = Button(style=ButtonStyle.gray, emoji='⬇️', label=f"{south_name[:15]}", custom_id='dir_south', row=0)
+            south_btn = Button(style=ButtonStyle.gray, emoji='⬇️', label=f"{south_name[:25]}", custom_id='dir_south', row=0)
             south_btn.callback = self.on_direction_click
             view.add_item(south_btn)
         else:
@@ -2217,7 +2217,7 @@ class EncountersMixin(MixinMeta):
         # ROW 1: East/West buttons
         if location.west:
             west_name = LOCATION_DISPLAY_NAMES.get(location.west, location.west)
-            west_btn = Button(style=ButtonStyle.gray, emoji='⬅️', label=f"{west_name[:15]}", custom_id='dir_west', row=1)
+            west_btn = Button(style=ButtonStyle.gray, emoji='⬅️', label=f"{west_name[:25]}", custom_id='dir_west', row=1)
             west_btn.callback = self.on_direction_click
             view.add_item(west_btn)
         else:
@@ -2226,7 +2226,7 @@ class EncountersMixin(MixinMeta):
         
         if location.east:
             east_name = LOCATION_DISPLAY_NAMES.get(location.east, location.east)
-            east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label=f"{east_name[:15]}", custom_id='dir_east', row=1)
+            east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label=f"{east_name[:25]}", custom_id='dir_east', row=1)
             east_btn.callback = self.on_direction_click
             view.add_item(east_btn)
         else:
@@ -2236,7 +2236,7 @@ class EncountersMixin(MixinMeta):
         # AUX button (if exists)
         if hasattr(location, 'aux') and location.aux:
             aux_name = LOCATION_DISPLAY_NAMES.get(location.aux, location.aux)
-            aux_btn = Button(style=ButtonStyle.gray, emoji='🔀', label=f"{aux_name[:15]}", custom_id='dir_aux', row=1)
+            aux_btn = Button(style=ButtonStyle.gray, emoji='🔀', label=f"{aux_name[:25]}", custom_id='dir_aux', row=1)
             aux_btn.callback = self.on_direction_click
             view.add_item(aux_btn)
 
@@ -5522,7 +5522,7 @@ class EncountersMixin(MixinMeta):
         # ROW 0: North/South buttons
         if location.north:
             north_name = LOCATION_DISPLAY_NAMES.get(location.north, location.north)
-            north_btn = Button(style=ButtonStyle.gray, emoji='⬆️', label=f"{north_name[:15]}", custom_id='dir_north', row=0)
+            north_btn = Button(style=ButtonStyle.gray, emoji='⬆️', label=f"{north_name[:25]}", custom_id='dir_north', row=0)
             north_btn.callback = self.on_direction_click
             view.add_item(north_btn)
         else:
@@ -5531,7 +5531,7 @@ class EncountersMixin(MixinMeta):
         
         if location.south:
             south_name = LOCATION_DISPLAY_NAMES.get(location.south, location.south)
-            south_btn = Button(style=ButtonStyle.gray, emoji='⬇️', label=f"{south_name[:15]}", custom_id='dir_south', row=0)
+            south_btn = Button(style=ButtonStyle.gray, emoji='⬇️', label=f"{south_name[:25]}", custom_id='dir_south', row=0)
             south_btn.callback = self.on_direction_click
             view.add_item(south_btn)
         else:
@@ -5541,7 +5541,7 @@ class EncountersMixin(MixinMeta):
         # ROW 1: East/West buttons
         if location.west:
             west_name = LOCATION_DISPLAY_NAMES.get(location.west, location.west)
-            west_btn = Button(style=ButtonStyle.gray, emoji='⬅️', label=f"{west_name[:15]}", custom_id='dir_west', row=1)
+            west_btn = Button(style=ButtonStyle.gray, emoji='⬅️', label=f"{west_name[:25]}", custom_id='dir_west', row=1)
             west_btn.callback = self.on_direction_click
             view.add_item(west_btn)
         else:
@@ -5550,7 +5550,7 @@ class EncountersMixin(MixinMeta):
         
         if location.east:
             east_name = LOCATION_DISPLAY_NAMES.get(location.east, location.east)
-            east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label=f"{east_name[:15]}", custom_id='dir_east', row=1)
+            east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label=f"{east_name[:25]}", custom_id='dir_east', row=1)
             east_btn.callback = self.on_direction_click
             view.add_item(east_btn)
         else:
@@ -5560,7 +5560,7 @@ class EncountersMixin(MixinMeta):
         # AUX button (if exists)
         if hasattr(location, 'aux') and location.aux:
             aux_name = LOCATION_DISPLAY_NAMES.get(location.aux, location.aux)
-            aux_btn = Button(style=ButtonStyle.gray, emoji='🔀', label=f"{aux_name[:15]}", custom_id='dir_aux', row=1)
+            aux_btn = Button(style=ButtonStyle.gray, emoji='🔀', label=f"{aux_name[:25]}", custom_id='dir_aux', row=1)
             aux_btn.callback = self.on_direction_click
             view.add_item(aux_btn)
 
@@ -7207,7 +7207,7 @@ class EncountersMixin(MixinMeta):
         # ROW 0: North/South buttons
         if location.north:
             north_name = LOCATION_DISPLAY_NAMES.get(location.north, location.north)
-            north_btn = Button(style=ButtonStyle.gray, emoji='⬆️', label=f"{north_name[:15]}", custom_id='dir_north', row=0)
+            north_btn = Button(style=ButtonStyle.gray, emoji='⬆️', label=f"{north_name[:25]}", custom_id='dir_north', row=0)
             north_btn.callback = self.on_direction_click
             view.add_item(north_btn)
         else:
@@ -7216,7 +7216,7 @@ class EncountersMixin(MixinMeta):
         
         if location.south:
             south_name = LOCATION_DISPLAY_NAMES.get(location.south, location.south)
-            south_btn = Button(style=ButtonStyle.gray, emoji='⬇️', label=f"{south_name[:15]}", custom_id='dir_south', row=0)
+            south_btn = Button(style=ButtonStyle.gray, emoji='⬇️', label=f"{south_name[:25]}", custom_id='dir_south', row=0)
             south_btn.callback = self.on_direction_click
             view.add_item(south_btn)
         else:
@@ -7226,7 +7226,7 @@ class EncountersMixin(MixinMeta):
         # ROW 1: East/West buttons
         if location.west:
             west_name = LOCATION_DISPLAY_NAMES.get(location.west, location.west)
-            west_btn = Button(style=ButtonStyle.gray, emoji='⬅️', label=f"{west_name[:15]}", custom_id='dir_west', row=1)
+            west_btn = Button(style=ButtonStyle.gray, emoji='⬅️', label=f"{west_name[:25]}", custom_id='dir_west', row=1)
             west_btn.callback = self.on_direction_click
             view.add_item(west_btn)
         else:
@@ -7235,7 +7235,7 @@ class EncountersMixin(MixinMeta):
         
         if location.east:
             east_name = LOCATION_DISPLAY_NAMES.get(location.east, location.east)
-            east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label=f"{east_name[:15]}", custom_id='dir_east', row=1)
+            east_btn = Button(style=ButtonStyle.gray, emoji='➡️', label=f"{east_name[:25]}", custom_id='dir_east', row=1)
             east_btn.callback = self.on_direction_click
             view.add_item(east_btn)
         else:
@@ -7245,7 +7245,7 @@ class EncountersMixin(MixinMeta):
         # AUX button (if exists)
         if hasattr(location, 'aux') and location.aux:
             aux_name = LOCATION_DISPLAY_NAMES.get(location.aux, location.aux)
-            aux_btn = Button(style=ButtonStyle.gray, emoji='🔀', label=f"{aux_name[:15]}", custom_id='dir_aux', row=1)
+            aux_btn = Button(style=ButtonStyle.gray, emoji='🔀', label=f"{aux_name[:25]}", custom_id='dir_aux', row=1)
             aux_btn.callback = self.on_direction_click
             view.add_item(aux_btn)
 
