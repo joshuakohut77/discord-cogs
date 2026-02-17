@@ -6763,8 +6763,13 @@ class EncountersMixin(MixinMeta):
                 ''
             )
             
+        
         else:
             # Regular trainer battle
+            
+            # CRITICAL: Mark trainer as defeated in database
+            battle_manager.battleVictory(trainer_model)
+            
             embed = discord.Embed(
                 title="🏆 VICTORY!",
                 description=f"You defeated {trainer_model.name}!",
