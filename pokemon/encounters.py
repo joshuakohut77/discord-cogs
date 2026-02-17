@@ -8965,14 +8965,25 @@ class EncountersMixin(MixinMeta):
                         await interaction.message.delete()
                     except:
                         pass
-                    if str(user.id) in self.__useractions:
-                        self.__useractions[str(user.id)].messageId = new_message.id
+                    # CRITICAL: Fully recreate ActionState with new message ID
+                    trainer = self._get_trainer(str(user.id))
+                    location = trainer.getLocation()
+                    self.__useractions[str(user.id)] = ActionState(
+                        str(user.id),
+                        new_message.channel.id,
+                        new_message.id,
+                        location,
+                        trainer.getActivePokemon(),
+                        None,
+                        ''
+                    )
                 else:
                     await interaction.message.edit(
                         content=None,
                         embed=embed,
                         view=view
                     )
+    # Message ID stays the same when editing, no ActionState update needed
             else:
                 await interaction.followup.send('Error getting next trainer.', ephemeral=True)
         else:
@@ -9075,14 +9086,25 @@ class EncountersMixin(MixinMeta):
                     await interaction.message.delete()
                 except:
                     pass
-                if str(user.id) in self.__useractions:
-                    self.__useractions[str(user.id)].messageId = new_message.id
+                # CRITICAL: Fully recreate ActionState with new message ID
+                trainer = self._get_trainer(str(user.id))
+                location = trainer.getLocation()
+                self.__useractions[str(user.id)] = ActionState(
+                    str(user.id),
+                    new_message.channel.id,
+                    new_message.id,
+                    location,
+                    trainer.getActivePokemon(),
+                    None,
+                    ''
+                )
             else:
                 await interaction.message.edit(
                     content=None,
                     embed=embed,
                     view=view
                 )
+    # Message ID stays the same when editing, no ActionState update needed
 
     async def on_gym_leader_battle_manual(self, interaction: discord.Interaction):
         """Handle MANUAL battle with gym leader"""
