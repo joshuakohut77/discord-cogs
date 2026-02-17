@@ -738,17 +738,22 @@ class EncountersMixin(MixinMeta):
         # Get ALL enemy Pokemon
         enemy_pokemon_list = next_trainer.pokemon
         
-        # Battle tracking - same pattern as gym battles
+        # Battle tracking
         player_pokemon_index = 0
         enemy_pokemon_index = 0
         all_battle_logs = []
         defeated_enemies = []
         defeated_player = []
-        exp_messages = []
-        
-        # Battle loop - uses result-based checking (not HP-based)
+        exp_messages = []  # Track experience gains
+        level_ups = []  # Track level ups for notifications
+
+        # Battle loop - continue until one side has no Pokemon left
+        battle_result = None
+
         while player_pokemon_index < len(alive_party) and enemy_pokemon_index < len(enemy_pokemon_list):
+            # Get current Pokemon
             player_pokemon = alive_party[player_pokemon_index]
+            old_level = player_pokemon.currentLevel  # Track level BEFORE battle
             enemy_data = enemy_pokemon_list[enemy_pokemon_index]
             
             from services.pokedexclass import pokedex as PokedexClass
@@ -769,9 +774,34 @@ class EncountersMixin(MixinMeta):
             if hasattr(enc, 'battle_log') and enc.battle_log:
                 all_battle_logs.extend(enc.battle_log)
             
-            # Capture experience message
+
+            # Capture experience message and check for level up
             if enc.message:
                 exp_messages.append(f"{player_pokemon.pokemonName.capitalize()}: {enc.message}")
+                
+                # Check if Pokemon leveled up
+                new_level = player_pokemon.currentLevel
+                if new_level > old_level:
+                    # Extract learned moves from message
+                    learned_moves = []
+                    if "learned" in enc.message.lower():
+                        import re
+                        learned_matches = re.findall(r'learned ([a-z\-]+)', enc.message.lower())
+                        learned_moves.extend(learned_matches)
+                    
+                    # Check for evolution
+                    evolution_name = None
+                    if hasattr(player_pokemon, 'evolvedInto') and player_pokemon.evolvedInto:
+                        evolution_name = player_pokemon.evolvedInto
+                    
+                    # Store level up data
+                    level_ups.append({
+                        'pokemon': player_pokemon,
+                        'old_level': old_level,
+                        'new_level': new_level,
+                        'learned_moves': learned_moves,
+                        'evolution_name': evolution_name
+                    })
             
             # Check result (NOT currentHP - battle_fight doesn't update pokemon HP on draws)
             if result.get('result') == 'victory':
@@ -906,7 +936,18 @@ class EncountersMixin(MixinMeta):
             )
         
         view_nav = self.__create_post_battle_buttons(str(user.id))
-        new_message = await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
+        await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
+
+        # Send level up notifications
+        for level_up_data in level_ups:
+            level_up_embed = self.__create_level_up_embed(
+                level_up_data['pokemon'],
+                level_up_data['old_level'],
+                level_up_data['new_level'],
+                learned_moves=level_up_data['learned_moves'],
+                evolution_name=level_up_data['evolution_name']
+            )
+            await interaction.followup.send(embed=level_up_embed, ephemeral=True)
         
         try:
             await interaction.message.delete()
@@ -7554,11 +7595,16 @@ class EncountersMixin(MixinMeta):
         all_battle_logs = []
         defeated_enemies = []
         defeated_player = []
-        exp_messages = []
-        
+        exp_messages = []  # Track experience gains
+        level_ups = []  # Track level ups for notifications
+
         # Battle loop - continue until one side has no Pokemon left
+        battle_result = None
+
         while player_pokemon_index < len(alive_party) and enemy_pokemon_index < len(enemy_pokemon_list):
+            # Get current Pokemon
             player_pokemon = alive_party[player_pokemon_index]
+            old_level = player_pokemon.currentLevel  # Track level BEFORE battle
             enemy_data = enemy_pokemon_list[enemy_pokemon_index]
             
             from services.pokedexclass import pokedex as PokedexClass
@@ -7577,8 +7623,33 @@ class EncountersMixin(MixinMeta):
             if hasattr(enc, 'battle_log') and enc.battle_log:
                 all_battle_logs.extend(enc.battle_log)
             
+            # Capture experience message and check for level up
             if enc.message:
                 exp_messages.append(f"{player_pokemon.pokemonName.capitalize()}: {enc.message}")
+                
+                # Check if Pokemon leveled up
+                new_level = player_pokemon.currentLevel
+                if new_level > old_level:
+                    # Extract learned moves from message
+                    learned_moves = []
+                    if "learned" in enc.message.lower():
+                        import re
+                        learned_matches = re.findall(r'learned ([a-z\-]+)', enc.message.lower())
+                        learned_moves.extend(learned_matches)
+                    
+                    # Check for evolution
+                    evolution_name = None
+                    if hasattr(player_pokemon, 'evolvedInto') and player_pokemon.evolvedInto:
+                        evolution_name = player_pokemon.evolvedInto
+                    
+                    # Store level up data
+                    level_ups.append({
+                        'pokemon': player_pokemon,
+                        'old_level': old_level,
+                        'new_level': new_level,
+                        'learned_moves': learned_moves,
+                        'evolution_name': evolution_name
+                    })
             
             if result.get('result') == 'victory':
                 defeated_enemies.append(enemy_name)
@@ -7730,7 +7801,18 @@ class EncountersMixin(MixinMeta):
             )
         
         view_nav = self.__create_post_battle_buttons(str(user.id))
-        new_message = await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
+        await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
+
+        # Send level up notifications
+        for level_up_data in level_ups:
+            level_up_embed = self.__create_level_up_embed(
+                level_up_data['pokemon'],
+                level_up_data['old_level'],
+                level_up_data['new_level'],
+                learned_moves=level_up_data['learned_moves'],
+                evolution_name=level_up_data['evolution_name']
+            )
+            await interaction.followup.send(embed=level_up_embed, ephemeral=True)
         
         try:
             await interaction.message.delete()
@@ -8544,15 +8626,23 @@ class EncountersMixin(MixinMeta):
 
         enemy_pokemon_list = gym_leader.pokemon
         
+        # new code
+        # Battle tracking
         player_pokemon_index = 0
         enemy_pokemon_index = 0
         all_battle_logs = []
         defeated_enemies = []
         defeated_player = []
-        exp_messages = []
-        
+        exp_messages = []  # Track experience gains
+        level_ups = []  # Track level ups for notifications
+
+        # Battle loop - continue until one side has no Pokemon left
+        battle_result = None
+
         while player_pokemon_index < len(alive_party) and enemy_pokemon_index < len(enemy_pokemon_list):
+            # Get current Pokemon
             player_pokemon = alive_party[player_pokemon_index]
+            old_level = player_pokemon.currentLevel  # Track level BEFORE battle
             enemy_data = enemy_pokemon_list[enemy_pokemon_index]
             
             enemy_name = list(enemy_data.keys())[0]
@@ -8567,8 +8657,33 @@ class EncountersMixin(MixinMeta):
             if hasattr(enc, 'battle_log') and enc.battle_log:
                 all_battle_logs.extend(enc.battle_log)
             
+            # Capture experience message and check for level up
             if enc.message:
                 exp_messages.append(f"{player_pokemon.pokemonName.capitalize()}: {enc.message}")
+                
+                # Check if Pokemon leveled up
+                new_level = player_pokemon.currentLevel
+                if new_level > old_level:
+                    # Extract learned moves from message
+                    learned_moves = []
+                    if "learned" in enc.message.lower():
+                        import re
+                        learned_matches = re.findall(r'learned ([a-z\-]+)', enc.message.lower())
+                        learned_moves.extend(learned_matches)
+                    
+                    # Check for evolution
+                    evolution_name = None
+                    if hasattr(player_pokemon, 'evolvedInto') and player_pokemon.evolvedInto:
+                        evolution_name = player_pokemon.evolvedInto
+                    
+                    # Store level up data
+                    level_ups.append({
+                        'pokemon': player_pokemon,
+                        'old_level': old_level,
+                        'new_level': new_level,
+                        'learned_moves': learned_moves,
+                        'evolution_name': evolution_name
+                    })
 
             if result.get('result') == 'victory':
                 defeated_enemies.append(enemy_name)
@@ -8708,7 +8823,18 @@ class EncountersMixin(MixinMeta):
             )
         
         view_nav = self.__create_post_battle_buttons(str(user.id))
-        new_message = await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
+        await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
+
+        # Send level up notifications
+        for level_up_data in level_ups:
+            level_up_embed = self.__create_level_up_embed(
+                level_up_data['pokemon'],
+                level_up_data['old_level'],
+                level_up_data['new_level'],
+                learned_moves=level_up_data['learned_moves'],
+                evolution_name=level_up_data['evolution_name']
+            )
+            await interaction.followup.send(embed=level_up_embed, ephemeral=True)
         
         try:
             await interaction.message.delete()
