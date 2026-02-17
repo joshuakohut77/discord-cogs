@@ -8923,7 +8923,7 @@ class EncountersMixin(MixinMeta):
             None,
             ''
         )
-
+        
         remaining = battle.getRemainingTrainerCount()
         if remaining > 0:
             next_up = battle.getNextTrainer()
@@ -8932,16 +8932,23 @@ class EncountersMixin(MixinMeta):
                 f"**Next Opponent:** {next_up.name if next_up else 'Unknown'}",
                 ephemeral=True
             )
-        else:
-            if hasattr(gym_leader, 'enemy_uuid') and gym_leader.enemy_uuid == "elite-4-5":
-                finale_embed = discord.Embed(
-                    title="🏆 Congratulations, Champion!",
-                    description="You have defeated the Elite Four and become the Pokémon Champion!\n\n"
-                                "**You have unlocked the finale!**\n"
-                                "Please type the command `,finale` and read the instructions to continue.",
-                    color=discord.Color.gold()
+        
+        if battle.finale_unlocked:
+            finale_embed = discord.Embed(
+                title="🏆 Congratulations, Champion!",
+                description="You have defeated the Elite Four and become the Pokémon Champion!\n\n"
+                            "**You have unlocked the finale!**\n"
+                            "Please type the command `,finale` and read the instructions to continue.",
+                color=discord.Color.gold()
+            )
+            await interaction.followup.send(embed=finale_embed)
+
+            if interaction.guild:
+                await self.send_achievement(
+                    guild=interaction.guild,
+                    user=user,
+                    achievement_type="elite_four"
                 )
-                await interaction.followup.send(embed=finale_embed)
 
     async def on_gym_click(self, interaction: discord.Interaction):
         """Handle gym button clicks - now shows battle type choice with embed"""

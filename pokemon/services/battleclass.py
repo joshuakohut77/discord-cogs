@@ -20,6 +20,7 @@ class battle:
         # pokemon1 for PvE will always be the discord trainers pokemon
         self.statuscode = 69
         self.message = ''
+        self.finale_unlocked = False
 
         self.discordId = discordId
         self.locationId = locationId
@@ -44,6 +45,7 @@ class battle:
             if not playerKeyItems.elite_four:
                 playerKeyItems.elite_four = True
                 playerKeyItems.save()
+                self.finale_unlocked = True
 
         return
 
