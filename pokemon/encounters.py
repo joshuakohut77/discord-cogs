@@ -1204,56 +1204,83 @@ class EncountersMixin(MixinMeta):
 
 
     async def on_wild_battle_throw_ball(self, interaction: discord.Interaction):
-        """Handle throwing a Pokeball at wild Pokemon"""
-        user = interaction.user
-        user_id = str(user.id)
-        
-        if user_id not in self.__wild_battle_states:
-            await interaction.response.send_message('No active wild battle found.', ephemeral=True)
-            return
-        
-        await interaction.response.defer()
-        
-        battle_state = self.__wild_battle_states[user_id]
-        trainer = self._get_trainer(user_id)
-        
-        # Get ball type from custom_id
-        ball_id = interaction.data['custom_id'].replace('wild_catch_', '')
-        
-        # Convert button ID to item format
-        ball_type_map = {
-            'pokeball': 'poke-ball',
-            'greatball': 'great-ball',
-            'ultraball': 'ultra-ball',
-            'masterball': 'master-ball'
-        }
-        ball_type = ball_type_map.get(ball_id, 'poke-ball')
-                
-        # Call catch method
-        trainer.catch(battle_state.wild_pokemon, ball_type)       
-        
-        if trainer.statuscode == 420:
-            # Successful catch
+    """Handle throwing a Pokeball at wild Pokemon"""
+    user = interaction.user
+    user_id = str(user.id)
+    
+    if user_id not in self.__wild_battle_states:
+        await interaction.response.send_message('No active wild battle found.', ephemeral=True)
+        return
+    
+    await interaction.response.defer()
+    
+    battle_state = self.__wild_battle_states[user_id]
+    trainer = self._get_trainer(user_id)
+    
+    # Get ball type from custom_id
+    ball_id = interaction.data['custom_id'].replace('wild_catch_', '')
+    
+    # Convert button ID to item format
+    ball_type_map = {
+        'pokeball': 'poke-ball',
+        'greatball': 'great-ball',
+        'ultraball': 'ultra-ball',
+        'masterball': 'master-ball'
+    }
+    ball_type = ball_type_map.get(ball_id, 'poke-ball')
             
-            embed = discord.Embed(
-                title="🎉 CAUGHT!",
-                description=f"{trainer.message}",
-                color=discord.Color.green()
-            )
-            
-            # Check for capture milestones
-            if interaction.guild:
-                await self.check_capture_milestones(str(user.id), interaction.guild)
+    # Call catch method
+    trainer.catch(battle_state.wild_pokemon, ball_type)       
+    
+    if trainer.statuscode == 420:
+        # Update main message with post-battle buttons
+        embed = discord.Embed(
+            title="🎉 CAUGHT!",
+            description=f"{trainer.message}",
+            color=discord.Color.green()
+        )
+        
+        # Check for capture milestones
+        if interaction.guild:
+            await self.check_capture_milestones(str(user.id), interaction.guild)
 
-            view = self.__create_post_battle_buttons(user_id)
+        view = self.__create_post_battle_buttons(user_id)
+        
+        await interaction.message.edit(
+            content=None,
+            embed=embed,
+            view=view
+        )
+        
+        # Send ephemeral success message with Pokemon sprite
+        success_embed = discord.Embed(
+            title="🎉 Pokémon Caught!",
+            description=f"You successfully caught **{battle_state.wild_pokemon.pokemonName.capitalize()}**!",
+            color=discord.Color.green()
+        )
+        
+        # Add Pokemon sprite to embed
+        try:
+            from helpers.pathhelpers import get_sprite_path
+            sprite_path = f"/sprites/pokemon/{battle_state.wild_pokemon.pokemonName}.png"
+            full_sprite_path = get_sprite_path(sprite_path)
             
-            await interaction.message.edit(
-                content=None,
-                embed=embed,
-                view=view
-            )
-            
-            del self.__wild_battle_states[user_id]
+            if os.path.exists(full_sprite_path):
+                filename = f"{battle_state.wild_pokemon.pokemonName}_caught.png"
+                sprite_file = discord.File(full_sprite_path, filename=filename)
+                success_embed.set_thumbnail(url=f"attachment://{filename}")
+                await interaction.followup.send(embed=success_embed, file=sprite_file, ephemeral=True)
+            else:
+                # Fallback to URL
+                sprite_url = f"https://pokesprites.joshkohut.com/sprites/pokemon/{battle_state.wild_pokemon.pokemonName}.png"
+                success_embed.set_thumbnail(url=sprite_url)
+                await interaction.followup.send(embed=success_embed, ephemeral=True)
+        except Exception as e:
+            print(f"Error loading pokemon sprite for catch: {e}")
+            # Send without sprite if there's an error
+            await interaction.followup.send(embed=success_embed, ephemeral=True)
+        
+        del self.__wild_battle_states[user_id]
 
     @require_wild_battle_state()
     async def on_wild_battle_catch_click(self, interaction: discord.Interaction):
