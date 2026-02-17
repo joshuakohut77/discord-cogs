@@ -80,6 +80,22 @@ class FinaleReadyView(View):
         await interaction.response.defer()
         await self.mixin._begin_finale(interaction)
 
+    async def on_later(self, interaction: Interaction):
+        if str(interaction.user.id) != self.user_id:
+            await interaction.response.send_message("This isn't for you.", ephemeral=True)
+            return
+        await interaction.response.defer()
+        embed = discord.Embed(
+            title="No worries!",
+            description="Come back anytime with `,finale` when you're ready.",
+            color=discord.Color.greyple()
+        )
+        await interaction.message.edit(embed=embed, view=View(), attachments=[])
+
+    async def on_timeout(self):
+        for item in self.children:
+            item.disabled = True
+
 class FinaleMixin(MixinMeta):
     """Cinematic finale battle system."""
 
