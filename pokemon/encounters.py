@@ -5655,10 +5655,13 @@ class EncountersMixin(MixinMeta):
             poke.load(pokemonId=poke.trainerId)
             if poke.currentHP > 0:
                 alive_party.append(poke)
-        
+
         if len(alive_party) == 0:
             await interaction.followup.send('All your party Pokemon have fainted! Heal at a Pokemon Center first.', ephemeral=True)
             return
+
+        # Sort party so active Pokemon (starter) is first, matching auto battle behavior
+        alive_party = self.__sort_party_active_first(alive_party, str(user.id))
         
         if not opponent:
             await interaction.followup.send('No trainer to battle.', ephemeral=True)
