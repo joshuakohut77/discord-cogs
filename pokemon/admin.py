@@ -460,3 +460,19 @@ class AdminMixin(MixinMeta):
             await ctx.send(f"❌ Invalid argument: {str(error)}")
         else:
             await ctx.send(f"❌ An error occurred: {str(error)}")
+    
+    @_trainer.command(name="seterrorlog")
+    @commands.is_owner()
+    async def set_error_log_channel(self, ctx: commands.Context, channel: discord.TextChannel = None):
+        """
+        [ADMIN ONLY] Set or clear the channel for error log output.
+        
+        Usage: ,trainer seterrorlog #channel
+        Usage: ,trainer seterrorlog  (no channel = clear)
+        """
+        if channel:
+            await self.config.guild(ctx.guild).error_log_channel.set(channel.id)
+            await ctx.send(f"✅ Error logs will be sent to {channel.mention}")
+        else:
+            await self.config.guild(ctx.guild).error_log_channel.set(None)
+            await ctx.send("✅ Error log channel cleared.")

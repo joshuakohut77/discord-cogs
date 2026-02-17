@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Union, TYPE_CHECKING
 from abc import ABCMeta
 
 import discord
+import logging
 # from discord_components import (DiscordComponents, ButtonStyle, ComponentsBot, Button, Interaction)
 from discord import ui, ButtonStyle, Button, Interaction
 
@@ -70,7 +71,6 @@ class Pokemon(AchievementsMixin, FinaleMixin, StarterMixin, PokemartMixin, Trade
 
     def __init__(self, bot: Red):
         super().__init__()
-        # self.client = DiscordComponents(bot)
         self.bot: Red = bot
         self.config: Config = Config.get_conf(
             self, identifier=4206980085, force_registration=True)
@@ -80,13 +80,40 @@ class Pokemon(AchievementsMixin, FinaleMixin, StarterMixin, PokemartMixin, Trade
         }
         default_guild: Dict[str, Any] = {
             "enabled": True,
-            "achievement_channel": None
+            "achievement_channel": None,
+            "error_log_channel": None
         }
         self.config.register_channel(**default_channel)
         self.config.register_guild(**default_guild)
 
         self.pokelist = {}
+        self._error_handler = None
 
+    async def cog_load(self):
+        """Called when the cog is loaded. Sets up the error logger."""
+        import logging
+        from .helpers.errorlogger import DiscordErrorHandler
+
+        self._error_handler = DiscordErrorHandler(self.bot, self.config)
+        formatter = logging.Formatter(
+            '%(name)s: %(message)s\n%(pathname)s\n\n%(exc_text)s'
+        )
+        self._error_handler.setFormatter(formatter)
+
+        # Attach to the root logger to catch everything (discord.ui.view, etc.)
+        logging.getLogger().addHandler(self._error_handler)
+        self._error_handler.start()
+        print("[Pokemon] Error logger attached.")
+
+    async def cog_unload(self):
+        """Called when the cog is unloaded. Cleans up the error logger."""
+        import logging
+
+        if self._error_handler:
+            self._error_handler.stop()
+            logging.getLogger().removeHandler(self._error_handler)
+            self._error_handler = None
+            print("[Pokemon] Error logger detached.")
 
     async def guild_only_check():
         async def pred(self, ctx: commands.Context):
