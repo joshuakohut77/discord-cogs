@@ -41,11 +41,11 @@ class battle:
 
         # If player defeated the Champion (elite-4-5), grant elite_four keyitem
         if enemy_uuid == "elite-4-5":
+            self.finale_unlocked = True
             playerKeyItems = kitems(self.discordId)
             if not playerKeyItems.elite_four:
                 playerKeyItems.elite_four = True
                 playerKeyItems.save()
-                self.finale_unlocked = True
 
         return
 
