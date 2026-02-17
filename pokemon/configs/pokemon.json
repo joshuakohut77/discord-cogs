@@ -1242,7 +1242,7 @@
     "name": "clefairy",
     "base_experience": 113,
     "growthRate": "fast",
-    "type1": "fairy",
+    "type1": "normal",
     "type2": "",
     "stats": {
       "hp": 70,
@@ -1280,7 +1280,7 @@
     "name": "clefable",
     "base_experience": 242,
     "growthRate": "fast",
-    "type1": "fairy",
+    "type1": "normal",
     "type2": "",
     "stats": {
       "hp": 95,
@@ -1386,7 +1386,7 @@
     "base_experience": 95,
     "growthRate": "fast",
     "type1": "normal",
-    "type2": "fairy",
+    "type2": "",
     "stats": {
       "hp": 115,
       "attack": 45,
@@ -1424,7 +1424,7 @@
     "base_experience": 218,
     "growthRate": "fast",
     "type1": "normal",
-    "type2": "fairy",
+    "type2": "",
     "stats": {
       "hp": 140,
       "attack": 70,
