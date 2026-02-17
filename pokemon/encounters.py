@@ -6825,7 +6825,7 @@ class EncountersMixin(MixinMeta):
             )
 
             # Check for Elite Four victory
-            if battle_state.is_elite_four:
+            if hasattr(battle_state, 'is_elite_four') and battle_state.is_elite_four:
                 # Check if this was the last Elite Four member
                 if battle_manager.hasCompletedEliteFour():
                     finale_embed = discord.Embed(
