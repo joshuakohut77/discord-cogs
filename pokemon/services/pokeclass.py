@@ -73,8 +73,14 @@ class Pokemon:
         
         # load pokemon from db using trainerId as unique primary key from Pokemon table
         self.__loadPokemonFromDB(pokemonId)
-        self.frontSpriteURL = self.__getFrontSpritePath()
-        self.backSpriteURL = self.__getBackSpritePath()
+        
+        # Set sprite URLs based on shiny status
+        if self.is_shiny:
+            self.frontSpriteURL = f"https://pokesprites.joshkohut.com/sprites/pokemon/shiny/{self.pokedexId}.png"
+            self.backSpriteURL = f"https://pokesprites.joshkohut.com/sprites/pokemon/shiny/back/{self.pokedexId}.png"
+        else:
+            self.frontSpriteURL = self.__getFrontSpritePath()
+            self.backSpriteURL = self.__getBackSpritePath()
 
     # TODO: make static method
     def create(self, level, is_shiny=False):
@@ -614,10 +620,11 @@ class Pokemon:
     def __getSpriteBasePath(self):
         """ returns a base path to pokemon sprites """
         basePath = "https://pokesprites.joshkohut.com/sprites/pokemon/"
-        # if the pokemon is a shiny, there is no legacy shiny, so the path will be overwritten regardless
-        if self.shiny:
-            return"https://pokesprites.joshkohut.com/sprites/pokemon/shiny/"
+        # Check both shiny attributes for compatibility
+        if self.shiny or self.is_shiny:
+            return "https://pokesprites.joshkohut.com/sprites/pokemon/shiny/"
         return basePath
+
 
     def getMovesLearnedBetweenLevels(self, fromLevel, toLevel):
         """
