@@ -76,45 +76,94 @@ class LeaderboardMixin(MixinMeta):
         try:
             # Get the Discord user
             user = await ctx.guild.fetch_member(int(discord_id))
-            
-            # Load their stats
+
+            # Load leaderboard stats
             stats = LeaderBoardClass(discord_id)
             stats.load()
-            
+
+            # Load additional stats from DB
+            db = dbconn()
+
+            # Pokémon owned (not deleted)
+            pokemon_count_result = db.querySingle(
+                "SELECT COUNT(*) FROM pokemon WHERE discord_id = %(did)s AND (is_deleted = FALSE OR is_deleted IS NULL)",
+                {'did': discord_id}
+            )
+            pokemon_owned = pokemon_count_result[0] if pokemon_count_result else 0
+
+            # Shiny owned (not deleted)
+            shiny_count_result = db.querySingle(
+                "SELECT COUNT(*) FROM pokemon WHERE discord_id = %(did)s AND is_shiny = TRUE AND (is_deleted = FALSE OR is_deleted IS NULL)",
+                {'did': discord_id}
+            )
+            shiny_owned = shiny_count_result[0] if shiny_count_result else 0
+
+            # Pokédex entries
+            pokedex_result = db.querySingle(
+                "SELECT COUNT(*) FROM pokedex WHERE discord_id = %(did)s",
+                {'did': discord_id}
+            )
+            pokedex_seen = pokedex_result[0] if pokedex_result else 0
+
+            # Trainers defeated
+            trainers_defeated_result = db.querySingle(
+                "SELECT COUNT(*) FROM trainer_battles WHERE discord_id = %(did)s",
+                {'did': discord_id}
+            )
+            trainers_defeated = trainers_defeated_result[0] if trainers_defeated_result else 0
+
+            # Badges owned — count True badge columns in keyitems
+            badges_result = db.querySingle(
+                """
+                SELECT (
+                    (badge_boulder::int) + (badge_cascade::int) + (badge_thunder::int) +
+                    (badge_rainbow::int) + (badge_soul::int) + (badge_marsh::int) +
+                    (badge_volcano::int) + (badge_earth::int)
+                ) FROM keyitems WHERE discord_id = %(did)s
+                """,
+                {'did': discord_id}
+            )
+            badges_owned = badges_result[0] if badges_result else 0
+
             # Create embed
             embed = discord.Embed(
                 title=f"📊 Trainer Stats",
                 color=discord.Color.blue()
             )
             embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
-            
-            # Battle stats
+
+            # --- Progress ---
+            embed.add_field(name='🏅 Badges', value=f'{badges_owned}/8', inline=True)
+            embed.add_field(name='📖 Pokédex', value=f'{pokedex_seen} seen', inline=True)
+            embed.add_field(name='🎒 Pokémon Owned', value=f'{pokemon_owned}', inline=True)
+            embed.add_field(name='✨ Shinies Owned', value=f'{shiny_owned}', inline=True)
+            embed.add_field(name='🥚 Easter Eggs', value=f'{stats.total_easter_eggs or 0}', inline=True)
+            embed.add_field(name='⚡ Pokémon Evolved', value=f'{stats.total_evolved or 0}', inline=True)
+
+            # --- Battle Stats ---
             embed.add_field(name='⚔️ Total Battles', value=f'{stats.total_battles or 0}', inline=True)
             embed.add_field(name='🏆 Victories', value=f'{stats.total_victory or 0}', inline=True)
             embed.add_field(name='💀 Defeats', value=f'{stats.total_defeat or 0}', inline=True)
-            
-            # Calculate win rate
+
             if stats.total_battles and stats.total_battles > 0:
                 win_rate = (stats.total_victory or 0) / stats.total_battles * 100
                 embed.add_field(name='📈 Win Rate', value=f'{win_rate:.1f}%', inline=True)
             else:
                 embed.add_field(name='📈 Win Rate', value='N/A', inline=True)
-            
-            # Pokemon stats
-            embed.add_field(name='🎯 Pokéballs Thrown', value=f'{stats.total_balls_thrown or 0}', inline=True)
-            embed.add_field(name='✨ Pokémon Caught', value=f'{stats.total_catch or 0}', inline=True)
-            embed.add_field(name='🏃 Run Aways', value=f'{stats.total_run_away or 0}', inline=True)
-            embed.add_field(name='🗑️ Pokémon Released', value=f'{stats.total_released or 0}', inline=True)
-            embed.add_field(name='⚡ Pokémon Evolved', value=f'{stats.total_evolved or 0}', inline=True)
-            
-            # Misc stats
-            embed.add_field(name='🔄 Trades', value=f'{stats.total_trades or 0}', inline=True)
+
+            embed.add_field(name='🧑‍🏫 Trainers Defeated', value=f'{trainers_defeated}', inline=True)
             embed.add_field(name='🎮 Actions', value=f'{stats.total_actions or 0}', inline=True)
-            embed.add_field(name='🥚 Easter Eggs', value=f'{stats.total_easter_eggs or 0}', inline=True)
-            embed.add_field(name='✅ Completions', value=f'{stats.total_completions or 0}', inline=True)
-            
+
+            # --- Catching Stats ---
+            embed.add_field(name='🎯 Pokéballs Thrown', value=f'{stats.total_balls_thrown or 0}', inline=True)
+            embed.add_field(name='✅ Pokémon Caught', value=f'{stats.total_catch or 0}', inline=True)
+            embed.add_field(name='🏃 Run Aways', value=f'{stats.total_run_away or 0}', inline=True)
+            embed.add_field(name='🗑️ Released', value=f'{stats.total_released or 0}', inline=True)
+            embed.add_field(name='🔄 Trades', value=f'{stats.total_trades or 0}', inline=True)
+            embed.add_field(name='✔️ Completions', value=f'{stats.total_completions or 0}', inline=True)
+
             return embed
-            
+
         except Exception as e:
             embed = discord.Embed(
                 title="❌ Error",
