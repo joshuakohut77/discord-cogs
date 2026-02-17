@@ -7813,10 +7813,18 @@ class EncountersMixin(MixinMeta):
                 inline=False
             )
         
+        
+        # Delete old battle selection message first
+        try:
+            await interaction.message.delete()
+        except:
+            pass
+
+        # Send new post-battle summary with navigation buttons
         view_nav = self.__create_post_battle_buttons(str(user.id))
         new_message = await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
 
-       
+        # Update ActionState with new message ID - this makes the navigation buttons work
         trainer = self._get_trainer(str(user.id))
         location = trainer.getLocation()
         self.__useractions[str(user.id)] = ActionState(
@@ -7829,7 +7837,7 @@ class EncountersMixin(MixinMeta):
             ''
         )
 
-        # Send level up notifications
+        # Send level up notifications after ActionState is set
         for level_up_data in level_ups:
             level_up_embed = self.__create_level_up_embed(
                 level_up_data['pokemon'],
@@ -7839,23 +7847,6 @@ class EncountersMixin(MixinMeta):
                 evolution_name=level_up_data['evolution_name']
             )
             await interaction.followup.send(embed=level_up_embed, ephemeral=True)
-        
-        try:
-            await interaction.message.delete()
-        except:
-            pass
-        
-        trainer = self._get_trainer(str(user.id))
-        location = trainer.getLocation()
-        self.__useractions[str(user.id)] = ActionState(
-            str(user.id),
-            new_message.channel.id,
-            new_message.id,
-            location,
-            trainer.getActivePokemon(),
-            None,
-            ''
-        )
 
     async def on_gym_battle_manual(self, interaction: discord.Interaction):
         """Handle MANUAL battle with gym trainer"""
