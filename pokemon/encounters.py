@@ -9884,8 +9884,7 @@ class EncountersMixin(MixinMeta):
         )
         self.__useractions[str(user.id)] = ActionState(
             str(user.id), message.channel.id, message.id, state.location, active, wildPokemon, desc)
-
-
+    
     async def __on_throw_pokeball_encounter(self, interaction: Interaction):
         user = interaction.user
 
@@ -9910,8 +9909,8 @@ class EncountersMixin(MixinMeta):
 
         desc = state.descLog
         desc += f'''{user.display_name} threw a {interaction.data['custom_id']}!
-    {trainer.message}
-    '''
+        {trainer.message}
+        '''
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
 
@@ -9941,11 +9940,40 @@ class EncountersMixin(MixinMeta):
             view=view  # Changed from View() to view with buttons
         )
         
+        # Check if catch was successful and send ephemeral message
+        if trainer.statuscode == 420 and "successfully caught" in trainer.message.lower():
+            # Create success embed with Pokemon sprite
+            success_embed = discord.Embed(
+                title="🎉 Pokémon Caught!",
+                description=f"You successfully caught **{state.wildPokemon.pokemonName.capitalize()}**!",
+                color=discord.Color.green()
+            )
+            
+            # Add Pokemon sprite to embed
+            try:
+                from helpers.pathhelpers import get_sprite_path
+                sprite_path = f"/sprites/pokemon/{state.wildPokemon.pokemonName}.png"
+                full_sprite_path = get_sprite_path(sprite_path)
+                
+                if os.path.exists(full_sprite_path):
+                    filename = f"{state.wildPokemon.pokemonName}_caught.png"
+                    sprite_file = discord.File(full_sprite_path, filename=filename)
+                    success_embed.set_thumbnail(url=f"attachment://{filename}")
+                    await interaction.followup.send(embed=success_embed, file=sprite_file, ephemeral=True)
+                else:
+                    # Fallback to URL
+                    sprite_url = f"https://pokesprites.joshkohut.com/sprites/pokemon/{state.wildPokemon.pokemonName}.png"
+                    success_embed.set_thumbnail(url=sprite_url)
+                    await interaction.followup.send(embed=success_embed, ephemeral=True)
+            except Exception as e:
+                print(f"Error loading pokemon sprite for catch: {e}")
+                # Send without sprite if there's an error
+                await interaction.followup.send(embed=success_embed, ephemeral=True)
+        
         del self.__useractions[str(user.id)]
 
         # Send to logging channel
         await self.sendToLoggingChannel(None, embed=embed)
-    
 
     def __wildPokemonEncounter(self, user: discord.User, wildPokemon: PokemonClass, activePokemon: PokemonClass, descLog: str):
         stats = wildPokemon.getPokeStats()
