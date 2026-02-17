@@ -48,7 +48,7 @@ class LeaderboardMixin(MixinMeta):
             JOIN leaderboard l ON t.discord_id = l.discord_id
             WHERE l.total_battles > 0 OR l.total_catch > 0
             ORDER BY t.startdate DESC
-            LIMIT 25
+            LIMIT 250
         """
         results = db.queryAll(query, {})
         
