@@ -56,6 +56,18 @@ class FinaleReadyView(View):
             await interaction.response.send_message("This isn't for you.", ephemeral=True)
             return
 
+        # Re-check if someone else started the finale while we were waiting
+        active_uid = self.mixin._is_finale_active_in_guild(interaction.guild.id, exclude_user_id=self.user_id)
+        if active_uid:
+            active_member = interaction.guild.get_member(int(active_uid))
+            active_name = active_member.display_name if active_member else "Someone"
+            await interaction.response.send_message(
+                f"**{active_name}** just started the finale before you. "
+                f"Only one finale can run at a time — please wait for them to finish!",
+                ephemeral=True
+            )
+            return
+
         # Check if user is in a voice channel
         member = interaction.guild.get_member(interaction.user.id)
         if not member or not member.voice or not member.voice.channel:
@@ -67,22 +79,6 @@ class FinaleReadyView(View):
 
         await interaction.response.defer()
         await self.mixin._begin_finale(interaction)
-
-    async def on_later(self, interaction: Interaction):
-        if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("This isn't for you.", ephemeral=True)
-            return
-        await interaction.response.defer()
-        embed = discord.Embed(
-            title="No worries!",
-            description="Come back anytime with `,finale` when you're ready.",
-            color=discord.Color.greyple()
-        )
-        await interaction.message.edit(embed=embed, view=View(), attachments=[])
-
-    async def on_timeout(self):
-        for item in self.children:
-            item.disabled = True
 
 class FinaleMixin(MixinMeta):
     """Cinematic finale battle system."""
@@ -128,6 +124,17 @@ class FinaleMixin(MixinMeta):
             await ctx.send("You're already in the finale! Finish or let it time out first.")
             return
 
+        # Check if someone else is already in the finale in this guild
+        active_uid = self._is_finale_active_in_guild(ctx.guild.id, exclude_user_id=user_id)
+        if active_uid:
+            active_member = ctx.guild.get_member(int(active_uid))
+            active_name = active_member.display_name if active_member else "Someone"
+            await ctx.send(
+                f"**{active_name}** is currently in the finale. "
+                f"Only one finale can run at a time — please wait for them to finish!"
+            )
+            return
+
         # Check for elite_four key item
         player_keyitems = KeyItemsClass(user_id)
         if not player_keyitems.elite_four:
@@ -138,7 +145,7 @@ class FinaleMixin(MixinMeta):
             title="The Finale Awaits...",
             description=(
                 "Before we begin, a few things to know:\n\n"
-                "**Estimated Time:** 15-20 minutes\n\n"
+                "**Estimated Time:** 10-15 minutes\n\n"
                 "**Voice Channel Required:** Please be at a computer and "
                 "join a Voice Channel before starting.\n\n"
                 "**Stay Active:** Don't delay too long between actions "
@@ -148,7 +155,6 @@ class FinaleMixin(MixinMeta):
                 "**Warning:** Discord does not like what I did "
                 "and the finale can occasionally break. "
                 "If it does, I will try to fix it for you.\n\n"
-                "**Fun Fact** This entire finale is genearted real time."
                 "When you're ready, the ultimate challenge begins."
             ),
             color=discord.Color.dark_purple()
@@ -157,7 +163,6 @@ class FinaleMixin(MixinMeta):
 
         view = FinaleReadyView(self, user_id)
         await ctx.send(embed=embed, view=view)
-
 
     @commands.command(name="finaleact")
     @commands.guild_only()
@@ -1147,6 +1152,16 @@ class FinaleMixin(MixinMeta):
         embed = discord.Embed(color=discord.Color.red())
         embed.set_image(url=f"attachment://{fname}")
         await self._safe_edit(msg, embed=embed, view=View(), attachments=[file])
+
+    def _is_finale_active_in_guild(self, guild_id: int, exclude_user_id: str = None) -> str | None:
+        """Check if another user has an active finale in this guild.
+        Returns the display name of the active user, or None if no one is active."""
+        for uid, engine in self.__finale_engines.items():
+            if exclude_user_id and uid == exclude_user_id:
+                continue
+            if engine.message and engine.message.guild and engine.message.guild.id == guild_id:
+                return uid
+        return None
 
     async def _safe_edit_battle_with_buttons(self, msg, engine):
         """Render battle state and edit message WITH move buttons (retries)."""
