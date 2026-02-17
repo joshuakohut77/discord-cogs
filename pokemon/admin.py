@@ -2,8 +2,8 @@ from __future__ import annotations
 from typing import Union, TYPE_CHECKING
 
 import discord
-from discord import Interaction, ButtonStyle
-from discord.ui import Button, View
+from discord import Interaction, ButtonStyle, SelectOption
+from discord.ui import Button, View, Select, Modal
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -17,10 +17,70 @@ from services.pokedexclass import pokedex as PokedexClass
 from services.leaderboardclass import leaderboard as LeaderboardClass
 
 from .abcd import MixinMeta
+from .functions import get_pokemon_display_name
 from .helpers.pathhelpers import load_json_config
 
 DiscordUser = Union[discord.Member, discord.User]
 
+class NicknameModal(Modal, title="Set Pokemon Nickname"):
+    def __init__(self, pokemon):
+        super().__init__()
+        self.pokemon = pokemon
+        
+        current_nick = pokemon.nickName if pokemon.nickName else ""
+        
+        self.nickname_input = discord.ui.TextInput(
+            label="Nickname",
+            placeholder=f"Enter nickname for {pokemon.pokemonName.capitalize()}",
+            default=current_nick,
+            required=False,
+            max_length=20,
+            style=discord.TextStyle.short
+        )
+        self.add_item(self.nickname_input)
+        
+        self.clear_input = discord.ui.TextInput(
+            label='Type "CLEAR" to remove nickname',
+            placeholder="Leave blank to set nickname above",
+            required=False,
+            max_length=5,
+            style=discord.TextStyle.short
+        )
+        self.add_item(self.clear_input)
+    
+    async def on_submit(self, interaction: discord.Interaction):
+        nickname = self.nickname_input.value.strip()
+        clear_text = self.clear_input.value.strip().upper()
+        
+        if clear_text == "CLEAR":
+            self.pokemon.nickName = None
+            self.pokemon.save()
+            
+            embed = discord.Embed(
+                title="✅ Nickname Cleared",
+                description=f"**{self.pokemon.pokemonName.capitalize()}** no longer has a nickname.",
+                color=discord.Color.green()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+        
+        if nickname:
+            self.pokemon.nickName = nickname
+            self.pokemon.save()
+            
+            embed = discord.Embed(
+                title="✅ Nickname Set",
+                description=f"**{self.pokemon.pokemonName.capitalize()}** is now nicknamed **{nickname}**!",
+                color=discord.Color.green()
+            )
+        else:
+            embed = discord.Embed(
+                title="❌ No Change",
+                description="No nickname entered.",
+                color=discord.Color.red()
+            )
+        
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 class AdminMixin(MixinMeta):
     """Admin-only commands for managing trainers and Pokemon"""
@@ -30,6 +90,79 @@ class AdminMixin(MixinMeta):
     async def _trainer(self, ctx: commands.Context) -> None:
         """Base command to manage the trainer (user)."""
         pass
+
+    @_trainer.command(name="nickname")
+    async def trainer_nickname(self, ctx):
+        """Set or clear nicknames for your Pokemon"""
+        user = ctx.author
+        trainer = self._get_trainer(str(user.id))
+        
+        party = trainer.getPokemon(party=True)
+        if not party:
+            await ctx.send("You don't have any Pokemon in your party!")
+            return
+        
+        for poke in party:
+            poke.load(pokemonId=poke.trainerId)
+        
+        options = []
+        for i, poke in enumerate(party):
+            display_name = get_pokemon_display_name(poke)
+            current_nickname = f" (nicknamed)" if poke.nickName else ""
+            label = f"{display_name} - Lv.{poke.currentLevel}{current_nickname}"
+            options.append(SelectOption(
+                label=label[:100],
+                value=str(poke.trainerId),
+                description=f"Species: {poke.pokemonName.capitalize()}"
+            ))
+        
+        select = Select(
+            placeholder="Choose a Pokemon to nickname...",
+            options=options,
+            custom_id="nickname_select"
+        )
+        
+        view = View(timeout=180)
+        
+        async def select_callback(interaction: discord.Interaction):
+            if interaction.user.id != user.id:
+                await interaction.response.send_message("This isn't your Pokemon!", ephemeral=True)
+                return
+            
+            selected_trainer_id = int(select.values[0])
+            
+            selected_poke = None
+            for poke in party:
+                if poke.trainerId == selected_trainer_id:
+                    selected_poke = poke
+                    break
+            
+            if not selected_poke:
+                await interaction.response.send_message("Pokemon not found!", ephemeral=True)
+                return
+            
+            await interaction.response.send_modal(NicknameModal(selected_poke))
+        
+        select.callback = select_callback
+        view.add_item(select)
+        
+        cancel_btn = Button(style=ButtonStyle.secondary, label="❌ Cancel", custom_id="nickname_cancel")
+        async def cancel_callback(interaction: discord.Interaction):
+            if interaction.user.id != user.id:
+                await interaction.response.send_message("This isn't for you!", ephemeral=True)
+                return
+            await interaction.message.delete()
+        
+        cancel_btn.callback = cancel_callback
+        view.add_item(cancel_btn)
+        
+        embed = discord.Embed(
+            title="🏷️ Pokemon Nickname Manager",
+            description="Select a Pokemon from your party to set or change its nickname.",
+            color=discord.Color.blue()
+        )
+        
+        await ctx.send(embed=embed, view=view)
 
     @_trainer.command(name="gift")
     @commands.is_owner()
