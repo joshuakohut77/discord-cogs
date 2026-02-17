@@ -979,6 +979,24 @@ class EncountersMixin(MixinMeta):
             ''
         )
 
+        # Check if finale was unlocked (defeated Champion Blue)
+        if battle.finale_unlocked:
+            finale_embed = discord.Embed(
+                title="🏆 Congratulations, Champion!",
+                description="You have defeated the Elite Four and become the Pokémon Champion!\n\n"
+                            "**You have unlocked the finale!**\n"
+                            "Please type the command `,finale` and read the instructions to continue.",
+                color=discord.Color.gold()
+            )
+            await interaction.followup.send(embed=finale_embed)
+
+            if interaction.guild:
+                await self.send_achievement(
+                    guild=interaction.guild,
+                    user=user,
+                    achievement_type="elite_four"
+                )
+
     async def on_wild_battle_manual(self, interaction: discord.Interaction):
         """Handle MANUAL turn-by-turn battle with wild trainer"""
         user = interaction.user
@@ -6879,26 +6897,24 @@ class EncountersMixin(MixinMeta):
                 ''
             )
 
-            # Check for Elite Four victory
-            if hasattr(battle_state, 'is_elite_four') and battle_state.is_elite_four:
-                # Check if this was the last Elite Four member
-                if battle_manager.hasCompletedEliteFour():
-                    finale_embed = discord.Embed(
-                        title="👑 CHAMPION!",
-                        description="You have defeated the Elite Four and become the Pokémon Champion!\n\n"
-                                    "**You have unlocked the finale!**\n"
-                                    "Please type the command `,finale` and read the instructions to continue.",
-                        color=discord.Color.gold()
-                    )
-                    await interaction.followup.send(embed=finale_embed)
+            # Check if finale was unlocked (defeated Champion Blue)
+            if battle_manager.finale_unlocked:
+                finale_embed = discord.Embed(
+                    title="👑 CHAMPION!",
+                    description="You have defeated the Elite Four and become the Pokémon Champion!\n\n"
+                                "**You have unlocked the finale!**\n"
+                                "Please type the command `,finale` and read the instructions to continue.",
+                    color=discord.Color.gold()
+                )
+                await interaction.followup.send(embed=finale_embed)
 
-                    # Send Elite Four achievement
-                    if interaction.guild:
-                        await self.send_achievement(
-                            guild=interaction.guild,
-                            user=user,
-                            achievement_type="elite_four"
-                        )
+                # Send Elite Four achievement
+                if interaction.guild:
+                    await self.send_achievement(
+                        guild=interaction.guild,
+                        user=user,
+                        achievement_type="elite_four"
+                    )
 
             # Check if gym leader is available (only for gym battles, not wild trainers)
             if not hasattr(battle_state, 'is_wild_trainer') or not battle_state.is_wild_trainer:
@@ -8933,22 +8949,7 @@ class EncountersMixin(MixinMeta):
                 ephemeral=True
             )
         
-        if battle.finale_unlocked:
-            finale_embed = discord.Embed(
-                title="🏆 Congratulations, Champion!",
-                description="You have defeated the Elite Four and become the Pokémon Champion!\n\n"
-                            "**You have unlocked the finale!**\n"
-                            "Please type the command `,finale` and read the instructions to continue.",
-                color=discord.Color.gold()
-            )
-            await interaction.followup.send(embed=finale_embed)
-
-            if interaction.guild:
-                await self.send_achievement(
-                    guild=interaction.guild,
-                    user=user,
-                    achievement_type="elite_four"
-                )
+        
 
     async def on_gym_click(self, interaction: discord.Interaction):
         """Handle gym button clicks - now shows battle type choice with embed"""
