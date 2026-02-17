@@ -108,19 +108,19 @@ class ailment:
     def rollAilmentChance(self, move):
         """ checks the ailment chance and rolls to determine if effected """
         chance = move['ailment_chance']
-        print(move)
+        
         if chance == 0:
             return False
         
         randomChance = random.randrange(1, 100+1)
-        print('rolling ailment chance')
+        
         if randomChance > 100 - chance:
             return True
         else:
             return False
         
     def setAilment(self, ailment):
-        print('Setting Ailment %s' %ailment)
+        
         """ sets a pokemons ailment """
         if ailment == 'sleep':
             self.resetAilments()
