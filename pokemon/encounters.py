@@ -1261,20 +1261,8 @@ class EncountersMixin(MixinMeta):
             
             # Add Pokemon sprite to embed
             try:
-                from helpers.pathhelpers import get_sprite_path
-                sprite_path = f"/sprites/pokemon/{battle_state.wild_pokemon.pokemonName}.png"
-                full_sprite_path = get_sprite_path(sprite_path)
-                
-                if os.path.exists(full_sprite_path):
-                    filename = f"{battle_state.wild_pokemon.pokemonName}_caught.png"
-                    sprite_file = discord.File(full_sprite_path, filename=filename)
-                    success_embed.set_thumbnail(url=f"attachment://{filename}")
-                    await interaction.followup.send(embed=success_embed, file=sprite_file, ephemeral=True)
-                else:
-                    # Fallback to URL
-                    sprite_url = f"https://pokesprites.joshkohut.com/sprites/pokemon/{battle_state.wild_pokemon.pokemonName}.png"
-                    success_embed.set_thumbnail(url=sprite_url)
-                    await interaction.followup.send(embed=success_embed, ephemeral=True)
+                success_embed.set_thumbnail(url=battle_state.wild_pokemon.frontSpriteURL)
+                await interaction.followup.send(embed=success_embed, ephemeral=True)
             except Exception as e:
                 print(f"Error loading pokemon sprite for catch: {e}")
                 # Send without sprite if there's an error

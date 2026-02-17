@@ -1,5 +1,5 @@
 {
-  "wild_pokemon_shiny_chance": 200,
+  "wild_pokemon_shiny_chance": 3,
   "legendary_shiny_chance": 20,
   "legendary_pokemon": ["articuno", "zapdos", "moltres", "mewtwo"]
 }
