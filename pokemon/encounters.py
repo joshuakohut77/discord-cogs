@@ -6682,6 +6682,9 @@ class EncountersMixin(MixinMeta):
 
     async def __handle_gym_battle_victory(self, interaction: discord.Interaction, battle_state: BattleState):
         """Handle when player wins a gym battle - shows all Pokemon used with navigation"""
+        # GET user from interaction
+        user = interaction.user
+        
         trainer_model = battle_state.trainer_model
         battle_manager = battle_state.battle_manager
         
@@ -6727,49 +6730,38 @@ class EncountersMixin(MixinMeta):
             player_summary.append(f"HP: {battle_state.player_pokemon.currentHP}/{player_max_hp}")
             
             embed.add_field(
-                name="💚 Your Pokemon",
+                name="💚 Your Team",
                 value="\n".join(player_summary),
                 inline=True
             )
             
-            # Battle log
+            # Show battle log
             if battle_state.battle_log:
-                log_text = "\n".join(battle_state.battle_log)
+                log_text = battle_state.battle_log[-1] if isinstance(battle_state.battle_log, list) else battle_state.battle_log
                 embed.add_field(
-                    name="⚔️ Final Turn",
+                    name="⚔️ Battle Log",
                     value=log_text[:1024],
                     inline=False
                 )
             
-            embed.add_field(
-                name="🎖️ Badge Earned",
-                value=trainer_model.badge,
-                inline=True
-            )
+            embed.set_footer(text=f"Badge earned: {trainer_model.badge}")
             
-            embed.add_field(
-                name="💰 Prize Money",
-                value=f"${trainer_model.money}",
-                inline=True
-            )
+            view = self.__create_post_battle_buttons(str(user.id))
+            await interaction.message.edit(embed=embed, view=view)
             
-        else:  # It's a trainer (wild or gym trainer, not gym leader)
-            battle_manager.battleVictory(trainer_model)
-            
+        else:
+            # Regular trainer battle
             embed = discord.Embed(
-                title="🎉 VICTORY!",
+                title="🏆 VICTORY!",
                 description=f"You defeated {trainer_model.name}!",
                 color=discord.Color.green()
             )
             
             # Show all defeated enemy Pokemon
             enemy_summary = []
-            if len(battle_state.defeated_enemies) > 1:
-                enemy_summary.append(f"**Defeated {len(battle_state.defeated_enemies)} Pokemon:**")
-                for i, poke_name in enumerate(battle_state.defeated_enemies, 1):
-                    enemy_summary.append(f"{i}. {poke_name.capitalize()} ❌")
-            else:
-                enemy_summary.append(f"**Enemy {battle_state.defeated_enemies[0].capitalize()}** ❌")
+            enemy_summary.append(f"**Defeated {len(battle_state.defeated_enemies)} Pokemon:**")
+            for i, poke_name in enumerate(battle_state.defeated_enemies, 1):
+                enemy_summary.append(f"{i}. {poke_name.capitalize()} ❌")
             
             embed.add_field(
                 name="🎯 Enemy Team",
@@ -6779,85 +6771,47 @@ class EncountersMixin(MixinMeta):
             
             # Show player's current Pokemon
             player_summary = []
-            from .functions import get_pokemon_display_name
-            player_display = get_pokemon_display_name(battle_state.player_pokemon)
-            player_summary.append(f"**{player_display}** (Lv.{player_level})")
+            player_summary.append(f"**Your {battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
             player_summary.append(f"HP: {battle_state.player_pokemon.currentHP}/{player_max_hp}")
             
             embed.add_field(
-                name="💚 Your Pokemon",
+                name="💚 Your Team",
                 value="\n".join(player_summary),
                 inline=True
             )
             
-            # Battle log
+            # Show battle log
             if battle_state.battle_log:
-                log_text = "\n".join(battle_state.battle_log)
+                log_text = battle_state.battle_log[-1] if isinstance(battle_state.battle_log, list) else battle_state.battle_log
                 embed.add_field(
-                    name="⚔️ Final Turn",
+                    name="⚔️ Battle Log",
                     value=log_text[:1024],
                     inline=False
                 )
             
-            embed.add_field(
-                name="💰 Reward",
-                value=f"${trainer_model.money}",
-                inline=True
-            )
-        
-        # ADD NAVIGATION BUTTONS
-        view = self.__create_post_battle_buttons(battle_state.user_id)
-        
-        # Send as NEW message, not edit
-        new_message = await interaction.followup.send(embed=embed, view=view, ephemeral=False)
-        
-        # Delete the old battle message
-        try:
-            await interaction.message.delete()
-        except:
-            pass
-        
-        user = interaction.user
-        trainer = self._get_trainer(str(user.id))
-        location = trainer.getLocation()
-        self.__useractions[str(user.id)] = ActionState(
-            str(user.id), 
-            new_message.channel.id, 
-            new_message.id, 
-            location, 
-            trainer.getActivePokemon(), 
-            None, 
-            ''
-        )
-
-        # Check for more trainers and send as followup (not in embed)
-        remaining = battle_manager.getRemainingTrainerCount()
-        if remaining > 0:
-            next_up = battle_manager.getNextTrainer()
-            await interaction.followup.send(
-                f"**Trainers Remaining:** {remaining}\n"
-                f"**Next Opponent:** {next_up.name if next_up else 'Unknown'}",
-                ephemeral=True
-            )
-        else:
-            # Check if player just defeated the Champion (elite-4-5)
-            if hasattr(trainer_model, 'enemy_uuid') and trainer_model.enemy_uuid == "elite-4-5":
-                finale_embed = discord.Embed(
-                    title="🏆 Congratulations, Champion!",
-                    description="You have defeated the Elite Four and become the Pokémon Champion!\n\n"
-                                "**You have unlocked the finale!**\n"
-                                "Please type the command `,finale` and read the instructions to continue.",
-                    color=discord.Color.gold()
-                )
-                await interaction.followup.send(embed=finale_embed)
-
-                # Send Elite Four achievement
-                if interaction.guild:
-                    await self.send_achievement(
-                        guild=interaction.guild,
-                        user=user,
-                        achievement_type="elite_four"
+            view = self.__create_post_battle_buttons(str(user.id))
+            await interaction.message.edit(embed=embed, view=view)
+            
+            # Check for Elite Four victory
+            if battle_state.is_elite_four:
+                # Check if this was the last Elite Four member
+                if battle_manager.hasCompletedEliteFour():
+                    finale_embed = discord.Embed(
+                        title="👑 CHAMPION!",
+                        description="You have defeated the Elite Four and become the Pokémon Champion!\n\n"
+                                    "**You have unlocked the finale!**\n"
+                                    "Please type the command `,finale` and read the instructions to continue.",
+                        color=discord.Color.gold()
                     )
+                    await interaction.followup.send(embed=finale_embed)
+
+                    # Send Elite Four achievement
+                    if interaction.guild:
+                        await self.send_achievement(
+                            guild=interaction.guild,
+                            user=user,
+                            achievement_type="elite_four"
+                        )
 
             # Check if gym leader is available (only for gym battles, not wild trainers)
             if not hasattr(battle_state, 'is_wild_trainer') or not battle_state.is_wild_trainer:
