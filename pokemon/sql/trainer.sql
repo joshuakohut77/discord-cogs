@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS public.trainer
     startdate date DEFAULT CURRENT_DATE,
     "starterName" character varying COLLATE pg_catalog."default",
     "trainerName" character varying COLLATE pg_catalog."default",
+    missingno_step integer DEFAULT 0,
     CONSTRAINT trainer_pkey PRIMARY KEY (discord_id),
     CONSTRAINT "trainer_activePokemon_pokemon_id" FOREIGN KEY ("activePokemon")
         REFERENCES public.pokemon (id) MATCH SIMPLE

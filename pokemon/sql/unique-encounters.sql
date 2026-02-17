@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS public."unique-encounters"
     eevee boolean DEFAULT false,
     snorlax boolean DEFAULT false,
     mew boolean DEFAULT false,
+    porygon boolean DEFAULT false,
+    missingno boolean DEFAULT false,
     CONSTRAINT "unique-encounters_pkey" PRIMARY KEY (discord_id)
 )
 

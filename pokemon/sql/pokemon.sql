@@ -39,6 +39,8 @@ CREATE TABLE IF NOT EXISTS public.pokemon
     traded boolean,
     "currentHP" integer,
     party boolean DEFAULT false,
+    is_shiny boolean DEFAULT false,
+    is_deleted boolean DEFAULT false,
     CONSTRAINT pokemon_pkey PRIMARY KEY (id)
 )
 

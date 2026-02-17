@@ -33,6 +33,13 @@ CREATE TABLE IF NOT EXISTS public.keyitems
     elite_four boolean DEFAULT false,
     helix_fossil boolean DEFAULT false,
     dome_fossil boolean DEFAULT false,
+    mr_fujis_finger boolean DEFAULT false,
+    game_shark boolean DEFAULT false,
+    eevee_tail boolean DEFAULT false,
+    old_amber boolean DEFAULT false,
+    gave_dome boolean DEFAULT false,
+    gave_helix boolean DEFAULT false,
+    gave_amber boolean DEFAULT false,
     CONSTRAINT keyitems_pkey PRIMARY KEY (discord_id)
 )
 
