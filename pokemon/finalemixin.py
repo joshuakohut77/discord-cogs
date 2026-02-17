@@ -138,7 +138,7 @@ class FinaleMixin(MixinMeta):
             title="The Finale Awaits...",
             description=(
                 "Before we begin, a few things to know:\n\n"
-                "**Estimated Time:** 10-15 minutes\n\n"
+                "**Estimated Time:** 15-20 minutes\n\n"
                 "**Voice Channel Required:** Please be at a computer and "
                 "join a Voice Channel before starting.\n\n"
                 "**Stay Active:** Don't delay too long between actions "
@@ -148,6 +148,7 @@ class FinaleMixin(MixinMeta):
                 "**Warning:** Discord does not like what I did "
                 "and the finale can occasionally break. "
                 "If it does, I will try to fix it for you.\n\n"
+                "**Fun Fact** This entire finale is genearted real time."
                 "When you're ready, the ultimate challenge begins."
             ),
             color=discord.Color.dark_purple()
