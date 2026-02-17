@@ -6805,7 +6805,20 @@ class EncountersMixin(MixinMeta):
             
             view = self.__create_post_battle_buttons(str(user.id))
             await interaction.message.edit(embed=embed, view=view)
-            
+
+            # Update ActionState with current message ID so navigation buttons work
+            trainer = self._get_trainer(str(user.id))
+            location = trainer.getLocation()
+            self.__useractions[str(user.id)] = ActionState(
+                str(user.id),
+                interaction.message.channel.id,
+                interaction.message.id,
+                location,
+                trainer.getActivePokemon(),
+                None,
+                ''
+            )
+
             # Check for Elite Four victory
             if battle_state.is_elite_four:
                 # Check if this was the last Elite Four member
