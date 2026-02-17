@@ -72,7 +72,8 @@ class WildBattleState:
     battle_log: List[str]
 
     def __init__(self, user_id: str, channel_id: int, message_id: int,
-                 player_pokemon: 'PokemonClass', wild_pokemon: 'PokemonClass'):
+                 player_pokemon: 'PokemonClass', wild_pokemon: 'PokemonClass',
+                 player_party: list = None):
         self.user_id = user_id
         self.channel_id = channel_id
         self.message_id = message_id
@@ -81,6 +82,10 @@ class WildBattleState:
         self.turn_number = 1
         self.battle_log = []
         self.level_up_data = None
+
+        # Party tracking for Pokemon switching on faint
+        self.player_party = player_party if player_party else [player_pokemon]
+        self.player_current_index = 0
 
         # Ailment tracking
         self.player_ailment = None

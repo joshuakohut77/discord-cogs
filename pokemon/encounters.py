@@ -1682,11 +1682,34 @@ class EncountersMixin(MixinMeta):
         # Check if player fainted from confusion/trap self-damage before enemy turn
         if battle_state.player_pokemon.currentHP <= 0:
             log_lines.append(f"💀 Your {p_name} fainted!")
-            battle_state.battle_log = ["\n".join(log_lines)]
+            battle_state.player_pokemon.currentHP = 0
             battle_state.player_pokemon.save()
-            await self.__handle_wild_battle_defeat(interaction, battle_state)
-            del self.__wild_battle_states[user_id]
-            return
+            battle_state.leech_seed_player = False
+            battle_state.rest_turns_player = 0
+            battle_state.player_stat_stages.reset()
+
+            next_pokemon, next_index = self.__get_next_party_pokemon(battle_state.player_party, battle_state.player_current_index)
+            if next_pokemon:
+                battle_state.player_current_index = next_index
+                battle_state.player_pokemon = next_pokemon
+                battle_state.player_ailment = AilmentClass(next_pokemon.trainerId)
+                p_name = battle_state.player_pokemon.pokemonName.capitalize()
+                log_lines.append(f"⚡ You sent out {p_name}!")
+                battle_state.battle_log = ["\n".join(log_lines)]
+                battle_state.turn_number += 1
+                embed = self.__create_wild_battle_embed(user, battle_state)
+                view = self.__create_battle_move_buttons_with_items(battle_state)
+                await interaction.message.edit(embed=embed, view=view)
+                return
+            else:
+                battle_state.battle_log = ["\n".join(log_lines)]
+                from services.leaderboardclass import leaderboard as LeaderboardClass
+                lb = LeaderboardClass(str(user.id))
+                lb.defeat()
+                lb.actions()
+                await self.__handle_wild_battle_defeat(interaction, battle_state)
+                del self.__wild_battle_states[user_id]
+                return
 
         # =====================================================================
         # ENEMY'S TURN - Check Rest sleep first
@@ -2020,17 +2043,34 @@ class EncountersMixin(MixinMeta):
         # Check if player fainted from burn/poison/leech seed/enemy attack
         if battle_state.player_pokemon.currentHP <= 0:
             log_lines.append(f"💀 Your {p_name} fainted!")
-            battle_state.battle_log = ["\n".join(log_lines)]
+            battle_state.player_pokemon.currentHP = 0
             battle_state.player_pokemon.save()
+            battle_state.leech_seed_player = False
+            battle_state.rest_turns_player = 0
+            battle_state.player_stat_stages.reset()
 
-            from services.leaderboardclass import leaderboard as LeaderboardClass
-            lb = LeaderboardClass(str(user.id))
-            lb.defeat()
-            lb.actions()
-
-            await self.__handle_wild_battle_defeat(interaction, battle_state)
-            del self.__wild_battle_states[user_id]
-            return
+            next_pokemon, next_index = self.__get_next_party_pokemon(battle_state.player_party, battle_state.player_current_index)
+            if next_pokemon:
+                battle_state.player_current_index = next_index
+                battle_state.player_pokemon = next_pokemon
+                battle_state.player_ailment = AilmentClass(next_pokemon.trainerId)
+                p_name = battle_state.player_pokemon.pokemonName.capitalize()
+                log_lines.append(f"⚡ You sent out {p_name}!")
+                battle_state.battle_log = ["\n".join(log_lines)]
+                battle_state.turn_number += 1
+                embed = self.__create_wild_battle_embed(user, battle_state)
+                view = self.__create_battle_move_buttons_with_items(battle_state)
+                await interaction.message.edit(embed=embed, view=view)
+                return
+            else:
+                battle_state.battle_log = ["\n".join(log_lines)]
+                from services.leaderboardclass import leaderboard as LeaderboardClass
+                lb = LeaderboardClass(str(user.id))
+                lb.defeat()
+                lb.actions()
+                await self.__handle_wild_battle_defeat(interaction, battle_state)
+                del self.__wild_battle_states[user_id]
+                return
 
         # Battle continues
         battle_state.battle_log = ["\n".join(log_lines)]
@@ -9534,13 +9574,24 @@ class EncountersMixin(MixinMeta):
             del self.__useractions[str(user.id)]
             return
         
-        # Create wild battle state
+        # Load full alive party for Pokemon switching on faint
+        trainer = self._get_trainer(str(user.id))
+        player_party = trainer.getPokemon(party=True)
+        alive_party = []
+        for poke in player_party:
+            poke.load(pokemonId=poke.trainerId)
+            if poke.currentHP > 0:
+                alive_party.append(poke)
+        alive_party = self.__sort_party_active_first(alive_party, str(user.id))
+        
+        # Create wild battle state with full party
         wild_battle_state = WildBattleState(
             user_id=str(user.id),
             channel_id=interaction.channel_id,
             message_id=0,
             player_pokemon=active_pokemon,
-            wild_pokemon=state.wildPokemon
+            wild_pokemon=state.wildPokemon,
+            player_party=alive_party
         )
         
         # Initialize ailments for manual battle
