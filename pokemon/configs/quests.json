@@ -172,6 +172,18 @@
     ],
     "name": "kanto-route-2"
   },
+  "992": {
+    "pre-requsites": [
+      "HM01"
+    ],
+    "quest": [
+      "Oaks Aide"
+    ],
+    "blockers": [
+      "oaks_parcel_delivered"
+    ],
+    "name": "kanto-route-2"
+  },
   "100": {
     "pre-requsites": [],
     "quest": [],
