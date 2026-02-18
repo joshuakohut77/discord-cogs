@@ -736,17 +736,20 @@ class Pokemon:
         self.special_defense.EV = evDict['special-defense']
 
     def __checkForEvolution(self):
-        """ returns boolean if a current pokemon is eligible for evolution """
+        """ returns the name of the evolved form if eligible, or None """
         evoList = self.__loadEvolutionConfig()
         evolvedForm = None
+        foundSelf = False
         for item in evoList:
             name = item['name']
             min_level = item['min_level']
-            if min_level is not None and name != self.pokemonName:
-                # possible evolution
+            if name == self.pokemonName:
+                foundSelf = True
+                continue
+            if foundSelf and min_level is not None:
                 if self.currentLevel >= min_level:
-                    # eligibal evolution, continue checking for more
                     evolvedForm = name
+                    break  # Take the immediate next evolution only
         return evolvedForm
 
     def __getPokemonNameById(self, pokedexId):
