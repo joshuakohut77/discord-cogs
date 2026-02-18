@@ -276,6 +276,8 @@ LOCATION_DISPLAY_NAMES = {
     "kanto-route-18": 'Route 18',
     "kanto-sea-route-19": 'Sea Route 19',
     "kanto-route-2": 'Route 2',
+    "kanto-route-2-S": 'Route 2 South',
+    "kanto-route-2-N": 'Route 2 North',
     "kanto-sea-route-20": 'Sea Route 20',
     "kanto-sea-route-21": 'Sea Route 21',
     "kanto-route-22": 'Route 22',
