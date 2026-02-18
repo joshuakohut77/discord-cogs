@@ -48,6 +48,7 @@ class BagState:
     pokedex_index: int  # For paginating through pokedex
     selected_pokemon_id: Optional[str]  # For party view
     pc_selected_pokemon_id: Optional[str]  # For PC view
+    pc_page: int  # For paginating PC Pokemon list
 
     def __init__(self, discord_id: str, message_id: int, channel_id: int,
                  current_view: str = 'items'):
@@ -58,6 +59,7 @@ class BagState:
         self.pokedex_index = 0
         self.selected_pokemon_id = None
         self.pc_selected_pokemon_id = None
+        self.pc_page = 0
 
 
 class ItemUsageState:
