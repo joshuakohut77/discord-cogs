@@ -4360,5 +4360,49 @@
         }
       ]
     }
+  ],
+  "155": [
+    {
+      "name": "Bug Catcher",
+      "spritePath": "/sprites/trainers/bugcatcher.png",
+      "money": 160,
+      "enemy_uuid": "8bf7991csds",
+      "pokemon": [
+        {
+          "weedle": 6
+        },
+        {
+          "caterpie": 6
+        }
+      ]
+    },
+    {
+      "name": "Bug Catcher",
+      "spritePath": "/sprites/trainers/bugcatcher.png",
+      "money": 170,
+      "enemy_uuid": "8bf79a0csdsakf",
+      "pokemon": [
+        {
+          "weedle": 7
+        },
+        {
+          "kakuna": 7
+        },
+        {
+          "weele": 7
+        }
+      ]
+    },
+    {
+      "name": "Bug Catcher",
+      "spritePath": "/sprites/trainers/bugcatcher.png",
+      "money": 180,
+      "enemy_uuid": "8bf79b06wer",
+      "pokemon": [
+        {
+          "weele": 9
+        }
+      ]
+    }
   ]
 }
