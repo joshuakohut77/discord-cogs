@@ -38,7 +38,7 @@
   "73": {
     "locationId": 73,
     "name": "digletts-cave",
-    "north": "kanto-route-2",
+    "north": "kanto-route-2-S",
     "east": null,
     "south": "kanto-route-11",
     "west": null,
@@ -483,7 +483,7 @@
   "154": {
     "locationId": 154,
     "name": "viridian-city",
-    "north": "kanto-route-2",
+    "north": "kanto-route-2-S",
     "east": null,
     "south": "kanto-route-1",
     "west": "kanto-route-22",
@@ -581,7 +581,7 @@
     "name": "pewter-city",
     "north": null,
     "east": "kanto-route-3",
-    "south": "kanto-route-2",
+    "south": "kanto-route-2-N",
     "west": null,
     "spritePath": "/sprites/locations/pewter-city.png",
     "pokecenter": true,
