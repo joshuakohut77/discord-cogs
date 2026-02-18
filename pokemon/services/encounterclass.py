@@ -46,6 +46,7 @@ class encounter:
         self.ailment2 = ailment(pokemon2.trainerId)
         self.ailment1.load()
         pokedex(self.pokemon1.discordId, pokemon2)
+        self.pendingMoves = []
 
     def trade(self):
         """
@@ -803,6 +804,9 @@ class encounter:
         levelUp, retMsg, pendingMoves = self.pokemon1.processBattleOutcome(
             expGained, evGained, newCurrentHP)
 
+        # Store pending moves so callers can access them for UI
+        self.pendingMoves = pendingMoves if pendingMoves else []
+
         resultString = "Your Pokemon gained %s exp." % (expGained)
         # if pokemon leveled up
         if levelUp:
@@ -819,9 +823,9 @@ class encounter:
         self.statuscode = 420
         self.message = resultString
         return 'victory'
-
     def __defeat(self):
         # pokemon1 lost, update currentHP to 0
+        self.pendingMoves = []
         expGained = 0
         evGained = None
         newCurrentHP = 0

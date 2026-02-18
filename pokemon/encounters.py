@@ -217,23 +217,29 @@ class EncountersMixin(MixinMeta):
                     custom_id=f"replace_move_{slot}"
                 )
                 
-                async def button_callback(inter: discord.Interaction, slot_num=slot, old_move=move_name):
+                # FIX: Capture move_to_learn as default arg to avoid closure bug
+                async def button_callback(inter: discord.Interaction, slot_num=slot, old_move=move_name, learned_move=move_to_learn):
                     if inter.user.id != interaction.user.id:
                         await inter.response.send_message("This is not for you!", ephemeral=True)
                         return
                     
                     # Learn the move in the selected slot
-                    pokemon.learnMove(move_to_learn, replaceSlot=slot_num)
+                    pokemon.learnMove(learned_move, replaceSlot=slot_num)
                     pokemon.save()
                     
-                    # Delete the original message
-                    await inter.message.delete()
-                    
-                    # Send ephemeral confirmation
+                    # FIX: Respond to interaction FIRST, then delete the message
                     await inter.response.send_message(
-                        f"✅ {pokemon.pokemonName.capitalize()} forgot {old_move.replace('-', ' ').title()} and learned {move_to_learn.replace('-', ' ').title()}!",
+                        f"✅ {pokemon.pokemonName.capitalize()} forgot {old_move.replace('-', ' ').title()} and learned {learned_move.replace('-', ' ').title()}!",
                         ephemeral=True
                     )
+                    
+                    try:
+                        await inter.message.delete()
+                    except Exception:
+                        pass
+                    
+                    # FIX: Stop the view so view.wait() returns immediately
+                    view.stop()
                 
                 button.callback = button_callback
                 view.add_item(button)
@@ -245,19 +251,25 @@ class EncountersMixin(MixinMeta):
                 custom_id="dont_learn_move"
             )
             
-            async def dont_learn_callback(inter: discord.Interaction):
+            # FIX: Capture move_to_learn as default arg
+            async def dont_learn_callback(inter: discord.Interaction, skipped_move=move_to_learn):
                 if inter.user.id != interaction.user.id:
                     await inter.response.send_message("This is not for you!", ephemeral=True)
                     return
                 
-                # Delete the original message
-                await inter.message.delete()
-                
-                # Send ephemeral confirmation
+                # FIX: Respond to interaction FIRST, then delete the message
                 await inter.response.send_message(
-                    f"❌ {pokemon.pokemonName.capitalize()} did not learn {move_to_learn.replace('-', ' ').title()}.",
+                    f"❌ {pokemon.pokemonName.capitalize()} did not learn {skipped_move.replace('-', ' ').title()}.",
                     ephemeral=True
                 )
+                
+                try:
+                    await inter.message.delete()
+                except Exception:
+                    pass
+                
+                # FIX: Stop the view so view.wait() returns immediately
+                view.stop()
             
             dont_learn_button.callback = dont_learn_callback
             view.add_item(dont_learn_button)
@@ -268,9 +280,8 @@ class EncountersMixin(MixinMeta):
             # Wait for button interaction
             try:
                 await view.wait()
-            except:
+            except Exception:
                 pass  # Timeout or error
-
 
     async def __handle_tm_usage(self, interaction, user, item_state):
         """Handle using a TM on a Pokemon from the party Use Items menu."""
@@ -731,13 +742,17 @@ class EncountersMixin(MixinMeta):
                     if hasattr(player_pokemon, 'evolvedInto') and player_pokemon.evolvedInto:
                         evolution_name = player_pokemon.evolvedInto
                     
+                    # Get pending moves from encounter (moves needing player choice)
+                    pending_moves = getattr(enc, 'pendingMoves', [])
+                    
                     # Store level up data
                     level_ups.append({
                         'pokemon': player_pokemon,
                         'old_level': old_level,
                         'new_level': new_level,
                         'learned_moves': learned_moves,
-                        'evolution_name': evolution_name
+                        'evolution_name': evolution_name,
+                        'pending_moves': pending_moves
                     })
             
             # Check result (NOT currentHP - battle_fight doesn't update pokemon HP on draws)
@@ -888,7 +903,7 @@ class EncountersMixin(MixinMeta):
             ''
         )
 
-        # Send level up notifications
+        # Send level up notifications after ActionState is set
         for level_up_data in level_ups:
             level_up_embed = self.__create_level_up_embed(
                 level_up_data['pokemon'],
@@ -898,6 +913,11 @@ class EncountersMixin(MixinMeta):
                 evolution_name=level_up_data['evolution_name']
             )
             await interaction.followup.send(embed=level_up_embed, ephemeral=True)
+            
+            # Handle pending moves that need player choice (4 moves already known)
+            pending_moves = level_up_data.get('pending_moves', [])
+            if pending_moves:
+                await self.__handle_move_learning(interaction, level_up_data['pokemon'], pending_moves)
         
         try:
             await interaction.message.delete()
@@ -7566,13 +7586,17 @@ class EncountersMixin(MixinMeta):
                     if hasattr(player_pokemon, 'evolvedInto') and player_pokemon.evolvedInto:
                         evolution_name = player_pokemon.evolvedInto
                     
+                    # Get pending moves from encounter (moves needing player choice)
+                    pending_moves = getattr(enc, 'pendingMoves', [])
+                    
                     # Store level up data
                     level_ups.append({
                         'pokemon': player_pokemon,
                         'old_level': old_level,
                         'new_level': new_level,
                         'learned_moves': learned_moves,
-                        'evolution_name': evolution_name
+                        'evolution_name': evolution_name,
+                        'pending_moves': pending_moves
                     })
             
             if result.get('result') == 'victory':
@@ -7758,6 +7782,11 @@ class EncountersMixin(MixinMeta):
                 evolution_name=level_up_data['evolution_name']
             )
             await interaction.followup.send(embed=level_up_embed, ephemeral=True)
+            
+            # Handle pending moves that need player choice (4 moves already known)
+            pending_moves = level_up_data.get('pending_moves', [])
+            if pending_moves:
+                await self.__handle_move_learning(interaction, level_up_data['pokemon'], pending_moves)
 
     async def on_gym_battle_manual(self, interaction: discord.Interaction):
         """Handle MANUAL battle with gym trainer"""
@@ -8604,13 +8633,17 @@ class EncountersMixin(MixinMeta):
                     if hasattr(player_pokemon, 'evolvedInto') and player_pokemon.evolvedInto:
                         evolution_name = player_pokemon.evolvedInto
                     
+                    # Get pending moves from encounter (moves needing player choice)
+                    pending_moves = getattr(enc, 'pendingMoves', [])
+                    
                     # Store level up data
                     level_ups.append({
                         'pokemon': player_pokemon,
                         'old_level': old_level,
                         'new_level': new_level,
                         'learned_moves': learned_moves,
-                        'evolution_name': evolution_name
+                        'evolution_name': evolution_name,
+                        'pending_moves': pending_moves
                     })
 
             if result.get('result') == 'victory':
@@ -8776,7 +8809,7 @@ class EncountersMixin(MixinMeta):
             ''
         )
 
-        # Send level up notifications
+        # Send level up notifications after ActionState is set
         for level_up_data in level_ups:
             level_up_embed = self.__create_level_up_embed(
                 level_up_data['pokemon'],
@@ -8786,6 +8819,11 @@ class EncountersMixin(MixinMeta):
                 evolution_name=level_up_data['evolution_name']
             )
             await interaction.followup.send(embed=level_up_embed, ephemeral=True)
+            
+            # Handle pending moves that need player choice (4 moves already known)
+            pending_moves = level_up_data.get('pending_moves', [])
+            if pending_moves:
+                await self.__handle_move_learning(interaction, level_up_data['pokemon'], pending_moves)
         
         try:
             await interaction.message.delete()
@@ -9513,6 +9551,9 @@ class EncountersMixin(MixinMeta):
             del self.__useractions[str(user.id)]
             return
 
+        # Save level BEFORE fight so we can detect level-ups after
+        old_level = battle_pokemon.currentLevel
+
         # Run the fight directly with battle-ready Pokemon (bypasses trainer.fight which always uses DB active)
         enc = EncounterClass(battle_pokemon, state.wildPokemon)
         retVal = enc.fight()
@@ -9590,6 +9631,32 @@ class EncountersMixin(MixinMeta):
                 inline=False
             )
         
+        # Check for level up and evolution
+        old_level_check = old_level
+        new_level_check = battle_pokemon.currentLevel
+        evolution_name = None
+        if hasattr(battle_pokemon, 'evolvedInto') and battle_pokemon.evolvedInto:
+            evolution_name = battle_pokemon.evolvedInto
+        
+        # Track level up data for notification
+        level_up_data = None
+        if new_level_check > old_level_check or evolution_name:
+            # Extract auto-learned moves from enc.message
+            auto_learned_moves = []
+            if enc.message and "learned" in enc.message.lower():
+                import re
+                learned_matches = re.findall(r'learned ([a-z\-]+)', enc.message.lower())
+                auto_learned_moves.extend(learned_matches)
+            
+            level_up_data = {
+                'pokemon': battle_pokemon,
+                'old_level': old_level_check,
+                'new_level': new_level_check,
+                'learned_moves': auto_learned_moves,
+                'evolution_name': evolution_name,
+                'pending_moves': getattr(enc, 'pendingMoves', [])
+            }
+
         embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
         
         # ADD NAVIGATION BUTTONS after battle
@@ -9616,6 +9683,21 @@ class EncountersMixin(MixinMeta):
             view=view
         )
         
+        # Send level up notification and handle pending moves
+        if level_up_data:
+            level_up_embed = self.__create_level_up_embed(
+                level_up_data['pokemon'],
+                level_up_data['old_level'],
+                level_up_data['new_level'],
+                learned_moves=level_up_data['learned_moves'],
+                evolution_name=level_up_data['evolution_name']
+            )
+            await interaction.followup.send(embed=level_up_embed, ephemeral=True)
+            
+            pending_moves = level_up_data.get('pending_moves', [])
+            if pending_moves:
+                await self.__handle_move_learning(interaction, level_up_data['pokemon'], pending_moves)
+
         del self.__useractions[str(user.id)]
 
 
