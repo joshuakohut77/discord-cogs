@@ -4366,7 +4366,7 @@
       "name": "Bug Catcher",
       "spritePath": "/sprites/trainers/bugcatcher.png",
       "money": 160,
-      "enemy_uuid": "8bf7991csds",
+      "enemy_uuid": "8bf79cbe",
       "pokemon": [
         {
           "weedle": 6
@@ -4380,7 +4380,7 @@
       "name": "Bug Catcher",
       "spritePath": "/sprites/trainers/bugcatcher.png",
       "money": 170,
-      "enemy_uuid": "8bf79a0csdsakf",
+      "enemy_uuid": "8bf79db8",
       "pokemon": [
         {
           "weedle": 7
@@ -4397,7 +4397,7 @@
       "name": "Bug Catcher",
       "spritePath": "/sprites/trainers/bugcatcher.png",
       "money": 180,
-      "enemy_uuid": "8bf79b06wer",
+      "enemy_uuid": "8bf79eb2",
       "pokemon": [
         {
           "weele": 9
