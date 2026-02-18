@@ -1069,6 +1069,35 @@
         "min_level": 5,
         "method": "walk"
       }
+    ],"992": [
+      {
+        "name": "caterpie",
+        "chance": 1,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "walk"
+      },
+      {
+        "name": "weedle",
+        "chance": 1,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "walk"
+      },
+      {
+        "name": "pidgey",
+        "chance": 10,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "walk"
+      },
+      {
+        "name": "rattata",
+        "chance": 5,
+        "max_level": 5,
+        "min_level": 5,
+        "method": "walk"
+      }
     ],
     "100": [
       {
