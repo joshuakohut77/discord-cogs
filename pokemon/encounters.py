@@ -1505,7 +1505,7 @@ class EncountersMixin(MixinMeta):
             elif player_special_fn == 'dream_eater':
                 if e_ailment.sleep or battle_state.rest_turns_enemy > 0:
                     player_damage, player_hit = calculate_battle_damage(
-                        battle_state.player_pokemon, battle_state.enemy_pokemon,
+                        battle_state.player_pokemon, battle_state.wild_pokemon,
                         move_name, moves_config, type_effectiveness,
                         p_stages, e_stages
                     )
@@ -1526,7 +1526,7 @@ class EncountersMixin(MixinMeta):
 
             elif player_special_fn == 'drain':
                 player_damage, player_hit = calculate_battle_damage(
-                    battle_state.player_pokemon, battle_state.enemy_pokemon,
+                    battle_state.player_pokemon, battle_state.wild_pokemon,
                     move_name, moves_config, type_effectiveness,
                     p_stages, e_stages
                 )
@@ -2054,6 +2054,7 @@ class EncountersMixin(MixinMeta):
         embed = self.__create_wild_battle_embed(user, battle_state)
         view = self.__create_battle_move_buttons_with_items(battle_state)
         await interaction.message.edit(embed=embed, view=view)
+
 
     def __create_wild_battle_embed(self, user: discord.User, battle_state: WildBattleState) -> discord.Embed:
         """Create an embed showing the current wild battle state"""
