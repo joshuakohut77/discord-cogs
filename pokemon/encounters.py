@@ -1208,6 +1208,7 @@ class EncountersMixin(MixinMeta):
         trainer.catch(battle_state.wild_pokemon, ball_type)       
         
         if trainer.statuscode == 420:
+            # === CATCH SUCCEEDED ===
             # Update main message with post-battle buttons
             embed = discord.Embed(
                 title="🎉 CAUGHT!",
@@ -1244,6 +1245,27 @@ class EncountersMixin(MixinMeta):
                 await interaction.followup.send(embed=success_embed, ephemeral=True)
             
             del self.__wild_battle_states[user_id]
+
+        elif trainer.statuscode == 96:
+            # === ERROR OCCURRED ===
+            await interaction.followup.send(
+                f"An error occurred: {trainer.message}", ephemeral=True
+            )
+        else:
+            # === CATCH FAILED — ball consumed, Pokemon broke free ===
+            # Add to battle log
+            ball_name = ball_type.replace('-', ' ').title()
+            battle_state.battle_log = [f"You threw a {ball_name}... but {battle_state.wild_pokemon.pokemonName.capitalize()} broke free!"]
+            
+            # Rebuild battle embed showing the failed catch in the log
+            embed = self.__create_wild_battle_embed(user, battle_state)
+            view = self.__create_battle_move_buttons_with_items(battle_state)
+            
+            await interaction.message.edit(
+                content=None,
+                embed=embed,
+                view=view
+            )
 
     @require_wild_battle_state()
     async def on_wild_battle_catch_click(self, interaction: discord.Interaction):
@@ -5956,6 +5978,12 @@ class EncountersMixin(MixinMeta):
         e_stages = battle_state.enemy_stat_stages
 
         p_name = battle_state.player_pokemon.pokemonName.capitalize()
+        if not battle_state.enemy_pokemon or not battle_state.enemy_pokemon.pokemonName:
+            await interaction.followup.send("Battle state error - enemy Pokemon data is missing. The battle has ended.", ephemeral=True)
+            if user_id in self.__battle_states:
+                del self.__battle_states[user_id]
+            return
+
         e_name = f"Enemy {battle_state.enemy_pokemon.pokemonName.capitalize()}"
         move_display = move_name.replace('-', ' ').title()
 

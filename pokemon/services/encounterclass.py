@@ -779,13 +779,10 @@ class encounter:
             
             self.statuscode = 420
             self.message = f"You successfully caught the pokemon!"
-            self.updateUniqueEncounters()
-
         else:
-            self.statuscode = 96
-            self.message = "You failed to catch the pokemon. The pokemon ran away!"
-
-        return self.message
+            # CATCH FAILED - set status and message so caller knows
+            self.statuscode = 200
+            self.message = f"The wild {self.pokemon2.pokemonName.capitalize()} broke free!"
 
     def __victory(self):
         # pokemon1 had victory, calculate gained exp and update current exp
