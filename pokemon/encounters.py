@@ -8637,6 +8637,16 @@ class EncountersMixin(MixinMeta):
             lb = LeaderboardClass(str(user.id))
             lb.victory()
             lb.actions()
+            
+            # Send badge achievement announcement
+            if interaction.guild:
+                await self.send_achievement(
+                    guild=interaction.guild,
+                    user=user,
+                    achievement_type="badge",
+                    badge_name=gym_leader.badge,
+                    gym_name=gym_leader.name
+                )
         else:
             battle_result = 'defeat'
             from services.leaderboardclass import leaderboard as LeaderboardClass
