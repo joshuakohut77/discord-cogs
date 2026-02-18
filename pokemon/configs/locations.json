@@ -254,15 +254,27 @@
   },
   "99": {
     "locationId": 99,
-    "name": "kanto-route-2",
-    "north": "pewter-city",
+    "name": "kanto-route-2-S",
+    "north": "viridian-forest",
     "east": "digletts-cave",
     "south": "viridian-city",
     "west": null,
-    "spritePath": "/sprites/locations/kanto-route-2.png",
+    "spritePath": "/sprites/locations/kanto-route-2-S.png",
     "pokecenter": false,
     "gym": false,
-    "displayName": "Route 2"
+    "displayName": "Route 2 South"
+  },
+  "992": {
+    "locationId": 992,
+    "name": "kanto-route-2-N",
+    "north": "viridian-city",
+    "east": null,
+    "south": "viridian-forest",
+    "west": null,
+    "spritePath": "/sprites/locations/kanto-route-2-N.png",
+    "pokecenter": false,
+    "gym": false,
+    "displayName": "Route 2 North"
   },
   "100": {
     "locationId": 100,
@@ -483,9 +495,9 @@
   "155": {
     "locationId": 155,
     "name": "viridian-forest",
-    "north": null,
+    "north": "kanto-route-2-N",
     "east": null,
-    "south": null,
+    "south": "kanto-route-2-S",
     "west": null,
     "spritePath": "/sprites/locations/viridian-forest.png",
     "pokecenter": false,
