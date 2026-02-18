@@ -155,9 +155,10 @@ class AchievementsMixin(MixinMeta):
             guild: The guild to send the achievement to
         """
         try:
-            # Get user's pokedex count
+            # Get user's unique CAUGHT species count from the pokemon table
+            # (not pokedex, which includes seen-only Pokemon)
             db = dbconn()
-            query = 'SELECT COUNT(*) FROM pokedex WHERE discord_id = %(discord_id)s'
+            query = 'SELECT COUNT(DISTINCT "pokemonName") FROM pokemon WHERE discord_id = %(discord_id)s'
             result = db.querySingle(query, {'discord_id': user_id})
             
             if not result:
@@ -183,7 +184,6 @@ class AchievementsMixin(MixinMeta):
         finally:
             if db:
                 del db
-
     async def check_first_evolution(
         self, 
         user_id: str, 
