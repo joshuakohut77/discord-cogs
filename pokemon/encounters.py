@@ -2086,6 +2086,14 @@ class EncountersMixin(MixinMeta):
         player_stats = player_poke.getPokeStats()
         wild_stats = wild_poke.getPokeStats()
         
+        # Safety: ensure 'hp' key exists
+        if 'hp' not in player_stats:
+            player_stats['hp'] = max(1, getattr(player_poke, 'currentHP', 1))
+        if 'hp' not in wild_stats:
+            wild_stats['hp'] = max(1, getattr(wild_poke, 'currentHP', 1))
+        
+        # Calculate HP percentages for visual bar
+        
         # Calculate HP percentages for visual bar
         player_hp_pct = (player_poke.currentHP / player_stats['hp']) * 100 if player_stats['hp'] > 0 else 0
         wild_hp_pct = (wild_poke.currentHP / wild_stats['hp']) * 100 if wild_stats['hp'] > 0 else 0
@@ -5859,6 +5867,12 @@ class EncountersMixin(MixinMeta):
         player_stats = player_poke.getPokeStats()
         enemy_stats = enemy_poke.getPokeStats()
         
+        # Safety: ensure 'hp' key exists
+        if 'hp' not in player_stats:
+            player_stats['hp'] = max(1, getattr(player_poke, 'currentHP', 1))
+        if 'hp' not in enemy_stats:
+            enemy_stats['hp'] = max(1, getattr(enemy_poke, 'currentHP', 1))
+        
         # Calculate HP percentages for visual bar
         player_hp_pct = (player_poke.currentHP / player_stats['hp']) * 100 if player_stats['hp'] > 0 else 0
         enemy_hp_pct = (enemy_poke.currentHP / enemy_stats['hp']) * 100 if enemy_stats['hp'] > 0 else 0
@@ -5912,7 +5926,6 @@ class EncountersMixin(MixinMeta):
         embed.set_image(url=player_poke.backSpriteURL)
         
         return embed
-
 
 
     async def on_battle_move_click(self, interaction: discord.Interaction):
@@ -5979,6 +5992,12 @@ class EncountersMixin(MixinMeta):
 
         p_name = battle_state.player_pokemon.pokemonName.capitalize()
         if not battle_state.enemy_pokemon or not battle_state.enemy_pokemon.pokemonName:
+            await interaction.followup.send("Battle state error - enemy Pokemon data is missing. The battle has ended.", ephemeral=True)
+            if user_id in self.__battle_states:
+                del self.__battle_states[user_id]
+            return
+
+        if not battle_state.enemy_pokemon or not getattr(battle_state.enemy_pokemon, 'pokemonName', None):
             await interaction.followup.send("Battle state error - enemy Pokemon data is missing. The battle has ended.", ephemeral=True)
             if user_id in self.__battle_states:
                 del self.__battle_states[user_id]
