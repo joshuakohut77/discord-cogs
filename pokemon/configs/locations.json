@@ -267,7 +267,7 @@
   "992": {
     "locationId": 992,
     "name": "kanto-route-2-N",
-    "north": "viridian-city",
+    "north": "pewter-city",
     "east": null,
     "south": "viridian-forest",
     "west": null,
