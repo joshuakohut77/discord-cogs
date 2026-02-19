@@ -129,13 +129,26 @@ class HallOfFameMixin(MixinMeta):
         trainer_discord_id = run['discord_id']
 
         # Try to get the member from the guild
+        display_name = f"Trainer ({trainer_discord_id})"
+        avatar_url = None
         try:
-            member = await guild.fetch_member(int(trainer_discord_id))
-            display_name = member.display_name
-            avatar_url = str(member.display_avatar.url)
+            # Try cache first (no API call)
+            member = guild.get_member(int(trainer_discord_id))
+            if member is None:
+                # Try fetching from guild
+                member = await guild.fetch_member(int(trainer_discord_id))
+            if member:
+                display_name = member.display_name
+                avatar_url = str(member.display_avatar.url)
         except Exception:
-            display_name = f"Trainer ({trainer_discord_id})"
-            avatar_url = None
+            try:
+                # Fallback: fetch user directly (doesn't need Members intent)
+                fetched_user = await self.bot.fetch_user(int(trainer_discord_id))
+                if fetched_user:
+                    display_name = fetched_user.display_name
+                    avatar_url = str(fetched_user.display_avatar.url)
+            except Exception:
+                pass
 
         # Figure out the run number for this specific trainer
         # Count how many runs this trainer has, and which one this is
