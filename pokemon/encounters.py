@@ -4203,6 +4203,577 @@ class EncountersMixin(MixinMeta):
         
         return view
 
+    async def on_battle_switch_click(self, interaction: discord.Interaction):
+        """Show Pokemon switch selection during manual battle"""
+        user = interaction.user
+        user_id = str(user.id)
+        
+        # Determine which battle state we're in
+        battle_state = None
+        is_wild_battle = False
+        
+        if user_id in self.__wild_battle_states:
+            battle_state = self.__wild_battle_states[user_id]
+            is_wild_battle = True
+        elif user_id in self.__battle_states:
+            battle_state = self.__battle_states[user_id]
+        
+        if not battle_state:
+            await interaction.response.send_message('No active battle found.', ephemeral=True)
+            return
+        
+        # Verify message ownership
+        if battle_state.message_id != interaction.message.id:
+            await interaction.response.send_message('This is not the current battle.', ephemeral=True)
+            return
+        
+        await interaction.response.defer()
+        
+        # Build the switch selection view
+        embed, view = self.__create_battle_switch_view(user, battle_state, is_wild_battle)
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    def __create_battle_switch_view(self, user: discord.User, battle_state, is_wild_battle: bool) -> tuple:
+        """Create the Pokemon switch selection interface during battle.
+        
+        Returns:
+            tuple of (embed, view)
+        """
+        from discord.ui import Select
+        from .functions import create_hp_bar, get_pokemon_display_name
+        
+        current_pokemon = battle_state.player_pokemon
+        current_display = get_pokemon_display_name(current_pokemon)
+        
+        embed = discord.Embed(
+            title="🔄 Switch Pokemon",
+            description=f"Currently battling with **{current_display}** (Lv.{current_pokemon.currentLevel})\n\n"
+                        f"⚠️ **Switching costs your turn** — the enemy will attack freely!",
+            color=discord.Color.orange()
+        )
+        embed.set_author(name=user.display_name, icon_url=str(user.display_avatar.url))
+        
+        # Show enemy info for context
+        if is_wild_battle:
+            enemy_poke = battle_state.wild_pokemon
+        else:
+            enemy_poke = battle_state.enemy_pokemon
+        
+        if enemy_poke:
+            e_stats = enemy_poke.getPokeStats()
+            e_hp_pct = (enemy_poke.currentHP / e_stats['hp'] * 100) if e_stats['hp'] > 0 else 0
+            embed.add_field(
+                name=f"🎯 Enemy: {enemy_poke.pokemonName.capitalize()} (Lv.{enemy_poke.currentLevel})",
+                value=f"HP: {enemy_poke.currentHP}/{e_stats['hp']} {create_hp_bar(e_hp_pct)}",
+                inline=False
+            )
+        
+        view = View()
+        
+        # ROW 0: Pokemon selector dropdown
+        select = Select(
+            placeholder="Choose a Pokemon to switch to...",
+            custom_id='battle_switch_select',
+            row=0
+        )
+        
+        has_options = False
+        for i, poke in enumerate(battle_state.player_party):
+            # Skip current Pokemon
+            if i == battle_state.player_current_index:
+                continue
+            
+            # Load latest data
+            if not hasattr(poke, 'currentHP') or poke.currentHP is None:
+                poke.load(pokemonId=poke.trainerId)
+            
+            # Skip fainted Pokemon
+            if poke.currentHP <= 0:
+                continue
+            
+            has_options = True
+            stats = poke.getPokeStats()
+            
+            shiny_tag = "✨" if hasattr(poke, 'is_shiny') and poke.is_shiny else ""
+            label = f"{shiny_tag}{poke.pokemonName.capitalize()}"
+            if hasattr(poke, 'nickName') and poke.nickName:
+                label = f"{shiny_tag}{poke.nickName} ({poke.pokemonName.capitalize()})"
+            label += f" Lv.{poke.currentLevel}"
+            
+            hp_pct = int(poke.currentHP / stats['hp'] * 100) if stats['hp'] > 0 else 0
+            description = f"HP: {poke.currentHP}/{stats['hp']} ({hp_pct}%)"
+            
+            poke_types = poke.type1
+            if poke.type2:
+                poke_types += f"/{poke.type2}"
+            description += f" | {poke_types}"
+            
+            select.add_option(
+                label=label[:100],
+                value=str(i),  # Store the party index
+                description=description[:100],
+                emoji=constant.POKEMON_EMOJIS.get(poke.pokemonName.upper())
+            )
+        
+        if has_options:
+            select.callback = self.on_battle_switch_confirm
+            view.add_item(select)
+        
+        # ROW 1: Cancel button to go back to battle
+        cancel_btn = Button(
+            style=ButtonStyle.danger,
+            label="← Back to Battle",
+            custom_id='battle_switch_cancel',
+            row=1
+        )
+        cancel_btn.callback = self.on_battle_switch_cancel
+        view.add_item(cancel_btn)
+        
+        return embed, view
+
+
+    async def on_battle_switch_cancel(self, interaction: discord.Interaction):
+        """Cancel the switch and return to the battle view"""
+        user = interaction.user
+        user_id = str(user.id)
+        
+        await interaction.response.defer()
+        
+        # Determine which battle state and rebuild the normal battle view
+        if user_id in self.__wild_battle_states:
+            battle_state = self.__wild_battle_states[user_id]
+            embed = self.__create_wild_battle_embed(user, battle_state)
+        elif user_id in self.__battle_states:
+            battle_state = self.__battle_states[user_id]
+            embed = self.__create_battle_embed(user, battle_state)
+        else:
+            await interaction.followup.send('No active battle found.', ephemeral=True)
+            return
+        
+        view = self.__create_battle_move_buttons_with_items(battle_state)
+        await interaction.message.edit(embed=embed, view=view)
+
+
+    async def on_battle_switch_confirm(self, interaction: discord.Interaction):
+        """Process the Pokemon switch — enemy gets a free attack"""
+        user = interaction.user
+        user_id = str(user.id)
+        
+        await interaction.response.defer()
+        
+        # Determine which battle state
+        is_wild_battle = False
+        if user_id in self.__wild_battle_states:
+            battle_state = self.__wild_battle_states[user_id]
+            is_wild_battle = True
+        elif user_id in self.__battle_states:
+            battle_state = self.__battle_states[user_id]
+        else:
+            await interaction.followup.send('No active battle found.', ephemeral=True)
+            return
+        
+        # Get the selected party index from the dropdown
+        selected_index = int(interaction.data['values'][0])
+        
+        # Validate the selection
+        if selected_index < 0 or selected_index >= len(battle_state.player_party):
+            await interaction.followup.send('Invalid Pokemon selection.', ephemeral=True)
+            return
+        
+        new_pokemon = battle_state.player_party[selected_index]
+        new_pokemon.load(pokemonId=new_pokemon.trainerId)
+        
+        if new_pokemon.currentHP <= 0:
+            await interaction.followup.send('That Pokemon has fainted!', ephemeral=True)
+            return
+        
+        import random
+        import math
+        from helpers.specialmoves import (
+            handle_rest, handle_recover, calculate_drain_heal,
+            calculate_night_shade_damage, calculate_leech_seed_damage,
+            check_dream_eater_valid, check_accuracy, get_special_function,
+            handle_haze
+        )
+        from helpers.statstages import apply_stat_change, apply_secondary_stat_change
+        moves_config = load_json_config('moves.json')
+        type_effectiveness = load_json_config('typeEffectiveness.json')
+        
+        old_pokemon = battle_state.player_pokemon
+        from .functions import get_pokemon_display_name
+        old_name = get_pokemon_display_name(old_pokemon)
+        new_name = get_pokemon_display_name(new_pokemon)
+        
+        log_lines = []
+        log_lines.append(f"**Turn {battle_state.turn_number}:**")
+        log_lines.append(f"🔄 You recalled {old_name} and sent out {new_name}!")
+        
+        # === PERFORM THE SWITCH ===
+        # Save old Pokemon's current state
+        old_pokemon.save()
+        
+        # Reset player's stat stages (switching resets boosts)
+        battle_state.player_stat_stages.reset()
+        
+        # Reset leech seed and rest on the player side
+        battle_state.leech_seed_player = False
+        battle_state.rest_turns_player = 0
+        
+        # Update battle state to the new Pokemon
+        battle_state.player_current_index = selected_index
+        battle_state.player_pokemon = new_pokemon
+        
+        # Create fresh ailment for the new Pokemon (load any existing ailments from DB)
+        battle_state.player_ailment = AilmentClass(new_pokemon.trainerId)
+        battle_state.player_ailment.load()
+        
+        # === ENEMY FREE ATTACK (switching costs your turn) ===
+        if is_wild_battle:
+            enemy_poke = battle_state.wild_pokemon
+            e_name = enemy_poke.pokemonName.capitalize()
+        else:
+            enemy_poke = battle_state.enemy_pokemon
+            e_name = enemy_poke.pokemonName.capitalize()
+        
+        e_ailment = battle_state.enemy_ailment
+        e_stages = battle_state.enemy_stat_stages
+        p_stages = battle_state.player_stat_stages
+        
+        # Check if enemy can attack (ailments may prevent it)
+        enemy_can_attack = True
+        
+        if hasattr(battle_state, 'rest_turns_enemy') and battle_state.rest_turns_enemy > 0:
+            battle_state.rest_turns_enemy -= 1
+            if battle_state.rest_turns_enemy == 0:
+                e_ailment.sleep = False
+                e_ailment.turnCounter = 0
+                log_lines.append(f"💤 {e_name} woke up from Rest!")
+            else:
+                log_lines.append(f"💤 {e_name} is sleeping from Rest!")
+            enemy_can_attack = False
+        elif e_ailment.sleep:
+            if e_ailment.turnCounter >= random.randint(1, 7):
+                e_ailment.sleep = False
+                e_ailment.turnCounter = 0
+                log_lines.append(f"💤 {e_name} woke up!")
+            else:
+                e_ailment.turnCounter += 1
+                log_lines.append(f"💤 {e_name} is fast asleep!")
+                enemy_can_attack = False
+        elif e_ailment.freeze:
+            if random.randint(1, 5) == 1:
+                e_ailment.freeze = False
+                log_lines.append(f"🧊 {e_name} thawed out!")
+            else:
+                log_lines.append(f"🧊 {e_name} is frozen solid!")
+                enemy_can_attack = False
+        elif e_ailment.paralysis:
+            if random.randint(1, 4) == 1:
+                log_lines.append(f"⚡ {e_name} is paralyzed and can't move!")
+                enemy_can_attack = False
+        elif e_ailment.confusion:
+            if e_ailment.turnCounter >= random.randint(2, 5):
+                e_ailment.confusion = False
+                e_ailment.turnCounter = 0
+                log_lines.append(f"💫 {e_name} snapped out of confusion!")
+            elif random.randint(1, 2) == 1:
+                e_ailment.turnCounter += 1
+                # Confusion self-damage
+                e_stats = enemy_poke.getPokeStats()
+                confusion_dmg = max(1, int((((2 * enemy_poke.currentLevel / 5 + 2) * 40 * (e_stats['attack'] / e_stats['defense'])) / 50 + 2)))
+                enemy_poke.currentHP = max(0, enemy_poke.currentHP - confusion_dmg)
+                log_lines.append(f"💫 {e_name} is confused and hurt itself! (-{confusion_dmg} HP)")
+                enemy_can_attack = False
+            else:
+                e_ailment.turnCounter += 1
+                log_lines.append(f"💫 {e_name} is confused!")
+        
+        if enemy_can_attack and enemy_poke.currentHP > 0:
+            # Enemy picks a move and attacks the NEW switched-in Pokemon
+            enemy_moves = enemy_poke.getMoves()
+            enemy_moves = [m for m in enemy_moves if m and m.lower() != 'none']
+            
+            if enemy_moves:
+                # Smart-ish move selection (prefer damaging)
+                damaging_moves = []
+                non_damaging_moves = []
+                for m in enemy_moves:
+                    mData = moves_config.get(m, {})
+                    if mData.get('power') is not None and mData['power'] > 0:
+                        damaging_moves.append(m)
+                    else:
+                        non_damaging_moves.append(m)
+                
+                if damaging_moves and random.random() < 0.85:
+                    enemy_move = random.choice(damaging_moves)
+                elif non_damaging_moves:
+                    enemy_move = random.choice(non_damaging_moves)
+                else:
+                    enemy_move = random.choice(enemy_moves)
+                
+                enemy_move_data = moves_config.get(enemy_move, {})
+                enemy_power = enemy_move_data.get('power', 0)
+                enemy_special_fn = get_special_function(enemy_move_data)
+                enemy_has_stat_change = 'stat_change' in enemy_move_data
+                enemy_move_display = enemy_move.replace("-", " ").title()
+                
+                # Process enemy ailment damage check
+                modifiedEnemy, attackViability = e_ailment.calculateAilmentDamage(enemy_poke)
+                
+                if not attackViability:
+                    # Enemy CAN attack
+                    if enemy_has_stat_change and not enemy_special_fn:
+                        log_lines.append(f"• {e_name} used {enemy_move_display}!")
+                        apply_stat_change(
+                            enemy_move_data, e_stages, p_stages,
+                            log_lines,
+                            e_name,
+                            new_name
+                        )
+                    elif enemy_special_fn == 'haze':
+                        handle_haze(p_stages, e_stages)
+                        log_lines.append(f"• {e_name} used Haze! All stat changes were eliminated!")
+                    elif enemy_special_fn == 'rest':
+                        old_hp = enemy_poke.currentHP
+                        enemy_poke, healed = handle_rest(enemy_poke)
+                        if healed:
+                            battle_state.rest_turns_enemy = 2
+                            e_ailment.sleep = True
+                            heal_amount = enemy_poke.currentHP - old_hp
+                            log_lines.append(f"• {e_name} used Rest! Fully healed (+{heal_amount} HP) and fell asleep!")
+                        else:
+                            log_lines.append(f"• {e_name} tried Rest but it failed!")
+                    elif enemy_special_fn == 'recover':
+                        old_hp = enemy_poke.currentHP
+                        enemy_poke, healed = handle_recover(enemy_poke)
+                        if healed:
+                            heal_amount = enemy_poke.currentHP - old_hp
+                            log_lines.append(f"• {e_name} used Recover! (+{heal_amount} HP)")
+                        else:
+                            log_lines.append(f"• {e_name} used Recover but HP is already full!")
+                    elif enemy_special_fn == 'leech_seed':
+                        if not battle_state.leech_seed_player:
+                            battle_state.leech_seed_player = True
+                            log_lines.append(f"• {e_name} used Leech Seed on {new_name}!")
+                        else:
+                            log_lines.append(f"• {e_name} used Leech Seed but it failed!")
+                    elif enemy_special_fn == 'night_shade':
+                        ns_damage = calculate_night_shade_damage(enemy_poke)
+                        new_pokemon.currentHP = max(0, new_pokemon.currentHP - ns_damage)
+                        log_lines.append(f"• {e_name} used Night Shade! (-{ns_damage} HP)")
+                    elif enemy_special_fn == 'dream_eater':
+                        p_ailment = battle_state.player_ailment
+                        if check_dream_eater_valid(p_ailment):
+                            from services.encounterclass import calculate_battle_damage
+                            e_damage, e_hit = calculate_battle_damage(
+                                enemy_poke, new_pokemon, enemy_move,
+                                moves_config, type_effectiveness,
+                                attacker_stages=e_stages, defender_stages=p_stages
+                            )
+                            if e_hit and e_damage > 0:
+                                new_pokemon.currentHP = max(0, new_pokemon.currentHP - e_damage)
+                                heal_amt = max(1, e_damage // 2)
+                                e_max_hp = enemy_poke.getPokeStats()['hp']
+                                enemy_poke.currentHP = min(e_max_hp, enemy_poke.currentHP + heal_amt)
+                                log_lines.append(f"• {e_name} used Dream Eater! (-{e_damage} HP, healed {heal_amt})")
+                            else:
+                                log_lines.append(f"• {e_name} used Dream Eater but it missed!")
+                        else:
+                            log_lines.append(f"• {e_name} used Dream Eater but {new_name} isn't asleep!")
+                    elif enemy_power and enemy_power > 0:
+                        # Standard damaging move
+                        from services.encounterclass import calculate_battle_damage
+                        e_damage, e_hit = calculate_battle_damage(
+                            enemy_poke, new_pokemon, enemy_move,
+                            moves_config, type_effectiveness,
+                            attacker_stages=e_stages, defender_stages=p_stages
+                        )
+                        if e_hit and e_damage > 0:
+                            new_pokemon.currentHP = max(0, new_pokemon.currentHP - e_damage)
+                            log_lines.append(f"• {e_name} used {enemy_move_display}! (-{e_damage} HP)")
+                            
+                            # Secondary stat changes from damaging moves
+                            if 'secondary_stat_change' in enemy_move_data:
+                                apply_secondary_stat_change(
+                                    enemy_move_data, e_stages, p_stages,
+                                    log_lines, e_name, new_name
+                                )
+                            
+                            # Drain moves
+                            if enemy_special_fn == 'drain' and e_damage > 0:
+                                drain_heal = calculate_drain_heal(e_damage)
+                                e_max_hp = enemy_poke.getPokeStats()['hp']
+                                enemy_poke.currentHP = min(e_max_hp, enemy_poke.currentHP + drain_heal)
+                                log_lines.append(f"  💚 {e_name} drained {drain_heal} HP!")
+                        elif e_hit:
+                            log_lines.append(f"• {e_name} used {enemy_move_display}! It had no effect...")
+                        else:
+                            log_lines.append(f"• {e_name} used {enemy_move_display}... but it missed!")
+                    else:
+                        # Non-damaging move without special handler
+                        log_lines.append(f"• {e_name} used {enemy_move_display}!")
+                        if enemy_has_stat_change:
+                            apply_stat_change(
+                                enemy_move_data, e_stages, p_stages,
+                                log_lines, e_name, new_name
+                            )
+                else:
+                    log_lines.append(f"• {e_name} has no moves and struggled!")
+        
+        # === POST-ENEMY-TURN: Residual damage (poison, burn, leech seed) ===
+        # Enemy residual
+        if e_ailment.burn and enemy_poke.currentHP > 0:
+            e_max_hp = enemy_poke.getPokeStats()['hp']
+            burn_dmg = max(1, e_max_hp // 16)
+            enemy_poke.currentHP = max(0, enemy_poke.currentHP - burn_dmg)
+            log_lines.append(f"🔥 {e_name} is hurt by its burn! (-{burn_dmg} HP)")
+        
+        if e_ailment.poison and enemy_poke.currentHP > 0:
+            e_max_hp = enemy_poke.getPokeStats()['hp']
+            poison_dmg = max(1, e_max_hp // 16)
+            enemy_poke.currentHP = max(0, enemy_poke.currentHP - poison_dmg)
+            log_lines.append(f"☠️ {e_name} is hurt by poison! (-{poison_dmg} HP)")
+        
+        # Player residual (on the NEW Pokemon)
+        p_ailment = battle_state.player_ailment
+        if p_ailment.burn and new_pokemon.currentHP > 0:
+            p_max_hp = new_pokemon.getPokeStats()['hp']
+            burn_dmg = max(1, p_max_hp // 16)
+            new_pokemon.currentHP = max(0, new_pokemon.currentHP - burn_dmg)
+            log_lines.append(f"🔥 {new_name} is hurt by its burn! (-{burn_dmg} HP)")
+        
+        if p_ailment.poison and new_pokemon.currentHP > 0:
+            p_max_hp = new_pokemon.getPokeStats()['hp']
+            poison_dmg = max(1, p_max_hp // 16)
+            new_pokemon.currentHP = max(0, new_pokemon.currentHP - poison_dmg)
+            log_lines.append(f"☠️ {new_name} is hurt by poison! (-{poison_dmg} HP)")
+        
+        # Leech seed on player
+        if battle_state.leech_seed_player and new_pokemon.currentHP > 0:
+            p_max_hp = new_pokemon.getPokeStats()['hp']
+            seed_damage = max(1, p_max_hp // 16)
+            new_pokemon.currentHP = max(0, new_pokemon.currentHP - seed_damage)
+            e_max_hp = enemy_poke.getPokeStats()['hp']
+            enemy_poke.currentHP = min(e_max_hp, enemy_poke.currentHP + seed_damage)
+            log_lines.append(f"🌿 Leech Seed saps {new_name}! (-{seed_damage} HP)")
+        
+        # Leech seed on enemy
+        if hasattr(battle_state, 'leech_seed_enemy') and battle_state.leech_seed_enemy and enemy_poke.currentHP > 0:
+            e_max_hp = enemy_poke.getPokeStats()['hp']
+            seed_damage = max(1, e_max_hp // 16)
+            enemy_poke.currentHP = max(0, enemy_poke.currentHP - seed_damage)
+            p_max_hp = new_pokemon.getPokeStats()['hp']
+            new_pokemon.currentHP = min(p_max_hp, new_pokemon.currentHP + seed_damage)
+            log_lines.append(f"🌿 Leech Seed saps {e_name}! (-{seed_damage} HP)")
+        
+        # === FAINT CHECKS ===
+        # Check if enemy fainted (from residual)
+        if enemy_poke.currentHP <= 0:
+            if is_wild_battle:
+                # Wild Pokemon fainted
+                log_lines.append(f"💀 {e_name} fainted!")
+                battle_state.battle_log = ["\n".join(log_lines)]
+                new_pokemon.save()
+                
+                from services.leaderboardclass import leaderboard as LeaderboardClass
+                lb = LeaderboardClass(user_id)
+                lb.victory()
+                lb.actions()
+                
+                await self.__handle_wild_battle_victory(interaction, battle_state)
+                del self.__wild_battle_states[user_id]
+                return
+            else:
+                # Trainer battle - enemy fainted
+                log_lines.append(f"💀 {e_name} fainted!")
+                battle_state.defeated_enemies.append(enemy_poke.pokemonName)
+                battle_state.enemy_current_index += 1
+                battle_state.leech_seed_enemy = False
+                battle_state.rest_turns_enemy = 0
+                battle_state.enemy_stat_stages.reset()
+                
+                if battle_state.enemy_current_index < len(battle_state.enemy_pokemon_data):
+                    next_enemy_data = battle_state.enemy_pokemon_data[battle_state.enemy_current_index]
+                    try:
+                        next_enemy = self.__create_enemy_pokemon(next_enemy_data, battle_state.user_id)
+                        battle_state.enemy_pokemon = next_enemy
+                        battle_state.enemy_ailment = AilmentClass('trainer_enemy')
+                        log_lines.append(f"⚡ {battle_state.enemy_name} sent out {next_enemy.pokemonName.capitalize()}!")
+                    except Exception as e:
+                        log_lines.append(f"Error: {str(e)}")
+                    battle_state.battle_log = ["\n".join(log_lines)]
+                    battle_state.turn_number += 1
+                    embed = self.__create_battle_embed(user, battle_state)
+                    view = self.__create_battle_move_buttons_with_items(battle_state)
+                    await interaction.message.edit(embed=embed, view=view)
+                    return
+                else:
+                    battle_state.battle_log = ["\n".join(log_lines)]
+                    new_pokemon.save()
+                    await self.__handle_gym_battle_victory(interaction, battle_state)
+                    del self.__battle_states[user_id]
+                    return
+        
+        # Check if new Pokemon fainted (from enemy attack or residual)
+        if new_pokemon.currentHP <= 0:
+            log_lines.append(f"💀 {new_name} fainted!")
+            new_pokemon.currentHP = 0
+            new_pokemon.save()
+            battle_state.leech_seed_player = False
+            battle_state.rest_turns_player = 0
+            battle_state.player_stat_stages.reset()
+            
+            # Find next alive Pokemon
+            next_pokemon, next_index = self.__get_next_party_pokemon(
+                battle_state.player_party, battle_state.player_current_index
+            )
+            if next_pokemon:
+                battle_state.player_current_index = next_index
+                battle_state.player_pokemon = next_pokemon
+                battle_state.player_ailment = AilmentClass(next_pokemon.trainerId)
+                log_lines.append(f"⚡ You sent out {next_pokemon.pokemonName.capitalize()}!")
+                
+                battle_state.battle_log = ["\n".join(log_lines)]
+                battle_state.turn_number += 1
+                
+                if is_wild_battle:
+                    embed = self.__create_wild_battle_embed(user, battle_state)
+                else:
+                    embed = self.__create_battle_embed(user, battle_state)
+                view = self.__create_battle_move_buttons_with_items(battle_state)
+                await interaction.message.edit(embed=embed, view=view)
+                return
+            else:
+                # All Pokemon fainted — defeat
+                battle_state.battle_log = ["\n".join(log_lines)]
+                
+                from services.leaderboardclass import leaderboard as LeaderboardClass
+                lb = LeaderboardClass(user_id)
+                lb.defeat()
+                lb.actions()
+                
+                if is_wild_battle:
+                    await self.__handle_wild_battle_defeat(interaction, battle_state)
+                    del self.__wild_battle_states[user_id]
+                else:
+                    await self.__handle_gym_battle_defeat(interaction, battle_state)
+                    del self.__battle_states[user_id]
+                return
+        
+        # === NORMAL CONTINUATION — both alive, show battle view ===
+        new_pokemon.save()
+        battle_state.battle_log = ["\n".join(log_lines)]
+        battle_state.turn_number += 1
+        
+        if is_wild_battle:
+            embed = self.__create_wild_battle_embed(user, battle_state)
+        else:
+            embed = self.__create_battle_embed(user, battle_state)
+        
+        view = self.__create_battle_move_buttons_with_items(battle_state)
+        await interaction.message.edit(embed=embed, view=view)
+
     async def on_battle_use_items_click(self, interaction: discord.Interaction):
         """Show item usage interface during battle"""
         user = interaction.user
@@ -7431,7 +8002,7 @@ class EncountersMixin(MixinMeta):
                 button.callback = callback
                 view.add_item(button)
         
-        # ROW 1: Action buttons (Use Items, and conditionally Run/Catch for wild battles)
+        # ROW 1: Action buttons (Use Items, Switch, and conditionally Run/Catch for wild battles)
         use_items_btn = Button(
             style=ButtonStyle.blurple,
             label="💊 Use Items",
@@ -7440,6 +8011,28 @@ class EncountersMixin(MixinMeta):
         )
         use_items_btn.callback = self.on_battle_use_items_click
         view.add_item(use_items_btn)
+        
+        # Switch Pokemon button - only show if more than 1 alive Pokemon in party
+        if hasattr(battle_state, 'player_party') and len(battle_state.player_party) > 1:
+            alive_others = 0
+            for i, poke in enumerate(battle_state.player_party):
+                if i == battle_state.player_current_index:
+                    continue
+                # Ensure HP is loaded
+                if not hasattr(poke, 'currentHP') or poke.currentHP is None:
+                    poke.load(pokemonId=poke.trainerId)
+                if poke.currentHP > 0:
+                    alive_others += 1
+            
+            switch_btn = Button(
+                style=ButtonStyle.secondary,
+                label="🔄 Switch",
+                custom_id='battle_switch',
+                row=1,
+                disabled=(alive_others == 0)
+            )
+            switch_btn.callback = self.on_battle_switch_click
+            view.add_item(switch_btn)
         
         # Add Run Away and Catch buttons ONLY for wild Pokemon battles
         if isinstance(battle_state, WildBattleState):
