@@ -4569,7 +4569,7 @@ class EncountersMixin(MixinMeta):
                             e_damage, e_hit = calculate_battle_damage(
                                 enemy_poke, new_pokemon, enemy_move,
                                 moves_config, type_effectiveness,
-                                attacker_stages=e_stages, defender_stages=p_stages
+                                attacker_stat_stages=e_stages, defender_stat_stages=p_stages
                             )
                             if e_hit and e_damage > 0:
                                 new_pokemon.currentHP = max(0, new_pokemon.currentHP - e_damage)
@@ -4587,7 +4587,7 @@ class EncountersMixin(MixinMeta):
                         e_damage, e_hit = calculate_battle_damage(
                             enemy_poke, new_pokemon, enemy_move,
                             moves_config, type_effectiveness,
-                            attacker_stages=e_stages, defender_stages=p_stages
+                            attacker_stat_stages=e_stages, defender_stat_stages=p_stages
                         )
                         if e_hit and e_damage > 0:
                             new_pokemon.currentHP = max(0, new_pokemon.currentHP - e_damage)
