@@ -476,3 +476,24 @@ class AdminMixin(MixinMeta):
         else:
             await self.config.guild(ctx.guild).error_log_channel.set(None)
             await ctx.send("✅ Error log channel cleared.")
+    
+    @_trainer.command()
+    @commands.admin_or_permissions(manage_roles=True)
+    async def setrole(self, ctx: commands.Context, role: discord.Role = None) -> None:
+        """Set the role to auto-assign when a new trainer picks their starter.
+        
+        Usage: [p]trainer setrole @Role
+        Use without a role to clear the setting: [p]trainer setrole
+        """
+        if role is None:
+            await self.config.guild(ctx.guild).trainer_role.set(None)
+            await ctx.send("✅ Trainer role cleared. No role will be assigned to new trainers.")
+            return
+
+        # Check if the bot can assign this role
+        if role >= ctx.guild.me.top_role:
+            await ctx.send("❌ I can't assign that role — it's higher than or equal to my highest role.")
+            return
+
+        await self.config.guild(ctx.guild).trainer_role.set(role.id)
+        await ctx.send(f"✅ New trainers will now receive the **{role.name}** role when they pick their starter.")

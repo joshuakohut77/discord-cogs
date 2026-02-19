@@ -228,6 +228,17 @@ class StarterMixin(MixinMeta):
         pokemon = trainer.getStarterPokemon()
         active = trainer.getActivePokemon()
         
+        # Auto-assign trainer role if configured
+        try:
+            if interaction.guild:
+                role_id = await self.config.guild(interaction.guild).trainer_role()
+                if role_id:
+                    role = interaction.guild.get_role(role_id)
+                    if role and role not in user.roles:
+                        await user.add_roles(role, reason="New Pokémon trainer - picked starter")
+        except Exception as e:
+            print(f"[Pokemon] Failed to assign trainer role: {e}")
+        
         # Create the completion embed with pokemon sprite
         completion_embed = discord.Embed(
             title='🎉 You received your first Pokémon! 🎉',
@@ -235,35 +246,10 @@ class StarterMixin(MixinMeta):
             color=discord.Color.gold()
         )
         
-        # Add the pokemon sprite to the embed
-        sprite_file = None
-        try:
-            from helpers.pathhelpers import get_sprite_path
-            sprite_path = f"/sprites/pokemon/{pokemon.pokemonName}.png"
-            full_sprite_path = get_sprite_path(sprite_path)
-            
-            if os.path.exists(full_sprite_path):
-                filename = f"{pokemon.pokemonName}.png"
-                sprite_file = discord.File(full_sprite_path, filename=filename)
-                completion_embed.set_image(url=f"attachment://{filename}")
-            else:
-                # Fallback to URL
-                sprite_url = f"https://pokesprites.joshkohut.com/sprites/pokemon/{pokemon.pokemonName}.png"
-                completion_embed.set_image(url=sprite_url)
-        except Exception as e:
-            print(f"Error loading pokemon sprite: {e}")
-            # Fallback to URL
-            try:
-                sprite_url = f"https://pokesprites.joshkohut.com/sprites/pokemon/{pokemon.pokemonName}.png"
-                completion_embed.set_image(url=sprite_url)
-            except:
-                pass
+        # Set the Pokemon sprite
+        completion_embed.set_image(url=pokemon.frontSpriteURL)
         
-        # Send completion message with sprite
-        if sprite_file:
-            await interaction.message.edit(embed=completion_embed, view=None, attachments=[sprite_file])
-        else:
-            await interaction.message.edit(embed=completion_embed, view=None)
+        await interaction.followup.send(embed=completion_embed)
 
     async def __on_moves_click(self, interaction: Interaction):
         user = interaction.user

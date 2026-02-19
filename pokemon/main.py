@@ -83,7 +83,8 @@ class Pokemon(AchievementsMixin, FinaleMixin, StarterMixin, PokemartMixin, Trade
         default_guild: Dict[str, Any] = {
             "enabled": True,
             "achievement_channel": None,
-            "error_log_channel": None
+            "error_log_channel": None,
+            "trainer_role": None
         }
         self.config.register_channel(**default_channel)
         self.config.register_guild(**default_guild)
