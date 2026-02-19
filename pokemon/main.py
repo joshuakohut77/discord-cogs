@@ -27,6 +27,7 @@ from .card import TrainerCardMixin
 from .pokedex import PokedexMixin
 from .trade import TradeMixin
 from .leaderboard import LeaderboardMixin
+from .halloffame import HallOfFameMixin
 from .admin import AdminMixin
 from .finalemixin import FinaleMixin
 from .achievements import AchievementsMixin
@@ -66,7 +67,8 @@ class CompositeClass(commands.CogMeta, ABCMeta):
     pass
 
 
-class Pokemon(AchievementsMixin, FinaleMixin, StarterMixin, PokemartMixin, TradeMixin, AdminMixin, TrainerCardMixin, EncountersMixin, PokedexMixin, LeaderboardMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
+# new code
+class Pokemon(AchievementsMixin, FinaleMixin, StarterMixin, PokemartMixin, TradeMixin, AdminMixin, TrainerCardMixin, EncountersMixin, PokedexMixin, LeaderboardMixin, HallOfFameMixin, commands.Cog, DebugMixin, metaclass=CompositeClass):
     """Pokemon"""
 
     def __init__(self, bot: Red):

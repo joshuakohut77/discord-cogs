@@ -26,6 +26,48 @@ class battle:
         self.locationId = locationId
         self.enemyType = enemyType # can be "wild" or "gym"
     
+    def __logEliteFourVictory(self):
+        """ Logs the trainer's party pokemon when they defeat the Elite Four """
+        try:
+            db = dbconn()
+
+            # Get next run_id for this player
+            runQuery = """
+                SELECT COALESCE(MAX(run_id), 0) + 1 
+                FROM elite_four_victories 
+                WHERE discord_id = %(discordId)s
+            """
+            runResult = db.querySingle(runQuery, {'discordId': self.discordId})
+            run_id = runResult[0] if runResult else 1
+
+            # Get all party pokemon for this trainer
+            queryString = """
+                SELECT "pokemonName", "currentLevel" 
+                FROM pokemon 
+                WHERE discord_id = %(discordId)s 
+                AND party = True 
+                AND (is_deleted = False OR is_deleted IS NULL)
+            """
+            results = db.queryAll(queryString, {'discordId': self.discordId})
+            if results:
+                for row in results:
+                    pokemon_name = row[0]
+                    pokemon_level = row[1]
+                    insertString = """
+                        INSERT INTO elite_four_victories (discord_id, run_id, pokemon_name, pokemon_level)
+                        VALUES (%(discordId)s, %(runId)s, %(pokemonName)s, %(pokemonLevel)s)
+                    """
+                    db.execute(insertString, {
+                        'discordId': self.discordId,
+                        'runId': run_id,
+                        'pokemonName': pokemon_name,
+                        'pokemonLevel': pokemon_level
+                    })
+        except Exception as e:
+            logger.error(excInfo=sys.exc_info())
+        finally:
+            del db
+
     def battleVictory(self, enemyTrainer: TrainerBattleModel):
         """ handles enemy trainer victory resolution """
         moneyReward = enemyTrainer.money
@@ -42,6 +84,7 @@ class battle:
         # If player defeated the Champion (elite-4-5), grant elite_four keyitem
         if enemy_uuid == "elite-4-5":
             self.finale_unlocked = True
+            self.__logEliteFourVictory()
             playerKeyItems = kitems(self.discordId)
             if not playerKeyItems.elite_four:
                 playerKeyItems.elite_four = True
