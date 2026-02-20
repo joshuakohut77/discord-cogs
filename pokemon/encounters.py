@@ -3106,7 +3106,8 @@ class EncountersMixin(MixinMeta):
             ('hyper-potion', inv.hyperpotion, 'Hyper Potion', 'Restores 200 HP'),
             ('max-potion', inv.maxpotion, 'Max Potion', 'Fully restores HP'),
             ('revive', inv.revive, 'Revive', 'Revives fainted Pokemon (50% HP)'),
-            ('full-restore', inv.fullrestore, 'Full Restore', 'Fully restores HP'),
+            ('full-restore', inv.fullrestore, 'Full Restore', 'Fully restores HP & cures status'),
+            ('full-heal', inv.fullheal, 'Full Heal', 'Cures all status conditions'),
             # Evolution stones
             ('fire-stone', inv.firestone, 'Fire Stone', 'Evolves certain Pokemon'),
             ('water-stone', inv.waterstone, 'Water Stone', 'Evolves certain Pokemon'),
@@ -4867,7 +4868,8 @@ class EncountersMixin(MixinMeta):
             ('hyper-potion', inv.hyperpotion, 'Hyper Potion', 'Restores 200 HP'),
             ('max-potion', inv.maxpotion, 'Max Potion', 'Fully restores HP'),
             ('revive', inv.revive, 'Revive', 'Revives fainted Pokemon (50% HP)'),
-            ('full-restore', inv.fullrestore, 'Full Restore', 'Fully restores HP'),
+            ('full-restore', inv.fullrestore, 'Full Restore', 'Fully restores HP & cures status'),
+            ('full-heal', inv.fullheal, 'Full Heal', 'Cures all status conditions'),
         ]
         
         has_items = False
@@ -5032,7 +5034,11 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('❌ You cannot use Revive on this Pokemon - it is not fainted!', ephemeral=True)
             return
         
-        if item != 'revive' and current_hp <= 0:
+        if item == 'full-heal' and current_hp <= 0:
+            await interaction.followup.send('❌ You cannot use Full Heal on a fainted Pokemon!', ephemeral=True)
+            return
+        
+        if item not in ['revive', 'full-heal'] and current_hp <= 0:
             await interaction.followup.send('❌ You cannot use a potion on a fainted Pokemon!', ephemeral=True)
             return
         
@@ -5056,6 +5062,9 @@ class EncountersMixin(MixinMeta):
         elif item == 'full-restore' and inv.fullrestore > 0:
             has_item = True
             inv.fullrestore -= 1
+        elif item == 'full-heal' and inv.fullheal > 0:
+            has_item = True
+            inv.fullheal -= 1
         
         if not has_item:
             await interaction.followup.send('❌ You do not have that item!', ephemeral=True)
@@ -5063,17 +5072,49 @@ class EncountersMixin(MixinMeta):
         
         # Calculate new HP based on item type
         new_hp = current_hp
+        status_cleared = False
         
         if item == 'revive':
             new_hp = max_hp // 2  # 50% HP
+            # Also clear ailments on revive
+            from services.ailmentsclass import ailment
+            ail = ailment(target_pokemon.trainerId)
+            ail.load()
+            ail.resetAilments()
+            ail.save()
+            status_cleared = True
+        elif item == 'full-heal':
+            # No HP healing, just clear status
+            new_hp = current_hp
+            from services.ailmentsclass import ailment
+            ail = ailment(target_pokemon.trainerId)
+            ail.load()
+            ail.resetAilments()
+            ail.save()
+            status_cleared = True
+            # Also clear battle-state ailment if it exists
+            if hasattr(target_pokemon, 'ailments') and target_pokemon.ailments:
+                target_pokemon.ailments.resetAilments()
         elif item == 'potion':
             new_hp = min(current_hp + 20, max_hp)
         elif item == 'super-potion':
             new_hp = min(current_hp + 50, max_hp)
         elif item == 'hyper-potion':
             new_hp = min(current_hp + 200, max_hp)
-        elif item == 'max-potion' or item == 'full-restore':
+        elif item == 'max-potion':
             new_hp = max_hp
+        elif item == 'full-restore':
+            new_hp = max_hp
+            # Full Restore also clears all status ailments
+            from services.ailmentsclass import ailment
+            ail = ailment(target_pokemon.trainerId)
+            ail.load()
+            ail.resetAilments()
+            ail.save()
+            status_cleared = True
+            # Also clear battle-state ailment if it exists
+            if hasattr(target_pokemon, 'ailments') and target_pokemon.ailments:
+                target_pokemon.ailments.resetAilments()
         
         # Calculate HP restored
         hp_restored = new_hp - current_hp
@@ -5088,10 +5129,21 @@ class EncountersMixin(MixinMeta):
         item_display_name = item.replace('-', ' ').title()
         poke_display_name = target_pokemon.nickName if target_pokemon.nickName else target_pokemon.pokemonName.capitalize()
         
-        await interaction.followup.send(
-            f'✅ Used {item_display_name} on {poke_display_name}! Restored {hp_restored} HP! (Now at {new_hp}/{max_hp} HP)',
-            ephemeral=True
-        )
+        if item == 'full-heal':
+            await interaction.followup.send(
+                f'✅ Used {item_display_name} on {poke_display_name}! Status conditions cured!',
+                ephemeral=True
+            )
+        elif status_cleared and hp_restored > 0:
+            await interaction.followup.send(
+                f'✅ Used {item_display_name} on {poke_display_name}! Restored {hp_restored} HP and cured status conditions! (Now at {new_hp}/{max_hp} HP)',
+                ephemeral=True
+            )
+        else:
+            await interaction.followup.send(
+                f'✅ Used {item_display_name} on {poke_display_name}! Restored {hp_restored} HP! (Now at {new_hp}/{max_hp} HP)',
+                ephemeral=True
+            )
         
         # Refresh the item usage view to show updated HP
         embed, view = self.__create_battle_item_usage_view(user, battle_state, is_wild_battle)
@@ -5828,7 +5880,16 @@ class EncountersMixin(MixinMeta):
             if poke.currentHP <= 0:
                 description = "💀 Fainted"
             else:
-                description = f"HP: {poke.currentHP}/{stats['hp']}"
+                ailment_text = ""
+                if hasattr(poke, 'ailments') and poke.ailments:
+                    a = poke.ailments
+                    if a.burn: ailment_text = " 🔥BRN"
+                    elif a.poison: ailment_text = " ☠️PSN"
+                    elif a.sleep: ailment_text = " 💤SLP"
+                    elif a.freeze: ailment_text = " 🧊FRZ"
+                    elif a.paralysis: ailment_text = " ⚡PRZ"
+                    elif a.confusion: ailment_text = " 💫CNF"
+                description = f"HP: {poke.currentHP}/{stats['hp']}{ailment_text}"
             
             select.add_option(
                 label=label[:100],

@@ -557,7 +557,7 @@ class trainer:
                 self.message = "error occured during pokemon load()"
                 return
         
-            if item in ['potion', 'super-potion', 'hyper-potion', 'max-potion', 'revive', 'full-restore']:
+            if item in ['potion', 'super-potion', 'hyper-potion', 'max-potion', 'revive', 'full-restore', 'full-heal']:
                 return self.heal(pokemon, item)
             elif item in ['moon-stone', 'leaf-stone', 'fire-stone', 'water-stone', 'thunder-stone']:
                 return self.evolveItem(pokemon, item)
@@ -570,13 +570,33 @@ class trainer:
             self.message = "Use of that item is not supported yet"
 
     def heal(self, pokemon, item):
-        """ uses a potion to heal a pokemon """
-        # this function is only designed to work with potion, super-potion, hyper-potion, max-potion
+        """ uses a healing item on a pokemon """
 
         # only use revive on fainted pokemon
         if item == 'revive' and pokemon.currentHP > 0:
             self.statuscode = 420
             self.message = "You cannot use revive on this pokemon"
+            return
+
+        # full-heal can be used on any non-fainted pokemon with a status ailment
+        if item == 'full-heal':
+            if pokemon.currentHP <= 0:
+                self.statuscode = 420
+                self.message = "You cannot use Full Heal on a fainted pokemon"
+                return
+            # Check if the pokemon actually has an ailment
+            from ailmentsclass import ailment
+            ail = ailment(pokemon.trainerId)
+            ail.load()
+            if not (ail.sleep or ail.poison or ail.burn or ail.freeze or ail.paralysis or ail.confusion):
+                self.statuscode = 420
+                self.message = "Your pokemon doesn't have any status conditions to heal"
+                return
+
+        # potions and full-restore cannot be used on fainted pokemon
+        if item not in ['revive', 'full-heal'] and pokemon.currentHP <= 0:
+            self.statuscode = 420
+            self.message = "You cannot use a potion on a fainted pokemon"
             return
 
         inventory = inv(self.discordId)
@@ -611,6 +631,11 @@ class trainer:
                 invalidQty = True
             else:
                 inventory.fullrestore -= 1
+        elif item == 'full-heal':
+            if inventory.fullheal <= 0:
+                invalidQty = True
+            else:
+                inventory.fullheal -= 1
         
         if invalidQty:
             self.statuscode = 420
@@ -627,7 +652,9 @@ class trainer:
             inventory.save()
 
     def healAll(self):
-        """ heals all pokemon to max HP """
+        """ heals all pokemon to max HP and clears status ailments """
+        from ailmentsclass import ailment
+        
         location = self.getLocation()
         if not location.pokecenter:
             self.statuscode = 420
@@ -644,9 +671,14 @@ class trainer:
                 pokemon.currentHP = maxHP
                 pokemon.discordId = self.discordId
                 pokemon.save()
+            # Clear any status ailments
+            ail = ailment(trainerId)
+            ail.load()
+            if ail.recordExists:
+                ail.resetAilments()
+                ail.save()
         self.statuscode = 420
         self.message = "Your pokemon have been healed back to full health!"
-        return
     
     def evolveItem(self, pokemon, item):
         """ handles use of the *-stone items for evolving pokemon"""
@@ -1074,14 +1106,16 @@ class trainer:
         return pokemon
 
 
-    def __healPokemon(self, pokemon: pokeClass, item: str):
-        """ heals a pokemons currentHP """
-        # this function is only designed to work with healing items
-        # update to remove status ailments later      
+    def __healPokemon(self, pokemon, item: str):
+        """ heals a pokemon's currentHP and/or clears status ailments """
+        from ailmentsclass import ailment
+        
         statsDict = pokemon.getPokeStats()
         maxHP = statsDict['hp']
         currentHP = pokemon.currentHP
         newHP = currentHP
+        status_cleared = False
+
         if item == 'revive':
             if currentHP > 0:
                 self.statuscode = 420
@@ -1089,24 +1123,48 @@ class trainer:
                 return
             else:
                 newHP = round(maxHP/2)
-        
-        # every item below is a potion which cannot be used with fainted pokemon
-        if currentHP <= 0:
-            self.statuscode = 420
-            self.message = "You cannot use a potion on a fainted pokemon"
-            return
-        
-        if item == 'potion':
-            newHP = currentHP + 20
-        elif item == 'super-potion':
-            newHP = currentHP + 50
-        elif item == 'hyper-potion':
-            newHP = currentHP + 200
-        elif item == 'max-potion':
-            newHP = maxHP
-        elif item == 'full-restore':
-            newHP = maxHP
-            # TODO update to remove status effects
+                # Revive also clears ailments
+                ail = ailment(pokemon.trainerId)
+                ail.load()
+                ail.resetAilments()
+                ail.save()
+                status_cleared = True
+        elif item == 'full-heal':
+            # Full Heal only cures status, no HP healing
+            if currentHP <= 0:
+                self.statuscode = 420
+                self.message = "You cannot use Full Heal on a fainted pokemon"
+                return
+            ail = ailment(pokemon.trainerId)
+            ail.load()
+            ail.resetAilments()
+            ail.save()
+            status_cleared = True
+            # No HP change
+            newHP = currentHP
+        else:
+            # Every item below is a potion which cannot be used on fainted pokemon
+            if currentHP <= 0:
+                self.statuscode = 420
+                self.message = "You cannot use a potion on a fainted pokemon"
+                return
+            
+            if item == 'potion':
+                newHP = currentHP + 20
+            elif item == 'super-potion':
+                newHP = currentHP + 50
+            elif item == 'hyper-potion':
+                newHP = currentHP + 200
+            elif item == 'max-potion':
+                newHP = maxHP
+            elif item == 'full-restore':
+                newHP = maxHP
+                # Full Restore also clears all status ailments
+                ail = ailment(pokemon.trainerId)
+                ail.load()
+                ail.resetAilments()
+                ail.save()
+                status_cleared = True
         
         if newHP > maxHP:
             newHP = maxHP
@@ -1121,5 +1179,17 @@ class trainer:
             return
         
         diff = newHP - currentHP
-        self.statuscode = 420
-        self.message = f'Your {pokemon.pokemonName.capitalize()} restored {diff} hp!'
+        pokeName = pokemon.pokemonName.capitalize()
+
+        if item == 'full-heal':
+            self.statuscode = 420
+            self.message = f'Your {pokeName} had its status conditions cured!'
+        elif status_cleared and diff > 0:
+            self.statuscode = 420
+            self.message = f'Your {pokeName} restored {diff} hp and had its status conditions cured!'
+        elif status_cleared:
+            self.statuscode = 420
+            self.message = f'Your {pokeName} restored {diff} hp and had its status conditions cured!'
+        else:
+            self.statuscode = 420
+            self.message = f'Your {pokeName} restored {diff} hp!'
