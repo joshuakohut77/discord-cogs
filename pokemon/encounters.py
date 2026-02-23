@@ -980,12 +980,13 @@ class EncountersMixin(MixinMeta):
         )
 
 
-    def __create_post_battle_buttons(self, user_id: str, show_trainer_buttons: bool = True) -> View:
+    def __create_post_battle_buttons(self, user_id: str, show_trainer_buttons: bool = True, interaction: discord.Interaction = None) -> View:
         """Create navigation buttons to show after battle ends
         
         Args:
             user_id: The user's Discord ID
             show_trainer_buttons: Whether to show trainer battle buttons (False for wild Pokemon)
+            interaction: If provided, adds encounter method buttons and sets up ActionState
         """
         view = View()
         
@@ -1001,7 +1002,7 @@ class EncountersMixin(MixinMeta):
                 has_alive_pokemon = True
                 break
         
-        # Only show trainer battle buttons if enabled AND player has alive Pokemon
+        # ROW 0: Trainer battle buttons (if applicable)
         if show_trainer_buttons and has_alive_pokemon:
             # Check for wild trainers
             battle_wild = BattleClass(user_id, location.locationId, enemyType="wild")
@@ -1021,15 +1022,22 @@ class EncountersMixin(MixinMeta):
                 gym_btn.callback = self.on_gym_click
                 view.add_item(gym_btn)
 
-        # ROW 0: Quick re-encounter button (if location has wild encounters)
-        if has_alive_pokemon:
+        # ROW 0: Encounter method buttons (Walk, Surf, etc.) if player has alive Pokemon
+        if has_alive_pokemon and interaction is not None:
             try:
                 loc_class = LocationClass(user_id)
                 methods = loc_class.getMethods()
+                for method in methods:
+                    enc_button = Button(style=ButtonStyle.gray, label=f"{method.name}", custom_id=f'{method.value}', row=0)
+                    enc_button.callback = self.on_action_encounter
+                    view.add_item(enc_button)
+                
+                # Set up ActionState so on_action_encounter works
                 if len(methods) > 0:
-                    enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='nav_encounters', row=0)
-                    enc_btn.callback = self.on_nav_encounters_click
-                    view.add_item(enc_btn)
+                    self.__useractions[user_id] = ActionState(
+                        user_id, interaction.message.channel.id, interaction.message.id,
+                        location, trainer.getActivePokemon(), None, ''
+                    )
             except Exception:
                 pass
 
@@ -1050,7 +1058,7 @@ class EncountersMixin(MixinMeta):
             view.add_item(heal_button)
         
         return view
-
+    
 # =============================================================================
 # SEPARATOR - NEXT METHOD
 # =============================================================================
@@ -1094,7 +1102,7 @@ class EncountersMixin(MixinMeta):
             )
         
         # KEY CHANGE: Use existing post battle buttons
-        view = self.__create_post_battle_buttons(battle_state.user_id, show_trainer_buttons=False)
+        view = self.__create_post_battle_buttons(battle_state.user_id, show_trainer_buttons=False, interaction=interaction)
         
         # KEY CHANGE: Clear content and use existing message
         await interaction.message.edit(content=None, embed=embed, view=view)
@@ -1133,7 +1141,7 @@ class EncountersMixin(MixinMeta):
             )
         
         # KEY CHANGE: Use existing post battle buttons
-        view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False)
+        view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False, interaction=interaction)
         
         # KEY CHANGE: Clear content and use existing message
         await interaction.message.edit(content=None, embed=embed, view=view)
@@ -1162,7 +1170,7 @@ class EncountersMixin(MixinMeta):
         )
         
         # KEY CHANGE: Use existing post battle buttons
-        view = self.__create_post_battle_buttons(user_id, show_trainer_buttons=False)
+        view = self.__create_post_battle_buttons(user_id, show_trainer_buttons=False, interaction=interaction)
         
         # KEY CHANGE: Clear content and use existing message
         await interaction.message.edit(content=None, embed=embed, view=view)
@@ -1231,7 +1239,7 @@ class EncountersMixin(MixinMeta):
             if interaction.guild:
                 await self.check_capture_milestones(str(user.id), interaction.guild)
 
-            view = self.__create_post_battle_buttons(user_id)
+            view = self.__create_post_battle_buttons(user_id, interaction=interaction)
             
             await interaction.message.edit(
                 content=None,
@@ -7568,7 +7576,7 @@ class EncountersMixin(MixinMeta):
             )
         
         # ADD NAVIGATION BUTTONS - use battle_state.user_id instead of str(user.id)
-        view = self.__create_post_battle_buttons(battle_state.user_id)
+        view = self.__create_post_battle_buttons(battle_state.user_id, interaction=interaction)
         
         await interaction.message.edit(embed=embed, view=view)
 
@@ -9981,7 +9989,7 @@ class EncountersMixin(MixinMeta):
                     embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
                     
                     # Navigation buttons with quick re-encounter
-                    view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False)
+                    view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False, interaction=interaction)
                     
                     # Edit the message with embed and buttons
                     await interaction.message.edit(
@@ -9990,9 +9998,9 @@ class EncountersMixin(MixinMeta):
                         view=view
                     )
                     
-                    # Clean up action state
-                    if str(user.id) in self.__useractions:
-                        del self.__useractions[str(user.id)]
+                    # # Clean up action state
+                    # if str(user.id) in self.__useractions:
+                    #     del self.__useractions[str(user.id)]
                 else:
                     await interaction.followup.send('No pokemon encountered.', ephemeral=True)
                 return
@@ -10298,7 +10306,7 @@ class EncountersMixin(MixinMeta):
         embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
         
         # Navigation buttons with quick re-encounter
-        view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False)
+        view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False, interaction=interaction)
 
         await interaction.message.edit(
             content=None,
@@ -10321,7 +10329,7 @@ class EncountersMixin(MixinMeta):
             if pending_moves:
                 await self.__handle_move_learning(interaction, level_up_data['pokemon'], pending_moves)
 
-        del self.__useractions[str(user.id)]
+        # del self.__useractions[str(user.id)]
 
 
     async def __on_fight_click_encounter(self, interaction: Interaction):
@@ -10353,14 +10361,14 @@ class EncountersMixin(MixinMeta):
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
 
         # Navigation buttons with quick re-encounter
-        view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False)
+        view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False, interaction=interaction)
 
         await interaction.message.edit(
             embed=embed,
             view=view  # Changed from View() to view with buttons
         )
         
-        del self.__useractions[str(user.id)]
+        # del self.__useractions[str(user.id)]
         
 
     async def __on_catch_click_encounter(self, interaction: Interaction):
@@ -10520,7 +10528,7 @@ class EncountersMixin(MixinMeta):
         # statuscode 96 = also ends encounter
         # Either way, add navigation buttons
         # Navigation buttons with quick re-encounter
-        view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False)
+        view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False, interaction=interaction)
 
         await interaction.message.edit(
             embed=embed,
@@ -10545,7 +10553,7 @@ class EncountersMixin(MixinMeta):
                 # Send without sprite if there's an error
                 await interaction.followup.send(embed=success_embed, ephemeral=True)
         
-        del self.__useractions[str(user.id)]
+        # del self.__useractions[str(user.id)]
 
         # Send to logging channel
         await self.sendToLoggingChannel(None, embed=embed)
