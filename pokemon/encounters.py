@@ -1008,7 +1008,7 @@ class EncountersMixin(MixinMeta):
             remaining_wild = battle_wild.getRemainingTrainerCount()
             
             if remaining_wild > 0:
-                wild_btn = Button(style=ButtonStyle.blurple, label=f"⚔️ Next Trainer ({remaining_wild})", custom_id='post_battle_wild')
+                wild_btn = Button(style=ButtonStyle.blurple, label=f"⚔️ Next Trainer ({remaining_wild})", custom_id='post_battle_wild', row=0)
                 wild_btn.callback = self.on_wild_trainers_click
                 view.add_item(wild_btn)
             
@@ -1017,11 +1017,23 @@ class EncountersMixin(MixinMeta):
             remaining_gym = battle_gym.getRemainingTrainerCount()
             
             if remaining_gym > 0:
-                gym_btn = Button(style=ButtonStyle.red, label=f"🏛️ Gym Trainer ({remaining_gym})", custom_id='post_battle_gym')
+                gym_btn = Button(style=ButtonStyle.red, label=f"🏛️ Gym Trainer ({remaining_gym})", custom_id='post_battle_gym', row=0)
                 gym_btn.callback = self.on_gym_click
                 view.add_item(gym_btn)
 
-        # Always show map button
+        # ROW 0: Quick re-encounter button (if location has wild encounters)
+        if has_alive_pokemon:
+            try:
+                loc_class = LocationClass(user_id)
+                methods = loc_class.getMethods()
+                if len(methods) > 0:
+                    enc_btn = Button(style=ButtonStyle.green, label="⚔️ Encounters", custom_id='nav_encounters', row=0)
+                    enc_btn.callback = self.on_nav_encounters_click
+                    view.add_item(enc_btn)
+            except Exception:
+                pass
+
+        # ROW 1: Always show map button
         map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map', row=1)
         map_button.callback = self.on_nav_map_click
         view.add_item(map_button)
@@ -1038,7 +1050,6 @@ class EncountersMixin(MixinMeta):
             view.add_item(heal_button)
         
         return view
-
 
 # =============================================================================
 # SEPARATOR - NEXT METHOD
@@ -9969,23 +9980,8 @@ class EncountersMixin(MixinMeta):
                     )
                     embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
                     
-                    # Create navigation view
-                    view = View()
-                    
-                    map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
-                    map_button.callback = self.on_nav_map_click
-                    view.add_item(map_button)
-                    
-                    party_button = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_party')
-                    party_button.callback = self.on_nav_bag_click
-                    view.add_item(party_button)
-                    
-                    # Check if at Pokemon Center
-                    location = trainer.getLocation()
-                    if location.pokecenter:
-                        heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal')
-                        heal_button.callback = self.on_nav_heal_click
-                        view.add_item(heal_button)
+                    # Navigation buttons with quick re-encounter
+                    view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False)
                     
                     # Edit the message with embed and buttons
                     await interaction.message.edit(
@@ -10301,23 +10297,8 @@ class EncountersMixin(MixinMeta):
 
         embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
         
-        # ADD NAVIGATION BUTTONS after battle
-        view = View()
-        
-        map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
-        map_button.callback = self.on_nav_map_click
-        view.add_item(map_button)
-        
-        party_button = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_party')
-        party_button.callback = self.on_nav_bag_click
-        view.add_item(party_button)
-        
-        # Check if at Pokemon Center
-        location = trainer.getLocation()
-        if location.pokecenter:
-            heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal')
-            heal_button.callback = self.on_nav_heal_click
-            view.add_item(heal_button)
+        # Navigation buttons with quick re-encounter
+        view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False)
 
         await interaction.message.edit(
             content=None,
@@ -10371,23 +10352,8 @@ class EncountersMixin(MixinMeta):
 
         embed = self.__wildPokemonEncounter(user, state.wildPokemon, state.activePokemon, desc)
 
-        # ADD NAVIGATION BUTTONS (same as catch)
-        view = View()
-        
-        map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
-        map_button.callback = self.on_nav_map_click
-        view.add_item(map_button)
-        
-        party_button = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_party')
-        party_button.callback = self.on_nav_bag_click
-        view.add_item(party_button)
-        
-        # Check if at Pokemon Center
-        location = trainer.getLocation()
-        if location.pokecenter:
-            heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal')
-            heal_button.callback = self.on_nav_heal_click
-            view.add_item(heal_button)
+        # Navigation buttons with quick re-encounter
+        view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False)
 
         await interaction.message.edit(
             embed=embed,
@@ -10553,22 +10519,8 @@ class EncountersMixin(MixinMeta):
         # statuscode 420 = success OR failure (both end the encounter)
         # statuscode 96 = also ends encounter
         # Either way, add navigation buttons
-        view = View()
-        
-        map_button = Button(style=ButtonStyle.primary, label="🗺️ Map", custom_id='nav_map')
-        map_button.callback = self.on_nav_map_click
-        view.add_item(map_button)
-        
-        party_button = Button(style=ButtonStyle.primary, label="🎒 Bag", custom_id='nav_party')
-        party_button.callback = self.on_nav_bag_click
-        view.add_item(party_button)
-        
-        # Check if at Pokemon Center
-        location = trainer.getLocation()
-        if location.pokecenter:
-            heal_button = Button(style=ButtonStyle.green, label="🏥 Heal", custom_id='nav_heal')
-            heal_button.callback = self.on_nav_heal_click
-            view.add_item(heal_button)
+        # Navigation buttons with quick re-encounter
+        view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False)
 
         await interaction.message.edit(
             embed=embed,
