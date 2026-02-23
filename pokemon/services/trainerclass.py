@@ -401,11 +401,13 @@ class trainer:
         pokemon1 = self.getActivePokemon()
         if pokemon1 is None:
             self.statuscode = 96
-            self.message = 'You do not have an active Pokemon'        
+            self.message = 'You do not have an active Pokemon'
+            return
         enc = encounter(pokemon1, pokemon2)
         retVal = enc.runAway()
+        self.statuscode = enc.statuscode
+        self.message = enc.message
         if enc.statuscode == 96:
-            self.statuscode = 96
             self.message = "error occurred during encounter.runAway()"
         return retVal
 
