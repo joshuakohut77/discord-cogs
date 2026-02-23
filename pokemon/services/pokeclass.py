@@ -750,6 +750,9 @@ class Pokemon:
                 if self.currentLevel >= min_level:
                     evolvedForm = name
                     break  # Take the immediate next evolution only
+        # Guard: never "evolve" into yourself
+        if evolvedForm is not None and evolvedForm == self.pokemonName:
+            return None
         return evolvedForm
 
     def __getPokemonNameById(self, pokedexId):

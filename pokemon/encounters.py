@@ -734,7 +734,7 @@ class EncountersMixin(MixinMeta):
                     learned_moves = []
                     if "learned" in enc.message.lower():
                         import re
-                        learned_matches = re.findall(r'learned ([a-z\-]+)', enc.message.lower())
+                        learned_matches = re.findall(r'learned ([^!]+?)!', enc.message.lower())
                         learned_moves.extend(learned_matches)
                     
                     # Check for evolution
@@ -1634,7 +1634,7 @@ class EncountersMixin(MixinMeta):
             auto_learned_moves = []
             if expMsg and "learned" in expMsg.lower():
                 import re
-                learned_matches = re.findall(r'learned ([a-z\-]+)', expMsg.lower())
+                learned_matches = re.findall(r'learned ([^!]+?)!', expMsg.lower())
                 auto_learned_moves.extend(learned_matches)
 
             if levelUp:
@@ -1994,7 +1994,7 @@ class EncountersMixin(MixinMeta):
             auto_learned_moves = []
             if expMsg and "learned" in expMsg.lower():
                 import re
-                learned_matches = re.findall(r'learned ([a-z\-]+)', expMsg.lower())
+                learned_matches = re.findall(r'learned ([^!]+?)!', expMsg.lower())
                 auto_learned_moves.extend(learned_matches)
 
             if levelUp:
@@ -8220,7 +8220,7 @@ class EncountersMixin(MixinMeta):
                     learned_moves = []
                     if "learned" in enc.message.lower():
                         import re
-                        learned_matches = re.findall(r'learned ([a-z\-]+)', enc.message.lower())
+                        learned_matches = re.findall(r'learned ([^!]+?)!', enc.message.lower())
                         learned_moves.extend(learned_matches)
                     
                     # Check for evolution
@@ -9267,7 +9267,7 @@ class EncountersMixin(MixinMeta):
                     learned_moves = []
                     if "learned" in enc.message.lower():
                         import re
-                        learned_matches = re.findall(r'learned ([a-z\-]+)', enc.message.lower())
+                        learned_matches = re.findall(r'learned ([^!]+?)!', enc.message.lower())
                         learned_moves.extend(learned_matches)
                     
                     # Check for evolution
@@ -10287,7 +10287,7 @@ class EncountersMixin(MixinMeta):
             auto_learned_moves = []
             if enc.message and "learned" in enc.message.lower():
                 import re
-                learned_matches = re.findall(r'learned ([a-z\-]+)', enc.message.lower())
+                learned_matches = re.findall(r'learned ([^!]+?)!', enc.message.lower())
                 auto_learned_moves.extend(learned_matches)
             
             level_up_data = {
