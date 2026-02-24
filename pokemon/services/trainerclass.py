@@ -654,33 +654,58 @@ class trainer:
             inventory.save()
 
     def healAll(self):
-        """ heals all pokemon to max HP and clears status ailments """
+        """ heals all pokemon to max HP and clears status ailments.
+            Returns a list of dicts with healing details for UI display:
+            [{'trainerId': int, 'pokemonName': str, 'level': int, 'old_hp': int, 'max_hp': int, 'hp_restored': int, 'ailment_cured': bool}, ...]
+        """
         from ailmentsclass import ailment
         
         location = self.getLocation()
         if not location.pokecenter:
             self.statuscode = 420
             self.message = "There is no Poke Center at your location"
-            return
+            return []
         
+        healing_details = []
         pokeList = self.getPokemon(party=True)
         for pokemon in pokeList:
             trainerId = pokemon.trainerId
             pokemon.load(trainerId)
             statsDict = pokemon.getPokeStats()
             maxHP = statsDict['hp']
+            oldHP = pokemon.currentHP
+            hp_restored = 0
+            ailment_cured = False
+            
+            # Heal HP if needed
             if maxHP != pokemon.currentHP:
                 pokemon.currentHP = maxHP
                 pokemon.discordId = self.discordId
                 pokemon.save()
+                hp_restored = maxHP - oldHP
+            
             # Clear any status ailments
             ail = ailment(trainerId)
             ail.load()
-            if ail.recordExists:
+            if ail.recordExists and (ail.sleep or ail.poison or ail.burn or ail.freeze or ail.paralysis or ail.trap or ail.confusion or ail.disable):
                 ail.resetAilments()
                 ail.save()
+                ailment_cured = True
+            
+            healing_details.append({
+                'trainerId': trainerId,
+                'pokemonName': pokemon.pokemonName,
+                'nickName': getattr(pokemon, 'nickName', None),
+                'level': pokemon.currentLevel,
+                'old_hp': oldHP,
+                'max_hp': maxHP,
+                'hp_restored': hp_restored,
+                'ailment_cured': ailment_cured,
+            })
+        
         self.statuscode = 420
         self.message = "Your pokemon have been healed back to full health!"
+        return healing_details
     
     def evolveItem(self, pokemon, item):
         """ handles use of the *-stone items for evolving pokemon"""

@@ -6237,43 +6237,42 @@ class EncountersMixin(MixinMeta):
             await interaction.followup.send('No Pokemon Center at this location.', ephemeral=True)
             return
         
-        # Get party before healing
-        party = trainer.getPokemon(party=True)
+        # Use the single healAll method which handles both HP and ailments
+        healing_details = trainer.healAll()
         
-        # Track healing details
-        healing_details = []
+        if trainer.statuscode == 96:
+            await interaction.followup.send('An error occurred while healing.', ephemeral=True)
+            return
+        
+        # Build the UI display from the returned data
+        healing_lines = []
         healed_count = 0
         
-        for poke in party:
-            poke.load(pokemonId=poke.trainerId)
-            stats = poke.getPokeStats()
-            max_hp = stats['hp']
-            current_hp = poke.currentHP
+        from .functions import get_pokemon_display_name
+        
+        for detail in healing_details:
+            poke_name = detail['nickName'] if detail['nickName'] else detail['pokemonName'].capitalize()
             
-            from .functions import get_pokemon_display_name
-            poke_name = get_pokemon_display_name(poke)
+            # Try to find emoji
+            clean_name = detail['pokemonName'].upper().replace('-', '').replace(' ', '').replace('.', '').replace("'", '')
+            pokemon_emoji = constant.POKEMON_EMOJIS.get(clean_name, constant.POKEBALL)
             
-            # Try multiple name formats to find emoji
-            # First try uppercase without hyphens/spaces
-            clean_name = poke.pokemonName.upper().replace('-', '').replace(' ', '').replace('.', '')
-            pokemon_emoji = constant.POKEMON_EMOJIS.get(clean_name)
-            
-            # If still not found, just use a generic Pokeball emoji or nothing
-            if not pokemon_emoji:
-                pokemon_emoji = constant.POKEBALL  # or just use "" for no emoji
-            
-            if current_hp < max_hp:
-                # Pokemon needs healing
-                hp_restored = max_hp - current_hp
-                poke.currentHP = max_hp
-                poke.save()
+            was_healed = detail['hp_restored'] > 0 or detail['ailment_cured']
+            if was_healed:
                 healed_count += 1
-                healing_details.append(f"{pokemon_emoji} {poke_name} - Lv.{poke.currentLevel}")
-                healing_details.append(f"   HP: {current_hp}/{max_hp} → {max_hp}/{max_hp} (+{hp_restored})")
+            
+            # Build status line
+            status_parts = []
+            if detail['hp_restored'] > 0:
+                status_parts.append(f"HP: {detail['old_hp']}/{detail['max_hp']} → {detail['max_hp']}/{detail['max_hp']} (+{detail['hp_restored']})")
             else:
-                # Already at full HP
-                healing_details.append(f"{pokemon_emoji} {poke_name} - Lv.{poke.currentLevel}")
-                healing_details.append(f"   HP: {max_hp}/{max_hp} ")
+                status_parts.append(f"HP: {detail['max_hp']}/{detail['max_hp']} ✓")
+            
+            if detail['ailment_cured']:
+                status_parts.append("Status: Cured! ✨")
+            
+            healing_lines.append(f"{pokemon_emoji} {poke_name} - Lv.{detail['level']}")
+            healing_lines.append(f"   {' | '.join(status_parts)}")
         
         embed = discord.Embed(
             title="🏥 Pokemon Center",
@@ -6283,7 +6282,7 @@ class EncountersMixin(MixinMeta):
         
         embed.add_field(
             name="Your Party Status",
-            value="\n".join(healing_details),
+            value="\n".join(healing_lines),
             inline=False
         )
         
@@ -6297,7 +6296,6 @@ class EncountersMixin(MixinMeta):
         view.add_item(map_btn)
         
         await interaction.message.edit(embed=embed, view=view)
-
 
 
     # Helper method to get next available Pokemon from party
