@@ -1093,6 +1093,24 @@ class EncountersMixin(MixinMeta):
             inline=True
         )
         
+        # Show experience gained
+        exp_gained = getattr(battle_state, 'exp_gained', 0)
+        if exp_gained > 0:
+            exp_text = f"**+{exp_gained} exp**"
+            if hasattr(battle_state, 'level_up_data') and battle_state.level_up_data:
+                data = battle_state.level_up_data
+                exp_text += f"\n⬆️ Leveled up to {data['new_level']}!"
+                if data.get('evolution_name'):
+                    exp_text += f"\n✨ Evolved into {data['evolution_name'].capitalize()}!"
+                if data.get('auto_learned_moves'):
+                    for move in data['auto_learned_moves']:
+                        exp_text += f"\n📖 Learned {move.replace('-', ' ').title()}!"
+            embed.add_field(
+                name="📈 Experience",
+                value=exp_text,
+                inline=True
+            )
+        
         if battle_state.battle_log:
             log_text = "\n".join(battle_state.battle_log)
             embed.add_field(
@@ -1101,12 +1119,13 @@ class EncountersMixin(MixinMeta):
                 inline=False
             )
         
+        embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+        
         # KEY CHANGE: Use existing post battle buttons
-        view = self.__create_post_battle_buttons(battle_state.user_id, show_trainer_buttons=False, interaction=interaction)
+        view = self.__create_post_battle_buttons(battle_state.user_id, show_trainer_buttons=False)
         
         # KEY CHANGE: Clear content and use existing message
         await interaction.message.edit(content=None, embed=embed, view=view)
-    
     async def __handle_wild_battle_defeat(self, interaction: discord.Interaction, battle_state: WildBattleState):
         """Handle when player loses to wild Pokemon"""
         user = interaction.user
@@ -1677,6 +1696,7 @@ class EncountersMixin(MixinMeta):
                     'evolution_name': evolution_name
                 }
 
+            battle_state.exp_gained = expGained
             battle_state.battle_log = ["\n".join(log_lines)]
             battle_state.player_pokemon.save()
             await self.__handle_wild_battle_victory(interaction, battle_state)
@@ -2037,6 +2057,7 @@ class EncountersMixin(MixinMeta):
                     'evolution_name': evolution_name
                 }
 
+            battle_state.exp_gained = expGained
             battle_state.battle_log = ["\n".join(log_lines)]
             battle_state.player_pokemon.save()
             await self.__handle_wild_battle_victory(interaction, battle_state)
@@ -7360,6 +7381,87 @@ class EncountersMixin(MixinMeta):
         player_max_hp = battle_state.player_pokemon.getPokeStats()['hp']
         player_level = battle_state.player_pokemon.currentLevel
         
+        # =====================================================================
+        # AWARD EXPERIENCE for all defeated enemy Pokemon
+        # =====================================================================
+        from services.expclass import experiance as exp
+        from services.pokeclass import Pokemon as PokemonClass
+        from services.leaderboardclass import leaderboard as LeaderboardClass
+        
+        total_exp = 0
+        total_evs = None
+        exp_messages = []
+        level_ups = []
+        
+        num_defeated = len(battle_state.defeated_enemies)
+        enemy_data_list = battle_state.enemy_pokemon_data
+        
+        for i in range(num_defeated):
+            if i < len(enemy_data_list):
+                enemy_data = enemy_data_list[i]
+                enemy_name = list(enemy_data.keys())[0]
+                enemy_level = enemy_data[enemy_name]
+                
+                # Create temp enemy Pokemon for exp calculation
+                try:
+                    temp_enemy = PokemonClass(str(user.id), enemy_name)
+                    temp_enemy.create(enemy_level)
+                    temp_enemy.discordId = None  # Consistent with auto battle
+                    
+                    expObj = exp(temp_enemy)
+                    exp_gained = expObj.getExpGained()
+                    ev_gained = expObj.getEffortValue()
+                    
+                    total_exp += exp_gained
+                    
+                    # Accumulate EVs
+                    if ev_gained:
+                        if total_evs is None:
+                            total_evs = dict(ev_gained)
+                        else:
+                            for stat, val in ev_gained.items():
+                                total_evs[stat] = total_evs.get(stat, 0) + val
+                    
+                    exp_messages.append(f"{enemy_name.capitalize()} (Lv.{enemy_level}): +{exp_gained} exp")
+                except Exception as e:
+                    exp_messages.append(f"{enemy_name.capitalize()}: exp calc error - {str(e)}")
+        
+        # Apply experience to current player Pokemon
+        if total_exp > 0:
+            old_level = battle_state.player_pokemon.currentLevel
+            current_hp = battle_state.player_pokemon.currentHP
+            
+            levelUp, expMsg, pendingMoves = battle_state.player_pokemon.processBattleOutcome(
+                total_exp, total_evs, current_hp
+            )
+            
+            auto_learned_moves = []
+            if expMsg and "learned" in expMsg.lower():
+                import re
+                learned_matches = re.findall(r'learned ([^!]+?)!', expMsg.lower())
+                auto_learned_moves.extend(learned_matches)
+            
+            evolution_name = None
+            if hasattr(battle_state.player_pokemon, 'evolvedInto') and battle_state.player_pokemon.evolvedInto:
+                evolution_name = battle_state.player_pokemon.evolvedInto
+            
+            if levelUp or (pendingMoves and len(pendingMoves) > 0):
+                level_ups.append({
+                    'pokemon': battle_state.player_pokemon,
+                    'old_level': old_level,
+                    'new_level': battle_state.player_pokemon.currentLevel,
+                    'learned_moves': auto_learned_moves,
+                    'pending_moves': pendingMoves if pendingMoves else [],
+                    'evolution_name': evolution_name
+                })
+            
+            battle_state.player_pokemon.save()
+        
+        # Leaderboard tracking
+        lb = LeaderboardClass(str(user.id))
+        lb.victory()
+        lb.actions()
+        
         # Award rewards
         if hasattr(trainer_model, 'badge'):  # It's a gym leader
             # It's a gym leader
@@ -7395,52 +7497,42 @@ class EncountersMixin(MixinMeta):
             
             # Show player's current Pokemon
             player_summary = []
-            player_summary.append(f"**Your {battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
+            player_summary.append(f"**Your {battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{battle_state.player_pokemon.currentLevel})")
             player_summary.append(f"HP: {battle_state.player_pokemon.currentHP}/{player_max_hp}")
             
             embed.add_field(
-                name="💚 Your Team",
+                name="💚 Your Pokemon",
                 value="\n".join(player_summary),
                 inline=True
             )
             
-            # Show battle log
-            if battle_state.battle_log:
-                log_text = battle_state.battle_log[-1] if isinstance(battle_state.battle_log, list) else battle_state.battle_log
+            # Show experience gained
+            if total_exp > 0:
+                exp_text = f"**Total: +{total_exp} exp**"
+                if level_ups:
+                    exp_text += f"\n⬆️ Leveled up to {battle_state.player_pokemon.currentLevel}!"
+                if level_ups and level_ups[0].get('evolution_name'):
+                    exp_text += f"\n✨ Evolved into {level_ups[0]['evolution_name'].capitalize()}!"
                 embed.add_field(
-                    name="⚔️ Battle Log",
-                    value=log_text[:1024],
+                    name="📈 Experience",
+                    value=exp_text,
                     inline=False
                 )
             
-            embed.set_footer(text=f"Badge earned: {trainer_model.badge}")
-            
-            
-            view = self.__create_post_battle_buttons(str(user.id))
-            await interaction.message.edit(embed=embed, view=view)
-
-            # Update ActionState with current message ID so navigation buttons work
-            trainer = self._get_trainer(str(user.id))
-            location = trainer.getLocation()
-            self.__useractions[str(user.id)] = ActionState(
-                str(user.id),
-                interaction.message.channel.id,
-                interaction.message.id,
-                location,
-                trainer.getActivePokemon(),
-                None,
-                ''
+            embed.add_field(
+                name="💰 Reward",
+                value=f"${trainer_model.money}\n🏅 {trainer_model.badge.replace('_', ' ').title()}",
+                inline=True
             )
             
+            embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
         
         else:
-            # Regular trainer battle
-            
-            # CRITICAL: Mark trainer as defeated in database
+            # It's a regular trainer
             battle_manager.battleVictory(trainer_model)
             
             embed = discord.Embed(
-                title="🏆 VICTORY!",
+                title="⚔️ VICTORY!",
                 description=f"You defeated {trainer_model.name}!",
                 color=discord.Color.green()
             )
@@ -7459,67 +7551,85 @@ class EncountersMixin(MixinMeta):
             
             # Show player's current Pokemon
             player_summary = []
-            player_summary.append(f"**Your {battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{player_level})")
+            player_summary.append(f"**Your {battle_state.player_pokemon.pokemonName.capitalize()}** (Lv.{battle_state.player_pokemon.currentLevel})")
             player_summary.append(f"HP: {battle_state.player_pokemon.currentHP}/{player_max_hp}")
             
             embed.add_field(
-                name="💚 Your Team",
+                name="💚 Your Pokemon",
                 value="\n".join(player_summary),
                 inline=True
             )
             
-            # Show battle log
-            if battle_state.battle_log:
-                log_text = battle_state.battle_log[-1] if isinstance(battle_state.battle_log, list) else battle_state.battle_log
+            # Show experience gained
+            if total_exp > 0:
+                exp_text = f"**Total: +{total_exp} exp**"
+                if level_ups:
+                    exp_text += f"\n⬆️ Leveled up to {battle_state.player_pokemon.currentLevel}!"
+                if level_ups and level_ups[0].get('evolution_name'):
+                    exp_text += f"\n✨ Evolved into {level_ups[0]['evolution_name'].capitalize()}!"
                 embed.add_field(
-                    name="⚔️ Battle Log",
-                    value=log_text[:1024],
+                    name="📈 Experience",
+                    value=exp_text,
                     inline=False
                 )
             
-            view = self.__create_post_battle_buttons(str(user.id))
-            await interaction.message.edit(embed=embed, view=view)
-
-            # Update ActionState with current message ID so navigation buttons work
-            trainer = self._get_trainer(str(user.id))
-            location = trainer.getLocation()
-            self.__useractions[str(user.id)] = ActionState(
-                str(user.id),
-                interaction.message.channel.id,
-                interaction.message.id,
-                location,
-                trainer.getActivePokemon(),
-                None,
-                ''
+            embed.add_field(
+                name="💰 Reward",
+                value=f"${trainer_model.money}",
+                inline=True
             )
+            
+            embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
+        
+        # Show battle log
+        if battle_state.battle_log:
+            battle_log_text = "\n".join(battle_state.battle_log)
+            if len(battle_log_text) > 1024:
+                battle_log_text = battle_log_text[-1024:]
+            embed.add_field(
+                name="⚔️ Battle Log",
+                value=battle_log_text,
+                inline=False
+            )
+        
+        # Delete old battle message
+        try:
+            await interaction.message.delete()
+        except:
+            pass
 
-            # Check if finale was unlocked (defeated Champion Blue)
-            if battle_manager.finale_unlocked:
-                finale_embed = discord.Embed(
-                    title="👑 CHAMPION!",
-                    description="You have defeated the Elite Four and become the Pokémon Champion!\n\n"
-                                "**You have unlocked the finale!**\n"
-                                "Please type the command `,finale` and read the instructions to continue.",
-                    color=discord.Color.gold()
-                )
-                await interaction.followup.send(embed=finale_embed)
+        # Send new post-battle summary with navigation buttons
+        view_nav = self.__create_post_battle_buttons(str(user.id))
+        new_message = await interaction.followup.send(embed=embed, view=view_nav, ephemeral=False)
 
-                # Send Elite Four achievement
-                if interaction.guild:
-                    await self.send_achievement(
-                        guild=interaction.guild,
-                        user=user,
-                        achievement_type="elite_four"
-                    )
+        # Update ActionState with new message ID
+        trainer = self._get_trainer(str(user.id))
+        location = trainer.getLocation()
+        self.__useractions[str(user.id)] = ActionState(
+            str(user.id),
+            new_message.channel.id,
+            new_message.id,
+            location,
+            trainer.getActivePokemon(),
+            None,
+            ''
+        )
 
-            # Check if gym leader is available (only for gym battles, not wild trainers)
-            if not hasattr(battle_state, 'is_wild_trainer') or not battle_state.is_wild_trainer:
-                gym_leader = battle_manager.getGymLeader()
-                if gym_leader and not hasattr(trainer_model, 'badge'):
-                    await interaction.followup.send(
-                        f"All gym trainers defeated! You can now challenge Gym Leader {gym_leader.name}!",
-                        ephemeral=True
-                    )
+        # Send level up notifications after ActionState is set
+        for level_up_data in level_ups:
+            level_up_embed = self.__create_level_up_embed(
+                level_up_data['pokemon'],
+                level_up_data['old_level'],
+                level_up_data['new_level'],
+                learned_moves=level_up_data['learned_moves'],
+                evolution_name=level_up_data['evolution_name']
+            )
+            await interaction.followup.send(embed=level_up_embed, ephemeral=True)
+            
+            # Handle pending moves that need player choice (4 moves already known)
+            pending_moves = level_up_data.get('pending_moves', [])
+            if pending_moves:
+                await self.__handle_move_learning(interaction, level_up_data['pokemon'], pending_moves)
 
     async def __handle_gym_battle_defeat(self, interaction: discord.Interaction, battle_state: BattleState):
         """Handle when player loses a gym battle - shows team info with navigation"""
