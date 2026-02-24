@@ -10337,13 +10337,15 @@ class EncountersMixin(MixinMeta):
             player_max_hp = player_stats['hp']
             
             embed = discord.Embed(
-                title="🎉 Victory!",
+                title="🏆 VICTORY!",
                 description=f"You defeated the wild {state.wildPokemon.pokemonName.capitalize()}!",
                 color=discord.Color.green()
             )
             
             player_summary = []
-            player_summary.append(f"**{battle_pokemon.pokemonName.capitalize()}** (Lv.{battle_pokemon.currentLevel})")
+            from .functions import get_pokemon_display_name
+            player_display = get_pokemon_display_name(battle_pokemon)
+            player_summary.append(f"**{player_display}** (Lv.{battle_pokemon.currentLevel})")
             player_summary.append(f"HP: {battle_pokemon.currentHP}/{player_max_hp}")
             
             embed.add_field(
@@ -10352,12 +10354,38 @@ class EncountersMixin(MixinMeta):
                 inline=True
             )
             
-            # Add exp info if available
+            # Parse exp from enc.message and format like manual battles
+            exp_gained = 0
             if enc.message:
+                import re
+                exp_match = re.search(r'gained (\d+) exp', enc.message)
+                if exp_match:
+                    exp_gained = int(exp_match.group(1))
+            
+            if exp_gained > 0:
+                exp_text = f"**+{exp_gained} exp**"
+                
+                # Check for level up
+                new_level_check = battle_pokemon.currentLevel
+                if new_level_check > old_level:
+                    exp_text += f"\n⬆️ Leveled up to {new_level_check}!"
+                
+                # Check for evolution
+                evolution_name = None
+                if hasattr(battle_pokemon, 'evolvedInto') and battle_pokemon.evolvedInto:
+                    evolution_name = battle_pokemon.evolvedInto
+                    exp_text += f"\n✨ Evolved into {evolution_name.capitalize()}!"
+                
+                # Check for learned moves
+                if enc.message and "learned" in enc.message.lower():
+                    learned_matches = re.findall(r'learned ([^!]+?)!', enc.message.lower())
+                    for move in learned_matches:
+                        exp_text += f"\n📖 Learned {move.replace('-', ' ').title()}!"
+                
                 embed.add_field(
-                    name="📊 Experience",
-                    value=enc.message,
-                    inline=False
+                    name="📈 Experience",
+                    value=exp_text,
+                    inline=True
                 )
         else:
             # DEFEAT EMBED
@@ -10365,13 +10393,15 @@ class EncountersMixin(MixinMeta):
             player_max_hp = player_stats['hp']
             
             embed = discord.Embed(
-                title="💀 Defeat...",
-                description=f"You were defeated by the wild {state.wildPokemon.pokemonName.capitalize()}!",
-                color=discord.Color.red()
+                title="💀 DEFEAT",
+                description=f"You were defeated by the wild {state.wildPokemon.pokemonName.capitalize()}...",
+                color=discord.Color.dark_red()
             )
             
             player_summary = []
-            player_summary.append(f"**{battle_pokemon.pokemonName.capitalize()}** (Lv.{battle_pokemon.currentLevel})")
+            from .functions import get_pokemon_display_name
+            player_display = get_pokemon_display_name(battle_pokemon)
+            player_summary.append(f"**{player_display}** (Lv.{battle_pokemon.currentLevel})")
             player_summary.append(f"HP: 0/{player_max_hp} ❌")
             
             embed.add_field(
@@ -10379,15 +10409,8 @@ class EncountersMixin(MixinMeta):
                 value="\n".join(player_summary),
                 inline=True
             )
-            
-            # Add battle result message
-            embed.add_field(
-                name="⚔️ Battle Result",
-                value="Your Pokemon fainted!",
-                inline=False
-            )
         
-        # Check for level up and evolution
+        # Check for level up and evolution for notification
         old_level_check = old_level
         new_level_check = battle_pokemon.currentLevel
         evolution_name = None
@@ -10415,8 +10438,8 @@ class EncountersMixin(MixinMeta):
 
         embed.set_author(name=f"{user.display_name}", icon_url=str(user.display_avatar.url))
         
-        # Navigation buttons with quick re-encounter
-        view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False, interaction=interaction)
+        # Use consistent post-battle buttons
+        view = self.__create_post_battle_buttons(str(user.id), show_trainer_buttons=False)
 
         await interaction.message.edit(
             content=None,
@@ -10439,8 +10462,7 @@ class EncountersMixin(MixinMeta):
             if pending_moves:
                 await self.__handle_move_learning(interaction, level_up_data['pokemon'], pending_moves)
 
-        # del self.__useractions[str(user.id)]
-
+        del self.__useractions[str(user.id)]
 
     async def __on_fight_click_encounter(self, interaction: Interaction):
         """Redirect to manual fight (kept for compatibility)"""
