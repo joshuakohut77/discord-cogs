@@ -78,7 +78,7 @@ class Soundboard(EventMixin, commands.Cog, metaclass=CompositeClass):
         """Get the lavalink player for a guild, if one exists."""
         try:
             return lavalink.get_player(guild_id)
-        except (KeyError, IndexError):
+        except Exception:
             return None
 
     def _load_soundboard_config(self) -> dict:

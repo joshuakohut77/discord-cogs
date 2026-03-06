@@ -44,7 +44,7 @@ class EventMixin(MixinMeta):
                 player = lavalink.get_player(guild.id)
                 if player and player.channel and player.channel.id == after.channel.id:
                     return
-            except (KeyError, IndexError):
+            except Exception:
                 pass
 
             # Disconnect any existing voice connection in this guild first
