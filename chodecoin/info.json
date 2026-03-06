@@ -1,0 +1,10 @@
+{
+    "author": ["BiCuriousGeorge#8804"],
+    "install_msg": "ChodeCoin has been installed! Use `[p]chodecoin` to get started.",
+    "name": "chodecoin",
+    "short": "Karma-style coin system with ++ and -- tracking",
+    "description": "A coin economy cog. Users can give or remove ChodeCoin with @user++ or @user--, gift coins, check balances, view leaderboards, and track statistics. Future store integration planned.",
+    "tags": ["economy", "fun", "karma", "coins"],
+    "requirements": ["psycopg[binary]", "psycopg_pool"],
+    "hidden": false
+}
