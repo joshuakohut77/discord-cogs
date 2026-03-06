@@ -53,8 +53,8 @@ VALID_BUTTONS = {"a", "b", "up", "down", "left", "right", "start", "select"}
 #
 # Resulting distribution:
 #   BUTTON A  : e, d, f           → 19.18%
-#   UP        : t, r, m           → 17.46%
-#   DOWN      : a, h, u, g        → 19.04%
+#   UP        : a, h, u, g        → 19.04%
+#   DOWN      : t, r, m           → 17.46%
 #   LEFT      : o, s, c, w        → 18.98%
 #   RIGHT     : i, n, l           → 17.75%
 #   B         : z, q, x, j, k, v  →  2.22%
@@ -62,27 +62,27 @@ VALID_BUTTONS = {"a", "b", "up", "down", "left", "right", "start", "select"}
 #   SELECT    : y                  →  1.97%
 # -----------------------------------------------------------------------
 LETTER_TO_BUTTON: dict[str, str] = {
-    "a": "down",    # 8.17%
+    "a": "up",      # 8.17%
     "b": "start",   # 1.29%
     "c": "left",    # 2.78%
     "d": "a",       # 4.25%
     "e": "a",       # 12.70%
     "f": "a",       # 2.23%
-    "g": "down",    # 2.02%
-    "h": "down",    # 6.09%
+    "g": "up",      # 2.02%
+    "h": "up",      # 6.09%
     "i": "right",   # 6.97%
     "j": "b",       # 0.15%
     "k": "b",       # 0.77%
     "l": "right",   # 4.03%
-    "m": "up",      # 2.41%
+    "m": "down",    # 2.41%
     "n": "right",   # 6.75%
     "o": "left",    # 7.51%
     "p": "start",   # 1.93%
     "q": "b",       # 0.10%
-    "r": "up",      # 5.99%
+    "r": "down",    # 5.99%
     "s": "left",    # 6.33%
-    "t": "up",      # 9.06%
-    "u": "down",    # 2.76%
+    "t": "down",    # 9.06%
+    "u": "up",      # 2.76%
     "v": "b",       # 0.98%
     "w": "left",    # 2.36%
     "x": "b",       # 0.15%
