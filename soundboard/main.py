@@ -96,6 +96,13 @@ class Soundboard(EventMixin, commands.Cog, metaclass=CompositeClass):
         for guild in self.bot.guilds:
             if guild.voice_client:
                 return guild
+            # Also check for a lavalink player (voice_client may be None briefly)
+            try:
+                player = lavalink.get_player(guild.id)
+                if player and player.channel:
+                    return guild
+            except Exception:
+                pass
         return None
 
     # ── playback ─────────────────────────────────────────────────────────
@@ -158,9 +165,14 @@ class Soundboard(EventMixin, commands.Cog, metaclass=CompositeClass):
 
             # Stop current playback and play the new sound
             player.store("soundboard_playing", True)
-            if player.is_playing:
-                await player.stop()
+            player.store("autoplay", False)
             player.queue.clear()
+            
+            # Use player.play() with the track added to queue
+            # If something is playing, stop it first then immediately play next
+            if player.is_playing or player.paused:
+                await player.stop()
+            
             player.add(player.channel.guild.me, track)
             await player.play()
 
@@ -211,11 +223,24 @@ class Soundboard(EventMixin, commands.Cog, metaclass=CompositeClass):
         """Connect to a voice channel using lavalink."""
         try:
             player = await lavalink.connect(channel)
+            # Try to disable Audio cog auto-disconnect for this guild
+            await self._disable_audio_auto_disconnect(channel.guild)
             log.info(f"[VOICE] Connected to: {channel.name} in {channel.guild.name}")
             return player
         except Exception as e:
             log.error(f"[VOICE] Failed to connect to {channel.name}: {e}")
             return None
+
+    async def _disable_audio_auto_disconnect(self, guild: discord.Guild) -> None:
+        """Try to disable the Audio cog's auto-disconnect so the bot stays in voice."""
+        try:
+            audio_cog = self.bot.get_cog("Audio")
+            if audio_cog and hasattr(audio_cog, "config"):
+                await audio_cog.config.guild(guild).dc.set(False)
+                await audio_cog.config.guild(guild).emptydc_enabled.set(False)
+                log.info(f"[VOICE] Disabled Audio auto-disconnect for {guild.name}")
+        except Exception as e:
+            log.warning(f"[VOICE] Could not disable Audio auto-disconnect: {e}")
 
     async def disconnect_from_guild(self, guild: discord.Guild) -> None:
         """Disconnect from voice in a guild."""
