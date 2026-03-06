@@ -5,4 +5,4 @@
 
 COIN_EMOJI = "<:ChodeCoin:1479593199554269318>"
 
-EMBED_COLOR = 0xFFD700  # gold
+EMBED_COLOR = 0xffa72e  # gold
