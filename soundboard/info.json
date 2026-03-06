@@ -1,0 +1,10 @@
+{
+    "author": ["BiCuriousGeorge#8804"],
+    "install_msg": "Soundboard cog installed! The bot will auto-join your voice channel and play sounds from the web soundboard.",
+    "name": "Soundboard",
+    "short": "Web-controlled soundboard for Discord voice",
+    "description": "Runs an HTTP API server that receives play/stop commands from a web-based soundboard. Auto-joins the bot owner's voice channel and plays audio files with optional normalization.",
+    "tags": ["audio", "voice", "soundboard"],
+    "requirements": ["aiohttp"],
+    "hidden": false
+}
