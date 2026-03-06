@@ -7,7 +7,7 @@ import discord
 from redbot.core import commands
 from .abc import MixinMeta
 from .db import ChodeCoinDB
-from .constants import COIN_EMOJI, EMBED_COLOR
+from .constants import COIN_EMOJI, COIN_EMOJI_URL, EMBED_COLOR
 
 if TYPE_CHECKING:
     pass
@@ -33,10 +33,12 @@ class CommandsMixin(MixinMeta):
         rank = await asyncio.to_thread(ChodeCoinDB.get_rank, ctx.guild.id, target.id)
 
         embed = discord.Embed(
-            title=f"{COIN_EMOJI} ChodeCoin Balance",
+            title=f"ChodeCoin Balance",
             color=EMBED_COLOR,
         )
-        embed.set_thumbnail(url=target.display_avatar.url)
+        embed.set_author(name=target.display_name, icon_url=target.display_avatar.url)
+        if COIN_EMOJI_URL:
+            embed.set_thumbnail(url=COIN_EMOJI_URL)
         embed.add_field(name="User", value=target.mention, inline=True)
         embed.add_field(name="Balance", value=f"**{balance}** {COIN_EMOJI}", inline=True)
         if rank is not None:
