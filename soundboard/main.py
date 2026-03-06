@@ -113,35 +113,48 @@ class Soundboard(EventMixin, commands.Cog, metaclass=CompositeClass):
         # Find which guild we're connected to voice in
         guild = self._get_voice_guild()
         if not guild:
+            log.warning("[PLAY] No voice guild found")
             return {"error": "Bot is not in a voice channel", "status": 503}
+
+        log.info(f"[PLAY] Found voice guild: {guild.name} ({guild.id})")
 
         player = self._get_player(guild.id)
         if not player:
+            log.warning(f"[PLAY] No lavalink player for guild {guild.id}")
             return {"error": "No Lavalink player for this guild", "status": 503}
+
+        log.info(f"[PLAY] Got player. Connected: {player.connected}, Channel: {player.channel}")
 
         # Verify the file exists on the bot's filesystem
         sound_path = os.path.join(self.sounds_dir, sound)
+        log.info(f"[PLAY] Checking file at bot path: {sound_path}")
         if not os.path.isfile(sound_path):
+            log.warning(f"[PLAY] File not found at: {sound_path}")
             return {"error": f"Sound file not found: {sound}", "status": 404}
 
         # Build the lavalink local file identifier
         # Lavalink needs the absolute path as seen from the lavalink container
         lavalink_path = os.path.join(self.lavalink_sounds_dir, sound)
+        log.info(f"[PLAY] Lavalink path: {lavalink_path}")
 
         try:
             # Load the track through lavalink
+            log.info(f"[PLAY] Loading track via lavalink...")
             result = await player.load_tracks(lavalink_path)
+            log.info(f"[PLAY] Load result: type={result.load_type}, tracks={len(result.tracks)}")
 
             if not result.tracks:
-                return {"error": f"Lavalink could not load: {sound}", "status": 500}
+                return {"error": f"Lavalink could not load: {sound} (load_type={result.load_type})", "status": 500}
 
             track = result.tracks[0]
+            log.info(f"[PLAY] Track loaded: {track.title}")
 
             # Set volume (lavalink uses 0-150 scale, we map 0-100 input)
             # Also apply any normalization gain from config
             sb_config = self._load_soundboard_config()
             effective_volume = self._calculate_volume(volume, sb_config)
             await player.set_volume(effective_volume)
+            log.info(f"[PLAY] Volume set to {effective_volume}")
 
             # Stop current playback and play the new sound
             player.store("soundboard_playing", True)

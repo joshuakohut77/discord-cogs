@@ -50,9 +50,14 @@ class SoundboardAPI:
         log.info(f"[API] Play request: {sound} (volume={volume})")
 
         # Delegate to the cog's playback logic
-        result = await self.cog.play_sound(sound, volume)
+        try:
+            result = await self.cog.play_sound(sound, volume)
+        except Exception as e:
+            log.error(f"[API] Unhandled error in play_sound: {e}", exc_info=True)
+            return web.json_response({"error": str(e)}, status=500)
 
         if result.get("error"):
+            log.warning(f"[API] Play error: {result['error']}")
             status = result.get("status", 500)
             return web.json_response({"error": result["error"]}, status=status)
 
