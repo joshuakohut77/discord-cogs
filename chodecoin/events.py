@@ -7,6 +7,7 @@ import re
 from redbot.core import commands
 from .abc import MixinMeta
 from .db import ChodeCoinDB
+from .constants import COIN_EMOJI
 
 if TYPE_CHECKING:
     import discord
@@ -80,7 +81,7 @@ class EventMixin(MixinMeta):
                         message.guild.id, target_id, message.author.id,
                     )
                     results.append(
-                        f"**{target.display_name}** gained a ChodeCoin! (Balance: **{new_bal}** CC)"
+                        f"**{target.display_name}** gained a ChodeCoin! (Balance: **{new_bal}** {COIN_EMOJI})"
                     )
                 else:
                     new_bal = await asyncio.to_thread(
@@ -88,7 +89,7 @@ class EventMixin(MixinMeta):
                         message.guild.id, target_id, message.author.id,
                     )
                     results.append(
-                        f"**{target.display_name}** lost a ChodeCoin. (Balance: **{new_bal}** CC)"
+                        f"**{target.display_name}** lost a ChodeCoin. (Balance: **{new_bal}** {COIN_EMOJI})"
                     )
             except Exception as e:
                 log.error(f"Error processing karma for {target_id}: {e}")

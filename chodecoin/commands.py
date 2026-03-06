@@ -7,14 +7,12 @@ import discord
 from redbot.core import commands
 from .abc import MixinMeta
 from .db import ChodeCoinDB
+from .constants import COIN_EMOJI, EMBED_COLOR
 
 if TYPE_CHECKING:
     pass
 
 log = logging.getLogger("red.chodecoin.commands")
-
-COIN_EMOJI = "\U0001fa99"  # 🪙
-EMBED_COLOR = 0xFFD700  # gold
 
 
 class CommandsMixin(MixinMeta):
@@ -40,7 +38,7 @@ class CommandsMixin(MixinMeta):
         )
         embed.set_thumbnail(url=target.display_avatar.url)
         embed.add_field(name="User", value=target.mention, inline=True)
-        embed.add_field(name="Balance", value=f"**{balance}** CC", inline=True)
+        embed.add_field(name="Balance", value=f"**{balance}** {COIN_EMOJI}", inline=True)
         if rank is not None:
             embed.add_field(name="Rank", value=f"#{rank}", inline=True)
         await ctx.send(embed=embed)
@@ -73,18 +71,18 @@ class CommandsMixin(MixinMeta):
         embed = discord.Embed(
             title=f"{COIN_EMOJI} ChodeCoin Gift",
             description=(
-                f"{ctx.author.mention} gifted **{amount}** CC to {member.mention}!"
+                f"{ctx.author.mention} gifted **{amount}** {COIN_EMOJI} to {member.mention}!"
             ),
             color=EMBED_COLOR,
         )
         embed.add_field(
             name=f"{ctx.author.display_name}'s Balance",
-            value=f"**{sender_bal}** CC",
+            value=f"**{sender_bal}** {COIN_EMOJI}",
             inline=True,
         )
         embed.add_field(
             name=f"{member.display_name}'s Balance",
-            value=f"**{recip_bal}** CC",
+            value=f"**{recip_bal}** {COIN_EMOJI}",
             inline=True,
         )
         await ctx.send(embed=embed)
@@ -111,7 +109,7 @@ class CommandsMixin(MixinMeta):
             member = ctx.guild.get_member(int(user_id_str))
             name = member.display_name if member else f"Unknown ({user_id_str})"
             medal = {1: "\U0001f947", 2: "\U0001f948", 3: "\U0001f949"}.get(i, f"**{i}.**")
-            lines.append(f"{medal} {name} — **{balance}** CC")
+            lines.append(f"{medal} {name} — **{balance}** {COIN_EMOJI}")
 
         embed = discord.Embed(
             title=f"{COIN_EMOJI} ChodeCoin Leaderboard",
@@ -142,7 +140,7 @@ class CommandsMixin(MixinMeta):
             color=EMBED_COLOR,
         )
         embed.set_thumbnail(url=target.display_avatar.url)
-        embed.add_field(name="Balance", value=f"**{balance}** CC", inline=True)
+        embed.add_field(name="Balance", value=f"**{balance}** {COIN_EMOJI}", inline=True)
         embed.add_field(name="Rank", value=f"#{rank}" if rank else "N/A", inline=True)
         embed.add_field(name="\u200b", value="\u200b", inline=True)  # spacer
 
@@ -160,12 +158,12 @@ class CommandsMixin(MixinMeta):
 
         embed.add_field(
             name="Gifts Sent",
-            value=f"{s.get('gifts_sent', 0)} ({s.get('gifts_sent_total', 0)} CC total)",
+            value=f"{s.get('gifts_sent', 0)} ({s.get('gifts_sent_total', 0)} {COIN_EMOJI} total)",
             inline=True,
         )
         embed.add_field(
             name="Gifts Received",
-            value=f"{s.get('gifts_recv', 0)} ({s.get('gifts_recv_total', 0)} CC total)",
+            value=f"{s.get('gifts_recv', 0)} ({s.get('gifts_recv_total', 0)} {COIN_EMOJI} total)",
             inline=True,
         )
 

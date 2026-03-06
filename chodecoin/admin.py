@@ -7,14 +7,12 @@ import discord
 from redbot.core import commands
 from .abc import MixinMeta
 from .db import ChodeCoinDB
+from .constants import COIN_EMOJI, EMBED_COLOR
 
 if TYPE_CHECKING:
     pass
 
 log = logging.getLogger("red.chodecoin.admin")
-
-COIN_EMOJI = "\U0001fa99"
-EMBED_COLOR = 0xFFD700
 
 
 class AdminMixin(MixinMeta):
@@ -46,7 +44,7 @@ class AdminMixin(MixinMeta):
         )
         embed = discord.Embed(
             title=f"{COIN_EMOJI} Balance Updated",
-            description=f"{member.mention}'s balance set to **{new_bal}** CC.",
+            description=f"{member.mention}'s balance set to **{new_bal}** {COIN_EMOJI}.",
             color=EMBED_COLOR,
         )
         await ctx.send(embed=embed)
@@ -116,7 +114,7 @@ class AdminMixin(MixinMeta):
             ChodeCoinDB.admin_set_balance,
             ctx.guild.id, member.id, current + amount, ctx.author.id,
         )
-        await ctx.send(f"Added **{amount}** CC to {member.mention}. New balance: **{new_bal}** CC.")
+        await ctx.send(f"Added **{amount}** {COIN_EMOJI} to {member.mention}. New balance: **{new_bal}** {COIN_EMOJI}.")
 
     @ccadmin.command(name="remove")
     async def admin_remove(self, ctx: commands.Context, member: discord.Member, amount: int):
@@ -132,4 +130,4 @@ class AdminMixin(MixinMeta):
             ChodeCoinDB.admin_set_balance,
             ctx.guild.id, member.id, current - amount, ctx.author.id,
         )
-        await ctx.send(f"Removed **{amount}** CC from {member.mention}. New balance: **{new_bal}** CC.")
+        await ctx.send(f"Removed **{amount}** {COIN_EMOJI} from {member.mention}. New balance: **{new_bal}** {COIN_EMOJI}.")
