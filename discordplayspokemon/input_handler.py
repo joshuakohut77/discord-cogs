@@ -122,9 +122,9 @@ class InputHandler:
                 buttons.append(btn)
             else:
                 # Token didn't match as a word — try character-by-character
-                # so "aaa" → a, a, a and "rrr" → right, right, right
+                # using the full letter map so every letter becomes an input
                 for char in tok:
-                    btn = INPUT_MAP.get(char)
+                    btn = LETTER_TO_BUTTON.get(char)
                     if btn:
                         buttons.append(btn)
                     if len(buttons) >= max_inputs:
