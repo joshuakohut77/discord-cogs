@@ -34,14 +34,13 @@ class ChodeCoin(
 
     def __init__(self, bot: Red):
         self.bot: Red = bot
-        self.db_pool = DatabasePool()
 
     async def initialize(self) -> None:
         """Called from __init__.py after construction."""
-        self.db_pool.initialize()
+        DatabasePool.initialize()
         await asyncio.to_thread(ChodeCoinDB.create_tables)
         log.info("ChodeCoin tables ready.")
 
     def cog_unload(self):
         """Cleanup when cog is unloaded."""
-        self.db_pool.close()
+        DatabasePool.close()
