@@ -42,8 +42,12 @@ VALID_BUTTONS = {"a", "b", "up", "down", "left", "right", "start", "select"}
 # -----------------------------------------------------------------------
 # Passive harvesting: ALL 26 letters map to buttons, distributed by
 # English letter frequency so the five primary buttons (a, up, down,
-# left, right) each receive ~18% of natural text input, while the
-# three secondary buttons (b, start, select) receive ~2% each.
+# left, right) each receive ~17-19% of natural text input, while the
+# three secondary buttons (b, start, select) receive low input.
+#
+# Traditional shortcuts are preserved: a→a, b→b, u→up, d→down,
+# l→left, r→right, s→start.  Remaining letters are balanced by
+# frequency.
 #
 # Letter frequencies (approximate %):
 #   e 12.70  t 9.06  a 8.17  o 7.51  i 6.97  n 6.75  s 6.33
@@ -52,42 +56,42 @@ VALID_BUTTONS = {"a", "b", "up", "down", "left", "right", "start", "select"}
 #   k 0.77   j 0.15  x 0.15  q 0.10  z 0.07
 #
 # Resulting distribution:
-#   BUTTON A  : e, d, f           → 19.18%
-#   UP        : a, h, u, g        → 19.04%
-#   DOWN      : t, r, m           → 17.46%
-#   LEFT      : o, s, c, w        → 18.98%
-#   RIGHT     : i, n, l           → 17.75%
-#   B         : z, q, x, j, k, v  →  2.22%
-#   START     : b, p               →  3.22%
-#   SELECT    : y                  →  1.97%
+#   BUTTON A  : a, n, w, p        → 19.21%
+#   UP        : u, e, m           → 17.87%
+#   DOWN      : d, o, h           → 17.85%
+#   LEFT      : l, t, f, g        → 17.34%
+#   RIGHT     : r, i, c, y        → 17.71%
+#   B         : b                  →  1.29%
+#   START     : s                  →  6.33%
+#   SELECT    : z, q, x, j, k, v  →  2.22%
 # -----------------------------------------------------------------------
 LETTER_TO_BUTTON: dict[str, str] = {
-    "a": "up",      # 8.17%
-    "b": "start",   # 1.29%
-    "c": "left",    # 2.78%
-    "d": "a",       # 4.25%
-    "e": "a",       # 12.70%
-    "f": "a",       # 2.23%
-    "g": "up",      # 2.02%
-    "h": "up",      # 6.09%
+    "a": "a",       # 8.17%
+    "b": "b",       # 1.29%
+    "c": "right",   # 2.78%
+    "d": "down",    # 4.25%
+    "e": "up",      # 12.70%
+    "f": "left",    # 2.23%
+    "g": "left",    # 2.02%
+    "h": "down",    # 6.09%
     "i": "right",   # 6.97%
-    "j": "b",       # 0.15%
-    "k": "b",       # 0.77%
-    "l": "right",   # 4.03%
-    "m": "down",    # 2.41%
-    "n": "right",   # 6.75%
-    "o": "left",    # 7.51%
-    "p": "start",   # 1.93%
-    "q": "b",       # 0.10%
-    "r": "down",    # 5.99%
-    "s": "left",    # 6.33%
-    "t": "down",    # 9.06%
+    "j": "select",  # 0.15%
+    "k": "select",  # 0.77%
+    "l": "left",    # 4.03%
+    "m": "up",      # 2.41%
+    "n": "a",       # 6.75%
+    "o": "down",    # 7.51%
+    "p": "a",       # 1.93%
+    "q": "select",  # 0.10%
+    "r": "right",   # 5.99%
+    "s": "start",   # 6.33%
+    "t": "left",    # 9.06%
     "u": "up",      # 2.76%
-    "v": "b",       # 0.98%
-    "w": "left",    # 2.36%
-    "x": "b",       # 0.15%
-    "y": "select",  # 1.97%
-    "z": "b",       # 0.07%
+    "v": "select",  # 0.98%
+    "w": "a",       # 2.36%
+    "x": "select",  # 0.15%
+    "y": "right",   # 1.97%
+    "z": "select",  # 0.07%
 }
 
 # Pattern for multi-input strings like "up up a left"
