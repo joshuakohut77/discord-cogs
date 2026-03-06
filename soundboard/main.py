@@ -158,8 +158,11 @@ class Soundboard(EventMixin, commands.Cog, metaclass=CompositeClass):
 
             # Stop current playback and play the new sound
             player.store("soundboard_playing", True)
+            if player.is_playing:
+                await player.stop()
             player.queue.clear()
-            await player.play(track)
+            player.add(player.channel.guild.me, track)
+            await player.play()
 
             log.info(f"[PLAY] Now playing: {sound} (vol={effective_volume})")
             return {}
