@@ -4,6 +4,7 @@ import logging
 from typing import TYPE_CHECKING
 
 import discord
+import lavalink
 from redbot.core import commands
 
 from .abc import MixinMeta
@@ -39,21 +40,21 @@ class EventMixin(MixinMeta):
                 return
 
             # If we're already in the target channel, do nothing
-            if self.current_vc and self.current_vc.channel == after.channel:
-                return
+            try:
+                player = lavalink.get_player(guild.id)
+                if player and player.channel and player.channel.id == after.channel.id:
+                    return
+            except (KeyError, IndexError):
+                pass
 
-            # Disconnect from any existing voice connection in this guild first
-            existing_vc = guild.voice_client
-            if existing_vc:
-                await existing_vc.disconnect(force=True)
-                self.current_vc = None
+            # Disconnect any existing voice connection in this guild first
+            await self.disconnect_from_guild(guild)
 
             try:
-                self.current_vc = await after.channel.connect()
+                player = await lavalink.connect(after.channel)
                 log.info(f"[VOICE] Auto-joined: {after.channel.name} in {guild.name}")
             except Exception as e:
                 log.error(f"[VOICE] Failed to join {after.channel.name}: {e}")
-                self.current_vc = None
 
         # Owner left voice entirely (didn't just move)
         elif after.channel is None and before.channel is not None:
@@ -63,8 +64,5 @@ class EventMixin(MixinMeta):
             if not auto_leave:
                 return
 
-            existing_vc = guild.voice_client
-            if existing_vc:
-                await existing_vc.disconnect(force=True)
-                self.current_vc = None
-                log.info(f"[VOICE] Auto-left voice in {guild.name} (owner disconnected)")
+            await self.disconnect_from_guild(guild)
+            log.info(f"[VOICE] Auto-left voice in {guild.name} (owner disconnected)")

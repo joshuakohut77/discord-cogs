@@ -1,10 +1,10 @@
 {
     "author": ["BiCuriousGeorge#8804"],
-    "install_msg": "Soundboard cog installed! The bot will auto-join your voice channel and play sounds from the web soundboard.",
+    "install_msg": "Soundboard cog installed! The bot will auto-join your voice channel and play sounds from the web soundboard via Lavalink. Make sure the Audio cog is loaded and local sources are enabled in your Lavalink application.yml.",
     "name": "Soundboard",
-    "short": "Web-controlled soundboard for Discord voice",
-    "description": "Runs an HTTP API server that receives play/stop commands from a web-based soundboard. Auto-joins the bot owner's voice channel and plays audio files with optional normalization.",
+    "short": "Web-controlled soundboard for Discord voice via Lavalink",
+    "description": "Runs an HTTP API server that receives play/stop commands from a web-based soundboard. Auto-joins the bot owner's voice channel and plays local audio files through Lavalink. Requires the Audio cog to be loaded and local: true in Lavalink's application.yml.",
     "tags": ["audio", "voice", "soundboard"],
-    "requirements": ["aiohttp"],
+    "requirements": [],
     "hidden": false
 }

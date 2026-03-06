@@ -6,9 +6,10 @@ import logging
 import math
 import os
 from abc import ABCMeta
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 import discord
+import lavalink
 from redbot.core import Config, commands
 
 from .api import SoundboardAPI
@@ -29,20 +30,27 @@ class Soundboard(EventMixin, commands.Cog, metaclass=CompositeClass):
     """Web-controlled soundboard for Discord voice channels.
 
     Runs an HTTP API that the web soundboard sends play/stop commands to.
-    Auto-joins the bot owner's voice channel.
+    Auto-joins the bot owner's voice channel and plays sounds via Lavalink.
     """
 
     def __init__(self, bot: Red):
         super().__init__()
         self.bot: Red = bot
-        self.current_vc: Optional[discord.VoiceClient] = None
         self.api_server: Optional[SoundboardAPI] = None
 
-        # Read env vars that mirror the web app's docker-compose
-        self.sounds_dir: str = os.environ.get("SOUNDS_DIR", "/app/sounds")
+        # Config env vars
+        self.sounds_dir: str = os.environ.get("SOUNDS_DIR", "/sounds")
         self.api_secret: str = os.environ.get("API_SECRET", "")
         self.api_port: int = int(os.environ.get("API_PORT", "8765"))
-        self.config_file: str = os.environ.get("SOUNDBOARD_CONFIG", "/app/soundboard_config.json")
+        self.config_file: str = os.environ.get(
+            "SOUNDBOARD_CONFIG", "/soundboard_config/config.json"
+        )
+
+        # The lavalink path to the sounds dir (as seen by the lavalink container)
+        # This may differ from self.sounds_dir if lavalink mounts it differently
+        self.lavalink_sounds_dir: str = os.environ.get(
+            "LAVALINK_SOUNDS_DIR", "/sounds"
+        )
 
         self.config = Config.get_conf(self, identifier=7364827591, force_registration=True)
 
@@ -60,14 +68,18 @@ class Soundboard(EventMixin, commands.Cog, metaclass=CompositeClass):
         await self.api_server.start()
 
     def cog_unload(self) -> None:
-        """Clean up voice and API server."""
+        """Clean up API server."""
         if self.api_server:
             asyncio.create_task(self.api_server.stop())
 
-        if self.current_vc and self.current_vc.is_connected():
-            asyncio.create_task(self.current_vc.disconnect(force=True))
+    # ── helpers ──────────────────────────────────────────────────────────
 
-    # ── soundboard config helpers ────────────────────────────────────────
+    def _get_player(self, guild_id: int) -> Optional[lavalink.Player]:
+        """Get the lavalink player for a guild, if one exists."""
+        try:
+            return lavalink.get_player(guild_id)
+        except (KeyError, IndexError):
+            return None
 
     def _load_soundboard_config(self) -> dict:
         """Load the soundboard config.json for normalization settings."""
@@ -79,10 +91,17 @@ class Soundboard(EventMixin, commands.Cog, metaclass=CompositeClass):
             log.warning(f"Could not load soundboard config: {e}")
         return {}
 
+    def _get_voice_guild(self) -> Optional[discord.Guild]:
+        """Find the guild where the bot is currently in voice."""
+        for guild in self.bot.guilds:
+            if guild.voice_client:
+                return guild
+        return None
+
     # ── playback ─────────────────────────────────────────────────────────
 
     async def play_sound(self, sound: str, volume: int = 100) -> dict:
-        """Play a sound file through the current voice connection.
+        """Play a sound file through Lavalink in the current voice channel.
 
         Args:
             sound: Relative path to the sound file (e.g. "memes/Bruh Sound Effect.mp3")
@@ -91,73 +110,110 @@ class Soundboard(EventMixin, commands.Cog, metaclass=CompositeClass):
         Returns:
             dict with "error" key on failure, or empty dict on success.
         """
-        if not self.current_vc or not self.current_vc.is_connected():
+        # Find which guild we're connected to voice in
+        guild = self._get_voice_guild()
+        if not guild:
             return {"error": "Bot is not in a voice channel", "status": 503}
 
+        player = self._get_player(guild.id)
+        if not player:
+            return {"error": "No Lavalink player for this guild", "status": 503}
+
+        # Verify the file exists on the bot's filesystem
         sound_path = os.path.join(self.sounds_dir, sound)
         if not os.path.isfile(sound_path):
             return {"error": f"Sound file not found: {sound}", "status": 404}
 
-        # Stop anything currently playing
-        if self.current_vc.is_playing():
-            self.current_vc.stop()
-
-        # Build ffmpeg options
-        sb_config = self._load_soundboard_config()
-        before_options = "-nostdin"
-        after_options = self._build_ffmpeg_filters(sb_config, volume)
+        # Build the lavalink local file identifier
+        # Lavalink needs the absolute path as seen from the lavalink container
+        lavalink_path = os.path.join(self.lavalink_sounds_dir, sound)
 
         try:
-            source = discord.FFmpegPCMAudio(
-                sound_path,
-                before_options=before_options,
-                options=after_options,
-            )
-            self.current_vc.play(source, after=lambda e: self._playback_done(e))
-            log.info(f"[PLAY] Now playing: {sound}")
+            # Load the track through lavalink
+            result = await player.load_tracks(lavalink_path)
+
+            if not result.tracks:
+                return {"error": f"Lavalink could not load: {sound}", "status": 500}
+
+            track = result.tracks[0]
+
+            # Set volume (lavalink uses 0-150 scale, we map 0-100 input)
+            # Also apply any normalization gain from config
+            sb_config = self._load_soundboard_config()
+            effective_volume = self._calculate_volume(volume, sb_config)
+            await player.set_volume(effective_volume)
+
+            # Stop current playback and play the new sound
+            player.store("soundboard_playing", True)
+            player.queue.clear()
+            await player.play(track)
+
+            log.info(f"[PLAY] Now playing: {sound} (vol={effective_volume})")
             return {}
+
         except Exception as e:
             log.error(f"[PLAY] Error playing {sound}: {e}")
             return {"error": str(e), "status": 500}
 
     async def stop_sound(self) -> dict:
         """Stop the currently playing sound."""
-        if not self.current_vc or not self.current_vc.is_connected():
+        guild = self._get_voice_guild()
+        if not guild:
             return {"error": "Bot is not in a voice channel", "status": 503}
 
-        if self.current_vc.is_playing():
-            self.current_vc.stop()
+        player = self._get_player(guild.id)
+        if not player:
+            return {"error": "No Lavalink player for this guild", "status": 503}
+
+        player.queue.clear()
+        await player.stop()
+        player.store("soundboard_playing", False)
 
         return {}
 
     @staticmethod
-    def _build_ffmpeg_filters(sb_config: dict, volume: int) -> str:
-        """Build the ffmpeg -af filter string based on soundboard config."""
-        filters = []
+    def _calculate_volume(volume: int, sb_config: dict) -> int:
+        """Calculate effective lavalink volume (0-150) from user volume and config gain."""
+        # Start with user volume as a fraction
+        vol_fraction = max(0, min(volume, 100)) / 100.0
 
-        # Volume adjustment (convert 0-100 percentage to 0.0-1.0 float)
-        vol = max(0, min(volume, 100)) / 100.0
-        if vol != 1.0:
-            filters.append(f"volume={vol:.2f}")
-
-        # Normalization
+        # Apply normalization gain if enabled
         normalize = sb_config.get("normalize_audio", True)
         if normalize:
-            gain = sb_config.get("normalization_gain", -9)
-            # dynaudnorm for real-time normalization
-            filters.append("dynaudnorm=f=150:g=15")
-            # Apply gain offset
-            if gain != 0:
-                linear_gain = math.pow(10, gain / 20.0)
-                filters.append(f"volume={linear_gain:.4f}")
+            gain_db = sb_config.get("normalization_gain", -9)
+            if gain_db != 0:
+                linear_gain = math.pow(10, gain_db / 20.0)
+                vol_fraction *= linear_gain
 
-        if filters:
-            return f'-af {",".join(filters)}'
-        return ""
+        # Lavalink volume is 0-150 (100 = normal)
+        lavalink_vol = int(vol_fraction * 100)
+        return max(0, min(lavalink_vol, 150))
 
-    def _playback_done(self, error: Optional[Exception]) -> None:
-        if error:
-            log.error(f"[PLAY] Playback error: {error}")
+    # ── voice connection ─────────────────────────────────────────────────
+
+    async def connect_to_channel(self, channel: discord.VoiceChannel) -> Optional[lavalink.Player]:
+        """Connect to a voice channel using lavalink."""
+        try:
+            player = await lavalink.connect(channel)
+            log.info(f"[VOICE] Connected to: {channel.name} in {channel.guild.name}")
+            return player
+        except Exception as e:
+            log.error(f"[VOICE] Failed to connect to {channel.name}: {e}")
+            return None
+
+    async def disconnect_from_guild(self, guild: discord.Guild) -> None:
+        """Disconnect from voice in a guild."""
+        try:
+            player = self._get_player(guild.id)
+            if player:
+                player.queue.clear()
+                await player.stop()
+                await player.disconnect()
+            elif guild.voice_client:
+                await guild.voice_client.disconnect(force=True)
+            log.info(f"[VOICE] Disconnected from voice in {guild.name}")
+        except Exception as e:
+            log.error(f"[VOICE] Error disconnecting in {guild.name}: {e}")
 
     # ── commands ──────────────────────────────────────────────────────────
 
@@ -178,22 +234,21 @@ class Soundboard(EventMixin, commands.Cog, metaclass=CompositeClass):
         channel = ctx.author.voice.channel
 
         # Disconnect existing connection in this guild
-        if ctx.guild.voice_client:
-            await ctx.guild.voice_client.disconnect(force=True)
+        await self.disconnect_from_guild(ctx.guild)
 
-        try:
-            self.current_vc = await channel.connect()
+        player = await self.connect_to_channel(channel)
+        if player:
             await ctx.send(f"Joined **{channel.name}**.")
-        except Exception as e:
-            await ctx.send(f"Failed to join: {e}")
+        else:
+            await ctx.send("Failed to join the voice channel.")
 
     @soundboard.command()
     @commands.is_owner()
     async def leave(self, ctx: commands.Context) -> None:
         """Leave the current voice channel."""
-        if ctx.guild.voice_client:
-            await ctx.guild.voice_client.disconnect(force=True)
-            self.current_vc = None
+        player = self._get_player(ctx.guild.id)
+        if player:
+            await self.disconnect_from_guild(ctx.guild)
             await ctx.send("Disconnected from voice.")
         else:
             await ctx.send("I'm not in a voice channel.")
@@ -202,10 +257,14 @@ class Soundboard(EventMixin, commands.Cog, metaclass=CompositeClass):
     @commands.is_owner()
     async def status(self, ctx: commands.Context) -> None:
         """Show soundboard status."""
+        player = self._get_player(ctx.guild.id)
+
         vc_status = "Not connected"
-        if self.current_vc and self.current_vc.is_connected():
-            vc_status = f"Connected to **{self.current_vc.channel.name}**"
-            if self.current_vc.is_playing():
+        if player and player.channel:
+            channel = ctx.guild.get_channel(player.channel.id)
+            channel_name = channel.name if channel else "Unknown"
+            vc_status = f"Connected to **{channel_name}**"
+            if player.is_playing:
                 vc_status += " (playing)"
 
         api_status = "Running" if self.api_server and self.api_server.site else "Not running"
@@ -213,7 +272,8 @@ class Soundboard(EventMixin, commands.Cog, metaclass=CompositeClass):
         embed = discord.Embed(title="🎵 Soundboard Status", color=0x0066FF)
         embed.add_field(name="Voice", value=vc_status, inline=False)
         embed.add_field(name="API Server", value=f"{api_status} (port {self.api_port})", inline=False)
-        embed.add_field(name="Sounds Directory", value=self.sounds_dir, inline=False)
+        embed.add_field(name="Sounds Dir (bot)", value=self.sounds_dir, inline=False)
+        embed.add_field(name="Sounds Dir (lavalink)", value=self.lavalink_sounds_dir, inline=False)
 
         sb_config = self._load_soundboard_config()
         norm_status = "Enabled" if sb_config.get("normalize_audio", True) else "Disabled"
@@ -221,6 +281,19 @@ class Soundboard(EventMixin, commands.Cog, metaclass=CompositeClass):
         embed.add_field(name="Gain", value=f"{sb_config.get('normalization_gain', -9)} dB", inline=True)
 
         await ctx.send(embed=embed)
+
+    @soundboard.command()
+    @commands.is_owner()
+    async def test(self, ctx: commands.Context, *, sound: str) -> None:
+        """Test playing a sound by relative path.
+
+        Example: [p]soundboard test memes/Bruh Sound Effect.mp3
+        """
+        result = await self.play_sound(sound, volume=100)
+        if result.get("error"):
+            await ctx.send(f"Error: {result['error']}")
+        else:
+            await ctx.send(f"Playing: **{sound}**")
 
     @soundboard.command()
     @commands.admin_or_permissions(manage_guild=True)
