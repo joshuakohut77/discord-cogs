@@ -1125,3 +1125,33 @@ class VaultDB:
             'DELETE FROM vault_inventory_state WHERE "InventoryId" = %(id)s AND "Key" = %(key)s',
             {"id": inv_id, "key": key},
         )
+
+    @staticmethod
+    def browse_store_all(
+        category: Optional[str] = None,
+        rarity: Optional[str] = None,
+        limit: int = 200,
+        offset: int = 0,
+    ) -> list[dict]:
+        """Browse ALL cards in the catalog (active or not, store or not).
+
+        Used by admin browse command to see the full catalog.
+        Unlike browse_store(), this doesn't filter by IsInStore or IsActive.
+        """
+        database = dbconn()
+        conditions = []
+        params: dict = {"limit": limit, "offset": offset}
+
+        if category:
+            conditions.append('"Category" = %(category)s')
+            params["category"] = category
+        if rarity:
+            conditions.append('"Rarity" = %(rarity)s')
+            params["rarity"] = rarity
+
+        where = " WHERE " + " AND ".join(conditions) if conditions else ""
+        rows = database.queryAll(
+            f'SELECT * FROM vault_cards{where} ORDER BY "Category", "Rarity", "Name" LIMIT %(limit)s OFFSET %(offset)s',
+            params,
+        )
+        return [VaultDB._row_to_card_dict(r) for r in rows]
