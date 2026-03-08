@@ -18,15 +18,31 @@ if TYPE_CHECKING:
 
 log = logging.getLogger("red.vault.commands")
 
-# Display names for categories
-CATEGORY_DISPLAY = {
-    "superpower": "\u2728 Superpowers",
-    "ally": "\U0001f9d9 Allies",
-    "companion": "\U0001f43e Companions",
-    "item": "\U0001f9ea Items",
-    "weapon": "\u2694\ufe0f Weapons",
-    "armor": "\U0001f6e1\ufe0f Armor",
+# Separate emoji and label so select menus render emojis properly
+CATEGORY_EMOJI = {
+    "superpower": "\u2728",
+    "ally": "\U0001f9d9",
+    "companion": "\U0001f43e",
+    "item": "\U0001f9ea",
+    "weapon": "\u2694\ufe0f",
+    "armor": "\U0001f6e1\ufe0f",
 }
+
+CATEGORY_LABEL = {
+    "superpower": "Superpowers",
+    "ally": "Allies",
+    "companion": "Companions",
+    "item": "Items",
+    "weapon": "Weapons",
+    "armor": "Armor",
+}
+
+
+def cat_display(cat: str) -> str:
+    """Combined emoji + label for use in embeds and text."""
+    emoji = CATEGORY_EMOJI.get(cat, "")
+    label = CATEGORY_LABEL.get(cat, cat.title())
+    return f"{emoji} {label}" if emoji else label
 
 RARITY_DISPLAY = {
     "common": "Common",
@@ -78,13 +94,15 @@ class CategorySelect(discord.ui.Select):
             config = store_config.get(cat, {"pull_price": 5, "is_open": True})
             if not config["is_open"]:
                 continue
-            label = CATEGORY_DISPLAY.get(cat, cat.title())
+            label = CATEGORY_LABEL.get(cat, cat.title())
+            emoji = CATEGORY_EMOJI.get(cat)
             price = config["pull_price"]
             options.append(
                 discord.SelectOption(
                     label=label,
                     value=cat,
                     description=f"{price} ChodeCoin per pull",
+                    emoji=emoji,
                 )
             )
 
@@ -130,7 +148,7 @@ class CategorySelect(discord.ui.Select):
 
         # Build info embed
         embed = discord.Embed(
-            title=f"{CATEGORY_DISPLAY.get(category, category.title())}",
+            title=f"{cat_display(category)}",
             description=(
                 f"**Cost:** {price} {COIN_EMOJI} per pull\n"
                 f"**Your balance:** {balance} {COIN_EMOJI}\n\n"
@@ -249,7 +267,7 @@ class PullView(discord.ui.View):
         # Show opening animation
         opening_embed = discord.Embed(
             title="\U0001f0cf Opening...",
-            description=f"*Drawing from the {CATEGORY_DISPLAY.get(self.category, self.category)} vault...*",
+            description=f"*Drawing from the {cat_display(self.category)} vault...*",
             color=EMBED_COLOR,
         )
         await interaction.edit_original_response(embed=opening_embed, view=None)
@@ -395,7 +413,7 @@ def _build_store_front_embed(guild_name: str, store_config: dict) -> discord.Emb
     for cat in ALL_CATEGORIES:
         config = store_config.get(cat, {"pull_price": 5, "is_open": True})
         if config["is_open"]:
-            display = CATEGORY_DISPLAY.get(cat, cat.title())
+            display = cat_display(cat)
             embed.description += f"> {display} — **{config['pull_price']}** {COIN_EMOJI} per pull\n"
 
     embed.set_footer(text=f"Select a category below to see available cards | {guild_name}")
@@ -417,7 +435,7 @@ def _build_card_reveal_embed(
     )
     embed.add_field(
         name="Category",
-        value=CATEGORY_DISPLAY.get(card["category"], card["category"].title()),
+        value=cat_display(card["category"]),
         inline=True,
     )
     embed.add_field(
@@ -572,7 +590,7 @@ class CommandsMixin(MixinMeta):
                     fled = " \U0001f4a8"
                 lines.append(f"{rarity_icon} {item['name']}{equipped}{fled}")
 
-            display = CATEGORY_DISPLAY.get(cat, cat.title())
+            display = cat_display(cat)
             embed.add_field(
                 name=f"{display} ({len(cat_items)})",
                 value="\n".join(lines),
@@ -612,7 +630,7 @@ class CommandsMixin(MixinMeta):
 
         embed.add_field(
             name="Category",
-            value=CATEGORY_DISPLAY.get(match["category"], match["category"].title()),
+            value=cat_display(match["category"]),
             inline=True,
         )
         embed.add_field(
