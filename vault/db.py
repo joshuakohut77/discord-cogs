@@ -97,6 +97,19 @@ class VaultDB:
             );
         """)
 
+        # -- Store configuration (per-guild category pricing) --
+        database.execute("""
+            CREATE TABLE IF NOT EXISTS vault_store_config (
+                "Id"            SERIAL PRIMARY KEY,
+                "GuildId"       VARCHAR(255) NOT NULL,
+                "Category"      VARCHAR(50)  NOT NULL,
+                "PullPrice"     INTEGER      NOT NULL DEFAULT 5,
+                "IsOpen"        BOOLEAN      NOT NULL DEFAULT TRUE,
+                "UpdatedAt"     TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE ("GuildId", "Category")
+            );
+        """)
+
         # -- Indexes --
         for idx in [
             'CREATE INDEX IF NOT EXISTS idx_vault_cards_category ON vault_cards("Category");',
@@ -108,6 +121,7 @@ class VaultDB:
             'CREATE INDEX IF NOT EXISTS idx_vault_inv_card ON vault_inventory("CardId");',
             'CREATE INDEX IF NOT EXISTS idx_vault_inv_active ON vault_inventory("GuildId", "UserId", "IsActive");',
             'CREATE INDEX IF NOT EXISTS idx_vault_inv_state_inv ON vault_inventory_state("InventoryId");',
+            'CREATE INDEX IF NOT EXISTS idx_vault_store_cfg ON vault_store_config("GuildId", "Category");',
         ]:
             database.execute(idx)
 
@@ -691,6 +705,284 @@ class VaultDB:
             return False
         except (ValueError, TypeError):
             return True
+
+    # ==================================================================
+    # STORE — configuration, availability, purchasing
+    # ==================================================================
+
+    @staticmethod
+    def get_store_config(guild_id: int, category: str) -> dict:
+        """Get store config for a category in a guild. Creates default if missing."""
+        database = dbconn()
+        database.execute(
+            """INSERT INTO vault_store_config ("GuildId", "Category")
+               VALUES (%(gid)s, %(cat)s)
+               ON CONFLICT ("GuildId", "Category") DO NOTHING
+            """,
+            {"gid": str(guild_id), "cat": category},
+        )
+        row = database.querySingle(
+            """SELECT "PullPrice", "IsOpen" FROM vault_store_config
+               WHERE "GuildId" = %(gid)s AND "Category" = %(cat)s
+            """,
+            {"gid": str(guild_id), "cat": category},
+        )
+        return {"pull_price": row[0], "is_open": row[1]} if row else {"pull_price": 5, "is_open": True}
+
+    @staticmethod
+    def get_all_store_config(guild_id: int) -> dict:
+        """Get store config for all categories in a guild."""
+        from .constants import ALL_CATEGORIES
+        result = {}
+        for cat in ALL_CATEGORIES:
+            result[cat] = VaultDB.get_store_config(guild_id, cat)
+        return result
+
+    @staticmethod
+    def set_store_price(guild_id: int, category: str, price: int) -> None:
+        """Set the pull price for a category."""
+        database = dbconn()
+        database.execute(
+            """INSERT INTO vault_store_config ("GuildId", "Category", "PullPrice")
+               VALUES (%(gid)s, %(cat)s, %(price)s)
+               ON CONFLICT ("GuildId", "Category")
+               DO UPDATE SET "PullPrice" = %(price)s, "UpdatedAt" = CURRENT_TIMESTAMP
+            """,
+            {"gid": str(guild_id), "cat": category, "price": price},
+        )
+
+    @staticmethod
+    def set_store_open(guild_id: int, category: str, is_open: bool) -> None:
+        """Open or close a category in the store."""
+        database = dbconn()
+        database.execute(
+            """INSERT INTO vault_store_config ("GuildId", "Category", "IsOpen")
+               VALUES (%(gid)s, %(cat)s, %(open)s)
+               ON CONFLICT ("GuildId", "Category")
+               DO UPDATE SET "IsOpen" = %(open)s, "UpdatedAt" = CURRENT_TIMESTAMP
+            """,
+            {"gid": str(guild_id), "cat": category, "open": is_open},
+        )
+
+    @staticmethod
+    def get_available_card(
+        guild_id: int,
+        category: str,
+        rarity: str,
+    ) -> Optional[dict]:
+        """Pick a random available card respecting uniqueness rules.
+
+        For non-item categories: excludes cards actively owned by anyone in the guild.
+        For items: all active store cards are available (duplicates allowed).
+        """
+        from .constants import CATEGORY_ITEM
+
+        database = dbconn()
+        params: dict = {
+            "gid": str(guild_id),
+            "cat": category,
+            "rar": rarity,
+        }
+
+        if category == CATEGORY_ITEM:
+            # Items: no uniqueness constraint
+            row = database.querySingle(
+                """SELECT * FROM vault_cards
+                   WHERE "IsInStore" = TRUE AND "IsActive" = TRUE
+                   AND "Category" = %(cat)s AND "Rarity" = %(rar)s
+                   ORDER BY RANDOM() LIMIT 1
+                """,
+                params,
+            )
+        else:
+            # Non-items: exclude cards actively owned by anyone in the guild
+            row = database.querySingle(
+                """SELECT * FROM vault_cards c
+                   WHERE c."IsInStore" = TRUE AND c."IsActive" = TRUE
+                   AND c."Category" = %(cat)s AND c."Rarity" = %(rar)s
+                   AND c."Id" NOT IN (
+                       SELECT i."CardId" FROM vault_inventory i
+                       WHERE i."GuildId" = %(gid)s AND i."IsActive" = TRUE
+                   )
+                   ORDER BY RANDOM() LIMIT 1
+                """,
+                params,
+            )
+
+        if not row:
+            return None
+
+        card = VaultDB._row_to_card_dict(row)
+        card["properties"] = VaultDB._get_card_properties(card["id"])
+        return card
+
+    @staticmethod
+    def count_available_cards(guild_id: int, category: str) -> dict:
+        """Count available cards per rarity for a category in a guild.
+
+        Returns dict like {"common": 5, "uncommon": 3, "rare": 2, "legendary": 0}
+        """
+        from .constants import CATEGORY_ITEM, RARITY_ORDER
+
+        database = dbconn()
+        result = {}
+
+        for rarity in RARITY_ORDER:
+            params = {"gid": str(guild_id), "cat": category, "rar": rarity}
+
+            if category == CATEGORY_ITEM:
+                row = database.querySingle(
+                    """SELECT COUNT(*) FROM vault_cards
+                       WHERE "IsInStore" = TRUE AND "IsActive" = TRUE
+                       AND "Category" = %(cat)s AND "Rarity" = %(rar)s
+                    """,
+                    params,
+                )
+            else:
+                row = database.querySingle(
+                    """SELECT COUNT(*) FROM vault_cards c
+                       WHERE c."IsInStore" = TRUE AND c."IsActive" = TRUE
+                       AND c."Category" = %(cat)s AND c."Rarity" = %(rar)s
+                       AND c."Id" NOT IN (
+                           SELECT i."CardId" FROM vault_inventory i
+                           WHERE i."GuildId" = %(gid)s AND i."IsActive" = TRUE
+                       )
+                    """,
+                    params,
+                )
+
+            result[rarity] = row[0] if row else 0
+
+        return result
+
+    @staticmethod
+    def pull_card(
+        guild_id: int,
+        user_id: int,
+        category: str,
+    ) -> dict:
+        """Execute a full store pull: roll rarity, find available card, deduct CC, grant card.
+
+        Returns a result dict:
+            success: bool
+            error: optional error message
+            card: the card dict (if success)
+            rarity_rolled: what rarity was rolled
+            price: how much was charged
+            new_balance: CC balance after purchase
+        """
+        import random
+        from .constants import RARITY_WEIGHTS, RARITY_ORDER, CATEGORY_ITEM
+
+        # 1. Check store config
+        config = VaultDB.get_store_config(guild_id, category)
+        if not config["is_open"]:
+            return {"success": False, "error": f"The **{category}** section of the store is currently closed."}
+
+        price = config["pull_price"]
+
+        # 2. Check player balance (read from chodecoin_wallets directly)
+        balance = VaultDB._get_cc_balance(guild_id, user_id)
+        if balance < price:
+            return {
+                "success": False,
+                "error": f"Not enough ChodeCoin. You need **{price}** but only have **{balance}**.",
+            }
+
+        # 3. Roll rarity with fallback
+        # Build weighted list and shuffle priority
+        rarities = []
+        for r in RARITY_ORDER:
+            rarities.extend([r] * RARITY_WEIGHTS[r])
+        random.shuffle(rarities)
+
+        # Try the rolled rarity first, then fall through to others
+        rolled_rarity = random.choice(rarities)
+        try_order = [rolled_rarity] + [r for r in RARITY_ORDER if r != rolled_rarity]
+
+        card = None
+        actual_rarity = None
+        for rarity in try_order:
+            card = VaultDB.get_available_card(guild_id, category, rarity)
+            if card:
+                actual_rarity = rarity
+                break
+
+        if not card:
+            return {
+                "success": False,
+                "error": f"No **{category}** cards are available right now. The pool is depleted!",
+            }
+
+        # 4. Deduct ChodeCoin
+        new_balance = VaultDB._deduct_cc(guild_id, user_id, price, f"vault pull: {category}")
+
+        # 5. Grant card to player
+        inv_id = VaultDB.grant_card(guild_id, user_id, card["id"], acquired_via="store")
+
+        card["inv_id"] = inv_id
+
+        return {
+            "success": True,
+            "error": None,
+            "card": card,
+            "rarity_rolled": actual_rarity,
+            "price": price,
+            "new_balance": new_balance,
+        }
+
+    # ==================================================================
+    # CHODECOIN WALLET INTEGRATION
+    # Direct access to ChodeCoin economy tables for purchases.
+    # ==================================================================
+
+    @staticmethod
+    def _get_cc_balance(guild_id: int, user_id: int) -> int:
+        """Read a player's ChodeCoin balance directly from chodecoin_wallets."""
+        database = dbconn()
+        row = database.querySingle(
+            'SELECT "Balance" FROM chodecoin_wallets WHERE "GuildId" = %(gid)s AND "UserId" = %(uid)s AND "IsActive" = TRUE',
+            {"gid": str(guild_id), "uid": str(user_id)},
+        )
+        return row[0] if row else 0
+
+    @staticmethod
+    def _deduct_cc(guild_id: int, user_id: int, amount: int, note: str = "") -> int:
+        """Deduct ChodeCoin and log the transaction. Returns new balance."""
+        database = dbconn()
+
+        # Update balance
+        database.execute(
+            """UPDATE chodecoin_wallets
+               SET "Balance" = "Balance" - %(amt)s, "UpdatedAt" = CURRENT_TIMESTAMP
+               WHERE "GuildId" = %(gid)s AND "UserId" = %(uid)s AND "IsActive" = TRUE
+            """,
+            {"amt": amount, "gid": str(guild_id), "uid": str(user_id)},
+        )
+
+        # Get new balance
+        row = database.querySingle(
+            'SELECT "Balance" FROM chodecoin_wallets WHERE "GuildId" = %(gid)s AND "UserId" = %(uid)s',
+            {"gid": str(guild_id), "uid": str(user_id)},
+        )
+        new_balance = row[0] if row else 0
+
+        # Log transaction in chodecoin_transactions
+        database.execute(
+            """INSERT INTO chodecoin_transactions
+                ("GuildId", "UserId", "ActorId", "Type", "Amount", "BalanceAfter", "Note")
+               VALUES (%(gid)s, %(uid)s, %(uid)s, 'vault_purchase', %(amt)s, %(bal)s, %(note)s)
+            """,
+            {
+                "gid": str(guild_id),
+                "uid": str(user_id),
+                "amt": -amount,
+                "bal": new_balance,
+                "note": note,
+            },
+        )
+
+        return new_balance
 
     # ==================================================================
     # DM CONTEXT — feeds the dungeon master (Claude) game state

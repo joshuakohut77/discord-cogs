@@ -17,6 +17,14 @@ COIN_EMOJI_URL = (
 EMBED_COLOR = 0x8B0000        # dark red — fits the dark fantasy tone
 STORE_EMBED_COLOR = 0xffa72e  # gold — matches ChodeCoin for purchase context
 
+# -- Rarity embed colors for card reveal --
+RARITY_COLORS = {
+    "common": 0x9e9e9e,      # grey
+    "uncommon": 0x4caf50,     # green
+    "rare": 0x2196f3,         # blue
+    "legendary": 0xffd700,    # gold
+}
+
 # -- Card categories --
 CATEGORY_SUPERPOWER = "superpower"
 CATEGORY_ALLY = "ally"
@@ -70,7 +78,7 @@ ALL_EQUIP_SLOTS = [
 # Property key constants
 # Use these instead of raw strings to avoid typos.
 # Definitions (descriptions, data types) live in the DB table
-# chodecoin_property_defs — these are just the key references.
+# vault_property_defs — these are just the key references.
 # ---------------------------------------------------------------
 class PropKeys:
     """Known property keys for card_properties and inventory_state."""

@@ -3,7 +3,7 @@
 # ---------------------------------------------------------------
 # Shares the same Postgres instance as ChodeCoin.
 # By default uses the same database (DB_CC_NAME env var) since
-# the card tables are prefixed with "chodecoin_" and the systems
+# the card tables use the vault_ prefix and the systems
 # are related. Override with DB_VAULT_NAME if you want separation.
 #
 # Uses its own pool class so it's fully independent of ChodeCoin's
