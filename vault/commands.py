@@ -128,7 +128,7 @@ class CategorySelect(discord.ui.Select):
             VaultDB._get_cc_balance, interaction.guild.id, interaction.user.id
         )
 
-        # Build confirmation embed
+        # Build info embed
         embed = discord.Embed(
             title=f"{CATEGORY_DISPLAY.get(category, category.title())}",
             description=(
@@ -147,11 +147,63 @@ class CategorySelect(discord.ui.Select):
         if category != CATEGORY_ITEM:
             embed.set_footer(text="Non-item cards are unique — only one owner per server!")
 
-        # Switch to pull view
-        pull_view = PullView(view.cog, view.ctx, category, price, balance, view.store_config)
-        pull_view.message = view.message
+        # Show confirm view (not pull view yet)
+        confirm_view = ConfirmPullView(
+            view.cog, view.ctx, category, price, balance, view.store_config
+        )
+        confirm_view.message = view.message
 
-        await interaction.response.edit_message(embed=embed, view=pull_view)
+        await interaction.response.edit_message(embed=embed, view=confirm_view)
+
+
+class ConfirmPullView(discord.ui.View):
+    """Intermediate confirmation step — player sees category info and confirms before pulling."""
+
+    def __init__(self, cog, ctx, category, price, balance, store_config):
+        super().__init__(timeout=120)
+        self.cog = cog
+        self.ctx = ctx
+        self.category = category
+        self.price = price
+        self.balance = balance
+        self.store_config = store_config
+        self.message: Optional[discord.Message] = None
+
+        if balance < price:
+            self.confirm_button.disabled = True
+            self.confirm_button.label = f"Not enough CC ({price} needed)"
+            self.confirm_button.style = discord.ButtonStyle.secondary
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message(
+                "This isn't your store session.", ephemeral=True
+            )
+            return False
+        return True
+
+    async def on_timeout(self):
+        if self.message:
+            try:
+                await self.message.edit(view=None)
+            except discord.HTTPException:
+                pass
+
+    @discord.ui.button(label="Confirm Pull", style=discord.ButtonStyle.success, emoji="\U0001f0cf")
+    async def confirm_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        # Transition to the actual pull
+        pull_view = PullView(
+            self.cog, self.ctx, self.category, self.price, self.balance, self.store_config
+        )
+        pull_view.message = self.message
+        await pull_view.pull_button.callback(interaction)
+
+    @discord.ui.button(label="Back", style=discord.ButtonStyle.secondary, emoji="\u25c0\ufe0f")
+    async def back_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        embed = _build_store_front_embed(interaction.guild.name, self.store_config)
+        store_view = StoreView(self.cog, self.ctx, self.store_config)
+        store_view.message = self.message
+        await interaction.response.edit_message(embed=embed, view=store_view)
 
 
 class PullView(discord.ui.View):
@@ -289,7 +341,7 @@ class AfterPullView(discord.ui.View):
         pull_view.message = self.message
         await pull_view.pull_button.callback(interaction)
 
-    @discord.ui.button(label="Back to Store", style=discord.ButtonStyle.secondary, emoji="\U0001f3ea")
+    @discord.ui.button(label="Back to Store", style=discord.ButtonStyle.secondary)
     async def back_to_store_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         embed = _build_store_front_embed(interaction.guild.name, self.store_config)
         store_view = StoreView(self.cog, self.ctx, self.store_config)
@@ -316,7 +368,7 @@ class BackToStoreView(discord.ui.View):
             return False
         return True
 
-    @discord.ui.button(label="Back to Store", style=discord.ButtonStyle.secondary, emoji="\U0001f3ea")
+    @discord.ui.button(label="Back to Store", style=discord.ButtonStyle.secondary)
     async def back_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         embed = _build_store_front_embed(interaction.guild.name, self.store_config)
         store_view = StoreView(self.cog, self.ctx, self.store_config)
@@ -331,7 +383,7 @@ class BackToStoreView(discord.ui.View):
 def _build_store_front_embed(guild_name: str, store_config: dict) -> discord.Embed:
     """Build the main store landing page embed."""
     embed = discord.Embed(
-        title="\U0001f3ea The Vault — Card Store",
+        title="The Vault — Card Store",
         description=(
             "Spend your ChodeCoin to pull cards from the vault.\n"
             "Each pull gives you a random card — rarity is the gamble!\n\n"
