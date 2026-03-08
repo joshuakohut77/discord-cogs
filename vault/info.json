@@ -1,0 +1,10 @@
+{
+    "author": ["BiCuriousGeorge#8804"],
+    "install_msg": "The Vault has been opened. Use `[p]vault` to enter.",
+    "name": "vault",
+    "short": "Collectible card game powered by ChodeCoin",
+    "description": "The Vault — a dark fantasy collectible card system. Buy card packs with ChodeCoin, collect Superpowers, Allies, Companions, Items, Weapons, and Armor. Equip your loadout, manage your inventory, and use your cards in DnD-style campaigns run by an AI Dungeon Master.",
+    "tags": ["cards", "economy", "game", "dnd", "rpg", "collectible"],
+    "requirements": ["psycopg[binary]", "psycopg_pool"],
+    "hidden": false
+}
