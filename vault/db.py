@@ -28,7 +28,7 @@ class VaultDB:
 
         # -- Card catalog --
         database.execute("""
-            CREATE TABLE IF NOT EXISTS chodecoin_cards (
+            CREATE TABLE IF NOT EXISTS vault_cards (
                 "Id"            SERIAL PRIMARY KEY,
                 "Name"          VARCHAR(100) NOT NULL,
                 "Category"      VARCHAR(50)  NOT NULL,
@@ -48,7 +48,7 @@ class VaultDB:
 
         # -- Property definitions (the rulebook) --
         database.execute("""
-            CREATE TABLE IF NOT EXISTS chodecoin_property_defs (
+            CREATE TABLE IF NOT EXISTS vault_property_defs (
                 "Id"            SERIAL PRIMARY KEY,
                 "Key"           VARCHAR(100) NOT NULL UNIQUE,
                 "DataType"      VARCHAR(20)  NOT NULL DEFAULT 'string',
@@ -61,9 +61,9 @@ class VaultDB:
 
         # -- Card properties (mechanics per card) --
         database.execute("""
-            CREATE TABLE IF NOT EXISTS chodecoin_card_properties (
+            CREATE TABLE IF NOT EXISTS vault_card_properties (
                 "Id"            SERIAL PRIMARY KEY,
-                "CardId"        INTEGER      NOT NULL REFERENCES chodecoin_cards("Id") ON DELETE CASCADE,
+                "CardId"        INTEGER      NOT NULL REFERENCES vault_cards("Id") ON DELETE CASCADE,
                 "Key"           VARCHAR(100) NOT NULL,
                 "Value"         TEXT         NOT NULL,
                 UNIQUE ("CardId", "Key")
@@ -72,11 +72,11 @@ class VaultDB:
 
         # -- Player inventory --
         database.execute("""
-            CREATE TABLE IF NOT EXISTS chodecoin_inventory (
+            CREATE TABLE IF NOT EXISTS vault_inventory (
                 "Id"            SERIAL PRIMARY KEY,
                 "GuildId"       VARCHAR(255) NOT NULL,
                 "UserId"        VARCHAR(255) NOT NULL,
-                "CardId"        INTEGER      NOT NULL REFERENCES chodecoin_cards("Id"),
+                "CardId"        INTEGER      NOT NULL REFERENCES vault_cards("Id"),
                 "AcquiredVia"   VARCHAR(50)  NOT NULL DEFAULT 'store',
                 "IsActive"      BOOLEAN      NOT NULL DEFAULT TRUE,
                 "IsEquipped"    BOOLEAN      NOT NULL DEFAULT FALSE,
@@ -87,9 +87,9 @@ class VaultDB:
 
         # -- Inventory instance state --
         database.execute("""
-            CREATE TABLE IF NOT EXISTS chodecoin_inventory_state (
+            CREATE TABLE IF NOT EXISTS vault_inventory_state (
                 "Id"            SERIAL PRIMARY KEY,
-                "InventoryId"   INTEGER      NOT NULL REFERENCES chodecoin_inventory("Id") ON DELETE CASCADE,
+                "InventoryId"   INTEGER      NOT NULL REFERENCES vault_inventory("Id") ON DELETE CASCADE,
                 "Key"           VARCHAR(100) NOT NULL,
                 "Value"         TEXT         NOT NULL,
                 "UpdatedAt"     TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
@@ -99,15 +99,15 @@ class VaultDB:
 
         # -- Indexes --
         for idx in [
-            'CREATE INDEX IF NOT EXISTS idx_cards_category ON chodecoin_cards("Category");',
-            'CREATE INDEX IF NOT EXISTS idx_cards_rarity ON chodecoin_cards("Rarity");',
-            'CREATE INDEX IF NOT EXISTS idx_cards_store ON chodecoin_cards("IsInStore", "IsActive");',
-            'CREATE INDEX IF NOT EXISTS idx_card_props_card ON chodecoin_card_properties("CardId");',
-            'CREATE INDEX IF NOT EXISTS idx_card_props_key ON chodecoin_card_properties("Key");',
-            'CREATE INDEX IF NOT EXISTS idx_inv_guild_user ON chodecoin_inventory("GuildId", "UserId");',
-            'CREATE INDEX IF NOT EXISTS idx_inv_card ON chodecoin_inventory("CardId");',
-            'CREATE INDEX IF NOT EXISTS idx_inv_active ON chodecoin_inventory("GuildId", "UserId", "IsActive");',
-            'CREATE INDEX IF NOT EXISTS idx_inv_state_inv ON chodecoin_inventory_state("InventoryId");',
+            'CREATE INDEX IF NOT EXISTS idx_vault_cards_category ON vault_cards("Category");',
+            'CREATE INDEX IF NOT EXISTS idx_vault_cards_rarity ON vault_cards("Rarity");',
+            'CREATE INDEX IF NOT EXISTS idx_vault_cards_store ON vault_cards("IsInStore", "IsActive");',
+            'CREATE INDEX IF NOT EXISTS idx_vault_card_props_card ON vault_card_properties("CardId");',
+            'CREATE INDEX IF NOT EXISTS idx_vault_card_props_key ON vault_card_properties("Key");',
+            'CREATE INDEX IF NOT EXISTS idx_vault_inv_guild_user ON vault_inventory("GuildId", "UserId");',
+            'CREATE INDEX IF NOT EXISTS idx_vault_inv_card ON vault_inventory("CardId");',
+            'CREATE INDEX IF NOT EXISTS idx_vault_inv_active ON vault_inventory("GuildId", "UserId", "IsActive");',
+            'CREATE INDEX IF NOT EXISTS idx_vault_inv_state_inv ON vault_inventory_state("InventoryId");',
         ]:
             database.execute(idx)
 
@@ -120,7 +120,7 @@ class VaultDB:
         """Fetch a single card by ID with all its properties."""
         database = dbconn()
         row = database.querySingle(
-            'SELECT * FROM chodecoin_cards WHERE "Id" = %(id)s',
+            'SELECT * FROM vault_cards WHERE "Id" = %(id)s',
             {"id": card_id},
         )
         if not row:
@@ -136,12 +136,12 @@ class VaultDB:
         database = dbconn()
         if category:
             row = database.querySingle(
-                'SELECT * FROM chodecoin_cards WHERE LOWER("Name") = LOWER(%(name)s) AND "Category" = %(cat)s',
+                'SELECT * FROM vault_cards WHERE LOWER("Name") = LOWER(%(name)s) AND "Category" = %(cat)s',
                 {"name": name, "cat": category},
             )
         else:
             row = database.querySingle(
-                'SELECT * FROM chodecoin_cards WHERE LOWER("Name") = LOWER(%(name)s)',
+                'SELECT * FROM vault_cards WHERE LOWER("Name") = LOWER(%(name)s)',
                 {"name": name},
             )
         if not row:
@@ -172,7 +172,7 @@ class VaultDB:
 
         where = " AND ".join(conditions)
         rows = database.queryAll(
-            f'SELECT * FROM chodecoin_cards WHERE {where} ORDER BY "Category", "Rarity", "Name" LIMIT %(limit)s OFFSET %(offset)s',
+            f'SELECT * FROM vault_cards WHERE {where} ORDER BY "Category", "Rarity", "Name" LIMIT %(limit)s OFFSET %(offset)s',
             params,
         )
         return [VaultDB._row_to_card_dict(r) for r in rows]
@@ -193,7 +193,7 @@ class VaultDB:
 
         where = " AND ".join(conditions)
         row = database.querySingle(
-            f"SELECT COUNT(*) FROM chodecoin_cards WHERE {where}",
+            f"SELECT COUNT(*) FROM vault_cards WHERE {where}",
             params,
         )
         return row[0] if row else 0
@@ -209,7 +209,7 @@ class VaultDB:
             params["category"] = category
 
         row = database.querySingle(
-            f"""SELECT * FROM chodecoin_cards
+            f"""SELECT * FROM vault_cards
                 WHERE "IsInStore" = TRUE AND "IsActive" = TRUE
                 AND "Rarity" = %(rarity)s{cat_filter}
                 ORDER BY RANDOM() LIMIT 1""",
@@ -239,7 +239,7 @@ class VaultDB:
         """Insert a new card into the catalog. Returns the new card ID."""
         database = dbconn()
         row = database.executeAndReturn(
-            """INSERT INTO chodecoin_cards
+            """INSERT INTO vault_cards
                 ("Name", "Category", "Rarity", "Explanation", "Blurb", "StorePrice", "ArtFile")
                VALUES (%(name)s, %(cat)s, %(rar)s, %(expl)s, %(blurb)s, %(price)s, %(art)s)
                RETURNING "Id"
@@ -275,7 +275,7 @@ class VaultDB:
 
         database = dbconn()
         database.execute(
-            f'UPDATE chodecoin_cards SET {set_clause} WHERE "Id" = %(id)s',
+            f'UPDATE vault_cards SET {set_clause} WHERE "Id" = %(id)s',
             to_set,
         )
 
@@ -284,7 +284,7 @@ class VaultDB:
         """Set a property on a card (upsert)."""
         database = dbconn()
         database.execute(
-            """INSERT INTO chodecoin_card_properties ("CardId", "Key", "Value")
+            """INSERT INTO vault_card_properties ("CardId", "Key", "Value")
                VALUES (%(cid)s, %(key)s, %(val)s)
                ON CONFLICT ("CardId", "Key") DO UPDATE SET "Value" = %(val)s
             """,
@@ -296,7 +296,7 @@ class VaultDB:
         """Remove a property from a card."""
         database = dbconn()
         database.execute(
-            'DELETE FROM chodecoin_card_properties WHERE "CardId" = %(cid)s AND "Key" = %(key)s',
+            'DELETE FROM vault_card_properties WHERE "CardId" = %(cid)s AND "Key" = %(key)s',
             {"cid": card_id, "key": key},
         )
 
@@ -318,7 +318,7 @@ class VaultDB:
         """
         database = dbconn()
         row = database.executeAndReturn(
-            """INSERT INTO chodecoin_inventory
+            """INSERT INTO vault_inventory
                 ("GuildId", "UserId", "CardId", "AcquiredVia")
                VALUES (%(gid)s, %(uid)s, %(cid)s, %(via)s)
                RETURNING "Id"
@@ -371,8 +371,8 @@ class VaultDB:
             f"""SELECT i."Id" as inv_id, i."IsEquipped", i."AcquiredVia", i."AcquiredAt",
                        c."Id" as card_id, c."Name", c."Category", c."Rarity",
                        c."Explanation", c."Blurb", c."ArtFile", c."RenderedFile"
-                FROM chodecoin_inventory i
-                JOIN chodecoin_cards c ON i."CardId" = c."Id"
+                FROM vault_inventory i
+                JOIN vault_cards c ON i."CardId" = c."Id"
                 WHERE {where}
                 ORDER BY c."Category", c."Rarity", c."Name"
             """,
@@ -410,8 +410,8 @@ class VaultDB:
                       i."IsActive", i."AcquiredVia", i."AcquiredAt",
                       c."Id", c."Name", c."Category", c."Rarity",
                       c."Explanation", c."Blurb", c."ArtFile"
-               FROM chodecoin_inventory i
-               JOIN chodecoin_cards c ON i."CardId" = c."Id"
+               FROM vault_inventory i
+               JOIN vault_cards c ON i."CardId" = c."Id"
                WHERE i."Id" = %(id)s
             """,
             {"id": inv_id},
@@ -444,7 +444,7 @@ class VaultDB:
         database = dbconn()
         active_filter = ' AND "IsActive" = TRUE' if active_only else ""
         row = database.querySingle(
-            f'SELECT COUNT(*) FROM chodecoin_inventory WHERE "GuildId" = %(gid)s AND "UserId" = %(uid)s{active_filter}',
+            f'SELECT COUNT(*) FROM vault_inventory WHERE "GuildId" = %(gid)s AND "UserId" = %(uid)s{active_filter}',
             {"gid": str(guild_id), "uid": str(user_id)},
         )
         return row[0] if row else 0
@@ -454,7 +454,7 @@ class VaultDB:
         """Check if a player owns an active copy of a specific card."""
         database = dbconn()
         row = database.querySingle(
-            """SELECT COUNT(*) FROM chodecoin_inventory
+            """SELECT COUNT(*) FROM vault_inventory
                WHERE "GuildId" = %(gid)s AND "UserId" = %(uid)s
                AND "CardId" = %(cid)s AND "IsActive" = TRUE
             """,
@@ -471,7 +471,7 @@ class VaultDB:
         """Retire an inventory item (consumed, destroyed, etc)."""
         database = dbconn()
         database.execute(
-            """UPDATE chodecoin_inventory
+            """UPDATE vault_inventory
                SET "IsActive" = FALSE, "IsEquipped" = FALSE,
                    "RetiredAt" = CURRENT_TIMESTAMP
                WHERE "Id" = %(id)s
@@ -511,13 +511,13 @@ class VaultDB:
 
         # Unequip anything currently in that slot
         database.execute(
-            """UPDATE chodecoin_inventory
+            """UPDATE vault_inventory
                SET "IsEquipped" = FALSE
                WHERE "GuildId" = %(gid)s AND "UserId" = %(uid)s
                AND "IsActive" = TRUE AND "IsEquipped" = TRUE
                AND "Id" IN (
-                   SELECT i."Id" FROM chodecoin_inventory i
-                   JOIN chodecoin_card_properties cp ON i."CardId" = cp."CardId"
+                   SELECT i."Id" FROM vault_inventory i
+                   JOIN vault_card_properties cp ON i."CardId" = cp."CardId"
                    WHERE cp."Key" = 'equip_slot' AND cp."Value" = %(slot)s
                    AND i."GuildId" = %(gid)s AND i."UserId" = %(uid)s
                )
@@ -527,7 +527,7 @@ class VaultDB:
 
         # Equip the new item
         database.execute(
-            'UPDATE chodecoin_inventory SET "IsEquipped" = TRUE WHERE "Id" = %(id)s',
+            'UPDATE vault_inventory SET "IsEquipped" = TRUE WHERE "Id" = %(id)s',
             {"id": inv_id},
         )
 
@@ -540,7 +540,7 @@ class VaultDB:
         """Unequip an inventory item."""
         database = dbconn()
         database.execute(
-            'UPDATE chodecoin_inventory SET "IsEquipped" = FALSE WHERE "Id" = %(id)s',
+            'UPDATE vault_inventory SET "IsEquipped" = FALSE WHERE "Id" = %(id)s',
             {"id": inv_id},
         )
 
@@ -711,7 +711,7 @@ class VaultDB:
         prop_defs = {}
         for key in card["properties"]:
             defn = database.querySingle(
-                'SELECT "Description" FROM chodecoin_property_defs WHERE "Key" = %(key)s',
+                'SELECT "Description" FROM vault_property_defs WHERE "Key" = %(key)s',
                 {"key": key},
             )
             if defn:
@@ -737,7 +737,7 @@ class VaultDB:
             for key in item["properties"]:
                 if key not in all_defs:
                     defn = database.querySingle(
-                        'SELECT "Description" FROM chodecoin_property_defs WHERE "Key" = %(key)s',
+                        'SELECT "Description" FROM vault_property_defs WHERE "Key" = %(key)s',
                         {"key": key},
                     )
                     if defn:
@@ -759,7 +759,7 @@ class VaultDB:
         """Get all property definitions. Useful for DM context loading."""
         database = dbconn()
         rows = database.queryAll(
-            'SELECT "Key", "DataType", "AppliesTo", "Description", "Example" FROM chodecoin_property_defs ORDER BY "Key"'
+            'SELECT "Key", "DataType", "AppliesTo", "Description", "Example" FROM vault_property_defs ORDER BY "Key"'
         )
         return [
             {
@@ -775,7 +775,7 @@ class VaultDB:
 
     @staticmethod
     def _row_to_card_dict(row) -> dict:
-        """Convert a chodecoin_cards row tuple to a dict."""
+        """Convert a vault_cards row tuple to a dict."""
         return {
             "id": row[0],
             "name": row[1],
@@ -797,7 +797,7 @@ class VaultDB:
         """Get all properties for a card as a key->value dict."""
         database = dbconn()
         rows = database.queryAll(
-            'SELECT "Key", "Value" FROM chodecoin_card_properties WHERE "CardId" = %(cid)s',
+            'SELECT "Key", "Value" FROM vault_card_properties WHERE "CardId" = %(cid)s',
             {"cid": card_id},
         )
         return {k: v for k, v in rows}
@@ -807,7 +807,7 @@ class VaultDB:
         """Get all state key-values for an inventory instance."""
         database = dbconn()
         rows = database.queryAll(
-            'SELECT "Key", "Value" FROM chodecoin_inventory_state WHERE "InventoryId" = %(id)s',
+            'SELECT "Key", "Value" FROM vault_inventory_state WHERE "InventoryId" = %(id)s',
             {"id": inv_id},
         )
         return {k: v for k, v in rows}
@@ -817,7 +817,7 @@ class VaultDB:
         """Set or update a state value on an inventory instance."""
         database = dbconn()
         database.execute(
-            """INSERT INTO chodecoin_inventory_state ("InventoryId", "Key", "Value", "UpdatedAt")
+            """INSERT INTO vault_inventory_state ("InventoryId", "Key", "Value", "UpdatedAt")
                VALUES (%(id)s, %(key)s, %(val)s, CURRENT_TIMESTAMP)
                ON CONFLICT ("InventoryId", "Key")
                DO UPDATE SET "Value" = %(val)s, "UpdatedAt" = CURRENT_TIMESTAMP
@@ -830,6 +830,6 @@ class VaultDB:
         """Remove a state key from an inventory instance."""
         database = dbconn()
         database.execute(
-            'DELETE FROM chodecoin_inventory_state WHERE "InventoryId" = %(id)s AND "Key" = %(key)s',
+            'DELETE FROM vault_inventory_state WHERE "InventoryId" = %(id)s AND "Key" = %(key)s',
             {"id": inv_id, "key": key},
         )

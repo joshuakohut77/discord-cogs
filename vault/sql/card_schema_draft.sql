@@ -15,7 +15,7 @@
 -- The canonical definition of every card in the game.
 -- Universal fields only — anything behavioral goes in properties.
 -- ============================================================
-CREATE TABLE IF NOT EXISTS chodecoin_cards (
+CREATE TABLE IF NOT EXISTS vault_cards (
     "Id"            SERIAL PRIMARY KEY,
     "Name"          VARCHAR(100) NOT NULL,
     "Category"      VARCHAR(50)  NOT NULL,      -- superpower, ally, companion, item, weapon, armor, ...
@@ -33,9 +33,9 @@ CREATE TABLE IF NOT EXISTS chodecoin_cards (
     UNIQUE ("Name", "Category")
 );
 
-CREATE INDEX IF NOT EXISTS idx_cards_category ON chodecoin_cards("Category");
-CREATE INDEX IF NOT EXISTS idx_cards_rarity ON chodecoin_cards("Rarity");
-CREATE INDEX IF NOT EXISTS idx_cards_store ON chodecoin_cards("IsInStore", "IsActive");
+CREATE INDEX IF NOT EXISTS idx_vault_cards_category ON vault_cards("Category");
+CREATE INDEX IF NOT EXISTS idx_vault_cards_rarity ON vault_cards("Rarity");
+CREATE INDEX IF NOT EXISTS idx_vault_cards_store ON vault_cards("IsInStore", "IsActive");
 
 
 -- ============================================================
@@ -44,7 +44,7 @@ CREATE INDEX IF NOT EXISTS idx_cards_store ON chodecoin_cards("IsInStore", "IsAc
 -- data type to expect, and how the DM should interpret it.
 -- This is the "rulebook" the DM queries to understand mechanics.
 -- ============================================================
-CREATE TABLE IF NOT EXISTS chodecoin_property_defs (
+CREATE TABLE IF NOT EXISTS vault_property_defs (
     "Id"            SERIAL PRIMARY KEY,
     "Key"           VARCHAR(100) NOT NULL UNIQUE,
     "DataType"      VARCHAR(20)  NOT NULL DEFAULT 'string',  -- string, int, float, bool, json
@@ -60,17 +60,17 @@ CREATE TABLE IF NOT EXISTS chodecoin_property_defs (
 -- Key-value pairs that define a card's mechanical behavior.
 -- Any card can have any combination of properties.
 -- ============================================================
-CREATE TABLE IF NOT EXISTS chodecoin_card_properties (
+CREATE TABLE IF NOT EXISTS vault_card_properties (
     "Id"            SERIAL PRIMARY KEY,
-    "CardId"        INTEGER      NOT NULL REFERENCES chodecoin_cards("Id") ON DELETE CASCADE,
+    "CardId"        INTEGER      NOT NULL REFERENCES vault_cards("Id") ON DELETE CASCADE,
     "Key"           VARCHAR(100) NOT NULL,   -- references a key from property_defs
     "Value"         TEXT         NOT NULL,    -- always stored as text, cast in code
 
     UNIQUE ("CardId", "Key")
 );
 
-CREATE INDEX IF NOT EXISTS idx_card_props_card ON chodecoin_card_properties("CardId");
-CREATE INDEX IF NOT EXISTS idx_card_props_key ON chodecoin_card_properties("Key");
+CREATE INDEX IF NOT EXISTS idx_vault_card_props_card ON vault_card_properties("CardId");
+CREATE INDEX IF NOT EXISTS idx_vault_card_props_key ON vault_card_properties("Key");
 
 
 -- ============================================================
@@ -79,11 +79,11 @@ CREATE INDEX IF NOT EXISTS idx_card_props_key ON chodecoin_card_properties("Key"
 -- of a card — if a player somehow gets two of the same card,
 -- that's two inventory rows.
 -- ============================================================
-CREATE TABLE IF NOT EXISTS chodecoin_inventory (
+CREATE TABLE IF NOT EXISTS vault_inventory (
     "Id"            SERIAL PRIMARY KEY,
     "GuildId"       VARCHAR(255) NOT NULL,
     "UserId"        VARCHAR(255) NOT NULL,
-    "CardId"        INTEGER      NOT NULL REFERENCES chodecoin_cards("Id"),
+    "CardId"        INTEGER      NOT NULL REFERENCES vault_cards("Id"),
     "AcquiredVia"   VARCHAR(50)  NOT NULL DEFAULT 'store',  -- store, gift, drop, admin, quest, ...
     "IsActive"      BOOLEAN      NOT NULL DEFAULT TRUE,      -- false = consumed/destroyed/removed
     "IsEquipped"    BOOLEAN      NOT NULL DEFAULT FALSE,      -- for weapons/armor/companions
@@ -91,9 +91,9 @@ CREATE TABLE IF NOT EXISTS chodecoin_inventory (
     "RetiredAt"     TIMESTAMP                                 -- when consumed/destroyed, null if active
 );
 
-CREATE INDEX IF NOT EXISTS idx_inv_guild_user ON chodecoin_inventory("GuildId", "UserId");
-CREATE INDEX IF NOT EXISTS idx_inv_card ON chodecoin_inventory("CardId");
-CREATE INDEX IF NOT EXISTS idx_inv_active ON chodecoin_inventory("GuildId", "UserId", "IsActive");
+CREATE INDEX IF NOT EXISTS idx_vault_inv_guild_user ON vault_inventory("GuildId", "UserId");
+CREATE INDEX IF NOT EXISTS idx_vault_inv_card ON vault_inventory("CardId");
+CREATE INDEX IF NOT EXISTS idx_vault_inv_active ON vault_inventory("GuildId", "UserId", "IsActive");
 
 
 -- ============================================================
@@ -109,9 +109,9 @@ CREATE INDEX IF NOT EXISTS idx_inv_active ON chodecoin_inventory("GuildId", "Use
 -- Distinct from card_properties (which define what a card IS)
 -- this tracks what's HAPPENING with this specific instance.
 -- ============================================================
-CREATE TABLE IF NOT EXISTS chodecoin_inventory_state (
+CREATE TABLE IF NOT EXISTS vault_inventory_state (
     "Id"            SERIAL PRIMARY KEY,
-    "InventoryId"   INTEGER      NOT NULL REFERENCES chodecoin_inventory("Id") ON DELETE CASCADE,
+    "InventoryId"   INTEGER      NOT NULL REFERENCES vault_inventory("Id") ON DELETE CASCADE,
     "Key"           VARCHAR(100) NOT NULL,
     "Value"         TEXT         NOT NULL,
     "UpdatedAt"     TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
@@ -119,7 +119,7 @@ CREATE TABLE IF NOT EXISTS chodecoin_inventory_state (
     UNIQUE ("InventoryId", "Key")
 );
 
-CREATE INDEX IF NOT EXISTS idx_inv_state_inv ON chodecoin_inventory_state("InventoryId");
+CREATE INDEX IF NOT EXISTS idx_vault_inv_state_inv ON vault_inventory_state("InventoryId");
 
 
 -- ============================================================
@@ -128,7 +128,7 @@ CREATE INDEX IF NOT EXISTS idx_inv_state_inv ON chodecoin_inventory_state("Inven
 -- The DM queries this to understand game mechanics.
 -- New mechanics = new rows here. No schema migration needed.
 -- ============================================================
-INSERT INTO chodecoin_property_defs ("Key", "DataType", "AppliesTo", "Description", "Example")
+INSERT INTO vault_property_defs ("Key", "DataType", "AppliesTo", "Description", "Example")
 VALUES
 -- ---- UNIVERSAL PROPERTIES (any category) ----
 ('consumable',          'bool',   NULL,              'Whether this card is destroyed after use. When true, the inventory instance is retired after activation.',   'true'),
