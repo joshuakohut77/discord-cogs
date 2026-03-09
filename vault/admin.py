@@ -261,12 +261,7 @@ class BrowseView(discord.ui.View):
         except (discord.HTTPException, discord.Forbidden):
             pass
 
-        await interaction.followup.send(
-            f"\u2705 Art saved for **{card['name']}**! Refreshing preview...",
-            ephemeral=True,
-        )
-
-        # Refresh the card data and re-render
+        # Refresh card data so the new art is picked up
         updated_cards = await asyncio.to_thread(
             VaultDB.browse_store_all, self.category
         )
@@ -278,12 +273,24 @@ class BrowseView(discord.ui.View):
                 self.index = i
                 break
 
+        # Rebuild the category dropdown so it stays in sync
+        for item in self.children:
+            if isinstance(item, BrowseCategorySelect):
+                self.remove_item(item)
+                break
+        self.add_item(BrowseCategorySelect(self, self.category))
+
+        # Re-render and update the browse message in place
         self._update_buttons()
         embed, file = await self._render_current()
-        if file:
-            await self.message.edit(embed=embed, view=self, attachments=[file])
-        else:
-            await self.message.edit(embed=embed, view=self, attachments=[])
+
+        attachments = [file] if file else []
+        await self.message.edit(embed=embed, view=self, attachments=attachments)
+
+        await interaction.followup.send(
+            f"\u2705 Art updated for **{card['name']}**.",
+            ephemeral=True,
+        )
 
     @discord.ui.button(label="Done", style=discord.ButtonStyle.danger, emoji="\u2716\ufe0f", row=0)
     async def done_button(self, interaction: discord.Interaction, button: discord.ui.Button):
