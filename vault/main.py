@@ -12,8 +12,10 @@ from redbot.core import commands
 from .events import EventMixin
 from .commands import CommandsMixin
 from .admin import AdminMixin
+from .campaign import CampaignMixin
 from .dbclass import VaultDatabasePool
 from .db import VaultDB
+from .campaign_db import CampaignDB
 
 log = logging.getLogger("red.vault")
 
@@ -27,6 +29,7 @@ class Vault(
     EventMixin,
     CommandsMixin,
     AdminMixin,
+    CampaignMixin,
     commands.Cog,
     metaclass=CompositeClass,
 ):
@@ -34,12 +37,15 @@ class Vault(
 
     def __init__(self, bot: Red):
         self.bot: Red = bot
+        # Register campaign subcommands onto existing groups
+        self._register_campaign_commands()
 
     async def initialize(self) -> None:
         """Called from __init__.py after construction."""
         VaultDatabasePool.initialize()
         await asyncio.to_thread(VaultDB.create_tables)
-        log.info("Vault tables ready.")
+        await asyncio.to_thread(CampaignDB.create_tables)
+        log.info("Vault tables ready (including campaign tables).")
 
     def cog_unload(self):
         """Cleanup when cog is unloaded."""
