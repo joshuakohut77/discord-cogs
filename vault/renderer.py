@@ -95,7 +95,7 @@ EXPL_FONT_SIZE = 22        # starting size
 # Full width below the art zone. Medium font.
 BLURB_X = 22
 BLURB_Y = 210
-BLURB_MAX_W = 460          # right boundary ~482 minus BLURB_X
+BLURB_MAX_W = 660          # right boundary ~482 minus BLURB_X
 BLURB_MAX_H = 165          # bottom boundary ~375 minus BLURB_Y
 BLURB_FONT_SIZE = 22       # starting size (DejaVu placeholder is wider than pixel fonts)
 
