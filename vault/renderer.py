@@ -72,14 +72,14 @@ TEXT_COLOR = (34, 31, 22)
 # Right of art, top. Bold, larger font. Left-aligned.
 CATEGORY_X = 204
 CATEGORY_Y = 30
-CATEGORY_MAX_W = 282     # right boundary ~486 minus CATEGORY_X
+CATEGORY_MAX_W = 482     # right boundary ~486 minus CATEGORY_X
 CATEGORY_FONT_SIZE = 44  # starting size, auto-shrinks to fit
 
 # --- Zone 2: Card name (e.g. "Levitation") ---
 # Below the category prefix, slightly indented. Bold, larger font.
 # Y position is dynamic (below the rendered category text).
 NAME_X = 240              # indented from category
-NAME_MAX_W = 246           # right boundary ~486 minus NAME_X
+NAME_MAX_W = 446           # right boundary ~486 minus NAME_X
 NAME_FONT_SIZE = 44        # starting size, auto-shrinks to fit
 NAME_Y_OFFSET = 8          # gap below the category text
 
@@ -95,7 +95,7 @@ EXPL_FONT_SIZE = 36        # starting size
 # Full width below the art zone. Medium font.
 BLURB_X = 22
 BLURB_Y = 210
-BLURB_MAX_W = 700          # right boundary ~482 minus BLURB_X
+BLURB_MAX_W = 730          # right boundary ~482 minus BLURB_X
 BLURB_MAX_H = 165          # bottom boundary ~375 minus BLURB_Y
 BLURB_FONT_SIZE = 36       # starting size (DejaVu placeholder is wider than pixel fonts)
 
