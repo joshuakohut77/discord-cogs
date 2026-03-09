@@ -799,6 +799,8 @@ class CampaignMixin(MixinMeta):
         """Register campaign subcommands onto the existing command groups.
 
         Called from Vault.__init__() after all mixins are composed.
+        The parent groups already enforce guild_only and admin perms,
+        so subcommands inherit those checks automatically.
         """
         # Admin commands → vaultadmin group
         self.vaultadmin.command(name="startcampaign", aliases=["sc"])(self.start_campaign)
@@ -814,8 +816,6 @@ class CampaignMixin(MixinMeta):
     # Admin: Campaign management → [p]va startcampaign / endcampaign / resume / pausecampaign
     # ------------------------------------------------------------------
 
-    @commands.guild_only()
-    @commands.admin_or_permissions(manage_guild=True)
     async def start_campaign(self, ctx: commands.Context, *members: discord.Member):
         """Start a new campaign with the specified players.
 
@@ -895,8 +895,6 @@ class CampaignMixin(MixinMeta):
         # Start the first turn
         await _start_turn(self, ctx.channel, campaign)
 
-    @commands.guild_only()
-    @commands.admin_or_permissions(manage_guild=True)
     async def end_campaign(self, ctx: commands.Context):
         """Force-end the current campaign.
 
@@ -927,8 +925,6 @@ class CampaignMixin(MixinMeta):
         embed.set_footer(text=f"Campaign #{campaign['id']} \u2022 {campaign['current_round']} rounds \u2022 {turns} turns taken")
         await ctx.send(embed=embed)
 
-    @commands.guild_only()
-    @commands.admin_or_permissions(manage_guild=True)
     async def resume_campaign(self, ctx: commands.Context):
         """Resume a campaign after a timeout or bot restart.
 
@@ -957,8 +953,6 @@ class CampaignMixin(MixinMeta):
         # Re-start the current turn
         await _start_turn(self, ctx.channel, campaign)
 
-    @commands.guild_only()
-    @commands.admin_or_permissions(manage_guild=True)
     async def pause_campaign(self, ctx: commands.Context):
         """Pause the current campaign. Use `[p]va resume` to continue.
 
@@ -981,7 +975,6 @@ class CampaignMixin(MixinMeta):
     # Player: Campaign info → [p]v campaign / [p]v request
     # ------------------------------------------------------------------
 
-    @commands.guild_only()
     async def campaign_status(self, ctx: commands.Context):
         """View the current campaign status.
 
@@ -1016,7 +1009,6 @@ class CampaignMixin(MixinMeta):
         embed.set_footer(text=f"Campaign #{campaign['id']}")
         await ctx.send(embed=embed)
 
-    @commands.guild_only()
     async def campaign_request(self, ctx: commands.Context, *, request: str):
         """Send a meta-request to the DM (e.g. 'end soon', 'extend the game').
 
