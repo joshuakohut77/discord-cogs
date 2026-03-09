@@ -87,7 +87,7 @@ NAME_Y_OFFSET = 5          # gap below the category text
 # Right of art, below the name block. Smaller font.
 EXPL_X = 204
 EXPL_Y_MIN = 120           # earliest Y the explanation can start
-EXPL_MAX_W = 430           # same right boundary as category
+EXPL_MAX_W = 415           # same right boundary as category
 EXPL_MAX_H = 75            # max height before we shrink the font
 EXPL_FONT_SIZE = 36        # starting size
 
