@@ -8,7 +8,7 @@ import discord
 from redbot.core import commands
 from .abc import MixinMeta
 from .db import VaultDB
-from .renderer import render_card, resolve_art_path
+from .renderer import render_card, resolve_art_path, save_art_file
 from .constants import (
     EMBED_COLOR, STORE_EMBED_COLOR, COIN_EMOJI, ALL_CATEGORIES,
     RARITY_COLORS, RARITY_ORDER,
@@ -126,6 +126,10 @@ class BrowseView(discord.ui.View):
         # Resolve art path: uses ArtFile if set, otherwise auto-derives from card name
         art_path = resolve_art_path(card["category"], card["name"], card.get("art_file"))
 
+        # Show art status in embed
+        art_status = "\u2705 Has Art" if art_path else "\u274c No Art"
+        embed.add_field(name="Art", value=art_status, inline=True)
+
         try:
             png_bytes = await asyncio.to_thread(
                 render_card,
@@ -154,7 +158,6 @@ class BrowseView(discord.ui.View):
         embed, file = await self._render_current()
 
         if file:
-            # Must use webhook edit to replace attachments
             await interaction.response.edit_message(
                 embed=embed, view=self, attachments=[file],
             )
@@ -173,7 +176,6 @@ class BrowseView(discord.ui.View):
 
     @discord.ui.button(label="1 / 1", style=discord.ButtonStyle.secondary, disabled=True, row=0)
     async def counter_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        # This is just a display label, not clickable
         await interaction.response.defer()
 
     @discord.ui.button(label="\u25b6", style=discord.ButtonStyle.secondary, row=0)
@@ -181,6 +183,107 @@ class BrowseView(discord.ui.View):
         if self.index < len(self.cards) - 1:
             self.index += 1
         await self.update_message(interaction)
+
+    @discord.ui.button(label="Update PNG", style=discord.ButtonStyle.primary, emoji="\U0001f5bc\ufe0f", row=0)
+    async def upload_art_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Prompt the admin to upload a PNG for the current card."""
+        if not self.cards:
+            return await interaction.response.send_message(
+                "No card selected to update.", ephemeral=True,
+            )
+
+        card = self.cards[self.index]
+        await interaction.response.send_message(
+            f"Upload a **.png** file for **{card['name']}** in your next message.\n"
+            f"You have 60 seconds.",
+            ephemeral=True,
+        )
+
+        def check(m: discord.Message) -> bool:
+            return (
+                m.author.id == interaction.user.id
+                and m.channel.id == interaction.channel.id
+                and len(m.attachments) > 0
+            )
+
+        try:
+            msg = await self.cog.bot.wait_for("message", check=check, timeout=60)
+        except asyncio.TimeoutError:
+            return await interaction.followup.send(
+                "Timed out waiting for an image.", ephemeral=True,
+            )
+
+        # Validate the attachment
+        attachment = msg.attachments[0]
+        if not attachment.filename.lower().endswith(".png"):
+            return await interaction.followup.send(
+                "That's not a `.png` file. Upload cancelled.", ephemeral=True,
+            )
+
+        if attachment.size > 5 * 1024 * 1024:  # 5MB limit
+            return await interaction.followup.send(
+                "File is too large (max 5MB). Upload cancelled.", ephemeral=True,
+            )
+
+        # Download the image bytes
+        try:
+            img_bytes = await attachment.read()
+        except discord.HTTPException:
+            return await interaction.followup.send(
+                "Failed to download the image. Try again.", ephemeral=True,
+            )
+
+        # Save to the correct directory with the correct name
+        try:
+            saved_path = await asyncio.to_thread(
+                save_art_file,
+                category=card["category"],
+                card_name=card["name"],
+                image_bytes=img_bytes,
+            )
+        except Exception as e:
+            log.error(f"Failed to save art for {card['name']}: {e}")
+            return await interaction.followup.send(
+                f"Failed to save the image: {e}", ephemeral=True,
+            )
+
+        # Invalidate the rendered cache by nulling RenderedFile
+        try:
+            await asyncio.to_thread(
+                VaultDB.update_card, card["id"], ArtFile=os.path.basename(saved_path),
+            )
+        except Exception as e:
+            log.warning(f"Failed to update ArtFile on card {card['id']}: {e}")
+
+        # Clean up the user's upload message if possible
+        try:
+            await msg.delete()
+        except (discord.HTTPException, discord.Forbidden):
+            pass
+
+        await interaction.followup.send(
+            f"\u2705 Art saved for **{card['name']}**! Refreshing preview...",
+            ephemeral=True,
+        )
+
+        # Refresh the card data and re-render
+        updated_cards = await asyncio.to_thread(
+            VaultDB.browse_store_all, self.category
+        )
+        self.cards = updated_cards
+
+        # Find the same card by ID in the refreshed list
+        for i, c in enumerate(self.cards):
+            if c["id"] == card["id"]:
+                self.index = i
+                break
+
+        self._update_buttons()
+        embed, file = await self._render_current()
+        if file:
+            await self.message.edit(embed=embed, view=self, attachments=[file])
+        else:
+            await self.message.edit(embed=embed, view=self, attachments=[])
 
     @discord.ui.button(label="Done", style=discord.ButtonStyle.danger, emoji="\u2716\ufe0f", row=0)
     async def done_button(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -213,18 +316,15 @@ class BrowseCategorySelect(discord.ui.Select):
     async def callback(self, interaction: discord.Interaction):
         new_category = self.values[0]
 
-        # Fetch cards for the new category
         cards = await asyncio.to_thread(
             VaultDB.browse_store_all, new_category
         )
 
-        # Rebuild the view with new data
         view = self.browse_view
         view.cards = cards
         view.category = new_category
         view.index = 0
 
-        # Update the select dropdown default
         for item in view.children:
             if isinstance(item, BrowseCategorySelect):
                 view.remove_item(item)
@@ -237,6 +337,10 @@ class BrowseCategorySelect(discord.ui.Select):
 # ==================================================================
 # ADMIN MIXIN
 # ==================================================================
+
+# Need os import for the upload handler
+import os
+
 
 class AdminMixin(MixinMeta):
     """Admin commands for Vault card and store management."""
@@ -260,6 +364,7 @@ class AdminMixin(MixinMeta):
         """Browse all cards in the catalog with rendered card images.
 
         Use the dropdown to switch categories, arrows to cycle through cards.
+        Use the Update PNG button to upload art for the current card.
 
         Example: `[p]va browse` or `[p]va browse weapon`
         """
@@ -352,20 +457,13 @@ class AdminMixin(MixinMeta):
     # ------------------------------------------------------------------
 
     @vaultadmin.command(name="addcard")
-    async def add_card(
-        self,
-        ctx: commands.Context,
-        category: str,
-        rarity: str,
-        name: str,
-        *,
-        text: str,
-    ):
+    async def add_card(self, ctx: commands.Context, category: str, rarity: str, *, text: str):
         """Add a card to the catalog.
 
-        The text should have the explanation and blurb separated by `|`.
+        Use `|` to separate the name, explanation, and blurb.
 
-        Example: `[p]va addcard item common Healing Potion Restores a small amount of health. | A simple glass vial filled with a glowing red liquid. One sip mends minor wounds, but don't expect miracles.`
+        Example:
+            `[p]va addcard item common Healing Potion | Restores a small amount of health. | A simple glass vial filled with a glowing red liquid. One sip mends minor wounds, but don't expect miracles.`
         """
         category = category.lower()
         rarity = rarity.lower()
@@ -378,12 +476,25 @@ class AdminMixin(MixinMeta):
         if rarity not in valid_rarities:
             return await ctx.send(f"Invalid rarity. Options: {', '.join(valid_rarities)}")
 
-        parts = text.split("|", 1)
-        if len(parts) != 2:
-            return await ctx.send("Separate the explanation and blurb with `|`.\nExample: `Short description. | Longer detailed blurb.`")
+        parts = text.split("|")
+        if len(parts) != 3:
+            return await ctx.send(
+                "Use `|` to separate the three fields:\n"
+                "`[p]va addcard <category> <rarity> <name> | <explanation> | <blurb>`\n\n"
+                "Example:\n"
+                "`[p]va addcard item common Healing Potion | Restores a small amount of health. | A simple glass vial filled with a glowing red liquid.`"
+            )
 
-        explanation = parts[0].strip()
-        blurb = parts[1].strip()
+        name = parts[0].strip()
+        explanation = parts[1].strip()
+        blurb = parts[2].strip()
+
+        if not name:
+            return await ctx.send("Card name can't be empty.")
+        if not explanation:
+            return await ctx.send("Explanation can't be empty.")
+        if not blurb:
+            return await ctx.send("Blurb can't be empty.")
 
         card_id = await asyncio.to_thread(
             VaultDB.add_card, name, category, rarity, explanation, blurb

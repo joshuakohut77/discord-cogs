@@ -11,6 +11,17 @@ four text fields into fixed zones:
 Font file is configurable — swap FONT_PATH to your own .ttf/.otf.
 All zone coordinates are hardcoded from the 504×392 background template.
 
+Art storage:
+    Art files are stored OUTSIDE the cog directory to survive cog updates
+    and container rebuilds. Set VAULT_ART_ROOT env var to a persistent
+    path (e.g. a Docker volume mount). Falls back to vault/assets/ if unset.
+
+    Expected structure:
+        <VAULT_ART_ROOT>/powers/levitation.png
+        <VAULT_ART_ROOT>/allies/the_faceless_merchant.png
+        <VAULT_ART_ROOT>/card_background.png   (optional override)
+        <VAULT_ART_ROOT>/font.ttf              (optional override)
+
 Usage:
     from .renderer import render_card
     img_bytes = render_card(
@@ -32,22 +43,32 @@ from typing import Optional
 from PIL import Image, ImageDraw, ImageFont
 
 # ---------------------------------------------------------------
-# PATHS — adjust to match your cog's data directory layout
+# PATHS — external art root for persistent storage
 # ---------------------------------------------------------------
 _THIS_DIR = Path(__file__).resolve().parent
 
-# Background template (504×392 PNG)
-BACKGROUND_PATH = _THIS_DIR / "assets" / "card_background.png"
+# External art root — set via env var for Docker volume persistence.
+# If not set, falls back to the cog's own assets/ directory.
+_ART_ROOT_ENV = os.getenv("VAULT_ART_ROOT")
+ART_ROOT = Path(_ART_ROOT_ENV) if _ART_ROOT_ENV else (_THIS_DIR / "assets")
 
-# Font file — swap this to your own pixel art .ttf
-FONT_PATH = _THIS_DIR / "assets" / "font.ttf"
+# Background template (504×392 PNG)
+# Check external root first, fall back to bundled asset
+_EXT_BG = ART_ROOT / "card_background.png"
+_INT_BG = _THIS_DIR / "assets" / "card_background.png"
+BACKGROUND_PATH = _EXT_BG if _EXT_BG.exists() else _INT_BG
+
+# Font file — check external root first, fall back to bundled asset
+_EXT_FONT = ART_ROOT / "font.ttf"
+_INT_FONT = _THIS_DIR / "assets" / "font.ttf"
+FONT_PATH = _EXT_FONT if _EXT_FONT.exists() else _INT_FONT
 
 # Fallback font if the custom one isn't found
 _FALLBACK_FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 _FALLBACK_FONT_REGULAR = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 
 # Directory where rendered card images are cached
-RENDER_CACHE_DIR = _THIS_DIR / "rendered"
+RENDER_CACHE_DIR = ART_ROOT / "rendered"
 
 # ---------------------------------------------------------------
 # LAYOUT CONSTANTS (measured from the 504×392 template)
@@ -138,17 +159,49 @@ def _derive_art_filename(card_name: str) -> str:
 def resolve_art_path(category: str, card_name: str, art_file: Optional[str] = None) -> Optional[str]:
     """Resolve the full filesystem path to a card's art file.
 
-    Checks vault/assets/<folder>/<artfile>. If art_file is None,
-    auto-derives the filename from the card name.
+    Checks <ART_ROOT>/<folder>/<artfile> first (external/persistent),
+    then falls back to vault/assets/<folder>/<artfile> (bundled).
+
+    If art_file is None, auto-derives the filename from the card name.
 
     Returns the path string if the file exists, otherwise None.
     """
     folder = CATEGORY_FOLDER.get(category.lower(), category.lower())
     filename = art_file if art_file else _derive_art_filename(card_name)
-    candidate = _THIS_DIR / "assets" / folder / filename
+
+    # Check external art root first
+    candidate = ART_ROOT / folder / filename
     if candidate.exists():
         return str(candidate)
+
+    # Fall back to bundled assets (only different if ART_ROOT is external)
+    if _ART_ROOT_ENV:
+        fallback = _THIS_DIR / "assets" / folder / filename
+        if fallback.exists():
+            return str(fallback)
+
     return None
+
+
+def save_art_file(category: str, card_name: str, image_bytes: bytes) -> str:
+    """Save art image bytes to the correct directory with the correct filename.
+
+    Saves to <ART_ROOT>/<category_folder>/<derived_name>.png.
+    Creates the directory if it doesn't exist.
+
+    Returns the full path where the file was saved.
+    """
+    folder = CATEGORY_FOLDER.get(category.lower(), category.lower())
+    filename = _derive_art_filename(card_name)
+
+    target_dir = ART_ROOT / folder
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+    target_path = target_dir / filename
+    with open(target_path, "wb") as f:
+        f.write(image_bytes)
+
+    return str(target_path)
 
 
 # ---------------------------------------------------------------
