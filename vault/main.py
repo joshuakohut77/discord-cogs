@@ -37,8 +37,6 @@ class Vault(
 
     def __init__(self, bot: Red):
         self.bot: Red = bot
-        # Register campaign subcommands onto existing groups
-        self._register_campaign_commands()
 
     async def initialize(self) -> None:
         """Called from __init__.py after construction."""
