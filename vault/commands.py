@@ -402,6 +402,263 @@ class BackToStoreView(discord.ui.View):
 
 
 # ==================================================================
+# INVENTORY BROWSE UI
+# ==================================================================
+
+class InventoryBrowseView(discord.ui.View):
+    """Interactive inventory browser with category dropdown, prev/next, and rendered cards."""
+
+    def __init__(
+        self,
+        cog,
+        ctx: commands.Context,
+        target: discord.Member | discord.User,
+        all_items: list[dict],
+        category: str,
+        index: int = 0,
+    ):
+        super().__init__(timeout=300)
+        self.cog = cog
+        self.ctx = ctx
+        self.target = target
+        self.all_items = all_items       # full inventory (all categories)
+        self.category = category
+        self.index = index
+        self.message: Optional[discord.Message] = None
+
+        # Filter items for the current category
+        self.items = [i for i in all_items if i["category"] == category]
+
+        self._update_buttons()
+        self.add_item(InventoryCategorySelect(self, all_items, category))
+
+    def _update_buttons(self):
+        """Enable/disable prev/next based on current index."""
+        self.prev_button.disabled = self.index <= 0
+        self.next_button.disabled = self.index >= len(self.items) - 1
+        if self.items:
+            self.counter_button.label = f"{self.index + 1} / {len(self.items)}"
+        else:
+            self.counter_button.label = "0 / 0"
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user.id != self.ctx.author.id:
+            await interaction.response.send_message(
+                "This isn't your inventory session. Use `[p]v inv` to open your own.",
+                ephemeral=True,
+            )
+            return False
+        return True
+
+    async def on_timeout(self):
+        if self.message:
+            try:
+                await self.message.edit(view=None)
+            except discord.HTTPException:
+                pass
+
+    async def _render_current(self) -> tuple[discord.Embed, Optional[discord.File]]:
+        """Render the current inventory card and build embed + file."""
+        if not self.items:
+            embed = discord.Embed(
+                title=f"\U0001f5c3\ufe0f {self.target.display_name}'s Vault",
+                description=f"No **{CATEGORY_LABEL.get(self.category, self.category)}** cards in this collection.",
+                color=EMBED_COLOR,
+            )
+            embed.set_thumbnail(url=self.target.display_avatar.url)
+            return embed, None
+
+        item = self.items[self.index]
+        rarity_color = RARITY_COLORS.get(item["rarity"], EMBED_COLOR)
+
+        embed = discord.Embed(
+            title=item["name"],
+            color=rarity_color,
+        )
+        embed.add_field(
+            name="Category",
+            value=cat_display(item["category"]),
+            inline=True,
+        )
+        embed.add_field(
+            name="Rarity",
+            value=RARITY_DISPLAY.get(item["rarity"], item["rarity"].title()),
+            inline=True,
+        )
+        equipped_str = "Yes \u2694\ufe0f" if item["is_equipped"] else "No"
+        embed.add_field(name="Equipped", value=equipped_str, inline=True)
+
+        # Build status lines from instance state and properties
+        state = item["state"]
+        props = item["properties"]
+        state_lines = []
+
+        if "uses_remaining" in state:
+            max_uses = props.get("max_uses", "?")
+            state_lines.append(f"Uses: **{state['uses_remaining']}** / {max_uses}")
+        if "durability_remaining" in state:
+            max_dur = props.get("durability", "?")
+            state_lines.append(f"Durability: **{state['durability_remaining']}** / {max_dur}")
+        if "fled_until" in state:
+            try:
+                fled_ts = int(datetime.fromisoformat(state["fled_until"]).timestamp())
+                state_lines.append(f"\U0001f4a8 Fled — returns <t:{fled_ts}:R>")
+            except (ValueError, TypeError):
+                state_lines.append(f"\U0001f4a8 Fled")
+        if "bond_level" in state:
+            state_lines.append(f"Bond level: **{state['bond_level']}**")
+        if props.get("passive_bonus"):
+            state_lines.append(f"Passive: {props['passive_bonus']}")
+        if props.get("cooldown_hours"):
+            state_lines.append(f"Cooldown: {props['cooldown_hours']}h")
+        if props.get("damage"):
+            dmg_type = props.get("damage_type", "")
+            state_lines.append(f"Damage: **{props['damage']}** {dmg_type}")
+        if props.get("armor_value"):
+            state_lines.append(f"Armor: **{props['armor_value']}**")
+        if props.get("combat_power"):
+            state_lines.append(f"Combat power: **{props['combat_power']}**")
+
+        if state_lines:
+            embed.add_field(name="Status", value="\n".join(state_lines), inline=False)
+
+        # Render card image
+        art_path = resolve_art_path(item["category"], item["name"], item.get("art_file"))
+        card_file = None
+
+        try:
+            png_bytes = await asyncio.to_thread(
+                render_card,
+                category=item["category"],
+                name=item["name"],
+                explanation=item["explanation"],
+                blurb=item["blurb"],
+                art_path=art_path,
+            )
+            card_file = discord.File(io.BytesIO(png_bytes), filename="card.png")
+            embed.set_image(url="attachment://card.png")
+        except Exception as e:
+            log.error(f"Failed to render card {item['name']} in inventory browse: {e}")
+            # Fallback to text if render fails
+            embed.add_field(name="Description", value=item["explanation"], inline=False)
+            embed.add_field(name="Details", value=item["blurb"], inline=False)
+
+        # Category totals for footer
+        total = len(self.all_items)
+        cat_count = len(self.items)
+        cat_label = CATEGORY_LABEL.get(self.category, self.category.title())
+        embed.set_footer(
+            text=(
+                f"Card {self.index + 1} of {cat_count} in {cat_label} "
+                f"\u2022 {total} cards total "
+                f"\u2022 Acquired via {item['acquired_via']}"
+            ),
+            icon_url=self.target.display_avatar.url,
+        )
+
+        return embed, card_file
+
+    async def update_message(self, interaction: discord.Interaction):
+        """Re-render and update the message."""
+        self._update_buttons()
+        embed, file = await self._render_current()
+
+        if file:
+            await interaction.response.edit_message(
+                embed=embed, view=self, attachments=[file],
+            )
+        else:
+            await interaction.response.edit_message(
+                embed=embed, view=self, attachments=[],
+            )
+
+    # ------------------------------------------------------------------
+    # Row 0: Navigation
+    # ------------------------------------------------------------------
+
+    @discord.ui.button(label="\u25c0", style=discord.ButtonStyle.secondary, row=0)
+    async def prev_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self.index > 0:
+            self.index -= 1
+        await self.update_message(interaction)
+
+    @discord.ui.button(label="1 / 1", style=discord.ButtonStyle.secondary, disabled=True, row=0)
+    async def counter_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.defer()
+
+    @discord.ui.button(label="\u25b6", style=discord.ButtonStyle.secondary, row=0)
+    async def next_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self.index < len(self.items) - 1:
+            self.index += 1
+        await self.update_message(interaction)
+
+    @discord.ui.button(label="Done", style=discord.ButtonStyle.danger, emoji="\u2716\ufe0f", row=0)
+    async def done_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.edit_message(view=None)
+        self.stop()
+
+
+class InventoryCategorySelect(discord.ui.Select):
+    """Dropdown to switch between card categories in the inventory browser.
+
+    Only shows categories the player actually has cards in.
+    """
+
+    def __init__(self, browse_view: InventoryBrowseView, all_items: list[dict], current_category: str):
+        self.browse_view = browse_view
+
+        # Determine which categories the player has cards in
+        owned_cats = sorted(set(i["category"] for i in all_items), key=lambda c: ALL_CATEGORIES.index(c) if c in ALL_CATEGORIES else 99)
+
+        options = []
+        for cat in owned_cats:
+            label = CATEGORY_LABEL.get(cat, cat.title())
+            emoji = CATEGORY_EMOJI.get(cat)
+            count = sum(1 for i in all_items if i["category"] == cat)
+            is_default = cat == current_category
+            options.append(
+                discord.SelectOption(
+                    label=label,
+                    value=cat,
+                    description=f"{count} card{'s' if count != 1 else ''}",
+                    emoji=emoji,
+                    default=is_default,
+                )
+            )
+
+        # Safety fallback — shouldn't happen since we check for empty inventory before creating
+        if not options:
+            options.append(discord.SelectOption(label="No cards", value="none"))
+
+        super().__init__(
+            placeholder="Switch category...",
+            options=options,
+            min_values=1,
+            max_values=1,
+            row=1,
+        )
+
+    async def callback(self, interaction: discord.Interaction):
+        new_category = self.values[0]
+        if new_category == "none":
+            return await interaction.response.defer()
+
+        view = self.browse_view
+        view.category = new_category
+        view.items = [i for i in view.all_items if i["category"] == new_category]
+        view.index = 0
+
+        # Replace the dropdown with an updated one
+        for item in view.children:
+            if isinstance(item, InventoryCategorySelect):
+                view.remove_item(item)
+                break
+        view.add_item(InventoryCategorySelect(view, view.all_items, new_category))
+
+        await view.update_message(interaction)
+
+
+# ==================================================================
 # EMBED BUILDERS
 # ==================================================================
 
@@ -573,7 +830,10 @@ class CommandsMixin(MixinMeta):
     @vault.command(name="inventory", aliases=["inv", "cards"])
     @commands.guild_only()
     async def inventory(self, ctx: commands.Context, member: Optional[discord.Member] = None):
-        """View your card inventory (or another player's).
+        """Browse your card inventory (or another player's).
+
+        Use the dropdown to switch categories and arrows to flip through cards.
+        Each card is shown as a rendered image with its stats.
 
         Example: `[p]v inv` or `[p]v cards @User`
         """
@@ -587,64 +847,40 @@ class CommandsMixin(MixinMeta):
                 return await ctx.send("You don't have any cards yet. Visit the store with `[p]v store`!")
             return await ctx.send(f"{target.display_name} doesn't have any cards yet.")
 
-        # Group by category
-        by_category: dict[str, list] = {}
-        for item in items:
-            cat = item["category"]
-            if cat not in by_category:
-                by_category[cat] = []
-            by_category[cat].append(item)
-
-        embed = discord.Embed(
-            title=f"\U0001f5c3\ufe0f {target.display_name}'s Vault",
-            description=f"**{len(items)}** cards collected",
-            color=EMBED_COLOR,
+        # Start on the first category that has cards (following ALL_CATEGORIES order)
+        owned_cats = set(i["category"] for i in items)
+        start_category = next(
+            (c for c in ALL_CATEGORIES if c in owned_cats),
+            items[0]["category"],
         )
-        embed.set_thumbnail(url=target.display_avatar.url)
 
-        for cat in ALL_CATEGORIES:
-            cat_items = by_category.get(cat, [])
-            if not cat_items:
-                continue
+        view = InventoryBrowseView(self, ctx, target, items, start_category)
+        embed, file = await view._render_current()
 
-            lines = []
-            for item in cat_items:
-                rarity_icon = {
-                    "common": "\u25cb",
-                    "uncommon": "\u25cf",
-                    "rare": "\U0001f535",
-                    "legendary": "\u2b50",
-                }.get(item["rarity"], "\u25cb")
-                equipped = " \u2694\ufe0f" if item["is_equipped"] else ""
-                fled = ""
-                if item["state"].get("fled_until"):
-                    fled = " \U0001f4a8"
-                lines.append(f"{rarity_icon} {item['name']}{equipped}{fled}")
+        kwargs: dict = {"embed": embed, "view": view}
+        if file:
+            kwargs["file"] = file
 
-            display = cat_display(cat)
-            embed.add_field(
-                name=f"{display} ({len(cat_items)})",
-                value="\n".join(lines),
-                inline=True,
-            )
-
-        embed.set_footer(text="\u2694\ufe0f = equipped | \U0001f4a8 = fled | Use [p]v inspect <name> for details")
-        await ctx.send(embed=embed)
+        message = await ctx.send(**kwargs)
+        view.message = message
 
     # ------------------------------------------------------------------
-    # Inspect
+    # Inspect (quick jump into the browse UI focused on a specific card)
     # ------------------------------------------------------------------
 
     @vault.command(name="inspect", aliases=["info", "card"])
     @commands.guild_only()
     async def inspect(self, ctx: commands.Context, *, card_name: str):
-        """Inspect a card from your inventory in detail.
+        """Inspect a card from your inventory — opens the browser focused on it.
 
         Example: `[p]v inspect Shadow Wolf`
         """
         items = await asyncio.to_thread(
             VaultDB.get_inventory, ctx.guild.id, ctx.author.id
         )
+
+        if not items:
+            return await ctx.send("You don't have any cards yet.")
 
         # Find by name (case-insensitive)
         match = None
@@ -656,58 +892,21 @@ class CommandsMixin(MixinMeta):
         if not match:
             return await ctx.send(f"You don't have a card called **{card_name}**.")
 
-        rarity_color = RARITY_COLORS.get(match["rarity"], EMBED_COLOR)
-        embed = discord.Embed(title=match["name"], color=rarity_color)
+        # Find the index of this card within its category
+        category = match["category"]
+        cat_items = [i for i in items if i["category"] == category]
+        card_index = 0
+        for i, ci in enumerate(cat_items):
+            if ci["inv_id"] == match["inv_id"]:
+                card_index = i
+                break
 
-        embed.add_field(
-            name="Category",
-            value=cat_display(match["category"]),
-            inline=True,
-        )
-        embed.add_field(
-            name="Rarity",
-            value=RARITY_DISPLAY.get(match["rarity"], match["rarity"]),
-            inline=True,
-        )
-        equipped_str = "Yes \u2694\ufe0f" if match["is_equipped"] else "No"
-        embed.add_field(name="Equipped", value=equipped_str, inline=True)
+        view = InventoryBrowseView(self, ctx, ctx.author, items, category, index=card_index)
+        embed, file = await view._render_current()
 
-        embed.add_field(name="Description", value=match["explanation"], inline=False)
-        embed.add_field(name="Details", value=match["blurb"], inline=False)
+        kwargs: dict = {"embed": embed, "view": view}
+        if file:
+            kwargs["file"] = file
 
-        # Show relevant state
-        state = match["state"]
-        props = match["properties"]
-        state_lines = []
-
-        if "uses_remaining" in state:
-            max_uses = props.get("max_uses", "?")
-            state_lines.append(f"Uses: **{state['uses_remaining']}** / {max_uses}")
-        if "durability_remaining" in state:
-            max_dur = props.get("durability", "?")
-            state_lines.append(f"Durability: **{state['durability_remaining']}** / {max_dur}")
-        if "fled_until" in state:
-            try:
-                fled_ts = int(datetime.fromisoformat(state["fled_until"]).timestamp())
-                state_lines.append(f"\U0001f4a8 Fled — returns <t:{fled_ts}:R>")
-            except (ValueError, TypeError):
-                state_lines.append("\U0001f4a8 Fled")
-        if "bond_level" in state:
-            state_lines.append(f"Bond level: **{state['bond_level']}**")
-        if props.get("passive_bonus"):
-            state_lines.append(f"Passive: {props['passive_bonus']}")
-        if props.get("cooldown_hours"):
-            state_lines.append(f"Cooldown: {props['cooldown_hours']}h")
-        if props.get("damage"):
-            dmg_type = props.get("damage_type", "")
-            state_lines.append(f"Damage: **{props['damage']}** {dmg_type}")
-        if props.get("armor_value"):
-            state_lines.append(f"Armor: **{props['armor_value']}**")
-        if props.get("combat_power"):
-            state_lines.append(f"Combat power: **{props['combat_power']}**")
-
-        if state_lines:
-            embed.add_field(name="Status", value="\n".join(state_lines), inline=False)
-
-        embed.set_footer(text=f"Acquired via {match['acquired_via']} | ID: {match['inv_id']}")
-        await ctx.send(embed=embed)
+        message = await ctx.send(**kwargs)
+        view.message = message
