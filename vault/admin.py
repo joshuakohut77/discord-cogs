@@ -193,11 +193,19 @@ class BrowseView(discord.ui.View):
             )
 
         card = self.cards[self.index]
-        await interaction.response.send_message(
-            f"Upload a **.png** file for **{card['name']}** in your next message.\n"
-            f"You have 60 seconds.",
-            ephemeral=True,
+        cat_label = CATEGORY_LABEL.get(card["category"], card["category"].title())
+
+        # Replace the browse embed with an upload prompt (no buttons)
+        prompt_embed = discord.Embed(
+            title="\U0001f5bc\ufe0f Upload Art",
+            description=(
+                f"Upload a **.png** file for **{cat_label} — {card['name']}**.\n\n"
+                f"Send the image as an attachment in your next message.\n"
+                f"You have 60 seconds."
+            ),
+            color=EMBED_COLOR,
         )
+        await interaction.response.edit_message(embed=prompt_embed, view=None, attachments=[])
 
         def check(m: discord.Message) -> bool:
             return (
@@ -209,29 +217,35 @@ class BrowseView(discord.ui.View):
         try:
             msg = await self.cog.bot.wait_for("message", check=check, timeout=60)
         except asyncio.TimeoutError:
-            return await interaction.followup.send(
-                "Timed out waiting for an image.", ephemeral=True,
-            )
+            # Timed out — restore the browse view
+            await self._restore_browse()
+            return
 
         # Validate the attachment
         attachment = msg.attachments[0]
         if not attachment.filename.lower().endswith(".png"):
-            return await interaction.followup.send(
+            await interaction.followup.send(
                 "That's not a `.png` file. Upload cancelled.", ephemeral=True,
             )
+            await self._restore_browse()
+            return
 
         if attachment.size > 5 * 1024 * 1024:  # 5MB limit
-            return await interaction.followup.send(
+            await interaction.followup.send(
                 "File is too large (max 5MB). Upload cancelled.", ephemeral=True,
             )
+            await self._restore_browse()
+            return
 
         # Download the image bytes
         try:
             img_bytes = await attachment.read()
         except discord.HTTPException:
-            return await interaction.followup.send(
+            await interaction.followup.send(
                 "Failed to download the image. Try again.", ephemeral=True,
             )
+            await self._restore_browse()
+            return
 
         # Save to the correct directory with the correct name
         try:
@@ -243,9 +257,11 @@ class BrowseView(discord.ui.View):
             )
         except Exception as e:
             log.error(f"Failed to save art for {card['name']}: {e}")
-            return await interaction.followup.send(
+            await interaction.followup.send(
                 f"Failed to save the image: {e}", ephemeral=True,
             )
+            await self._restore_browse()
+            return
 
         # Invalidate the rendered cache by nulling RenderedFile
         try:
@@ -261,36 +277,33 @@ class BrowseView(discord.ui.View):
         except (discord.HTTPException, discord.Forbidden):
             pass
 
-        # Refresh card data so the new art is picked up
-        updated_cards = await asyncio.to_thread(
+        # Refresh card data and restore the browse view on the same card
+        await self._refresh_cards(card["id"])
+        await self._restore_browse()
+
+    async def _refresh_cards(self, focus_card_id: int):
+        """Reload card data from DB and re-focus on a specific card by ID."""
+        self.cards = await asyncio.to_thread(
             VaultDB.browse_store_all, self.category
         )
-        self.cards = updated_cards
-
-        # Find the same card by ID in the refreshed list
         for i, c in enumerate(self.cards):
-            if c["id"] == card["id"]:
+            if c["id"] == focus_card_id:
                 self.index = i
                 break
 
-        # Rebuild the category dropdown so it stays in sync
+    async def _restore_browse(self):
+        """Re-render the browse view and edit it back onto the message."""
+        # Rebuild category dropdown
         for item in self.children:
             if isinstance(item, BrowseCategorySelect):
                 self.remove_item(item)
                 break
         self.add_item(BrowseCategorySelect(self, self.category))
 
-        # Re-render and update the browse message in place
         self._update_buttons()
         embed, file = await self._render_current()
-
         attachments = [file] if file else []
         await self.message.edit(embed=embed, view=self, attachments=attachments)
-
-        await interaction.followup.send(
-            f"\u2705 Art updated for **{card['name']}**.",
-            ephemeral=True,
-        )
 
     @discord.ui.button(label="Done", style=discord.ButtonStyle.danger, emoji="\u2716\ufe0f", row=0)
     async def done_button(self, interaction: discord.Interaction, button: discord.ui.Button):
