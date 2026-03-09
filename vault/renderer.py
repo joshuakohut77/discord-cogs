@@ -78,8 +78,8 @@ CATEGORY_FONT_SIZE = 40  # starting size, auto-shrinks to fit
 # --- Zone 2: Card name (e.g. "Levitation") ---
 # Below the category prefix, slightly indented. Bold, larger font.
 # Y position is dynamic (below the rendered category text).
-NAME_X = 240              # indented from category
-NAME_MAX_W = 346           # right boundary ~486 minus NAME_X
+NAME_X = 220              # indented from category
+NAME_MAX_W = 246           # right boundary ~486 minus NAME_X
 NAME_FONT_SIZE = 40        # starting size, auto-shrinks to fit
 NAME_Y_OFFSET = 5          # gap below the category text
 
