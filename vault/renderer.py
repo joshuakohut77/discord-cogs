@@ -350,6 +350,18 @@ def render_card(
         art = art.resize((ART_WIDTH, ART_HEIGHT), Image.NEAREST)
         card.paste(art, (ART_LEFT, ART_TOP), art)
 
+        # Restore the two corner notch squares from the original background.
+        # The art zone isn't a perfect rectangle — the background template has
+        # small decorative squares at the top-left and bottom-right corners
+        # that should not be covered by the art.
+        #   Top-left notch:     (17,17) to (22,22)  — 6×6 px
+        #   Bottom-right notch: (185,185) to (190,190) — 6×6 px
+        bg_clean = Image.open(bg_path).convert("RGBA")
+        tl_notch = bg_clean.crop((ART_LEFT, ART_TOP, ART_LEFT + 6, ART_TOP + 6))
+        br_notch = bg_clean.crop((ART_RIGHT - 5, ART_BOTTOM - 5, ART_RIGHT + 1, ART_BOTTOM + 1))
+        card.paste(tl_notch, (ART_LEFT, ART_TOP))
+        card.paste(br_notch, (ART_RIGHT - 5, ART_BOTTOM - 5))
+
     draw = ImageDraw.Draw(card)
 
     # --- Zone 1: Category prefix ---
