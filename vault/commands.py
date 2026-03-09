@@ -462,7 +462,7 @@ def _build_card_reveal_embed(
         icon_url=user.display_avatar.url,
     )
 
-    # TODO: Once PIL card renderer is built, attach the rendered card image
+    # TODO: Once renderer is integrated into pull flow, attach the rendered card image
     # if card.get("rendered_file"):
     #     embed.set_image(url=f"attachment://card.png")
 

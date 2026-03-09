@@ -119,22 +119,16 @@ class BrowseView(discord.ui.View):
             value=f"#{card['id']}",
             inline=True,
         )
-        if card.get("store_price") is not None:
-            embed.add_field(
-                name="Store Price",
-                value=f"{card['store_price']} {COIN_EMOJI}",
-                inline=True,
-            )
         store_status = "\u2705 In Store" if card.get("is_in_store") else "\u274c Not In Store"
         active_status = "\u2705 Active" if card.get("is_active") else "\u274c Inactive"
         embed.add_field(name="Status", value=f"{store_status} | {active_status}", inline=True)
 
         # Render the card image
+        # Art files live in vault/assets/<category>/<artfile>
         art_path = None
         if card.get("art_file"):
-            # Try to find the art file in the cog's assets/art directory
             from pathlib import Path
-            art_dir = Path(__file__).resolve().parent / "assets" / "art"
+            art_dir = Path(__file__).resolve().parent / "assets" / card["category"]
             candidate = art_dir / card["art_file"]
             if candidate.exists():
                 art_path = str(candidate)

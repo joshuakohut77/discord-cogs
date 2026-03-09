@@ -37,7 +37,6 @@ class VaultDB:
                 "Blurb"         TEXT         NOT NULL,
                 "ArtFile"       VARCHAR(255),
                 "RenderedFile"  VARCHAR(255),
-                "StorePrice"    INTEGER      NOT NULL DEFAULT 0,
                 "IsInStore"     BOOLEAN      NOT NULL DEFAULT TRUE,
                 "IsActive"      BOOLEAN      NOT NULL DEFAULT TRUE,
                 "CreatedAt"     TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
@@ -192,6 +191,36 @@ class VaultDB:
         return [VaultDB._row_to_card_dict(r) for r in rows]
 
     @staticmethod
+    def browse_store_all(
+        category: Optional[str] = None,
+        rarity: Optional[str] = None,
+        limit: int = 200,
+        offset: int = 0,
+    ) -> list[dict]:
+        """Browse ALL cards in the catalog (active or not, store or not).
+
+        Used by admin browse command to see the full catalog.
+        Unlike browse_store(), this doesn't filter by IsInStore or IsActive.
+        """
+        database = dbconn()
+        conditions = []
+        params: dict = {"limit": limit, "offset": offset}
+
+        if category:
+            conditions.append('"Category" = %(category)s')
+            params["category"] = category
+        if rarity:
+            conditions.append('"Rarity" = %(rarity)s')
+            params["rarity"] = rarity
+
+        where = " WHERE " + " AND ".join(conditions) if conditions else ""
+        rows = database.queryAll(
+            f'SELECT * FROM vault_cards{where} ORDER BY "Category", "Rarity", "Name" LIMIT %(limit)s OFFSET %(offset)s',
+            params,
+        )
+        return [VaultDB._row_to_card_dict(r) for r in rows]
+
+    @staticmethod
     def count_store(category: Optional[str] = None, rarity: Optional[str] = None) -> int:
         """Count cards available in the store (for pagination)."""
         database = dbconn()
@@ -247,21 +276,19 @@ class VaultDB:
         rarity: str,
         explanation: str,
         blurb: str,
-        store_price: int = 0,
         art_file: Optional[str] = None,
     ) -> int:
         """Insert a new card into the catalog. Returns the new card ID."""
         database = dbconn()
         row = database.executeAndReturn(
             """INSERT INTO vault_cards
-                ("Name", "Category", "Rarity", "Explanation", "Blurb", "StorePrice", "ArtFile")
-               VALUES (%(name)s, %(cat)s, %(rar)s, %(expl)s, %(blurb)s, %(price)s, %(art)s)
+                ("Name", "Category", "Rarity", "Explanation", "Blurb", "ArtFile")
+               VALUES (%(name)s, %(cat)s, %(rar)s, %(expl)s, %(blurb)s, %(art)s)
                RETURNING "Id"
             """,
             {
                 "name": name, "cat": category, "rar": rarity,
-                "expl": explanation, "blurb": blurb,
-                "price": store_price, "art": art_file,
+                "expl": explanation, "blurb": blurb, "art": art_file,
             },
         )
         return row[0]
@@ -274,7 +301,7 @@ class VaultDB:
         """
         allowed = {
             "Name", "Category", "Rarity", "Explanation", "Blurb",
-            "ArtFile", "StorePrice", "IsInStore", "IsActive",
+            "ArtFile", "IsInStore", "IsActive",
         }
         to_set = {k: v for k, v in fields.items() if k in allowed}
         if not to_set:
@@ -614,11 +641,6 @@ class VaultDB:
                     VaultDB._remove_instance_state(inv_id, StateKeys.FLED_UNTIL)
             except (ValueError, TypeError):
                 pass
-
-        # -- Check time restriction --
-        time_restriction = props.get(PropKeys.TIME_RESTRICTION)
-        # NOTE: actual time-of-day check would depend on game world time
-        # or real time. Leaving as a hook — DM can also enforce narratively.
 
         # -- Decrement uses if applicable --
         consumed = False
@@ -1067,7 +1089,13 @@ class VaultDB:
 
     @staticmethod
     def _row_to_card_dict(row) -> dict:
-        """Convert a vault_cards row tuple to a dict."""
+        """Convert a vault_cards row tuple to a dict.
+
+        Column order matches:
+            Id, Name, Category, Rarity, Explanation, Blurb,
+            ArtFile, RenderedFile, IsInStore, IsActive,
+            CreatedAt, UpdatedAt
+        """
         return {
             "id": row[0],
             "name": row[1],
@@ -1077,11 +1105,10 @@ class VaultDB:
             "blurb": row[5],
             "art_file": row[6],
             "rendered_file": row[7],
-            "store_price": row[8],
-            "is_in_store": row[9],
-            "is_active": row[10],
-            "created_at": row[11],
-            "updated_at": row[12],
+            "is_in_store": row[8],
+            "is_active": row[9],
+            "created_at": row[10],
+            "updated_at": row[11],
         }
 
     @staticmethod
@@ -1125,33 +1152,3 @@ class VaultDB:
             'DELETE FROM vault_inventory_state WHERE "InventoryId" = %(id)s AND "Key" = %(key)s',
             {"id": inv_id, "key": key},
         )
-
-    @staticmethod
-    def browse_store_all(
-        category: Optional[str] = None,
-        rarity: Optional[str] = None,
-        limit: int = 200,
-        offset: int = 0,
-    ) -> list[dict]:
-        """Browse ALL cards in the catalog (active or not, store or not).
-
-        Used by admin browse command to see the full catalog.
-        Unlike browse_store(), this doesn't filter by IsInStore or IsActive.
-        """
-        database = dbconn()
-        conditions = []
-        params: dict = {"limit": limit, "offset": offset}
-
-        if category:
-            conditions.append('"Category" = %(category)s')
-            params["category"] = category
-        if rarity:
-            conditions.append('"Rarity" = %(rarity)s')
-            params["rarity"] = rarity
-
-        where = " WHERE " + " AND ".join(conditions) if conditions else ""
-        rows = database.queryAll(
-            f'SELECT * FROM vault_cards{where} ORDER BY "Category", "Rarity", "Name" LIMIT %(limit)s OFFSET %(offset)s',
-            params,
-        )
-        return [VaultDB._row_to_card_dict(r) for r in rows]
