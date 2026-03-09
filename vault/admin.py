@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 import asyncio
 import io
+import os
 import logging
 
 import discord
@@ -35,6 +36,26 @@ RARITY_DISPLAY = {
     "rare": "\u2728 Rare",
     "legendary": "\U0001f525 Legendary",
 }
+
+VALID_RARITIES = ["common", "uncommon", "rare", "legendary"]
+
+
+# ==================================================================
+# HELPER: wait for a text message from the user
+# ==================================================================
+
+async def _wait_for_text(bot, user_id: int, channel_id: int, timeout: float = 60) -> Optional[discord.Message]:
+    """Wait for the next text message from a user in a channel.
+
+    Returns the Message, or None on timeout.
+    """
+    def check(m: discord.Message) -> bool:
+        return m.author.id == user_id and m.channel.id == channel_id
+
+    try:
+        return await bot.wait_for("message", check=check, timeout=timeout)
+    except asyncio.TimeoutError:
+        return None
 
 
 # ==================================================================
@@ -71,6 +92,12 @@ class BrowseView(discord.ui.View):
             self.counter_button.label = f"{self.index + 1} / {len(self.cards)}"
         else:
             self.counter_button.label = "0 / 0"
+
+        # Disable card-specific buttons when there are no cards
+        has_cards = len(self.cards) > 0
+        self.upload_art_button.disabled = not has_cards
+        self.update_text_button.disabled = not has_cards
+        self.delete_card_button.disabled = not has_cards
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.ctx.author.id:
@@ -166,7 +193,40 @@ class BrowseView(discord.ui.View):
                 embed=embed, view=self, attachments=[],
             )
 
-    # -- Navigation buttons --
+    # ------------------------------------------------------------------
+    # Shared helpers
+    # ------------------------------------------------------------------
+
+    async def _refresh_cards(self, focus_card_id: int):
+        """Reload card data from DB and re-focus on a specific card by ID."""
+        self.cards = await asyncio.to_thread(
+            VaultDB.browse_store_all, self.category
+        )
+        for i, c in enumerate(self.cards):
+            if c["id"] == focus_card_id:
+                self.index = i
+                return
+        # If the card was deleted or not found, clamp index
+        if self.index >= len(self.cards):
+            self.index = max(0, len(self.cards) - 1)
+
+    async def _restore_browse(self):
+        """Re-render the browse view and edit it back onto the message."""
+        # Rebuild category dropdown
+        for item in self.children:
+            if isinstance(item, BrowseCategorySelect):
+                self.remove_item(item)
+                break
+        self.add_item(BrowseCategorySelect(self, self.category))
+
+        self._update_buttons()
+        embed, file = await self._render_current()
+        attachments = [file] if file else []
+        await self.message.edit(embed=embed, view=self, attachments=attachments)
+
+    # ------------------------------------------------------------------
+    # Row 0: Navigation
+    # ------------------------------------------------------------------
 
     @discord.ui.button(label="\u25c0", style=discord.ButtonStyle.secondary, row=0)
     async def prev_button(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -184,18 +244,22 @@ class BrowseView(discord.ui.View):
             self.index += 1
         await self.update_message(interaction)
 
-    @discord.ui.button(label="Update PNG", style=discord.ButtonStyle.primary, emoji="\U0001f5bc\ufe0f", row=0)
+    @discord.ui.button(label="Done", style=discord.ButtonStyle.danger, emoji="\u2716\ufe0f", row=0)
+    async def done_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.edit_message(view=None)
+        self.stop()
+
+    # ------------------------------------------------------------------
+    # Row 2: Card actions (row 1 = category select dropdown)
+    # ------------------------------------------------------------------
+
+    @discord.ui.button(label="Update PNG", style=discord.ButtonStyle.primary, emoji="\U0001f5bc\ufe0f", row=2)
     async def upload_art_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         """Prompt the admin to upload a PNG for the current card."""
-        if not self.cards:
-            return await interaction.response.send_message(
-                "No card selected to update.", ephemeral=True,
-            )
-
         card = self.cards[self.index]
         cat_label = CATEGORY_LABEL.get(card["category"], card["category"].title())
 
-        # Replace the browse embed with an upload prompt (no buttons)
+        # Replace the browse embed with an upload prompt
         prompt_embed = discord.Embed(
             title="\U0001f5bc\ufe0f Upload Art",
             description=(
@@ -217,7 +281,6 @@ class BrowseView(discord.ui.View):
         try:
             msg = await self.cog.bot.wait_for("message", check=check, timeout=60)
         except asyncio.TimeoutError:
-            # Timed out — restore the browse view
             await self._restore_browse()
             return
 
@@ -230,14 +293,13 @@ class BrowseView(discord.ui.View):
             await self._restore_browse()
             return
 
-        if attachment.size > 5 * 1024 * 1024:  # 5MB limit
+        if attachment.size > 5 * 1024 * 1024:
             await interaction.followup.send(
                 "File is too large (max 5MB). Upload cancelled.", ephemeral=True,
             )
             await self._restore_browse()
             return
 
-        # Download the image bytes
         try:
             img_bytes = await attachment.read()
         except discord.HTTPException:
@@ -247,7 +309,6 @@ class BrowseView(discord.ui.View):
             await self._restore_browse()
             return
 
-        # Save to the correct directory with the correct name
         try:
             saved_path = await asyncio.to_thread(
                 save_art_file,
@@ -263,7 +324,7 @@ class BrowseView(discord.ui.View):
             await self._restore_browse()
             return
 
-        # Invalidate the rendered cache by nulling RenderedFile
+        # Update ArtFile column and invalidate render cache
         try:
             await asyncio.to_thread(
                 VaultDB.update_card, card["id"], ArtFile=os.path.basename(saved_path),
@@ -271,44 +332,244 @@ class BrowseView(discord.ui.View):
         except Exception as e:
             log.warning(f"Failed to update ArtFile on card {card['id']}: {e}")
 
-        # Clean up the user's upload message if possible
+        # Clean up upload message
         try:
             await msg.delete()
         except (discord.HTTPException, discord.Forbidden):
             pass
 
-        # Refresh card data and restore the browse view on the same card
         await self._refresh_cards(card["id"])
         await self._restore_browse()
 
-    async def _refresh_cards(self, focus_card_id: int):
-        """Reload card data from DB and re-focus on a specific card by ID."""
-        self.cards = await asyncio.to_thread(
-            VaultDB.browse_store_all, self.category
+    @discord.ui.button(label="Update Text", style=discord.ButtonStyle.primary, emoji="\u270f\ufe0f", row=2)
+    async def update_text_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Prompt the admin to update the name, explanation, and blurb of the current card."""
+        card = self.cards[self.index]
+        cat_label = CATEGORY_LABEL.get(card["category"], card["category"].title())
+
+        prompt_embed = discord.Embed(
+            title="\u270f\ufe0f Update Card Text",
+            description=(
+                f"Editing **{cat_label} — {card['name']}** (#{card['id']})\n\n"
+                f"Send the updated text in this format:\n"
+                f"`Name | Explanation | Blurb`\n\n"
+                f"**Current values:**\n"
+                f"> **Name:** {card['name']}\n"
+                f"> **Explanation:** {card['explanation']}\n"
+                f"> **Blurb:** {card['blurb']}\n\n"
+                f"You have 60 seconds."
+            ),
+            color=EMBED_COLOR,
         )
-        for i, c in enumerate(self.cards):
-            if c["id"] == focus_card_id:
-                self.index = i
-                break
+        await interaction.response.edit_message(embed=prompt_embed, view=None, attachments=[])
 
-    async def _restore_browse(self):
-        """Re-render the browse view and edit it back onto the message."""
-        # Rebuild category dropdown
-        for item in self.children:
-            if isinstance(item, BrowseCategorySelect):
-                self.remove_item(item)
-                break
-        self.add_item(BrowseCategorySelect(self, self.category))
+        msg = await _wait_for_text(self.cog.bot, interaction.user.id, interaction.channel.id)
+        if msg is None:
+            await self._restore_browse()
+            return
 
-        self._update_buttons()
-        embed, file = await self._render_current()
-        attachments = [file] if file else []
-        await self.message.edit(embed=embed, view=self, attachments=attachments)
+        # Parse the input
+        parts = msg.content.split("|")
+        if len(parts) != 3:
+            await interaction.followup.send(
+                "Invalid format. Use: `Name | Explanation | Blurb`", ephemeral=True,
+            )
+            await self._restore_browse()
+            return
 
-    @discord.ui.button(label="Done", style=discord.ButtonStyle.danger, emoji="\u2716\ufe0f", row=0)
-    async def done_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.response.edit_message(view=None)
-        self.stop()
+        new_name = parts[0].strip()
+        new_explanation = parts[1].strip()
+        new_blurb = parts[2].strip()
+
+        if not new_name or not new_explanation or not new_blurb:
+            await interaction.followup.send(
+                "Name, explanation, and blurb can't be empty.", ephemeral=True,
+            )
+            await self._restore_browse()
+            return
+
+        # Update the card in the database
+        try:
+            await asyncio.to_thread(
+                VaultDB.update_card, card["id"],
+                Name=new_name, Explanation=new_explanation, Blurb=new_blurb,
+            )
+        except Exception as e:
+            log.error(f"Failed to update card text for {card['name']}: {e}")
+            await interaction.followup.send(
+                f"Failed to update card: {e}", ephemeral=True,
+            )
+            await self._restore_browse()
+            return
+
+        # Clean up input message
+        try:
+            await msg.delete()
+        except (discord.HTTPException, discord.Forbidden):
+            pass
+
+        await self._refresh_cards(card["id"])
+        await self._restore_browse()
+
+    @discord.ui.button(label="Add Card", style=discord.ButtonStyle.success, emoji="\u2795", row=2)
+    async def add_card_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Prompt the admin to add a new card to the current category."""
+        cat_label = CATEGORY_LABEL.get(self.category, self.category.title())
+        rarities_str = ", ".join(f"`{r}`" for r in VALID_RARITIES)
+
+        prompt_embed = discord.Embed(
+            title=f"\u2795 Add New {cat_label} Card",
+            description=(
+                f"Adding to **{cat_label}** category.\n\n"
+                f"Send the new card in this format:\n"
+                f"`Rarity | Name | Explanation | Blurb`\n\n"
+                f"Valid rarities: {rarities_str}\n\n"
+                f"**Example:**\n"
+                f"> `rare | Deity of Sand | Commands the desert sands. | "
+                f"An ancient being bound to the dunes. Its power shapes "
+                f"sandstorms but each use erodes its physical form.`\n\n"
+                f"You have 60 seconds."
+            ),
+            color=EMBED_COLOR,
+        )
+        await interaction.response.edit_message(embed=prompt_embed, view=None, attachments=[])
+
+        msg = await _wait_for_text(self.cog.bot, interaction.user.id, interaction.channel.id)
+        if msg is None:
+            await self._restore_browse()
+            return
+
+        # Parse the input
+        parts = msg.content.split("|")
+        if len(parts) != 4:
+            await interaction.followup.send(
+                "Invalid format. Use: `Rarity | Name | Explanation | Blurb`", ephemeral=True,
+            )
+            await self._restore_browse()
+            return
+
+        rarity = parts[0].strip().lower()
+        new_name = parts[1].strip()
+        new_explanation = parts[2].strip()
+        new_blurb = parts[3].strip()
+
+        if rarity not in VALID_RARITIES:
+            await interaction.followup.send(
+                f"Invalid rarity `{rarity}`. Options: {', '.join(VALID_RARITIES)}", ephemeral=True,
+            )
+            await self._restore_browse()
+            return
+
+        if not new_name or not new_explanation or not new_blurb:
+            await interaction.followup.send(
+                "Name, explanation, and blurb can't be empty.", ephemeral=True,
+            )
+            await self._restore_browse()
+            return
+
+        # Insert into the database
+        try:
+            card_id = await asyncio.to_thread(
+                VaultDB.add_card, new_name, self.category, rarity, new_explanation, new_blurb,
+            )
+        except Exception as e:
+            log.error(f"Failed to add card '{new_name}': {e}")
+            await interaction.followup.send(
+                f"Failed to add card: {e}", ephemeral=True,
+            )
+            await self._restore_browse()
+            return
+
+        # Clean up input message
+        try:
+            await msg.delete()
+        except (discord.HTTPException, discord.Forbidden):
+            pass
+
+        # Refresh and focus on the newly added card
+        await self._refresh_cards(card_id)
+        await self._restore_browse()
+
+    @discord.ui.button(label="Delete", style=discord.ButtonStyle.danger, emoji="\U0001f5d1\ufe0f", row=2)
+    async def delete_card_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Delete the current card from the database after confirmation."""
+        card = self.cards[self.index]
+        cat_label = CATEGORY_LABEL.get(card["category"], card["category"].title())
+        rarity_label = RARITY_DISPLAY.get(card["rarity"], card["rarity"].title())
+
+        # Show confirmation embed with confirm/cancel buttons
+        confirm_embed = discord.Embed(
+            title="\U0001f5d1\ufe0f Delete Card?",
+            description=(
+                f"Are you sure you want to **permanently delete** this card?\n\n"
+                f"> **{card['name']}** (#{card['id']})\n"
+                f"> {cat_label} / {rarity_label}\n"
+                f"> {card['explanation']}\n\n"
+                f"This will also remove it from all player inventories.\n"
+                f"**This cannot be undone.**"
+            ),
+            color=0xff0000,
+        )
+        confirm_view = DeleteConfirmView(self, card)
+        await interaction.response.edit_message(embed=confirm_embed, view=confirm_view, attachments=[])
+
+
+class DeleteConfirmView(discord.ui.View):
+    """Confirmation step for card deletion."""
+
+    def __init__(self, browse_view: BrowseView, card: dict):
+        super().__init__(timeout=30)
+        self.browse_view = browse_view
+        self.card = card
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user.id != self.browse_view.ctx.author.id:
+            await interaction.response.send_message(
+                "This isn't your browse session.", ephemeral=True,
+            )
+            return False
+        return True
+
+    async def on_timeout(self):
+        # Timed out waiting for confirmation — restore browse
+        await self.browse_view._restore_browse()
+
+    @discord.ui.button(label="Yes, Delete", style=discord.ButtonStyle.danger, emoji="\U0001f5d1\ufe0f")
+    async def confirm_delete(self, interaction: discord.Interaction, button: discord.ui.Button):
+        card = self.card
+
+        try:
+            await asyncio.to_thread(VaultDB.delete_card, card["id"])
+        except Exception as e:
+            log.error(f"Failed to delete card {card['name']} (#{card['id']}): {e}")
+            await interaction.response.send_message(
+                f"Failed to delete card: {e}", ephemeral=True,
+            )
+            await self.browse_view._restore_browse()
+            return
+
+        # Disable buttons immediately
+        for child in self.children:
+            child.disabled = True
+        await interaction.response.edit_message(view=self)
+
+        # Refresh card list (the deleted card will be gone)
+        bv = self.browse_view
+        bv.cards = await asyncio.to_thread(
+            VaultDB.browse_store_all, bv.category
+        )
+        if bv.index >= len(bv.cards):
+            bv.index = max(0, len(bv.cards) - 1)
+
+        await bv._restore_browse()
+
+    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary)
+    async def cancel_delete(self, interaction: discord.Interaction, button: discord.ui.Button):
+        # Just restore the browse view
+        for child in self.children:
+            child.disabled = True
+        await interaction.response.edit_message(view=self)
+        await self.browse_view._restore_browse()
 
 
 class BrowseCategorySelect(discord.ui.Select):
@@ -358,10 +619,6 @@ class BrowseCategorySelect(discord.ui.Select):
 # ADMIN MIXIN
 # ==================================================================
 
-# Need os import for the upload handler
-import os
-
-
 class AdminMixin(MixinMeta):
     """Admin commands for Vault card and store management."""
 
@@ -384,7 +641,12 @@ class AdminMixin(MixinMeta):
         """Browse all cards in the catalog with rendered card images.
 
         Use the dropdown to switch categories, arrows to cycle through cards.
-        Use the Update PNG button to upload art for the current card.
+
+        **Action buttons:**
+        \u2022 **Update PNG** — upload new art for the current card
+        \u2022 **Update Text** — edit name, explanation, and blurb
+        \u2022 **Add Card** — add a new card to the current category
+        \u2022 **Delete** — permanently remove the current card
 
         Example: `[p]va browse` or `[p]va browse weapon`
         """
@@ -492,15 +754,14 @@ class AdminMixin(MixinMeta):
             categories = ", ".join(f"`{c}`" for c in ALL_CATEGORIES)
             return await ctx.send(f"Invalid category. Options: {categories}")
 
-        valid_rarities = ["common", "uncommon", "rare", "legendary"]
-        if rarity not in valid_rarities:
-            return await ctx.send(f"Invalid rarity. Options: {', '.join(valid_rarities)}")
+        if rarity not in VALID_RARITIES:
+            return await ctx.send(f"Invalid rarity. Options: {', '.join(VALID_RARITIES)}")
 
         parts = text.split("|")
         if len(parts) != 3:
             return await ctx.send(
                 "Use `|` to separate the three fields:\n"
-                "`[p]va addcard <category> <rarity> <name> | <explanation> | <blurb>`\n\n"
+                "`[p]va addcard <category> <rarity> <n> | <explanation> | <blurb>`\n\n"
                 "Example:\n"
                 "`[p]va addcard item common Healing Potion | Restores a small amount of health. | A simple glass vial filled with a glowing red liquid.`"
             )

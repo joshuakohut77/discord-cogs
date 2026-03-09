@@ -1152,3 +1152,36 @@ class VaultDB:
             'DELETE FROM vault_inventory_state WHERE "InventoryId" = %(id)s AND "Key" = %(key)s',
             {"id": inv_id, "key": key},
         )
+    
+    @staticmethod
+    def delete_card(card_id: int) -> None:
+        """Permanently delete a card from the catalog.
+
+        This cascades to vault_card_properties (ON DELETE CASCADE).
+        Inventory rows referencing this card are also removed since
+        a deleted card should not exist in anyone's collection.
+        """
+        database = dbconn()
+
+        # Remove all inventory state entries for this card first
+        database.execute(
+            """DELETE FROM vault_inventory_state
+               WHERE "InventoryId" IN (
+                   SELECT "Id" FROM vault_inventory WHERE "CardId" = %(cid)s
+               )
+            """,
+            {"cid": card_id},
+        )
+
+        # Remove all inventory entries for this card
+        # (vault_inventory has ON DELETE NO ACTION for CardId)
+        database.execute(
+            'DELETE FROM vault_inventory WHERE "CardId" = %(cid)s',
+            {"cid": card_id},
+        )
+
+        # Delete the card itself (card_properties cascade automatically)
+        database.execute(
+            'DELETE FROM vault_cards WHERE "Id" = %(cid)s',
+            {"cid": card_id},
+        )
