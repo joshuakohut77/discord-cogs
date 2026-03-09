@@ -218,6 +218,53 @@ def _draw_text_block(
     return y
 
 
+def _fit_single_line(
+    text: str,
+    max_width: int,
+    start_size: int,
+    bold: bool = True,
+    min_size: int = 6,
+) -> ImageFont.FreeTypeFont:
+    """Find the largest font size where text fits on ONE line (no wrapping).
+
+    Returns the font at the right size.
+    """
+    for size in range(start_size, min_size - 1, -1):
+        font = _load_font(size, bold=bold)
+        if font.getlength(text) <= max_width:
+            return font
+
+    return _load_font(min_size, bold=bold)
+
+
+def _draw_text_centered(
+    draw: ImageDraw.ImageDraw,
+    text: str,
+    font: ImageFont.FreeTypeFont,
+    zone_x: int,
+    zone_w: int,
+    y: int,
+    color: tuple = TEXT_COLOR,
+) -> int:
+    """Draw a single line of text horizontally centered within a zone.
+
+    Parameters
+    ----------
+    zone_x : int
+        Left edge of the zone.
+    zone_w : int
+        Width of the zone.
+    y : int
+        Vertical position to draw at.
+
+    Returns the Y position below the drawn text.
+    """
+    text_w = font.getlength(text)
+    x = zone_x + (zone_w - text_w) / 2
+    draw.text((x, y), text, font=font, fill=color)
+    return y + _get_line_height(font)
+
+
 # ---------------------------------------------------------------
 # MAIN RENDERER
 # ---------------------------------------------------------------
@@ -277,16 +324,19 @@ def render_card(
     draw.text((CATEGORY_X, CATEGORY_Y), cat_label, font=cat_font, fill=TEXT_COLOR)
     cat_line_h = _get_line_height(cat_font)
 
-    # --- Zone 2: Card name ---
+    # --- Zone 2: Card name (single line, centered, shrinks to fit) ---
     name_y = CATEGORY_Y + cat_line_h + NAME_Y_OFFSET
-    name_font, name_lines = _fit_text_in_zone(
+    name_font = _fit_single_line(
         name,
         max_width=NAME_MAX_W,
-        max_height=ART_BOTTOM - name_y,  # can't go below the art zone bottom
         start_size=NAME_FONT_SIZE,
         bold=True,
     )
-    name_bottom = _draw_text_block(draw, name_lines, name_font, NAME_X, name_y)
+    name_bottom = _draw_text_centered(
+        draw, name, name_font,
+        zone_x=NAME_X, zone_w=NAME_MAX_W,
+        y=name_y,
+    )
 
     # --- Zone 3: Explanation ---
     # Position dynamically: below the name, but not above EXPL_Y_MIN
