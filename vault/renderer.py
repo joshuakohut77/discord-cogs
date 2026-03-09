@@ -73,14 +73,14 @@ TEXT_COLOR = (34, 31, 22)
 CATEGORY_X = 204
 CATEGORY_Y = 30
 CATEGORY_MAX_W = 282     # right boundary ~486 minus CATEGORY_X
-CATEGORY_FONT_SIZE = 22  # starting size, auto-shrinks to fit
+CATEGORY_FONT_SIZE = 36  # starting size, auto-shrinks to fit
 
 # --- Zone 2: Card name (e.g. "Levitation") ---
 # Below the category prefix, slightly indented. Bold, larger font.
 # Y position is dynamic (below the rendered category text).
 NAME_X = 240              # indented from category
 NAME_MAX_W = 246           # right boundary ~486 minus NAME_X
-NAME_FONT_SIZE = 22        # starting size, auto-shrinks to fit
+NAME_FONT_SIZE = 36        # starting size, auto-shrinks to fit
 NAME_Y_OFFSET = 8          # gap below the category text
 
 # --- Zone 3: Explanation (one-sentence summary) ---
@@ -89,7 +89,7 @@ EXPL_X = 204
 EXPL_Y_MIN = 120           # earliest Y the explanation can start
 EXPL_MAX_W = 282           # same right boundary as category
 EXPL_MAX_H = 70            # max height before we shrink the font
-EXPL_FONT_SIZE = 16        # starting size
+EXPL_FONT_SIZE = 22        # starting size
 
 # --- Zone 4: Blurb (detailed description) ---
 # Full width below the art zone. Medium font.
@@ -97,7 +97,7 @@ BLURB_X = 22
 BLURB_Y = 210
 BLURB_MAX_W = 460          # right boundary ~482 minus BLURB_X
 BLURB_MAX_H = 165          # bottom boundary ~375 minus BLURB_Y
-BLURB_FONT_SIZE = 18       # starting size (DejaVu placeholder is wider than pixel fonts)
+BLURB_FONT_SIZE = 22       # starting size (DejaVu placeholder is wider than pixel fonts)
 
 # ---------------------------------------------------------------
 # CATEGORY DISPLAY LABELS
