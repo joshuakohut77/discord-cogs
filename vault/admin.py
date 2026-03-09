@@ -343,17 +343,21 @@ class BrowseView(discord.ui.View):
 
     @discord.ui.button(label="Update Text", style=discord.ButtonStyle.primary, emoji="\u270f\ufe0f", row=2)
     async def update_text_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        """Prompt the admin to update the name, explanation, and blurb of the current card."""
+        """Prompt the admin to update the rarity, name, explanation, and blurb of the current card."""
         card = self.cards[self.index]
         cat_label = CATEGORY_LABEL.get(card["category"], card["category"].title())
+        rarity_label = RARITY_DISPLAY.get(card["rarity"], card["rarity"].title())
+        rarities_str = ", ".join(f"`{r}`" for r in VALID_RARITIES)
 
         prompt_embed = discord.Embed(
             title="\u270f\ufe0f Update Card Text",
             description=(
                 f"Editing **{cat_label} — {card['name']}** (#{card['id']})\n\n"
                 f"Send the updated text in this format:\n"
-                f"`Name | Explanation | Blurb`\n\n"
+                f"`Rarity | Name | Explanation | Blurb`\n\n"
+                f"Valid rarities: {rarities_str}\n\n"
                 f"**Current values:**\n"
+                f"> **Rarity:** {rarity_label}\n"
                 f"> **Name:** {card['name']}\n"
                 f"> **Explanation:** {card['explanation']}\n"
                 f"> **Blurb:** {card['blurb']}\n\n"
@@ -370,16 +374,24 @@ class BrowseView(discord.ui.View):
 
         # Parse the input
         parts = msg.content.split("|")
-        if len(parts) != 3:
+        if len(parts) != 4:
             await interaction.followup.send(
-                "Invalid format. Use: `Name | Explanation | Blurb`", ephemeral=True,
+                "Invalid format. Use: `Rarity | Name | Explanation | Blurb`", ephemeral=True,
             )
             await self._restore_browse()
             return
 
-        new_name = parts[0].strip()
-        new_explanation = parts[1].strip()
-        new_blurb = parts[2].strip()
+        new_rarity = parts[0].strip().lower()
+        new_name = parts[1].strip()
+        new_explanation = parts[2].strip()
+        new_blurb = parts[3].strip()
+
+        if new_rarity not in VALID_RARITIES:
+            await interaction.followup.send(
+                f"Invalid rarity `{new_rarity}`. Options: {', '.join(VALID_RARITIES)}", ephemeral=True,
+            )
+            await self._restore_browse()
+            return
 
         if not new_name or not new_explanation or not new_blurb:
             await interaction.followup.send(
@@ -392,7 +404,7 @@ class BrowseView(discord.ui.View):
         try:
             await asyncio.to_thread(
                 VaultDB.update_card, card["id"],
-                Name=new_name, Explanation=new_explanation, Blurb=new_blurb,
+                Rarity=new_rarity, Name=new_name, Explanation=new_explanation, Blurb=new_blurb,
             )
         except Exception as e:
             log.error(f"Failed to update card text for {card['name']}: {e}")
