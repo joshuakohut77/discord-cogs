@@ -108,7 +108,7 @@ NAME_Y_OFFSET = 5          # gap below the category text
 # Right of art, below the name block. Smaller font.
 EXPL_X = 204
 EXPL_Y_MIN = 120           # earliest Y the explanation can start
-EXPL_MAX_W = 415           # same right boundary as category
+EXPL_MAX_W = 410           # same right boundary as category
 EXPL_MAX_H = 75            # max height before we shrink the font
 EXPL_FONT_SIZE = 36        # starting size
 
@@ -116,7 +116,7 @@ EXPL_FONT_SIZE = 36        # starting size
 # Full width below the art zone. Medium font.
 BLURB_X = 24
 BLURB_Y = 210
-BLURB_MAX_W = 720          # right boundary ~482 minus BLURB_X
+BLURB_MAX_W = 716          # right boundary ~482 minus BLURB_X
 BLURB_MAX_H = 160          # bottom boundary ~375 minus BLURB_Y
 BLURB_FONT_SIZE = 36       # starting size (DejaVu placeholder is wider than pixel fonts)
 
