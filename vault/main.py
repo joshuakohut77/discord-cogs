@@ -43,6 +43,7 @@ class Vault(
         VaultDatabasePool.initialize()
         await asyncio.to_thread(VaultDB.create_tables)
         await asyncio.to_thread(CampaignDB.create_tables)
+        self._register_campaign_commands()
         log.info("Vault tables ready (including campaign tables).")
 
     def cog_unload(self):

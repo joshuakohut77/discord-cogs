@@ -786,24 +786,41 @@ async def _start_turn(cog, channel: discord.TextChannel, campaign: dict):
 class CampaignMixin(MixinMeta):
     """Campaign commands for The Vault DnD system.
 
-    Re-declares the vaultadmin and vault groups with the same names
-    as AdminMixin and CommandsMixin. Red's CogMeta merges groups
-    that share the same name across mixins automatically.
+    Subcommands are registered onto the existing vaultadmin and vault
+    groups (from AdminMixin and CommandsMixin) via async_register_commands(),
+    which is called from Vault.initialize() after the cog is fully loaded.
     """
 
     __slots__: tuple = ()
 
+    def _register_campaign_commands(self):
+        """Register campaign subcommands onto existing command groups.
+
+        Must be called after the cog is added to the bot, so that
+        self.vaultadmin and self.vault exist from the other mixins.
+        Uses add_command() which works with already-constructed Group objects.
+        """
+        # Build Command objects manually with proper signatures
+        admin_cmds = [
+            commands.Command(self.start_campaign, name="startcampaign", aliases=["sc"]),
+            commands.Command(self.end_campaign, name="endcampaign", aliases=["ec"]),
+            commands.Command(self.resume_campaign, name="resume"),
+            commands.Command(self.pause_campaign, name="pausecampaign", aliases=["pc"]),
+        ]
+        for cmd in admin_cmds:
+            self.vaultadmin.add_command(cmd)
+
+        player_cmds = [
+            commands.Command(self.campaign_status, name="campaign", aliases=["camp", "quest"]),
+            commands.Command(self.campaign_request, name="request"),
+        ]
+        for cmd in player_cmds:
+            self.vault.add_command(cmd)
+
     # ------------------------------------------------------------------
-    # Admin: Campaign management → [p]va ...
+    # Admin: Campaign management → [p]va startcampaign / endcampaign / resume / pausecampaign
     # ------------------------------------------------------------------
 
-    @commands.group(name="vaultadmin", aliases=["va"])
-    @commands.guild_only()
-    @commands.admin_or_permissions(manage_guild=True)
-    async def _campaign_vaultadmin(self, ctx: commands.Context):
-        pass
-
-    @_campaign_vaultadmin.command(name="startcampaign", aliases=["sc"])
     async def start_campaign(self, ctx: commands.Context, *members: discord.Member):
         """Start a new campaign with the specified players.
 
@@ -883,7 +900,6 @@ class CampaignMixin(MixinMeta):
         # Start the first turn
         await _start_turn(self, ctx.channel, campaign)
 
-    @_campaign_vaultadmin.command(name="endcampaign", aliases=["ec"])
     async def end_campaign(self, ctx: commands.Context):
         """Force-end the current campaign.
 
@@ -914,7 +930,6 @@ class CampaignMixin(MixinMeta):
         embed.set_footer(text=f"Campaign #{campaign['id']} \u2022 {campaign['current_round']} rounds \u2022 {turns} turns taken")
         await ctx.send(embed=embed)
 
-    @_campaign_vaultadmin.command(name="resume")
     async def resume_campaign(self, ctx: commands.Context):
         """Resume a campaign after a timeout or bot restart.
 
@@ -943,7 +958,6 @@ class CampaignMixin(MixinMeta):
         # Re-start the current turn
         await _start_turn(self, ctx.channel, campaign)
 
-    @_campaign_vaultadmin.command(name="pausecampaign", aliases=["pc"])
     async def pause_campaign(self, ctx: commands.Context):
         """Pause the current campaign. Use `[p]va resume` to continue.
 
@@ -966,12 +980,6 @@ class CampaignMixin(MixinMeta):
     # Player: Campaign info → [p]v campaign / [p]v request
     # ------------------------------------------------------------------
 
-    @commands.group(name="vault", aliases=["v"], invoke_without_command=True)
-    @commands.guild_only()
-    async def _campaign_vault(self, ctx: commands.Context):
-        pass
-
-    @_campaign_vault.command(name="campaign", aliases=["camp", "quest"])
     async def campaign_status(self, ctx: commands.Context):
         """View the current campaign status.
 
@@ -1006,7 +1014,6 @@ class CampaignMixin(MixinMeta):
         embed.set_footer(text=f"Campaign #{campaign['id']}")
         await ctx.send(embed=embed)
 
-    @_campaign_vault.command(name="request")
     async def campaign_request(self, ctx: commands.Context, *, request: str):
         """Send a meta-request to the DM (e.g. 'end soon', 'extend the game').
 
