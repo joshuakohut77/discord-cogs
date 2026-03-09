@@ -10745,6 +10745,10 @@ HP    : {wildPokemon.currentHP} / {stats['hp']}
         # activeStats = active.getPokeStats()
 
         embed.set_footer(text=descLog)
+        
+        print(f"[DEBUG SPRITE] Wild: {wildPokemon.frontSpriteURL}")
+        print(f"[DEBUG SPRITE] Active: {activePokemon.backSpriteURL}")
+
         return embed
 
     def __checkUserActionState(self, user: discord.User, message: discord.Message):
