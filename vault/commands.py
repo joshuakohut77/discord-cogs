@@ -2,12 +2,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from datetime import datetime
 import asyncio
+import io
 import logging
 
 import discord
 from redbot.core import commands
 from .abc import MixinMeta
 from .db import VaultDB
+from .renderer import render_card, resolve_art_path
 from .constants import (
     COIN_EMOJI, COIN_EMOJI_URL, EMBED_COLOR, STORE_EMBED_COLOR,
     RARITY_COLORS, ALL_CATEGORIES, RARITY_ORDER, CATEGORY_ITEM,
@@ -270,7 +272,7 @@ class PullView(discord.ui.View):
             description=f"*Drawing from the {cat_display(self.category)} vault...*",
             color=EMBED_COLOR,
         )
-        await interaction.edit_original_response(embed=opening_embed, view=None)
+        await interaction.edit_original_response(embed=opening_embed, view=None, attachments=[])
 
         # Brief suspense delay
         await asyncio.sleep(1.5)
@@ -294,10 +296,10 @@ class PullView(discord.ui.View):
             await interaction.edit_original_response(embed=error_embed, view=back_view)
             return
 
-        # Build reveal embed
+        # Build reveal embed with rendered card image
         card = result["card"]
         rarity = result["rarity_rolled"]
-        reveal_embed = _build_card_reveal_embed(card, rarity, result, interaction.user)
+        reveal_embed, card_file = await _build_card_reveal(card, rarity, result, interaction.user)
 
         # Offer to pull again or go back
         after_view = AfterPullView(
@@ -305,7 +307,12 @@ class PullView(discord.ui.View):
             self.store_config,
         )
         after_view.message = self.message
-        await interaction.edit_original_response(embed=reveal_embed, view=after_view)
+
+        kwargs = {"embed": reveal_embed, "view": after_view}
+        if card_file:
+            kwargs["attachments"] = [card_file]
+
+        await interaction.edit_original_response(**kwargs)
 
     @discord.ui.button(label="Back", style=discord.ButtonStyle.secondary, emoji="\u25c0\ufe0f")
     async def back_button(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -420,13 +427,17 @@ def _build_store_front_embed(guild_name: str, store_config: dict) -> discord.Emb
     return embed
 
 
-def _build_card_reveal_embed(
+async def _build_card_reveal(
     card: dict,
     rarity: str,
     result: dict,
     user: discord.User | discord.Member,
-) -> discord.Embed:
-    """Build the card reveal embed after a successful pull."""
+) -> tuple[discord.Embed, Optional[discord.File]]:
+    """Build the card reveal embed with the rendered card image.
+
+    Returns (embed, file) — file may be None if rendering fails,
+    in which case the embed falls back to text fields.
+    """
     rarity_color = RARITY_COLORS.get(rarity, EMBED_COLOR)
 
     embed = discord.Embed(
@@ -444,8 +455,6 @@ def _build_card_reveal_embed(
         inline=True,
     )
     embed.add_field(name="\u200b", value="\u200b", inline=True)
-    embed.add_field(name="Description", value=card["explanation"], inline=False)
-    embed.add_field(name="Details", value=card["blurb"], inline=False)
     embed.add_field(
         name="Cost",
         value=f"-{result['price']} {COIN_EMOJI}",
@@ -462,11 +471,28 @@ def _build_card_reveal_embed(
         icon_url=user.display_avatar.url,
     )
 
-    # TODO: Once renderer is integrated into pull flow, attach the rendered card image
-    # if card.get("rendered_file"):
-    #     embed.set_image(url=f"attachment://card.png")
+    # Render the card image
+    art_path = resolve_art_path(card["category"], card["name"], card.get("art_file"))
+    card_file = None
 
-    return embed
+    try:
+        png_bytes = await asyncio.to_thread(
+            render_card,
+            category=card["category"],
+            name=card["name"],
+            explanation=card["explanation"],
+            blurb=card["blurb"],
+            art_path=art_path,
+        )
+        card_file = discord.File(io.BytesIO(png_bytes), filename="card.png")
+        embed.set_image(url="attachment://card.png")
+    except Exception as e:
+        log.error(f"Failed to render card {card['name']} during pull reveal: {e}")
+        # Fallback: show text fields if rendering fails
+        embed.add_field(name="Description", value=card["explanation"], inline=False)
+        embed.add_field(name="Details", value=card["blurb"], inline=False)
+
+    return embed, card_file
 
 
 # ==================================================================
@@ -532,8 +558,13 @@ class CommandsMixin(MixinMeta):
 
         card = result["card"]
         rarity = result["rarity_rolled"]
-        embed = _build_card_reveal_embed(card, rarity, result, ctx.author)
-        await ctx.send(embed=embed)
+        embed, card_file = await _build_card_reveal(card, rarity, result, ctx.author)
+
+        kwargs = {"embed": embed}
+        if card_file:
+            kwargs["file"] = card_file
+
+        await ctx.send(**kwargs)
 
     # ------------------------------------------------------------------
     # Inventory
