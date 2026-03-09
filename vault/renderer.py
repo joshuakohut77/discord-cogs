@@ -111,6 +111,45 @@ CATEGORY_LABELS = {
     "armor": "Armor:",
 }
 
+# ---------------------------------------------------------------
+# CATEGORY → ASSET FOLDER NAME
+# Maps DB category keys to the actual directory names under assets/
+# ---------------------------------------------------------------
+CATEGORY_FOLDER = {
+    "superpower": "powers",
+    "ally": "allies",
+    "companion": "companions",
+    "item": "items",
+    "weapon": "weapons",
+    "armor": "armor",
+}
+
+
+def _derive_art_filename(card_name: str) -> str:
+    """Derive an art filename from a card name.
+
+    'Deity of Sand' → 'deity_of_sand.png'
+    'The Faceless Merchant' → 'the_faceless_merchant.png'
+    """
+    safe = card_name.lower().replace(" ", "_").replace("'", "")
+    return f"{safe}.png"
+
+
+def resolve_art_path(category: str, card_name: str, art_file: Optional[str] = None) -> Optional[str]:
+    """Resolve the full filesystem path to a card's art file.
+
+    Checks vault/assets/<folder>/<artfile>. If art_file is None,
+    auto-derives the filename from the card name.
+
+    Returns the path string if the file exists, otherwise None.
+    """
+    folder = CATEGORY_FOLDER.get(category.lower(), category.lower())
+    filename = art_file if art_file else _derive_art_filename(card_name)
+    candidate = _THIS_DIR / "assets" / folder / filename
+    if candidate.exists():
+        return str(candidate)
+    return None
+
 
 # ---------------------------------------------------------------
 # FONT LOADING

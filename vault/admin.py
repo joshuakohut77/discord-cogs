@@ -8,7 +8,7 @@ import discord
 from redbot.core import commands
 from .abc import MixinMeta
 from .db import VaultDB
-from .renderer import render_card
+from .renderer import render_card, resolve_art_path
 from .constants import (
     EMBED_COLOR, STORE_EMBED_COLOR, COIN_EMOJI, ALL_CATEGORIES,
     RARITY_COLORS, RARITY_ORDER,
@@ -123,15 +123,8 @@ class BrowseView(discord.ui.View):
         active_status = "\u2705 Active" if card.get("is_active") else "\u274c Inactive"
         embed.add_field(name="Status", value=f"{store_status} | {active_status}", inline=True)
 
-        # Render the card image
-        # Art files live in vault/assets/<category>/<artfile>
-        art_path = None
-        if card.get("art_file"):
-            from pathlib import Path
-            art_dir = Path(__file__).resolve().parent / "assets" / card["category"]
-            candidate = art_dir / card["art_file"]
-            if candidate.exists():
-                art_path = str(candidate)
+        # Resolve art path: uses ArtFile if set, otherwise auto-derives from card name
+        art_path = resolve_art_path(card["category"], card["name"], card.get("art_file"))
 
         try:
             png_bytes = await asyncio.to_thread(
