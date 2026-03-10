@@ -723,20 +723,25 @@ async def _start_turn(cog, channel: discord.TextChannel, campaign: dict):
         last_message_id=str(dm_message.id),
     )
 
-    # Announce whose turn it is
-    turn_announce = discord.Embed(
-        title=f"\u2694\ufe0f {active_member.display_name}'s Turn",
-        description=(
-            f"{active_member.mention}, it's your move!\n\n"
-            f"Browse your cards below, then choose:\n"
-            f"\u2022 **Play Card** — use the currently shown card\n"
-            f"\u2022 **Action** — describe what you do (no card)\n"
-            f"\u2022 **Play Both** — play the card AND describe an action\n"
-            f"\u2022 **Ask Question** — ask the DM without using your turn (1 per turn)"
-        ),
-        color=CAMPAIGN_COLOR,
-    )
-    await channel.send(embed=turn_announce)
+    # Simple turn announcement (rules are explained once at campaign start)
+    # Show rules on the very first turn only
+    if campaign["current_round"] == 1 and campaign["current_turn_index"] == 0:
+        rules_embed = discord.Embed(
+            title="\U0001f4dc How To Play",
+            description=(
+                "Each turn, the active player's cards are shown publicly.\n\n"
+                "\u2022 **Play Card** — use the currently shown card\n"
+                "\u2022 **Action** — describe what you do (no card)\n"
+                "\u2022 **Play Both** — play a card AND describe an action\n"
+                "\u2022 **Ask Question** — ask the DM without using your turn (1 per turn)\n"
+                "\u2022 **Show My Cards** — other players can browse their own cards\n\n"
+                "*Use `[p]v request <message>` to tell the DM to adjust pacing.*"
+            ),
+            color=CAMPAIGN_COLOR,
+        )
+        await channel.send(embed=rules_embed)
+
+    await channel.send(f"\u2694\ufe0f {active_member.mention}, it's your turn!")
 
     # Load active player's inventory and post it publicly
     items = await asyncio.to_thread(
