@@ -15,6 +15,11 @@ from .constants import (
     RARITY_COLORS, RARITY_ORDER,
 )
 
+import random
+from .campaign_db import CampaignDB
+from .dm_engine import DMEngine
+from .campaign import _start_turn, CAMPAIGN_COLOR
+
 if TYPE_CHECKING:
     pass
 
@@ -893,3 +898,166 @@ class AdminMixin(MixinMeta):
 
         await asyncio.to_thread(VaultDB.retire_item, inv_id)
         await ctx.send(f"Revoked **{item['name']}** (inv #{inv_id}) from <@{item['user_id']}>.")
+
+    # ------------------------------------------------------------------
+    # Campaign management
+    # ------------------------------------------------------------------
+
+    @vaultadmin.command(name="startcampaign", aliases=["sc"])
+    async def start_campaign(self, ctx: commands.Context, *members: discord.Member):
+        """Start a new campaign with the specified players.
+
+        This registers all players, generates a random turn order,
+        builds the campaign narrative, and begins the first turn.
+
+        Example: `[p]va startcampaign @User1 @User2 @User3`
+        """
+        if len(members) < 1:
+            return await ctx.send("You need at least 1 player to start a campaign.")
+
+        # Check for duplicates
+        unique_members = list({m.id: m for m in members}.values())
+        if len(unique_members) != len(members):
+            return await ctx.send("Duplicate players detected. Each player can only be listed once.")
+
+        # Check for bots
+        if any(m.bot for m in unique_members):
+            return await ctx.send("Bots can't participate in campaigns.")
+
+        # Create campaign
+        try:
+            campaign_id = await asyncio.to_thread(
+                CampaignDB.create_campaign, ctx.guild.id, ctx.channel.id,
+            )
+        except ValueError as e:
+            return await ctx.send(str(e))
+
+        # Register players
+        for member in unique_members:
+            await asyncio.to_thread(
+                CampaignDB.add_player, campaign_id, member.id, member.display_name,
+            )
+
+        # Generate random turn order
+        user_ids = [m.id for m in unique_members]
+        random.shuffle(user_ids)
+        await asyncio.to_thread(CampaignDB.set_turn_order, campaign_id, user_ids)
+
+        # Get players for DM engine
+        players = await asyncio.to_thread(CampaignDB.get_players, campaign_id)
+
+        # Build turn order display
+        turn_order_display = "\n".join(
+            f"**{i+1}.** <@{uid}>" for i, uid in enumerate(user_ids)
+        )
+
+        # Starting embed
+        setup_embed = discord.Embed(
+            title="\U0001f3ad The Vault — Campaign Begins",
+            description=(
+                f"**Players ({len(unique_members)}):**\n"
+                f"{turn_order_display}\n\n"
+                f"Generating the campaign..."
+            ),
+            color=CAMPAIGN_COLOR,
+        )
+        await ctx.send(embed=setup_embed)
+
+        # Generate campaign opening
+        await DMEngine.generate_campaign_start(
+            campaign_id=campaign_id,
+            guild_id=str(ctx.guild.id),
+            players=players,
+        )
+
+        # Activate the campaign
+        await asyncio.to_thread(
+            CampaignDB.set_campaign_status, campaign_id, "active",
+        )
+
+        # Get the fresh campaign state
+        campaign = await asyncio.to_thread(
+            CampaignDB.get_active_campaign, ctx.guild.id,
+        )
+
+        # Start the first turn
+        await _start_turn(self, ctx.channel, campaign)
+
+    @vaultadmin.command(name="endcampaign", aliases=["ec"])
+    async def end_campaign(self, ctx: commands.Context):
+        """Force-end the current campaign.
+
+        Example: `[p]va endcampaign`
+        """
+        campaign = await asyncio.to_thread(
+            CampaignDB.get_active_campaign, ctx.guild.id,
+        )
+        if not campaign:
+            return await ctx.send("No active campaign in this server.")
+
+        # Generate ending narrative
+        ending = await DMEngine.generate_campaign_ending(
+            campaign["id"], reason="admin_ended",
+        )
+
+        # End the campaign
+        await asyncio.to_thread(
+            CampaignDB.set_campaign_status, campaign["id"], "ended",
+        )
+
+        embed = discord.Embed(
+            title="\U0001f3c1 Campaign Ended",
+            description=ending,
+            color=CAMPAIGN_COLOR,
+        )
+        turns = await asyncio.to_thread(CampaignDB.get_turn_count, campaign["id"])
+        embed.set_footer(text=f"Campaign #{campaign['id']} \u2022 {campaign['current_round']} rounds \u2022 {turns} turns taken")
+        await ctx.send(embed=embed)
+
+    @vaultadmin.command(name="resume")
+    async def resume_campaign(self, ctx: commands.Context):
+        """Resume a campaign after a timeout or bot restart.
+
+        Re-renders the current DM prompt and active player's inventory
+        with fresh buttons.
+
+        Example: `[p]va resume`
+        """
+        campaign = await asyncio.to_thread(
+            CampaignDB.get_active_campaign, ctx.guild.id,
+        )
+        if not campaign:
+            return await ctx.send("No active campaign to resume.")
+
+        if campaign["status"] not in ("active", "paused"):
+            return await ctx.send("Campaign isn't in a resumable state.")
+
+        # If paused, reactivate
+        if campaign["status"] == "paused":
+            await asyncio.to_thread(
+                CampaignDB.set_campaign_status, campaign["id"], "active",
+            )
+
+        await ctx.send("\U0001f504 **Resuming campaign...**")
+
+        # Re-start the current turn
+        await _start_turn(self, ctx.channel, campaign)
+
+    @vaultadmin.command(name="pausecampaign", aliases=["pc"])
+    async def pause_campaign(self, ctx: commands.Context):
+        """Pause the current campaign. Use `[p]va resume` to continue.
+
+        Example: `[p]va pausecampaign`
+        """
+        campaign = await asyncio.to_thread(
+            CampaignDB.get_active_campaign, ctx.guild.id,
+        )
+        if not campaign:
+            return await ctx.send("No active campaign.")
+        if campaign["status"] != "active":
+            return await ctx.send("Campaign isn't active.")
+
+        await asyncio.to_thread(
+            CampaignDB.set_campaign_status, campaign["id"], "paused",
+        )
+        await ctx.send("\u23f8\ufe0f **Campaign paused.** Use `[p]va resume` to continue.")

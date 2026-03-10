@@ -15,6 +15,10 @@ from .constants import (
     RARITY_COLORS, ALL_CATEGORIES, RARITY_ORDER, CATEGORY_ITEM,
 )
 
+from .campaign_db import CampaignDB
+from .dm_engine import DMEngine
+from .campaign import CAMPAIGN_COLOR
+
 if TYPE_CHECKING:
     pass
 
@@ -910,3 +914,78 @@ class CommandsMixin(MixinMeta):
 
         message = await ctx.send(**kwargs)
         view.message = message
+
+    # ------------------------------------------------------------------
+    # Campaign — player commands
+    # ------------------------------------------------------------------
+
+    @vault.command(name="campaign", aliases=["camp", "quest"])
+    async def campaign_status(self, ctx: commands.Context):
+        """View the current campaign status.
+
+        Example: `[p]v campaign`
+        """
+        campaign = await asyncio.to_thread(
+            CampaignDB.get_active_campaign, ctx.guild.id,
+        )
+        if not campaign:
+            return await ctx.send("No active campaign in this server.")
+
+        players = await asyncio.to_thread(CampaignDB.get_players, campaign["id"])
+        turns = await asyncio.to_thread(CampaignDB.get_turn_count, campaign["id"])
+        turn_order = campaign["turn_order"]
+        current_idx = campaign["current_turn_index"]
+
+        # Build turn order with indicator
+        order_lines = []
+        for i, uid in enumerate(turn_order):
+            name = next((p["display_name"] for p in players if p["user_id"] == uid), f"<@{uid}>")
+            marker = " \u25c0 **CURRENT**" if i == current_idx else ""
+            order_lines.append(f"**{i+1}.** {name}{marker}")
+
+        embed = discord.Embed(
+            title="\U0001f3ad Campaign Status",
+            color=CAMPAIGN_COLOR,
+        )
+        embed.add_field(name="Status", value=campaign["status"].title(), inline=True)
+        embed.add_field(name="Round", value=str(campaign["current_round"]), inline=True)
+        embed.add_field(name="Turns Taken", value=str(turns), inline=True)
+        embed.add_field(name="Turn Order", value="\n".join(order_lines), inline=False)
+        embed.set_footer(text=f"Campaign #{campaign['id']}")
+        await ctx.send(embed=embed)
+
+    @vault.command(name="request")
+    async def campaign_request(self, ctx: commands.Context, *, request: str):
+        """Send a meta-request to the DM (e.g. 'end soon', 'extend the game').
+
+        This doesn't consume a turn — it's a note to the DM that influences
+        the campaign direction.
+
+        Example: `[p]v request wrap this up soon`
+        Example: `[p]v request extend the game, we're having fun`
+        """
+        campaign = await asyncio.to_thread(
+            CampaignDB.get_active_campaign, ctx.guild.id,
+        )
+        if not campaign:
+            return await ctx.send("No active campaign.")
+
+        if not await asyncio.to_thread(
+            CampaignDB.is_player_in_campaign, campaign["id"], ctx.author.id,
+        ):
+            return await ctx.send("You're not part of this campaign.")
+
+        # Store as a player_request message in the chain
+        msg = f"[PLAYER REQUEST from {ctx.author.display_name}]: {request}"
+        await asyncio.to_thread(
+            CampaignDB.add_message, campaign["id"], "user", msg,
+            message_type="player_request",
+        )
+
+        embed = discord.Embed(
+            title="\U0001f4e8 Request Sent",
+            description=f"Your request has been noted by the Dungeon Master:\n> *{request}*",
+            color=CAMPAIGN_COLOR,
+        )
+        embed.set_footer(text="The DM will take this into account for future narrative decisions.")
+        await ctx.send(embed=embed)
