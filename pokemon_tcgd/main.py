@@ -365,7 +365,7 @@ class PokemonTCG(commands.Cog):
 
     @tcgset.command(name="warmcache")
     @commands.admin_or_permissions(administrator=True)
-    async def tcgset_warmcache(self, ctx: commands.Context, set_id: str = None):
+    async def tcgset_warmcache(self, ctx: commands.Context, set_id: str = None, repeats: int = 1):
         """
         Warm Discord's image proxy cache by sending embeds with card images.
 
@@ -373,12 +373,20 @@ class PokemonTCG(commands.Cog):
         per message, waits for Discord to fetch them, then deletes.
 
         Usage:
-            !tcgset warmcache          — All sets
-            !tcgset warmcache base1    — Just Base Set
+            !tcgset warmcache                — All sets, once
+            !tcgset warmcache base1          — Just Base Set, once
+            !tcgset warmcache base1 5        — Base Set, repeat 5 times
+            !tcgset warmcache all 3          — All sets, repeat 3 times
         """
         if not self.card_pool.loaded:
             await ctx.send("❌ Card data not loaded.")
             return
+
+        # "all" as set_id means no filter
+        if set_id and set_id.lower() == "all":
+            set_id = None
+
+        repeats = max(1, min(repeats, 20))  # Clamp between 1-20
 
         cards = []
         for card in self.card_pool.cards_by_id.values():
@@ -392,45 +400,53 @@ class PokemonTCG(commands.Cog):
             await ctx.send(f"❌ No cards found{' for set ' + set_id if set_id else ''}.")
             return
 
-        status = await ctx.send(f"🔥 Warming cache for **{len(cards)}** images... this will take ~{len(cards) * 4 // 60} min")
+        est_min = (len(cards) * 4 * repeats) // 60
+        status = await ctx.send(
+            f"🔥 Warming cache for **{len(cards)}** images × **{repeats}** pass{'es' if repeats > 1 else ''}... ~{est_min} min"
+        )
 
-        warmed = 0
-        failed = 0
-        # Discord can render up to 4 image embeds per message
+        total_warmed = 0
+        total_failed = 0
         batch_size = 4
 
-        for i in range(0, len(cards), batch_size):
-            batch = cards[i:i + batch_size]
+        for run in range(1, repeats + 1):
+            warmed = 0
+            failed = 0
 
-            try:
-                # Send multiple embeds in one message — Discord fetches all of them
-                embeds = [discord.Embed().set_image(url=url) for url in batch]
-                msg = await ctx.send(embeds=embeds)
+            for i in range(0, len(cards), batch_size):
+                batch = cards[i:i + batch_size]
 
-                # Wait long enough for Discord's proxy to actually download the images
-                await asyncio.sleep(3.5)
-
-                await msg.delete()
-                warmed += len(batch)
-
-            except Exception as e:
-                log.warning(f"Cache warm batch failed: {e}")
-                failed += len(batch)
-
-            # Update progress every 20 images
-            if warmed % 20 < batch_size:
                 try:
-                    await status.edit(
-                        content=f"🔥 Warming... **{warmed}**/{len(cards)} ({failed} failed)"
-                    )
-                except discord.HTTPException:
-                    pass
+                    embeds = [discord.Embed().set_image(url=url) for url in batch]
+                    msg = await ctx.send(embeds=embeds)
+                    await asyncio.sleep(3.5)
+                    await msg.delete()
+                    warmed += len(batch)
+                except Exception as e:
+                    log.warning(f"Cache warm batch failed: {e}")
+                    failed += len(batch)
 
-            # Pause between messages to avoid rate limits
-            await asyncio.sleep(1.0)
+                if warmed % 20 < batch_size:
+                    try:
+                        await status.edit(
+                            content=f"🔥 Pass {run}/{repeats} — **{warmed}**/{len(cards)} ({failed} failed)"
+                        )
+                    except discord.HTTPException:
+                        pass
+
+                await asyncio.sleep(1.0)
+
+            total_warmed += warmed
+            total_failed += failed
+
+            if run < repeats:
+                await status.edit(
+                    content=f"✅ Pass {run}/{repeats} done. Pausing 10s before next pass..."
+                )
+                await asyncio.sleep(10)
 
         await status.edit(
-            content=f"✅ Cache warmed: **{warmed}** images sent, **{failed}** failed."
+            content=f"✅ Cache warming complete: **{repeats}** pass{'es' if repeats > 1 else ''}, **{total_warmed}** sent, **{total_failed}** failed."
         )
 
     # ─── User commands ─────────────────────────────────────
