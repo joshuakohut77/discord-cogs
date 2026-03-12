@@ -68,7 +68,15 @@ async def _wait_for_text(bot, user_id: int, channel_id: int, timeout: float = 60
 # ==================================================================
 
 class BrowseView(discord.ui.View):
-    """Interactive card browser with category dropdown and prev/next buttons."""
+    """Interactive card browser with category dropdown and prev/next buttons.
+
+    Layout:
+      Row 0 — ◀  counter  ▶  Done
+      Row 1 — BrowseCategorySelect (dropdown)
+      Row 2 — Update PNG | Update Text | Add Card | Delete
+      Row 3 — RaritySelect (dropdown)
+      Row 4 — Toggle In Store | Toggle Active
+    """
 
     def __init__(
         self,
@@ -88,9 +96,10 @@ class BrowseView(discord.ui.View):
 
         self._update_buttons()
         self.add_item(BrowseCategorySelect(self, category))
+        self.add_item(RaritySelect(self))
 
     def _update_buttons(self):
-        """Enable/disable prev/next based on current index."""
+        """Enable/disable prev/next and card-action buttons based on current state."""
         self.prev_button.disabled = self.index <= 0
         self.next_button.disabled = self.index >= len(self.cards) - 1
         if self.cards:
@@ -98,11 +107,42 @@ class BrowseView(discord.ui.View):
         else:
             self.counter_button.label = "0 / 0"
 
-        # Disable card-specific buttons when there are no cards
         has_cards = len(self.cards) > 0
         self.upload_art_button.disabled = not has_cards
         self.update_text_button.disabled = not has_cards
         self.delete_card_button.disabled = not has_cards
+
+        # Toggle button labels and state
+        self._refresh_toggle_buttons()
+
+    def _refresh_toggle_buttons(self):
+        """Update toggle button labels and disabled state to match the current card."""
+        if not self.cards:
+            self.toggle_store_button.label = "\U0001f6d2 In Store: —"
+            self.toggle_store_button.style = discord.ButtonStyle.secondary
+            self.toggle_store_button.disabled = True
+            self.toggle_active_button.label = "\u2705 Active: —"
+            self.toggle_active_button.style = discord.ButtonStyle.secondary
+            self.toggle_active_button.disabled = True
+            return
+
+        card = self.cards[self.index]
+
+        if card.get("is_in_store"):
+            self.toggle_store_button.label = "\U0001f6d2 In Store: ON"
+            self.toggle_store_button.style = discord.ButtonStyle.success
+        else:
+            self.toggle_store_button.label = "\U0001f6d2 In Store: OFF"
+            self.toggle_store_button.style = discord.ButtonStyle.secondary
+        self.toggle_store_button.disabled = False
+
+        if card.get("is_active"):
+            self.toggle_active_button.label = "\u2705 Active: ON"
+            self.toggle_active_button.style = discord.ButtonStyle.success
+        else:
+            self.toggle_active_button.label = "\u274c Active: OFF"
+            self.toggle_active_button.style = discord.ButtonStyle.danger
+        self.toggle_active_button.disabled = False
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.ctx.author.id:
@@ -217,12 +257,12 @@ class BrowseView(discord.ui.View):
 
     async def _restore_browse(self):
         """Re-render the browse view and edit it back onto the message."""
-        # Rebuild category dropdown
-        for item in self.children:
-            if isinstance(item, BrowseCategorySelect):
+        # Rebuild dropdowns
+        for item in list(self.children):
+            if isinstance(item, (BrowseCategorySelect, RaritySelect)):
                 self.remove_item(item)
-                break
         self.add_item(BrowseCategorySelect(self, self.category))
+        self.add_item(RaritySelect(self))
 
         self._update_buttons()
         embed, file = await self._render_current()
@@ -255,7 +295,7 @@ class BrowseView(discord.ui.View):
         self.stop()
 
     # ------------------------------------------------------------------
-    # Row 2: Card actions (row 1 = category select dropdown)
+    # Row 2: Card actions  (row 1 = BrowseCategorySelect)
     # ------------------------------------------------------------------
 
     @discord.ui.button(label="Update PNG", style=discord.ButtonStyle.primary, emoji="\U0001f5bc\ufe0f", row=2)
@@ -348,24 +388,23 @@ class BrowseView(discord.ui.View):
 
     @discord.ui.button(label="Update Text", style=discord.ButtonStyle.primary, emoji="\u270f\ufe0f", row=2)
     async def update_text_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        """Prompt the admin to update the rarity, name, explanation, and blurb of the current card."""
+        """Prompt the admin to update the name, explanation, and blurb of the current card."""
         card = self.cards[self.index]
         cat_label = CATEGORY_LABEL.get(card["category"], card["category"].title())
         rarity_label = RARITY_DISPLAY.get(card["rarity"], card["rarity"].title())
-        rarities_str = ", ".join(f"`{r}`" for r in VALID_RARITIES)
 
         prompt_embed = discord.Embed(
             title="\u270f\ufe0f Update Card Text",
             description=(
                 f"Editing **{cat_label} — {card['name']}** (#{card['id']})\n\n"
                 f"Send the updated text in this format:\n"
-                f"`Rarity | Name | Explanation | Blurb`\n\n"
-                f"Valid rarities: {rarities_str}\n\n"
+                f"`Name | Explanation | Blurb`\n\n"
                 f"**Current values:**\n"
                 f"> **Rarity:** {rarity_label}\n"
                 f"> **Name:** {card['name']}\n"
                 f"> **Explanation:** {card['explanation']}\n"
                 f"> **Blurb:** {card['blurb']}\n\n"
+                f"*(To change rarity, use the **Change Rarity** dropdown below.)*\n\n"
                 f"You have 60 seconds."
             ),
             color=EMBED_COLOR,
@@ -379,24 +418,16 @@ class BrowseView(discord.ui.View):
 
         # Parse the input
         parts = msg.content.split("|")
-        if len(parts) != 4:
+        if len(parts) != 3:
             await interaction.followup.send(
-                "Invalid format. Use: `Rarity | Name | Explanation | Blurb`", ephemeral=True,
+                "Invalid format. Use: `Name | Explanation | Blurb`", ephemeral=True,
             )
             await self._restore_browse()
             return
 
-        new_rarity = parts[0].strip().lower()
-        new_name = parts[1].strip()
-        new_explanation = parts[2].strip()
-        new_blurb = parts[3].strip()
-
-        if new_rarity not in VALID_RARITIES:
-            await interaction.followup.send(
-                f"Invalid rarity `{new_rarity}`. Options: {', '.join(VALID_RARITIES)}", ephemeral=True,
-            )
-            await self._restore_browse()
-            return
+        new_name = parts[0].strip()
+        new_explanation = parts[1].strip()
+        new_blurb = parts[2].strip()
 
         if not new_name or not new_explanation or not new_blurb:
             await interaction.followup.send(
@@ -409,7 +440,7 @@ class BrowseView(discord.ui.View):
         try:
             await asyncio.to_thread(
                 VaultDB.update_card, card["id"],
-                Rarity=new_rarity, Name=new_name, Explanation=new_explanation, Blurb=new_blurb,
+                Name=new_name, Explanation=new_explanation, Blurb=new_blurb,
             )
         except Exception as e:
             log.error(f"Failed to update card text for {card['name']}: {e}")
@@ -530,6 +561,108 @@ class BrowseView(discord.ui.View):
         confirm_view = DeleteConfirmView(self, card)
         await interaction.response.edit_message(embed=confirm_embed, view=confirm_view, attachments=[])
 
+    # ------------------------------------------------------------------
+    # Row 3: RaritySelect dropdown  (added dynamically in __init__)
+    # ------------------------------------------------------------------
+
+    # ------------------------------------------------------------------
+    # Row 4: Toggle In Store | Toggle Active
+    # ------------------------------------------------------------------
+
+    @discord.ui.button(label="\U0001f6d2 In Store: —", style=discord.ButtonStyle.secondary, row=4)
+    async def toggle_store_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Toggle the IsInStore flag on the current card."""
+        card = self.cards[self.index]
+        new_value = not card.get("is_in_store", True)
+
+        try:
+            await asyncio.to_thread(VaultDB.update_card, card["id"], IsInStore=new_value)
+        except Exception as e:
+            log.error(f"Failed to toggle IsInStore on card {card['id']}: {e}")
+            return await interaction.response.send_message(
+                f"Failed to update card: {e}", ephemeral=True,
+            )
+
+        await self._refresh_cards(card["id"])
+        await self.update_message(interaction)
+
+    @discord.ui.button(label="\u2705 Active: —", style=discord.ButtonStyle.secondary, row=4)
+    async def toggle_active_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Toggle the IsActive flag on the current card."""
+        card = self.cards[self.index]
+        new_value = not card.get("is_active", True)
+
+        try:
+            await asyncio.to_thread(VaultDB.update_card, card["id"], IsActive=new_value)
+        except Exception as e:
+            log.error(f"Failed to toggle IsActive on card {card['id']}: {e}")
+            return await interaction.response.send_message(
+                f"Failed to update card: {e}", ephemeral=True,
+            )
+
+        await self._refresh_cards(card["id"])
+        await self.update_message(interaction)
+
+
+class RaritySelect(discord.ui.Select):
+    """Dropdown to change the rarity of the currently displayed card."""
+
+    def __init__(self, browse_view: BrowseView):
+        self.browse_view = browse_view
+
+        current_rarity = None
+        if browse_view.cards:
+            current_rarity = browse_view.cards[browse_view.index].get("rarity")
+
+        rarity_emojis = {
+            "common": "\u26aa",      # grey circle
+            "uncommon": "\U0001f7e2", # green circle
+            "rare": "\U0001f535",     # blue circle
+            "legendary": "\U0001f7e1",# yellow circle
+        }
+
+        options = [
+            discord.SelectOption(
+                label=RARITY_DISPLAY.get(r, r.title()),
+                value=r,
+                emoji=rarity_emojis.get(r),
+                default=(r == current_rarity),
+            )
+            for r in VALID_RARITIES
+        ]
+
+        super().__init__(
+            placeholder="Change rarity...",
+            options=options,
+            min_values=1,
+            max_values=1,
+            disabled=not browse_view.cards,
+            row=3,
+        )
+
+    async def callback(self, interaction: discord.Interaction):
+        view = self.browse_view
+        if not view.cards:
+            return await interaction.response.defer()
+
+        card = view.cards[view.index]
+        new_rarity = self.values[0]
+
+        if new_rarity == card.get("rarity"):
+            # No change — just defer silently
+            return await interaction.response.defer()
+
+        try:
+            await asyncio.to_thread(VaultDB.update_card, card["id"], Rarity=new_rarity)
+        except Exception as e:
+            log.error(f"Failed to update rarity for card {card['id']}: {e}")
+            return await interaction.response.send_message(
+                f"Failed to update rarity: {e}", ephemeral=True,
+            )
+
+        await view._refresh_cards(card["id"])
+        await view.update_message(interaction)
+
 
 class DeleteConfirmView(discord.ui.View):
     """Confirmation step for card deletion."""
@@ -623,11 +756,12 @@ class BrowseCategorySelect(discord.ui.Select):
         view.category = new_category
         view.index = 0
 
-        for item in view.children:
-            if isinstance(item, BrowseCategorySelect):
+        # Rebuild both dropdowns
+        for item in list(view.children):
+            if isinstance(item, (BrowseCategorySelect, RaritySelect)):
                 view.remove_item(item)
-                break
         view.add_item(BrowseCategorySelect(view, new_category))
+        view.add_item(RaritySelect(view))
 
         await view.update_message(interaction)
 
@@ -664,6 +798,9 @@ class AdminMixin(MixinMeta):
         \u2022 **Update Text** — edit name, explanation, and blurb
         \u2022 **Add Card** — add a new card to the current category
         \u2022 **Delete** — permanently remove the current card
+        \u2022 **Change Rarity** — change rarity via dropdown
+        \u2022 **Toggle In Store** — toggle whether the card appears in the store
+        \u2022 **Toggle Active** — toggle whether the card is active
 
         Example: `[p]va browse` or `[p]va browse weapon`
         """
