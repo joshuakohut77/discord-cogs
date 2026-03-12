@@ -1,0 +1,11 @@
+{
+    "author": ["BiCuriousGeorge#8804"],
+    "install_msg": "Pokemon TCG Collector installed! Use `[p]tcg packs` to see available packs and `[p]tcg open <set>` to open one.",
+    "name": "PokemonTCG",
+    "short": "Collect original Gen 1 Pokemon TCG cards by opening booster packs",
+    "description": "Simulates opening WOTC era Pokemon TCG booster packs. Users can collect cards from Base Set, Jungle, Fossil, Base Set 2, Team Rocket, Legendary Collection, Gym Heroes, and Gym Challenge. Cards are saved to PostgreSQL and users can browse their collections.",
+    "tags": ["pokemon", "tcg", "cards", "collector", "game"],
+    "type": "COG",
+    "requirements": ["psycopg[binary]", "psycopg_pool"],
+    "end_user_data_statement": "This cog stores Discord user IDs alongside collected card data in PostgreSQL."
+}
