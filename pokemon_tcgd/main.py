@@ -18,79 +18,109 @@ log = logging.getLogger("red.pokemontcg")
 
 
 # ═══════════════════════════════════════════════════════════
-#  Embed builder helpers
+#  Constants
 # ═══════════════════════════════════════════════════════════
 
-# Rarity colors for embeds
+ASSET_BASE_URL = "https://pokesprites.joshkohut.com/pokemon_tcgd"
+
 RARITY_COLORS = {
-    "common":    0x8B8B8B,   # Gray
-    "uncommon":  0x3B82F6,   # Blue
-    "rare":      0xF59E0B,   # Gold
-    "rare holo": 0xEF4444,   # Red
-    "energy":    0x10B981,   # Green
-}
-
-# Type emoji mapping
-TYPE_EMOJI = {
-    "Colorless": "⚪", "Fire": "🔥", "Water": "💧", "Grass": "🌿",
-    "Lightning": "⚡", "Psychic": "🔮", "Fighting": "👊", "Darkness": "🌑",
-    "Metal": "⚙️", "Dragon": "🐉", "Fairy": "🧚",
+    "common":    0x8B8B8B,
+    "uncommon":  0x3B82F6,
+    "rare":      0xF59E0B,
+    "rare holo": 0xEF4444,
+    "energy":    0x10B981,
 }
 
 
-# Self-hosted card image base URL
-CARD_IMAGE_BASE_URL = "https://pokesprites.joshkohut.com/pokemon_tcgd"
-
+# ═══════════════════════════════════════════════════════════
+#  URL helpers
+# ═══════════════════════════════════════════════════════════
 
 def card_image_url(card: dict) -> str | None:
-    """Build the self-hosted image URL for a card."""
     image_file = card.get("image_file")
     if image_file:
-        # image_file is like "base1/4.png"
-        return f"{CARD_IMAGE_BASE_URL}/{image_file}"
+        return f"{ASSET_BASE_URL}/{image_file}"
     return None
 
 
-def build_card_embed(card: dict, index: int, total: int, set_name: str) -> discord.Embed:
-    """Build a Discord embed for a single card in a pack."""
+def pack_art_url(set_id: str) -> str:
+    return f"{ASSET_BASE_URL}/packart/{set_id}/display.png"
 
+
+def set_logo_url(set_id: str) -> str:
+    return f"{ASSET_BASE_URL}/packart/{set_id}/logo.png"
+
+
+# ═══════════════════════════════════════════════════════════
+#  Embed builders
+# ═══════════════════════════════════════════════════════════
+
+def build_welcome_embed() -> discord.Embed:
+    embed = discord.Embed(
+        title="🎴 Pokémon TCG Card Collector",
+        description=(
+            "Collect cards from the original Gen 1 Pokémon TCG sets!\n\n"
+            "**Select a booster pack** from the menu below to get started."
+        ),
+        color=0xFFD700,
+    )
+    embed.set_footer(text="Wizards of the Coast Era • 1999–2002")
+    return embed
+
+
+def build_set_preview_embed(set_id: str, config: dict) -> discord.Embed:
+    name = config.get("name", set_id)
+    emoji = config.get("emoji", "📦")
+    desc = config.get("description", "")
+    year = config.get("year", "")
+    total = config.get("total_cards_in_set", "?")
+    per_pack = config.get("cards_per_pack", 11)
+
+    embed = discord.Embed(
+        title=f"{emoji} {name}",
+        description=desc,
+        color=0xFFD700,
+    )
+    embed.set_image(url=pack_art_url(set_id))
+    embed.set_thumbnail(url=set_logo_url(set_id))
+    embed.add_field(name="Cards in Set", value=str(total), inline=True)
+    embed.add_field(name="Per Pack", value=str(per_pack), inline=True)
+    embed.add_field(name="Released", value=str(year), inline=True)
+    embed.set_footer(text="Hit Open Pack to rip it! 🔥")
+    return embed
+
+
+def build_card_embed(card: dict, index: int, total: int, set_name: str) -> discord.Embed:
     name = card.get("name", "Unknown")
     rarity = card.get("rarity") or "Unknown"
     category = card.get("category") or "Unknown"
     pulled_holo = card.get("pulled_as_holo", False)
 
-    # Title
     holo_tag = " ✨ HOLO" if pulled_holo else ""
     title = f"{name}{holo_tag}"
 
-    # Color based on rarity
     color_key = "rare holo" if pulled_holo else rarity.lower()
     color = RARITY_COLORS.get(color_key, RARITY_COLORS.get("common", 0x8B8B8B))
 
     embed = discord.Embed(title=title, color=color)
 
-    # Card image from self-hosted nginx
-    image_url = card_image_url(card)
-    if image_url:
-        embed.set_image(url=image_url)
+    image = card_image_url(card)
+    if image:
+        embed.set_image(url=image)
 
-    # Footer with position and set info
     rarity_display = f"{'✨ ' if pulled_holo else ''}{rarity}"
     embed.set_footer(text=f"Card {index + 1}/{total} • {set_name} • {category} • {rarity_display}")
-
     return embed
 
 
-def build_pack_summary_embed(cards: list[dict], set_name: str, set_emoji: str) -> discord.Embed:
-    """Build a summary embed showing all cards in an opened pack."""
-
+def build_pack_summary_embed(cards: list[dict], set_name: str, set_id: str) -> discord.Embed:
     embed = discord.Embed(
-        title=f"{set_emoji} {set_name} Booster Pack",
+        title=f"🎴 {set_name} Booster Pack",
         description="Here's what you pulled!",
         color=0xFFD700,
     )
+    embed.set_thumbnail(url=set_logo_url(set_id))
 
-    # Group by rarity for display
     lines = []
     for card in cards:
         name = card.get("name", "?")
@@ -109,54 +139,150 @@ def build_pack_summary_embed(cards: list[dict], set_name: str, set_emoji: str) -
 
     embed.add_field(name="Cards", value="\n".join(lines), inline=False)
     embed.set_footer(text="Use the arrows to view each card")
-
     return embed
 
 
 # ═══════════════════════════════════════════════════════════
-#  Pack viewer UI (discord.py View with buttons)
+#  Pack Selector UI (dropdown + open button)
 # ═══════════════════════════════════════════════════════════
 
-class PackViewer(discord.ui.View):
-    """Interactive card viewer for an opened pack with Previous/Next buttons."""
+class PackSelector(discord.ui.View):
+    """Interactive pack selection: dropdown to pick a set, button to open."""
 
-    def __init__(self, cards: list[dict], set_name: str, set_emoji: str, author_id: int, timeout: float = 180):
+    def __init__(self, cog: "PokemonTCG", author_id: int, timeout: float = 120):
         super().__init__(timeout=timeout)
-        self.cards = cards
-        self.set_name = set_name
-        self.set_emoji = set_emoji
+        self.cog = cog
         self.author_id = author_id
-        self.index = -1  # -1 = summary page
+        self.selected_set_id: str | None = None
         self.message: discord.Message | None = None
 
-    def get_embed(self) -> discord.Embed:
-        """Get the embed for the current index."""
-        if self.index == -1:
-            return build_pack_summary_embed(self.cards, self.set_name, self.set_emoji)
-        return build_card_embed(self.cards[self.index], self.index, len(self.cards), self.set_name)
-
-    def _update_buttons(self):
-        """Update button states based on current index."""
-        self.btn_prev.disabled = (self.index <= -1)
-        self.btn_next.disabled = (self.index >= len(self.cards) - 1)
-        # Update label to show position
-        if self.index == -1:
-            self.btn_pos.label = "Summary"
-        else:
-            self.btn_pos.label = f"{self.index + 1}/{len(self.cards)}"
+        sets = cog.card_pool.get_available_sets()
+        options = []
+        for s in sets:
+            options.append(discord.SelectOption(
+                label=s["name"],
+                value=s["set_id"],
+                description=f"{s['total_in_set']} cards • {s['year']}",
+                emoji=s["emoji"],
+            ))
+        self.set_select.options = options
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
-        """Only the user who opened the pack can navigate."""
         if interaction.user.id != self.author_id:
             await interaction.response.send_message(
-                "This isn't your pack! Open your own with `!tcg open`.",
+                "Use `!tcg` to open your own pack selector!",
                 ephemeral=True,
             )
             return False
         return True
 
     async def on_timeout(self):
-        """Disable buttons when the view times out."""
+        for item in self.children:
+            item.disabled = True
+        if self.message:
+            try:
+                await self.message.edit(view=self)
+            except discord.HTTPException:
+                pass
+
+    @discord.ui.select(
+        placeholder="Choose a booster pack...",
+        min_values=1, max_values=1,
+    )
+    async def set_select(self, interaction: discord.Interaction, select: discord.ui.Select):
+        self.selected_set_id = select.values[0]
+        config = self.cog.card_pool.pack_config.get(self.selected_set_id, {})
+
+        self.btn_open.disabled = False
+        self.btn_open.label = f"Open {config.get('name', 'Pack')}"
+
+        embed = build_set_preview_embed(self.selected_set_id, config)
+        await interaction.response.edit_message(embed=embed, view=self)
+
+    @discord.ui.button(
+        label="Open Pack", style=discord.ButtonStyle.success,
+        emoji="📦", disabled=True, row=1,
+    )
+    async def btn_open(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if not self.selected_set_id:
+            return
+
+        set_id = self.selected_set_id
+        config = self.cog.card_pool.pack_config.get(set_id, {})
+        set_name = config.get("name", set_id)
+
+        cards = self.cog.card_pool.open_pack(set_id)
+        if not cards:
+            await interaction.response.send_message("❌ Failed to generate pack.", ephemeral=True)
+            return
+
+        guild_id = interaction.guild.id if interaction.guild else 0
+        await self.cog._save_pack_to_db(interaction.user.id, guild_id, set_id, cards)
+
+        self.stop()
+
+        viewer = PackViewer(
+            cog=self.cog,
+            cards=cards,
+            set_name=set_name,
+            set_id=set_id,
+            author_id=interaction.user.id,
+        )
+        viewer._update_buttons()
+
+        await interaction.response.edit_message(embed=viewer.get_embed(), view=viewer)
+        viewer.message = self.message
+
+    @discord.ui.button(
+        label="Stats", style=discord.ButtonStyle.secondary,
+        emoji="📊", row=1,
+    )
+    async def btn_stats(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.defer(ephemeral=True)
+        guild_id = interaction.guild.id if interaction.guild else 0
+        embed = await self.cog._build_stats_embed(
+            interaction.user.id, guild_id, interaction.user.display_name
+        )
+        await interaction.followup.send(embed=embed, ephemeral=True)
+
+
+# ═══════════════════════════════════════════════════════════
+#  Pack Viewer UI (navigate cards + open another)
+# ═══════════════════════════════════════════════════════════
+
+class PackViewer(discord.ui.View):
+    """Card-by-card viewer for an opened pack."""
+
+    def __init__(self, cog: "PokemonTCG", cards: list[dict], set_name: str, set_id: str, author_id: int, timeout: float = 180):
+        super().__init__(timeout=timeout)
+        self.cog = cog
+        self.cards = cards
+        self.set_name = set_name
+        self.set_id = set_id
+        self.author_id = author_id
+        self.index = -1  # -1 = summary
+        self.message: discord.Message | None = None
+
+    def get_embed(self) -> discord.Embed:
+        if self.index == -1:
+            return build_pack_summary_embed(self.cards, self.set_name, self.set_id)
+        return build_card_embed(self.cards[self.index], self.index, len(self.cards), self.set_name)
+
+    def _update_buttons(self):
+        self.btn_prev.disabled = (self.index <= -1)
+        self.btn_next.disabled = (self.index >= len(self.cards) - 1)
+        self.btn_pos.label = "Summary" if self.index == -1 else f"{self.index + 1}/{len(self.cards)}"
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user.id != self.author_id:
+            await interaction.response.send_message(
+                "This isn't your pack! Use `!tcg` to open your own.",
+                ephemeral=True,
+            )
+            return False
+        return True
+
+    async def on_timeout(self):
         for item in self.children:
             if isinstance(item, discord.ui.Button):
                 item.disabled = True
@@ -166,24 +292,31 @@ class PackViewer(discord.ui.View):
             except discord.HTTPException:
                 pass
 
-    @discord.ui.button(label="◀", style=discord.ButtonStyle.secondary, custom_id="pack_prev")
+    @discord.ui.button(label="◀", style=discord.ButtonStyle.secondary)
     async def btn_prev(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.index = max(-1, self.index - 1)
         self._update_buttons()
         await interaction.response.edit_message(embed=self.get_embed(), view=self)
 
-    @discord.ui.button(label="Summary", style=discord.ButtonStyle.primary, custom_id="pack_pos", disabled=True)
+    @discord.ui.button(label="Summary", style=discord.ButtonStyle.primary, disabled=True)
     async def btn_pos(self, interaction: discord.Interaction, button: discord.ui.Button):
-        # Clicking position indicator goes back to summary
         self.index = -1
         self._update_buttons()
         await interaction.response.edit_message(embed=self.get_embed(), view=self)
 
-    @discord.ui.button(label="▶", style=discord.ButtonStyle.secondary, custom_id="pack_next")
+    @discord.ui.button(label="▶", style=discord.ButtonStyle.secondary)
     async def btn_next(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.index = min(len(self.cards) - 1, self.index + 1)
         self._update_buttons()
         await interaction.response.edit_message(embed=self.get_embed(), view=self)
+
+    @discord.ui.button(label="Open Another", style=discord.ButtonStyle.success, emoji="📦", row=1)
+    async def btn_another(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.stop()
+        selector = PackSelector(cog=self.cog, author_id=self.author_id)
+        embed = build_welcome_embed()
+        await interaction.response.edit_message(embed=embed, view=selector)
+        selector.message = self.message
 
 
 # ═══════════════════════════════════════════════════════════
@@ -195,13 +328,11 @@ class PokemonTCG(commands.Cog):
 
     def __init__(self, bot: Red):
         self.bot = bot
-        # Card data lives in pokemon_cards/ inside the cog directory
         self.data_dir = os.path.join(os.path.dirname(__file__), "pokemon_cards")
         self.card_pool = CardPool()
         self.database = db()
 
     async def cog_load(self):
-        """Load card data when cog is loaded."""
         try:
             self.card_pool.load(self.data_dir)
             log.info(f"Pokemon TCG: Loaded card data from {self.data_dir}")
@@ -210,7 +341,7 @@ class PokemonTCG(commands.Cog):
         except Exception as e:
             log.error(f"Pokemon TCG: Failed to load card data: {e}")
 
-    # ─── Admin commands ────────────────────────────────────
+    # ─── Admin ─────────────────────────────────────────────
 
     @commands.group(name="tcgset", invoke_without_command=True)
     @commands.admin_or_permissions(administrator=True)
@@ -223,11 +354,11 @@ class PokemonTCG(commands.Cog):
     async def tcgset_reload(self, ctx: commands.Context):
         """Reload card data from disk."""
         try:
-            self.card_pool = CardPool()  # Reset
+            self.card_pool = CardPool()
             self.card_pool.load(self.data_dir)
             total = len(self.card_pool.cards_by_id)
             sets = len(self.card_pool.get_available_sets())
-            await ctx.send(f"✅ Reloaded: **{total}** cards across **{sets}** sets from `{self.data_dir}`")
+            await ctx.send(f"✅ Reloaded: **{total}** cards across **{sets}** sets")
         except Exception as e:
             await ctx.send(f"❌ Failed to reload: {e}")
 
@@ -235,88 +366,78 @@ class PokemonTCG(commands.Cog):
 
     @commands.group(name="tcg", invoke_without_command=True)
     async def tcg(self, ctx: commands.Context):
-        """Pokemon TCG Card Collector — open packs, collect cards!"""
-        await ctx.send_help(ctx.command)
-
-    @tcg.command(name="packs")
-    async def tcg_packs(self, ctx: commands.Context):
-        """Show available booster packs you can open."""
+        """Open Pokémon TCG booster packs and collect cards!"""
         if not self.card_pool.loaded:
-            await ctx.send("❌ Card data not loaded. Check that pokemon_cards/ exists in the cog directory with cards.json and pack_config.json. Try `!tcgset reload`.")
+            await ctx.send("❌ Card data not loaded. Try `!tcgset reload`.")
             return
 
-        sets = self.card_pool.get_available_sets()
-        if not sets:
-            await ctx.send("❌ No sets available.")
-            return
-
-        embed = discord.Embed(
-            title="📦 Available Booster Packs",
-            description="Choose a set to open with `!tcg open <set_id>`",
-            color=0xFFD700,
-        )
-
-        for s in sets:
-            embed.add_field(
-                name=f"{s['emoji']} {s['name']} (`{s['set_id']}`)",
-                value=f"{s['description']}\n{s['total_in_set']} cards • {s['cards_per_pack']} per pack • {s['year']}",
-                inline=False,
-            )
-
-        await ctx.send(embed=embed)
+        selector = PackSelector(cog=self, author_id=ctx.author.id)
+        embed = build_welcome_embed()
+        message = await ctx.send(embed=embed, view=selector)
+        selector.message = message
 
     @tcg.command(name="open")
     async def tcg_open(self, ctx: commands.Context, set_id: str):
-        """
-        Open a booster pack from a specific set.
-
-        Examples:
-            !tcg open base1    — Open a Base Set pack
-            !tcg open base5    — Open a Team Rocket pack
-            !tcg open gym1     — Open a Gym Heroes pack
-        """
+        """Quick-open a booster pack: !tcg open base1"""
         if not self.card_pool.loaded:
-            await ctx.send("❌ Card data not loaded. Check that pokemon_cards/ exists in the cog directory with cards.json and pack_config.json. Try `!tcgset reload`.")
+            await ctx.send("❌ Card data not loaded. Try `!tcgset reload`.")
             return
 
         set_id = set_id.lower().strip()
-
-        # Validate set
         config = self.card_pool.pack_config.get(set_id)
         if not config or set_id not in self.card_pool.sets:
             available = ", ".join(f"`{s['set_id']}`" for s in self.card_pool.get_available_sets())
             await ctx.send(f"❌ Unknown set `{set_id}`. Available: {available}")
             return
 
-        # Open the pack
         cards = self.card_pool.open_pack(set_id)
         if not cards:
-            await ctx.send("❌ Failed to generate pack. The set may not have enough card data.")
+            await ctx.send("❌ Failed to generate pack.")
             return
 
         set_name = config.get("name", set_id)
-        set_emoji = config.get("emoji", "📦")
+        await self._save_pack_to_db(ctx.author.id, ctx.guild.id, set_id, cards)
 
-        # Save to database
-        pack_open_id = await self._save_pack_to_db(ctx.author.id, ctx.guild.id, set_id, cards)
-
-        # Build the viewer
-        view = PackViewer(
-            cards=cards,
-            set_name=set_name,
-            set_emoji=set_emoji,
-            author_id=ctx.author.id,
+        viewer = PackViewer(
+            cog=self, cards=cards, set_name=set_name,
+            set_id=set_id, author_id=ctx.author.id,
         )
-        view._update_buttons()
+        viewer._update_buttons()
+        message = await ctx.send(embed=viewer.get_embed(), view=viewer)
+        viewer.message = message
 
-        message = await ctx.send(embed=view.get_embed(), view=view)
-        view.message = message
+    @tcg.command(name="packs")
+    async def tcg_packs(self, ctx: commands.Context):
+        """Show available booster packs."""
+        if not self.card_pool.loaded:
+            await ctx.send("❌ Card data not loaded. Try `!tcgset reload`.")
+            return
+
+        sets = self.card_pool.get_available_sets()
+        embed = discord.Embed(
+            title="📦 Available Booster Packs",
+            description="Use `!tcg` for the interactive selector, or `!tcg open <set_id>` to quick-open.",
+            color=0xFFD700,
+        )
+        for s in sets:
+            embed.add_field(
+                name=f"{s['emoji']} {s['name']} (`{s['set_id']}`)",
+                value=f"{s['description']}\n{s['total_in_set']} cards • {s['year']}",
+                inline=False,
+            )
+        await ctx.send(embed=embed)
 
     @tcg.command(name="stats")
     async def tcg_stats(self, ctx: commands.Context, member: discord.Member = None):
         """View your (or another user's) collection stats."""
         target = member or ctx.author
+        guild_id = ctx.guild.id if ctx.guild else 0
+        embed = await self._build_stats_embed(target.id, guild_id, target.display_name)
+        await ctx.send(embed=embed)
 
+    # ─── Helpers ───────────────────────────────────────────
+
+    async def _build_stats_embed(self, user_id: int, guild_id: int, display_name: str) -> discord.Embed:
         try:
             rows = self.database.queryAll(
                 """
@@ -326,28 +447,21 @@ class PokemonTCG(commands.Cog):
                 WHERE user_id = %(user_id)s AND guild_id = %(guild_id)s
                 ORDER BY set_id
                 """,
-                {"user_id": target.id, "guild_id": ctx.guild.id},
+                {"user_id": user_id, "guild_id": guild_id},
             )
         except Exception as e:
             log.error(f"Stats query failed: {e}")
-            await ctx.send("❌ Failed to fetch stats.")
-            return
+            return discord.Embed(title="❌ Error", description="Failed to fetch stats.", color=0xFF0000)
 
         if not rows:
-            if target == ctx.author:
-                await ctx.send("You haven't collected any cards yet! Try `!tcg open base1` to get started.")
-            else:
-                await ctx.send(f"{target.display_name} hasn't collected any cards yet.")
-            return
+            return discord.Embed(
+                title=f"📊 {display_name}'s Collection",
+                description="No cards collected yet! Use `!tcg` to open your first pack.",
+                color=0x3B82F6,
+            )
 
-        embed = discord.Embed(
-            title=f"📊 {target.display_name}'s Collection",
-            color=0x3B82F6,
-        )
-
-        total_all = 0
-        unique_all = 0
-        holo_all = 0
+        embed = discord.Embed(title=f"📊 {display_name}'s Collection", color=0x3B82F6)
+        total_all = unique_all = holo_all = 0
 
         for row in rows:
             set_id, total, unique, holos, pokemon, trainers, energy = row
@@ -358,40 +472,29 @@ class PokemonTCG(commands.Cog):
 
             embed.add_field(
                 name=f"{set_emoji} {set_name}",
-                value=(
-                    f"**{unique}**/{set_total} unique • {total} total\n"
-                    f"✨ {holos} holo"
-                ),
+                value=f"**{unique}**/{set_total} unique • {total} total\n✨ {holos} holo",
                 inline=True,
             )
-
             total_all += total
             unique_all += unique
             holo_all += holos
 
-        # Pack count
         try:
             pack_row = self.database.querySingle(
-                """
-                SELECT COUNT(*) FROM tcg_pack_opens
-                WHERE user_id = %(user_id)s AND guild_id = %(guild_id)s
-                """,
-                {"user_id": target.id, "guild_id": ctx.guild.id},
+                "SELECT COUNT(*) FROM tcg_pack_opens WHERE user_id = %(user_id)s AND guild_id = %(guild_id)s",
+                {"user_id": user_id, "guild_id": guild_id},
             )
             pack_count = pack_row[0] if pack_row else 0
         except Exception:
             pack_count = "?"
 
-        embed.description = f"**{total_all}** cards collected • **{unique_all}** unique • **{holo_all}** ✨ holo • **{pack_count}** packs opened"
+        embed.description = f"**{total_all}** cards • **{unique_all}** unique • **{holo_all}** ✨ holo • **{pack_count}** packs opened"
+        return embed
 
-        await ctx.send(embed=embed)
-
-    # ─── Database operations ───────────────────────────────
+    # ─── Database ──────────────────────────────────────────
 
     async def _save_pack_to_db(self, user_id: int, guild_id: int, set_id: str, cards: list[dict]) -> int | None:
-        """Save a pack opening and its cards to the database."""
         try:
-            # Insert pack open record
             result = self.database.executeAndReturn(
                 """
                 INSERT INTO tcg_pack_opens (user_id, guild_id, set_id)
@@ -402,7 +505,6 @@ class PokemonTCG(commands.Cog):
             )
             pack_open_id = result[0] if result else None
 
-            # Insert each card
             for card in cards:
                 self.database.execute(
                     """
@@ -424,7 +526,6 @@ class PokemonTCG(commands.Cog):
                         "pack_open_id": pack_open_id,
                     },
                 )
-
             return pack_open_id
 
         except Exception as e:
