@@ -1,0 +1,20 @@
+{
+  "id": "base3",
+  "name": "Fossil",
+  "series": "Base",
+  "release_date": "1999-10-10",
+  "card_count": {
+    "firstEd": 62,
+    "holo": 35,
+    "normal": 142,
+    "official": 62,
+    "reverse": 0,
+    "total": 62
+  },
+  "logo": "https://assets.tcgdex.net/en/base/base3/logo",
+  "symbol": "https://assets.tcgdex.net/univ/base/base3/symbol",
+  "legal": {
+    "expanded": false,
+    "standard": false
+  }
+}

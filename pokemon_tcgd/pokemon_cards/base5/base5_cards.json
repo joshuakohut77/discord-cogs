@@ -1,0 +1,5481 @@
+[
+  {
+    "id": "base5-1",
+    "local_id": "1",
+    "name": "Dark Alakazam",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage2",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Psychic"
+    ],
+    "evolve_from": "Kadabra",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Teleport Blast",
+        "cost": [
+          "Psychic",
+          "Psychic",
+          "Colorless"
+        ],
+        "damage": 30,
+        "effect": "You may switch Dark Alakazam with 1 of your Benched Pokémon (Do the damage before switching the Pokémon)."
+      },
+      {
+        "name": "Mind Shock",
+        "cost": [
+          "Psychic",
+          "Psychic",
+          "Psychic"
+        ],
+        "damage": 40,
+        "effect": "Don't apply Weakness and Resistance for this attack. (Any other effects that would happen after applying Weakness and Resistance still happen.)"
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Ken Sugimori",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/1",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/1/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/1/low.png",
+    "image_file": "base5/1.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-2",
+    "local_id": "2",
+    "name": "Dark Arbok",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Grass"
+    ],
+    "evolve_from": "Ekans",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Stare",
+        "cost": [
+          "Grass",
+          "Grass"
+        ],
+        "damage": null,
+        "effect": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. Don't apply Weakness and Resistance for this attack. (Any other effects that would happen after applying Weakness and Resistance still happen.) If that Pokémon has a Pokémon Power, that power stops working until the end of your opponent's next turn."
+      },
+      {
+        "name": "Poison Vapor",
+        "cost": [
+          "Grass",
+          "Grass",
+          "Grass"
+        ],
+        "damage": 10,
+        "effect": "The Defending Pokémon is now Poisoned. This attack does 10 damage to each of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/2",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/2/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/2/low.png",
+    "image_file": "base5/2.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-3",
+    "local_id": "3",
+    "name": "Dark Blastoise",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage2",
+    "supertype": "Pokemon",
+    "hp": 70,
+    "types": [
+      "Water"
+    ],
+    "evolve_from": "Wartortle",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Hydrocannon",
+        "cost": [
+          "Water",
+          "Water"
+        ],
+        "damage": "30+",
+        "effect": "Does 30 damage plus 20 more damage for each W Energy attached to Dark Blastoise but not used to pay for this attack. You can't add more than 40 damage in this way."
+      },
+      {
+        "name": "Rocket Tackle",
+        "cost": [
+          "Water",
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 40,
+        "effect": "Dark Blastoise does 10 damage to itself. Flip a coin. If heads, prevent all damage done to Dark Blastoise during your opponent's next turn. (Any other effects of attacks still happen.)"
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Lightning",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/3",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/3/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/3/low.png",
+    "image_file": "base5/3.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-4",
+    "local_id": "4",
+    "name": "Dark Charizard",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage2",
+    "supertype": "Pokemon",
+    "hp": 80,
+    "types": [
+      "Fire"
+    ],
+    "evolve_from": "Charmeleon",
+    "retreat": 3,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Nail Flick",
+        "cost": [
+          "Colorless"
+        ],
+        "damage": 10,
+        "effect": null
+      },
+      {
+        "name": "Continuous Fireball",
+        "cost": [
+          "Fire",
+          "Fire"
+        ],
+        "damage": "50x",
+        "effect": "Flip a number of coins equal to the number of Energy cards attached to Dark Charizard. This attack does 50 damage times the number of heads. Discard a number of Energy cards attached to Dark Charizard equal to the number of heads."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Water",
+        "value": "×2"
+      }
+    ],
+    "resistances": [
+      {
+        "type": "Fighting",
+        "value": "-30"
+      }
+    ],
+    "abilities": [],
+    "illustrator": "Ken Sugimori",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/4",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/4/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/4/low.png",
+    "image_file": "base5/4.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-5",
+    "local_id": "5",
+    "name": "Dark Dragonite",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage2",
+    "supertype": "Pokemon",
+    "hp": 70,
+    "types": [
+      "Colorless"
+    ],
+    "evolve_from": "Dragonair",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Giant Tail",
+        "cost": [
+          "Colorless",
+          "Colorless",
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 70,
+        "effect": "Flip a coin. If tails, this attack does nothing."
+      }
+    ],
+    "weaknesses": [],
+    "resistances": [
+      {
+        "type": "Fighting",
+        "value": "-30"
+      }
+    ],
+    "abilities": [
+      {
+        "name": "Summon Minions",
+        "type": "Pokemon Power",
+        "effect": "When you play Dark Dragonite from your hand, search your deck for up to 2 Basic Pokémon and put them onto your Bench. Shuffle your deck afterward."
+      }
+    ],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/5",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/5/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/5/low.png",
+    "image_file": "base5/5.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-6",
+    "local_id": "6",
+    "name": "Dark Dugtrio",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Fighting"
+    ],
+    "evolve_from": "Diglett",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Knock Down",
+        "cost": [
+          "Fighting",
+          "Fighting"
+        ],
+        "damage": "20+",
+        "effect": "Your opponent flips a coin. If tails, this attack does 20 damage plus 20 more damage; if heads, this attack does 20 damage."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Grass",
+        "value": "×2"
+      }
+    ],
+    "resistances": [
+      {
+        "type": "Lightning",
+        "value": "-30"
+      }
+    ],
+    "abilities": [
+      {
+        "name": "Sinkhole",
+        "type": "Pokemon Power",
+        "effect": "Whenever your opponent's Active Pokémon retreats, your opponent flips a coin. If tails, this power does 20 damage to that Pokémon. (Don't apply Weakness and Resistance.) This power stops working while Dark Dugtrio is Asleep, Confused, or Paralyzed."
+      }
+    ],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/6",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/6/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/6/low.png",
+    "image_file": "base5/6.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-7",
+    "local_id": "7",
+    "name": "Dark Golbat",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Grass"
+    ],
+    "evolve_from": "Zubat",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Flitter",
+        "cost": [
+          "Grass",
+          "Grass"
+        ],
+        "damage": null,
+        "effect": "Choose 1 of your opponent's Pokémon. This attack does 20 damage to that Pokémon. Don't apply Weakness and Resistance for this attack. (Any other effects that would happen after applying Weakness and Resistance still happen.)"
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [
+      {
+        "type": "Fighting",
+        "value": "-30"
+      }
+    ],
+    "abilities": [
+      {
+        "name": "Sneak Attack",
+        "type": "Pokemon Power",
+        "effect": "When you play Dark Golbat from your hand, you may choose 1 of your opponent's Pokémon. If you do, Dark Golbat does 10 damage to that Pokémon. Apply Weakness and Resistance."
+      }
+    ],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/7",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/7/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/7/low.png",
+    "image_file": "base5/7.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-8",
+    "local_id": "8",
+    "name": "Dark Gyarados",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 70,
+    "types": [
+      "Water"
+    ],
+    "evolve_from": "Magikarp",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Ice Beam",
+        "cost": [
+          "Water",
+          "Water",
+          "Water"
+        ],
+        "damage": 30,
+        "effect": "Flip a coin. If heads, the Defending Pokémon is now Paralyzed."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Grass",
+        "value": "×2"
+      }
+    ],
+    "resistances": [
+      {
+        "type": "Fighting",
+        "value": "-30"
+      }
+    ],
+    "abilities": [
+      {
+        "name": "Final Beam",
+        "type": "Pokemon Power",
+        "effect": "When Dark Gyarados is Knocked Out by an attack, flip a coin. If heads, this power does 20 damage for each Water Energy attached to Dark Gyarados to the Pokémon that Knocked Out Dark Gyarados. Apply Weakness and Resistance. This power doesn't work if Dark Gyarados is Asleep, Confused, or Paralyzed."
+      }
+    ],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/8",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/8/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/8/low.png",
+    "image_file": "base5/8.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-9",
+    "local_id": "9",
+    "name": "Dark Hypno",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Psychic"
+    ],
+    "evolve_from": "Drowzee",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Psypunch",
+        "cost": [
+          "Psychic"
+        ],
+        "damage": 20,
+        "effect": null
+      },
+      {
+        "name": "Bench Manipulation",
+        "cost": [
+          "Psychic",
+          "Psychic",
+          "Colorless"
+        ],
+        "damage": "20x",
+        "effect": "Your opponent flips a number of coins equal to the number of Pokémon on his or her Bench. This attack does 20 damage times the number of tails. Don't apply Weakness and Resistance for this attack. (Any other effects that would happen after applying Weakness and Resistance still happen.)"
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/9",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/9/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/9/low.png",
+    "image_file": "base5/9.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-10",
+    "local_id": "10",
+    "name": "Dark Machamp",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage2",
+    "supertype": "Pokemon",
+    "hp": 70,
+    "types": [
+      "Fighting"
+    ],
+    "evolve_from": "Machoke",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Mega Punch",
+        "cost": [
+          "Fighting",
+          "Fighting"
+        ],
+        "damage": 30,
+        "effect": null
+      },
+      {
+        "name": "Fling",
+        "cost": [
+          "Fighting",
+          "Fighting",
+          "Fighting",
+          "Colorless"
+        ],
+        "damage": null,
+        "effect": "Your opponent shuffles his or her Active Pokémon and all cards attached to it into his or her deck. This attack can't be used if your opponent has no Benched Pokémon."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/10",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/10/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/10/low.png",
+    "image_file": "base5/10.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-11",
+    "local_id": "11",
+    "name": "Dark Magneton",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Lightning"
+    ],
+    "evolve_from": "Magnemite",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Sonicboom",
+        "cost": [
+          "Grass",
+          "Grass",
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 40,
+        "effect": "Don't apply Weakness and Resistance for this attack. (Any other effects that would happen after applying Weakness and Resistance still happen.)"
+      },
+      {
+        "name": "Magnetic Lines",
+        "cost": [
+          "Lightning",
+          "Lightning"
+        ],
+        "damage": 30,
+        "effect": "If the Defending Pokémon has any basic Energy cards attached to it, choose 1 of them. If your opponent has any Benched Pokémon, choose 1 of them and attach that Energy card to it."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fighting",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Miki Tanaka",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/11",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/11/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/11/low.png",
+    "image_file": "base5/11.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-12",
+    "local_id": "12",
+    "name": "Dark Slowbro",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Psychic"
+    ],
+    "evolve_from": "Slowpoke",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Fickle Attack",
+        "cost": [
+          "Psychic",
+          "Psychic"
+        ],
+        "damage": 40,
+        "effect": "Flip a coin. If tails, this attack does nothing."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [
+      {
+        "name": "Reel In",
+        "type": "Pokemon Power",
+        "effect": "When you play Dark Slowbro from your hand, choose up to 3 Basic Pokémon and/or Evolution cards from your discard pile and put them into your hand."
+      }
+    ],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/12",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/12/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/12/low.png",
+    "image_file": "base5/12.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-13",
+    "local_id": "13",
+    "name": "Dark Vileplume",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage2",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Grass"
+    ],
+    "evolve_from": "Gloom",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Petal Whirlwind",
+        "cost": [
+          "Grass",
+          "Grass",
+          "Grass"
+        ],
+        "damage": "30x",
+        "effect": "Flip 3 coins. This attack does 30 damage times the number of heads. If you get 2 or more heads, Dark Vileplume is now Confused (after dealing damage)."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fire",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [
+      {
+        "name": "Hay Fever",
+        "type": "Pokemon Power",
+        "effect": "No Trainer cards can be played. This power stops working while Dark Vileplume is Asleep, Confused, or Paralyzed."
+      }
+    ],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/13",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/13/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/13/low.png",
+    "image_file": "base5/13.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-14",
+    "local_id": "14",
+    "name": "Dark Weezing",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Grass"
+    ],
+    "evolve_from": "Koffing",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Mass Explosion",
+        "cost": [
+          "Grass",
+          "Colorless"
+        ],
+        "damage": "20x",
+        "effect": "Does 20 damage times the total number of Koffings, Weezings, and Dark Weezings in play (Apply Weakness and Resistance.). Then, this attack does 20 damage to each Koffing, Weezing, and Dark Weezing (even your own). Don't apply Weakness and Resistance."
+      },
+      {
+        "name": "Stun Gas",
+        "cost": [
+          "Grass",
+          "Grass",
+          "Grass"
+        ],
+        "damage": 20,
+        "effect": "Flip a coin. If heads, the Defending Pokémon is now Poisoned; if tails, the Defending Pokémon is now Paralyzed."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Shin-ichi Yoshida",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/14",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/14/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/14/low.png",
+    "image_file": "base5/14.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-15",
+    "local_id": "15",
+    "name": "Here Comes Team Rocket!",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Trainer",
+    "rarity": "Rare",
+    "stage": null,
+    "supertype": "Trainer",
+    "hp": null,
+    "types": [],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [],
+    "weaknesses": [],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Ken Sugimori",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/15",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/15/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/15/low.png",
+    "image_file": "base5/15.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-16",
+    "local_id": "16",
+    "name": "Rocket's Sneak Attack",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Trainer",
+    "rarity": "Rare",
+    "stage": null,
+    "supertype": "Trainer",
+    "hp": null,
+    "types": [],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [],
+    "weaknesses": [],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Ken Sugimori",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/16",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/16/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/16/low.png",
+    "image_file": "base5/16.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-17",
+    "local_id": "17",
+    "name": "Rainbow Energy",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Energy",
+    "rarity": "Rare",
+    "stage": null,
+    "supertype": "Energy",
+    "hp": null,
+    "types": [],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": true,
+      "normal": false,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": true,
+    "is_normal": false,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [],
+    "weaknesses": [],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Takumi Akabane",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/17",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/17/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/17/low.png",
+    "image_file": "base5/17.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-18",
+    "local_id": "18",
+    "name": "Dark Alakazam",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage2",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Psychic"
+    ],
+    "evolve_from": "Kadabra",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Teleport Blast",
+        "cost": [
+          "Psychic",
+          "Psychic",
+          "Colorless"
+        ],
+        "damage": 30,
+        "effect": "You may switch Dark Alakazam with 1 of your Benched Pokémon (Do the damage before switching the Pokémon)."
+      },
+      {
+        "name": "Mind Shock",
+        "cost": [
+          "Psychic",
+          "Psychic",
+          "Psychic"
+        ],
+        "damage": 40,
+        "effect": "Don't apply Weakness and Resistance for this attack. (Any other effects that would happen after applying Weakness and Resistance still happen.)"
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Ken Sugimori",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/18",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/18/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/18/low.png",
+    "image_file": "base5/18.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-19",
+    "local_id": "19",
+    "name": "Dark Arbok",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Grass"
+    ],
+    "evolve_from": "Ekans",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Stare",
+        "cost": [
+          "Grass",
+          "Grass"
+        ],
+        "damage": null,
+        "effect": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. Don't apply Weakness and Resistance for this attack. (Any other effects that would happen after applying Weakness and Resistance still happen.) If that Pokémon has a Pokémon Power, that power stops working until the end of your opponent's next turn."
+      },
+      {
+        "name": "Poison Vapor",
+        "cost": [
+          "Grass",
+          "Grass",
+          "Grass"
+        ],
+        "damage": 10,
+        "effect": "The Defending Pokémon is now Poisoned. This attack does 10 damage to each of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/19",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/19/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/19/low.png",
+    "image_file": "base5/19.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-20",
+    "local_id": "20",
+    "name": "Dark Blastoise",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage2",
+    "supertype": "Pokemon",
+    "hp": 70,
+    "types": [
+      "Water"
+    ],
+    "evolve_from": "Wartortle",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Hydrocannon",
+        "cost": [
+          "Water",
+          "Water"
+        ],
+        "damage": "30+",
+        "effect": "Does 30 damage plus 20 more damage for each W Energy attached to Dark Blastoise but not used to pay for this attack. You can't add more than 40 damage in this way."
+      },
+      {
+        "name": "Rocket Tackle",
+        "cost": [
+          "Water",
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 40,
+        "effect": "Dark Blastoise does 10 damage to itself. Flip a coin. If heads, prevent all damage done to Dark Blastoise during your opponent's next turn. (Any other effects of attacks still happen.)"
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Lightning",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/20",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/20/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/20/low.png",
+    "image_file": "base5/20.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-21",
+    "local_id": "21",
+    "name": "Dark Charizard",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage2",
+    "supertype": "Pokemon",
+    "hp": 80,
+    "types": [
+      "Fire"
+    ],
+    "evolve_from": "Charmeleon",
+    "retreat": 3,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Nail Flick",
+        "cost": [
+          "Colorless"
+        ],
+        "damage": 10,
+        "effect": null
+      },
+      {
+        "name": "Continuous Fireball",
+        "cost": [
+          "Fire",
+          "Fire"
+        ],
+        "damage": "50x",
+        "effect": "Flip a number of coins equal to the number of Energy cards attached to Dark Charizard. This attack does 50 damage times the number of heads. Discard a number of Energy cards attached to Dark Charizard equal to the number of heads."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Water",
+        "value": "×2"
+      }
+    ],
+    "resistances": [
+      {
+        "type": "Fighting",
+        "value": "-30"
+      }
+    ],
+    "abilities": [],
+    "illustrator": "Ken Sugimori",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/21",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/21/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/21/low.png",
+    "image_file": "base5/21.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-22",
+    "local_id": "22",
+    "name": "Dark Dragonite",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage2",
+    "supertype": "Pokemon",
+    "hp": 70,
+    "types": [
+      "Colorless"
+    ],
+    "evolve_from": "Dragonair",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Giant Tail",
+        "cost": [
+          "Colorless",
+          "Colorless",
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 70,
+        "effect": "Flip a coin. If tails, this attack does nothing."
+      }
+    ],
+    "weaknesses": [],
+    "resistances": [
+      {
+        "type": "Fighting",
+        "value": "-30"
+      }
+    ],
+    "abilities": [
+      {
+        "name": "Summon Minions",
+        "type": "Pokemon Power",
+        "effect": "When you play Dark Dragonite from your hand, search your deck for up to 2 Basic Pokémon and put them onto your Bench. Shuffle your deck afterward."
+      }
+    ],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/22",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/22/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/22/low.png",
+    "image_file": "base5/22.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-23",
+    "local_id": "23",
+    "name": "Dark Dugtrio",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Fighting"
+    ],
+    "evolve_from": "Diglett",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Knock Down",
+        "cost": [
+          "Fighting",
+          "Fighting"
+        ],
+        "damage": "20+",
+        "effect": "Your opponent flips a coin. If tails, this attack does 20 damage plus 20 more damage; if heads, this attack does 20 damage."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Grass",
+        "value": "×2"
+      }
+    ],
+    "resistances": [
+      {
+        "type": "Lightning",
+        "value": "-30"
+      }
+    ],
+    "abilities": [
+      {
+        "name": "Sinkhole",
+        "type": "Pokemon Power",
+        "effect": "Whenever your opponent's Active Pokémon retreats, your opponent flips a coin. If tails, this power does 20 damage to that Pokémon. (Don't apply Weakness and Resistance.) This power stops working while Dark Dugtrio is Asleep, Confused, or Paralyzed."
+      }
+    ],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/23",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/23/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/23/low.png",
+    "image_file": "base5/23.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-24",
+    "local_id": "24",
+    "name": "Dark Golbat",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Grass"
+    ],
+    "evolve_from": "Weavile",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Flitter",
+        "cost": [
+          "Grass",
+          "Grass"
+        ],
+        "damage": null,
+        "effect": "Choose 1 of your opponent's Pokémon. This attack does 20 damage to that Pokémon. Don't apply Weakness and Resistance for this attack. (Any other effects that would happen after applying Weakness and Resistance still happen.)"
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [
+      {
+        "type": "Fighting",
+        "value": "-30"
+      }
+    ],
+    "abilities": [
+      {
+        "name": "Sneak Attack",
+        "type": "Pokemon Power",
+        "effect": "When you play Dark Golbat from your hand, you may choose 1 of your opponent's Pokémon. If you do, Dark Golbat does 10 damage to that Pokémon. Apply Weakness and Resistance."
+      }
+    ],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/24",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/24/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/24/low.png",
+    "image_file": "base5/24.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-25",
+    "local_id": "25",
+    "name": "Dark Gyarados",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 70,
+    "types": [
+      "Water"
+    ],
+    "evolve_from": "Magikarp",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Ice Beam",
+        "cost": [
+          "Water",
+          "Water",
+          "Water"
+        ],
+        "damage": 30,
+        "effect": "Flip a coin. If heads, the Defending Pokémon is now Paralyzed."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Grass",
+        "value": "×2"
+      }
+    ],
+    "resistances": [
+      {
+        "type": "Fighting",
+        "value": "-30"
+      }
+    ],
+    "abilities": [
+      {
+        "name": "Final Beam",
+        "type": "Pokemon Power",
+        "effect": "When Dark Gyarados is Knocked Out by an attack, flip a coin. If heads, this power does 20 damage for each Water Energy attached to Dark Gyarados to the Pokémon that Knocked Out Dark Gyarados. Apply Weakness and Resistance. This power doesn't work if Dark Gyarados is Asleep, Confused, or Paralyzed."
+      }
+    ],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/25",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/25/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/25/low.png",
+    "image_file": "base5/25.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-26",
+    "local_id": "26",
+    "name": "Dark Hypno",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Psychic"
+    ],
+    "evolve_from": "Drowzee",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Psypunch",
+        "cost": [
+          "Psychic"
+        ],
+        "damage": 20,
+        "effect": null
+      },
+      {
+        "name": "Bench Manipulation",
+        "cost": [
+          "Psychic",
+          "Psychic",
+          "Colorless"
+        ],
+        "damage": "20x",
+        "effect": "Your opponent flips a number of coins equal to the number of Pokémon on his or her Bench. This attack does 20 damage times the number of tails. Don't apply Weakness and Resistance for this attack. (Any other effects that would happen after applying Weakness and Resistance still happen.)"
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/26",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/26/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/26/low.png",
+    "image_file": "base5/26.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-27",
+    "local_id": "27",
+    "name": "Dark Machamp",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage2",
+    "supertype": "Pokemon",
+    "hp": 70,
+    "types": [
+      "Fighting"
+    ],
+    "evolve_from": "Machoke",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Mega Punch",
+        "cost": [
+          "Fighting",
+          "Fighting"
+        ],
+        "damage": 30,
+        "effect": null
+      },
+      {
+        "name": "Fling",
+        "cost": [
+          "Fighting",
+          "Fighting",
+          "Fighting",
+          "Colorless"
+        ],
+        "damage": null,
+        "effect": "Your opponent shuffles his or her Active Pokémon and all cards attached to it into his or her deck. This attack can't be used if your opponent has no Benched Pokémon."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/27",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/27/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/27/low.png",
+    "image_file": "base5/27.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-28",
+    "local_id": "28",
+    "name": "Dark Magneton",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Lightning"
+    ],
+    "evolve_from": "Magnemite",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Sonicboom",
+        "cost": [
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 20,
+        "effect": "Don't apply Weakness and Resistance for this attack. (Any other effects that would happen after applying Weakness and Resistance still happen.)"
+      },
+      {
+        "name": "Magnetic Lines",
+        "cost": [
+          "Lightning",
+          "Lightning"
+        ],
+        "damage": 20,
+        "effect": "If the Defending Pokémon has any basic Energy cards attached to it, choose 1 of them. If your opponent has any Benched Pokémon, choose 1 of them and attach that Energy card to it."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fighting",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Miki Tanaka",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/28",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/28/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/28/low.png",
+    "image_file": "base5/28.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-29",
+    "local_id": "29",
+    "name": "Dark Slowbro",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Psychic"
+    ],
+    "evolve_from": "Slowpoke",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Fickle Attack",
+        "cost": [
+          "Psychic",
+          "Psychic"
+        ],
+        "damage": 40,
+        "effect": "Flip a coin. If tails, this attack does nothing."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [
+      {
+        "name": "Reel In",
+        "type": "Pokemon Power",
+        "effect": "When you play Dark Slowbro from your hand, choose up to 3 Basic Pokémon and/or Evolution cards from your discard pile and put them into your hand."
+      }
+    ],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/29",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/29/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/29/low.png",
+    "image_file": "base5/29.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-30",
+    "local_id": "30",
+    "name": "Dark Vileplume",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage2",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Grass"
+    ],
+    "evolve_from": "Gloom",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Petal Whirlwind",
+        "cost": [
+          "Grass",
+          "Grass",
+          "Grass"
+        ],
+        "damage": "30x",
+        "effect": "Flip 3 coins. This attack does 30 damage times the number of heads. If you get 2 or more heads, Dark Vileplume is now Confused (after dealing damage)."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fire",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [
+      {
+        "name": "Hay Fever",
+        "type": "Pokemon Power",
+        "effect": "No Trainer cards can be played. This power stops working while Dark Vileplume is Asleep, Confused, or Paralyzed."
+      }
+    ],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/30",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/30/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/30/low.png",
+    "image_file": "base5/30.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-31",
+    "local_id": "31",
+    "name": "Dark Weezing",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Grass"
+    ],
+    "evolve_from": "Koffing",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Mass Explosion",
+        "cost": [
+          "Grass",
+          "Colorless"
+        ],
+        "damage": "20x",
+        "effect": "Does 20 damage times the total number of Koffings, Weezings, and Dark Weezings in play (Apply Weakness and Resistance.). Then, this attack does 20 damage to each Koffing, Weezing, and Dark Weezing (even your own). Don't apply Weakness and Resistance."
+      },
+      {
+        "name": "Stun Gas",
+        "cost": [
+          "Grass",
+          "Grass",
+          "Grass"
+        ],
+        "damage": 20,
+        "effect": "Flip a coin. If heads, the Defending Pokémon is now Poisoned; if tails, the Defending Pokémon is now Paralyzed."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Shin-ichi Yoshida",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/31",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/31/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/31/low.png",
+    "image_file": "base5/31.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-32",
+    "local_id": "32",
+    "name": "Dark Charmeleon",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Fire"
+    ],
+    "evolve_from": "Charmander",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Tail Slap",
+        "cost": [
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 20,
+        "effect": null
+      },
+      {
+        "name": "Fireball",
+        "cost": [
+          "Fire",
+          "Fire",
+          "Fire"
+        ],
+        "damage": 70,
+        "effect": "Use this attack only if there are any Energy cards attached to Dark Charmeleon. Flip a coin. If heads, discard 1 of those Energy cards. If tails, this attack does nothing (not even damage)."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Water",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/32",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/32/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/32/low.png",
+    "image_file": "base5/32.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-33",
+    "local_id": "33",
+    "name": "Dark Dragonair",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Colorless"
+    ],
+    "evolve_from": "Dratini",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Tail Strike",
+        "cost": [
+          "Colorless",
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": "20+",
+        "effect": "Flip a coin. If heads, this attack does 20 damage plus 20 more damage; if tails, this attack does 20 damage."
+      }
+    ],
+    "weaknesses": [],
+    "resistances": [
+      {
+        "type": "Psychic",
+        "value": "-30"
+      }
+    ],
+    "abilities": [
+      {
+        "name": "Evolutionary Light",
+        "type": "Pokemon Power",
+        "effect": "Once during your turn (before your attack), you may search your deck for an Evolution card. Show it to your opponent and put it into your hand. Shuffle your deck afterward. This power can't be used if Dark Dragonair is Asleep, Confused, or Paralyzed."
+      }
+    ],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/33",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/33/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/33/low.png",
+    "image_file": "base5/33.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-34",
+    "local_id": "34",
+    "name": "Dark Electrode",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Lightning"
+    ],
+    "evolve_from": "Voltorb",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Rolling Tackle",
+        "cost": [
+          "Colorless"
+        ],
+        "damage": 10,
+        "effect": null
+      },
+      {
+        "name": "Energy Bomb",
+        "cost": [
+          "Lightning",
+          "Lightning"
+        ],
+        "damage": 30,
+        "effect": "Take all Energy cards attached to Dark Electrode and attach them to your Benched Pokémon (in any way you choose). If you have no Benched Pokémon, discard all Energy cards attached to Dark Electrode."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fighting",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Ken Sugimori",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/34",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/34/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/34/low.png",
+    "image_file": "base5/34.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-35",
+    "local_id": "35",
+    "name": "Dark Flareon",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Fire"
+    ],
+    "evolve_from": "Eevee",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Rage",
+        "cost": [
+          "Colorless"
+        ],
+        "damage": "10+",
+        "effect": "Does 10 damage plus 10 more damage for each damage counter on Dark Flareon."
+      },
+      {
+        "name": "Playing with Fire",
+        "cost": [
+          "Fire",
+          "Fire"
+        ],
+        "damage": "30+",
+        "effect": "Use this attack only if there are any Energy cards attached to Dark Flareon. Flip a coin. If heads, discard 1 of those Energy cards and this attack does 30 damage plus 20 more damage. If tails, this attack does 30 damage."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Water",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/35",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/35/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/35/low.png",
+    "image_file": "base5/35.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-36",
+    "local_id": "36",
+    "name": "Dark Gloom",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Grass"
+    ],
+    "evolve_from": "Oddish",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Poisonpowder",
+        "cost": [
+          "Grass",
+          "Grass"
+        ],
+        "damage": 10,
+        "effect": "The Defending Pokémon is now Poisoned."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fighting",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [
+      {
+        "name": "Pollen Stench",
+        "type": "Pokemon Power",
+        "effect": "Once during your turn (before your attack), you may flip a coin. If heads, the Defending Pokémon is now Confused; if tails, your Active Pokémon is now Confused. This power can't be used if Dark Gloom is Asleep, Confused, or Paralyzed."
+      }
+    ],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/36",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/36/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/36/low.png",
+    "image_file": "base5/36.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-37",
+    "local_id": "37",
+    "name": "Dark Golduck",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Water"
+    ],
+    "evolve_from": "Psyduck",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Third Eye",
+        "cost": [
+          "Psychic"
+        ],
+        "damage": null,
+        "effect": "Discard 1 Energy card attached to Dark Golduck in order to draw up to 3 cards."
+      },
+      {
+        "name": "Super Psy",
+        "cost": [
+          "Psychic",
+          "Psychic",
+          "Colorless"
+        ],
+        "damage": 50,
+        "effect": null
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Lightning",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/37",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/37/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/37/low.png",
+    "image_file": "base5/37.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-38",
+    "local_id": "38",
+    "name": "Dark Jolteon",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Lightning"
+    ],
+    "evolve_from": "Eevee",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Lightning Flash",
+        "cost": [
+          "Lightning"
+        ],
+        "damage": 20,
+        "effect": "If the Defending Pokémon tries to attack during your opponent's next turn, your opponent flips a coin. If tails, that attack does nothing."
+      },
+      {
+        "name": "Thunder Attack",
+        "cost": [
+          "Lightning",
+          "Lightning",
+          "Colorless"
+        ],
+        "damage": 30,
+        "effect": "Flip a coin. If heads, the Defending Pokémon is now Paralyzed. If tails, Dark Jolteon does 10 damage to itself."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fighting",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/38",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/38/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/38/low.png",
+    "image_file": "base5/38.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-39",
+    "local_id": "39",
+    "name": "Dark Kadabra",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Psychic"
+    ],
+    "evolve_from": "Abra",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Mind Shock",
+        "cost": [
+          "Psychic",
+          "Psychic"
+        ],
+        "damage": 30,
+        "effect": "Don't apply Weakness and Resistance for this attack. (Any other effects that would happen after applying Weakness and Resistance still happen.)"
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [
+      {
+        "name": "Matter Exchange",
+        "type": "Pokemon Power",
+        "effect": "Once during your turn (before your attack), you may discard a card from your hand in order to draw a card. This power can't be used if Dark Kadabra is Asleep, Confused, or Paralyzed."
+      }
+    ],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/39",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/39/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/39/low.png",
+    "image_file": "base5/39.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-40",
+    "local_id": "40",
+    "name": "Dark Machoke",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Fighting"
+    ],
+    "evolve_from": "Machop",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Drag Off",
+        "cost": [
+          "Fighting",
+          "Fighting",
+          "Colorless"
+        ],
+        "damage": 20,
+        "effect": "Before doing damage, choose 1 of your opponent's Benched Pokémon and switch it with the Defending Pokémon. Do the damage to the new Defending Pokémon. This attack can't be used if your opponent has no Benched Pokémon."
+      },
+      {
+        "name": "Knock Back",
+        "cost": [
+          "Fighting",
+          "Fighting",
+          "Colorless"
+        ],
+        "damage": 30,
+        "effect": "If your opponent has any Benched Pokémon, he or she chooses 1 of them and switches it with the Defending Pokémon. (Do the damage before switching the Pokémon.)"
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/40",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/40/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/40/low.png",
+    "image_file": "base5/40.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-41",
+    "local_id": "41",
+    "name": "Dark Muk",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Grass"
+    ],
+    "evolve_from": "Grimer",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Sludge Punch",
+        "cost": [
+          "Grass",
+          "Grass"
+        ],
+        "damage": 20,
+        "effect": "The Defending Pokémon is now Poisoned."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [
+      {
+        "name": "Sticky Goo",
+        "type": "Pokemon Power",
+        "effect": "As long as Dark Muk is your Active Pokémon, your opponent pays 2 more to retreat his or her Active Pokémon. This power stops working while Dark Muk is Asleep, Confused, or Paralyzed."
+      }
+    ],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/41",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/41/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/41/low.png",
+    "image_file": "base5/41.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-42",
+    "local_id": "42",
+    "name": "Dark Persian",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Colorless"
+    ],
+    "evolve_from": "Meowth",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Fascinate",
+        "cost": [
+          "Colorless"
+        ],
+        "damage": null,
+        "effect": "Flip a coin. If heads, choose 1 of your opponent's Benched Pokémon and switch it with the Defending Pokémon. This attack can't be used if your opponent has no Benched Pokémon."
+      },
+      {
+        "name": "Poison Claws",
+        "cost": [
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 10,
+        "effect": "Flip a coin. If heads, the Defending Pokémon is now Poisoned."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fighting",
+        "value": "×2"
+      }
+    ],
+    "resistances": [
+      {
+        "type": "Psychic",
+        "value": "-30"
+      }
+    ],
+    "abilities": [],
+    "illustrator": "Shin-ichi Yoshida",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/42",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/42/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/42/low.png",
+    "image_file": "base5/42.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-43",
+    "local_id": "43",
+    "name": "Dark Primeape",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Fighting"
+    ],
+    "evolve_from": "Mankey",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Frenzied Attack",
+        "cost": [
+          "Fighting",
+          "Fighting"
+        ],
+        "damage": 40,
+        "effect": "Dark Primeape is now Confused (after doing damage)."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [
+      {
+        "name": "Frenzy",
+        "type": "Pokemon Power",
+        "effect": "If Dark Primeape does any damage while it's Confused (even to itself), it does 30 more damage."
+      }
+    ],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/43",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/43/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/43/low.png",
+    "image_file": "base5/43.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-44",
+    "local_id": "44",
+    "name": "Dark Rapidash",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Fire"
+    ],
+    "evolve_from": "Ponyta",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Rear Kick",
+        "cost": [
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 20,
+        "effect": null
+      },
+      {
+        "name": "Flame Pillar",
+        "cost": [
+          "Fire",
+          "Fire"
+        ],
+        "damage": 30,
+        "effect": "You may discard 1 Energy card attached to Dark Rapidash when you use this attack. If you do and if your opponent has any Benched Pokémon, choose 1 of them and this attack does 10 damage to it. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Water",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/44",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/44/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/44/low.png",
+    "image_file": "base5/44.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-45",
+    "local_id": "45",
+    "name": "Dark Vaporeon",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Water"
+    ],
+    "evolve_from": "Eevee",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Bite",
+        "cost": [
+          "Colorless",
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 30,
+        "effect": null
+      },
+      {
+        "name": "Whirlpool",
+        "cost": [
+          "Water",
+          "Water",
+          "Colorless"
+        ],
+        "damage": 20,
+        "effect": "If the Defending Pokémon has any Energy cards attached to it, choose 1 of them and discard it."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Lightning",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/45",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/45/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/45/low.png",
+    "image_file": "base5/45.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-46",
+    "local_id": "46",
+    "name": "Dark Wartortle",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 60,
+    "types": [
+      "Water"
+    ],
+    "evolve_from": "Squirtle",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Doubleslap",
+        "cost": [
+          "Water"
+        ],
+        "damage": "10x",
+        "effect": "Flip 2 coins. This attack does 10 damage times the number of heads."
+      },
+      {
+        "name": "Mirror Shell",
+        "cost": [
+          "Water",
+          "Colorless"
+        ],
+        "damage": null,
+        "effect": "If an attack does damage to Dark Wartortle during your opponent's next turn (even if Dark Wartortle is Knocked Out), Dark Wartortle attacks the Defending Pokémon for an equal amount of damage."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Lightning",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/46",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/46/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/46/low.png",
+    "image_file": "base5/46.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-47",
+    "local_id": "47",
+    "name": "Magikarp",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 30,
+    "types": [
+      "Water"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Flop",
+        "cost": [
+          "Colorless"
+        ],
+        "damage": 10,
+        "effect": null
+      },
+      {
+        "name": "Rapid Evolution",
+        "cost": [
+          "Water",
+          "Water",
+          "Water"
+        ],
+        "damage": null,
+        "effect": "Search your deck for an Evolution card named Gyarados or Dark Gyarados and put it on Magikarp. (This counts as evolving Magikarp.) Shuffle your deck afterward."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Lightning",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/47",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/47/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/47/low.png",
+    "image_file": "base5/47.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-48",
+    "local_id": "48",
+    "name": "Porygon",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Uncommon",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 40,
+    "types": [
+      "Colorless"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Conversion 1",
+        "cost": [
+          "Colorless"
+        ],
+        "damage": null,
+        "effect": "If Defending Pokémon has a Weakness, you may change it to a type of your choice other than Colorless."
+      },
+      {
+        "name": "Psybeam",
+        "cost": [
+          "Colorless",
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 20,
+        "effect": "Flip a coin. If heads, the Defending Pokémon is now Confused."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fighting",
+        "value": "×2"
+      }
+    ],
+    "resistances": [
+      {
+        "type": "Psychic",
+        "value": "-30"
+      }
+    ],
+    "abilities": [],
+    "illustrator": "Keiji Kinebuchi",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/48",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/48/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/48/low.png",
+    "image_file": "base5/48.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-49",
+    "local_id": "49",
+    "name": "Abra",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 40,
+    "types": [
+      "Psychic"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Vanish",
+        "cost": [
+          "Psychic"
+        ],
+        "damage": null,
+        "effect": "Shuffle Abra into your deck. (Discard all cards attached to Abra.)"
+      },
+      {
+        "name": "Psyshock",
+        "cost": [
+          "Psychic"
+        ],
+        "damage": 10,
+        "effect": "Flip a coin. If heads, the Defending Pokémon is now Paralyzed."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Sumiyoshi Kizuki",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/49",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/49/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/49/low.png",
+    "image_file": "base5/49.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-50",
+    "local_id": "50",
+    "name": "Charmander",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 40,
+    "types": [
+      "Fire"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Fire Tail",
+        "cost": [
+          "Fire"
+        ],
+        "damage": 20,
+        "effect": null
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Water",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [
+      {
+        "name": "Gather Fire",
+        "type": "Pokemon Power",
+        "effect": "Once during your turn (before your attack), you may take 1 Fire Energy card attached to 1 of your other Pokémon and attach it to Charmander. This power can't be used if Charmander is Asleep, Confused, or Paralyzed."
+      }
+    ],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/50",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/50/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/50/low.png",
+    "image_file": "base5/50.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-51",
+    "local_id": "51",
+    "name": "Dark Raticate",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Colorless"
+    ],
+    "evolve_from": "Rattata",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Gnaw",
+        "cost": [
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 20,
+        "effect": null
+      },
+      {
+        "name": "Hyper Fang",
+        "cost": [
+          "Colorless",
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 50,
+        "effect": "Flip a coin. if tails, this attack does nothing."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fighting",
+        "value": "×2"
+      }
+    ],
+    "resistances": [
+      {
+        "type": "Psychic",
+        "value": "-30"
+      }
+    ],
+    "abilities": [],
+    "illustrator": "Shin-ichi Yoshida",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/51",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/51/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/51/low.png",
+    "image_file": "base5/51.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-52",
+    "local_id": "52",
+    "name": "Diglett",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 40,
+    "types": [
+      "Fighting"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Dig Under",
+        "cost": [
+          "Fighting"
+        ],
+        "damage": null,
+        "effect": "Choose 1 of your opponent's Pokémon. This attack does 10 damage to that Pokémon. Don't apply Weakness and Resistance for this attack. (Any other effects that would happen after Applying Weakness and Resistance still happen.)"
+      },
+      {
+        "name": "Scratch",
+        "cost": [
+          "Fighting",
+          "Colorless"
+        ],
+        "damage": 20,
+        "effect": null
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Grass",
+        "value": "×2"
+      }
+    ],
+    "resistances": [
+      {
+        "type": "Lightning",
+        "value": "-30"
+      }
+    ],
+    "abilities": [],
+    "illustrator": "Sumiyoshi Kizuki",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/52",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/52/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/52/low.png",
+    "image_file": "base5/52.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-53",
+    "local_id": "53",
+    "name": "Dratini",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 40,
+    "types": [
+      "Colorless"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Wrap",
+        "cost": [
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 10,
+        "effect": "Flip a coin. If heads, the Defending Pokémon is now Paralyzed."
+      }
+    ],
+    "weaknesses": [],
+    "resistances": [
+      {
+        "type": "Psychic",
+        "value": "-30"
+      }
+    ],
+    "abilities": [],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/53",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/53/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/53/low.png",
+    "image_file": "base5/53.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-54",
+    "local_id": "54",
+    "name": "Drowzee",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Psychic"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Nightmare",
+        "cost": [
+          "Psychic",
+          "Colorless"
+        ],
+        "damage": 10,
+        "effect": "The Defending Pokémon is now Asleep."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [
+      {
+        "name": "Long Distance Hypnosis",
+        "type": "Pokemon Power",
+        "effect": "Distance Hypnosis - Once during your turn (before your attack), you may flip a coin. If heads, the Defending Pokémon is now Asleep; if tails, your Active Pokémon is now Asleep. The power can't be used if Drowzee is Asleep, Confused, or Paralyzed."
+      }
+    ],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/54",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/54/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/54/low.png",
+    "image_file": "base5/54.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-55",
+    "local_id": "55",
+    "name": "Eevee",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 40,
+    "types": [
+      "Colorless"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Tackle",
+        "cost": [
+          "Colorless"
+        ],
+        "damage": 10,
+        "effect": null
+      },
+      {
+        "name": "Sand-attack",
+        "cost": [
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 10,
+        "effect": "If the Defending Pokémon tries to attack during your opponent's next turn, your opponent flips a coin. If tails, that attack does nothing."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fighting",
+        "value": "×2"
+      }
+    ],
+    "resistances": [
+      {
+        "type": "Psychic",
+        "value": "-30"
+      }
+    ],
+    "abilities": [],
+    "illustrator": "Atsuko Nishida",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/55",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/55/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/55/low.png",
+    "image_file": "base5/55.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-56",
+    "local_id": "56",
+    "name": "Ekans",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Grass"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Bite",
+        "cost": [
+          "Colorless"
+        ],
+        "damage": 10,
+        "effect": null
+      },
+      {
+        "name": "Poison Sting",
+        "cost": [
+          "Grass",
+          "Grass"
+        ],
+        "damage": 20,
+        "effect": "Flip a coin. If heads, the Defending Pokémon is now Poisoned."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Ken Sugimori",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/56",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/56/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/56/low.png",
+    "image_file": "base5/56.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-57",
+    "local_id": "57",
+    "name": "Grimer",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 40,
+    "types": [
+      "Grass"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Poison Gas",
+        "cost": [
+          "Grass"
+        ],
+        "damage": null,
+        "effect": "The Defending Pokémon is now Asleep."
+      },
+      {
+        "name": "Sticky Hands",
+        "cost": [
+          "Grass",
+          "Grass"
+        ],
+        "damage": "10+",
+        "effect": "Flip a coin. If heads, this attack does 10 damage plus 20 more damage and the Defending Pokémon is now Paralyzed; if tails, this attack does 10 damage."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/57",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/57/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/57/low.png",
+    "image_file": "base5/57.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-58",
+    "local_id": "58",
+    "name": "Koffing",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 40,
+    "types": [
+      "Grass"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Tackle",
+        "cost": [
+          "Colorless"
+        ],
+        "damage": 10,
+        "effect": null
+      },
+      {
+        "name": "Poison Gas",
+        "cost": [
+          "Grass",
+          "Colorless"
+        ],
+        "damage": 20,
+        "effect": "Flip a coin. If heads, the Defending Pokémon is now Poisoned."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Sumiyoshi Kizuki",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/58",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/58/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/58/low.png",
+    "image_file": "base5/58.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-59",
+    "local_id": "59",
+    "name": "Machop",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Fighting"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Punch",
+        "cost": [
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 20,
+        "effect": null
+      },
+      {
+        "name": "Kick",
+        "cost": [
+          "Fighting",
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 30,
+        "effect": null
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Ken Sugimori",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/59",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/59/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/59/low.png",
+    "image_file": "base5/59.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-60",
+    "local_id": "60",
+    "name": "Magnemite",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 40,
+    "types": [
+      "Lightning"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Tackle",
+        "cost": [
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 20,
+        "effect": null
+      },
+      {
+        "name": "Magnetism",
+        "cost": [
+          "Lightning",
+          "Colorless"
+        ],
+        "damage": "10+",
+        "effect": "Does 10 damage plus 10 more damage for each Magnemite, Magneton, and Dark Magneton on your Bench."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fighting",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Miki Tanaka",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/60",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/60/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/60/low.png",
+    "image_file": "base5/60.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-61",
+    "local_id": "61",
+    "name": "Mankey",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 40,
+    "types": [
+      "Fighting"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Mischief",
+        "cost": [
+          "Colorless"
+        ],
+        "damage": null,
+        "effect": "Shuffle your opponent's deck."
+      },
+      {
+        "name": "Anger",
+        "cost": [
+          "Colorless",
+          "Fighting"
+        ],
+        "damage": "20+",
+        "effect": "Flip a coin. If heads, this attack does 20 damage plus 20 more damage; if tails, this attack does 20 damage."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Sumiyoshi Kizuki",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/61",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/61/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/61/low.png",
+    "image_file": "base5/61.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-62",
+    "local_id": "62",
+    "name": "Meowth",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 40,
+    "types": [
+      "Colorless"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Coin Hurl",
+        "cost": [
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": null,
+        "effect": "Choose 1 of your opponent's Pokémon and flip a coin. If heads, this attack does 20 damage to that Pokémon. Don't apply Weakness and Resistance for this attack. (Any other effects that would happen after applying Weakness and Resistance still happen.)"
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fighting",
+        "value": "×2"
+      }
+    ],
+    "resistances": [
+      {
+        "type": "Psychic",
+        "value": "-30"
+      }
+    ],
+    "abilities": [],
+    "illustrator": "Atsuko Nishida",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/62",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/62/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/62/low.png",
+    "image_file": "base5/62.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-63",
+    "local_id": "63",
+    "name": "Oddish",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Grass"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Sleep Powder",
+        "cost": [
+          "Grass"
+        ],
+        "damage": null,
+        "effect": "The Defending Pokémon is now Asleep."
+      },
+      {
+        "name": "Poisonpowder",
+        "cost": [
+          "Grass"
+        ],
+        "damage": null,
+        "effect": "The Defending Pokémon is now Poisoned."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fire",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/63",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/63/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/63/low.png",
+    "image_file": "base5/63.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-64",
+    "local_id": "64",
+    "name": "Ponyta",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Fire"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Ember",
+        "cost": [
+          "Fire",
+          "Colorless"
+        ],
+        "damage": 30,
+        "effect": "Discard 1 Energy card attached to Ponyta in order to use this attack."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Water",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Atsuko Nishida",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/64",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/64/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/64/low.png",
+    "image_file": "base5/64.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-65",
+    "local_id": "65",
+    "name": "Psyduck",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Water"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Dizziness",
+        "cost": [
+          "Psychic"
+        ],
+        "damage": null,
+        "effect": "Draw a card."
+      },
+      {
+        "name": "Water Gun",
+        "cost": [
+          "Colorless",
+          "Water"
+        ],
+        "damage": "20+",
+        "effect": "Does 20 damage plus 10 more damage for each Energy attached to Psyduck but not used to pay for this attack. You can't add more than 20 damage in this way."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Lightning",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/65",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/65/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/65/low.png",
+    "image_file": "base5/65.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-66",
+    "local_id": "66",
+    "name": "Rattata",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 40,
+    "types": [
+      "Colorless"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Quick Attack",
+        "cost": [
+          "Colorless"
+        ],
+        "damage": "10+",
+        "effect": "Flip a coin. If heads, this attack does 10 damage plus 10 more damage; if tails, this attack does 10 damage."
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fighting",
+        "value": "×2"
+      }
+    ],
+    "resistances": [
+      {
+        "type": "Psychic",
+        "value": "-30"
+      }
+    ],
+    "abilities": [
+      {
+        "name": "Trickery",
+        "type": "Pokemon Power",
+        "effect": "Once during your turn (before your attack), you may switch 1 of your Prizes with the top card of your deck. This power can't be used if Rattata is Asleep, Confused, or Paralyzed."
+      }
+    ],
+    "illustrator": "Atsuko Nishida",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/66",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/66/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/66/low.png",
+    "image_file": "base5/66.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-67",
+    "local_id": "67",
+    "name": "Slowpoke",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Psychic"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Afternoon Nap",
+        "cost": [
+          "Colorless"
+        ],
+        "damage": null,
+        "effect": "Search your deck for a Energy card and attach it to Slowpoke. Shuffle your deck afterward."
+      },
+      {
+        "name": "Headbutt",
+        "cost": [
+          "Psychic"
+        ],
+        "damage": 10,
+        "effect": null
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Sumiyoshi Kizuki",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/67",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/67/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/67/low.png",
+    "image_file": "base5/67.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-68",
+    "local_id": "68",
+    "name": "Squirtle",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 50,
+    "types": [
+      "Water"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Shell Attack",
+        "cost": [
+          "Colorless",
+          "Colorless"
+        ],
+        "damage": 20,
+        "effect": null
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Lightning",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Atsuko Nishida",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/68",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/68/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/68/low.png",
+    "image_file": "base5/68.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-69",
+    "local_id": "69",
+    "name": "Voltorb",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 40,
+    "types": [
+      "Lightning"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Speed Ball",
+        "cost": [
+          "Lightning"
+        ],
+        "damage": 20,
+        "effect": null
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fighting",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Ken Sugimori",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/69",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/69/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/69/low.png",
+    "image_file": "base5/69.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-70",
+    "local_id": "70",
+    "name": "Zubat",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Common",
+    "stage": "Basic",
+    "supertype": "Pokemon",
+    "hp": 40,
+    "types": [
+      "Grass"
+    ],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Ram",
+        "cost": [
+          "Colorless"
+        ],
+        "damage": 10,
+        "effect": null
+      },
+      {
+        "name": "Bite",
+        "cost": [
+          "Grass",
+          "Colorless"
+        ],
+        "damage": 20,
+        "effect": null
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Psychic",
+        "value": "×2"
+      }
+    ],
+    "resistances": [
+      {
+        "type": "Fighting",
+        "value": "-30"
+      }
+    ],
+    "abilities": [],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/70",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/70/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/70/low.png",
+    "image_file": "base5/70.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-71",
+    "local_id": "71",
+    "name": "Here Comes Team Rocket!",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Trainer",
+    "rarity": "Rare",
+    "stage": null,
+    "supertype": "Trainer",
+    "hp": null,
+    "types": [],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [],
+    "weaknesses": [],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Ken Sugimori",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/71",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/71/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/71/low.png",
+    "image_file": "base5/71.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-72",
+    "local_id": "72",
+    "name": "Rocket's Sneak Attack",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Trainer",
+    "rarity": "Rare",
+    "stage": null,
+    "supertype": "Trainer",
+    "hp": null,
+    "types": [],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [],
+    "weaknesses": [],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Ken Sugimori",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/72",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/72/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/72/low.png",
+    "image_file": "base5/72.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-73",
+    "local_id": "73",
+    "name": "The Boss's Way",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Trainer",
+    "rarity": "Uncommon",
+    "stage": null,
+    "supertype": "Trainer",
+    "hp": null,
+    "types": [],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [],
+    "weaknesses": [],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Ken Sugimori",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/73",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/73/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/73/low.png",
+    "image_file": "base5/73.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-74",
+    "local_id": "74",
+    "name": "Challenge!",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Trainer",
+    "rarity": "Uncommon",
+    "stage": null,
+    "supertype": "Trainer",
+    "hp": null,
+    "types": [],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [],
+    "weaknesses": [],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Kagemaru Himeno",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/74",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/74/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/74/low.png",
+    "image_file": "base5/74.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-75",
+    "local_id": "75",
+    "name": "Digger",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Trainer",
+    "rarity": "Uncommon",
+    "stage": null,
+    "supertype": "Trainer",
+    "hp": null,
+    "types": [],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [],
+    "weaknesses": [],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Sumiyoshi Kizuki",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/75",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/75/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/75/low.png",
+    "image_file": "base5/75.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-76",
+    "local_id": "76",
+    "name": "Imposter Oak's Revenge",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Trainer",
+    "rarity": "Uncommon",
+    "stage": null,
+    "supertype": "Trainer",
+    "hp": null,
+    "types": [],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [],
+    "weaknesses": [],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Ken Sugimori",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/76",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/76/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/76/low.png",
+    "image_file": "base5/76.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-77",
+    "local_id": "77",
+    "name": "Nightly Garbage Run",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Trainer",
+    "rarity": "Uncommon",
+    "stage": null,
+    "supertype": "Trainer",
+    "hp": null,
+    "types": [],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [],
+    "weaknesses": [],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Sumiyoshi Kizuki",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/77",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/77/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/77/low.png",
+    "image_file": "base5/77.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-78",
+    "local_id": "78",
+    "name": "Goop Gas Attack",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Trainer",
+    "rarity": "Common",
+    "stage": null,
+    "supertype": "Trainer",
+    "hp": null,
+    "types": [],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [],
+    "weaknesses": [],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Sumiyoshi Kizuki",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/78",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/78/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/78/low.png",
+    "image_file": "base5/78.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-79",
+    "local_id": "79",
+    "name": "Sleep!",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Trainer",
+    "rarity": "Common",
+    "stage": null,
+    "supertype": "Trainer",
+    "hp": null,
+    "types": [],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [],
+    "weaknesses": [],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Sumiyoshi Kizuki",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/79",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/79/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/79/low.png",
+    "image_file": "base5/79.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-80",
+    "local_id": "80",
+    "name": "Rainbow Energy",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Energy",
+    "rarity": "Rare",
+    "stage": null,
+    "supertype": "Energy",
+    "hp": null,
+    "types": [],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [],
+    "weaknesses": [],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Takumi Akabane",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/80",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/80/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/80/low.png",
+    "image_file": "base5/80.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-81",
+    "local_id": "81",
+    "name": "Full Heal Energy",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Energy",
+    "rarity": "Uncommon",
+    "stage": null,
+    "supertype": "Energy",
+    "hp": null,
+    "types": [],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [],
+    "weaknesses": [],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Keiji Kinebuchi",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/81",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/81/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/81/low.png",
+    "image_file": "base5/81.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-82",
+    "local_id": "82",
+    "name": "Potion Energy",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Energy",
+    "rarity": "Uncommon",
+    "stage": null,
+    "supertype": "Energy",
+    "hp": null,
+    "types": [],
+    "evolve_from": null,
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [],
+    "weaknesses": [],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Keiji Kinebuchi",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/82",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/82/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/82/low.png",
+    "image_file": "base5/82.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  },
+  {
+    "id": "base5-83",
+    "local_id": "83",
+    "name": "Dark Raichu",
+    "set_id": "base5",
+    "set_name": "Team Rocket",
+    "category": "Pokemon",
+    "rarity": "Rare",
+    "stage": "Stage1",
+    "supertype": "Pokemon",
+    "hp": 70,
+    "types": [
+      "Lightning"
+    ],
+    "evolve_from": "Pikachu",
+    "retreat": null,
+    "description": null,
+    "variants": {
+      "firstEdition": true,
+      "holo": false,
+      "normal": true,
+      "reverse": false,
+      "wPromo": false
+    },
+    "is_holo": false,
+    "is_normal": true,
+    "is_first_edition": true,
+    "is_reverse": false,
+    "attacks": [
+      {
+        "name": "Surprise Thunder",
+        "cost": [
+          "Lightning",
+          "Lightning",
+          "Lightning"
+        ],
+        "damage": 30,
+        "effect": "Flip a coin. If heads, flip another coin. If the second coin is heads, this attack does 20 damage to each of your opponent's Benched Pokémon. If the second coin is tails, this attack does 10 damage to each of your opponent's Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.)"
+      }
+    ],
+    "weaknesses": [
+      {
+        "type": "Fighting",
+        "value": "×2"
+      }
+    ],
+    "resistances": [],
+    "abilities": [],
+    "illustrator": "Mitsuhiro Arita",
+    "image_base_url": "https://assets.tcgdex.net/en/base/base5/83",
+    "image_high": "https://assets.tcgdex.net/en/base/base5/83/high.png",
+    "image_low": "https://assets.tcgdex.net/en/base/base5/83/low.png",
+    "image_file": "base5/83.png",
+    "tcgplayer": null,
+    "cardmarket": null,
+    "effect": null,
+    "rules": [],
+    "regulation_mark": null,
+    "legal": {
+      "standard": false,
+      "expanded": false
+    }
+  }
+]

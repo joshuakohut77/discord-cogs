@@ -1,0 +1,20 @@
+{
+  "id": "lc",
+  "name": "Legendary Collection",
+  "series": "Legendary Collection",
+  "release_date": "2002-05-24",
+  "card_count": {
+    "firstEd": 0,
+    "holo": 19,
+    "normal": 94,
+    "official": 110,
+    "reverse": 111,
+    "total": 110
+  },
+  "logo": "https://assets.tcgdex.net/en/lc/lc/logo",
+  "symbol": "https://assets.tcgdex.net/univ/lc/lc/symbol",
+  "legal": {
+    "expanded": false,
+    "standard": false
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "id": "base1",
+  "name": "Base Set",
+  "series": "Base",
+  "release_date": "1999-01-09",
+  "card_count": {
+    "firstEd": 102,
+    "holo": 64,
+    "normal": 344,
+    "official": 102,
+    "reverse": 0,
+    "total": 102
+  },
+  "logo": "https://assets.tcgdex.net/en/base/base1/logo",
+  "symbol": null,
+  "legal": {
+    "expanded": false,
+    "standard": false
+  }
+}

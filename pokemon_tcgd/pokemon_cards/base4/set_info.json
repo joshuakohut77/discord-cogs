@@ -1,0 +1,20 @@
+{
+  "id": "base4",
+  "name": "Base Set 2",
+  "series": "Base",
+  "release_date": "2000-02-24",
+  "card_count": {
+    "firstEd": 0,
+    "holo": 20,
+    "normal": 111,
+    "official": 130,
+    "reverse": 0,
+    "total": 130
+  },
+  "logo": "https://assets.tcgdex.net/en/base/base4/logo",
+  "symbol": "https://assets.tcgdex.net/univ/base/base4/symbol",
+  "legal": {
+    "expanded": false,
+    "standard": false
+  }
+}

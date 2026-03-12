@@ -1,0 +1,20 @@
+{
+  "id": "gym1",
+  "name": "Gym Heroes",
+  "series": "Gym",
+  "release_date": "2000-08-14",
+  "card_count": {
+    "firstEd": 132,
+    "holo": 40,
+    "normal": 227,
+    "official": 132,
+    "reverse": 0,
+    "total": 132
+  },
+  "logo": "https://assets.tcgdex.net/en/gym/gym1/logo",
+  "symbol": "https://assets.tcgdex.net/univ/gym/gym1/symbol",
+  "legal": {
+    "expanded": false,
+    "standard": false
+  }
+}

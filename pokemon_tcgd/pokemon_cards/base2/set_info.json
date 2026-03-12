@@ -1,0 +1,20 @@
+{
+  "id": "base2",
+  "name": "Jungle",
+  "series": "Base",
+  "release_date": "1999-06-16",
+  "card_count": {
+    "firstEd": 64,
+    "holo": 52,
+    "normal": 98,
+    "official": 64,
+    "reverse": 0,
+    "total": 64
+  },
+  "logo": "https://assets.tcgdex.net/en/base/base2/logo",
+  "symbol": "https://assets.tcgdex.net/univ/base/base2/symbol",
+  "legal": {
+    "expanded": false,
+    "standard": false
+  }
+}

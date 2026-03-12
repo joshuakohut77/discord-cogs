@@ -1,0 +1,20 @@
+{
+  "id": "gym2",
+  "name": "Gym Challenge",
+  "series": "Gym",
+  "release_date": "2000-10-16",
+  "card_count": {
+    "firstEd": 132,
+    "holo": 42,
+    "normal": 226,
+    "official": 132,
+    "reverse": 0,
+    "total": 132
+  },
+  "logo": "https://assets.tcgdex.net/en/gym/gym2/logo",
+  "symbol": "https://assets.tcgdex.net/univ/gym/gym2/symbol",
+  "legal": {
+    "expanded": false,
+    "standard": false
+  }
+}

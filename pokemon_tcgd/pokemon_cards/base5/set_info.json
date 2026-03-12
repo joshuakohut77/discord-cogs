@@ -1,0 +1,20 @@
+{
+  "id": "base5",
+  "name": "Team Rocket",
+  "series": "Base",
+  "release_date": "2000-04-24",
+  "card_count": {
+    "firstEd": 84,
+    "holo": 37,
+    "normal": 135,
+    "official": 82,
+    "reverse": 0,
+    "total": 83
+  },
+  "logo": "https://assets.tcgdex.net/en/base/base5/logo",
+  "symbol": "https://assets.tcgdex.net/univ/base/base5/symbol",
+  "legal": {
+    "expanded": false,
+    "standard": false
+  }
+}

@@ -1,0 +1,141 @@
+{
+    "_comment": "WOTC era Pokemon TCG booster pack configurations. All packs contain 11 cards. Holo chance is ~1/3 on the rare slot. Sets without energy cards (Jungle, Fossil) fill those slots with extra commons.",
+    "sets": {
+        "base1": {
+            "name": "Base Set",
+            "series": "Base",
+            "year": 1999,
+            "total_cards_in_set": 102,
+            "cards_per_pack": 11,
+            "pack_composition": {
+                "common": 5,
+                "uncommon": 3,
+                "rare": 1,
+                "energy": 2
+            },
+            "holo_chance": 0.333,
+            "has_energy_in_set": true,
+            "description": "The original 102-card set. Charizard, Blastoise, Venusaur.",
+            "emoji": "🔥"
+        },
+        "base2": {
+            "name": "Jungle",
+            "series": "Base",
+            "year": 1999,
+            "total_cards_in_set": 64,
+            "cards_per_pack": 11,
+            "pack_composition": {
+                "common": 7,
+                "uncommon": 3,
+                "rare": 1,
+                "energy": 0
+            },
+            "holo_chance": 0.333,
+            "has_energy_in_set": false,
+            "description": "Safari Zone Pokemon. Eeveelutions, Scyther, Pinsir, Mr. Mime.",
+            "emoji": "🌿"
+        },
+        "base3": {
+            "name": "Fossil",
+            "series": "Base",
+            "year": 1999,
+            "total_cards_in_set": 62,
+            "cards_per_pack": 11,
+            "pack_composition": {
+                "common": 7,
+                "uncommon": 3,
+                "rare": 1,
+                "energy": 0
+            },
+            "holo_chance": 0.333,
+            "has_energy_in_set": false,
+            "description": "Prehistoric Pokemon. Aerodactyl, Kabutops, legendary birds.",
+            "emoji": "🦴"
+        },
+        "base4": {
+            "name": "Base Set 2",
+            "series": "Base",
+            "year": 2000,
+            "total_cards_in_set": 130,
+            "cards_per_pack": 11,
+            "pack_composition": {
+                "common": 5,
+                "uncommon": 3,
+                "rare": 1,
+                "energy": 2
+            },
+            "holo_chance": 0.333,
+            "has_energy_in_set": true,
+            "description": "Reprint compilation from Base Set and Jungle.",
+            "emoji": "2️⃣"
+        },
+        "base5": {
+            "name": "Team Rocket",
+            "series": "Base",
+            "year": 2000,
+            "total_cards_in_set": 83,
+            "cards_per_pack": 11,
+            "pack_composition": {
+                "common": 5,
+                "uncommon": 3,
+                "rare": 1,
+                "energy": 2
+            },
+            "holo_chance": 0.333,
+            "has_energy_in_set": true,
+            "description": "Dark Pokemon. Dark Charizard, Dark Blastoise, Dark Dragonite.",
+            "emoji": "🚀"
+        },
+        "lc": {
+            "name": "Legendary Collection",
+            "series": "Legendary Collection",
+            "year": 2002,
+            "total_cards_in_set": 110,
+            "cards_per_pack": 11,
+            "pack_composition": {
+                "common": 5,
+                "uncommon": 3,
+                "rare": 1,
+                "energy": 2
+            },
+            "holo_chance": 0.333,
+            "has_energy_in_set": true,
+            "description": "Reprint set with fireworks reverse holo pattern.",
+            "emoji": "✨"
+        },
+        "gym1": {
+            "name": "Gym Heroes",
+            "series": "Gym",
+            "year": 2000,
+            "total_cards_in_set": 132,
+            "cards_per_pack": 11,
+            "pack_composition": {
+                "common": 5,
+                "uncommon": 3,
+                "rare": 1,
+                "energy": 2
+            },
+            "holo_chance": 0.333,
+            "has_energy_in_set": true,
+            "description": "Gym Leader Pokemon. Brock, Misty, Lt. Surge, Erika.",
+            "emoji": "🏟️"
+        },
+        "gym2": {
+            "name": "Gym Challenge",
+            "series": "Gym",
+            "year": 2000,
+            "total_cards_in_set": 132,
+            "cards_per_pack": 11,
+            "pack_composition": {
+                "common": 5,
+                "uncommon": 3,
+                "rare": 1,
+                "energy": 2
+            },
+            "holo_chance": 0.333,
+            "has_energy_in_set": true,
+            "description": "Gym Leaders continued. Sabrina, Blaine, Koga, Giovanni.",
+            "emoji": "⚔️"
+        }
+    }
+}
