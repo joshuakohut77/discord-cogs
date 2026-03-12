@@ -1,0 +1,11 @@
+{
+    "author": ["Josh (based on Vexed's ButtonPoll)"],
+    "end_user_data_statement": "This cog stores user IDs paired with guild IDs and how they voted if a user participated in a poll. This data is removed once a poll finishes.",
+    "install_msg": "Thanks for installing! Load the cog and get started with the `buttonpoll` command or the `/poll` slash command.",
+    "min_bot_version": "3.5.1",
+    "min_python_version": [3, 8, 1],
+    "name": "ButtonPoll",
+    "requirements": [],
+    "short": "Create polls powered by buttons with text-based results.",
+    "tags": ["utility", "poll", "button"]
+}
