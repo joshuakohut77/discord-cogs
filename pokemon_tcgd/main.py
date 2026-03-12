@@ -8,6 +8,7 @@ and track your collection in PostgreSQL.
 import discord
 from redbot.core import commands
 from redbot.core.bot import Red
+import asyncio
 import logging
 import os
 
@@ -361,6 +362,74 @@ class PokemonTCG(commands.Cog):
             await ctx.send(f"✅ Reloaded: **{total}** cards across **{sets}** sets")
         except Exception as e:
             await ctx.send(f"❌ Failed to reload: {e}")
+
+    @tcgset.command(name="warmcache")
+    @commands.admin_or_permissions(administrator=True)
+    async def tcgset_warmcache(self, ctx: commands.Context, set_id: str = None):
+        """
+        Warm Discord's image proxy cache by sending/deleting embeds.
+
+        Run this in a private channel. It sends an embed for each card image
+        (triggering Discord's proxy to fetch & cache it), then deletes it.
+
+        Usage:
+            !tcgset warmcache          — All sets
+            !tcgset warmcache base1    — Just Base Set
+        """
+        if not self.card_pool.loaded:
+            await ctx.send("❌ Card data not loaded.")
+            return
+
+        # Determine which cards to warm
+        cards = []
+        for card in self.card_pool.cards_by_id.values():
+            if set_id and card.get("set_id") != set_id.lower():
+                continue
+            url = card_image_url(card)
+            if url:
+                cards.append((card.get("name", "?"), card.get("set_id", "?"), url))
+
+        if not cards:
+            await ctx.send(f"❌ No cards found{' for set ' + set_id if set_id else ''}.")
+            return
+
+        status = await ctx.send(f"🔥 Warming cache for **{len(cards)}** cards... (this takes a while)")
+
+        warmed = 0
+        failed = 0
+        batch_size = 5  # Send 5 at a time, then small pause
+
+        for i in range(0, len(cards), batch_size):
+            batch = cards[i:i + batch_size]
+
+            for name, sid, url in batch:
+                try:
+                    embed = discord.Embed()
+                    embed.set_image(url=url)
+                    msg = await ctx.send(embed=embed)
+                    # Brief pause to let Discord's proxy fetch the image
+                    await asyncio.sleep(0.5)
+                    await msg.delete()
+                    warmed += 1
+                except Exception as e:
+                    log.warning(f"Cache warm failed for {sid}/{name}: {e}")
+                    failed += 1
+
+            # Update status every 50 cards
+            if (i + batch_size) % 50 == 0 or i + batch_size >= len(cards):
+                try:
+                    await status.edit(
+                        content=f"🔥 Warming cache... **{warmed}**/{len(cards)} done ({failed} failed)"
+                    )
+                except discord.HTTPException:
+                    pass
+
+            # Pause between batches to avoid rate limits
+            await asyncio.sleep(1.5)
+
+        await status.edit(
+            content=f"✅ Cache warmed: **{warmed}** images cached, **{failed}** failed."
+        )
 
     # ─── User commands ─────────────────────────────────────
 
