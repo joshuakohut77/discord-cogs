@@ -22,7 +22,7 @@ class DatabasePool:
             host = os.getenv("DB_HOST", "postgres_container")
             dbname = os.getenv("TCG_DB_NAME", "pokemon_tcgd")
             user = os.getenv("DB_USER", "redbot")
-            password = os.getenv("DB_PASSWORD")
+            password = os.getenv("POKEMON_DB_PASSWORD")
             port = os.getenv("DB_PORT", "5432")
             
             # Validate that password is set
