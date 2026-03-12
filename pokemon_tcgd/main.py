@@ -6,7 +6,7 @@ and track your collection in PostgreSQL.
 """
 
 import discord
-from redbot.core import commands, Config
+from redbot.core import commands
 from redbot.core.bot import Red
 import logging
 import os
@@ -182,22 +182,18 @@ class PokemonTCG(commands.Cog):
 
     def __init__(self, bot: Red):
         self.bot = bot
-        self.config = Config.get_conf(self, identifier=0x706B6D6E_74636700)
-        self.config.register_global(
-            data_dir="/srv/pokemontcg/data",  # Where cards.json + pack_config.json live
-        )
+        # Card data lives in pokemon_cards/ inside the cog directory
+        self.data_dir = os.path.join(os.path.dirname(__file__), "pokemon_cards")
         self.card_pool = CardPool()
         self.database = db()
 
     async def cog_load(self):
         """Load card data when cog is loaded."""
-        data_dir = await self.config.data_dir()
         try:
-            self.card_pool.load(data_dir)
-            log.info(f"Pokemon TCG: Loaded card data from {data_dir}")
+            self.card_pool.load(self.data_dir)
+            log.info(f"Pokemon TCG: Loaded card data from {self.data_dir}")
         except FileNotFoundError as e:
             log.error(f"Pokemon TCG: {e}")
-            log.error(f"Pokemon TCG: Set data directory with: [p]tcgset datadir <path>")
         except Exception as e:
             log.error(f"Pokemon TCG: Failed to load card data: {e}")
 
@@ -209,46 +205,16 @@ class PokemonTCG(commands.Cog):
         """Admin settings for Pokemon TCG collector."""
         await ctx.send_help(ctx.command)
 
-    @tcgset.command(name="datadir")
-    @commands.admin_or_permissions(administrator=True)
-    async def tcgset_datadir(self, ctx: commands.Context, path: str):
-        """Set the path to the card data directory (where cards.json and pack_config.json live)."""
-        if not os.path.isdir(path):
-            await ctx.send(f"❌ Directory not found: `{path}`")
-            return
-
-        cards_json = os.path.join(path, "cards.json")
-        config_json = os.path.join(path, "pack_config.json")
-
-        if not os.path.exists(cards_json):
-            await ctx.send(f"❌ `cards.json` not found in `{path}`")
-            return
-        if not os.path.exists(config_json):
-            await ctx.send(f"❌ `pack_config.json` not found in `{path}`")
-            return
-
-        await self.config.data_dir.set(path)
-
-        try:
-            self.card_pool.load(path)
-            sets = self.card_pool.get_available_sets()
-            total_cards = len(self.card_pool.cards_by_id)
-            await ctx.send(
-                f"✅ Card data loaded: **{total_cards}** cards across **{len(sets)}** sets from `{path}`"
-            )
-        except Exception as e:
-            await ctx.send(f"❌ Failed to load card data: {e}")
-
     @tcgset.command(name="reload")
     @commands.admin_or_permissions(administrator=True)
     async def tcgset_reload(self, ctx: commands.Context):
         """Reload card data from disk."""
-        data_dir = await self.config.data_dir()
         try:
             self.card_pool = CardPool()  # Reset
-            self.card_pool.load(data_dir)
+            self.card_pool.load(self.data_dir)
             total = len(self.card_pool.cards_by_id)
-            await ctx.send(f"✅ Reloaded: **{total}** cards")
+            sets = len(self.card_pool.get_available_sets())
+            await ctx.send(f"✅ Reloaded: **{total}** cards across **{sets}** sets from `{self.data_dir}`")
         except Exception as e:
             await ctx.send(f"❌ Failed to reload: {e}")
 
@@ -263,7 +229,7 @@ class PokemonTCG(commands.Cog):
     async def tcg_packs(self, ctx: commands.Context):
         """Show available booster packs you can open."""
         if not self.card_pool.loaded:
-            await ctx.send("❌ Card data not loaded yet. An admin needs to run `!tcgset datadir <path>`.")
+            await ctx.send("❌ Card data not loaded. Check that pokemon_cards/ exists in the cog directory with cards.json and pack_config.json. Try `!tcgset reload`.")
             return
 
         sets = self.card_pool.get_available_sets()
@@ -297,7 +263,7 @@ class PokemonTCG(commands.Cog):
             !tcg open gym1     — Open a Gym Heroes pack
         """
         if not self.card_pool.loaded:
-            await ctx.send("❌ Card data not loaded yet. An admin needs to run `!tcgset datadir <path>`.")
+            await ctx.send("❌ Card data not loaded. Check that pokemon_cards/ exists in the cog directory with cards.json and pack_config.json. Try `!tcgset reload`.")
             return
 
         set_id = set_id.lower().strip()
