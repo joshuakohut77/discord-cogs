@@ -136,7 +136,7 @@ def _classify_rarity(rarity: str | None, is_holo: bool, category: str | None) ->
 #  Embed builders
 # ═══════════════════════════════════════════════════════════
 
-def build_welcome_embed() -> discord.Embed:
+def build_welcome_embed(packs_remaining: int | None = None) -> discord.Embed:
     embed = discord.Embed(
         title="<:pokemon_trading_card:1481844443127611444> Pokémon TCG Card Collector",
         description=(
@@ -145,7 +145,10 @@ def build_welcome_embed() -> discord.Embed:
         ),
         color=0xFFD700,
     )
-    embed.set_footer(text="Wizards of the Coast Era • 1999–2002")
+    if packs_remaining is not None:
+        embed.set_footer(text=f"📦 {packs_remaining} pack{'s' if packs_remaining != 1 else ''} remaining • Wizards of the Coast Era • 1999–2002")
+    else:
+        embed.set_footer(text="Wizards of the Coast Era • 1999–2002")
     return embed
 
 
@@ -584,7 +587,9 @@ class PackViewer(discord.ui.View):
     async def btn_another(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.stop()
         selector = PackSelector(cog=self.cog, author_id=self.author_id)
-        embed = build_welcome_embed()
+        guild_id = interaction.guild.id if interaction.guild else 0
+        balance = await self.cog._get_pack_balance(interaction.user.id, guild_id)
+        embed = build_welcome_embed(packs_remaining=balance)
         await interaction.response.edit_message(embed=embed, view=selector)
         selector.message = self.message
 
@@ -1002,7 +1007,9 @@ class PokemonTCG(commands.Cog):
             return
 
         selector = PackSelector(cog=self, author_id=ctx.author.id)
-        embed = build_welcome_embed()
+        guild_id = ctx.guild.id if ctx.guild else 0
+        balance = await self._get_pack_balance(ctx.author.id, guild_id)
+        embed = build_welcome_embed(packs_remaining=balance)
         message = await ctx.send(embed=embed, view=selector)
         selector.message = message
 
