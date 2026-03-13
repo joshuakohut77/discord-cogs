@@ -262,7 +262,7 @@ class PackSelector(discord.ui.View):
         await interaction.response.edit_message(embed=rip_embed, view=None)
 
         # Wait for the dramatic reveal
-        await asyncio.sleep(2.5)
+        await asyncio.sleep(3.5)
 
         # Transition to the card viewer starting at card 1
         viewer = PackViewer(
