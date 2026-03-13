@@ -129,10 +129,10 @@ class Pokemon(AchievementsMixin, FinaleMixin, StarterMixin, PokemartMixin, Trade
 
 
 
-    @commands.group(name="trainer", aliases=['t'])
-    @commands.guild_only()
-    async def _trainer(self, ctx: commands.Context) -> None:
-        """Base command to manage the trainer (user).
-        """
-        pass       
+    # @commands.group(name="trainer", aliases=['t'])
+    # @commands.guild_only()
+    # async def _trainer(self, ctx: commands.Context) -> None:
+    #     """Base command to manage the trainer (user).
+    #     """
+    #     pass       
 
