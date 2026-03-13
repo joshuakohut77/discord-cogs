@@ -13,6 +13,7 @@ import logging
 import os
 import random
 import urllib.parse
+import re
 
 from .packopener import CardPool
 from .dbclass import db
@@ -67,13 +68,30 @@ def wrapper_url(set_id: str, filename: str) -> str:
     return f"{ASSET_BASE_URL}/packart/{set_id}/packs/{encoded}"
 
 
+_CUSTOM_EMOJI_RE = re.compile(r"<(?P<animated>a?):(?P<name>\w+):(?P<id>\d+)>")
+ 
+ 
+def parse_emoji(emoji_str: str) -> discord.PartialEmoji | str:
+    """Convert a custom emoji string like <:base1:123456> into a
+    discord.PartialEmoji, or return the original string if it's
+    a standard Unicode emoji."""
+    match = _CUSTOM_EMOJI_RE.fullmatch(emoji_str)
+    if match:
+        return discord.PartialEmoji(
+            name=match.group("n"),
+            id=int(match.group("id")),
+            animated=bool(match.group("animated")),
+        )
+    return emoji_str
+
+
 # ═══════════════════════════════════════════════════════════
 #  Embed builders
 # ═══════════════════════════════════════════════════════════
 
 def build_welcome_embed() -> discord.Embed:
     embed = discord.Embed(
-        title="🎴 Pokémon TCG Card Collector",
+        title="<:pokemon_trading_card:1481844443127611444> Pokémon TCG Card Collector",
         description=(
             "Collect cards from the original Gen 1 Pokémon TCG sets!\n\n"
             "**Select a booster pack** from the menu below to get started."
@@ -196,7 +214,7 @@ class PackSelector(discord.ui.View):
                 label=s["name"],
                 value=s["set_id"],
                 description=f"{s['total_in_set']} cards • {s['year']}",
-                emoji=s["emoji"],
+                emoji=parse_emoji(s["emoji"]),
             ))
         self.set_select.options = options
 
@@ -663,7 +681,6 @@ class PokemonTCG(commands.Cog):
         )
         embed.set_footer(text="Open more packs to complete your collection!")
         return embed
-
     # ─── Database ──────────────────────────────────────────
 
     async def _save_pack_to_db(self, user_id: int, guild_id: int, set_id: str, cards: list[dict]) -> int | None:

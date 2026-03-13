@@ -16,7 +16,7 @@
             "holo_chance": 0.333,
             "has_energy_in_set": true,
             "description": "The original 102-card set. Charizard, Blastoise, Venusaur.",
-            "emoji": "🔥",
+            "emoji": "<:base1:1481843034977992724>",
             "wrappers": [
                 "Base_Set_Booster_Blastoise_Shadowless.webp",
                 "Base_Set_Booster_Charizard_Shadowless.webp",
@@ -38,7 +38,7 @@
             "holo_chance": 0.333,
             "has_energy_in_set": false,
             "description": "Safari Zone Pokemon. Eeveelutions, Scyther, Pinsir, Mr. Mime.",
-            "emoji": "🌿",
+            "emoji": "<:base2:1481843104888782858>",
             "wrappers": [
                 "Jungle_Booster_Flareon.webp",
                 "Jungle_Booster_Scyther.webp",
@@ -60,7 +60,7 @@
             "holo_chance": 0.333,
             "has_energy_in_set": false,
             "description": "Prehistoric Pokemon. Aerodactyl, Kabutops, legendary birds.",
-            "emoji": "🦴",
+            "emoji": "<:base3:1481843158282403920>",
             "wrappers": [
                 "Fossil_Booster_Aerodactyl.webp",
                 "Fossil_Booster_Lapras.webp",
@@ -82,7 +82,7 @@
             "holo_chance": 0.333,
             "has_energy_in_set": true,
             "description": "Reprint compilation from Base Set and Jungle.",
-            "emoji": "2️⃣",
+            "emoji": "<:base4:1481843201068236870>",
             "wrappers": [
                 "81VK9bOyc+L.webp",
                 "Base_Set_2_Booster_Mewtwo.webp",
@@ -105,7 +105,7 @@
             "holo_chance": 0.333,
             "has_energy_in_set": true,
             "description": "Dark Pokemon. Dark Charizard, Dark Blastoise, Dark Dragonite.",
-            "emoji": "🚀",
+            "emoji": "<:base5:1481843240805339178>",
             "wrappers": [
                 "Team_Rocket_Booster_Giovanni.webp",
                 "Team_Rocket_Booster_Gyarados.webp",
@@ -128,7 +128,7 @@
             "holo_chance": 0.333,
             "has_energy_in_set": true,
             "description": "Reprint set with fireworks reverse holo pattern.",
-            "emoji": "✨",
+            "emoji": "<:lc:1481843352042471526>",
             "wrappers": [
                 "138150.webp",
                 "birds.webp",
@@ -151,7 +151,7 @@
             "holo_chance": 0.333,
             "has_energy_in_set": true,
             "description": "Gym Leader Pokemon. Brock, Misty, Lt. Surge, Erika.",
-            "emoji": "🏟️",
+            "emoji": "<:gym1:1481843280906813560>",
             "wrappers": [
                 "Gym_Heroes_Booster_Brock.webp",
                 "Gym_Heroes_Booster_Erika.webp",
@@ -173,7 +173,7 @@
             "holo_chance": 0.333,
             "has_energy_in_set": true,
             "description": "Gym Leaders continued. Sabrina, Blaine, Koga, Giovanni.",
-            "emoji": "⚔️",
+            "emoji": "<:gym2:1481843317573554266>",
             "wrappers": [
                 "304px-Gym_Challenge_Booster_Koga.webp",
                 "330px-Gym_Challenge_Booster_Blaine.webp",
