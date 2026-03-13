@@ -166,7 +166,7 @@ def build_card_embed(card: dict, index: int, total: int, set_name: str) -> disco
 
 def build_pack_summary_embed(cards: list[dict], set_name: str, set_id: str) -> discord.Embed:
     embed = discord.Embed(
-        title=f"🎴 {set_name} — Pack Summary",
+        title=f"<:pokemon_trading_card:1481844443127611444> {set_name} — Pack Summary",
         description="Here's everything you pulled!",
         color=0xFFD700,
     )
