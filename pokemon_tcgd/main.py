@@ -1026,7 +1026,79 @@ class PokemonTCG(commands.Cog):
         message = await ctx.send(embed=embed, view=viewer)
         viewer.message = message
 
+    @tcg.command(name="leaderboard", aliases=["lb"])
+    async def tcg_leaderboard(self, ctx: commands.Context):
+        """Show the server-wide leaderboard for unique Holos and Rares collected."""
+        guild_id = ctx.guild.id if ctx.guild else 0
+        embed = await self._build_leaderboard_embed(guild_id)
+        await ctx.send(embed=embed)
+
     # ─── Helpers ───────────────────────────────────────────
+
+    async def _build_leaderboard_embed(self, guild_id: int) -> discord.Embed:
+        """Build a server-wide leaderboard showing unique Holos and Rares per player."""
+        try:
+            rows = self.database.queryAll(
+                """
+                SELECT
+                    user_id,
+                    COUNT(DISTINCT card_id) FILTER (WHERE is_holo = true) AS unique_holos,
+                    COUNT(DISTINCT card_id) FILTER (
+                        WHERE is_holo = false
+                          AND LOWER(rarity) LIKE '%%rare%%'
+                          AND category != 'Energy'
+                    ) AS unique_rares,
+                    COUNT(DISTINCT card_id) AS total_unique
+                FROM tcg_user_cards
+                WHERE guild_id = %(guild_id)s
+                GROUP BY user_id
+                ORDER BY unique_holos DESC, unique_rares DESC, total_unique DESC
+                """,
+                {"guild_id": guild_id},
+            )
+        except Exception as e:
+            log.error(f"Leaderboard query failed: {e}")
+            return discord.Embed(title="❌ Error", description="Failed to fetch leaderboard.", color=0xFF0000)
+
+        if not rows:
+            return discord.Embed(
+                title="🏆 TCG Leaderboard",
+                description="Nobody has collected any cards yet!\nUse `!tcg` to open your first pack.",
+                color=0xFFD700,
+            )
+
+        # Count total possible holos and rares across all sets
+        total_holos_in_game = 0
+        total_rares_in_game = 0
+        for set_id, pool in self.card_pool.sets.items():
+            total_holos_in_game += len(pool.get("rares_holo", []))
+            total_rares_in_game += len(pool.get("rares_normal", []))
+
+        # Build leaderboard lines
+        medals = ["🥇", "🥈", "🥉"]
+        lines = []
+        for i, row in enumerate(rows[:15]):  # Cap at top 15
+            user_id, unique_holos, unique_rares, total_unique = row
+            rank = medals[i] if i < 3 else f"**{i + 1}.**"
+            lines.append(
+                f"{rank} <@{user_id}>  —  "
+                f"✨ **{unique_holos}** holo  •  "
+                f"⭐ **{unique_rares}** rare"
+            )
+
+        description = "\n".join(lines)
+        description += (
+            f"\n\n─────────────────────────\n"
+            f"**{total_holos_in_game}** holos and **{total_rares_in_game}** rares exist across all sets"
+        )
+
+        embed = discord.Embed(
+            title="🏆 TCG Leaderboard — Holos & Rares",
+            description=description,
+            color=0xFFD700,
+        )
+        embed.set_footer(text="Ranked by unique holos, then unique rares")
+        return embed
 
     async def _build_stats_embed(self, user_id: int, guild_id: int, display_name: str) -> discord.Embed:
         try:
