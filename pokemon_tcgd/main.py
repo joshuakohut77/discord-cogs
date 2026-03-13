@@ -68,7 +68,7 @@ def wrapper_url(set_id: str, filename: str) -> str:
     return f"{ASSET_BASE_URL}/packart/{set_id}/packs/{encoded}"
 
 
-_CUSTOM_EMOJI_RE = re.compile(r"<(?P<animated>a?):(?P<name>\w+):(?P<id>\d+)>")
+_CUSTOM_EMOJI_RE = re.compile(r"<(a?):(\w+):(\d+)>")
  
  
 def parse_emoji(emoji_str: str) -> discord.PartialEmoji | str:
@@ -78,9 +78,9 @@ def parse_emoji(emoji_str: str) -> discord.PartialEmoji | str:
     match = _CUSTOM_EMOJI_RE.fullmatch(emoji_str)
     if match:
         return discord.PartialEmoji(
-            name=match.group("n"),
-            id=int(match.group("id")),
-            animated=bool(match.group("animated")),
+            name=match.group(2),
+            id=int(match.group(3)),
+            animated=bool(match.group(1)),
         )
     return emoji_str
 
