@@ -952,14 +952,12 @@ class CollectionViewer(discord.ui.View):
             description="Choose a player to send this trade offer to:",
             color=0xF59E0B,
         )
-        from .trade import card_image_url as trade_card_image_url
-        img = trade_card_image_url(card_data)
+        img = card_image_url(card_data)
         if img:
             embed.set_thumbnail(url=img)
  
         await interaction.response.send_message(embed=embed, view=selector, ephemeral=True)
         selector.message = await interaction.original_response()
-
 # ═══════════════════════════════════════════════════════════
 #  Main cog
 # ═══════════════════════════════════════════════════════════

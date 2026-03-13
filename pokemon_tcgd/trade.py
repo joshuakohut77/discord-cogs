@@ -34,15 +34,15 @@ log = logging.getLogger("red.pokemontcg.trade")
 #  URL helpers (mirror main.py conventions)
 # ═══════════════════════════════════════════════════════════
 
-CDN_BASE = "https://pokemon-tcg-cog.s3.us-east-2.amazonaws.com"
+ASSET_BASE_URL = "https://pokesprites.joshkohut.com/pokemon_tcgd"
 
 
 def card_image_url(card_data: dict) -> str | None:
-    """Return the CDN image URL for a card."""
+    """Return the CDN image URL for a card — must match main.py exactly."""
     image_file = card_data.get("image_file")
     if image_file:
-        return f"{CDN_BASE}/cards/{image_file}"
-    return card_data.get("image_high") or card_data.get("image_low")
+        return f"{ASSET_BASE_URL}/{image_file}"
+    return None
 
 
 # ═══════════════════════════════════════════════════════════
@@ -375,7 +375,12 @@ def build_counter_offer_dm_embed(
     if image:
         embed.set_image(url=image)
 
-    embed.set_footer(text="Use !tcg trade in the server to respond")
+    # Show the offered card (what you'd give up) as thumbnail
+    offered_img = card_image_url(offered_card)
+    if offered_img:
+        embed.set_thumbnail(url=offered_img)
+
+    embed.set_footer(text="🖼️ Large = what you'd receive • Thumbnail = what you'd give up")
     return embed
 
 
@@ -430,7 +435,7 @@ def build_trade_review_embed(trade: dict, card_pool, viewer_id: int) -> discord.
         return embed
 
     elif status == "pending_initiator" and is_initiator:
-        # Initiator reviews the counter-offer
+        # Initiator reviews the counter-offer — show BOTH cards
         embed = discord.Embed(
             title="🔄 Trade — Review Counter-Offer",
             description=(
@@ -444,16 +449,23 @@ def build_trade_review_embed(trade: dict, card_pool, viewer_id: int) -> discord.
             ),
             color=0x10B981,
         )
+        # Counter-offer card = large image (what you'd receive)
         counter_data = card_pool.cards_by_id.get(trade["counter_card_id"]) if card_pool else None
         if counter_data:
             img = card_image_url(counter_data)
             if img:
                 embed.set_image(url=img)
-        embed.set_footer(text="Accept to swap cards, or decline to cancel")
+        # Your offered card = thumbnail (what you'd give up)
+        offered_data = card_pool.cards_by_id.get(trade["offered_card_id"]) if card_pool else None
+        if offered_data:
+            img = card_image_url(offered_data)
+            if img:
+                embed.set_thumbnail(url=img)
+        embed.set_footer(text="🖼️ Large = what you'd receive • Thumbnail = what you'd give up")
         return embed
 
     elif status == "pending_initiator" and not is_initiator:
-        # Recipient waiting for initiator to accept/decline
+        # Recipient waiting for initiator to accept/decline — show BOTH cards
         embed = discord.Embed(
             title="🔄 Trade — Waiting for Response",
             description=(
@@ -466,12 +478,19 @@ def build_trade_review_embed(trade: dict, card_pool, viewer_id: int) -> discord.
             ),
             color=0xF59E0B,
         )
+        # What you'd receive = large image (the offered card)
+        offered_data = card_pool.cards_by_id.get(trade["offered_card_id"]) if card_pool else None
+        if offered_data:
+            img = card_image_url(offered_data)
+            if img:
+                embed.set_image(url=img)
+        # What you offered = thumbnail (your counter card)
         counter_data = card_pool.cards_by_id.get(trade["counter_card_id"]) if card_pool else None
         if counter_data:
             img = card_image_url(counter_data)
             if img:
-                embed.set_image(url=img)
-        embed.set_footer(text="You can cancel this trade at any time")
+                embed.set_thumbnail(url=img)
+        embed.set_footer(text="🖼️ Large = what you'd receive • Thumbnail = what you'd give up")
         return embed
 
     # Fallback
@@ -482,7 +501,7 @@ def build_trade_review_embed(trade: dict, card_pool, viewer_id: int) -> discord.
     )
 
 
-def build_trade_complete_embed(trade: dict, accepted: bool) -> discord.Embed:
+def build_trade_complete_embed(trade: dict, accepted: bool, card_pool=None) -> discord.Embed:
     """Embed shown after a trade is accepted or declined."""
     if accepted:
         embed = discord.Embed(
@@ -498,6 +517,18 @@ def build_trade_complete_embed(trade: dict, accepted: bool) -> discord.Embed:
             ),
             color=0x10B981,
         )
+        # Show both cards: counter as main image, offered as thumbnail
+        if card_pool:
+            counter_data = card_pool.cards_by_id.get(trade.get("counter_card_id"))
+            if counter_data:
+                img = card_image_url(counter_data)
+                if img:
+                    embed.set_image(url=img)
+            offered_data = card_pool.cards_by_id.get(trade.get("offered_card_id"))
+            if offered_data:
+                img = card_image_url(offered_data)
+                if img:
+                    embed.set_thumbnail(url=img)
     else:
         embed = discord.Embed(
             title="❌ Trade Cancelled",
@@ -841,7 +872,7 @@ class TradeAcceptButton(discord.ui.Button):
         # Execute the swap
         success = complete_trade(self.cog.database, self.trade)
         if success:
-            embed = build_trade_complete_embed(self.trade, accepted=True)
+            embed = build_trade_complete_embed(self.trade, accepted=True, card_pool=self.cog.card_pool)
             await interaction.response.edit_message(embed=embed, view=None)
 
             # Notify the recipient via DM
