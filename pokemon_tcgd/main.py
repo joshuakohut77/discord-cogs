@@ -600,33 +600,46 @@ class PokemonTCG(commands.Cog):
         except Exception as e:
             log.error(f"Stats query failed: {e}")
             return discord.Embed(title="❌ Error", description="Failed to fetch stats.", color=0xFF0000)
-
+ 
         if not rows:
             return discord.Embed(
                 title=f"📊 {display_name}'s Collection",
                 description="No cards collected yet! Use `!tcg` to open your first pack.",
                 color=0x3B82F6,
             )
-
-        embed = discord.Embed(title=f"📊 {display_name}'s Collection", color=0x3B82F6)
+ 
+        # ── Gather totals ──
         total_all = unique_all = holo_all = 0
-
+        set_lines = []
+ 
         for row in rows:
             set_id, total, unique, holos, pokemon, trainers, energy = row
             config = self.card_pool.pack_config.get(set_id, {})
             set_name = config.get("name", set_id)
             set_emoji = config.get("emoji", "📦")
-            set_total = config.get("total_cards_in_set", "?")
-
-            embed.add_field(
-                name=f"{set_emoji} {set_name}",
-                value=f"**{unique}**/{set_total} unique • {total} total\n✨ {holos} holo",
-                inline=True,
-            )
+            set_total = config.get("total_cards_in_set", 0)
+ 
             total_all += total
             unique_all += unique
             holo_all += holos
-
+ 
+            # Build a progress bar  ▓▓▓▓▓▓▓▓░░  8/10
+            bar_length = 10
+            if set_total and set_total != "?":
+                filled = round(unique / int(set_total) * bar_length)
+            else:
+                filled = 0
+                set_total = "?"
+            filled = min(filled, bar_length)
+            bar = "▓" * filled + "░" * (bar_length - filled)
+ 
+            holo_str = f"  ✨ {holos}" if holos else ""
+            set_lines.append(
+                f"{set_emoji} **{set_name}**\n"
+                f"`{bar}` **{unique}**/{set_total} unique • {total} pulled{holo_str}"
+            )
+ 
+        # ── Pack count ──
         try:
             pack_row = self.database.querySingle(
                 "SELECT COUNT(*) FROM tcg_pack_opens WHERE user_id = %(user_id)s AND guild_id = %(guild_id)s",
@@ -635,8 +648,20 @@ class PokemonTCG(commands.Cog):
             pack_count = pack_row[0] if pack_row else 0
         except Exception:
             pack_count = "?"
-
-        embed.description = f"**{total_all}** cards • **{unique_all}** unique • **{holo_all}** ✨ holo • **{pack_count}** packs opened"
+ 
+        # ── Build embed ──
+        summary = (
+            f"**{pack_count}** packs opened • **{total_all}** cards\n"
+            f"**{unique_all}** unique • **{holo_all}** ✨ holo\n"
+            f"─────────────────────────"
+        )
+ 
+        embed = discord.Embed(
+            title=f"📊 {display_name}'s Collection",
+            description=summary + "\n\n" + "\n\n".join(set_lines),
+            color=0x3B82F6,
+        )
+        embed.set_footer(text="Open more packs to complete your collection!")
         return embed
 
     # ─── Database ──────────────────────────────────────────
