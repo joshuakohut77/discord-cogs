@@ -11,6 +11,8 @@ from redbot.core.bot import Red
 import asyncio
 import logging
 import os
+import random
+import urllib.parse
 
 from .packopener import CardPool
 from .dbclass import db
@@ -32,6 +34,14 @@ RARITY_COLORS = {
     "energy":    0x10B981,
 }
 
+RIP_MESSAGES = [
+    "You tear open the pack...",
+    "You rip into the foil...",
+    "The wrapper crinkles as you tear it open...",
+    "You carefully peel the pack open...",
+    "The foil glints as you rip it apart...",
+]
+
 
 # ═══════════════════════════════════════════════════════════
 #  URL helpers
@@ -50,6 +60,11 @@ def pack_art_url(set_id: str) -> str:
 
 def set_logo_url(set_id: str) -> str:
     return f"{ASSET_BASE_URL}/packart/{set_id}/logo.png"
+
+
+def wrapper_url(set_id: str, filename: str) -> str:
+    encoded = urllib.parse.quote(filename)
+    return f"{ASSET_BASE_URL}/packart/{set_id}/packs/{encoded}"
 
 
 # ═══════════════════════════════════════════════════════════
@@ -91,6 +106,23 @@ def build_set_preview_embed(set_id: str, config: dict) -> discord.Embed:
     return embed
 
 
+def build_rip_embed(set_id: str, config: dict) -> discord.Embed:
+    """Build the pack-ripping animation embed with random foil wrapper."""
+    wrappers = config.get("wrappers", [])
+    wrapper_file = random.choice(wrappers) if wrappers else None
+
+    embed = discord.Embed(
+        title=random.choice(RIP_MESSAGES),
+        color=0xFFD700,
+    )
+
+    if wrapper_file:
+        embed.set_image(url=wrapper_url(set_id, wrapper_file))
+
+    embed.set_footer(text="✨ What's inside...?")
+    return embed
+
+
 def build_card_embed(card: dict, index: int, total: int, set_name: str) -> discord.Embed:
     name = card.get("name", "Unknown")
     rarity = card.get("rarity") or "Unknown"
@@ -116,8 +148,8 @@ def build_card_embed(card: dict, index: int, total: int, set_name: str) -> disco
 
 def build_pack_summary_embed(cards: list[dict], set_name: str, set_id: str) -> discord.Embed:
     embed = discord.Embed(
-        title=f"🎴 {set_name} Booster Pack",
-        description="Here's what you pulled!",
+        title=f"🎴 {set_name} — Pack Summary",
+        description="Here's everything you pulled!",
         color=0xFFD700,
     )
     embed.set_thumbnail(url=set_logo_url(set_id))
@@ -139,7 +171,7 @@ def build_pack_summary_embed(cards: list[dict], set_name: str, set_id: str) -> d
             lines.append(f"• {name} — {rarity}")
 
     embed.add_field(name="Cards", value="\n".join(lines), inline=False)
-    embed.set_footer(text="Use the arrows to view each card")
+    embed.set_footer(text="Open another pack or check your stats!")
     return embed
 
 
@@ -212,16 +244,27 @@ class PackSelector(discord.ui.View):
         config = self.cog.card_pool.pack_config.get(set_id, {})
         set_name = config.get("name", set_id)
 
+        # Generate the pack
         cards = self.cog.card_pool.open_pack(set_id)
         if not cards:
             await interaction.response.send_message("❌ Failed to generate pack.", ephemeral=True)
             return
 
+        # Save to database
         guild_id = interaction.guild.id if interaction.guild else 0
         await self.cog._save_pack_to_db(interaction.user.id, guild_id, set_id, cards)
 
+        # Stop the selector
         self.stop()
 
+        # Show the foil wrapper rip animation
+        rip_embed = build_rip_embed(set_id, config)
+        await interaction.response.edit_message(embed=rip_embed, view=None)
+
+        # Wait for the dramatic reveal
+        await asyncio.sleep(2.5)
+
+        # Transition to the card viewer starting at card 1
         viewer = PackViewer(
             cog=self.cog,
             cards=cards,
@@ -231,7 +274,7 @@ class PackSelector(discord.ui.View):
         )
         viewer._update_buttons()
 
-        await interaction.response.edit_message(embed=viewer.get_embed(), view=viewer)
+        await self.message.edit(embed=viewer.get_embed(), view=viewer)
         viewer.message = self.message
 
     @discord.ui.button(
@@ -248,11 +291,16 @@ class PackSelector(discord.ui.View):
 
 
 # ═══════════════════════════════════════════════════════════
-#  Pack Viewer UI (navigate cards + open another)
+#  Pack Viewer UI (navigate cards, summary at end)
 # ═══════════════════════════════════════════════════════════
 
 class PackViewer(discord.ui.View):
-    """Card-by-card viewer for an opened pack."""
+    """
+    Card-by-card viewer for an opened pack.
+
+    Index 0 through len(cards)-1 = individual cards
+    Index len(cards) = summary page (last)
+    """
 
     def __init__(self, cog: "PokemonTCG", cards: list[dict], set_name: str, set_id: str, author_id: int, timeout: float = 180):
         super().__init__(timeout=timeout)
@@ -261,18 +309,27 @@ class PackViewer(discord.ui.View):
         self.set_name = set_name
         self.set_id = set_id
         self.author_id = author_id
-        self.index = -1  # -1 = summary
+        self.index = 0  # Start at first card
         self.message: discord.Message | None = None
 
+    @property
+    def max_index(self) -> int:
+        """Last index = summary page."""
+        return len(self.cards)
+
     def get_embed(self) -> discord.Embed:
-        if self.index == -1:
+        if self.index >= len(self.cards):
             return build_pack_summary_embed(self.cards, self.set_name, self.set_id)
         return build_card_embed(self.cards[self.index], self.index, len(self.cards), self.set_name)
 
     def _update_buttons(self):
-        self.btn_prev.disabled = (self.index <= -1)
-        self.btn_next.disabled = (self.index >= len(self.cards) - 1)
-        self.btn_pos.label = "Summary" if self.index == -1 else f"{self.index + 1}/{len(self.cards)}"
+        self.btn_prev.disabled = (self.index <= 0)
+        self.btn_next.disabled = (self.index >= self.max_index)
+
+        if self.index >= len(self.cards):
+            self.btn_pos.label = "Summary"
+        else:
+            self.btn_pos.label = f"{self.index + 1}/{len(self.cards)}"
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.author_id:
@@ -295,19 +352,20 @@ class PackViewer(discord.ui.View):
 
     @discord.ui.button(label="◀", style=discord.ButtonStyle.secondary)
     async def btn_prev(self, interaction: discord.Interaction, button: discord.ui.Button):
-        self.index = max(-1, self.index - 1)
+        self.index = max(0, self.index - 1)
         self._update_buttons()
         await interaction.response.edit_message(embed=self.get_embed(), view=self)
 
-    @discord.ui.button(label="Summary", style=discord.ButtonStyle.primary, disabled=True)
+    @discord.ui.button(label="1/11", style=discord.ButtonStyle.primary, disabled=True)
     async def btn_pos(self, interaction: discord.Interaction, button: discord.ui.Button):
-        self.index = -1
+        # Jump to summary
+        self.index = self.max_index
         self._update_buttons()
         await interaction.response.edit_message(embed=self.get_embed(), view=self)
 
     @discord.ui.button(label="▶", style=discord.ButtonStyle.secondary)
     async def btn_next(self, interaction: discord.Interaction, button: discord.ui.Button):
-        self.index = min(len(self.cards) - 1, self.index + 1)
+        self.index = min(self.max_index, self.index + 1)
         self._update_buttons()
         await interaction.response.edit_message(embed=self.get_embed(), view=self)
 
@@ -367,10 +425,7 @@ class PokemonTCG(commands.Cog):
     @commands.admin_or_permissions(administrator=True)
     async def tcgset_warmcache(self, ctx: commands.Context, set_id: str = None, repeats: int = 1):
         """
-        Warm Discord's image proxy cache by sending embeds with card images.
-
-        Run this in a private/spam channel. Sends batches of 4 card images
-        per message, waits for Discord to fetch them, then deletes.
+        Warm Discord's image proxy cache.
 
         Usage:
             !tcgset warmcache                — All sets, once
@@ -382,11 +437,10 @@ class PokemonTCG(commands.Cog):
             await ctx.send("❌ Card data not loaded.")
             return
 
-        # "all" as set_id means no filter
         if set_id and set_id.lower() == "all":
             set_id = None
 
-        repeats = max(1, min(repeats, 20))  # Clamp between 1-20
+        repeats = max(1, min(repeats, 20))
 
         cards = []
         for card in self.card_pool.cards_by_id.values():
@@ -485,12 +539,19 @@ class PokemonTCG(commands.Cog):
         set_name = config.get("name", set_id)
         await self._save_pack_to_db(ctx.author.id, ctx.guild.id, set_id, cards)
 
+        # Show foil wrapper rip
+        rip_embed = build_rip_embed(set_id, config)
+        message = await ctx.send(embed=rip_embed)
+
+        await asyncio.sleep(2.5)
+
+        # Transition to card viewer
         viewer = PackViewer(
             cog=self, cards=cards, set_name=set_name,
             set_id=set_id, author_id=ctx.author.id,
         )
         viewer._update_buttons()
-        message = await ctx.send(embed=viewer.get_embed(), view=viewer)
+        await message.edit(embed=viewer.get_embed(), view=viewer)
         viewer.message = message
 
     @tcg.command(name="packs")
