@@ -16,7 +16,7 @@ import urllib.parse
 import re
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
-
+from discord.ext import tasks
 from .packopener import CardPool
 from .dbclass import db
 
@@ -979,6 +979,90 @@ class PokemonTCG(commands.Cog):
             log.error(f"Pokemon TCG: {e}")
         except Exception as e:
             log.error(f"Pokemon TCG: Failed to load card data: {e}")
+ 
+        # Start the pack-full reminder loop
+        self._pack_reminder_loop.start()
+ 
+    async def cog_unload(self):
+        self._pack_reminder_loop.cancel()
+
+    @tasks.loop(hours=1)
+    async def _pack_reminder_loop(self):
+        """
+        Runs every hour. For every user who:
+          1. Has opted in (remind_dm = TRUE)
+          2. Has a balance at or above the cap
+          3. Hasn't already been reminded this cap cycle
+        … send them a DM telling them their packs are full.
+        """
+        try:
+            rows = self.database.queryAll(
+                """
+                SELECT user_id, guild_id, balance
+                FROM tcg_pack_allowance
+                WHERE remind_dm = TRUE
+                  AND balance >= %(cap)s
+                  AND (last_reminded_at IS NULL
+                       OR last_reminded_at < last_updated)
+                """,
+                {"cap": MAX_PACK_BALANCE},
+            )
+        except Exception as e:
+            log.error(f"Pack reminder query failed: {e}")
+            return
+ 
+        if not rows:
+            return
+ 
+        for user_id, guild_id, balance in rows:
+            try:
+                guild = self.bot.get_guild(guild_id)
+                if not guild:
+                    continue
+ 
+                member = guild.get_member(user_id)
+                if not member:
+                    try:
+                        member = await guild.fetch_member(user_id)
+                    except discord.NotFound:
+                        continue
+                    except discord.HTTPException:
+                        continue
+ 
+                embed = discord.Embed(
+                    title="📦 Your packs are full!",
+                    description=(
+                        f"You have **{balance}/{MAX_PACK_BALANCE}** packs banked in "
+                        f"**{guild.name}**.\n\n"
+                        f"New packs won't accumulate past the cap, so "
+                        f"head over and open some with `!tcg`!\n\n"
+                        f"*To stop these reminders, use `!tcg remind` in the server.*"
+                    ),
+                    color=0xFFD700,
+                )
+ 
+                await member.send(embed=embed)
+ 
+                # Mark as reminded
+                self.database.execute(
+                    """
+                    UPDATE tcg_pack_allowance
+                    SET balance = %(balance)s,
+                        last_reminded_at = NULL
+                    WHERE user_id = %(user_id)s AND guild_id = %(guild_id)s
+                    """,
+                    {"user_id": user_id, "guild_id": guild_id},
+                )
+ 
+            except discord.Forbidden:
+                # User has DMs disabled — skip silently
+                log.debug(f"Cannot DM user {user_id} for pack reminder (DMs disabled)")
+            except Exception as e:
+                log.error(f"Pack reminder failed for user {user_id}: {e}")
+ 
+    @_pack_reminder_loop.before_loop
+    async def _before_pack_reminder(self):
+        await self.bot.wait_until_ready()
 
     # ─── Admin ─────────────────────────────────────────────
 
@@ -1236,6 +1320,59 @@ class PokemonTCG(commands.Cog):
  
         message = await ctx.send(embed=embed, view=view)
         view.message = message
+
+    @tcg.command(name="remind")
+    async def tcg_remind(self, ctx: commands.Context):
+        """Toggle DM reminders for when your packs are full.
+ 
+        When enabled, you'll receive a DM once your pack balance
+        hits the maximum (10). The reminder only fires once per
+        cap cycle — after you open a pack the timer resets.
+        """
+        guild_id = ctx.guild.id if ctx.guild else 0
+        user_id = ctx.author.id
+ 
+        # Make sure they have an allowance row
+        await self._get_pack_balance(user_id, guild_id)
+ 
+        try:
+            row = self.database.querySingle(
+                """
+                SELECT remind_dm
+                FROM tcg_pack_allowance
+                WHERE user_id = %(user_id)s AND guild_id = %(guild_id)s
+                """,
+                {"user_id": user_id, "guild_id": guild_id},
+            )
+        except Exception as e:
+            log.error(f"Remind query failed: {e}")
+            await ctx.send("❌ Something went wrong. Try again later.")
+            return
+ 
+        current = row[0] if row else False
+        new_value = not current
+ 
+        try:
+            self.database.execute(
+                """
+                UPDATE tcg_pack_allowance
+                SET remind_dm = %(remind)s
+                WHERE user_id = %(user_id)s AND guild_id = %(guild_id)s
+                """,
+                {"remind": new_value, "user_id": user_id, "guild_id": guild_id},
+            )
+        except Exception as e:
+            log.error(f"Remind toggle failed: {e}")
+            await ctx.send("❌ Something went wrong. Try again later.")
+            return
+ 
+        if new_value:
+            await ctx.send(
+                "🔔 **Pack reminders enabled!** I'll DM you when your packs hit "
+                f"**{MAX_PACK_BALANCE}** so you don't waste any."
+            )
+        else:
+            await ctx.send("🔕 **Pack reminders disabled.** You won't receive DMs about full packs anymore.")
 
     # ─── Helpers ───────────────────────────────────────────
 
