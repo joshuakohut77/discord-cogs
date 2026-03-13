@@ -14,6 +14,8 @@ import os
 import random
 import urllib.parse
 import re
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from .packopener import CardPool
 from .dbclass import db
@@ -53,6 +55,12 @@ RIP_MESSAGES = [
     "You carefully peel the pack open...",
     "The foil glints as you rip it apart...",
 ]
+
+# ── Pack allowance settings ──
+PACKS_PER_DAY = 2           # Packs earned each day at midnight
+MAX_PACK_BALANCE = 10       # Max banked packs (5 days × 2/day)
+STARTING_BALANCE = 5        # Packs a brand new user starts with
+RESET_TIMEZONE = ZoneInfo("America/New_York")  # Midnight Eastern
 
 
 # ═══════════════════════════════════════════════════════════
@@ -141,7 +149,7 @@ def build_welcome_embed() -> discord.Embed:
     return embed
 
 
-def build_set_preview_embed(set_id: str, config: dict) -> discord.Embed:
+def build_set_preview_embed(set_id: str, config: dict, packs_remaining: int | None = None) -> discord.Embed:
     name = config.get("name", set_id)
     emoji = config.get("emoji", "📦")
     desc = config.get("description", "")
@@ -159,7 +167,10 @@ def build_set_preview_embed(set_id: str, config: dict) -> discord.Embed:
     embed.add_field(name="Cards in Set", value=str(total), inline=True)
     embed.add_field(name="Per Pack", value=str(per_pack), inline=True)
     embed.add_field(name="Released", value=str(year), inline=True)
-    embed.set_footer(text="Hit Open Pack to rip it! 🔥")
+    if packs_remaining is not None:
+        embed.set_footer(text=f"📦 {packs_remaining} pack{'s' if packs_remaining != 1 else ''} remaining • Hit Open Pack to rip it! 🔥")
+    else:
+        embed.set_footer(text="Hit Open Pack to rip it! 🔥")
     return embed
 
 
@@ -203,7 +214,7 @@ def build_card_embed(card: dict, index: int, total: int, set_name: str) -> disco
     return embed
 
 
-def build_pack_summary_embed(cards: list[dict], set_name: str, set_id: str) -> discord.Embed:
+def build_pack_summary_embed(cards: list[dict], set_name: str, set_id: str, packs_remaining: int | None = None) -> discord.Embed:
     embed = discord.Embed(
         title=f"<:pokemon_trading_card:1481844443127611444> {set_name} — Pack Summary",
         description="Here's everything you pulled!",
@@ -228,7 +239,10 @@ def build_pack_summary_embed(cards: list[dict], set_name: str, set_id: str) -> d
             lines.append(f"• {name} — {rarity}")
 
     embed.add_field(name="Cards", value="\n".join(lines), inline=False)
-    embed.set_footer(text="Open another pack or check your stats!")
+    if packs_remaining is not None:
+        embed.set_footer(text=f"📦 {packs_remaining} pack{'s' if packs_remaining != 1 else ''} remaining • Open another pack or check your stats!")
+    else:
+        embed.set_footer(text="Open another pack or check your stats!")
     return embed
 
 
@@ -387,7 +401,10 @@ class PackSelector(discord.ui.View):
         self.btn_open.disabled = False
         self.btn_open.label = f"Open {config.get('name', 'Pack')}"
 
-        embed = build_set_preview_embed(self.selected_set_id, config)
+        guild_id = interaction.guild.id if interaction.guild else 0
+        balance = await self.cog._get_pack_balance(interaction.user.id, guild_id)
+
+        embed = build_set_preview_embed(self.selected_set_id, config, packs_remaining=balance)
         await interaction.response.edit_message(embed=embed, view=self)
 
     @discord.ui.button(
@@ -402,14 +419,30 @@ class PackSelector(discord.ui.View):
         config = self.cog.card_pool.pack_config.get(set_id, {})
         set_name = config.get("name", set_id)
 
+        # Check pack balance
+        guild_id = interaction.guild.id if interaction.guild else 0
+        balance = await self.cog._get_pack_balance(interaction.user.id, guild_id)
+        if balance <= 0:
+            now_et = datetime.now(RESET_TIMEZONE)
+            midnight = (now_et + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+            minutes_left = int((midnight - now_et).total_seconds() / 60)
+            hours = minutes_left // 60
+            mins = minutes_left % 60
+            await interaction.response.send_message(
+                f"📦 You're out of packs! You'll get **{PACKS_PER_DAY}** more at midnight ET "
+                f"(in about **{hours}h {mins}m**).",
+                ephemeral=True,
+            )
+            return
+
         # Generate the pack
         cards = self.cog.card_pool.open_pack(set_id)
         if not cards:
             await interaction.response.send_message("❌ Failed to generate pack.", ephemeral=True)
             return
 
-        # Save to database
-        guild_id = interaction.guild.id if interaction.guild else 0
+        # Deduct a pack and save
+        new_balance = await self.cog._spend_pack(interaction.user.id, guild_id)
         await self.cog._save_pack_to_db(interaction.user.id, guild_id, set_id, cards)
 
         # Stop the selector
@@ -429,6 +462,7 @@ class PackSelector(discord.ui.View):
             set_name=set_name,
             set_id=set_id,
             author_id=interaction.user.id,
+            packs_remaining=new_balance,
         )
         viewer._update_buttons()
 
@@ -478,13 +512,14 @@ class PackViewer(discord.ui.View):
     Index len(cards) = summary page (last)
     """
 
-    def __init__(self, cog: "PokemonTCG", cards: list[dict], set_name: str, set_id: str, author_id: int, timeout: float = 180):
+    def __init__(self, cog: "PokemonTCG", cards: list[dict], set_name: str, set_id: str, author_id: int, packs_remaining: int | None = None, timeout: float = 180):
         super().__init__(timeout=timeout)
         self.cog = cog
         self.cards = cards
         self.set_name = set_name
         self.set_id = set_id
         self.author_id = author_id
+        self.packs_remaining = packs_remaining
         self.index = 0  # Start at first card
         self.message: discord.Message | None = None
 
@@ -495,7 +530,7 @@ class PackViewer(discord.ui.View):
 
     def get_embed(self) -> discord.Embed:
         if self.index >= len(self.cards):
-            return build_pack_summary_embed(self.cards, self.set_name, self.set_id)
+            return build_pack_summary_embed(self.cards, self.set_name, self.set_id, packs_remaining=self.packs_remaining)
         return build_card_embed(self.cards[self.index], self.index, len(self.cards), self.set_name)
 
     def _update_buttons(self):
@@ -927,6 +962,36 @@ class PokemonTCG(commands.Cog):
 
         await msg.edit(content=f"✅ Cache warm complete! Touched **{count}** URLs.")
 
+    @tcgset.command(name="givepack")
+    @commands.admin_or_permissions(administrator=True)
+    async def tcgset_givepack(self, ctx: commands.Context, member: discord.Member, amount: int = 1):
+        """Give a user extra pack opens. Can exceed the normal cap.
+
+        Usage:
+            !tcgset givepack @user         — Give 1 extra pack
+            !tcgset givepack @user 5       — Give 5 extra packs
+        """
+        guild_id = ctx.guild.id if ctx.guild else 0
+        amount = max(1, min(amount, 50))  # Sanity cap at 50
+
+        # Ensure user has an allowance row (triggers creation if new)
+        current = await self._get_pack_balance(member.id, guild_id)
+        new_balance = current + amount
+
+        try:
+            self.database.execute(
+                """
+                UPDATE tcg_pack_allowance
+                SET balance = %(balance)s
+                WHERE user_id = %(user_id)s AND guild_id = %(guild_id)s
+                """,
+                {"balance": new_balance, "user_id": member.id, "guild_id": guild_id},
+            )
+            await ctx.send(f"✅ Gave **{amount}** pack{'s' if amount != 1 else ''} to {member.mention}. They now have **{new_balance}** packs.")
+        except Exception as e:
+            log.error(f"Givepack failed: {e}")
+            await ctx.send(f"❌ Failed to give packs: {e}")
+
     # ─── User commands ─────────────────────────────────────
 
     @commands.group(name="tcg", aliases=["t"], invoke_without_command=True)
@@ -955,13 +1020,29 @@ class PokemonTCG(commands.Cog):
             await ctx.send(f"❌ Unknown set `{set_id}`. Available: {available}")
             return
 
+        # Check pack balance
+        guild_id = ctx.guild.id if ctx.guild else 0
+        balance = await self._get_pack_balance(ctx.author.id, guild_id)
+        if balance <= 0:
+            now_et = datetime.now(RESET_TIMEZONE)
+            midnight = (now_et + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+            minutes_left = int((midnight - now_et).total_seconds() / 60)
+            hours = minutes_left // 60
+            mins = minutes_left % 60
+            await ctx.send(
+                f"📦 You're out of packs! You'll get **{PACKS_PER_DAY}** more at midnight ET "
+                f"(in about **{hours}h {mins}m**)."
+            )
+            return
+
         cards = self.card_pool.open_pack(set_id)
         if not cards:
             await ctx.send("❌ Failed to generate pack.")
             return
 
         set_name = config.get("name", set_id)
-        await self._save_pack_to_db(ctx.author.id, ctx.guild.id, set_id, cards)
+        new_balance = await self._spend_pack(ctx.author.id, guild_id)
+        await self._save_pack_to_db(ctx.author.id, guild_id, set_id, cards)
 
         # Show foil wrapper rip
         rip_embed = build_rip_embed(set_id, config)
@@ -973,6 +1054,7 @@ class PokemonTCG(commands.Cog):
         viewer = PackViewer(
             cog=self, cards=cards, set_name=set_name,
             set_id=set_id, author_id=ctx.author.id,
+            packs_remaining=new_balance,
         )
         viewer._update_buttons()
         await message.edit(embed=viewer.get_embed(), view=viewer)
@@ -1261,6 +1343,109 @@ class PokemonTCG(commands.Cog):
             holo_unique=holo_unique,
             holo_total_in_set=holo_total_in_set,
         )
+
+    # ─── Pack allowance ──────────────────────────────────────
+
+    async def _get_pack_balance(self, user_id: int, guild_id: int) -> int:
+        """
+        Get the user's current pack balance, crediting any days that have
+        passed since their last update. Uses a token-bucket approach:
+        earn PACKS_PER_DAY at each midnight ET, capped at MAX_PACK_BALANCE.
+        """
+        now_et = datetime.now(RESET_TIMEZONE)
+        today_midnight = now_et.replace(hour=0, minute=0, second=0, microsecond=0)
+
+        try:
+            row = self.database.querySingle(
+                """
+                SELECT balance, last_updated
+                FROM tcg_pack_allowance
+                WHERE user_id = %(user_id)s AND guild_id = %(guild_id)s
+                """,
+                {"user_id": user_id, "guild_id": guild_id},
+            )
+        except Exception as e:
+            log.error(f"Pack balance query failed: {e}")
+            return 0
+
+        if not row:
+            # New user — initialize with starting balance
+            try:
+                self.database.execute(
+                    """
+                    INSERT INTO tcg_pack_allowance (user_id, guild_id, balance, last_updated)
+                    VALUES (%(user_id)s, %(guild_id)s, %(balance)s, %(now)s)
+                    ON CONFLICT (user_id, guild_id) DO NOTHING
+                    """,
+                    {
+                        "user_id": user_id,
+                        "guild_id": guild_id,
+                        "balance": STARTING_BALANCE,
+                        "now": today_midnight,
+                    },
+                )
+            except Exception as e:
+                log.error(f"Pack balance init failed: {e}")
+            return STARTING_BALANCE
+
+        balance, last_updated = row
+
+        # Calculate how many midnights have passed since last_updated
+        if last_updated.tzinfo is None:
+            last_updated = last_updated.replace(tzinfo=RESET_TIMEZONE)
+        else:
+            last_updated = last_updated.astimezone(RESET_TIMEZONE)
+
+        last_midnight = last_updated.replace(hour=0, minute=0, second=0, microsecond=0)
+        days_elapsed = (today_midnight - last_midnight).days
+
+        if days_elapsed > 0:
+            earned = days_elapsed * PACKS_PER_DAY
+            new_balance = min(balance + earned, MAX_PACK_BALANCE)
+
+            # Update the stored balance and timestamp
+            try:
+                self.database.execute(
+                    """
+                    UPDATE tcg_pack_allowance
+                    SET balance = %(balance)s, last_updated = %(now)s
+                    WHERE user_id = %(user_id)s AND guild_id = %(guild_id)s
+                    """,
+                    {
+                        "balance": new_balance,
+                        "now": today_midnight,
+                        "user_id": user_id,
+                        "guild_id": guild_id,
+                    },
+                )
+            except Exception as e:
+                log.error(f"Pack balance update failed: {e}")
+            return new_balance
+
+        return balance
+
+    async def _spend_pack(self, user_id: int, guild_id: int) -> int:
+        """Deduct one pack from the user's balance. Returns the new balance."""
+        # Ensure balance is up to date first
+        balance = await self._get_pack_balance(user_id, guild_id)
+        new_balance = max(0, balance - 1)
+
+        try:
+            self.database.execute(
+                """
+                UPDATE tcg_pack_allowance
+                SET balance = %(balance)s
+                WHERE user_id = %(user_id)s AND guild_id = %(guild_id)s
+                """,
+                {
+                    "balance": new_balance,
+                    "user_id": user_id,
+                    "guild_id": guild_id,
+                },
+            )
+        except Exception as e:
+            log.error(f"Pack spend failed: {e}")
+        return new_balance
 
     # ─── Database ──────────────────────────────────────────
 
