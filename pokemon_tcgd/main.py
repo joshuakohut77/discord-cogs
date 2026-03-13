@@ -929,7 +929,7 @@ class PokemonTCG(commands.Cog):
 
     # ─── User commands ─────────────────────────────────────
 
-    @commands.group(name="tcg", invoke_without_command=True)
+    @commands.group(name="tcg", aliases=["t"], invoke_without_command=True)
     async def tcg(self, ctx: commands.Context):
         """Open Pokémon TCG booster packs and collect cards!"""
         if not self.card_pool.loaded:
