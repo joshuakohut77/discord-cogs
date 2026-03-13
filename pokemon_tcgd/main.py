@@ -20,6 +20,15 @@ from zoneinfo import ZoneInfo
 from .packopener import CardPool
 from .dbclass import db
 
+from .trade import (
+    get_pending_trade,
+    get_other_players,
+    get_completed_trade_counts,
+    build_trade_review_embed,
+    RecipientSelectView,
+    TradeStatusView,
+)
+
 log = logging.getLogger("red.pokemontcg")
 
 
@@ -880,6 +889,77 @@ class CollectionViewer(discord.ui.View):
         await interaction.followup.send(embed=embed, ephemeral=True)
 
 
+    @discord.ui.button(label="Trade", style=discord.ButtonStyle.primary, emoji="🔄", row=3)
+    async def btn_trade(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Initiate a trade with the currently viewed card."""
+        if not self.filtered_cards:
+            await interaction.response.send_message("No card selected to trade!", ephemeral=True)
+            return
+ 
+        card_data, count = self.filtered_cards[self.index]
+        guild_id = self.guild_id
+ 
+        # Check if user already has a pending trade
+        try:
+            existing = get_pending_trade(self.cog.database, self.author_id, guild_id)
+            if existing:
+                await interaction.response.send_message(
+                    "❌ You already have a pending trade! Use `!tcg trade` to view or cancel it.",
+                    ephemeral=True,
+                )
+                return
+        except Exception as e:
+            log.error(f"Trade check failed: {e}")
+            await interaction.response.send_message(f"❌ Error checking trades: {e}", ephemeral=True)
+            return
+ 
+        # Get other players
+        try:
+            player_ids = get_other_players(self.cog.database, self.author_id, guild_id)
+        except Exception as e:
+            log.error(f"Get other players failed: {e}")
+            await interaction.response.send_message(f"❌ Error: {e}", ephemeral=True)
+            return
+ 
+        if not player_ids:
+            await interaction.response.send_message(
+                "❌ No other players have collected cards yet!",
+                ephemeral=True,
+            )
+            return
+ 
+        guild = interaction.guild
+        guild_name = guild.name if guild else "the server"
+ 
+        # Show recipient selector
+        selector = RecipientSelectView(
+            cog=self.cog,
+            author_id=self.author_id,
+            guild_id=guild_id,
+            guild_name=guild_name,
+            card_data=card_data,
+            card_count=count,
+            player_ids=player_ids,
+        )
+        await selector.initialize(guild)
+ 
+        card_name = card_data.get("name", "Unknown")
+        is_holo = card_data.get("is_holo", False)
+        holo_tag = " ✨" if is_holo else ""
+ 
+        embed = discord.Embed(
+            title=f"🔄 Trade — {card_name}{holo_tag}",
+            description="Choose a player to send this trade offer to:",
+            color=0xF59E0B,
+        )
+        from .trade import card_image_url as trade_card_image_url
+        img = trade_card_image_url(card_data)
+        if img:
+            embed.set_thumbnail(url=img)
+ 
+        await interaction.response.send_message(embed=embed, view=selector, ephemeral=True)
+        selector.message = await interaction.original_response()
+
 # ═══════════════════════════════════════════════════════════
 #  Main cog
 # ═══════════════════════════════════════════════════════════
@@ -1122,10 +1202,47 @@ class PokemonTCG(commands.Cog):
         embed = await self._build_leaderboard_embed(guild_id)
         await ctx.send(embed=embed)
 
+    @tcg.command(name="trade")
+    async def tcg_trade(self, ctx: commands.Context):
+        """View or manage your active trade."""
+        guild_id = ctx.guild.id if ctx.guild else 0
+ 
+        try:
+            trade = get_pending_trade(self.database, ctx.author.id, guild_id)
+        except Exception as e:
+            log.error(f"Trade lookup failed: {e}")
+            await ctx.send(f"❌ Error: {e}")
+            return
+ 
+        if not trade:
+            await ctx.send(
+                embed=discord.Embed(
+                    title="🔄 No Active Trade",
+                    description=(
+                        "You don't have any pending trades.\n\n"
+                        "To start a trade, browse your collection with `!tcg collection` "
+                        "and click the **Trade** button on any card."
+                    ),
+                    color=0x8B8B8B,
+                )
+            )
+            return
+ 
+        embed = build_trade_review_embed(trade, self.card_pool, ctx.author.id)
+        view = TradeStatusView(
+            cog=self,
+            trade=trade,
+            viewer_id=ctx.author.id,
+            guild_id=guild_id,
+        )
+ 
+        message = await ctx.send(embed=embed, view=view)
+        view.message = message
+
     # ─── Helpers ───────────────────────────────────────────
 
     async def _build_leaderboard_embed(self, guild_id: int) -> discord.Embed:
-        """Build a server-wide leaderboard showing unique Holos and Rares per player."""
+        """Build a server-wide leaderboard showing unique Holos, Rares, and Trades per player."""
         try:
             rows = self.database.queryAll(
                 """
@@ -1148,47 +1265,56 @@ class PokemonTCG(commands.Cog):
         except Exception as e:
             log.error(f"Leaderboard query failed: {e}")
             return discord.Embed(title="❌ Error", description="Failed to fetch leaderboard.", color=0xFF0000)
-
+ 
         if not rows:
             return discord.Embed(
                 title="🏆 TCG Leaderboard",
                 description="Nobody has collected any cards yet!\nUse `!tcg` to open your first pack.",
                 color=0xFFD700,
             )
-
+ 
+        # Get trade counts
+        try:
+            trade_counts = get_completed_trade_counts(self.database, guild_id)
+        except Exception:
+            trade_counts = {}
+ 
         # Count total possible holos and rares across all sets
         total_holos_in_game = 0
         total_rares_in_game = 0
         for set_id, pool in self.card_pool.sets.items():
             total_holos_in_game += len(pool.get("rares_holo", []))
             total_rares_in_game += len(pool.get("rares_normal", []))
-
+ 
         # Build leaderboard lines
         medals = ["🥇", "🥈", "🥉"]
         lines = []
-        for i, row in enumerate(rows[:15]):  # Cap at top 15
+        for i, row in enumerate(rows[:15]):
             user_id, unique_holos, unique_rares, total_unique = row
             rank = medals[i] if i < 3 else f"**{i + 1}.**"
+            trades = trade_counts.get(user_id, 0)
+            trade_str = f"  •  🔄 **{trades}** trades" if trades > 0 else ""
             lines.append(
                 f"{rank} <@{user_id}>  —  "
                 f"✨ **{unique_holos}** holo  •  "
                 f"⭐ **{unique_rares}** rare"
+                f"{trade_str}"
             )
-
+ 
         description = "\n".join(lines)
         description += (
             f"\n\n─────────────────────────\n"
             f"**{total_holos_in_game}** holos and **{total_rares_in_game}** rares exist across all sets"
         )
-
+ 
         embed = discord.Embed(
             title="🏆 TCG Leaderboard — Holos & Rares",
             description=description,
             color=0xFFD700,
         )
-        embed.set_footer(text="Ranked by unique holos, then unique rares")
+        embed.set_footer(text="Ranked by unique holos, then unique rares • 🔄 = completed trades")
         return embed
-
+    
     async def _build_stats_embed(self, user_id: int, guild_id: int, display_name: str) -> discord.Embed:
         try:
             rows = self.database.queryAll(
