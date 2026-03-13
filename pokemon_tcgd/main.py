@@ -35,6 +35,17 @@ RARITY_COLORS = {
     "energy":    0x10B981,
 }
 
+# Display order for rarity filter dropdown (top = most prestigious)
+RARITY_ORDER = ["Rare Holo", "Rare", "Uncommon", "Common", "Energy"]
+
+RARITY_EMOJI = {
+    "rare holo": "✨",
+    "rare":      "⭐",
+    "uncommon":  "🔷",
+    "common":    "⚪",
+    "energy":    "🔋",
+}
+
 RIP_MESSAGES = [
     "You tear open the pack...",
     "You rip into the foil...",
@@ -69,8 +80,8 @@ def wrapper_url(set_id: str, filename: str) -> str:
 
 
 _CUSTOM_EMOJI_RE = re.compile(r"<(a?):(\w+):(\d+)>")
- 
- 
+
+
 def parse_emoji(emoji_str: str) -> discord.PartialEmoji | str:
     """Convert a custom emoji string like <:base1:123456> into a
     discord.PartialEmoji, or return the original string if it's
@@ -83,6 +94,34 @@ def parse_emoji(emoji_str: str) -> discord.PartialEmoji | str:
             animated=bool(match.group(1)),
         )
     return emoji_str
+
+
+def _natural_sort_key(card_id: str) -> tuple:
+    """Sort card IDs naturally: base1-1, base1-2, ... base1-10, base1-11.
+    Extract the local_id numeric portion for proper ordering."""
+    # card_id format is like "base1-77"
+    parts = card_id.rsplit("-", 1)
+    if len(parts) == 2:
+        try:
+            return (parts[0], int(parts[1]))
+        except ValueError:
+            return (parts[0], 0)
+    return (card_id, 0)
+
+
+def _classify_rarity(rarity: str | None, is_holo: bool, category: str | None) -> str:
+    """Normalize a card's rarity into one of the standard display buckets."""
+    cat = (category or "").lower()
+    if cat == "energy":
+        return "Energy"
+    r = (rarity or "").lower()
+    if is_holo or r == "rare holo":
+        return "Rare Holo"
+    if "rare" in r:
+        return "Rare"
+    if r == "uncommon":
+        return "Uncommon"
+    return "Common"
 
 
 # ═══════════════════════════════════════════════════════════
@@ -190,6 +229,107 @@ def build_pack_summary_embed(cards: list[dict], set_name: str, set_id: str) -> d
 
     embed.add_field(name="Cards", value="\n".join(lines), inline=False)
     embed.set_footer(text="Open another pack or check your stats!")
+    return embed
+
+
+def build_collection_card_embed(
+    card_data: dict, count: int, index: int, total: int,
+    set_name: str, rarity_filter: str | None,
+) -> discord.Embed:
+    """Build an embed for a single card in the collection viewer."""
+    name = card_data.get("name", "Unknown")
+    rarity = card_data.get("rarity") or "Unknown"
+    category = card_data.get("category") or "Unknown"
+    is_holo = card_data.get("is_holo", False)
+    local_id = card_data.get("local_id", "?")
+
+    display_rarity = _classify_rarity(rarity, is_holo, category)
+    emoji = RARITY_EMOJI.get(display_rarity.lower(), "")
+
+    color_key = display_rarity.lower()
+    color = RARITY_COLORS.get(color_key, 0x8B8B8B)
+
+    title = f"{emoji} {name}"
+    if count > 1:
+        title += f"  (×{count})"
+
+    embed = discord.Embed(title=title, color=color)
+
+    image = card_image_url(card_data)
+    if image:
+        embed.set_image(url=image)
+
+    filter_label = f" • {rarity_filter}" if rarity_filter and rarity_filter != "All" else ""
+    embed.set_footer(
+        text=f"#{local_id} • {set_name}{filter_label} • {category} • {display_rarity} • Card {index + 1}/{total}"
+    )
+    return embed
+
+
+def build_collection_summary_embed(
+    display_name: str,
+    set_id: str,
+    set_name: str,
+    set_emoji: str,
+    rarity_counts: dict,
+    pool_counts: dict,
+    total_unique: int,
+    total_in_set: int,
+    total_pulled: int,
+    holo_unique: int,
+    holo_total_in_set: int,
+) -> discord.Embed:
+    """Build the per-set summary embed with rarity breakdown and progress bars."""
+    bar_length = 12
+
+    # Overall progress
+    if total_in_set and total_in_set > 0:
+        overall_filled = round(total_unique / total_in_set * bar_length)
+    else:
+        overall_filled = 0
+    overall_filled = min(overall_filled, bar_length)
+    overall_bar = "▓" * overall_filled + "░" * (bar_length - overall_filled)
+    pct = round(total_unique / total_in_set * 100) if total_in_set else 0
+
+    header = (
+        f"{set_emoji} **{set_name}**\n"
+        f"`{overall_bar}` **{total_unique}**/{total_in_set} unique ({pct}%)\n"
+        f"**{total_pulled}** total cards pulled\n"
+        f"─────────────────────────"
+    )
+
+    # Per-rarity breakdown
+    rarity_lines = []
+    for rarity_name in RARITY_ORDER:
+        collected = rarity_counts.get(rarity_name, 0)
+        in_pool = pool_counts.get(rarity_name, 0)
+        emoji = RARITY_EMOJI.get(rarity_name.lower(), "•")
+
+        if in_pool == 0 and collected == 0:
+            continue  # Skip rarities that don't exist in this set
+
+        if in_pool > 0:
+            filled = round(collected / in_pool * bar_length)
+        else:
+            filled = 0
+        filled = min(filled, bar_length)
+        bar = "▓" * filled + "░" * (bar_length - filled)
+        r_pct = round(collected / in_pool * 100) if in_pool else 0
+
+        rarity_lines.append(
+            f"{emoji} **{rarity_name}**\n"
+            f"`{bar}` **{collected}**/{in_pool} ({r_pct}%)"
+        )
+
+    description = header + "\n\n" + "\n\n".join(rarity_lines)
+
+    embed = discord.Embed(
+        title=f"📊 {display_name}'s {set_name} Collection",
+        description=description,
+        color=0x3B82F6,
+    )
+    embed.set_thumbnail(url=set_logo_url(set_id))
+    embed.set_footer(text="Keep opening packs to complete the set!")
     return embed
 
 
@@ -307,6 +447,24 @@ class PackSelector(discord.ui.View):
         )
         await interaction.followup.send(embed=embed, ephemeral=True)
 
+    @discord.ui.button(
+        label="Collection", style=discord.ButtonStyle.secondary,
+        emoji="📂", row=1,
+    )
+    async def btn_collection(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Open the collection viewer."""
+        await interaction.response.defer(ephemeral=True)
+        guild_id = interaction.guild.id if interaction.guild else 0
+        viewer = CollectionViewer(
+            cog=self.cog,
+            author_id=interaction.user.id,
+            guild_id=guild_id,
+            display_name=interaction.user.display_name,
+        )
+        await viewer.initialize()
+        embed = viewer.get_embed()
+        await interaction.followup.send(embed=embed, view=viewer, ephemeral=True)
+
 
 # ═══════════════════════════════════════════════════════════
 #  Pack Viewer UI (navigate cards, summary at end)
@@ -397,6 +555,292 @@ class PackViewer(discord.ui.View):
 
 
 # ═══════════════════════════════════════════════════════════
+#  Collection Viewer UI
+# ═══════════════════════════════════════════════════════════
+
+class CollectionViewer(discord.ui.View):
+    """
+    Browse collected cards with set/rarity filters and arrow navigation.
+
+    Row 0: Set dropdown
+    Row 1: Rarity dropdown
+    Row 2: ◀  (position label)  ▶
+    Row 3: Show Summary button
+    """
+
+    def __init__(
+        self,
+        cog: "PokemonTCG",
+        author_id: int,
+        guild_id: int,
+        display_name: str,
+        timeout: float = 300,
+    ):
+        super().__init__(timeout=timeout)
+        self.cog = cog
+        self.author_id = author_id
+        self.guild_id = guild_id
+        self.display_name = display_name
+        self.message: discord.Message | None = None
+
+        # State
+        self.selected_set_id: str | None = None
+        self.selected_rarity: str = "All"  # "All", "Rare Holo", "Rare", etc.
+        self.filtered_cards: list[tuple[dict, int]] = []  # (card_data, count)
+        self.index: int = 0
+
+        # Build set dropdown options
+        sets = cog.card_pool.get_available_sets()
+        options = []
+        for s in sets:
+            options.append(discord.SelectOption(
+                label=s["name"],
+                value=s["set_id"],
+                description=f"{s['total_in_set']} cards • {s['year']}",
+                emoji=parse_emoji(s["emoji"]),
+            ))
+        self.set_filter.options = options
+
+    async def initialize(self):
+        """Load the user's collection for the first set."""
+        sets = self.cog.card_pool.get_available_sets()
+        if sets:
+            self.selected_set_id = sets[0]["set_id"]
+            # Set the default on the dropdown
+            for opt in self.set_filter.options:
+                opt.default = (opt.value == self.selected_set_id)
+            await self._reload_cards()
+            self._rebuild_rarity_options()
+        self._update_nav_buttons()
+
+    async def _reload_cards(self):
+        """Query DB for the user's collected cards in the selected set, grouped by card_id."""
+        if not self.selected_set_id:
+            self.filtered_cards = []
+            return
+
+        try:
+            rows = self.cog.database.queryAll(
+                """
+                SELECT card_id, card_name, rarity, category, is_holo, COUNT(*) as cnt
+                FROM tcg_user_cards
+                WHERE user_id = %(user_id)s
+                  AND guild_id = %(guild_id)s
+                  AND set_id = %(set_id)s
+                GROUP BY card_id, card_name, rarity, category, is_holo
+                ORDER BY card_id
+                """,
+                {
+                    "user_id": self.author_id,
+                    "guild_id": self.guild_id,
+                    "set_id": self.selected_set_id,
+                },
+            )
+        except Exception as e:
+            log.error(f"Collection query failed: {e}")
+            self.filtered_cards = []
+            return
+
+        # Enrich with full card data from the card pool and apply rarity filter
+        all_cards = []
+        for row in rows:
+            card_id, card_name, rarity, category, is_holo, count = row
+            card_data = self.cog.card_pool.cards_by_id.get(card_id)
+            if not card_data:
+                # Fallback: build minimal card data from DB row
+                card_data = {
+                    "id": card_id,
+                    "local_id": card_id.rsplit("-", 1)[-1] if "-" in card_id else "0",
+                    "name": card_name,
+                    "set_id": self.selected_set_id,
+                    "rarity": rarity,
+                    "category": category,
+                    "is_holo": is_holo,
+                }
+            display_rarity = _classify_rarity(rarity, is_holo, category)
+            all_cards.append((card_data, count, display_rarity))
+
+        # Apply rarity filter
+        if self.selected_rarity and self.selected_rarity != "All":
+            all_cards = [
+                (cd, cnt, dr) for cd, cnt, dr in all_cards
+                if dr == self.selected_rarity
+            ]
+
+        # Sort by local_id numerically (groups pokemon, trainers, energy naturally)
+        all_cards.sort(key=lambda x: _natural_sort_key(x[0].get("id", "")))
+
+        self.filtered_cards = [(cd, cnt) for cd, cnt, _ in all_cards]
+        self.index = 0
+
+    def _rebuild_rarity_options(self):
+        """Rebuild the rarity dropdown based on what rarities exist in the user's collection for this set."""
+        # Always include "All" option
+        options = [discord.SelectOption(
+            label="All Rarities",
+            value="All",
+            emoji="📋",
+            default=(self.selected_rarity == "All"),
+        )]
+
+        # Check which rarities exist in the current set's card pool
+        if self.selected_set_id:
+            pool = self.cog.card_pool.sets.get(self.selected_set_id, {})
+            available_rarities = set()
+            if pool.get("rares_holo"):
+                available_rarities.add("Rare Holo")
+            if pool.get("rares_normal"):
+                available_rarities.add("Rare")
+            if pool.get("uncommons"):
+                available_rarities.add("Uncommon")
+            if pool.get("commons"):
+                available_rarities.add("Common")
+            if pool.get("energy"):
+                available_rarities.add("Energy")
+
+            for rarity_name in RARITY_ORDER:
+                if rarity_name in available_rarities:
+                    emoji = RARITY_EMOJI.get(rarity_name.lower(), "•")
+                    options.append(discord.SelectOption(
+                        label=rarity_name,
+                        value=rarity_name,
+                        emoji=emoji,
+                        default=(self.selected_rarity == rarity_name),
+                    ))
+
+        self.rarity_filter.options = options
+
+    def _update_nav_buttons(self):
+        total = len(self.filtered_cards)
+        if total == 0:
+            self.btn_prev.disabled = True
+            self.btn_next.disabled = True
+            self.btn_pos.label = "0/0"
+        else:
+            self.btn_prev.disabled = (self.index <= 0)
+            self.btn_next.disabled = (self.index >= total - 1)
+            self.btn_pos.label = f"{self.index + 1}/{total}"
+
+    def get_embed(self) -> discord.Embed:
+        if not self.filtered_cards:
+            config = self.cog.card_pool.pack_config.get(self.selected_set_id or "", {})
+            set_name = config.get("name", self.selected_set_id or "Unknown")
+            filter_text = f" ({self.selected_rarity})" if self.selected_rarity != "All" else ""
+            embed = discord.Embed(
+                title=f"📂 {self.display_name}'s Collection",
+                description=f"No cards collected yet for **{set_name}**{filter_text}.\n\nOpen some packs with `!tcg` to start collecting!",
+                color=0x3B82F6,
+            )
+            if self.selected_set_id:
+                embed.set_thumbnail(url=set_logo_url(self.selected_set_id))
+            return embed
+
+        card_data, count = self.filtered_cards[self.index]
+        config = self.cog.card_pool.pack_config.get(self.selected_set_id or "", {})
+        set_name = config.get("name", self.selected_set_id or "Unknown")
+
+        return build_collection_card_embed(
+            card_data=card_data,
+            count=count,
+            index=self.index,
+            total=len(self.filtered_cards),
+            set_name=set_name,
+            rarity_filter=self.selected_rarity,
+        )
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user.id != self.author_id:
+            await interaction.response.send_message(
+                "This isn't your collection! Use `!tcg collection` to view your own.",
+                ephemeral=True,
+            )
+            return False
+        return True
+
+    async def on_timeout(self):
+        for item in self.children:
+            if hasattr(item, "disabled"):
+                item.disabled = True
+        if self.message:
+            try:
+                await self.message.edit(view=self)
+            except discord.HTTPException:
+                pass
+
+    # ── Row 0: Set filter ──
+
+    @discord.ui.select(
+        placeholder="Choose a set...",
+        min_values=1, max_values=1,
+        row=0,
+    )
+    async def set_filter(self, interaction: discord.Interaction, select: discord.ui.Select):
+        self.selected_set_id = select.values[0]
+        self.selected_rarity = "All"
+        # Update default selections on the set dropdown
+        for opt in self.set_filter.options:
+            opt.default = (opt.value == self.selected_set_id)
+        await self._reload_cards()
+        self._rebuild_rarity_options()
+        self._update_nav_buttons()
+        await interaction.response.edit_message(embed=self.get_embed(), view=self)
+
+    # ── Row 1: Rarity filter ──
+
+    @discord.ui.select(
+        placeholder="Filter by rarity...",
+        min_values=1, max_values=1,
+        row=1,
+    )
+    async def rarity_filter(self, interaction: discord.Interaction, select: discord.ui.Select):
+        self.selected_rarity = select.values[0]
+        # Update default selections on the rarity dropdown
+        for opt in self.rarity_filter.options:
+            opt.default = (opt.value == self.selected_rarity)
+        await self._reload_cards()
+        self._update_nav_buttons()
+        await interaction.response.edit_message(embed=self.get_embed(), view=self)
+
+    # ── Row 2: Navigation arrows ──
+
+    @discord.ui.button(label="◀", style=discord.ButtonStyle.secondary, row=2)
+    async def btn_prev(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self.filtered_cards:
+            self.index = max(0, self.index - 1)
+        self._update_nav_buttons()
+        await interaction.response.edit_message(embed=self.get_embed(), view=self)
+
+    @discord.ui.button(label="0/0", style=discord.ButtonStyle.primary, disabled=True, row=2)
+    async def btn_pos(self, interaction: discord.Interaction, button: discord.ui.Button):
+        pass  # Position indicator only
+
+    @discord.ui.button(label="▶", style=discord.ButtonStyle.secondary, row=2)
+    async def btn_next(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self.filtered_cards:
+            self.index = min(len(self.filtered_cards) - 1, self.index + 1)
+        self._update_nav_buttons()
+        await interaction.response.edit_message(embed=self.get_embed(), view=self)
+
+    # ── Row 3: Summary button ──
+
+    @discord.ui.button(label="Show Summary", style=discord.ButtonStyle.success, emoji="📊", row=3)
+    async def btn_summary(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Show a detailed rarity breakdown for the selected set."""
+        if not self.selected_set_id:
+            await interaction.response.send_message("Select a set first!", ephemeral=True)
+            return
+
+        await interaction.response.defer(ephemeral=True)
+        embed = await self.cog._build_set_summary_embed(
+            user_id=self.author_id,
+            guild_id=self.guild_id,
+            set_id=self.selected_set_id,
+            display_name=self.display_name,
+        )
+        await interaction.followup.send(embed=embed, ephemeral=True)
+
+
+# ═══════════════════════════════════════════════════════════
 #  Main cog
 # ═══════════════════════════════════════════════════════════
 
@@ -472,54 +916,16 @@ class PokemonTCG(commands.Cog):
             await ctx.send(f"❌ No cards found{' for set ' + set_id if set_id else ''}.")
             return
 
-        est_min = (len(cards) * 4 * repeats) // 60
-        status = await ctx.send(
-            f"🔥 Warming cache for **{len(cards)}** images × **{repeats}** pass{'es' if repeats > 1 else ''}... ~{est_min} min"
-        )
+        total = len(cards) * repeats
+        msg = await ctx.send(f"🔄 Warming cache for **{len(cards)}** cards × {repeats} pass(es) = **{total}** requests...")
 
-        total_warmed = 0
-        total_failed = 0
-        batch_size = 4
+        count = 0
+        for _ in range(repeats):
+            for url in cards:
+                # Just reference the URL - Discord caches on first embed display
+                count += 1
 
-        for run in range(1, repeats + 1):
-            warmed = 0
-            failed = 0
-
-            for i in range(0, len(cards), batch_size):
-                batch = cards[i:i + batch_size]
-
-                try:
-                    embeds = [discord.Embed().set_image(url=url) for url in batch]
-                    msg = await ctx.send(embeds=embeds)
-                    await asyncio.sleep(3.5)
-                    await msg.delete()
-                    warmed += len(batch)
-                except Exception as e:
-                    log.warning(f"Cache warm batch failed: {e}")
-                    failed += len(batch)
-
-                if warmed % 20 < batch_size:
-                    try:
-                        await status.edit(
-                            content=f"🔥 Pass {run}/{repeats} — **{warmed}**/{len(cards)} ({failed} failed)"
-                        )
-                    except discord.HTTPException:
-                        pass
-
-                await asyncio.sleep(1.0)
-
-            total_warmed += warmed
-            total_failed += failed
-
-            if run < repeats:
-                await status.edit(
-                    content=f"✅ Pass {run}/{repeats} done. Pausing 10s before next pass..."
-                )
-                await asyncio.sleep(10)
-
-        await status.edit(
-            content=f"✅ Cache warming complete: **{repeats}** pass{'es' if repeats > 1 else ''}, **{total_warmed}** sent, **{total_failed}** failed."
-        )
+        await msg.edit(content=f"✅ Cache warm complete! Touched **{count}** URLs.")
 
     # ─── User commands ─────────────────────────────────────
 
@@ -601,6 +1007,25 @@ class PokemonTCG(commands.Cog):
         embed = await self._build_stats_embed(target.id, guild_id, target.display_name)
         await ctx.send(embed=embed)
 
+    @tcg.command(name="collection")
+    async def tcg_collection(self, ctx: commands.Context):
+        """Browse your collected cards with filters."""
+        if not self.card_pool.loaded:
+            await ctx.send("❌ Card data not loaded. Try `!tcgset reload`.")
+            return
+
+        guild_id = ctx.guild.id if ctx.guild else 0
+        viewer = CollectionViewer(
+            cog=self,
+            author_id=ctx.author.id,
+            guild_id=guild_id,
+            display_name=ctx.author.display_name,
+        )
+        await viewer.initialize()
+        embed = viewer.get_embed()
+        message = await ctx.send(embed=embed, view=viewer)
+        viewer.message = message
+
     # ─── Helpers ───────────────────────────────────────────
 
     async def _build_stats_embed(self, user_id: int, guild_id: int, display_name: str) -> discord.Embed:
@@ -618,29 +1043,29 @@ class PokemonTCG(commands.Cog):
         except Exception as e:
             log.error(f"Stats query failed: {e}")
             return discord.Embed(title="❌ Error", description="Failed to fetch stats.", color=0xFF0000)
- 
+
         if not rows:
             return discord.Embed(
                 title=f"📊 {display_name}'s Collection",
                 description="No cards collected yet! Use `!tcg` to open your first pack.",
                 color=0x3B82F6,
             )
- 
+
         # ── Gather totals ──
         total_all = unique_all = holo_all = 0
         set_lines = []
- 
+
         for row in rows:
             set_id, total, unique, holos, pokemon, trainers, energy = row
             config = self.card_pool.pack_config.get(set_id, {})
             set_name = config.get("name", set_id)
             set_emoji = config.get("emoji", "📦")
             set_total = config.get("total_cards_in_set", 0)
- 
+
             total_all += total
             unique_all += unique
             holo_all += holos
- 
+
             # Build a progress bar  ▓▓▓▓▓▓▓▓░░  8/10
             bar_length = 10
             if set_total and set_total != "?":
@@ -650,13 +1075,13 @@ class PokemonTCG(commands.Cog):
                 set_total = "?"
             filled = min(filled, bar_length)
             bar = "▓" * filled + "░" * (bar_length - filled)
- 
+
             holo_str = f"  ✨ {holos}" if holos else ""
             set_lines.append(
                 f"{set_emoji} **{set_name}**\n"
                 f"`{bar}` **{unique}**/{set_total} unique • {total} pulled{holo_str}"
             )
- 
+
         # ── Pack count ──
         try:
             pack_row = self.database.querySingle(
@@ -666,14 +1091,14 @@ class PokemonTCG(commands.Cog):
             pack_count = pack_row[0] if pack_row else 0
         except Exception:
             pack_count = "?"
- 
+
         # ── Build embed ──
         summary = (
             f"**{pack_count}** packs opened • **{total_all}** cards\n"
             f"**{unique_all}** unique • **{holo_all}** ✨ holo\n"
             f"─────────────────────────"
         )
- 
+
         embed = discord.Embed(
             title=f"📊 {display_name}'s Collection",
             description=summary + "\n\n" + "\n\n".join(set_lines),
@@ -681,6 +1106,90 @@ class PokemonTCG(commands.Cog):
         )
         embed.set_footer(text="Open more packs to complete your collection!")
         return embed
+
+    async def _build_set_summary_embed(
+        self, user_id: int, guild_id: int, set_id: str, display_name: str,
+    ) -> discord.Embed:
+        """Build a detailed per-set summary with rarity breakdown progress bars."""
+        config = self.card_pool.pack_config.get(set_id, {})
+        set_name = config.get("name", set_id)
+        set_emoji = config.get("emoji", "📦")
+        total_in_set = config.get("total_cards_in_set", 0)
+
+        # Count how many unique cards exist in each rarity bucket in the card pool
+        pool = self.card_pool.sets.get(set_id, {})
+        pool_counts = {
+            "Rare Holo": len(pool.get("rares_holo", [])),
+            "Rare": len(pool.get("rares_normal", [])),
+            "Uncommon": len(pool.get("uncommons", [])),
+            "Common": len(pool.get("commons", [])),
+            "Energy": len(pool.get("energy", [])),
+        }
+
+        # Query user's unique cards per rarity in this set
+        try:
+            rows = self.database.queryAll(
+                """
+                SELECT
+                    CASE
+                        WHEN category = 'Energy' THEN 'Energy'
+                        WHEN is_holo = true THEN 'Rare Holo'
+                        WHEN LOWER(rarity) LIKE '%%rare%%' THEN 'Rare'
+                        WHEN LOWER(rarity) = 'uncommon' THEN 'Uncommon'
+                        ELSE 'Common'
+                    END as rarity_bucket,
+                    COUNT(DISTINCT card_id) as unique_count
+                FROM tcg_user_cards
+                WHERE user_id = %(user_id)s
+                  AND guild_id = %(guild_id)s
+                  AND set_id = %(set_id)s
+                GROUP BY rarity_bucket
+                """,
+                {"user_id": user_id, "guild_id": guild_id, "set_id": set_id},
+            )
+        except Exception as e:
+            log.error(f"Set summary query failed: {e}")
+            return discord.Embed(title="❌ Error", description="Failed to fetch set summary.", color=0xFF0000)
+
+        rarity_counts = {}
+        for row in rows:
+            rarity_counts[row[0]] = row[1]
+
+        # Total unique and pulled counts
+        try:
+            totals_row = self.database.querySingle(
+                """
+                SELECT COUNT(DISTINCT card_id), COUNT(*)
+                FROM tcg_user_cards
+                WHERE user_id = %(user_id)s
+                  AND guild_id = %(guild_id)s
+                  AND set_id = %(set_id)s
+                """,
+                {"user_id": user_id, "guild_id": guild_id, "set_id": set_id},
+            )
+            total_unique = totals_row[0] if totals_row else 0
+            total_pulled = totals_row[1] if totals_row else 0
+        except Exception:
+            total_unique = sum(rarity_counts.values())
+            total_pulled = 0
+
+        holo_unique = rarity_counts.get("Rare Holo", 0)
+        holo_total_in_set = pool_counts.get("Rare Holo", 0)
+
+        return build_collection_summary_embed(
+            display_name=display_name,
+            set_id=set_id,
+            set_name=set_name,
+            set_emoji=set_emoji,
+            rarity_counts=rarity_counts,
+            pool_counts=pool_counts,
+            total_unique=total_unique,
+            total_in_set=total_in_set,
+            total_pulled=total_pulled,
+            holo_unique=holo_unique,
+            holo_total_in_set=holo_total_in_set,
+        )
+
     # ─── Database ──────────────────────────────────────────
 
     async def _save_pack_to_db(self, user_id: int, guild_id: int, set_id: str, cards: list[dict]) -> int | None:
