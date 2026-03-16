@@ -66,8 +66,8 @@ RIP_MESSAGES = [
 ]
 
 # ── Pack allowance settings ──
-PACKS_PER_DAY = 2           # Packs earned each day at midnight
-MAX_PACK_BALANCE = 10       # Max banked packs (5 days × 2/day)
+PACKS_PER_DAY = 5           # Packs earned each day at midnight
+MAX_PACK_BALANCE = 20       # Max banked packs (5 days × 2/day)
 STARTING_BALANCE = 5        # Packs a brand new user starts with
 RESET_TIMEZONE = ZoneInfo("America/New_York")  # Midnight Eastern
 
@@ -1326,7 +1326,7 @@ class PokemonTCG(commands.Cog):
         """Toggle DM reminders for when your packs are full.
  
         When enabled, you'll receive a DM once your pack balance
-        hits the maximum (10). The reminder only fires once per
+        hits the maximum (15). The reminder only fires once per
         cap cycle — after you open a pack the timer resets.
         """
         guild_id = ctx.guild.id if ctx.guild else 0
