@@ -29,6 +29,11 @@ from .trade import (
     TradeStatusView,
 )
 
+from .showcase import (
+      get_players_with_cards,
+      ShowcasePlayerSelector,
+  )
+
 log = logging.getLogger("red.pokemontcg")
 
 
@@ -1276,6 +1281,52 @@ class PokemonTCG(commands.Cog):
         embed = viewer.get_embed()
         message = await ctx.send(embed=embed, view=viewer)
         viewer.message = message
+
+    @tcg.command(name="showcase")
+    async def tcg_showcase(self, ctx: commands.Context):
+        """Browse another player's Holo and Rare cards."""
+        if not self.card_pool.loaded:
+            await ctx.send("❌ Card data not loaded. Try `!tcgset reload`.")
+            return
+
+        guild_id = ctx.guild.id if ctx.guild else 0
+
+        try:
+            player_ids = get_players_with_cards(self.database, guild_id)
+        except Exception as e:
+            log.error(f"Showcase player query failed: {e}")
+            await ctx.send(f"❌ Error: {e}")
+            return
+
+        if not player_ids:
+            await ctx.send(
+                embed=discord.Embed(
+                    title="🏆 Showcase",
+                    description="No players have collected cards yet!",
+                    color=0x8B8B8B,
+                )
+            )
+            return
+
+        selector = ShowcasePlayerSelector(
+            cog=self,
+            author_id=ctx.author.id,
+            guild_id=guild_id,
+            player_ids=player_ids,
+        )
+        await selector.initialize(ctx.guild)
+
+        embed = discord.Embed(
+            title="🏆 Showcase — Browse Collections",
+            description=(
+                "Pick a player from the dropdown to browse their\n"
+                "**Rare Holo** and **Rare** cards!"
+            ),
+            color=0xFFD700,
+        )
+
+        message = await ctx.send(embed=embed, view=selector)
+        selector.message = message
 
     @tcg.command(name="leaderboard", aliases=["lb"])
     async def tcg_leaderboard(self, ctx: commands.Context):
