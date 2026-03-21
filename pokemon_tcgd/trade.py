@@ -4,10 +4,10 @@ Pokemon TCG — Card Trading System
 Trade flow:
     1. Player1 browses collection → clicks "Trade" on a card with count ≥ 1
     2. Player1 picks a recipient from a dropdown of other players → confirms
-    3. Player2 receives a DM: "<Player1> wants to trade you <card>! Use !tcg trade in the server."
-    4. Player2 uses !tcg trade → sees the offer → browses their own collection to pick a counter-card
-    5. Player1 receives a DM: "<Player2> offers <card> for your <card>! Use !tcg trade in the server."
-    6. Player1 uses !tcg trade → sees both cards → Accept / Decline
+    3. Player2 receives a DM: "<Player1> wants to trade you <card>! Use ,tcg trade in the server."
+    4. Player2 uses ,tcg trade → sees the offer → browses their own collection to pick a counter-card
+    5. Player1 receives a DM: "<Player2> offers <card> for your <card>! Use ,tcg trade in the server."
+    6. Player1 uses ,tcg trade → sees both cards → Accept / Decline
     7. On accept: cards swap in DB. On decline/cancel: trade cancelled.
 
 Constraints:
@@ -331,7 +331,7 @@ def build_trade_offer_dm_embed(
             f"**{initiator_name}** wants to trade you this card:\n\n"
             f"**{name}{holo_tag}**\n"
             f"{set_name} • {rarity}\n\n"
-            f"Head to **{guild_name}** and use `!tcg trade` to pick a card to offer back, "
+            f"Head to **{guild_name}** and use `,tcg trade` to pick a card to offer back, "
             f"or cancel the trade."
         ),
         color=_card_color(rarity, is_holo),
@@ -341,7 +341,7 @@ def build_trade_offer_dm_embed(
     if image:
         embed.set_image(url=image)
 
-    embed.set_footer(text="You can also cancel with !tcg trade → Cancel")
+    embed.set_footer(text="You can also cancel with ,tcg trade → Cancel")
     return embed
 
 
@@ -366,7 +366,7 @@ def build_counter_offer_dm_embed(
             f"**{c_name}{c_holo}**\n"
             f"{c_set} • {c_rarity}\n\n"
             f"In exchange for your **{o_name}{o_holo}**\n\n"
-            f"Head to **{guild_name}** and use `!tcg trade` to accept or decline."
+            f"Head to **{guild_name}** and use `,tcg trade` to accept or decline."
         ),
         color=_card_color(c_rarity, counter_card.get("is_holo", False)),
     )
@@ -386,7 +386,7 @@ def build_counter_offer_dm_embed(
 
 def build_trade_review_embed(trade: dict, card_pool, viewer_id: int) -> discord.Embed:
     """
-    Build the embed shown when a player uses !tcg trade and has an active trade.
+    Build the embed shown when a player uses ,tcg trade and has an active trade.
     Shows different info depending on trade status and who is viewing.
     """
     status = trade["status"]
@@ -644,7 +644,7 @@ class RecipientSelectView(discord.ui.View):
             existing = get_pending_trade(self.cog.database, self.author_id, self.guild_id)
             if existing:
                 await interaction.response.send_message(
-                    "❌ You already have a pending trade! Cancel it first with `!tcg trade`.",
+                    "❌ You already have a pending trade! Cancel it first with `,tcg trade`.",
                     ephemeral=True,
                 )
                 return
@@ -694,7 +694,7 @@ class RecipientSelectView(discord.ui.View):
                 title="✅ Trade Offer Sent!",
                 description=(
                     f"Sent trade offer to <@{self.selected_recipient}>.\n"
-                    f"They'll receive a DM and can use `!tcg trade` to respond."
+                    f"They'll receive a DM and can use `,tcg trade` to respond."
                 ),
                 color=0x10B981,
             ),
@@ -718,7 +718,7 @@ class RecipientSelectView(discord.ui.View):
                 try:
                     await recipient_member.send(embed=dm_embed)
                 except discord.Forbidden:
-                    # Can't DM the user, they'll have to check !tcg trade
+                    # Can't DM the user, they'll have to check ,tcg trade
                     log.warning(f"Cannot DM user {self.selected_recipient} for trade {trade_id}")
         except Exception as e:
             log.error(f"Failed to send trade DM: {e}")
@@ -737,7 +737,7 @@ class RecipientSelectView(discord.ui.View):
 
 class TradeStatusView(discord.ui.View):
     """
-    Shown when a player uses !tcg trade and has an active trade.
+    Shown when a player uses ,tcg trade and has an active trade.
     Adapts buttons based on trade status and the viewer's role.
 
     - pending_recipient + viewer is recipient → "Browse Collection" + "Cancel"

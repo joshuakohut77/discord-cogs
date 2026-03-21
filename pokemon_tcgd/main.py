@@ -392,7 +392,7 @@ class PackSelector(discord.ui.View):
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.author_id:
             await interaction.response.send_message(
-                "Use `!tcg` to open your own pack selector!",
+                "Use `,tcg` to open your own pack selector!",
                 ephemeral=True,
             )
             return False
@@ -562,7 +562,7 @@ class PackViewer(discord.ui.View):
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.author_id:
             await interaction.response.send_message(
-                "This isn't your pack! Use `!tcg` to open your own.",
+                "This isn't your pack! Use `,tcg` to open your own.",
                 ephemeral=True,
             )
             return False
@@ -782,7 +782,7 @@ class CollectionViewer(discord.ui.View):
             filter_text = f" ({self.selected_rarity})" if self.selected_rarity != "All" else ""
             embed = discord.Embed(
                 title=f"📂 {self.display_name}'s Collection",
-                description=f"No cards collected yet for **{set_name}**{filter_text}.\n\nOpen some packs with `!tcg` to start collecting!",
+                description=f"No cards collected yet for **{set_name}**{filter_text}.\n\nOpen some packs with `,tcg` to start collecting!",
                 color=0x3B82F6,
             )
             if self.selected_set_id:
@@ -805,7 +805,7 @@ class CollectionViewer(discord.ui.View):
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.author_id:
             await interaction.response.send_message(
-                "This isn't your collection! Use `!tcg collection` to view your own.",
+                "This isn't your collection! Use `,tcg collection` to view your own.",
                 ephemeral=True,
             )
             return False
@@ -909,7 +909,7 @@ class CollectionViewer(discord.ui.View):
             existing = get_pending_trade(self.cog.database, self.author_id, guild_id)
             if existing:
                 await interaction.response.send_message(
-                    "❌ You already have a pending trade! Use `!tcg trade` to view or cancel it.",
+                    "❌ You already have a pending trade! Use `,tcg trade` to view or cancel it.",
                     ephemeral=True,
                 )
                 return
@@ -1040,8 +1040,8 @@ class PokemonTCG(commands.Cog):
                         f"You have **{balance}/{MAX_PACK_BALANCE}** packs banked in "
                         f"**{guild.name}**.\n\n"
                         f"New packs won't accumulate past the cap, so "
-                        f"head over and open some with `!tcg`!\n\n"
-                        f"*To stop these reminders, use `!tcg remind` in the server.*"
+                        f"head over and open some with `,tcg`!\n\n"
+                        f"*To stop these reminders, use `,tcg remind` in the server.*"
                     ),
                     color=0xFFD700,
                 )
@@ -1097,10 +1097,10 @@ class PokemonTCG(commands.Cog):
         Warm Discord's image proxy cache.
 
         Usage:
-            !tcgset warmcache                — All sets, once
-            !tcgset warmcache base1          — Just Base Set, once
-            !tcgset warmcache base1 5        — Base Set, repeat 5 times
-            !tcgset warmcache all 3          — All sets, repeat 3 times
+            ,tcgset warmcache                — All sets, once
+            ,tcgset warmcache base1          — Just Base Set, once
+            ,tcgset warmcache base1 5        — Base Set, repeat 5 times
+            ,tcgset warmcache all 3          — All sets, repeat 3 times
         """
         if not self.card_pool.loaded:
             await ctx.send("❌ Card data not loaded.")
@@ -1140,8 +1140,8 @@ class PokemonTCG(commands.Cog):
         """Give a user extra pack opens. Can exceed the normal cap.
 
         Usage:
-            !tcgset givepack @user         — Give 1 extra pack
-            !tcgset givepack @user 5       — Give 5 extra packs
+            ,tcgset givepack @user         — Give 1 extra pack
+            ,tcgset givepack @user 5       — Give 5 extra packs
         """
         guild_id = ctx.guild.id if ctx.guild else 0
         amount = max(1, min(amount, 50))  # Sanity cap at 50
@@ -1170,7 +1170,7 @@ class PokemonTCG(commands.Cog):
     async def tcg(self, ctx: commands.Context):
         """Open Pokémon TCG booster packs and collect cards!"""
         if not self.card_pool.loaded:
-            await ctx.send("❌ Card data not loaded. Try `!tcgset reload`.")
+            await ctx.send("❌ Card data not loaded. Try `,tcgset reload`.")
             return
 
         selector = PackSelector(cog=self, author_id=ctx.author.id)
@@ -1182,9 +1182,9 @@ class PokemonTCG(commands.Cog):
 
     @tcg.command(name="open")
     async def tcg_open(self, ctx: commands.Context, set_id: str):
-        """Quick-open a booster pack: !tcg open base1"""
+        """Quick-open a booster pack: ,tcg open base1"""
         if not self.card_pool.loaded:
-            await ctx.send("❌ Card data not loaded. Try `!tcgset reload`.")
+            await ctx.send("❌ Card data not loaded. Try `,tcgset reload`.")
             return
 
         set_id = set_id.lower().strip()
@@ -1238,13 +1238,13 @@ class PokemonTCG(commands.Cog):
     async def tcg_packs(self, ctx: commands.Context):
         """Show available booster packs."""
         if not self.card_pool.loaded:
-            await ctx.send("❌ Card data not loaded. Try `!tcgset reload`.")
+            await ctx.send("❌ Card data not loaded. Try `,tcgset reload`.")
             return
 
         sets = self.card_pool.get_available_sets()
         embed = discord.Embed(
             title="📦 Available Booster Packs",
-            description="Use `!tcg` for the interactive selector, or `!tcg open <set_id>` to quick-open.",
+            description="Use `,tcg` for the interactive selector, or `,tcg open <set_id>` to quick-open.",
             color=0xFFD700,
         )
         for s in sets:
@@ -1267,7 +1267,7 @@ class PokemonTCG(commands.Cog):
     async def tcg_collection(self, ctx: commands.Context):
         """Browse your collected cards with filters."""
         if not self.card_pool.loaded:
-            await ctx.send("❌ Card data not loaded. Try `!tcgset reload`.")
+            await ctx.send("❌ Card data not loaded. Try `,tcgset reload`.")
             return
 
         guild_id = ctx.guild.id if ctx.guild else 0
@@ -1286,7 +1286,7 @@ class PokemonTCG(commands.Cog):
     async def tcg_showcase(self, ctx: commands.Context):
         """Browse another player's Holo and Rare cards."""
         if not self.card_pool.loaded:
-            await ctx.send("❌ Card data not loaded. Try `!tcgset reload`.")
+            await ctx.send("❌ Card data not loaded. Try `,tcgset reload`.")
             return
 
         guild_id = ctx.guild.id if ctx.guild else 0
@@ -1353,7 +1353,7 @@ class PokemonTCG(commands.Cog):
                     title="🔄 No Active Trade",
                     description=(
                         "You don't have any pending trades.\n\n"
-                        "To start a trade, browse your collection with `!tcg collection` "
+                        "To start a trade, browse your collection with `,tcg collection` "
                         "and click the **Trade** button on any card."
                     ),
                     color=0x8B8B8B,
@@ -1455,7 +1455,7 @@ class PokemonTCG(commands.Cog):
         if not rows:
             return discord.Embed(
                 title="🏆 TCG Leaderboard",
-                description="Nobody has collected any cards yet!\nUse `!tcg` to open your first pack.",
+                description="Nobody has collected any cards yet!\nUse `,tcg` to open your first pack.",
                 color=0xFFD700,
             )
  
@@ -1520,7 +1520,7 @@ class PokemonTCG(commands.Cog):
         if not rows:
             return discord.Embed(
                 title=f"📊 {display_name}'s Collection",
-                description="No cards collected yet! Use `!tcg` to open your first pack.",
+                description="No cards collected yet! Use `,tcg` to open your first pack.",
                 color=0x3B82F6,
             )
 

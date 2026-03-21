@@ -6,7 +6,7 @@ You need **two** directory trees: the **cog** (lives in your Red bot cogs) and t
 
 ### Card Data (from bulk downloader)
 ```
-/srv/pokemontcg/data/               ← configurable via !tcgset datadir
+/srv/pokemontcg/data/               ← configurable via ,tcgset datadir
 ├── cards.json                       ← master metadata (all sets, all cards)
 ├── pack_config.json                 ← booster pack compositions (copy from cog)
 ├── base1/
@@ -66,12 +66,12 @@ Copy the `pokemontcg/` cog folder into your Red bot's cog directory, then:
 
 | Command | Description |
 |---------|-------------|
-| `!tcg packs` | Show all available booster packs |
-| `!tcg open <set_id>` | Open a booster pack (e.g., `!tcg open base1`) |
-| `!tcg stats` | View your collection stats |
-| `!tcg stats @user` | View another user's stats |
-| `!tcgset datadir <path>` | (Admin) Set card data directory |
-| `!tcgset reload` | (Admin) Reload card data from disk |
+| `,tcg packs` | Show all available booster packs |
+| `,tcg open <set_id>` | Open a booster pack (e.g., `,tcg open base1`) |
+| `,tcg stats` | View your collection stats |
+| `,tcg stats @user` | View another user's stats |
+| `,tcgset datadir <path>` | (Admin) Set card data directory |
+| `,tcgset reload` | (Admin) Reload card data from disk |
 
 ## Pack Compositions (authentic WOTC era)
 

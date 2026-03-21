@@ -1,7 +1,7 @@
 """
 Showcase — Browse another player's Rare Holo and Rare cards.
 
-New command:  !tcg showcase
+New command:  ,tcg showcase
 Flow:
   1. Player dropdown (no @mention needed) → pick who to view
   2. Read-only collection viewer filtered to Rare Holo + Rare only
@@ -204,7 +204,7 @@ class ShowcasePlayerSelector(discord.ui.View):
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.author_id:
             await interaction.response.send_message(
-                "Use `!tcg showcase` to browse someone's collection!",
+                "Use `,tcg showcase` to browse someone's collection!",
                 ephemeral=True,
             )
             return False
@@ -462,7 +462,7 @@ class ShowcaseViewer(discord.ui.View):
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.author_id:
             await interaction.response.send_message(
-                "Use `!tcg showcase` to browse someone's collection!",
+                "Use `,tcg showcase` to browse someone's collection!",
                 ephemeral=True,
             )
             return False
