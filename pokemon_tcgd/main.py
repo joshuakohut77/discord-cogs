@@ -516,7 +516,7 @@ class PackSelector(discord.ui.View):
         await interaction.followup.send(embed=embed, view=viewer, ephemeral=True)
 
     @discord.ui.button(
-        label="View Potential", style=discord.ButtonStyle.secondary,
+        label="Card Pool", style=discord.ButtonStyle.secondary,
         emoji="🔍", row=1,
     )
     async def btn_potential(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -554,7 +554,7 @@ class PackSelector(discord.ui.View):
             )
             owned_ids = {row[0] for row in rows}
         except Exception as e:
-            log.error(f"View potential query failed: {e}")
+            log.error(f"Card Pool query failed: {e}")
 
         # Build the checklist — Holos first, then Rares
         # Deduplicate: a card in both pools only shows once (as Holo)
