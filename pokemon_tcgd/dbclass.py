@@ -36,8 +36,18 @@ class DatabasePool:
                 min_size=2,
                 max_size=10,
                 timeout=30,
-                open=True
+                # Health check: ping connection before handing it out.
+                # Detects dead connections killed by the DB server.
+                check=ConnectionPool.check_connection,
+                # Recycle connections every 10 minutes so they don't go
+                # stale waiting for the DB server to kill them.
+                max_lifetime=600,
+                # If the DB goes down, keep retrying for 5 minutes
+                # before giving up on restocking the pool.
+                reconnect_timeout=300,
+                open=True,
             )
+
     def close(self):
         """Close the connection pool"""
         if self._pool is not None:
