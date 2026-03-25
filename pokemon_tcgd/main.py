@@ -1641,7 +1641,11 @@ class PokemonTCG(commands.Cog):
     @commands.admin_or_permissions(administrator=True)
     async def tcgset_warmcache(self, ctx: commands.Context, set_id: str = None, repeats: int = 1):
         """
-        Warm Discord's image proxy cache.
+        Warm Discord's image proxy cache by sending card images in embeds.
+
+        Discord only caches images when they're actually displayed in an embed.
+        This sends cards in batches of 5 embeds (Discord max per message),
+        pauses briefly, then deletes the message to keep the channel clean.
 
         Usage:
             ,tcgset warmcache                — All sets, once
@@ -1671,15 +1675,48 @@ class PokemonTCG(commands.Cog):
             return
 
         total = len(cards) * repeats
-        msg = await ctx.send(f"🔄 Warming cache for **{len(cards)}** cards × {repeats} pass(es) = **{total}** requests...")
+        BATCH_SIZE = 5  # Discord allows up to 10 embeds per message; 5 is safe
+        DELAY = 1.5     # Seconds between batches (avoid rate limits)
 
-        count = 0
-        for _ in range(repeats):
-            for url in cards:
-                # Just reference the URL - Discord caches on first embed display
-                count += 1
+        msg = await ctx.send(
+            f"🔄 Warming cache for **{len(cards)}** cards × {repeats} pass(es) "
+            f"= **{total}** URLs. This will take a while..."
+        )
 
-        await msg.edit(content=f"✅ Cache warm complete! Touched **{count}** URLs.")
+        sent = 0
+        for pass_num in range(repeats):
+            for i in range(0, len(cards), BATCH_SIZE):
+                batch = cards[i : i + BATCH_SIZE]
+                embeds = []
+                for url in batch:
+                    embed = discord.Embed()
+                    embed.set_image(url=url)
+                    embeds.append(embed)
+
+                try:
+                    temp_msg = await ctx.send(embeds=embeds)
+                    sent += len(batch)
+                    # Give Discord a moment to fetch the images
+                    await asyncio.sleep(DELAY)
+                    # Delete to keep the channel clean
+                    await temp_msg.delete()
+                except discord.HTTPException as e:
+                    log.warning(f"Warmcache batch failed: {e}")
+                    await asyncio.sleep(3)  # Back off on errors
+
+                # Update progress every 50 cards
+                if sent % 50 < BATCH_SIZE:
+                    try:
+                        await msg.edit(
+                            content=(
+                                f"🔄 Warming cache... **{sent}/{total}** "
+                                f"(pass {pass_num + 1}/{repeats})"
+                            )
+                        )
+                    except discord.HTTPException:
+                        pass
+
+        await msg.edit(content=f"✅ Cache warm complete! Sent **{sent}** URLs across **{repeats}** pass(es).")
 
     @tcgset.command(name="givepack")
     @commands.admin_or_permissions(administrator=True)
