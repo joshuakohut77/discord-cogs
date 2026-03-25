@@ -70,10 +70,19 @@ RIP_MESSAGES = [
     "The foil glints as you rip it apart...",
 ]
 
+# Sort priority for multi-pack results (lower = shown first)
+RARITY_SORT_PRIORITY = {
+    "rare holo": 0,
+    "rare":      1,
+    "uncommon":  2,
+    "common":    3,
+    "energy":    4,
+}
+
 # ── Pack allowance settings ──
-PACKS_PER_DAY = 5           # Packs earned each day at midnight
-MAX_PACK_BALANCE = 20       # Max banked packs (5 days × 2/day)
-STARTING_BALANCE = 5        # Packs a brand new user starts with
+PACKS_PER_DAY = 10          # Packs earned each day at midnight
+MAX_PACK_BALANCE = 40       # Max banked packs (5 days × 2/day)
+STARTING_BALANCE = 10        # Packs a brand new user starts with
 RESET_TIMEZONE = ZoneInfo("America/New_York")  # Midnight Eastern
 
 
@@ -145,6 +154,15 @@ def _classify_rarity(rarity: str | None, is_holo: bool, category: str | None) ->
         return "Uncommon"
     return "Common"
 
+def _sort_cards_by_rarity(cards: list[dict]) -> list[dict]:
+    """Sort cards so Rare Holos appear first, then Rares, etc."""
+    def _sort_key(card):
+        if card.get("pulled_as_holo", False):
+            return (0, card.get("name", ""))
+        rarity = (card.get("rarity") or "common").lower()
+        priority = RARITY_SORT_PRIORITY.get(rarity, 3)
+        return (priority, card.get("name", ""))
+    return sorted(cards, key=_sort_key)
 
 # ═══════════════════════════════════════════════════════════
 #  Embed builders
@@ -262,6 +280,83 @@ def build_pack_summary_embed(cards: list[dict], set_name: str, set_id: str, pack
         embed.set_footer(text="Open another pack or check your stats!")
     return embed
 
+def build_multi_pack_summary_embed(
+    cards: list[dict],
+    set_name: str,
+    set_id: str,
+    pack_count: int,
+    packs_remaining: int | None = None,
+) -> discord.Embed:
+    """Summary embed for a multi-pack opening (5 or 10 packs)."""
+    embed = discord.Embed(
+        title=(
+            f"<:pokemon_trading_card:1481844443127611444> "
+            f"{set_name} — {pack_count}-Pack Summary"
+        ),
+        description=(
+            f"You opened **{pack_count} packs** and pulled "
+            f"**{len(cards)} cards**!"
+        ),
+        color=0xFFD700,
+    )
+    embed.set_thumbnail(url=set_logo_url(set_id))
+ 
+    # Count by rarity bucket
+    buckets = {
+        "Rare Holo": [],
+        "Rare": [],
+        "Uncommon": [],
+        "Common": [],
+        "Energy": [],
+    }
+    for card in cards:
+        bucket = _classify_rarity(
+            card.get("rarity"),
+            card.get("pulled_as_holo", False),
+            card.get("category"),
+        )
+        if bucket in buckets:
+            buckets[bucket].append(card)
+        else:
+            buckets["Common"].append(card)
+ 
+    lines = []
+    for rarity_name in ["Rare Holo", "Rare", "Uncommon", "Common", "Energy"]:
+        bucket_cards = buckets[rarity_name]
+        emoji = RARITY_EMOJI.get(rarity_name.lower(), "")
+        if bucket_cards:
+            # Deduplicate names and show counts
+            seen = {}
+            for c in bucket_cards:
+                n = c.get("name", "?")
+                seen[n] = seen.get(n, 0) + 1
+            name_parts = []
+            for n, cnt in seen.items():
+                if cnt > 1:
+                    name_parts.append(f"{n} ×{cnt}")
+                else:
+                    name_parts.append(n)
+            lines.append(
+                f"{emoji} **{rarity_name}** ({len(bucket_cards)}): "
+                f"{', '.join(name_parts)}"
+            )
+        else:
+            lines.append(f"{emoji} **{rarity_name}** (0)")
+ 
+    embed.add_field(
+        name="Pull Breakdown",
+        value="\n".join(lines),
+        inline=False,
+    )
+ 
+    footer_parts = []
+    if packs_remaining is not None:
+        s = "s" if packs_remaining != 1 else ""
+        footer_parts.append(f"📦 {packs_remaining} pack{s} remaining")
+    footer_parts.append("Open another pack or check your stats!")
+    embed.set_footer(text=" • ".join(footer_parts))
+    return embed
+
 
 def build_collection_card_embed(
     card_data: dict, count: int, index: int, total: int,
@@ -368,35 +463,44 @@ def build_collection_summary_embed(
 # ═══════════════════════════════════════════════════════════
 
 class PackSelector(discord.ui.View):
-    """Interactive pack selection: dropdown to pick a set, button to open."""
-
-    def __init__(self, cog: "PokemonTCG", author_id: int, timeout: float = 120):
+    """
+    Set-selection UI with Open Pack, Open 5, Open 10 buttons.
+ 
+    Row 0: Set dropdown
+    Row 1: Open Pack | Open 5 | Open 10
+    Row 2: Stats | Collection
+    """
+ 
+    def __init__(self, cog, author_id: int, timeout: float = 120):
         super().__init__(timeout=timeout)
         self.cog = cog
         self.author_id = author_id
         self.selected_set_id: str | None = None
         self.message: discord.Message | None = None
-
-        sets = cog.card_pool.get_available_sets()
-        options = []
-        for s in sets:
-            options.append(discord.SelectOption(
-                label=s["name"],
-                value=s["set_id"],
-                description=f"{s['total_in_set']} cards • {s['year']}",
-                emoji=parse_emoji(s["emoji"]),
-            ))
-        self.set_select.options = options
-
+ 
+        # Populate the dropdown with available sets
+        available = cog.card_pool.get_available_sets()
+        for s in available[:25]:
+            sid = s["set_id"]
+            config = cog.card_pool.pack_config.get(sid, {})
+            emoji_str = config.get("emoji", "📦")
+            emoji = parse_emoji(emoji_str)
+            self.set_select.add_option(
+                label=config.get("name", sid),
+                value=sid,
+                description=config.get("description", "")[:100],
+                emoji=emoji,
+            )
+ 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.author_id:
             await interaction.response.send_message(
-                "Use `,tcg` to open your own pack selector!",
+                "Use `!tcg` to open your own pack selector!",
                 ephemeral=True,
             )
             return False
         return True
-
+ 
     async def on_timeout(self):
         for item in self.children:
             item.disabled = True
@@ -405,72 +509,115 @@ class PackSelector(discord.ui.View):
                 await self.message.edit(view=self)
             except discord.HTTPException:
                 pass
-
+ 
+    def _update_open_buttons(self):
+        """Enable/disable all open buttons based on set selection."""
+        has_set = self.selected_set_id is not None
+        self.btn_open.disabled = not has_set
+        self.btn_open5.disabled = not has_set
+        self.btn_open10.disabled = not has_set
+ 
+        if has_set:
+            config = self.cog.card_pool.pack_config.get(
+                self.selected_set_id, {},
+            )
+            self.btn_open.label = f"Open {config.get('name', 'Pack')}"
+ 
+    # ── Row 0: Set dropdown ──────────────────────────────
+ 
     @discord.ui.select(
         placeholder="Choose a booster pack...",
         min_values=1, max_values=1,
     )
-    async def set_select(self, interaction: discord.Interaction, select: discord.ui.Select):
+    async def set_select(
+        self, interaction: discord.Interaction, select: discord.ui.Select,
+    ):
         self.selected_set_id = select.values[0]
-        config = self.cog.card_pool.pack_config.get(self.selected_set_id, {})
-
-        self.btn_open.disabled = False
-        self.btn_open.label = f"Open {config.get('name', 'Pack')}"
-
+        self._update_open_buttons()
+ 
         guild_id = interaction.guild.id if interaction.guild else 0
-        balance = await self.cog._get_pack_balance(interaction.user.id, guild_id)
-
-        embed = build_set_preview_embed(self.selected_set_id, config, packs_remaining=balance)
+        balance = await self.cog._get_pack_balance(
+            interaction.user.id, guild_id,
+        )
+ 
+        config = self.cog.card_pool.pack_config.get(
+            self.selected_set_id, {},
+        )
+        embed = build_set_preview_embed(
+            self.selected_set_id, config, packs_remaining=balance,
+        )
         await interaction.response.edit_message(embed=embed, view=self)
-
+ 
+    # ── Row 1: Open Pack / Open 5 / Open 10 ─────────────
+ 
     @discord.ui.button(
-        label="Open Pack", style=discord.ButtonStyle.success,
-        emoji="📦", disabled=True, row=1,
+        label="Open Pack",
+        style=discord.ButtonStyle.success,
+        emoji="📦",
+        disabled=True,
+        row=1,
     )
-    async def btn_open(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def btn_open(
+        self, interaction: discord.Interaction, button: discord.ui.Button,
+    ):
         if not self.selected_set_id:
             return
-
+ 
         set_id = self.selected_set_id
         config = self.cog.card_pool.pack_config.get(set_id, {})
         set_name = config.get("name", set_id)
-
+ 
         # Check pack balance
         guild_id = interaction.guild.id if interaction.guild else 0
-        balance = await self.cog._get_pack_balance(interaction.user.id, guild_id)
+        balance = await self.cog._get_pack_balance(
+            interaction.user.id, guild_id,
+        )
         if balance <= 0:
             now_et = datetime.now(RESET_TIMEZONE)
-            midnight = (now_et + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
-            minutes_left = int((midnight - now_et).total_seconds() / 60)
+            midnight = (now_et + timedelta(days=1)).replace(
+                hour=0, minute=0, second=0, microsecond=0,
+            )
+            minutes_left = int(
+                (midnight - now_et).total_seconds() / 60,
+            )
             hours = minutes_left // 60
             mins = minutes_left % 60
             await interaction.response.send_message(
-                f"📦 You're out of packs! You'll get **{PACKS_PER_DAY}** more at midnight ET "
+                f"📦 You're out of packs! You'll get "
+                f"**{PACKS_PER_DAY}** more at midnight ET "
                 f"(in about **{hours}h {mins}m**).",
                 ephemeral=True,
             )
             return
-
+ 
         # Generate the pack
         cards = self.cog.card_pool.open_pack(set_id)
         if not cards:
-            await interaction.response.send_message("❌ Failed to generate pack.", ephemeral=True)
+            await interaction.response.send_message(
+                "❌ Failed to generate pack.", ephemeral=True,
+            )
             return
-
+ 
         # Deduct a pack and save
-        new_balance = await self.cog._spend_pack(interaction.user.id, guild_id)
-        await self.cog._save_pack_to_db(interaction.user.id, guild_id, set_id, cards)
-
+        new_balance = await self.cog._spend_pack(
+            interaction.user.id, guild_id,
+        )
+        await self.cog._save_pack_to_db(
+            interaction.user.id, guild_id, set_id, cards,
+        )
+ 
         # Stop the selector
         self.stop()
-
+ 
         # Show the foil wrapper rip animation
         rip_embed = build_rip_embed(set_id, config)
-        await interaction.response.edit_message(embed=rip_embed, view=None)
-
+        await interaction.response.edit_message(
+            embed=rip_embed, view=None,
+        )
+ 
         # Wait for the dramatic reveal
         await asyncio.sleep(3.5)
-
+ 
         # Transition to the card viewer starting at card 1
         viewer = PackViewer(
             cog=self.cog,
@@ -481,27 +628,160 @@ class PackSelector(discord.ui.View):
             packs_remaining=new_balance,
         )
         viewer._update_buttons()
-
+ 
         await self.message.edit(embed=viewer.get_embed(), view=viewer)
         viewer.message = self.message
-
+ 
     @discord.ui.button(
-        label="Stats", style=discord.ButtonStyle.secondary,
-        emoji="📊", row=1,
+        label="Open 5",
+        style=discord.ButtonStyle.success,
+        emoji="🎁",
+        disabled=True,
+        row=1,
     )
-    async def btn_stats(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def btn_open5(
+        self, interaction: discord.Interaction, button: discord.ui.Button,
+    ):
+        await self._open_multi_packs(interaction, 5)
+ 
+    @discord.ui.button(
+        label="Open 10",
+        style=discord.ButtonStyle.success,
+        emoji="🎊",
+        disabled=True,
+        row=1,
+    )
+    async def btn_open10(
+        self, interaction: discord.Interaction, button: discord.ui.Button,
+    ):
+        await self._open_multi_packs(interaction, 10)
+ 
+    async def _open_multi_packs(
+        self, interaction: discord.Interaction, count: int,
+    ):
+        """Shared logic for Open 5 and Open 10 buttons."""
+        if not self.selected_set_id:
+            return
+ 
+        set_id = self.selected_set_id
+        config = self.cog.card_pool.pack_config.get(set_id, {})
+        set_name = config.get("name", set_id)
+ 
+        # Check pack balance
+        guild_id = interaction.guild.id if interaction.guild else 0
+        balance = await self.cog._get_pack_balance(
+            interaction.user.id, guild_id,
+        )
+        if balance < count:
+            if balance <= 0:
+                now_et = datetime.now(RESET_TIMEZONE)
+                midnight = (now_et + timedelta(days=1)).replace(
+                    hour=0, minute=0, second=0, microsecond=0,
+                )
+                minutes_left = int(
+                    (midnight - now_et).total_seconds() / 60,
+                )
+                hours = minutes_left // 60
+                mins = minutes_left % 60
+                await interaction.response.send_message(
+                    f"📦 You're out of packs! You'll get "
+                    f"**{PACKS_PER_DAY}** more at midnight ET "
+                    f"(in about **{hours}h {mins}m**).",
+                    ephemeral=True,
+                )
+            else:
+                await interaction.response.send_message(
+                    f"📦 You only have **{balance}** "
+                    f"pack{'s' if balance != 1 else ''} "
+                    f"but need **{count}** for this option. "
+                    f"Try opening packs one at a time, "
+                    f"or wait for more!",
+                    ephemeral=True,
+                )
+            return
+ 
+        # Generate all packs at once
+        all_cards = []
+        for _ in range(count):
+            cards = self.cog.card_pool.open_pack(set_id)
+            if cards:
+                all_cards.extend(cards)
+ 
+        if not all_cards:
+            await interaction.response.send_message(
+                "❌ Failed to generate packs.", ephemeral=True,
+            )
+            return
+ 
+        # Deduct packs and save all cards to DB
+        new_balance = await self.cog._spend_packs(
+            interaction.user.id, guild_id, count,
+        )
+        await self.cog._save_pack_to_db(
+            interaction.user.id, guild_id, set_id, all_cards,
+        )
+ 
+        # Sort: Holos first, then Rares, then the rest
+        sorted_cards = _sort_cards_by_rarity(all_cards)
+ 
+        # Stop the selector
+        self.stop()
+ 
+        # Show the foil wrapper rip animation
+        rip_embed = build_rip_embed(set_id, config)
+        rip_embed.title = f"🎊 Ripping open {count} packs..."
+        await interaction.response.edit_message(
+            embed=rip_embed, view=None,
+        )
+ 
+        # Wait for the dramatic reveal
+        await asyncio.sleep(3.5)
+ 
+        # Transition to the multi-pack viewer
+        viewer = MultiPackViewer(
+            cog=self.cog,
+            cards=sorted_cards,
+            set_name=set_name,
+            set_id=set_id,
+            author_id=interaction.user.id,
+            pack_count=count,
+            packs_remaining=new_balance,
+        )
+        viewer._update_buttons()
+ 
+        await self.message.edit(
+            embed=viewer.get_embed(), view=viewer,
+        )
+        viewer.message = self.message
+ 
+    # ── Row 2: Stats & Collection (moved from row 1) ─────
+ 
+    @discord.ui.button(
+        label="Stats",
+        style=discord.ButtonStyle.secondary,
+        emoji="📊",
+        row=2,
+    )
+    async def btn_stats(
+        self, interaction: discord.Interaction, button: discord.ui.Button,
+    ):
         await interaction.response.defer(ephemeral=True)
         guild_id = interaction.guild.id if interaction.guild else 0
         embed = await self.cog._build_stats_embed(
-            interaction.user.id, guild_id, interaction.user.display_name
+            interaction.user.id, guild_id,
+            interaction.user.display_name,
         )
         await interaction.followup.send(embed=embed, ephemeral=True)
-
+ 
     @discord.ui.button(
-        label="Collection", style=discord.ButtonStyle.secondary,
-        emoji="📂", row=1,
+        label="Collection",
+        style=discord.ButtonStyle.secondary,
+        emoji="📂",
+        row=2,
     )
-    async def btn_collection(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def btn_collection(
+        self, interaction: discord.Interaction, button: discord.ui.Button,
+    ):
         """Open the collection viewer."""
         await interaction.response.defer(ephemeral=True)
         guild_id = interaction.guild.id if interaction.guild else 0
@@ -513,122 +793,9 @@ class PackSelector(discord.ui.View):
         )
         await viewer.initialize()
         embed = viewer.get_embed()
-        await interaction.followup.send(embed=embed, view=viewer, ephemeral=True)
-
-    @discord.ui.button(
-        label="Card Pool", style=discord.ButtonStyle.secondary,
-        emoji="🔍", row=1,
-    )
-    async def btn_potential(self, interaction: discord.Interaction, button: discord.ui.Button):
-        """Show all Holos and Rares available in the selected set with owned status."""
-        if not self.selected_set_id:
-            await interaction.response.send_message(
-                "Pick a set first!", ephemeral=True,
-            )
-            return
-
-        await interaction.response.defer(ephemeral=True)
-
-        set_id = self.selected_set_id
-        config = self.cog.card_pool.pack_config.get(set_id, {})
-        set_name = config.get("name", set_id)
-        pool = self.cog.card_pool.sets.get(set_id, {})
-
-        # Get the user's owned card IDs for this set
-        guild_id = interaction.guild.id if interaction.guild else 0
-        owned_ids = set()
-        try:
-            rows = self.cog.database.queryAll(
-                """
-                SELECT DISTINCT card_id
-                FROM tcg_user_cards
-                WHERE user_id = %(user_id)s
-                  AND guild_id = %(guild_id)s
-                  AND set_id = %(set_id)s
-                """,
-                {
-                    "user_id": interaction.user.id,
-                    "guild_id": guild_id,
-                    "set_id": set_id,
-                },
-            )
-            owned_ids = {row[0] for row in rows}
-        except Exception as e:
-            log.error(f"Card Pool query failed: {e}")
-
-        # Build the checklist — Holos first, then Rares
-        # Deduplicate: a card in both pools only shows once (as Holo)
-        seen_ids = set()
-        lines_holo = []
-        lines_rare = []
-
-        holo_cards = sorted(
-            pool.get("rares_holo", []),
-            key=lambda c: _natural_sort_key(c.get("id", "")),
+        await interaction.followup.send(
+            embed=embed, view=viewer, ephemeral=True,
         )
-        rare_cards = sorted(
-            pool.get("rares_normal", []),
-            key=lambda c: _natural_sort_key(c.get("id", "")),
-        )
-
-        for card in holo_cards:
-            cid = card.get("id", "")
-            if cid in seen_ids:
-                continue
-            seen_ids.add(cid)
-            name = card.get("name", "Unknown")
-            local_id = card.get("local_id", "?")
-            mark = "✅" if cid in owned_ids else "❌"
-            lines_holo.append(f"{mark} #{local_id} {name}")
-
-        for card in rare_cards:
-            cid = card.get("id", "")
-            if cid in seen_ids:
-                continue
-            seen_ids.add(cid)
-            name = card.get("name", "Unknown")
-            local_id = card.get("local_id", "?")
-            mark = "✅" if cid in owned_ids else "❌"
-            lines_rare.append(f"{mark} #{local_id} {name}")
-
-        # Count totals
-        total_available = len(lines_holo) + len(lines_rare)
-        total_owned = sum(
-            1 for line in lines_holo + lines_rare if line.startswith("✅")
-        )
-
-        # Build description
-        parts = []
-        parts.append(f"**{total_owned}/{total_available}** collected\n")
-
-        if lines_holo:
-            parts.append(f"**✨ Rare Holo** ({len(lines_holo)})")
-            parts.append("\n".join(lines_holo))
-
-        if lines_rare:
-            if lines_holo:
-                parts.append("")  # blank line separator
-            parts.append(f"**⭐ Rare** ({len(lines_rare)})")
-            parts.append("\n".join(lines_rare))
-
-        if not lines_holo and not lines_rare:
-            parts.append("No Holos or Rares in this set.")
-
-        description = "\n".join(parts)
-
-        # Discord embed description limit is 4096 chars
-        if len(description) > 4000:
-            description = description[:3997] + "..."
-
-        embed = discord.Embed(
-            title=f"🔍 {set_name} — Potential Pulls",
-            description=description,
-            color=0xFFD700,
-        )
-        embed.set_thumbnail(url=set_logo_url(set_id))
-        embed.set_footer(text="✅ = owned • ❌ = not yet pulled")
-
-        await interaction.followup.send(embed=embed, ephemeral=True)
 
 # ═══════════════════════════════════════════════════════════
 #  Pack Viewer UI (navigate cards, summary at end)
@@ -716,6 +883,155 @@ class PackViewer(discord.ui.View):
         selector = PackSelector(cog=self.cog, author_id=self.author_id)
         guild_id = interaction.guild.id if interaction.guild else 0
         balance = await self.cog._get_pack_balance(interaction.user.id, guild_id)
+        embed = build_welcome_embed(packs_remaining=balance)
+        await interaction.response.edit_message(embed=embed, view=selector)
+        selector.message = self.message
+
+
+# ═══════════════════════════════════════════════════════════
+#  MultiPack Viewer
+# ═══════════════════════════════════════════════════════════
+
+class MultiPackViewer(discord.ui.View):
+    """
+    Card-by-card viewer for a multi-pack opening (5 or 10).
+    Cards are pre-sorted: Holos first, then Rares, etc.
+    Last page is a summary embed.
+    """
+ 
+    def __init__(
+        self,
+        cog,  # "PokemonTCG"
+        cards: list[dict],
+        set_name: str,
+        set_id: str,
+        author_id: int,
+        pack_count: int,
+        packs_remaining: int | None = None,
+        timeout: float = 300,
+    ):
+        super().__init__(timeout=timeout)
+        self.cog = cog
+        self.cards = cards  # Already sorted by rarity
+        self.set_name = set_name
+        self.set_id = set_id
+        self.author_id = author_id
+        self.pack_count = pack_count
+        self.packs_remaining = packs_remaining
+        self.index = 0
+        self.message: discord.Message | None = None
+ 
+    @property
+    def max_index(self) -> int:
+        return len(self.cards)  # last index = summary page
+ 
+    def get_embed(self) -> discord.Embed:
+        if self.index >= len(self.cards):
+            return build_multi_pack_summary_embed(
+                self.cards,
+                self.set_name,
+                self.set_id,
+                self.pack_count,
+                packs_remaining=self.packs_remaining,
+            )
+        card = self.cards[self.index]
+        embed = build_card_embed(
+            card, self.index, len(self.cards), self.set_name,
+        )
+        # Override footer to show multi-pack context
+        rarity = card.get("rarity") or "Unknown"
+        pulled_holo = card.get("pulled_as_holo", False)
+        rarity_display = f"{'✨ ' if pulled_holo else ''}{rarity}"
+        category = card.get("category") or "Unknown"
+        embed.set_footer(
+            text=(
+                f"Card {self.index + 1}/{len(self.cards)} • "
+                f"{self.pack_count}-Pack Opening • {self.set_name} • "
+                f"{category} • {rarity_display}"
+            )
+        )
+        return embed
+ 
+    def _update_buttons(self):
+        self.btn_prev.disabled = self.index <= 0
+        self.btn_next.disabled = self.index >= self.max_index
+        if self.index >= len(self.cards):
+            self.btn_next.label = "Summary"
+        else:
+            self.btn_next.label = "Next ▶"
+ 
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user.id != self.author_id:
+            await interaction.response.send_message(
+                "This isn't your pack opening! Use `!tcg` to open your own.",
+                ephemeral=True,
+            )
+            return False
+        return True
+ 
+    async def on_timeout(self):
+        for item in self.children:
+            item.disabled = True
+        if self.message:
+            try:
+                await self.message.edit(view=self)
+            except discord.HTTPException:
+                pass
+ 
+    @discord.ui.button(
+        label="◀ Prev", style=discord.ButtonStyle.secondary, row=0,
+    )
+    async def btn_prev(
+        self, interaction: discord.Interaction, button: discord.ui.Button,
+    ):
+        self.index = max(0, self.index - 1)
+        self._update_buttons()
+        await interaction.response.edit_message(
+            embed=self.get_embed(), view=self,
+        )
+ 
+    @discord.ui.button(
+        label="Next ▶", style=discord.ButtonStyle.secondary, row=0,
+    )
+    async def btn_next(
+        self, interaction: discord.Interaction, button: discord.ui.Button,
+    ):
+        self.index = min(self.max_index, self.index + 1)
+        self._update_buttons()
+        await interaction.response.edit_message(
+            embed=self.get_embed(), view=self,
+        )
+ 
+    @discord.ui.button(
+        label="Jump to Summary",
+        style=discord.ButtonStyle.primary,
+        emoji="📋",
+        row=0,
+    )
+    async def btn_summary(
+        self, interaction: discord.Interaction, button: discord.ui.Button,
+    ):
+        self.index = self.max_index
+        self._update_buttons()
+        await interaction.response.edit_message(
+            embed=self.get_embed(), view=self,
+        )
+ 
+    @discord.ui.button(
+        label="Open Another",
+        style=discord.ButtonStyle.success,
+        emoji="📦",
+        row=1,
+    )
+    async def btn_another(
+        self, interaction: discord.Interaction, button: discord.ui.Button,
+    ):
+        self.stop()
+        selector = PackSelector(cog=self.cog, author_id=self.author_id)
+        guild_id = interaction.guild.id if interaction.guild else 0
+        balance = await self.cog._get_pack_balance(
+            interaction.user.id, guild_id,
+        )
         embed = build_welcome_embed(packs_remaining=balance)
         await interaction.response.edit_message(embed=embed, view=selector)
         selector.message = self.message
@@ -1877,6 +2193,29 @@ class PokemonTCG(commands.Cog):
             )
         except Exception as e:
             log.error(f"Pack spend failed: {e}")
+        return new_balance
+
+    async def _spend_packs(self, user_id: int, guild_id: int, count: int) -> int:
+        """Deduct multiple packs at once. Returns the new balance."""
+        balance = await self._get_pack_balance(user_id, guild_id)
+        new_balance = max(0, balance - count)
+ 
+        try:
+            self.database.execute(
+                """
+                UPDATE tcg_pack_allowance
+                SET balance = %(balance)s,
+                    last_reminded_at = NULL
+                WHERE user_id = %(user_id)s AND guild_id = %(guild_id)s
+                """,
+                {
+                    "balance": new_balance,
+                    "user_id": user_id,
+                    "guild_id": guild_id,
+                },
+            )
+        except Exception as e:
+            log.error(f"Multi-pack spend failed: {e}")
         return new_balance
 
     # ─── Database ──────────────────────────────────────────
