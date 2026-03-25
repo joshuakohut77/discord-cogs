@@ -779,6 +779,123 @@ class PackSelector(discord.ui.View):
         emoji="📂",
         row=2,
     )
+
+    @discord.ui.button(
+        label="Card Pool",
+        style=discord.ButtonStyle.secondary,
+        emoji="🔍",
+        row=2,
+    )
+    async def btn_potential(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """Show all Holos and Rares available in the selected set with owned status."""
+        if not self.selected_set_id:
+            await interaction.response.send_message(
+                "Pick a set first!", ephemeral=True,
+            )
+            return
+
+        await interaction.response.defer(ephemeral=True)
+
+        set_id = self.selected_set_id
+        config = self.cog.card_pool.pack_config.get(set_id, {})
+        set_name = config.get("name", set_id)
+        pool = self.cog.card_pool.sets.get(set_id, {})
+
+        # Get the user's owned card IDs for this set
+        guild_id = interaction.guild.id if interaction.guild else 0
+        owned_ids = set()
+        try:
+            rows = self.cog.database.queryAll(
+                """
+                SELECT DISTINCT card_id
+                FROM tcg_user_cards
+                WHERE user_id = %(user_id)s
+                  AND guild_id = %(guild_id)s
+                  AND set_id = %(set_id)s
+                """,
+                {
+                    "user_id": interaction.user.id,
+                    "guild_id": guild_id,
+                    "set_id": set_id,
+                },
+            )
+            owned_ids = {row[0] for row in rows}
+        except Exception as e:
+            log.error(f"Card Pool query failed: {e}")
+
+        # Build the checklist — Holos first, then Rares
+        seen_ids = set()
+        lines_holo = []
+        lines_rare = []
+
+        holo_cards = sorted(
+            pool.get("rares_holo", []),
+            key=lambda c: _natural_sort_key(c.get("id", "")),
+        )
+        rare_cards = sorted(
+            pool.get("rares_normal", []),
+            key=lambda c: _natural_sort_key(c.get("id", "")),
+        )
+
+        for card in holo_cards:
+            cid = card.get("id", "")
+            if cid in seen_ids:
+                continue
+            seen_ids.add(cid)
+            name = card.get("name", "Unknown")
+            local_id = card.get("local_id", "?")
+            mark = "✅" if cid in owned_ids else "❌"
+            lines_holo.append(f"{mark} #{local_id} {name}")
+
+        for card in rare_cards:
+            cid = card.get("id", "")
+            if cid in seen_ids:
+                continue
+            seen_ids.add(cid)
+            name = card.get("name", "Unknown")
+            local_id = card.get("local_id", "?")
+            mark = "✅" if cid in owned_ids else "❌"
+            lines_rare.append(f"{mark} #{local_id} {name}")
+
+        # Count totals
+        total_available = len(lines_holo) + len(lines_rare)
+        total_owned = sum(
+            1 for line in lines_holo + lines_rare if line.startswith("✅")
+        )
+
+        # Build description
+        parts = []
+        parts.append(f"**{total_owned}/{total_available}** collected\n")
+
+        if lines_holo:
+            parts.append(f"**✨ Rare Holo** ({len(lines_holo)})")
+            parts.append("\n".join(lines_holo))
+
+        if lines_rare:
+            if lines_holo:
+                parts.append("")  # blank line separator
+            parts.append(f"**⭐ Rare** ({len(lines_rare)})")
+            parts.append("\n".join(lines_rare))
+
+        if not lines_holo and not lines_rare:
+            parts.append("No Holos or Rares in this set.")
+
+        description = "\n".join(parts)
+
+        # Discord embed description limit is 4096 chars
+        if len(description) > 4000:
+            description = description[:3997] + "..."
+
+        embed = discord.Embed(
+            title=f"🔍 {set_name} — Potential Pulls",
+            description=description,
+            color=0xFFD700,
+        )
+        embed.set_thumbnail(url=set_logo_url(set_id))
+        embed.set_footer(text="✅ = owned • ❌ = not yet pulled")
+
+        await interaction.followup.send(embed=embed, ephemeral=True)
+
     async def btn_collection(
         self, interaction: discord.Interaction, button: discord.ui.Button,
     ):
