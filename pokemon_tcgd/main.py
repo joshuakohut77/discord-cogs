@@ -1676,7 +1676,7 @@ class PokemonTCG(commands.Cog):
 
         total = len(cards) * repeats
         BATCH_SIZE = 5  # Discord allows up to 10 embeds per message; 5 is safe
-        DELAY = 1.5     # Seconds between batches (avoid rate limits)
+        DELAY = 3.5     # Seconds between batches (avoid rate limits)
 
         msg = await ctx.send(
             f"🔄 Warming cache for **{len(cards)}** cards × {repeats} pass(es) "
