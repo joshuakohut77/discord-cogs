@@ -465,19 +465,19 @@ def build_collection_summary_embed(
 class PackSelector(discord.ui.View):
     """
     Set-selection UI with Open Pack, Open 5, Open 10 buttons.
- 
+
     Row 0: Set dropdown
     Row 1: Open Pack | Open 5 | Open 10
-    Row 2: Stats | Collection
+    Row 2: Stats | Collection | Card Pool
     """
- 
+
     def __init__(self, cog, author_id: int, timeout: float = 120):
         super().__init__(timeout=timeout)
         self.cog = cog
         self.author_id = author_id
         self.selected_set_id: str | None = None
         self.message: discord.Message | None = None
- 
+
         # Populate the dropdown with available sets
         available = cog.card_pool.get_available_sets()
         for s in available[:25]:
@@ -491,7 +491,7 @@ class PackSelector(discord.ui.View):
                 description=config.get("description", "")[:100],
                 emoji=emoji,
             )
- 
+
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.author_id:
             await interaction.response.send_message(
@@ -500,7 +500,7 @@ class PackSelector(discord.ui.View):
             )
             return False
         return True
- 
+
     async def on_timeout(self):
         for item in self.children:
             item.disabled = True
@@ -509,22 +509,22 @@ class PackSelector(discord.ui.View):
                 await self.message.edit(view=self)
             except discord.HTTPException:
                 pass
- 
+
     def _update_open_buttons(self):
         """Enable/disable all open buttons based on set selection."""
         has_set = self.selected_set_id is not None
         self.btn_open.disabled = not has_set
         self.btn_open5.disabled = not has_set
         self.btn_open10.disabled = not has_set
- 
+
         if has_set:
             config = self.cog.card_pool.pack_config.get(
                 self.selected_set_id, {},
             )
             self.btn_open.label = f"Open {config.get('name', 'Pack')}"
- 
+
     # ── Row 0: Set dropdown ──────────────────────────────
- 
+
     @discord.ui.select(
         placeholder="Choose a booster pack...",
         min_values=1, max_values=1,
@@ -534,12 +534,12 @@ class PackSelector(discord.ui.View):
     ):
         self.selected_set_id = select.values[0]
         self._update_open_buttons()
- 
+
         guild_id = interaction.guild.id if interaction.guild else 0
         balance = await self.cog._get_pack_balance(
             interaction.user.id, guild_id,
         )
- 
+
         config = self.cog.card_pool.pack_config.get(
             self.selected_set_id, {},
         )
@@ -547,9 +547,9 @@ class PackSelector(discord.ui.View):
             self.selected_set_id, config, packs_remaining=balance,
         )
         await interaction.response.edit_message(embed=embed, view=self)
- 
+
     # ── Row 1: Open Pack / Open 5 / Open 10 ─────────────
- 
+
     @discord.ui.button(
         label="Open Pack",
         style=discord.ButtonStyle.success,
@@ -562,11 +562,11 @@ class PackSelector(discord.ui.View):
     ):
         if not self.selected_set_id:
             return
- 
+
         set_id = self.selected_set_id
         config = self.cog.card_pool.pack_config.get(set_id, {})
         set_name = config.get("name", set_id)
- 
+
         # Check pack balance
         guild_id = interaction.guild.id if interaction.guild else 0
         balance = await self.cog._get_pack_balance(
@@ -589,7 +589,7 @@ class PackSelector(discord.ui.View):
                 ephemeral=True,
             )
             return
- 
+
         # Generate the pack
         cards = self.cog.card_pool.open_pack(set_id)
         if not cards:
@@ -597,7 +597,7 @@ class PackSelector(discord.ui.View):
                 "❌ Failed to generate pack.", ephemeral=True,
             )
             return
- 
+
         # Deduct a pack and save
         new_balance = await self.cog._spend_pack(
             interaction.user.id, guild_id,
@@ -605,19 +605,19 @@ class PackSelector(discord.ui.View):
         await self.cog._save_pack_to_db(
             interaction.user.id, guild_id, set_id, cards,
         )
- 
+
         # Stop the selector
         self.stop()
- 
+
         # Show the foil wrapper rip animation
         rip_embed = build_rip_embed(set_id, config)
         await interaction.response.edit_message(
             embed=rip_embed, view=None,
         )
- 
+
         # Wait for the dramatic reveal
         await asyncio.sleep(3.5)
- 
+
         # Transition to the card viewer starting at card 1
         viewer = PackViewer(
             cog=self.cog,
@@ -628,10 +628,10 @@ class PackSelector(discord.ui.View):
             packs_remaining=new_balance,
         )
         viewer._update_buttons()
- 
+
         await self.message.edit(embed=viewer.get_embed(), view=viewer)
         viewer.message = self.message
- 
+
     @discord.ui.button(
         label="Open 5",
         style=discord.ButtonStyle.success,
@@ -643,7 +643,7 @@ class PackSelector(discord.ui.View):
         self, interaction: discord.Interaction, button: discord.ui.Button,
     ):
         await self._open_multi_packs(interaction, 5)
- 
+
     @discord.ui.button(
         label="Open 10",
         style=discord.ButtonStyle.success,
@@ -655,18 +655,18 @@ class PackSelector(discord.ui.View):
         self, interaction: discord.Interaction, button: discord.ui.Button,
     ):
         await self._open_multi_packs(interaction, 10)
- 
+
     async def _open_multi_packs(
         self, interaction: discord.Interaction, count: int,
     ):
         """Shared logic for Open 5 and Open 10 buttons."""
         if not self.selected_set_id:
             return
- 
+
         set_id = self.selected_set_id
         config = self.cog.card_pool.pack_config.get(set_id, {})
         set_name = config.get("name", set_id)
- 
+
         # Check pack balance
         guild_id = interaction.guild.id if interaction.guild else 0
         balance = await self.cog._get_pack_balance(
@@ -699,20 +699,20 @@ class PackSelector(discord.ui.View):
                     ephemeral=True,
                 )
             return
- 
+
         # Generate all packs at once
         all_cards = []
         for _ in range(count):
             cards = self.cog.card_pool.open_pack(set_id)
             if cards:
                 all_cards.extend(cards)
- 
+
         if not all_cards:
             await interaction.response.send_message(
                 "❌ Failed to generate packs.", ephemeral=True,
             )
             return
- 
+
         # Deduct packs and save all cards to DB
         new_balance = await self.cog._spend_packs(
             interaction.user.id, guild_id, count,
@@ -720,23 +720,23 @@ class PackSelector(discord.ui.View):
         await self.cog._save_pack_to_db(
             interaction.user.id, guild_id, set_id, all_cards,
         )
- 
+
         # Sort: Holos first, then Rares, then the rest
         sorted_cards = _sort_cards_by_rarity(all_cards)
- 
+
         # Stop the selector
         self.stop()
- 
+
         # Show the foil wrapper rip animation
         rip_embed = build_rip_embed(set_id, config)
         rip_embed.title = f"🎊 Ripping open {count} packs..."
         await interaction.response.edit_message(
             embed=rip_embed, view=None,
         )
- 
+
         # Wait for the dramatic reveal
         await asyncio.sleep(3.5)
- 
+
         # Transition to the multi-pack viewer
         viewer = MultiPackViewer(
             cog=self.cog,
@@ -748,14 +748,14 @@ class PackSelector(discord.ui.View):
             packs_remaining=new_balance,
         )
         viewer._update_buttons()
- 
+
         await self.message.edit(
             embed=viewer.get_embed(), view=viewer,
         )
         viewer.message = self.message
- 
-    # ── Row 2: Stats & Collection (moved from row 1) ─────
- 
+
+    # ── Row 2: Stats | Collection | Card Pool ────────────
+
     @discord.ui.button(
         label="Stats",
         style=discord.ButtonStyle.secondary,
@@ -772,13 +772,30 @@ class PackSelector(discord.ui.View):
             interaction.user.display_name,
         )
         await interaction.followup.send(embed=embed, ephemeral=True)
- 
+
     @discord.ui.button(
         label="Collection",
         style=discord.ButtonStyle.secondary,
         emoji="📂",
         row=2,
     )
+    async def btn_collection(
+        self, interaction: discord.Interaction, button: discord.ui.Button,
+    ):
+        """Open the collection viewer."""
+        await interaction.response.defer(ephemeral=True)
+        guild_id = interaction.guild.id if interaction.guild else 0
+        viewer = CollectionViewer(
+            cog=self.cog,
+            author_id=interaction.user.id,
+            guild_id=guild_id,
+            display_name=interaction.user.display_name,
+        )
+        await viewer.initialize()
+        embed = viewer.get_embed()
+        await interaction.followup.send(
+            embed=embed, view=viewer, ephemeral=True,
+        )
 
     @discord.ui.button(
         label="Card Pool",
@@ -786,7 +803,9 @@ class PackSelector(discord.ui.View):
         emoji="🔍",
         row=2,
     )
-    async def btn_potential(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def btn_potential(
+        self, interaction: discord.Interaction, button: discord.ui.Button,
+    ):
         """Show all Holos and Rares available in the selected set with owned status."""
         if not self.selected_set_id:
             await interaction.response.send_message(
@@ -895,24 +914,6 @@ class PackSelector(discord.ui.View):
         embed.set_footer(text="✅ = owned • ❌ = not yet pulled")
 
         await interaction.followup.send(embed=embed, ephemeral=True)
-
-    async def btn_collection(
-        self, interaction: discord.Interaction, button: discord.ui.Button,
-    ):
-        """Open the collection viewer."""
-        await interaction.response.defer(ephemeral=True)
-        guild_id = interaction.guild.id if interaction.guild else 0
-        viewer = CollectionViewer(
-            cog=self.cog,
-            author_id=interaction.user.id,
-            guild_id=guild_id,
-            display_name=interaction.user.display_name,
-        )
-        await viewer.initialize()
-        embed = viewer.get_embed()
-        await interaction.followup.send(
-            embed=embed, view=viewer, ephemeral=True,
-        )
 
 # ═══════════════════════════════════════════════════════════
 #  Pack Viewer UI (navigate cards, summary at end)
